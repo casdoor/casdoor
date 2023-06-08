@@ -54,9 +54,13 @@ class ProductEditPage extends React.Component {
   getPaymentProviders() {
     ProviderBackend.getProviders(this.props.account.owner)
       .then((res) => {
-        this.setState({
-          providers: res.filter(provider => provider.category === "Payment"),
-        });
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data.filter(provider => provider.category === "Payment"),
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 
@@ -228,7 +232,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.product.providers} onChange={(value => {this.updateProductField("providers", value);})}>
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.product.providers} onChange={(value => {this.updateProductField("providers", value);})}>
               {
                 this.state.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }

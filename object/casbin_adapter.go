@@ -46,64 +46,59 @@ type CasbinAdapter struct {
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-func GetCasbinAdapterCount(owner, organization, field, value string) int {
+func GetCasbinAdapterCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&CasbinAdapter{Organization: organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&CasbinAdapter{Organization: organization})
 }
 
-func GetCasbinAdapters(owner string, organization string) []*CasbinAdapter {
+func GetCasbinAdapters(owner string, organization string) ([]*CasbinAdapter, error) {
 	adapters := []*CasbinAdapter{}
 	err := adapter.Engine.Where("owner = ? and organization = ?", owner, organization).Find(&adapters)
 	if err != nil {
-		panic(err)
+		return adapters, err
 	}
 
-	return adapters
+	return adapters, nil
 }
 
-func GetPaginationCasbinAdapters(owner, organization string, page, limit int, field, value, sort, order string) []*CasbinAdapter {
+func GetPaginationCasbinAdapters(owner, organization string, page, limit int, field, value, sort, order string) ([]*CasbinAdapter, error) {
 	session := GetSession(owner, page, limit, field, value, sort, order)
 	adapters := []*CasbinAdapter{}
 	err := session.Find(&adapters, &CasbinAdapter{Organization: organization})
 	if err != nil {
-		panic(err)
+		return adapters, err
 	}
 
-	return adapters
+	return adapters, nil
 }
 
-func getCasbinAdapter(owner, name string) *CasbinAdapter {
+func getCasbinAdapter(owner, name string) (*CasbinAdapter, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	casbinAdapter := CasbinAdapter{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&casbinAdapter)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &casbinAdapter
+		return &casbinAdapter, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetCasbinAdapter(id string) *CasbinAdapter {
+func GetCasbinAdapter(id string) (*CasbinAdapter, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getCasbinAdapter(owner, name)
 }
 
-func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) bool {
+func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getCasbinAdapter(owner, name) == nil {
-		return false
+	if casbinAdapter, err := getCasbinAdapter(owner, name); casbinAdapter == nil {
+		return false, err
 	}
 
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
@@ -112,28 +107,28 @@ func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) bool {
 	}
 	affected, err := session.Update(casbinAdapter)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddCasbinAdapter(casbinAdapter *CasbinAdapter) bool {
+func AddCasbinAdapter(casbinAdapter *CasbinAdapter) (bool, error) {
 	affected, err := adapter.Engine.Insert(casbinAdapter)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteCasbinAdapter(casbinAdapter *CasbinAdapter) bool {
+func DeleteCasbinAdapter(casbinAdapter *CasbinAdapter) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{casbinAdapter.Owner, casbinAdapter.Name}).Delete(&CasbinAdapter{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (casbinAdapter *CasbinAdapter) GetId() string {
@@ -214,7 +209,11 @@ func matrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.Casbi
 }
 
 func SyncPolicies(casbinAdapter *CasbinAdapter) ([]*xormadapter.CasbinRule, error) {
-	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	if err != nil {
+		return nil, err
+	}
+
 	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return nil, err
@@ -229,7 +228,11 @@ func SyncPolicies(casbinAdapter *CasbinAdapter) ([]*xormadapter.CasbinRule, erro
 }
 
 func UpdatePolicy(oldPolicy, newPolicy []string, casbinAdapter *CasbinAdapter) (bool, error) {
-	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	if err != nil {
+		return false, err
+	}
+
 	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err
@@ -243,7 +246,11 @@ func UpdatePolicy(oldPolicy, newPolicy []string, casbinAdapter *CasbinAdapter) (
 }
 
 func AddPolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
-	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	if err != nil {
+		return false, err
+	}
+
 	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err
@@ -257,7 +264,11 @@ func AddPolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
 }
 
 func RemovePolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
-	modelObj := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
+	if err != nil {
+		return false, err
+	}
+
 	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err

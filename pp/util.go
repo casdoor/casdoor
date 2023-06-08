@@ -23,3 +23,15 @@ func getPriceString(price float64) string {
 	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
 	return priceString
 }
+
+func joinAttachString(tokens []string) string {
+	return strings.Join(tokens, "|")
+}
+
+func parseAttachString(s string) (string, string, string, error) {
+	tokens := strings.Split(s, "|")
+	if len(tokens) != 3 {
+		return "", "", "", fmt.Errorf("parseAttachString() error: len(tokens) expected 3, got: %d", len(tokens))
+	}
+	return tokens[0], tokens[1], tokens[2], nil
+}

@@ -38,13 +38,31 @@ func (c *ApiController) GetWebhooks() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetWebhooks(owner, organization)
+		webhooks, err := object.GetWebhooks(owner, organization)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = webhooks
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetWebhookCount(owner, organization, field, value)))
-		webhooks := object.GetPaginationWebhooks(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetWebhookCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+
+		webhooks, err := object.GetPaginationWebhooks(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(webhooks, paginator.Nums())
 	}
 }
@@ -59,7 +77,12 @@ func (c *ApiController) GetWebhooks() {
 func (c *ApiController) GetWebhook() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetWebhook(id)
+	webhook, err := object.GetWebhook(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = webhook
 	c.ServeJSON()
 }
 

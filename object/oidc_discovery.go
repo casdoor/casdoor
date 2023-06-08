@@ -110,8 +110,12 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 }
 
 func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
-	certs := GetCerts("admin")
 	jwks := jose.JSONWebKeySet{}
+	certs, err := GetCerts("admin")
+	if err != nil {
+		return jwks, err
+	}
+
 	// follows the protocol rfc 7517(draft)
 	// link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	// or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key

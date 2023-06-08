@@ -175,7 +175,7 @@ class ChatEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Users"), i18next.t("chat:Users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: "100%"}} value={this.state.chat.users}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.chat.users}
               onChange={(value => {this.updateChatField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />

@@ -33,9 +33,8 @@ class PricingListPage extends BaseListPage {
       createdTime: moment().format(),
       plans: [],
       displayName: `New Pricing - ${randomName}`,
-      hasTrial: true,
       isEnabled: true,
-      trialDuration: 14,
+      trialDuration: 7,
     };
   }
 
@@ -44,7 +43,7 @@ class PricingListPage extends BaseListPage {
     PricingBackend.addPricing(newPricing)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/pricing/${newPricing.owner}/${newPricing.name}`, mode: "add"});
+          this.props.history.push({pathname: `/pricings/${newPricing.owner}/${newPricing.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -85,7 +84,7 @@ class PricingListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/pricing/${record.owner}/${text}`}>
+            <Link to={`/pricings/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -120,7 +119,7 @@ class PricingListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        width: "170px",
+        // width: "170px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
@@ -146,7 +145,7 @@ class PricingListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/pricing/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/pricings/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePricing(index)}
@@ -189,11 +188,13 @@ class PricingListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PricingBackend.getPricings("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PricingBackend.getPricings(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -205,9 +206,10 @@ class PricingListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

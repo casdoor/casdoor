@@ -163,6 +163,10 @@ export const OtherProviderInfo = {
     },
   },
   Payment: {
+    "Dummy": {
+      logo: `${StaticBaseUrl}/img/payment_paypal.png`,
+      url: "",
+    },
     "Alipay": {
       logo: `${StaticBaseUrl}/img/payment_alipay.png`,
       url: "https://www.alipay.com/",
@@ -679,7 +683,7 @@ export function getLanguageText(text) {
 }
 
 export function getLanguage() {
-  return i18next.language ?? Conf.DefaultLanguage;
+  return (i18next.language !== undefined && i18next.language !== null && i18next.language !== "" && i18next.language !== "null") ? i18next.language : Conf.DefaultLanguage;
 }
 
 export function setLanguage(language) {
@@ -848,6 +852,7 @@ export function getProviderTypeOptions(category) {
     ]);
   } else if (category === "Payment") {
     return ([
+      {id: "Dummy", name: "Dummy"},
       {id: "Alipay", name: "Alipay"},
       {id: "WeChat Pay", name: "WeChat Pay"},
       {id: "PayPal", name: "PayPal"},

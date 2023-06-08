@@ -53,7 +53,12 @@ func (c *ApiController) Unlink() {
 
 	if user.Id == unlinkedUser.Id && !user.IsGlobalAdmin {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
-		application := object.GetApplicationByUser(user)
+		application, err := object.GetApplicationByUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if application == nil {
 			c.ResponseError(c.T("link:You can't unlink yourself, you are not a member of any application"))
 			return
@@ -88,8 +93,17 @@ func (c *ApiController) Unlink() {
 		return
 	}
 
-	object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+	_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	object.LinkUserAccount(&unlinkedUser, providerType, "")
+	_, err = object.LinkUserAccount(&unlinkedUser, providerType, "")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk()
 }

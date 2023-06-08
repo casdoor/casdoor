@@ -21,6 +21,16 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// Enforce
+// @Title Enforce
+// @Tag Enforce API
+// @Description Call Casbin Enforce API
+// @Param   body    body   object.CasbinRequest  true   "Casbin request"
+// @Param   permissionId    query   string  false   "permission id"
+// @Param   modelId    query   string  false   "model id"
+// @Param   resourceId    query   string  false   "resource id"
+// @Success 200 {object} controllers.Response The Response object
+// @router /enforce [post]
 func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
@@ -34,28 +44,59 @@ func (c *ApiController) Enforce() {
 	}
 
 	if permissionId != "" {
-		c.Data["json"] = object.Enforce(permissionId, &request)
-		c.ServeJSON()
+		enforceResult, err := object.Enforce(permissionId, &request)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res := []bool{}
+		res = append(res, enforceResult)
+		c.ResponseOk(res)
 		return
 	}
 
-	permissions := make([]*object.Permission, 0)
-	res := []bool{}
-
+	permissions := []*object.Permission{}
 	if modelId != "" {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions = object.GetPermissionsByModel(owner, modelName)
+		permissions, err = object.GetPermissionsByModel(owner, modelName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else if resourceId != "" {
+		permissions, err = object.GetPermissionsByResource(resourceId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	} else {
-		permissions = object.GetPermissionsByResource(resourceId)
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
 	}
 
+	res := []bool{}
 	for _, permission := range permissions {
-		res = append(res, object.Enforce(permission.GetId(), &request))
+		enforceResult, err := object.Enforce(permission.GetId(), &request)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
 	}
-	c.Data["json"] = res
-	c.ServeJSON()
+	c.ResponseOk(res)
 }
 
+// BatchEnforce
+// @Title BatchEnforce
+// @Tag Enforce API
+// @Description Call Casbin BatchEnforce API
+// @Param   body    body   object.CasbinRequest  true   "array of casbin requests"
+// @Param   permissionId    query   string  false   "permission id"
+// @Param   modelId    query   string  false   "model id"
+// @Success 200 {object} controllers.Response The Response object
+// @router /batch-enforce [post]
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
@@ -68,19 +109,42 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	if permissionId != "" {
-		c.Data["json"] = object.BatchEnforce(permissionId, &requests)
-		c.ServeJSON()
-	} else {
-		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions := object.GetPermissionsByModel(owner, modelName)
+		enforceResult, err := object.BatchEnforce(permissionId, &requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		res := [][]bool{}
-		for _, permission := range permissions {
-			res = append(res, object.BatchEnforce(permission.GetId(), &requests))
-		}
-		c.Data["json"] = res
-		c.ServeJSON()
+		res = append(res, enforceResult)
+		c.ResponseOk(res)
+		return
 	}
+
+	permissions := []*object.Permission{}
+	if modelId != "" {
+		owner, modelName := util.GetOwnerAndNameFromId(modelId)
+		permissions, err = object.GetPermissionsByModel(owner, modelName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
+
+	res := [][]bool{}
+	for _, permission := range permissions {
+		enforceResult, err := object.BatchEnforce(permission.GetId(), &requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
+	}
+	c.ResponseOk(res)
 }
 
 func (c *ApiController) GetAllObjects() {
@@ -90,8 +154,7 @@ func (c *ApiController) GetAllObjects() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllObjects(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllObjects(userId))
 }
 
 func (c *ApiController) GetAllActions() {
@@ -101,8 +164,7 @@ func (c *ApiController) GetAllActions() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllActions(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllActions(userId))
 }
 
 func (c *ApiController) GetAllRoles() {
@@ -112,6 +174,5 @@ func (c *ApiController) GetAllRoles() {
 		return
 	}
 
-	c.Data["json"] = object.GetAllRoles(userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetAllRoles(userId))
 }

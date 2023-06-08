@@ -79,3 +79,13 @@ export function getDefaultApplication(owner, name) {
     },
   }).then(res => res.json());
 }
+
+export function getOrganizationNames(owner) {
+  return fetch(`${Setting.ServerUrl}/api/get-organization-names?owner=${owner}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

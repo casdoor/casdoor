@@ -12,19 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Select} from "antd";
-import * as Setting from "../../Setting";
 import React from "react";
+import {Select} from "antd";
+import i18next from "i18next";
+import * as OrganizationBackend from "../../backend/OrganizationBackend";
+import * as Setting from "../../Setting";
 
-export const CountryCodeSelect = (props) => {
-  const {onChange, style, disabled} = props;
-  const countryCodes = props.countryCodes ?? [];
+function OrganizationSelect(props) {
+  const {onChange} = props;
+  const [organizations, setOrganizations] = React.useState([]);
   const [value, setValue] = React.useState("");
 
   React.useEffect(() => {
-    const initValue = countryCodes.length > 0 ? countryCodes[0] : "";
+    if (props.organizations === undefined) {
+      getOrganizations();
+    }
+    const initValue = organizations.length > 0 ? organizations[0] : "";
     handleOnChange(initValue);
   }, []);
+
+  const getOrganizations = () => {
+    OrganizationBackend.getOrganizationNames("admin")
+      .then((res) => {
+        if (res.status === "ok") {
+          setOrganizations(res.data);
+        }
+      });
+  };
 
   const handleOnChange = (value) => {
     setValue(value);
@@ -33,19 +47,17 @@ export const CountryCodeSelect = (props) => {
 
   return (
     <Select
+      options={organizations.map((organization) => Setting.getOption(organization.name, organization.name))}
       virtual={false}
       showSearch
-      style={style}
-      disabled={disabled}
+      placeholder={i18next.t("login:Please select an organization")}
       value={value}
-      dropdownMatchSelectWidth={false}
-      optionLabelProp={"label"}
       onChange={handleOnChange}
       filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
+      {...props}
     >
-      {
-        Setting.getCountryCodeData(countryCodes).map((country) => Setting.getCountryCodeOption(country))
-      }
     </Select>
   );
-};
+}
+
+export default OrganizationSelect;

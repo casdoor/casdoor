@@ -51,12 +51,28 @@ func (c *ApiController) GetResources() {
 	}
 
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetResources(owner, user)
+		resources, err := object.GetResources(owner, user)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = resources
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetResourceCount(owner, user, field, value)))
-		resources := object.GetPaginationResources(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetResourceCount(owner, user, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		resources, err := object.GetPaginationResources(owner, user, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(resources, paginator.Nums())
 	}
 }
@@ -68,7 +84,12 @@ func (c *ApiController) GetResources() {
 func (c *ApiController) GetResource() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetResource(id)
+	resource, err := object.GetResource(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = resource
 	c.ServeJSON()
 }
 
@@ -187,7 +208,10 @@ func (c *ApiController) UploadResource() {
 		index := len(fullFilePath) - len(ext)
 		for i := 1; ; i++ {
 			_, objectKey := object.GetUploadFileUrl(provider, fullFilePath, true)
-			if object.GetResourceCount(owner, username, "name", objectKey) == 0 {
+			if count, err := object.GetResourceCount(owner, username, "name", objectKey); err != nil {
+				c.ResponseError(err.Error())
+				return
+			} else if count == 0 {
 				break
 			}
 
@@ -223,20 +247,39 @@ func (c *ApiController) UploadResource() {
 		Url:         fileUrl,
 		Description: description,
 	}
-	object.AddOrUpdateResource(resource)
+	_, err = object.AddOrUpdateResource(resource)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	switch tag {
 	case "avatar":
-		user := object.GetUserNoCheck(util.GetId(owner, username))
+		user, err := object.GetUserNoCheck(util.GetId(owner, username))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if user == nil {
 			c.ResponseError(c.T("resource:User is nil for tag: avatar"))
 			return
 		}
 
 		user.Avatar = fileUrl
-		object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
+		_, err = object.UpdateUser(user.GetId(), user, []string{"avatar"}, false)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 	case "termsOfUse":
-		user := object.GetUserNoCheck(util.GetId(owner, username))
+		user, err := object.GetUserNoCheck(util.GetId(owner, username))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if user == nil {
 			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, username)))
 			return
@@ -248,9 +291,18 @@ func (c *ApiController) UploadResource() {
 		}
 
 		_, applicationId := util.GetOwnerAndNameFromIdNoCheck(strings.TrimRight(fullFilePath, ".html"))
-		applicationObj := object.GetApplication(applicationId)
+		applicationObj, err := object.GetApplication(applicationId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		applicationObj.TermsOfUse = fileUrl
-		object.UpdateApplication(applicationId, applicationObj)
+		_, err = object.UpdateApplication(applicationId, applicationObj)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.ResponseOk(fileUrl, objectKey)

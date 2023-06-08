@@ -19,22 +19,25 @@ type Affiliation struct {
 	Name string `xorm:"varchar(128)" json:"name"`
 }
 
-func (syncer *Syncer) getAffiliations() []*Affiliation {
+func (syncer *Syncer) getAffiliations() ([]*Affiliation, error) {
 	affiliations := []*Affiliation{}
 	err := syncer.Adapter.Engine.Table(syncer.AffiliationTable).Asc("id").Find(&affiliations)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return affiliations
+	return affiliations, nil
 }
 
-func (syncer *Syncer) getAffiliationMap() ([]*Affiliation, map[int]string) {
-	affiliations := syncer.getAffiliations()
+func (syncer *Syncer) getAffiliationMap() ([]*Affiliation, map[int]string, error) {
+	affiliations, err := syncer.getAffiliations()
+	if err != nil {
+		return nil, nil, err
+	}
 
 	m := map[int]string{}
 	for _, affiliation := range affiliations {
 		m[affiliation.Id] = affiliation.Name
 	}
-	return affiliations, m
+	return affiliations, m, nil
 }

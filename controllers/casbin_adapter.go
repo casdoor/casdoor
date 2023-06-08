@@ -33,19 +33,40 @@ func (c *ApiController) GetCasbinAdapters() {
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
 	if limit == "" || page == "" {
-		adapters := object.GetCasbinAdapters(owner, organization)
+		adapters, err := object.GetCasbinAdapters(owner, organization)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(adapters)
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetCasbinAdapterCount(owner, organization, field, value)))
-		adapters := object.GetPaginationCasbinAdapters(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetCasbinAdapterCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		adapters, err := object.GetPaginationCasbinAdapters(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(adapters, paginator.Nums())
 	}
 }
 
 func (c *ApiController) GetCasbinAdapter() {
 	id := c.Input().Get("id")
-	adapter := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasbinAdapter(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(adapter)
 }
 
@@ -89,7 +110,11 @@ func (c *ApiController) DeleteCasbinAdapter() {
 
 func (c *ApiController) SyncPolicies() {
 	id := c.Input().Get("id")
-	adapter := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasbinAdapter(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	policies, err := object.SyncPolicies(adapter)
 	if err != nil {
@@ -102,9 +127,14 @@ func (c *ApiController) SyncPolicies() {
 
 func (c *ApiController) UpdatePolicy() {
 	id := c.Input().Get("id")
-	adapter := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasbinAdapter(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var policies []xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -121,9 +151,14 @@ func (c *ApiController) UpdatePolicy() {
 
 func (c *ApiController) AddPolicy() {
 	id := c.Input().Get("id")
-	adapter := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasbinAdapter(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var policy xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -140,9 +175,14 @@ func (c *ApiController) AddPolicy() {
 
 func (c *ApiController) RemovePolicy() {
 	id := c.Input().Get("id")
-	adapter := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasbinAdapter(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var policy xormadapter.CasbinRule
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

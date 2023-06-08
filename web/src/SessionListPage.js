@@ -55,10 +55,10 @@ class SessionListPage extends BaseListPage {
       {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
-        key: "organization",
+        key: "owner",
         width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -136,9 +136,11 @@ class SessionListPage extends BaseListPage {
     this.setState({loading: true});
     SessionBackend.getSessions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -150,9 +152,10 @@ class SessionListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

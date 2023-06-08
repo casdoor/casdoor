@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -105,7 +106,11 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	roles := attributes.CreateElement("saml:Attribute")
 	roles.CreateAttr("Name", "Roles")
 	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
-	ExtendUserWithRolesAndPermissions(user)
+	err := ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, role := range user.Roles {
 		roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(role.Name)
 	}
@@ -186,7 +191,15 @@ type Attribute struct {
 }
 
 func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return nil, err
+	}
+
+	if cert == nil {
+		return nil, errors.New("please set a cert for the application first")
+	}
+
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
@@ -263,7 +276,11 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	// get certificate string
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return "", "", "", err
+	}
+
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 

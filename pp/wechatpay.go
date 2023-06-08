@@ -16,7 +16,7 @@ package pp
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/casdoor/casdoor/util"
@@ -24,12 +24,21 @@ import (
 	"github.com/go-pay/gopay/wechat/v3"
 )
 
-type WechatPaymentProvider struct {
-	ClientV3 *wechat.ClientV3
-	appId    string
+type WechatPayNotifyResponse struct {
+	Code    string `json:"Code"`
+	Message string `json:"Message"`
 }
 
-func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber string, apiV3Key string, privateKey string) (*WechatPaymentProvider, error) {
+type WechatPaymentProvider struct {
+	Client *wechat.ClientV3
+	appId  string
+}
+
+func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, mchCertSerialNumber string, privateKey string) (*WechatPaymentProvider, error) {
+	if appId == "" && mchId == "" && mchCertSerialNumber == "" && apiV3Key == "" && privateKey == "" {
+		return &WechatPaymentProvider{}, nil
+	}
+
 	pp := &WechatPaymentProvider{appId: appId}
 
 	clientV3, err := wechat.NewClientV3(mchId, mchCertSerialNumber, apiV3Key, privateKey)
@@ -37,11 +46,13 @@ func NewWechatPaymentProvider(appId string, mchId string, mchCertSerialNumber st
 		return nil, err
 	}
 
-	err = clientV3.AutoVerifySign()
+	platformCert, serialNo, err := clientV3.GetAndSelectNewestCert()
 	if err != nil {
 		return nil, err
 	}
-	pp.ClientV3 = clientV3
+
+	pp.Client = clientV3.SetPlatformCert([]byte(platformCert), serialNo)
+
 	return pp, nil
 }
 
@@ -50,46 +61,50 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 
 	bm := gopay.BodyMap{}
 
-	bm.Set("providerName", providerName)
-	bm.Set("productName", productName)
-
-	bm.Set("return_url", returnUrl)
+	bm.Set("attach", joinAttachString([]string{productDisplayName, productName, providerName}))
+	bm.Set("appid", pp.appId)
+	bm.Set("description", productDisplayName)
 	bm.Set("notify_url", notifyUrl)
-
-	bm.Set("body", productDisplayName)
 	bm.Set("out_trade_no", paymentName)
-	bm.Set("total_fee", getPriceString(price))
+	bm.SetBodyMap("amount", func(bm gopay.BodyMap) {
+		bm.Set("total", int(price*100))
+		bm.Set("currency", "CNY")
+	})
 
-	wechatRsp, err := pp.ClientV3.V3TransactionJsapi(context.Background(), bm)
+	wxRsp, err := pp.Client.V3TransactionNative(context.Background(), bm)
 	if err != nil {
 		return "", err
 	}
 
-	payUrl := fmt.Sprintf("https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect", pp.appId, wechatRsp.Response.PrepayId)
-	return payUrl, nil
+	if wxRsp.Code != wechat.Success {
+		return "", errors.New(wxRsp.Error)
+	}
+
+	return wxRsp.Response.CodeUrl, nil
 }
 
 func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
-	bm, err := wechat.V3ParseNotifyToBodyMap(request)
-	if err != nil {
-		return "", "", 0, "", "", err
-	}
-
-	providerName := bm.Get("providerName")
-	productName := bm.Get("productName")
-
-	productDisplayName := bm.Get("body")
-	paymentName := bm.Get("out_trade_no")
-	price := util.ParseFloat(bm.Get("total_fee"))
-
 	notifyReq, err := wechat.V3ParseNotify(request)
 	if err != nil {
 		panic(err)
 	}
 
-	cert := pp.ClientV3.WxPublicKey()
-
+	cert := pp.Client.WxPublicKey()
 	err = notifyReq.VerifySignByPK(cert)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+
+	apiKey := string(pp.Client.ApiV3Key)
+	result, err := notifyReq.DecryptCipherText(apiKey)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+
+	paymentName := result.OutTradeNo
+	price := float64(result.Amount.PayerTotal) / 100
+
+	productDisplayName, productName, providerName, err := parseAttachString(result.Attach)
 	if err != nil {
 		return "", "", 0, "", "", err
 	}
@@ -99,4 +114,18 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 func (pp *WechatPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
 	return "", nil
+}
+
+func (pp *WechatPaymentProvider) GetResponseError(err error) string {
+	response := &WechatPayNotifyResponse{
+		Code:    "SUCCESS",
+		Message: "",
+	}
+
+	if err != nil {
+		response.Code = "FAIL"
+		response.Message = err.Error()
+	}
+
+	return util.StructToJson(response)
 }

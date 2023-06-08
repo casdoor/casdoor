@@ -124,9 +124,9 @@ p, *, *, GET, /api/get-release, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-prometheus-info, *, *
 p, *, *, *, /api/metrics, *, *
-p, *, *, GET, /api/get-subscriptions, *, *
 p, *, *, GET, /api/get-pricing, *, *
 p, *, *, GET, /api/get-plan, *, *
+p, *, *, GET, /api/get-organization-names, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
@@ -153,7 +153,11 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		}
 	}
 
-	user := object.GetUser(util.GetId(subOwner, subName))
+	user, err := object.GetUser(util.GetId(subOwner, subName))
+	if err != nil {
+		panic(err)
+	}
+
 	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 		return true
 	}

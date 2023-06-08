@@ -252,7 +252,7 @@ class WebhookEditPage extends React.Component {
             {Setting.getLabel(i18next.t("webhook:Events"), i18next.t("webhook:Events - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}}
               value={this.state.webhook.events}
               onChange={value => {
                 this.updateWebhookField("events", value);

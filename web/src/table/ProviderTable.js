@@ -188,7 +188,7 @@ class ProviderTable extends React.Component {
               onChange={value => {
                 this.updateField(table, index, "rule", value);
               }} >
-              <Option key="None" value="None">{i18next.t("application:None")}</Option>
+              <Option key="None" value="None">{i18next.t("general:None")}</Option>
               <Option key="Dynamic" value="Dynamic">{i18next.t("application:Dynamic")}</Option>
               <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
             </Select>

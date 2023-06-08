@@ -41,12 +41,28 @@ func (c *ApiController) GetTokens() {
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetTokens(owner, organization)
+		token, err := object.GetTokens(owner, organization)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = token
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetTokenCount(owner, organization, field, value)))
-		tokens := object.GetPaginationTokens(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetTokenCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		tokens, err := object.GetPaginationTokens(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(tokens, paginator.Nums())
 	}
 }
@@ -60,8 +76,12 @@ func (c *ApiController) GetTokens() {
 // @router /get-token [get]
 func (c *ApiController) GetToken() {
 	id := c.Input().Get("id")
+	token, err := object.GetToken(id)
+	if err != nil {
+		panic(err)
+	}
 
-	c.Data["json"] = object.GetToken(id)
+	c.Data["json"] = token
 	c.ServeJSON()
 }
 
@@ -171,8 +191,12 @@ func (c *ApiController) GetOAuthToken() {
 		}
 	}
 	host := c.Ctx.Request.Host
+	oAuthtoken, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	if err != nil {
+		panic(err)
+	}
 
-	c.Data["json"] = object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	c.Data["json"] = oAuthtoken
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
@@ -210,7 +234,12 @@ func (c *ApiController) RefreshToken() {
 		}
 	}
 
-	c.Data["json"] = object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = refreshToken2
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
@@ -245,7 +274,11 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 	}
-	application := object.GetApplicationByClientId(clientId)
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil || application.ClientSecret != clientSecret {
 		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
 		c.Data["json"] = &object.TokenError{
@@ -254,7 +287,11 @@ func (c *ApiController) IntrospectToken() {
 		c.SetTokenErrorHttpStatus()
 		return
 	}
-	token := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
+	token, err := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
+	if err != nil {
+		panic(err)
+	}
+
 	if token == nil {
 		c.Data["json"] = &object.IntrospectionResponse{Active: false}
 		c.ServeJSON()
