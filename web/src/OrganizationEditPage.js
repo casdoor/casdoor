@@ -177,10 +177,10 @@ class OrganizationEditPage extends React.Component {
                 this.updateOrganizationField("passwordComplexOptions", value);
               })}
               options={[
-                {value: "AtLeast8", name: i18next.t("passwordComplexOptions:AtLeast8")},
-                {value: "Aa123", name: i18next.t("passwordComplexOptions:Aa123")},
-                {value: "SpecialChar", name: i18next.t("passwordComplexOptions:SpecialChar")},
-                {value: "NoRepeat", name: i18next.t("passwordComplexOptions:NoRepeat")},
+                {value: "AtLeast8", name: i18next.t("user:AtLeast8")},
+                {value: "Aa123", name: i18next.t("user:Aa123")},
+                {value: "SpecialChar", name: i18next.t("user:SpecialChar")},
+                {value: "NoRepeat", name: i18next.t("user:NoRepeat")},
               ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

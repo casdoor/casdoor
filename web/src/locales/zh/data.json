@@ -251,6 +251,8 @@
     "Organizations": "组织",
     "Password": "密码",
     "Password - Tooltip": "请确认密码正确",
+    "Password complexity options": "密码复杂度选项",
+    "Password complexity options - Tooltip": "密码复杂度组合，登录密码复杂度必须符合该规范",
     "Password salt": "密码Salt值",
     "Password salt - Tooltip": "用于密码加密的随机参数",
     "Password type": "密码类型",
@@ -324,17 +326,7 @@
     "Users under all organizations": "所有组织里的用户",
     "Webhooks": "Webhooks",
     "empty": "无",
-    "{total} in total": "{total} 总计",
-    "Password complexity options": "密码复杂度选项",
-    "Password complexity options - Tooltip": "组织中的成员的登录密码复杂度必须符合的规范"
-  },
-  "passwordComplexOptions": {
-    "AtLeast8": "密码长度至少为8位",
-    "Aa123": "密码至少需要包含一个大写字母、一个小写字母和一个数字",
-    "SpecialChar": "密码必须包括特殊字符（如!@#$%^&*等）",
-    "NoRepeat": "密码不能包含连续字符",
-
-    "InvalidOption": "存在未定义复杂度选项"
+    "{total} in total": "{total} 总计"
   },
   "ldap": {
     "Admin": "管理员",
@@ -549,8 +541,6 @@
     "Edit Pricing": "编辑定价",
     "Free": "免费",
     "Getting started": "开始使用",
-    "Has trial": "有试用期",
-    "Has trial - Tooltip": "选择计划后是否有试用期",
     "New Pricing": "添加定价",
     "Trial duration": "试用期时长",
     "Trial duration - Tooltip": "试用期时长",
@@ -853,10 +843,12 @@
   "user": {
     "3rd-party logins": "第三方登录",
     "3rd-party logins - Tooltip": "用户所绑定的社会化登录",
+    "Aa123": "密码至少需要包含一个大写字母、一个小写字母和一个数字",
     "Address": "地址",
     "Address - Tooltip": "居住地址",
     "Affiliation": "工作单位",
     "Affiliation - Tooltip": "工作单位，如公司、组织名称",
+    "AtLeast8": "密码长度至少为8位",
     "Bio": "自我介绍",
     "Bio - Tooltip": "用户的自我介绍",
     "Birthday": "Birthday",
@@ -882,6 +874,7 @@
     "ID card type - Tooltip": "身份证类型 - Tooltip",
     "Input your email": "请输入邮箱",
     "Input your phone number": "输入手机号",
+    "InvalidOption": "InvalidOption",
     "Is admin": "是组织管理员",
     "Is admin - Tooltip": "是用户所属组织的管理员",
     "Is deleted": "被删除",
@@ -906,6 +899,7 @@
     "New Password": "新密码",
     "New User": "添加用户",
     "New phone": "新手机号",
+    "NoRepeat": "密码不能包含连续字符",
     "Old Password": "旧密码",
     "Password set successfully": "密码设置成功",
     "Phone cannot be empty": "手机号不能为空",
@@ -923,6 +917,7 @@
     "Set Password": "设置密码",
     "Set new profile picture": "设置新头像",
     "Set password...": "设置密码...",
+    "SpecialChar": "密码必须包括特殊字符（如!@#$%^&*等）",
     "Tag": "标签",
     "Tag - Tooltip": "用户的标签",
     "Title": "职务",

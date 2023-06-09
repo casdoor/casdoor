@@ -41,7 +41,8 @@ export const PasswordModal = (props) => {
 
     function isValidOption_atLeast8(password) {
       if (password.length < 8) {
-        return "AtLeast8";
+        // return "AtLeast8";
+        return i18next.t("user:AtLeast8");
       }
       return "";
     }
@@ -49,7 +50,8 @@ export const PasswordModal = (props) => {
     function isValidOption_Aa123(password) {
       const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$/;
       if (!regex.test(password)) {
-        return "Aa123";
+        // return "Aa123";
+        return i18next.t("user:Aa123");
       }
       return "";
     }
@@ -57,7 +59,8 @@ export const PasswordModal = (props) => {
     function isValidOption_SpecialChar(password) {
       const regex = /^(?=.*[!@#$%^&*]).+$/;
       if (!regex.test(password)) {
-        return "SpecialChar";
+        // return "SpecialChar";
+        return i18next.t("user:SpecialChar");
       }
       return "";
     }
@@ -65,7 +68,8 @@ export const PasswordModal = (props) => {
     function isValidOption_noRepeat(password) {
       const regex = /(.)\1+/;
       if (regex.test(password)) {
-        return "NoRepeat";
+        // return "NoRepeat";
+        return i18next.t("user:NoRepeat");
       }
       return "";
     }
@@ -85,7 +89,8 @@ export const PasswordModal = (props) => {
         }
       } else {
         // Invalid complex option
-        return "InvalidOption";
+        // return "InvalidOption";
+        return i18next.t("user:InvalidOption");
       }
     }
 
@@ -126,7 +131,7 @@ export const PasswordModal = (props) => {
 
       const pwdCheckRes = checkPasswordComplexOption(newPassword, pwdComplexOptionList);
       if (pwdCheckRes !== "") {
-        Setting.showMessage("error", i18next.t(`passwordComplexOptions:${pwdCheckRes}`));
+        Setting.showMessage("error", pwdCheckRes);
         setConfirmLoading(false);
         return;
       }

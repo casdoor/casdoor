@@ -68,7 +68,8 @@
     "Missing parameter": "Missing parameter",
     "Please login first": "Please login first",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "don't support captchaProvider: ": "don't support captchaProvider: "
+    "don't support captchaProvider: ": "don't support captchaProvider: ",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Ldap server exist"
@@ -119,6 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Display name cannot be empty",
+    "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "New password cannot contain blank space.",
     "New password must have at least 6 characters": "New password must have at least 6 characters"
   },

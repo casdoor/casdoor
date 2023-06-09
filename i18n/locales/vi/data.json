@@ -68,7 +68,8 @@
     "Missing parameter": "Thiếu tham số",
     "Please login first": "Vui lòng đăng nhập trước",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
-    "don't support captchaProvider: ": "không hỗ trợ captchaProvider: "
+    "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Máy chủ LDAP tồn tại"
@@ -119,6 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Tên hiển thị không thể trống",
+    "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
     "New password must have at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự"
   },

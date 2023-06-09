@@ -267,11 +267,11 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 		validateFunc, ok := validators[option]
 		if !ok {
 			// Validate Function not defined
-			return i18n.Translate(lang, "passwordComplexOptions:InvalidOption")
+			return i18n.Translate(lang, "user:InvalidOption")
 		}
 		pwdCheckRes := validateFunc(password)
 		if pwdCheckRes != "" {
-			return i18n.Translate(lang, "passwordComplexOptions:"+pwdCheckRes)
+			return i18n.Translate(lang, "user:"+pwdCheckRes)
 		}
 	}
 	return ""

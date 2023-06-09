@@ -251,6 +251,8 @@
     "Organizations": "Organizations",
     "Password": "Password",
     "Password - Tooltip": "Make sure the password is correct",
+    "Password complexity options": "Password complexity options",
+    "Password complexity options - Tooltip": "Different combinations of password complexity options",
     "Password salt": "Password salt",
     "Password salt - Tooltip": "Random parameter used for password encryption",
     "Password type": "Password type",
@@ -324,17 +326,7 @@
     "Users under all organizations": "Users under all organizations",
     "Webhooks": "Webhooks",
     "empty": "empty",
-    "{total} in total": "{total} in total",
-    "Password complexity options": "密码复杂度选项",
-    "Password complexity options - Tooltip": "组织中的成员的登录密码复杂度必须符合的规范"
-  },
-  "passwordComplexOptions": {
-    "AtLeast8": "The password must have at least 6 characters.",
-    "Aa123": "The password must contain at least one uppercase letter, one lowercase letter, and one digit.",
-    "SpecialChar": "The password must contain at least one special character.",
-    "NoRepeat": "The password must not contain any repeated characters.",
-
-    "InvalidOption": "Invalid Complex Option"
+    "{total} in total": "{total} in total"
   },
   "ldap": {
     "Admin": "Admin",
@@ -549,8 +541,6 @@
     "Edit Pricing": "Edit Pricing",
     "Free": "Free",
     "Getting started": "Getting started",
-    "Has trial": "Has trial",
-    "Has trial - Tooltip": "Availability of the trial period after choosing a plan",
     "New Pricing": "New Pricing",
     "Trial duration": "Trial duration",
     "Trial duration - Tooltip": "Trial duration period",
@@ -853,10 +843,12 @@
   "user": {
     "3rd-party logins": "3rd-party logins",
     "3rd-party logins - Tooltip": "Social logins linked by the user",
+    "Aa123": "The password must contain at least one uppercase letter, one lowercase letter, and one digit.",
     "Address": "Address",
     "Address - Tooltip": "Residential address",
     "Affiliation": "Affiliation",
     "Affiliation - Tooltip": "Employer, such as company name or organization name",
+    "AtLeast8": "The password must have at least 6 characters.",
     "Bio": "Bio",
     "Bio - Tooltip": "Self introduction of the user",
     "Birthday": "Birthday",
@@ -882,6 +874,7 @@
     "ID card type - Tooltip": "ID card type - Tooltip",
     "Input your email": "Input your email",
     "Input your phone number": "Input your phone number",
+    "InvalidOption": "Please use a valid password complexity option",
     "Is admin": "Is admin",
     "Is admin - Tooltip": "Is an administrator of the organization the user belongs to",
     "Is deleted": "Is deleted",
@@ -906,6 +899,7 @@
     "New Password": "New Password",
     "New User": "New User",
     "New phone": "New phone",
+    "NoRepeat": "The password must not contain any repeated characters.",
     "Old Password": "Old Password",
     "Password set successfully": "Password set successfully",
     "Phone cannot be empty": "Phone cannot be empty",
@@ -923,6 +917,7 @@
     "Set Password": "Set Password",
     "Set new profile picture": "Set new profile picture",
     "Set password...": "Set password...",
+    "SpecialChar": "The password must contain at least one special character.",
     "Tag": "Tag",
     "Tag - Tooltip": "Tag of the user",
     "Title": "Title",
