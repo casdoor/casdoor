@@ -182,6 +182,12 @@ jobs:
         with:
           version: latest
 
+      - name: Test all-in-one
+        uses: docker/compose-action@v2
+        with:
+          compose-file: ./docker-compose.yml
+          command: up -d
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
