@@ -48,9 +48,13 @@ class ModelEditPage extends React.Component {
   getModel() {
     ModelBackend.getModel(this.state.organizationName, this.state.modelName)
       .then((model) => {
-        this.setState({
-          model: model,
-        });
+        if (model === undefined || model === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            model: model,
+          });
+        }
       });
   }
 
