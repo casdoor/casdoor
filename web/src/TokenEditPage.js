@@ -36,6 +36,9 @@ class TokenEditPage extends React.Component {
   getToken() {
     TokenBackend.getToken("admin", this.state.tokenName)
       .then((token) => {
+        if (token === null) {
+          this.props.history.push("/404");
+        }
         this.setState({
           token: token,
         });

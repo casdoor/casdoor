@@ -42,6 +42,9 @@ class PaymentEditPage extends React.Component {
   getPayment() {
     PaymentBackend.getPayment("admin", this.state.paymentName)
       .then((payment) => {
+        if (payment === null) {
+          this.props.history.push("/404");
+        }
         this.setState({
           payment: payment,
         });

@@ -50,6 +50,9 @@ class OrganizationEditPage extends React.Component {
   getOrganization() {
     OrganizationBackend.getOrganization("admin", this.state.organizationName)
       .then((organization) => {
+        if (organization === null) {
+          this.props.history.push("/404");
+        }
         this.setState({
           organization: organization,
         });

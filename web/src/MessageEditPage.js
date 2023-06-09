@@ -46,6 +46,9 @@ class MessageEditPage extends React.Component {
   getMessage() {
     MessageBackend.getMessage("admin", this.state.messageName)
       .then((message) => {
+        if (message === null) {
+          this.props.history.push("/404");
+        }
         this.setState({
           message: message,
         });

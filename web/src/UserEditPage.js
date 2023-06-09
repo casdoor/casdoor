@@ -66,6 +66,9 @@ class UserEditPage extends React.Component {
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((data) => {
+        if (data === null) {
+          this.props.history.push("/404");
+        }
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,

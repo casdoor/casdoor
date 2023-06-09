@@ -45,6 +45,10 @@ class ProductEditPage extends React.Component {
   getProduct() {
     ProductBackend.getProduct(this.props.account.owner, this.state.productName)
       .then((product) => {
+        if (product === null) {
+          this.props.history.push("/404");
+        }
+
         this.setState({
           product: product,
         });

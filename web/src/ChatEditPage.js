@@ -41,6 +41,9 @@ class ChatEditPage extends React.Component {
   getChat() {
     ChatBackend.getChat("admin", this.state.chatName)
       .then((chat) => {
+        if (chat === null) {
+          this.props.history.push("/404");
+        }
         this.setState({
           chat: chat,
         });
