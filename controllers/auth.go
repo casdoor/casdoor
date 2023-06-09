@@ -49,8 +49,8 @@ func codeToResponse(code *object.Code) *Response {
 }
 
 func tokenToResponse(token *object.Token) *Response {
-	if token == nil || token.AccessToken == "" {
-		return &Response{Status: "error", Msg: "fail to get accessToken", Data: ""}
+	if token.AccessToken == "" {
+		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
 	}
 	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken}
 }
@@ -105,11 +105,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
 		} else {
 			scope := c.Input().Get("scope")
-			var token *object.Token
-			if !user.PasswordChangeRequired {
-				token, _ = object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
-			}
-
+			token, _ := object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
 			resp = tokenToResponse(token)
 		}
 	} else if form.Type == ResponseTypeSaml { // saml flow
