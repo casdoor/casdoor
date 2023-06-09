@@ -124,12 +124,9 @@ jobs:
           name: cypress-videos
           path: ./web/cypress/videos
 
-      - name: Start Docker Compose
-        uses: docker/compose-action@v1
-        with:
-          compose-file: docker-compose.yml
-          service: casdoor-all-in-one
-          command: up -d
+      - name: Tests
+        run: |
+          docker-compose -f ./docker-compose.yml up -d
 
   release-and-push:
     name: Release And Push
