@@ -276,6 +276,7 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 	}
 	return ""
 }
+
 func checkLdapUserPassword(user *User, password string, lang string) string {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
