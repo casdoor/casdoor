@@ -50,10 +50,14 @@ class PricingEditPage extends React.Component {
   getPricing() {
     PricingBackend.getPricing(this.state.organizationName, this.state.pricingName)
       .then((pricing) => {
-        this.setState({
-          pricing: pricing,
-        });
-        this.getPlans(pricing.owner);
+        if (pricing === undefined || pricing === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            pricing: pricing,
+          });
+          this.getPlans(pricing.owner);
+        }
       });
   }
 

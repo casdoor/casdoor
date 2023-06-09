@@ -46,11 +46,14 @@ class MessageEditPage extends React.Component {
   getMessage() {
     MessageBackend.getMessage("admin", this.state.messageName)
       .then((message) => {
-        this.setState({
-          message: message,
-        });
-
-        this.getUsers(message.organization);
+        if (message === undefined || message === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            message: message,
+          });
+          this.getUsers(message.organization);
+        }
       });
   }
 

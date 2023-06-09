@@ -47,12 +47,15 @@ class SubscriptionEditPage extends React.Component {
   getSubscription() {
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
       .then((subscription) => {
-        this.setState({
-          subscription: subscription,
-        });
-
-        this.getUsers(subscription.owner);
-        this.getPlanes(subscription.owner);
+        if (subscription === undefined || subscription === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            subscription: subscription,
+          });
+          this.getUsers(subscription.owner);
+          this.getPlanes(subscription.owner);
+        }
       });
   }
 

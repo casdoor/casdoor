@@ -66,15 +66,19 @@ class UserEditPage extends React.Component {
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((data) => {
-        if (data.status === null || data.status !== "error") {
+        if (data === undefined || data === null) {
+          this.props.history.push("/404");
+        } else {
+          if (data.status === null || data.status !== "error") {
+            this.setState({
+              user: data,
+              multiFactorAuths: data?.multiFactorAuths ?? [],
+            });
+          }
           this.setState({
-            user: data,
-            multiFactorAuths: data?.multiFactorAuths ?? [],
+            loading: false,
           });
         }
-        this.setState({
-          loading: false,
-        });
       });
   }
 

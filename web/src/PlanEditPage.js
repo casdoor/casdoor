@@ -47,12 +47,15 @@ class PlanEditPage extends React.Component {
   getPlan() {
     PlanBackend.getPlan(this.state.organizationName, this.state.planName)
       .then((plan) => {
-        this.setState({
-          plan: plan,
-        });
-
-        this.getUsers(plan.owner);
-        this.getRoles(plan.owner);
+        if (plan === undefined || plan === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            plan: plan,
+          });
+          this.getUsers(plan.owner);
+          this.getRoles(plan.owner);
+        }
       });
   }
 

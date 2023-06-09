@@ -50,15 +50,18 @@ class PermissionEditPage extends React.Component {
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((permission) => {
-        this.setState({
-          permission: permission,
-        });
-
-        this.getUsers(permission.owner);
-        this.getRoles(permission.owner);
-        this.getModels(permission.owner);
-        this.getResources(permission.owner);
-        this.getModel(permission.owner, permission.model);
+        if (permission === undefined || permission === null) {
+          this.props.history.push("/404");
+        } else {
+          this.setState({
+            permission: permission,
+          });
+          this.getUsers(permission.owner);
+          this.getRoles(permission.owner);
+          this.getModels(permission.owner);
+          this.getResources(permission.owner);
+          this.getModel(permission.owner, permission.model);
+        }
       });
   }
 

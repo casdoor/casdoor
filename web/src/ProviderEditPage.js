@@ -50,12 +50,16 @@ class ProviderEditPage extends React.Component {
   getProvider() {
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            provider: res.data,
-          });
+        if (res === undefined || res === null) {
+          this.props.history.push("/404");
         } else {
-          Setting.showMessage("error", res.msg);
+          if (res.status === "ok") {
+            this.setState({
+              provider: res.data,
+            });
+          } else {
+            Setting.showMessage("error", res.msg);
+          }
         }
       });
   }
