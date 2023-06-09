@@ -51,7 +51,9 @@ class AdapterEditPage extends React.Component {
       .then((res) => {
         if (res === null) {
           this.props.history.push("/404");
+          return;
         }
+
         if (res.status === "ok") {
           this.setState({
             adapter: res.data,
