@@ -123,10 +123,12 @@ jobs:
         with:
           name: cypress-videos
           path: ./web/cypress/videos
-      - name: Test all-in-one
-        uses: docker/compose-action@v2
+
+      - name: Start Docker Compose
+        uses: docker/compose-action@v1
         with:
-          compose-file: ./docker-compose.yml
+          compose-file: docker-compose.yml
+          service: casdoor-all-in-one
           command: up -d
 
   release-and-push:
