@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Logout",
@@ -308,7 +302,6 @@
     "Successfully added": "Successfully added",
     "Successfully deleted": "Successfully deleted",
     "Successfully saved": "Successfully saved",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Supported country codes",
     "Supported country codes - Tooltip": "Country codes supported by the organization. These codes can be selected as a prefix when sending SMS verification codes",
     "Sure to delete": "Sure to delete",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

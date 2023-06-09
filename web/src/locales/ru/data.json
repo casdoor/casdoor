@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Выход",
@@ -308,7 +302,6 @@
     "Successfully added": "Успешно добавлено",
     "Successfully deleted": "Успешно удалено",
     "Successfully saved": "Успешно сохранено",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Поддерживаемые коды стран",
     "Supported country codes - Tooltip": "Коды стран, поддерживаемые организацией. Эти коды могут быть выбраны в качестве префикса при отправке SMS-кодов подтверждения",
     "Sure to delete": "Обязательное удаление",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

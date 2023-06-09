@@ -58,7 +58,7 @@ class GroupTreePage extends React.Component {
     return {
       key: treeData.key,
       title: treeData.title,
-      icon: treeData.type === "physical" ? <UsergroupAddOutlined /> : <HolderOutlined />,
+      icon: treeData.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />,
       children: haveChildren ? treeData.children.map(i => this.setTreeIcon(i)) : [],
     };
   }

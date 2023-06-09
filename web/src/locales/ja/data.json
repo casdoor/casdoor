@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "ログアウト",
@@ -308,7 +302,6 @@
     "Successfully added": "正常に追加されました",
     "Successfully deleted": "正常に削除されました",
     "Successfully saved": "成功的に保存されました",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "サポートされている国コード",
     "Supported country codes - Tooltip": "組織でサポートされている国コード。これらのコードは、SMS認証コードのプレフィックスとして選択できます",
     "Sure to delete": "削除することが確実です",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

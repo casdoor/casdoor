@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "聊天 & 消息",
     "Logout": "登出",
@@ -308,7 +302,6 @@
     "Successfully added": "添加成功",
     "Successfully deleted": "删除成功",
     "Successfully saved": "保存成功",
-    "Superior group - Tooltip": "上级组 - Tooltip",
     "Supported country codes": "支持的国家代码",
     "Supported country codes - Tooltip": "该组织所支持的国家代码，发送短信验证码时可以选择这些国家的代码前缀",
     "Sure to delete": "确定删除",
@@ -321,7 +314,7 @@
     "Timestamp": "时间戳",
     "Tokens": "令牌",
     "Type": "类型",
-    "Type - Tooltip": "类型 - Tooltip",
+    "Type - Tooltip": "类型",
     "URL": "链接",
     "URL - Tooltip": "URL链接",
     "Up": "上移",
@@ -339,11 +332,11 @@
     "{total} in total": "{total} 总计"
   },
   "group": {
-    "Edit Group": "编辑组",
-    "Group list": "用户组列表",
-    "New Group": "新建组",
+    "Edit Group": "编辑用户组",
+    "New Group": "新建用户组",
+    "Parent group": "上级组",
+    "Parent group - Tooltip": "上级组",
     "Physical": "物理组",
-    "Superior group": "上级组",
     "Virtual": "虚拟组"
   },
   "ldap": {

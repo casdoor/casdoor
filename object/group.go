@@ -33,17 +33,17 @@ type Group struct {
 	ContactEmail  string    `xorm:"varchar(100)" json:"contactEmail"`
 	Type          string    `xorm:"varchar(100)" json:"type"`
 	ParentGroupId string    `xorm:"varchar(100)" json:"parentGroupId"`
+	IsTopGroup    bool      `xorm:"bool" json:"isTopGroup"`
 	Users         *[]string `xorm:"-" json:"users"`
+
+	Title    string   `json:"title,omitempty"`
+	Key      string   `json:"key,omitempty"`
+	Children []*Group `json:"children,omitempty"`
 
 	IsEnabled bool `json:"isEnabled"`
 }
 
-type GroupNode struct {
-	Title    string       `json:"title"`
-	Key      string       `json:"key"`
-	Type     string       `json:"type"`
-	Children []*GroupNode `json:"children,omitempty"`
-}
+type GroupNode struct{}
 
 func GetGroupCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
@@ -124,6 +124,7 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		return false, err
 	}
 
+	group.UpdatedTime = util.GetCurrentTime()
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
 		return false, err
@@ -169,12 +170,12 @@ func (group *Group) GetId() string {
 	return fmt.Sprintf("%s/%s", group.Owner, group.Name)
 }
 
-func ConvertToTreeData(groups []*Group, parentGroupId string) []*GroupNode {
-	treeData := []*GroupNode{}
+func ConvertToTreeData(groups []*Group, parentGroupId string) []*Group {
+	treeData := []*Group{}
 
 	for _, group := range groups {
 		if group.ParentGroupId == parentGroupId {
-			node := &GroupNode{
+			node := &Group{
 				Title: group.DisplayName,
 				Key:   group.Id,
 				Type:  group.Type,

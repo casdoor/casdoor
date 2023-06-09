@@ -73,10 +73,6 @@ class GroupEditPage extends React.Component {
       });
   }
 
-  getId(group = null) {
-    return group !== null ? `${group.owner}/${group.name}` : "";
-  }
-
   parseGroupField(key, value) {
     if ([""].includes(key)) {
       value = Setting.myParseInt(value);
@@ -155,8 +151,8 @@ class GroupEditPage extends React.Component {
             <Select style={{width: "100%"}}
               options={
                 [
-                  {label: i18next.t("group:Virtual"), value: "virtual"},
-                  {label: i18next.t("group:Physical"), value: "physical"},
+                  {label: i18next.t("group:Virtual"), value: "Virtual"},
+                  {label: i18next.t("group:Physical"), value: "Physical"},
                 ].map((item) => ({label: item.label, value: item.value}))
               }
               value={this.state.group.type} onChange={(value => {
@@ -167,7 +163,7 @@ class GroupEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("group:Superior group"), i18next.t("general:Superior group - Tooltip"))} :
+            {Setting.getLabel(i18next.t("group:Parent group"), i18next.t("group:Parent group - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select style={{width: "100%"}}
@@ -194,6 +190,8 @@ class GroupEditPage extends React.Component {
 
   submitGroupEdit(willExist) {
     const group = Setting.deepCopy(this.state.group);
+    group["isTopGroup"] = this.state.organizations.some((organization) => organization.name === group.parentGroupId);
+
     GroupBackend.updateGroup(this.state.organizationName, this.state.groupName, group)
       .then((res) => {
         if (res.status === "ok") {

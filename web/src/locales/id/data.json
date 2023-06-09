@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Keluar",
@@ -308,7 +302,6 @@
     "Successfully added": "Berhasil ditambahkan",
     "Successfully deleted": "Berhasil dihapus",
     "Successfully saved": "Berhasil disimpan",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Kode negara yang didukung",
     "Supported country codes - Tooltip": "Kode negara yang didukung oleh organisasi. Kode-kode ini dapat dipilih sebagai awalan saat mengirim kode verifikasi SMS",
     "Sure to delete": "Pasti untuk menghapus",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

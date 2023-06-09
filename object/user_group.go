@@ -17,7 +17,7 @@ type UserGroupRelation struct {
 func updateGroupRelation(session *xorm.Session, user *User) (int64, error) {
 	groupIds := user.Groups
 
-	physicalGroupCount, err := session.Where("type = ?", "physical").In("id", user.Groups).Count(Group{})
+	physicalGroupCount, err := session.Where("type = ?", "Physical").In("id", user.Groups).Count(Group{})
 	if err != nil {
 		return 0, err
 	}

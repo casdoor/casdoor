@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Đăng xuất",
@@ -308,7 +302,6 @@
     "Successfully added": "Đã thêm thành công",
     "Successfully deleted": "Đã xóa thành công",
     "Successfully saved": "Thành công đã được lưu lại",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Các mã quốc gia được hỗ trợ",
     "Supported country codes - Tooltip": "Mã quốc gia được hỗ trợ bởi tổ chức. Những mã này có thể được chọn làm tiền tố khi gửi mã xác nhận SMS",
     "Sure to delete": "Chắc chắn muốn xóa",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

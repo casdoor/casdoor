@@ -1,10 +1,4 @@
 {
-  "Group": {
-    "Physical": "Physical",
-    "Superior group": "Superior group",
-    "Type": "Type",
-    "Virtual": "Virtual"
-  },
   "account": {
     "Chats & Messages": "Chats & Messages",
     "Logout": "Cierre de sesión",
@@ -308,7 +302,6 @@
     "Successfully added": "Éxito al agregar",
     "Successfully deleted": "Éxito en la eliminación",
     "Successfully saved": "Guardado exitosamente",
-    "Superior group - Tooltip": "Superior group - Tooltip",
     "Supported country codes": "Códigos de país admitidos",
     "Supported country codes - Tooltip": "Códigos de país compatibles con la organización. Estos códigos se pueden seleccionar como prefijo al enviar códigos de verificación SMS",
     "Sure to delete": "Seguro que eliminar",
@@ -340,10 +333,10 @@
   },
   "group": {
     "Edit Group": "Edit Group",
-    "Group list": "Group list",
     "New Group": "New Group",
+    "Parent group": "Parent group",
+    "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
-    "Superior group": "Superior group",
     "Virtual": "Virtual"
   },
   "ldap": {

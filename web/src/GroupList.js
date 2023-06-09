@@ -23,6 +23,30 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class GroupListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
+      groups: [],
+    };
+  }
+  UNSAFE_componentWillMount() {
+    super.UNSAFE_componentWillMount();
+    this.getGroups(this.state.owner);
+  }
+
+  getGroups(organizationName) {
+    GroupBackend.getGroups(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
+      });
+  }
+
   newGroup() {
     const randomName = Setting.getRandomName();
     return {
@@ -31,8 +55,9 @@ class GroupListPage extends BaseListPage {
       createdTime: moment().format(),
       updatedTime: moment().format(),
       displayName: `New Group - ${randomName}`,
-      type: "virtual",
-      parentGroupId: "",
+      type: "Virtual",
+      parentGroupId: this.props.account.owner,
+      isTopGroup: true,
       isEnabled: true,
     };
   }
@@ -83,7 +108,7 @@ class GroupListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/groups/${text}`}>
+            <Link to={`/groups/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -133,29 +158,32 @@ class GroupListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("Group:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "110px",
         sorter: true,
         filterMultiple: false,
         filters: [
-          {text: i18next.t("Group:Virtual"), value: "Virtual"},
-          {text: i18next.t("Group:Physical"), value: "Physical"},
+          {text: i18next.t("group:Virtual"), value: "Virtual"},
+          {text: i18next.t("group:Physical"), value: "Physical"},
         ],
         render: (text, record, index) => {
-          return i18next.t(`group:${text}`);
+          return i18next.t("group:" + text);
         },
       },
       {
-        title: i18next.t("Group:Superior group"),
+        title: i18next.t("group:Parent group"),
         dataIndex: "parentGroupId",
         key: "parentGroupId",
         width: "110px",
         sorter: true,
         ...this.getColumnSearchProps("parentGroupId"),
         render: (text, record, index) => {
-          return groups.filter((group) => group.id === text)[0]?.displayName;
+          if (record.isTopGroup) {
+            return record.parentGroupId;
+          }
+          return this.state.groups.filter((group) => group.id === text)[0]?.displayName;
         },
       },
       {
@@ -213,11 +241,13 @@ class GroupListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    GroupBackend.getGroups(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(this.state.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -229,7 +259,6 @@ class GroupListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
           }
