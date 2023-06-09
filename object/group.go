@@ -179,6 +179,8 @@ func ConvertToTreeData(groups []*Group, parentGroupId string) []*Group {
 				Title: group.DisplayName,
 				Key:   group.Id,
 				Type:  group.Type,
+				Owner: group.Owner,
+				Name:  group.Name,
 			}
 			children := ConvertToTreeData(groups, group.Id)
 			if len(children) > 0 {

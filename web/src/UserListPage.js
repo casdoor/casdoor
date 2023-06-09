@@ -50,7 +50,7 @@ class UserListPage extends BaseListPage {
       this.getOrganization(this.state.organizationName);
     }
 
-    if (prevProps.selectedGroup !== this.props.selectedGroup || this.state.organizationName !== prevState.organizationName) {
+    if (prevProps.groupName !== this.props.groupName || this.state.organizationName !== prevState.organizationName) {
       this.fetch({
         pagination: this.state.pagination,
         searchText: this.state.searchText,
@@ -75,7 +75,7 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
-      groups: this.props.selectedGroup?.key !== undefined ? [this.props.selectedGroup.key] : [],
+      groups: this.props.groupId !== undefined ? [this.props.groupId] : [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
@@ -448,9 +448,9 @@ class UserListPage extends BaseListPage {
           }
         });
     } else {
-      (this.props.selectedGroup === null ?
+      (this.props.groupName === undefined ?
         UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, this.props.selectedGroup.key))
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, `${this.state.organizationName}/${this.props.groupName}`))
         .then((res) => {
           this.setState({
             loading: false,

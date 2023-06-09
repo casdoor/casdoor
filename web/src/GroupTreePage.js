@@ -25,6 +25,7 @@ class GroupTreePage extends React.Component {
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
+      groupName: this.props.match?.params.groupName,
       treeData: [],
       selectedGroup: null,
     };
@@ -56,7 +57,8 @@ class GroupTreePage extends React.Component {
   setTreeIcon(treeData) {
     const haveChildren = Array.isArray(treeData.children) && treeData.children.length > 0;
     return {
-      key: treeData.key,
+      id: treeData.key,
+      key: treeData.name,
       title: treeData.title,
       icon: treeData.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />,
       children: haveChildren ? treeData.children.map(i => this.setTreeIcon(i)) : [],
@@ -66,8 +68,10 @@ class GroupTreePage extends React.Component {
   renderTree() {
     const onSelect = (selectedKeys, info) => {
       this.setState({
-        selectedGroup: info.node,
+        groupName: info.node.key,
+        groupId: info.node.id,
       });
+      this.props.history.push(`/organizations/${this.state.organizationName}/groups/${info.node.key}`);
     };
 
     if (this.state.treeData.length === 0) {
@@ -90,8 +94,7 @@ class GroupTreePage extends React.Component {
     return (
       <React.Fragment>
         <Row>
-          <Col span={4}
-          >
+          <Col span={4}>
             <Row>
               <Col span={24} style={{textAlign: "center"}}>
                 <OrganizationSelect
@@ -100,8 +103,8 @@ class GroupTreePage extends React.Component {
                   onChange={(value) => {
                     this.setState({
                       organizationName: value,
-                      selectedGroup: null,
                     });
+                    this.props.history.push(`/organizations/${this.state.organizationName}/groups`);
                   }}
                 />
               </Col>
@@ -115,7 +118,8 @@ class GroupTreePage extends React.Component {
           <Col span={20}>
             <UserListPage
               organizationName={this.state.organizationName}
-              selectedGroup={this.state.selectedGroup !== null ? this.state.selectedGroup : null}
+              groupName={this.state.groupName}
+              groupId={this.state.groupId}
               {...this.props} />
           </Col>
         </Row>

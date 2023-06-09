@@ -16,7 +16,6 @@ package object
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -224,9 +223,9 @@ func GetUserCount(owner, field, value string, groupId string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 
 	if groupId != "" {
-		group, err := getGroupById(groupId)
-		if group == nil {
-			return 0, errors.New("group not found " + err.Error())
+		group, err := GetGroup(groupId)
+		if group == nil || err != nil {
+			return 0, err
 		}
 		// users count in group
 		return adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
@@ -275,9 +274,9 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	users := []*User{}
 
 	if groupId != "" {
-		group, err := getGroupById(groupId)
-		if group == nil {
-			return nil, errors.New("group not found " + err.Error())
+		group, err := GetGroup(groupId)
+		if group == nil || err != nil {
+			return []*User{}, err
 		}
 
 		session := adapter.Engine.Prepare()
@@ -300,9 +299,9 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 }
 
 func GetUsersByGroup(groupId string) ([]*User, error) {
-	group, err := getGroupById(groupId)
-	if group == nil {
-		return nil, errors.New("group not found " + err.Error())
+	group, err := GetGroup(groupId)
+	if group == nil || err != nil {
+		return []*User{}, err
 	}
 
 	users := []*User{}

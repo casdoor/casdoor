@@ -559,6 +559,7 @@ class App extends Component {
         <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations/:organizationName/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/organizations/:organizationName/groups/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
         <Route exact path="/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupListPage account={this.state.account} {...props} />)} />
         <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
