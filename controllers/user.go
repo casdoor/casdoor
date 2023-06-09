@@ -437,15 +437,6 @@ func (c *ApiController) SetPassword() {
 		}
 	}
 
-	// check if password match all complexity options
-	organization, _ := object.GetOrganizationByUser(targetUser)
-	pwdComplexOptionList := organization.PasswordComplexOptions
-	msg := object.CheckPasswordComplexOption(newPassword, pwdComplexOptionList, c.GetAcceptLanguage())
-	if msg != "" {
-		c.ResponseError(msg)
-		return
-	}
-
 	targetUser.Password = newPassword
 	_, err = object.SetUserField(targetUser, "password", targetUser.Password)
 	if err != nil {

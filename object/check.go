@@ -170,6 +170,9 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 		}
 	}
 
+	if msg := CheckPasswordComplexity(user, password, lang); msg != "" {
+		return msg
+	}
 	organization, err := GetOrganizationByUser(user)
 	if err != nil {
 		panic(err)
@@ -203,63 +206,31 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 	}
 }
 
-type ValidatorFunc func(password string) string
-
-var (
-	regexLowerCase = regexp.MustCompile(`[a-z]`)
-	regexUpperCase = regexp.MustCompile(`[A-Z]`)
-	regexDigit     = regexp.MustCompile(`\d`)
-	regexSpecial   = regexp.MustCompile(`[!@#$%^&*]`)
-)
-
-var validators = map[string]ValidatorFunc{
-	/*
-		atLeast8: The password length must be greater than 8
-		aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
-		specialChar: The password must contain at least one special character
-		noRepeat: The password must not contain any repeated characters
-	*/
-	"AtLeast8":    isValidOptionAtLeast8,
-	"Aa123":       isValidOptionAa123,
-	"SpecialChar": isValidOptionSpecialChar,
-	"NoRepeat":    isValidOptionNoRepeat,
-}
-
-func isValidOptionAtLeast8(password string) string {
-	if len(password) < 8 {
-		return "atLeast8"
-	}
-	return ""
-}
-
-func isValidOptionAa123(password string) string {
-	hasLowerCase := regexLowerCase.MatchString(password)
-	hasUpperCase := regexUpperCase.MatchString(password)
-	hasDigit := regexDigit.MatchString(password)
-
-	if !hasLowerCase || !hasUpperCase || !hasDigit {
-		return "aa123"
-	}
-	return ""
-}
-
-func isValidOptionSpecialChar(password string) string {
-	if !regexSpecial.MatchString(password) {
-		return "specialChar"
-	}
-	return ""
-}
-
-func isValidOptionNoRepeat(password string) string {
-	for i := 0; i < len(password)-1; i++ {
-		if password[i] == password[i+1] {
-			return "noRepeat"
-		}
+func CheckPasswordComplexity(user *User, password string, lang string) string {
+	// check if password match all complexity options
+	organization, _ := GetOrganizationByUser(user)
+	pwdComplexOptionList := organization.PasswordComplexOptions
+	msg := CheckPasswordComplexOption(password, pwdComplexOptionList, lang)
+	if msg != "" {
+		return msg
 	}
 	return ""
 }
 
 func CheckPasswordComplexOption(password string, complexOptions []string, lang string) string {
+	validators := map[string]ValidatorFunc{
+		/*
+			atLeast8: The password length must be greater than 8
+			aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
+			specialChar: The password must contain at least one special character
+			noRepeat: The password must not contain any repeated characters
+		*/
+		"AtLeast8":    isValidOptionAtLeast8,
+		"Aa123":       isValidOptionAa123,
+		"SpecialChar": isValidOptionSpecialChar,
+		"NoRepeat":    isValidOptionNoRepeat,
+	}
+
 	if len(complexOptions) < 1 {
 		return ""
 	}

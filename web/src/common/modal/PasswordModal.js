@@ -19,6 +19,7 @@ import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 import * as Setting from "../../Setting";
 import * as OrganizationBackend from "../../backend/OrganizationBackend";
+import * as PasswordValidator from "./ComplexityValidator";
 
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -39,46 +40,11 @@ export const PasswordModal = (props) => {
       return "";
     }
 
-    function isValidOption_atLeast8(password) {
-      if (password.length < 8) {
-        // return "AtLeast8";
-        return i18next.t("user:AtLeast8");
-      }
-      return "";
-    }
-
-    function isValidOption_Aa123(password) {
-      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$/;
-      if (!regex.test(password)) {
-        // return "Aa123";
-        return i18next.t("user:Aa123");
-      }
-      return "";
-    }
-
-    function isValidOption_SpecialChar(password) {
-      const regex = /^(?=.*[!@#$%^&*]).+$/;
-      if (!regex.test(password)) {
-        // return "SpecialChar";
-        return i18next.t("user:SpecialChar");
-      }
-      return "";
-    }
-
-    function isValidOption_noRepeat(password) {
-      const regex = /(.)\1+/;
-      if (regex.test(password)) {
-        // return "NoRepeat";
-        return i18next.t("user:NoRepeat");
-      }
-      return "";
-    }
-
     const validators = {
-      AtLeast8: isValidOption_atLeast8,
-      Aa123: isValidOption_Aa123,
-      SpecialChar: isValidOption_SpecialChar,
-      NoRepeat: isValidOption_noRepeat,
+      AtLeast8: PasswordValidator.isValidOption_atLeast8,
+      Aa123: PasswordValidator.isValidOption_Aa123,
+      SpecialChar: PasswordValidator.isValidOption_SpecialChar,
+      NoRepeat: PasswordValidator.isValidOption_noRepeat,
     };
     for (const option of complexOptions) {
       const validateFunc = validators[option];
