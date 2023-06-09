@@ -41,8 +41,8 @@ func InitConfig() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter()
-	DoMigration()
 	CreateTables(true)
+	DoMigration()
 }
 
 func InitAdapter() {
@@ -305,7 +305,8 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 		sortField = "created_time"
 	}
 
-	tableName := "user"
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	tableName := tableNamePrefix + "user"
 	if offset == -1 {
 		if sortOrder == "ascend" {
 			session = session.Asc(util.SnakeString(sortField))

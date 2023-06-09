@@ -31,12 +31,12 @@ import (
 )
 
 func main() {
-	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
+	createDatabase := *flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
 
 	object.InitAdapter()
+	object.CreateTables(createDatabase)
 	object.DoMigration()
-	object.CreateTables(*createDatabase)
 
 	object.InitDb()
 	object.InitFromFile()
