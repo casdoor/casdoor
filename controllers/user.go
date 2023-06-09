@@ -390,27 +390,13 @@ func (c *ApiController) ChangeCurrentUserPassword() {
 		return
 	}
 
-	organization := object.GetOrganizationByUser(user)
-	if organization == nil {
-		resp = &Response{Status: "error", Msg: c.T("check:Organization does not exist")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
 	c.ClearUserSession()
 	object.DeleteSessionId(util.GetSessionId(user.Owner, user.Name, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 
 	util.LogInfo(c.Ctx, "API: [%s] logged out", user.Name)
 
 	user.Password = changePasswordForm.Password
-	user.PasswordChangeRequired = false
-	user.UpdateUserPassword(organization)
-
-	user.UpdateUserHash()
-	user.PreHash = user.Hash
-
-	object.UpdateUser(user.GetId(), user, []string{"password", "password_change_required", "hash", "password_type", "pre_hash"}, false)
+	object.SetUserField(user, "password", changePasswordForm.Password)
 
 	application := c.GetSessionApplication()
 	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
