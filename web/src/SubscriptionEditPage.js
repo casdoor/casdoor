@@ -49,7 +49,9 @@ class SubscriptionEditPage extends React.Component {
       .then((subscription) => {
         if (subscription === null) {
           this.props.history.push("/404");
+          return;
         }
+
         this.setState({
           subscription: subscription,
         });

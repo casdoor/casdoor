@@ -125,7 +125,9 @@ class WebhookEditPage extends React.Component {
       .then((webhook) => {
         if (webhook === null) {
           this.props.history.push("/404");
+          return;
         }
+
         this.setState({
           webhook: webhook,
         });

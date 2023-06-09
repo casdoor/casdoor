@@ -38,7 +38,9 @@ class TokenEditPage extends React.Component {
       .then((token) => {
         if (token === null) {
           this.props.history.push("/404");
+          return;
         }
+
         this.setState({
           token: token,
         });

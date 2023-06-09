@@ -47,6 +47,7 @@ class ProductEditPage extends React.Component {
       .then((product) => {
         if (product === null) {
           this.props.history.push("/404");
+          return;
         }
 
         this.setState({

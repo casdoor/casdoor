@@ -52,7 +52,9 @@ class PermissionEditPage extends React.Component {
       .then((permission) => {
         if (permission === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           permission: permission,
         });

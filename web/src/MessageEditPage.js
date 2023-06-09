@@ -48,7 +48,9 @@ class MessageEditPage extends React.Component {
       .then((message) => {
         if (message === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           message: message,
         });

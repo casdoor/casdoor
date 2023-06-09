@@ -68,7 +68,9 @@ class UserEditPage extends React.Component {
       .then((data) => {
         if (data === null) {
           this.props.history.push("/404");
+          return;
         }
+
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,

@@ -44,7 +44,9 @@ class PaymentEditPage extends React.Component {
       .then((payment) => {
         if (payment === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           payment: payment,
         });

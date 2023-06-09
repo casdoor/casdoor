@@ -49,7 +49,9 @@ class PlanEditPage extends React.Component {
       .then((plan) => {
         if (plan === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           plan: plan,
         });

@@ -45,7 +45,9 @@ class RoleEditPage extends React.Component {
       .then((role) => {
         if (role === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           role: role,
         });

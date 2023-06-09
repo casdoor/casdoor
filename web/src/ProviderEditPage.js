@@ -52,7 +52,9 @@ class ProviderEditPage extends React.Component {
       .then((res) => {
         if (res === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         if (res.status === "ok") {
           this.setState({
             provider: res.data,

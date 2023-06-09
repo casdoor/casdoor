@@ -50,7 +50,9 @@ class SyncerEditPage extends React.Component {
       .then((syncer) => {
         if (syncer === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           syncer: syncer,
         });

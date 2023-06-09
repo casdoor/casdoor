@@ -52,7 +52,9 @@ class PricingEditPage extends React.Component {
       .then((pricing) => {
         if (pricing === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           pricing: pricing,
         });

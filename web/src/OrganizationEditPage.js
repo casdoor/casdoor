@@ -52,7 +52,9 @@ class OrganizationEditPage extends React.Component {
       .then((organization) => {
         if (organization === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           organization: organization,
         });

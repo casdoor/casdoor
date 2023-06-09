@@ -47,7 +47,9 @@ class CertEditPage extends React.Component {
       .then((cert) => {
         if (cert === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           cert: cert,
         });

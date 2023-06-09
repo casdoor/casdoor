@@ -43,7 +43,9 @@ class ChatEditPage extends React.Component {
       .then((chat) => {
         if (chat === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           chat: chat,
         });

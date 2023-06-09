@@ -50,7 +50,9 @@ class ModelEditPage extends React.Component {
       .then((model) => {
         if (model === null) {
           this.props.history.push("/404");
+          return;
         }
+        
         this.setState({
           model: model,
         });
