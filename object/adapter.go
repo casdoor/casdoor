@@ -41,8 +41,8 @@ func InitConfig() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter()
-	DoMigration()
 	CreateTables(true)
+	DoMigration()
 }
 
 func InitAdapter() {
