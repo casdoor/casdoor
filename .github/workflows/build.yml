@@ -99,7 +99,7 @@ jobs:
 
       - name: Build All In One Version Docker Image
         run: docker build -t casbin/casdoor-all-in-one:test -f Dockerfile.all-in-one .
-        working-directory: /path/to/dockerfile/directory
+        working-directory: ./
 
       - name: Start Local All In One Container
         run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:test
