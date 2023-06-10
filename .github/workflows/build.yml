@@ -183,6 +183,14 @@ jobs:
         with:
           version: latest
 
+      - name: Run All In One Docker Image
+        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
+
+      - name: Stop and Remove Existing All In One Container
+        run: |
+          docker stop casdoor-all-in-one || true
+          docker rm casdoor-all-in-one || true
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
 #        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
@@ -210,11 +218,5 @@ jobs:
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
 
-      - name: Run All In One Docker Image
-        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
 
-      - name: Stop and Remove Existing All In One Container
-        run: |
-          docker stop casdoor-all-in-one || true
-          docker rm casdoor-all-in-one || true
 
