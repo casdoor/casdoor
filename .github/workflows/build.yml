@@ -194,6 +194,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          target: ALLINONE
+          platforms: linux/amd64,linux/arm64
           load: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
 
