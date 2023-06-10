@@ -35,8 +35,8 @@ func main() {
 	flag.Parse()
 
 	object.InitAdapter()
-	object.CreateTables(createDatabase)
 	object.DoMigration()
+	object.CreateTables(createDatabase)
 
 	object.InitDb()
 	object.InitFromFile()
