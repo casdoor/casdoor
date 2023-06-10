@@ -97,12 +97,33 @@ jobs:
           go-version: '^1.16.5'
           cache-dependency-path: ./go.mod
 
+      - name: Decide Should_Push Or Not
+        id: should_push
+        run: |
+          old_version=${{steps.get-previous-tag.outputs.tag}}
+          new_version=${{steps.get-current-tag.outputs.tag }}
+
+          old_array=(${old_version//\./ })
+          new_array=(${new_version//\./ })
+
+          if [ ${old_array[0]} != ${new_array[0]} ]
+          then 
+              echo ::set-output name=push::'true'
+          elif [ ${old_array[1]} != ${new_array[1]} ]
+          then 
+              echo ::set-output name=push::'true'
+          
+          else
+              echo ::set-output name=push::'false'
+          
+          fi
+
       - name: Build All In One Version Docker Image
-        run: docker build -t casbin/casdoor-all-in-one:123 -f Dockerfile .
+        run: docker build -t casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }} -f Dockerfile .
         working-directory: ./
 
       - name: Start Local All In One Container
-        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:123
+        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
 
       # 执行其他测试步骤...
 
