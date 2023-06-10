@@ -96,6 +96,19 @@ jobs:
         with:
           go-version: '^1.16.5'
           cache-dependency-path: ./go.mod
+
+      - name: Build All In One Version Docker Image
+        run: docker build -t casbin/casdoor-all-in-one:123 -f docker-compose
+        working-directory: ./
+
+      - name: Start Local All In One Container
+        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
+
+      # 执行其他测试步骤...
+
+      - name: Stop and Remove Local All In One Container
+        run: docker stop casdoor-all-in-one && docker rm casdoor-all-in-one
+
       - name: start backend
         run: nohup go run ./main.go &
         working-directory: ./
@@ -123,18 +136,6 @@ jobs:
         with:
           name: cypress-videos
           path: ./web/cypress/videos
-
-      - name: Build All In One Version Docker Image
-        run: docker build -t casbin/casdoor-all-in-one:123 -f docker-compose
-        working-directory: ./
-
-      - name: Start Local All In One Container
-        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
-
-      # 执行其他测试步骤...
-
-      - name: Stop and Remove Local All In One Container
-        run: docker stop casdoor-all-in-one && docker rm casdoor-all-in-one
 
   release-and-push:
     name: Release And Push
