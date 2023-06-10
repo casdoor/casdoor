@@ -49,7 +49,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		}
 
 		userId := util.GetId(token.Organization, token.User)
-		application, _, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
+		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		if err != nil {
 			panic(err)
 		}
