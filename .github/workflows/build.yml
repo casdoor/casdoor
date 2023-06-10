@@ -183,30 +183,23 @@ jobs:
         with:
           version: latest
 
-      - name: Push All In One Version to Docker Hub
-        uses: docker/build-push-action@v3
-#        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
-        with:
-          context: .
-          target: ALLINONE
-          platforms: linux/amd64,linux/arm64
-          push: false
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
-
-      - name: Run All In One Docker Image
-        run: docker run -d --name casdoor-all-in-one casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
-
-      - name: Stop and Remove Existing All In One Container
-        run: |
-          docker stop casdoor-all-in-one || true
-          docker rm casdoor-all-in-one || true
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+
+      - name: Test
+        run: |
+          docker run --rm casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest    
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
