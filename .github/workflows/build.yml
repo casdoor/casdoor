@@ -199,7 +199,7 @@ jobs:
 
       - name: Test
         run: |
-          docker run --rm casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest    
+          docker run --rm casbin/casdoor:${{steps.get-current-tag.outputs.tag }} 
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
