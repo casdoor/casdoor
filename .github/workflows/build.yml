@@ -195,7 +195,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}
 
       - name: Test
         run: |
