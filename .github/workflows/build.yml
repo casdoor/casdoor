@@ -125,7 +125,7 @@ jobs:
           path: ./web/cypress/videos
 
       - name: Build All In One Version Docker Image
-        run: docker build -t casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }} -f docker-compose
+        run: docker build -t casbin/casdoor-all-in-one:123 -f docker-compose
         working-directory: ./
 
       - name: Start Local All In One Container
