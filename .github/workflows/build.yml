@@ -98,7 +98,7 @@ jobs:
           cache-dependency-path: ./go.mod
 
       - name: Build All In One Version Docker Image
-        run: docker build -t casbin/casdoor-all-in-one:test -f Dockerfile.all-in-one .
+        run: docker build -t casbin/casdoor-all-in-one:test -f Dockerfile .
         working-directory: ./
 
       - name: Start Local All In One Container
