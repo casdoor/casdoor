@@ -55,8 +55,12 @@ func InitAdapter() {
 
 func CreateTables(createDatabase bool) {
 	if createDatabase {
-		adapter.CreateDatabase()
+		err := adapter.CreateDatabase()
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	adapter.createTable()
 }
 
