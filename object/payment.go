@@ -149,7 +149,7 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, error, string) {
+func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error, string) {
 	provider, err := getProvider(owner, providerName)
 	if err != nil {
 		panic(err)
@@ -180,7 +180,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, providerNam
 		return payment, err, pProvider.GetResponseError(err)
 	}
 
-	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey)
+	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
 		return payment, err, pProvider.GetResponseError(err)
 	}
@@ -199,8 +199,8 @@ func notifyPayment(request *http.Request, body []byte, owner string, providerNam
 	return payment, err, pProvider.GetResponseError(err)
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (error, string) {
-	payment, err, errorResponse := notifyPayment(request, body, owner, providerName, productName, paymentName)
+func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (error, string) {
+	payment, err, errorResponse := notifyPayment(request, body, owner, providerName, productName, paymentName, orderId)
 	if payment != nil {
 		if err != nil {
 			payment.State = "Error"

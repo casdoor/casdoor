@@ -16,10 +16,13 @@ package pp
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"net/http"
+	"strconv"
 
-	"github.com/plutov/paypal/v4"
+	"github.com/go-pay/gopay"
+	"github.com/go-pay/gopay/paypal"
+	"github.com/go-pay/gopay/pkg/util"
 )
 
 type PaypalPaymentProvider struct {
@@ -29,7 +32,7 @@ type PaypalPaymentProvider struct {
 func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentProvider, error) {
 	pp := &PaypalPaymentProvider{}
 
-	client, err := paypal.NewClient(clientID, secret, paypal.APIBaseSandBox)
+	client, err := paypal.NewClient(clientID, secret, false)
 	if err != nil {
 		return nil, err
 	}
@@ -38,51 +41,62 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 	return pp, nil
 }
 
-func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
-	// pp.Client.SetLog(os.Stdout) // Set log to terminal stdout
+func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
+	// pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
 
-	receiverEmail := "sb-tmsqa26118644@business.example.com"
-
-	amount := paypal.AmountPayout{
-		Value:    fmt.Sprintf("%.2f", price),
-		Currency: "USD",
-	}
-
-	description := fmt.Sprintf("%s-%s", providerName, productName)
-
-	payout := paypal.Payout{
-		SenderBatchHeader: &paypal.SenderBatchHeader{
-			EmailSubject: description,
+	priceStr := strconv.FormatFloat(price, 'f', 2, 64)
+	var pus []*paypal.PurchaseUnit
+	item := &paypal.PurchaseUnit{
+		ReferenceId: util.GetRandomString(16),
+		Amount: &paypal.Amount{
+			CurrencyCode: currency,
+			Value:        priceStr,
 		},
-		Items: []paypal.PayoutItem{
-			{
-				RecipientType: "EMAIL",
-				Receiver:      receiverEmail,
-				Amount:        &amount,
-				Note:          description,
-				SenderItemID:  description,
-			},
-		},
+		Description: joinAttachString([]string{productDisplayName, productName, providerName}),
 	}
+	pus = append(pus, item)
 
-	_, err := pp.Client.GetAccessToken(context.Background())
+	bm := make(gopay.BodyMap)
+	bm.Set("intent", "CAPTURE")
+	bm.Set("purchase_units", pus)
+	bm.SetBodyMap("payment_source", func(b1 gopay.BodyMap) {
+		b1.SetBodyMap("paypal", func(b2 gopay.BodyMap) {
+			b2.Set("brand_name", "Casdoor")
+			b2.Set("return_url", returnUrl)
+		})
+	})
+	ppRsp, err := pp.Client.CreateOrder(context.Background(), bm)
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+	if ppRsp.Code != paypal.Success {
+		return "", "", errors.New(ppRsp.Error)
 	}
 
-	payoutResponse, err := pp.Client.CreatePayout(context.Background(), payout)
-	if err != nil {
-		return "", err
-	}
-
-	payUrl := payoutResponse.Links[0].Href
-	return payUrl, nil
+	return ppRsp.Response.Links[1].Href, ppRsp.Response.Id, nil
 }
 
-func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
-	// The PayPal SDK does not directly support IPN verification.
-	// So, you need to implement this part according to PayPal's IPN guide.
-	return "", "", 0, "", "", nil
+func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
+	ppRsp, err := pp.Client.OrderCapture(context.Background(), orderId, nil)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+	if ppRsp.Code != paypal.Success {
+		return "", "", 0, "", "", errors.New(ppRsp.Error)
+	}
+
+	paymentName := ppRsp.Response.Id
+	price, err := strconv.ParseFloat(ppRsp.Response.PurchaseUnits[0].Amount.Value, 64)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+
+	productDisplayName, productName, providerName, err := parseAttachString(ppRsp.Response.PurchaseUnits[0].Description)
+	if err != nil {
+		return "", "", 0, "", "", err
+	}
+
+	return productDisplayName, paymentName, price, productName, providerName, nil
 }
 
 func (pp *PaypalPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
