@@ -139,8 +139,9 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	provider, _, ok := c.GetProviderFromContext("Storage")
-	if !ok {
+	provider, err := c.GetProviderFromContext("Storage")
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -187,8 +188,9 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
-	provider, _, ok := c.GetProviderFromContext("Storage")
-	if !ok {
+	provider, err := c.GetProviderFromContext("Storage")
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
