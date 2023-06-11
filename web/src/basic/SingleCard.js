@@ -28,6 +28,10 @@ class SingleCard extends React.Component {
   }
 
   wrappedAsSilentSigninLink(link) {
+    if (link.includes("casdoor.com")) {
+      return link;
+    }
+
     if (link.startsWith("http")) {
       link += link.includes("?") ? "&silentSignin=1" : "?silentSignin=1";
     }

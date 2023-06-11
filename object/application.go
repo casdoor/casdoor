@@ -235,16 +235,16 @@ func GetApplicationByUser(user *User) (*Application, error) {
 	}
 }
 
-func GetApplicationByUserId(userId string) (application *Application, user *User, err error) {
+func GetApplicationByUserId(userId string) (application *Application, err error) {
 	owner, name := util.GetOwnerAndNameFromId(userId)
 	if owner == "app" {
 		application, err = getApplication("admin", name)
 		return
 	}
 
-	user, err = GetUser(userId)
+	user, err := GetUser(userId)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	application, err = GetApplicationByUser(user)
 	return

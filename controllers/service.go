@@ -69,9 +69,9 @@ func (c *ApiController) SendEmail() {
 
 	} else {
 		// called by Casdoor SDK via Client ID & Client Secret, so the used Email provider will be the application' Email provider or the default Email provider
-		var ok bool
-		provider, _, ok = c.GetProviderFromContext("Email")
-		if !ok {
+		provider, err = c.GetProviderFromContext("Email")
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
 	}
@@ -127,13 +127,14 @@ func (c *ApiController) SendEmail() {
 // @Success 200 {object}  Response object
 // @router /api/send-sms [post]
 func (c *ApiController) SendSms() {
-	provider, _, ok := c.GetProviderFromContext("SMS")
-	if !ok {
+	provider, err := c.GetProviderFromContext("SMS")
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
 	var smsForm SmsForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &smsForm)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
