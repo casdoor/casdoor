@@ -34,6 +34,7 @@ import (
 // @router /get-messages [get]
 func (c *ApiController) GetMessages() {
 	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -41,7 +42,7 @@ func (c *ApiController) GetMessages() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	chat := c.Input().Get("chat")
-	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
 		var messages []*object.Message
 		var err error

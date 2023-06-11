@@ -56,9 +56,9 @@ type Payment struct {
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
 }
 
-func GetPaymentCount(owner, field, value string) (int64, error) {
+func GetPaymentCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Payment{})
+	return session.Count(&Payment{Organization: organization})
 }
 
 func GetPayments(owner string) ([]*Payment, error) {
@@ -81,10 +81,10 @@ func GetUserPayments(owner string, organization string, user string) ([]*Payment
 	return payments, nil
 }
 
-func GetPaginationPayments(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
+func GetPaginationPayments(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
 	payments := []*Payment{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&payments)
+	err := session.Find(&payments, &Payment{Organization: organization})
 	if err != nil {
 		return nil, err
 	}
