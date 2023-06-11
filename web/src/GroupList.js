@@ -181,9 +181,17 @@ class GroupListPage extends BaseListPage {
         ...this.getColumnSearchProps("parentGroupId"),
         render: (text, record, index) => {
           if (record.isTopGroup) {
-            return record.parentGroupId;
+            return <Link to={`/organizations/${record.parentGroupId}`}>
+              {record.parentGroupId}
+            </Link>;
           }
-          return this.state.groups.filter((group) => group.id === text)[0]?.displayName;
+          const parentGroup = this.state.groups.find((group) => group.id === text);
+          if (parentGroup === undefined) {
+            return "";
+          }
+          return <Link to={`/groups/${parentGroup.owner}/${parentGroup.name}`}>
+            {parentGroup?.displayName}
+          </Link>;
         },
       },
       {

@@ -92,7 +92,10 @@ class GroupEditPage extends React.Component {
 
   getParentIdOptions() {
     const groups = this.state.groups.filter((group) => group.id !== this.state.group.id);
-    groups.push({id: this.state.group.owner, displayName: this.state.group.owner});
+    const organization = this.state.organizations.find((organization) => organization.name === this.state.group.owner);
+    if (organization !== undefined) {
+      groups.push({id: organization.name, displayName: organization.displayName});
+    }
     return groups.map((group) => ({label: group.displayName, value: group.id}));
   }
 
@@ -119,7 +122,7 @@ class GroupEditPage extends React.Component {
                 this.updateGroupField("owner", value);
                 this.getGroups(value);
               })}
-              options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
+              options={this.state.organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))
               } />
           </Col>
         </Row>
@@ -201,7 +204,13 @@ class GroupEditPage extends React.Component {
           });
 
           if (willExist) {
-            this.props.history.push("/groups");
+            const groupTreeUrl = sessionStorage.getItem("groupTreeUrl");
+            if (groupTreeUrl !== null) {
+              sessionStorage.removeItem("groupTreeUrl");
+              this.props.history.push(groupTreeUrl);
+            } else {
+              this.props.history.push("/groups");
+            }
           } else {
             this.props.history.push(`/groups/${this.state.group.owner}/${this.state.group.name}`);
           }
@@ -219,7 +228,13 @@ class GroupEditPage extends React.Component {
     GroupBackend.deleteGroup(this.state.group)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push("/groups");
+          const groupTreeUrl = sessionStorage.getItem("groupTreeUrl");
+          if (groupTreeUrl !== null) {
+            sessionStorage.removeItem("groupTreeUrl");
+            this.props.history.push(groupTreeUrl);
+          } else {
+            this.props.history.push("/groups");
+          }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

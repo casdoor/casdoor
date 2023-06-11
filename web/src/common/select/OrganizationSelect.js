@@ -48,7 +48,7 @@ function OrganizationSelect(props) {
 
   return (
     <Select
-      options={organizations.map((organization) => Setting.getOption(organization.name, organization.name))}
+      options={organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))}
       virtual={false}
       placeholder={i18next.t("login:Please select an organization")}
       value={value}

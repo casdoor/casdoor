@@ -448,9 +448,9 @@ class UserListPage extends BaseListPage {
           }
         });
     } else {
-      (this.props.groupName === undefined ?
-        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, `${this.state.organizationName}/${this.props.groupName}`))
+      (this.props.groupName ?
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, `${this.state.organizationName}/${this.props.groupName}`) :
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           this.setState({
             loading: false,

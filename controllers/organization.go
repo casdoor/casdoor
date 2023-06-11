@@ -180,12 +180,12 @@ func (c *ApiController) GetDefaultApplication() {
 // @Title GetOrganizationNames
 // @Tag Organization API
 // @Param   owner     query    string    true   "owner"
-// @Description get all organization names
+// @Description get all organization name and displayName
 // @Success 200 {array} object.Organization The Response object
 // @router /get-organization-names [get]
 func (c *ApiController) GetOrganizationNames() {
 	owner := c.Input().Get("owner")
-	organizationNames, err := object.GetOrganizationsByFields(owner, "name")
+	organizationNames, err := object.GetOrganizationsByFields(owner, []string{"name", "display_name"}...)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
