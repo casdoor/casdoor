@@ -283,14 +283,15 @@ class GroupTreePage extends React.Component {
                   }}>
                   {i18next.t("group:Show organization users")}
                 </Button>
-                <Button size={"small"} type={"primary"}
-                  onClick={() => this.addGroup(true)} style={{marginLeft: "10px"}}>
+                <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}}
+                  onClick={() => this.addGroup(true)}
+                >
                   {i18next.t("general:Add")}
                 </Button>
               </Col>
             </Row>
             <Row style={{marginTop: 10}}>
-              <Col span={20} style={{textAlign: "left"}}>
+              <Col span={24} style={{textAlign: "left"}}>
                 {this.renderTree()}
               </Col>
             </Row>
