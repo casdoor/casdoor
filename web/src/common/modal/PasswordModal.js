@@ -29,6 +29,27 @@ export const PasswordModal = (props) => {
   const [rePassword, setRePassword] = React.useState("");
   const {user} = props;
   const {account} = props;
+
+  const [passwordComplexityOptions, setPasswordComplexityOptions] = React.useState([]);
+  const [passwordValid, setPasswordValid] = React.useState(true);
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+
+  React.useEffect(() => {
+    OrganizationBackend.getOrganizations("admin")
+      .then((res) => {
+        const organizations = (res.msg === undefined) ? res : [];
+        // Find the user's corresponding organization
+        const organization = organizations.find((org) => org.name === user.owner);
+        if (organization) {
+          setPasswordComplexityOptions(organization.passwordComplexOptions);
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error("Error fetching organizations:", error);
+      });
+  }, [user.owner]);
+
   function checkPasswordComplexOption(password, complexOptions) {
     /*
       AtLeast8: The password length must be greater than 8
@@ -127,7 +148,7 @@ export const PasswordModal = (props) => {
       <Modal
         maskClosable={false}
         title={i18next.t("general:Password")}
-        open={visible}
+        visible={visible}
         okText={i18next.t("user:Set Password")}
         cancelText={i18next.t("general:Cancel")}
         confirmLoading={confirmLoading}
@@ -142,11 +163,21 @@ export const PasswordModal = (props) => {
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:New Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setNewPassword(e.target.value)} />
+            <Input.Password
+              addonBefore={i18next.t("user:New Password")}
+              placeholder={i18next.t("user:input password")}
+              onChange={(e) => {
+                setNewPassword(e.target.value);
+                const errorMessage = checkPasswordComplexOption(e.target.value, passwordComplexityOptions);
+                setPasswordValid(errorMessage === "");
+                setPasswordErrorMessage(errorMessage);
+              }}
+            />
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)} />
           </Row>
+          {!passwordValid && <div style={{color: "red"}}>{passwordErrorMessage}</div>}
         </Col>
       </Modal>
     </Row>

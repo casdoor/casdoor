@@ -169,10 +169,6 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 			return msg
 		}
 	}
-
-	if msg := CheckPasswordComplexity(user, password, lang); msg != "" {
-		return msg
-	}
 	organization, err := GetOrganizationByUser(user)
 	if err != nil {
 		panic(err)
