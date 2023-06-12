@@ -38,13 +38,30 @@ func (c *ApiController) GetProducts() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetProducts(owner)
+		products, err := object.GetProducts(owner)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = products
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProductCount(owner, field, value)))
-		products := object.GetPaginationProducts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetProductCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		products, err := object.GetPaginationProducts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(products, paginator.Nums())
 	}
 }
@@ -59,8 +76,15 @@ func (c *ApiController) GetProducts() {
 func (c *ApiController) GetProduct() {
 	id := c.Input().Get("id")
 
-	product := object.GetProduct(id)
-	object.ExtendProductWithProviders(product)
+	product, err := object.GetProduct(id)
+	if err != nil {
+		panic(err)
+	}
+
+	err = object.ExtendProductWithProviders(product)
+	if err != nil {
+		panic(err)
+	}
 
 	c.Data["json"] = product
 	c.ServeJSON()
@@ -145,7 +169,12 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 		return

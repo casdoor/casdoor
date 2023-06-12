@@ -36,7 +36,7 @@ type Session struct {
 	SessionId []string `json:"sessionId"`
 }
 
-func GetSessions(owner string) []*Session {
+func GetSessions(owner string) ([]*Session, error) {
 	sessions := []*Session{}
 	var err error
 	if owner != "" {
@@ -45,61 +45,58 @@ func GetSessions(owner string) []*Session {
 		err = adapter.Engine.Desc("created_time").Find(&sessions)
 	}
 	if err != nil {
-		panic(err)
+		return sessions, err
 	}
 
-	return sessions
+	return sessions, nil
 }
 
-func GetPaginationSessions(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Session {
+func GetPaginationSessions(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Session, error) {
 	sessions := []*Session{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&sessions)
 	if err != nil {
-		panic(err)
+		return sessions, err
 	}
 
-	return sessions
+	return sessions, nil
 }
 
-func GetSessionCount(owner, field, value string) int {
+func GetSessionCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Session{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Session{})
 }
 
-func GetSingleSession(id string) *Session {
+func GetSingleSession(id string) (*Session, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	session := Session{Owner: owner, Name: name, Application: application}
 	get, err := adapter.Engine.Get(&session)
 	if err != nil {
-		panic(err)
+		return &session, err
 	}
 
 	if !get {
-		return nil
+		return nil, nil
 	}
 
-	return &session
+	return &session, nil
 }
 
-func UpdateSession(id string, session *Session) bool {
+func UpdateSession(id string, session *Session) (bool, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 
-	if GetSingleSession(id) == nil {
-		return false
+	if ss, err := GetSingleSession(id); err != nil {
+		return false, err
+	} else if ss == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Update(session)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func removeExtraSessionIds(session *Session) {
@@ -108,17 +105,21 @@ func removeExtraSessionIds(session *Session) {
 	}
 }
 
-func AddSession(session *Session) bool {
-	dbSession := GetSingleSession(session.GetId())
+func AddSession(session *Session) (bool, error) {
+	dbSession, err := GetSingleSession(session.GetId())
+	if err != nil {
+		return false, err
+	}
+
 	if dbSession == nil {
 		session.CreatedTime = util.GetCurrentTime()
 
 		affected, err := adapter.Engine.Insert(session)
 		if err != nil {
-			panic(err)
+			return false, err
 		}
 
-		return affected != 0
+		return affected != 0, nil
 	} else {
 		m := make(map[string]struct{})
 		for _, v := range dbSession.SessionId {
@@ -136,10 +137,14 @@ func AddSession(session *Session) bool {
 	}
 }
 
-func DeleteSession(id string) bool {
+func DeleteSession(id string) (bool, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	if owner == CasdoorOrganization && application == CasdoorApplication {
-		session := GetSingleSession(id)
+		session, err := GetSingleSession(id)
+		if err != nil {
+			return false, err
+		}
+
 		if session != nil {
 			DeleteBeegoSession(session.SessionId)
 		}
@@ -147,16 +152,19 @@ func DeleteSession(id string) bool {
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteSessionId(id string, sessionId string) bool {
-	session := GetSingleSession(id)
+func DeleteSessionId(id string, sessionId string) (bool, error) {
+	session, err := GetSingleSession(id)
+	if err != nil {
+		return false, err
+	}
 	if session == nil {
-		return false
+		return false, nil
 	}
 
 	owner, _, application := util.GetOwnerAndNameAndOtherFromId(id)
@@ -185,17 +193,21 @@ func (session *Session) GetId() string {
 	return fmt.Sprintf("%s/%s/%s", session.Owner, session.Name, session.Application)
 }
 
-func IsSessionDuplicated(id string, sessionId string) bool {
-	session := GetSingleSession(id)
+func IsSessionDuplicated(id string, sessionId string) (bool, error) {
+	session, err := GetSingleSession(id)
+	if err != nil {
+		return false, err
+	}
+
 	if session == nil {
-		return false
+		return false, nil
 	} else {
 		if len(session.SessionId) > 1 {
-			return true
+			return true, nil
 		} else if len(session.SessionId) < 1 {
-			return false
+			return false, nil
 		} else {
-			return session.SessionId[0] != sessionId
+			return session.SessionId[0] != sessionId, nil
 		}
 	}
 }

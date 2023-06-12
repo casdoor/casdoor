@@ -36,7 +36,6 @@ class ModelEditPage extends React.Component {
       model: null,
       organizations: [],
       users: [],
-      models: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -49,11 +48,14 @@ class ModelEditPage extends React.Component {
   getModel() {
     ModelBackend.getModel(this.state.organizationName, this.state.modelName)
       .then((model) => {
+        if (model === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         this.setState({
           model: model,
         });
-
-        this.getModels(model.organization);
       });
   }
 
@@ -62,15 +64,6 @@ class ModelEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
-        });
-      });
-  }
-
-  getModels(organizationName) {
-    ModelBackend.getModels(organizationName)
-      .then((res) => {
-        this.setState({
-          models: res,
         });
       });
   }
@@ -131,6 +124,16 @@ class ModelEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.model.displayName} onChange={e => {
               this.updateModelField("displayName", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.model.description} onChange={e => {
+              this.updateModelField("description", e.target.value);
             }} />
           </Col>
         </Row>

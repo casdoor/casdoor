@@ -51,6 +51,7 @@ const (
 const (
 	MfaSessionUserId = "MfaSessionUserId"
 	NextMfa          = "NextMfa"
+	RequiredMfa      = "RequiredMfa"
 )
 
 func GetMfaUtil(providerType string, config *MfaProps) MfaInterface {
@@ -82,7 +83,11 @@ func RecoverTfs(user *User, recoveryCode string) error {
 		return fmt.Errorf("recovery code not found")
 	}
 
-	affected := UpdateUser(user.GetId(), user, []string{"two_factor_auth"}, user.IsAdminUser())
+	affected, err := UpdateUser(user.GetId(), user, []string{"two_factor_auth"}, user.IsAdminUser())
+	if err != nil {
+		return err
+	}
+
 	if !affected {
 		return fmt.Errorf("")
 	}

@@ -1,11 +1,11 @@
-FROM node:16.13.0 AS FRONT
+FROM node:16.18.0 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 
-FROM golang:1.17.5 AS BACK
+FROM golang:1.19.9 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh

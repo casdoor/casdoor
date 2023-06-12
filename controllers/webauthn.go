@@ -33,7 +33,12 @@ import (
 // @Success 200 {object} protocol.CredentialCreation The CredentialCreationOptions object
 // @router /webauthn/signup/begin [get]
 func (c *ApiController) WebAuthnSignupBegin() {
-	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	user := c.getCurrentUser()
 	if user == nil {
 		c.ResponseError(c.T("general:Please login first"))
@@ -64,7 +69,12 @@ func (c *ApiController) WebAuthnSignupBegin() {
 // @Success 200 {object} Response "The Response object"
 // @router /webauthn/signup/finish [post]
 func (c *ApiController) WebAuthnSignupFinish() {
-	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	user := c.getCurrentUser()
 	if user == nil {
 		c.ResponseError(c.T("general:Please login first"))
@@ -84,7 +94,12 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		return
 	}
 	isGlobalAdmin := c.IsGlobalAdmin()
-	user.AddCredentials(*credential, isGlobalAdmin)
+	_, err = user.AddCredentials(*credential, isGlobalAdmin)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk()
 }
 
@@ -97,10 +112,20 @@ func (c *ApiController) WebAuthnSignupFinish() {
 // @Success 200 {object} protocol.CredentialAssertion The CredentialAssertion object
 // @router /webauthn/signin/begin [get]
 func (c *ApiController) WebAuthnSigninBegin() {
-	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	userOwner := c.Input().Get("owner")
 	userName := c.Input().Get("name")
-	user := object.GetUserByFields(userOwner, userName)
+	user, err := object.GetUserByFields(userOwner, userName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(userOwner, userName)))
 		return
@@ -129,7 +154,12 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
 	responseType := c.Input().Get("responseType")
-	webauthnObj := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	sessionObj := c.GetSession("authentication")
 	sessionData, ok := sessionObj.(webauthn.SessionData)
 	if !ok {
@@ -138,8 +168,13 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 	userId := string(sessionData.UserID)
-	user := object.GetUser(userId)
-	_, err := webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	_, err = webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -147,7 +182,12 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	c.SetSessionUsername(userId)
 	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 
-	application := object.GetApplicationByUser(user)
+	application, err := object.GetApplicationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var authForm form.AuthForm
 	authForm.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &authForm)

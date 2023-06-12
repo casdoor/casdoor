@@ -16,18 +16,27 @@ package object
 
 import "github.com/casdoor/casdoor/cred"
 
-func calculateHash(user *User) string {
-	syncer := getDbSyncerForUser(user)
-	if syncer == nil {
-		return ""
+func calculateHash(user *User) (string, error) {
+	syncer, err := getDbSyncerForUser(user)
+	if err != nil {
+		return "", err
 	}
 
-	return syncer.calculateHash(user)
+	if syncer == nil {
+		return "", nil
+	}
+
+	return syncer.calculateHash(user), nil
 }
 
-func (user *User) UpdateUserHash() {
-	hash := calculateHash(user)
+func (user *User) UpdateUserHash() error {
+	hash, err := calculateHash(user)
+	if err != nil {
+		return err
+	}
+
 	user.Hash = hash
+	return nil
 }
 
 func (user *User) UpdateUserPassword(organization *Organization) {
@@ -35,5 +44,6 @@ func (user *User) UpdateUserPassword(organization *Organization) {
 	if credManager != nil {
 		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
 		user.Password = hashedPassword
+		user.PasswordType = organization.PasswordType
 	}
 }

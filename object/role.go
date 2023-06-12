@@ -16,6 +16,9 @@ package object
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/casdoor/casdoor/conf"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -26,6 +29,7 @@ type Role struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
+	Description string `xorm:"varchar(100)" json:"description"`
 
 	Users     []string `xorm:"mediumtext" json:"users"`
 	Roles     []string `xorm:"mediumtext" json:"roles"`
@@ -33,79 +37,90 @@ type Role struct {
 	IsEnabled bool     `json:"isEnabled"`
 }
 
-func GetRoleCount(owner, field, value string) int {
+func GetRoleCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Role{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Role{})
 }
 
-func GetRoles(owner string) []*Role {
+func GetRoles(owner string) ([]*Role, error) {
 	roles := []*Role{}
 	err := adapter.Engine.Desc("created_time").Find(&roles, &Role{Owner: owner})
 	if err != nil {
-		panic(err)
+		return roles, err
 	}
 
-	return roles
+	return roles, nil
 }
 
-func GetPaginationRoles(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Role {
+func GetPaginationRoles(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Role, error) {
 	roles := []*Role{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&roles)
 	if err != nil {
-		panic(err)
+		return roles, err
 	}
 
-	return roles
+	return roles, nil
 }
 
-func getRole(owner string, name string) *Role {
+func getRole(owner string, name string) (*Role, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	role := Role{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&role)
 	if err != nil {
-		panic(err)
+		return &role, err
 	}
 
 	if existed {
-		return &role
+		return &role, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetRole(id string) *Role {
+func GetRole(id string) (*Role, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getRole(owner, name)
 }
 
-func UpdateRole(id string, role *Role) bool {
+func UpdateRole(id string, role *Role) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	oldRole := getRole(owner, name)
+	oldRole, err := getRole(owner, name)
+	if err != nil {
+		return false, err
+	}
+
 	if oldRole == nil {
-		return false
+		return false, nil
 	}
 
 	visited := map[string]struct{}{}
 
-	permissions := GetPermissionsByRole(id)
+	permissions, err := GetPermissionsByRole(id)
+	if err != nil {
+		return false, err
+	}
+
 	for _, permission := range permissions {
 		removeGroupingPolicies(permission)
 		removePolicies(permission)
 		visited[permission.GetId()] = struct{}{}
 	}
 
-	ancestorRoles := GetAncestorRoles(id)
+	ancestorRoles, err := GetAncestorRoles(id)
+	if err != nil {
+		return false, err
+	}
+
 	for _, r := range ancestorRoles {
-		permissions := GetPermissionsByRole(r.GetId())
+		permissions, err := GetPermissionsByRole(r.GetId())
+		if err != nil {
+			return false, err
+		}
+
 		for _, permission := range permissions {
 			permissionId := permission.GetId()
 			if _, ok := visited[permissionId]; !ok {
@@ -118,27 +133,38 @@ func UpdateRole(id string, role *Role) bool {
 	if name != role.Name {
 		err := roleChangeTrigger(name, role.Name)
 		if err != nil {
-			return false
+			return false, nil
 		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	visited = map[string]struct{}{}
 	newRoleID := role.GetId()
-	permissions = GetPermissionsByRole(newRoleID)
+	permissions, err = GetPermissionsByRole(newRoleID)
+	if err != nil {
+		return false, err
+	}
+
 	for _, permission := range permissions {
 		addGroupingPolicies(permission)
 		addPolicies(permission)
 		visited[permission.GetId()] = struct{}{}
 	}
 
-	ancestorRoles = GetAncestorRoles(newRoleID)
+	ancestorRoles, err = GetAncestorRoles(newRoleID)
+	if err != nil {
+		return false, err
+	}
+
 	for _, r := range ancestorRoles {
-		permissions := GetPermissionsByRole(r.GetId())
+		permissions, err := GetPermissionsByRole(r.GetId())
+		if err != nil {
+			return false, err
+		}
 		for _, permission := range permissions {
 			permissionId := permission.GetId()
 			if _, ok := visited[permissionId]; !ok {
@@ -148,50 +174,96 @@ func UpdateRole(id string, role *Role) bool {
 		}
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddRole(role *Role) bool {
+func AddRole(role *Role) (bool, error) {
 	affected, err := adapter.Engine.Insert(role)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
+	return affected != 0, nil
+}
+
+func AddRoles(roles []*Role) bool {
+	if len(roles) == 0 {
+		return false
+	}
+	affected, err := adapter.Engine.Insert(roles)
+	if err != nil {
+		if !strings.Contains(err.Error(), "Duplicate entry") {
+			panic(err)
+		}
+	}
 	return affected != 0
 }
 
-func DeleteRole(role *Role) bool {
+func AddRolesInBatch(roles []*Role) bool {
+	batchSize := conf.GetConfigBatchSize()
+
+	if len(roles) == 0 {
+		return false
+	}
+
+	affected := false
+	for i := 0; i < (len(roles)-1)/batchSize+1; i++ {
+		start := i * batchSize
+		end := (i + 1) * batchSize
+		if end > len(roles) {
+			end = len(roles)
+		}
+
+		tmp := roles[start:end]
+		// TODO: save to log instead of standard output
+		// fmt.Printf("Add users: [%d - %d].\n", start, end)
+		if AddRoles(tmp) {
+			affected = true
+		}
+	}
+
+	return affected
+}
+
+func DeleteRole(role *Role) (bool, error) {
 	roleId := role.GetId()
-	permissions := GetPermissionsByRole(roleId)
+	permissions, err := GetPermissionsByRole(roleId)
+	if err != nil {
+		return false, err
+	}
+
 	for _, permission := range permissions {
 		permission.Roles = util.DeleteVal(permission.Roles, roleId)
-		UpdatePermission(permission.GetId(), permission)
+		_, err := UpdatePermission(permission.GetId(), permission)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (role *Role) GetId() string {
 	return fmt.Sprintf("%s/%s", role.Owner, role.Name)
 }
 
-func GetRolesByUser(userId string) []*Role {
+func GetRolesByUser(userId string) ([]*Role, error) {
 	roles := []*Role{}
 	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
 	if err != nil {
-		panic(err)
+		return roles, err
 	}
 
 	for i := range roles {
 		roles[i].Users = nil
 	}
 
-	return roles
+	return roles, nil
 }
 
 func roleChangeTrigger(oldName string, newName string) error {
@@ -208,6 +280,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	if err != nil {
 		return err
 	}
+
 	for _, role := range roles {
 		for j, u := range role.Roles {
 			owner, name := util.GetOwnerAndNameFromId(u)
@@ -226,6 +299,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	if err != nil {
 		return err
 	}
+
 	for _, permission := range permissions {
 		for j, u := range permission.Roles {
 			// u = organization/username
@@ -251,17 +325,17 @@ func GetMaskedRoles(roles []*Role) []*Role {
 	return roles
 }
 
-func GetRolesByNamePrefix(owner string, prefix string) []*Role {
+func GetRolesByNamePrefix(owner string, prefix string) ([]*Role, error) {
 	roles := []*Role{}
 	err := adapter.Engine.Where("owner=? and name like ?", owner, prefix+"%").Find(&roles)
 	if err != nil {
-		panic(err)
+		return roles, err
 	}
 
-	return roles
+	return roles, nil
 }
 
-func GetAncestorRoles(roleId string) []*Role {
+func GetAncestorRoles(roleId string) ([]*Role, error) {
 	var (
 		result  []*Role
 		roleMap = make(map[string]*Role)
@@ -270,7 +344,11 @@ func GetAncestorRoles(roleId string) []*Role {
 
 	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleId)
 
-	allRoles := GetRoles(owner)
+	allRoles, err := GetRoles(owner)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, r := range allRoles {
 		roleMap[r.GetId()] = r
 	}
@@ -289,7 +367,7 @@ func GetAncestorRoles(roleId string) []*Role {
 		}
 	}
 
-	return result
+	return result, nil
 }
 
 // containsRole is a helper function to check if a slice of roles contains a specific roleId

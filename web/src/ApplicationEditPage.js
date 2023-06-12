@@ -113,7 +113,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getCerts();
     this.getProviders();
     this.getSamlMetadata();
     this.getApplications();
@@ -131,12 +130,19 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
+        if (application === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
           application.grantTypes = ["authorization_code"];
         }
         this.setState({
           application: application,
         });
+
+        this.getCerts(application.organization);
       });
   }
 
@@ -155,8 +161,8 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts() {
-    CertBackend.getCerts(this.props.account.owner)
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
           certs: (res.msg === undefined) ? res : [],
@@ -165,11 +171,16 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    ProviderBackend.getProviders(this.state.owner).then((res => {
-      this.setState({
-        providers: res,
+    ProviderBackend.getProviders(this.state.owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
-    }));
   }
 
   getSamlMetadata() {
@@ -469,6 +480,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Org choice mode"), i18next.t("application:Org choice mode - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}}
+              options={[
+                {label: i18next.t("general:None"), value: "None"},
+                {label: i18next.t("application:Select"), value: "Select"},
+                {label: i18next.t("application:Input"), value: "Input"},
+              ].map((item) => {
+                return Setting.getOption(item.label, item.value);
+              })}
+              value={this.state.application.orgChoiceMode ?? []}
+              onChange={(value => {
+                this.updateApplicationField("orgChoiceMode", value);
+              })} >
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -570,7 +601,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}}
               value={this.state.application.grantTypes}
               onChange={(value => {
                 this.updateApplicationField("grantTypes", value);
@@ -817,7 +848,7 @@ class ApplicationEditPage extends React.Component {
     let signUpUrl = `/signup/${this.state.application.name}`;
 
     let redirectUri;
-    if (this.state.application.redirectUris.length !== 0) {
+    if (this.state.application.redirectUris?.length > 0) {
       redirectUri = this.state.application.redirectUris[0];
     } else {
       redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";

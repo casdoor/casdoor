@@ -59,3 +59,13 @@ func (c *ApiController) GetVersionInfo() {
 
 	c.ResponseOk(versionInfo)
 }
+
+// Health
+// @Title Health
+// @Tag System API
+// @Description check if the system is live
+// @Success 200 {object} controllers.Response The Response object
+// @router /health [get]
+func (c *ApiController) Health() {
+	c.ResponseOk()
+}

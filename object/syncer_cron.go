@@ -43,11 +43,11 @@ func clearCron(name string) {
 	}
 }
 
-func addSyncerJob(syncer *Syncer) {
+func addSyncerJob(syncer *Syncer) error {
 	deleteSyncerJob(syncer)
 
 	if !syncer.IsEnabled {
-		return
+		return nil
 	}
 
 	syncer.initAdapter()
@@ -58,10 +58,11 @@ func addSyncerJob(syncer *Syncer) {
 	cron := getCronMap(syncer.Name)
 	_, err := cron.AddFunc(schedule, syncer.syncUsers)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	cron.Start()
+	return nil
 }
 
 func deleteSyncerJob(syncer *Syncer) {

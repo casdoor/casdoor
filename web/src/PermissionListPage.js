@@ -14,13 +14,14 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table} from "antd";
+import {Button, Switch, Table, Upload} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {UploadOutlined} from "@ant-design/icons";
 
 class PermissionListPage extends BaseListPage {
   newPermission() {
@@ -79,6 +80,40 @@ class PermissionListPage extends BaseListPage {
       });
   }
 
+  uploadPermissionFile(info) {
+    const {status, response: res} = info.file;
+    if (status === "done") {
+      if (res.status === "ok") {
+        Setting.showMessage("success", "Users uploaded successfully, refreshing the page");
+
+        const {pagination} = this.state;
+        this.fetch({pagination});
+      } else {
+        Setting.showMessage("error", `Users failed to upload: ${res.msg}`);
+      }
+    } else if (status === "error") {
+      Setting.showMessage("error", "File failed to upload");
+    }
+  }
+  renderPermissionUpload() {
+    const props = {
+      name: "file",
+      accept: ".xlsx",
+      method: "post",
+      action: `${Setting.ServerUrl}/api/upload-permissions`,
+      withCredentials: true,
+      onChange: (info) => {
+        this.uploadPermissionFile(info);
+      },
+    };
+
+    return (
+      <Upload {...props}>
+        <Button type="primary" size="small">
+          <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
+        </Button></Upload>
+    );
+  }
   renderTable(permissions) {
     const columns = [
       // https://github.com/ant-design/ant-design/issues/22184
@@ -325,7 +360,10 @@ class PermissionListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Permissions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
+              {
+                this.renderPermissionUpload()
+              }
             </div>
           )}
           loading={this.state.loading}
@@ -347,9 +385,11 @@ class PermissionListPage extends BaseListPage {
     const getPermissions = Setting.isLocalAdminUser(this.props.account) ? PermissionBackend.getPermissions : PermissionBackend.getPermissionsBySubmitter;
     getPermissions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -361,9 +401,10 @@ class PermissionListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

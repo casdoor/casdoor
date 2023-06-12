@@ -122,14 +122,18 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 }
 
 func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
+	var err error
 	owner, name := util.GetOwnerAndNameFromId(user.GetId())
-	oldUser := getUserById(owner, name)
-	if oldUser == nil {
-		return false, nil
+	oldUser, err := getUserById(owner, name)
+	if oldUser == nil || err != nil {
+		return false, err
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	columns := syncer.getCasdoorColumns()
@@ -175,7 +179,11 @@ func (syncer *Syncer) initAdapter() {
 }
 
 func RunSyncUsersJob() {
-	syncers := GetSyncers("admin")
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		panic(err)
+	}
+
 	for _, syncer := range syncers {
 		addSyncerJob(syncer)
 	}

@@ -37,13 +37,30 @@ func (c *ApiController) GetRoles() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetRoles(owner)
+		roles, err := object.GetRoles(owner)
+		if err != nil {
+			panic(err)
+		}
+
+		c.Data["json"] = roles
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRoleCount(owner, field, value)))
-		roles := object.GetPaginationRoles(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetRoleCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		roles, err := object.GetPaginationRoles(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(roles, paginator.Nums())
 	}
 }
@@ -58,7 +75,12 @@ func (c *ApiController) GetRoles() {
 func (c *ApiController) GetRole() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetRole(id)
+	role, err := object.GetRole(id)
+	if err != nil {
+		panic(err)
+	}
+
+	c.Data["json"] = role
 	c.ServeJSON()
 }
 

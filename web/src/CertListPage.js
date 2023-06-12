@@ -23,10 +23,20 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class CertListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.setState({
+      owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
+    });
+  }
+
   newCert() {
     const randomName = Setting.getRandomName();
     return {
-      owner: this.props.account.owner, // this.props.account.certname,
+      owner: this.state.owner,
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
@@ -45,7 +55,7 @@ class CertListPage extends BaseListPage {
     CertBackend.addCert(newCert)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/certs/${newCert.name}`, mode: "add"});
+          this.props.history.push({pathname: `/certs/${newCert.owner}/${newCert.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -86,7 +96,7 @@ class CertListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/certs/${text}`}>
+            <Link to={`/certs/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -98,7 +108,10 @@ class CertListPage extends BaseListPage {
         key: "owner",
         width: "150px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (text !== "admin") ? text : i18next.t("provider:admin (Shared)");
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -176,7 +189,7 @@ class CertListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/certs/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
@@ -226,9 +239,11 @@ class CertListPage extends BaseListPage {
     (Setting.isAdminUser(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       : CertBackend.getCerts(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -240,9 +255,10 @@ class CertListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

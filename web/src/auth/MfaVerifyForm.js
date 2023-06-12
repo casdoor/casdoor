@@ -18,7 +18,6 @@ import {CopyOutlined, UserOutlined} from "@ant-design/icons";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as Setting from "../Setting";
 import React from "react";
-import QRCode from "qrcode.react";
 import copy from "copy-to-clipboard";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 
@@ -105,7 +104,6 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
     >
       <Row type="flex" justify="center" align="middle">
         <Col>
-          <QRCode value={mfaProps.url} size={200} />
         </Col>
       </Row>
 

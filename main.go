@@ -27,17 +27,21 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
-	_ "github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
 )
 
-func main() {
-	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
+func getCreateDatabaseFlag() bool {
+	res := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
+	return *res
+}
+
+func main() {
+	createDatabase := getCreateDatabaseFlag()
 
 	object.InitAdapter()
+	object.CreateTables(createDatabase)
 	object.DoMigration()
-	object.CreateTables(*createDatabase)
 
 	object.InitDb()
 	object.InitFromFile()
@@ -59,8 +63,8 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.BConfig.WebConfig.Session.SessionName = "casdoor_session_id"
@@ -74,7 +78,7 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger("file", `{"filename":"logs/casdoor.log","maxdays":99999,"perm":"0770"}`)
+	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
 	if err != nil {
 		panic(err)
 	}

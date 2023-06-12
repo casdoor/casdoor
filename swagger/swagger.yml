@@ -177,6 +177,42 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-plan:
+    post:
+      tags:
+      - Plan API
+      description: add plan
+      operationId: ApiController.AddPlan
+      parameters:
+      - in: body
+        name: body
+        description: The details of the plan
+        required: true
+        schema:
+          $ref: '#/definitions/object.Plan'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-pricing:
+    post:
+      tags:
+      - Pricing API
+      description: add pricing
+      operationId: ApiController.AddPricing
+      parameters:
+      - in: body
+        name: body
+        description: The details of the pricing
+        required: true
+        schema:
+          $ref: '#/definitions/object.Pricing'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-product:
     post:
       tags:
@@ -278,6 +314,24 @@ paths:
             type: array
             items:
               type: string
+  /api/add-subscription:
+    post:
+      tags:
+      - Subscription API
+      description: add subscription
+      operationId: ApiController.AddSubscription
+      parameters:
+      - in: body
+        name: body
+        description: The details of the subscription
+        required: true
+        schema:
+          $ref: '#/definitions/object.Subscription'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-syncer:
     post:
       tags:
@@ -448,6 +502,32 @@ paths:
       tags:
       - HandleOfficialAccountEvent API
       operationId: ApiController.HandleOfficialAccountEvent
+  /api/batch-enforce:
+    post:
+      tags:
+      - Enforce API
+      description: perform enforce
+      operationId: ApiController.BatchEnforce
+      parameters:
+      - in: body
+        name: body
+        description: casbin request array
+        required: true
+        schema:
+          $ref: '#/definitions/object.CasbinRequest'
+      - in: query
+        name: permissionId
+        description: permission id
+        type: string
+      - in: query
+        name: modelId
+        description: model id
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/buy-product:
     post:
       tags:
@@ -552,6 +632,17 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-mfa/:
+    post:
+      tags:
+      - MFA API
+      description: ': Delete MFA'
+      operationId: ApiController.DeleteMfa
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
   /api/delete-model:
     post:
       tags:
@@ -619,6 +710,42 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Permission'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/delete-plan:
+    post:
+      tags:
+      - Plan API
+      description: delete plan
+      operationId: ApiController.DeletePlan
+      parameters:
+      - in: body
+        name: body
+        description: The details of the plan
+        required: true
+        schema:
+          $ref: '#/definitions/object.Plan'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/delete-pricing:
+    post:
+      tags:
+      - Pricing API
+      description: delete pricing
+      operationId: ApiController.DeletePricing
+      parameters:
+      - in: body
+        name: body
+        description: The details of the pricing
+        required: true
+        schema:
+          $ref: '#/definitions/object.Pricing'
       responses:
         "200":
           description: The Response object
@@ -702,6 +829,24 @@ paths:
             type: array
             items:
               type: string
+  /api/delete-subscription:
+    post:
+      tags:
+      - Subscription API
+      description: delete subscription
+      operationId: ApiController.DeleteSubscription
+      parameters:
+      - in: body
+        name: body
+        description: The details of the subscription
+        required: true
+        schema:
+          $ref: '#/definitions/object.Subscription'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-syncer:
     post:
       tags:
@@ -769,6 +914,36 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Webhook'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/enforce:
+    post:
+      tags:
+      - Enforce API
+      description: perform enforce
+      operationId: ApiController.Enforce
+      parameters:
+      - in: body
+        name: body
+        description: casbin request
+        required: true
+        schema:
+          $ref: '#/definitions/object.CasbinRequest'
+      - in: query
+        name: permissionId
+        description: permission id
+        type: string
+      - in: query
+        name: modelId
+        description: model id
+        type: string
+      - in: query
+        name: resourceId
+        description: resource id
+        type: string
       responses:
         "200":
           description: The Response object
@@ -995,6 +1170,19 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.User'
+  /api/get-globle-certs:
+    get:
+      tags:
+      - Cert API
+      description: get globle certs
+      operationId: ApiController.GetGlobleCerts
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Cert'
   /api/get-ldap:
     get:
       tags:
@@ -1016,6 +1204,23 @@ paths:
       - Message API
       description: get message
       operationId: ApiController.GetMessage
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the message
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Message'
+  /api/get-message-answer:
+    get:
+      tags:
+      - Message API
+      description: get message answer
+      operationId: ApiController.GetMessageAnswer
       parameters:
       - in: query
         name: id
@@ -1118,6 +1323,25 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Application'
+  /api/get-organization-names:
+    get:
+      tags:
+      - Organization API
+      description: get all organization names
+      operationId: ApiController.GetOrganizationNames
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Organization'
   /api/get-organizations:
     get:
       tags:
@@ -1241,6 +1465,82 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Permission'
+  /api/get-plan:
+    get:
+      tags:
+      - Plan API
+      description: get plan
+      operationId: ApiController.GetPlan
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the plan
+        required: true
+        type: string
+      - in: query
+        name: includeOption
+        description: Should include plan's option
+        type: boolean
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Plan'
+  /api/get-plans:
+    get:
+      tags:
+      - Plan API
+      description: get plans
+      operationId: ApiController.GetPlans
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of plans
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Plan'
+  /api/get-pricing:
+    get:
+      tags:
+      - Pricing API
+      description: get pricing
+      operationId: ApiController.GetPricing
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the pricing
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.pricing'
+  /api/get-pricings:
+    get:
+      tags:
+      - Pricing API
+      description: get pricings
+      operationId: ApiController.GetPricings
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of pricings
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Pricing'
   /api/get-product:
     get:
       tags:
@@ -1277,6 +1577,17 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Product'
+  /api/get-prometheus-info:
+    get:
+      tags:
+      - Prometheus API
+      description: get Prometheus Info
+      operationId: ApiController.GetPrometheusInfo
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.PrometheusInfo'
   /api/get-provider:
     get:
       tags:
@@ -1466,6 +1777,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.User'
+  /api/get-subscription:
+    get:
+      tags:
+      - Subscription API
+      description: get subscription
+      operationId: ApiController.GetSubscription
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the subscription
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.subscription'
+  /api/get-subscriptions:
+    get:
+      tags:
+      - Subscription API
+      description: get subscriptions
+      operationId: ApiController.GetSubscriptions
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of subscriptions
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Subscription'
   /api/get-syncer:
     get:
       tags:
@@ -1569,7 +1916,6 @@ paths:
       - in: query
         name: id
         description: The id ( owner/name ) of the user
-        required: true
         type: string
       - in: query
         name: owner
@@ -1722,6 +2068,17 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Webhook'
+  /api/health:
+    get:
+      tags:
+      - System API
+      description: check if the system is live
+      operationId: ApiController.Health
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/invoice-payment:
     post:
       tags:
@@ -1975,6 +2332,39 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/mfa/setup/enable:
+    post:
+      tags:
+      - MFA API
+      description: enable totp
+      operationId: ApiController.MfaSetupEnable
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
+  /api/mfa/setup/initiate:
+    post:
+      tags:
+      - MFA API
+      description: setup MFA
+      operationId: ApiController.MfaSetupInitiate
+      responses:
+        "200":
+          description: Response object
+          schema:
+            $ref: '#/definitions/The'
+  /api/mfa/setup/verify:
+    post:
+      tags:
+      - MFA API
+      description: setup verify totp
+      operationId: ApiController.MfaSetupVerify
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
   /api/notify-payment:
     post:
       tags:
@@ -2048,6 +2438,17 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/set-preferred-mfa:
+    post:
+      tags:
+      - MFA API
+      description: ': Set specific Mfa Preferred'
+      operationId: ApiController.SetPreferredMfa
+      responses:
+        "200":
+          description: object
+          schema:
+            $ref: '#/definitions/Response'
   /api/signup:
     post:
       tags:
@@ -2268,6 +2669,52 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-plan:
+    post:
+      tags:
+      - Plan API
+      description: update plan
+      operationId: ApiController.UpdatePlan
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the plan
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the plan
+        required: true
+        schema:
+          $ref: '#/definitions/object.Plan'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/update-pricing:
+    post:
+      tags:
+      - Pricing API
+      description: update pricing
+      operationId: ApiController.UpdatePricing
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the pricing
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the pricing
+        required: true
+        schema:
+          $ref: '#/definitions/object.Pricing'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-product:
     post:
       tags:
@@ -2361,6 +2808,29 @@ paths:
             type: array
             items:
               type: string
+  /api/update-subscription:
+    post:
+      tags:
+      - Subscription API
+      description: update subscription
+      operationId: ApiController.UpdateSubscription
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the subscription
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the subscription
+        required: true
+        schema:
+          $ref: '#/definitions/object.Subscription'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-syncer:
     post:
       tags:
@@ -2555,10 +3025,10 @@ paths:
           schema:
             $ref: '#/definitions/Response'
 definitions:
-  1183.0xc000455050.false:
+  1225.0xc0002e2ae0.false:
     title: "false"
     type: object
-  1217.0xc000455080.false:
+  1260.0xc0002e2b10.false:
     title: "false"
     type: object
   LaravelResponse:
@@ -2566,6 +3036,9 @@ definitions:
     type: object
   Response:
     title: Response
+    type: object
+  The:
+    title: The
     type: object
   controllers.AuthForm:
     title: AuthForm
@@ -2591,9 +3064,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1183.0xc000455050.false'
+        $ref: '#/definitions/1225.0xc0002e2ae0.false'
       data2:
-        $ref: '#/definitions/1217.0xc000455080.false'
+        $ref: '#/definitions/1260.0xc0002e2b10.false'
       msg:
         type: string
       name:
@@ -2616,6 +3089,9 @@ definitions:
           type: string
   jose.JSONWebKey:
     title: JSONWebKey
+    type: object
+  object.&{179844 0xc000a02f90 false}:
+    title: '&{179844 0xc000a02f90 false}'
     type: object
   object.AccountItem:
     title: AccountItem
@@ -2684,6 +3160,8 @@ definitions:
         type: string
       formCss:
         type: string
+      formCssMobile:
+        type: string
       formOffset:
         type: integer
         format: int64
@@ -2698,6 +3176,8 @@ definitions:
       logo:
         type: string
       name:
+        type: string
+      orgChoiceMode:
         type: string
       organization:
         type: string
@@ -2736,6 +3216,11 @@ definitions:
         $ref: '#/definitions/object.ThemeData'
       tokenFormat:
         type: string
+  object.CasbinRequest:
+    title: CasbinRequest
+    type: array
+    items:
+      $ref: '#/definitions/object.&{179844 0xc000a02f90 false}'
   object.Cert:
     title: Cert
     type: object
@@ -2799,6 +3284,17 @@ definitions:
         type: array
         items:
           type: string
+  object.GaugeVecInfo:
+    title: GaugeVecInfo
+    type: object
+    properties:
+      method:
+        type: string
+      name:
+        type: string
+      throughput:
+        type: number
+        format: double
   object.Header:
     title: Header
     type: object
@@ -2806,6 +3302,19 @@ definitions:
       name:
         type: string
       value:
+        type: string
+  object.HistogramVecInfo:
+    title: HistogramVecInfo
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+      latency:
+        type: string
+      method:
+        type: string
+      name:
         type: string
   object.IntrospectionResponse:
     title: IntrospectionResponse
@@ -2868,7 +3377,37 @@ definitions:
         type: string
       owner:
         type: string
+      replyTo:
+        type: string
       text:
+        type: string
+  object.MfaItem:
+    title: MfaItem
+    type: object
+    properties:
+      name:
+        type: string
+      rule:
+        type: string
+  object.MfaProps:
+    title: MfaProps
+    type: object
+    properties:
+      countryCode:
+        type: string
+      id:
+        type: string
+      isPreferred:
+        type: boolean
+      recoveryCodes:
+        type: array
+        items:
+          type: string
+      secret:
+        type: string
+      type:
+        type: string
+      url:
         type: string
   object.Model:
     title: Model
@@ -2973,6 +3512,10 @@ definitions:
           type: string
       masterPassword:
         type: string
+      mfaItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.MfaItem'
       name:
         type: string
       owner:
@@ -3098,6 +3641,71 @@ definitions:
         type: array
         items:
           type: string
+  object.Plan:
+    title: Plan
+    type: object
+    properties:
+      createdTime:
+        type: string
+      currency:
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      isEnabled:
+        type: boolean
+      name:
+        type: string
+      options:
+        type: array
+        items:
+          type: string
+      owner:
+        type: string
+      pricePerMonth:
+        type: number
+        format: double
+      pricePerYear:
+        type: number
+        format: double
+      role:
+        type: string
+  object.Pricing:
+    title: Pricing
+    type: object
+    properties:
+      application:
+        type: string
+      approveTime:
+        type: string
+      approver:
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      hasTrial:
+        type: boolean
+      isEnabled:
+        type: boolean
+      name:
+        type: string
+      owner:
+        type: string
+      plans:
+        type: array
+        items:
+          type: string
+      state:
+        type: string
+      submitter:
+        type: string
+      trialDuration:
+        type: integer
+        format: int64
   object.Product:
     title: Product
     type: object
@@ -3141,6 +3749,21 @@ definitions:
         type: string
       tag:
         type: string
+  object.PrometheusInfo:
+    title: PrometheusInfo
+    type: object
+    properties:
+      apiLatency:
+        type: array
+        items:
+          $ref: '#/definitions/object.HistogramVecInfo'
+      apiThroughput:
+        type: array
+        items:
+          $ref: '#/definitions/object.GaugeVecInfo'
+      totalThroughput:
+        type: number
+        format: double
   object.Provider:
     title: Provider
     type: object
@@ -3265,6 +3888,8 @@ definitions:
         type: string
       name:
         type: string
+      object:
+        type: string
       organization:
         type: string
       owner:
@@ -3313,6 +3938,43 @@ definitions:
         type: string
       visible:
         type: boolean
+  object.Subscription:
+    title: Subscription
+    type: object
+    properties:
+      approveTime:
+        type: string
+      approver:
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      duration:
+        type: integer
+        format: int64
+      endDate:
+        type: string
+        format: datetime
+      isEnabled:
+        type: boolean
+      name:
+        type: string
+      owner:
+        type: string
+      plan:
+        type: string
+      startDate:
+        type: string
+        format: datetime
+      state:
+        type: string
+      submitter:
+        type: string
+      user:
+        type: string
   object.Syncer:
     title: Syncer
     type: object
@@ -3612,6 +4274,10 @@ definitions:
         type: string
       microsoftonline:
         type: string
+      multiFactorAuths:
+        type: array
+        items:
+          $ref: '#/definitions/object.MfaProps'
       name:
         type: string
       naver:
@@ -3629,6 +4295,8 @@ definitions:
       password:
         type: string
       passwordSalt:
+        type: string
+      passwordType:
         type: string
       patreon:
         type: string
@@ -3740,6 +4408,8 @@ definitions:
         type: string
       name:
         type: string
+      organization:
+        type: string
       phone:
         type: string
       picture:
@@ -3778,6 +4448,12 @@ definitions:
         type: string
       url:
         type: string
+  object.pricing:
+    title: pricing
+    type: object
+  object.subscription:
+    title: subscription
+    type: object
   protocol.CredentialAssertion:
     title: CredentialAssertion
     type: object

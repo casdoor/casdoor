@@ -15,7 +15,11 @@
 package object
 
 func (syncer *Syncer) getUsers() []*User {
-	users := GetUsers(syncer.Organization)
+	users, err := GetUsers(syncer.Organization)
+	if err != nil {
+		panic(err)
+	}
+
 	return users
 }
 

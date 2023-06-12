@@ -40,8 +40,13 @@ class PaymentEditPage extends React.Component {
   }
 
   getPayment() {
-    PaymentBackend.getPayment(this.props.account.owner, this.state.paymentName)
+    PaymentBackend.getPayment("admin", this.state.paymentName)
       .then((payment) => {
+        if (payment === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         this.setState({
           payment: payment,
         });

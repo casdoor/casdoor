@@ -56,74 +56,71 @@ type Payment struct {
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
 }
 
-func GetPaymentCount(owner, field, value string) int {
+func GetPaymentCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Payment{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Payment{Organization: organization})
 }
 
-func GetPayments(owner string) []*Payment {
+func GetPayments(owner string) ([]*Payment, error) {
 	payments := []*Payment{}
 	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return payments
+	return payments, nil
 }
 
-func GetUserPayments(owner string, organization string, user string) []*Payment {
+func GetUserPayments(owner string, organization string, user string) ([]*Payment, error) {
 	payments := []*Payment{}
 	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return payments
+	return payments, nil
 }
 
-func GetPaginationPayments(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Payment {
+func GetPaginationPayments(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
 	payments := []*Payment{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&payments)
+	err := session.Find(&payments, &Payment{Organization: organization})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return payments
+	return payments, nil
 }
 
-func getPayment(owner string, name string) *Payment {
+func getPayment(owner string, name string) (*Payment, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	payment := Payment{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&payment)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &payment
+		return &payment, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetPayment(id string) *Payment {
+func GetPayment(id string) (*Payment, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPayment(owner, name)
 }
 
-func UpdatePayment(id string, payment *Payment) bool {
+func UpdatePayment(id string, payment *Payment) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getPayment(owner, name) == nil {
-		return false
+	if p, err := getPayment(owner, name); err != nil {
+		return false, err
+	} else if p == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
@@ -131,67 +128,79 @@ func UpdatePayment(id string, payment *Payment) bool {
 		panic(err)
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddPayment(payment *Payment) bool {
+func AddPayment(payment *Payment) (bool, error) {
 	affected, err := adapter.Engine.Insert(payment)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeletePayment(payment *Payment) bool {
+func DeletePayment(payment *Payment) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{payment.Owner, payment.Name}).Delete(&Payment{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, error) {
-	payment := getPayment(owner, paymentName)
-	if payment == nil {
-		return nil, fmt.Errorf("the payment: %s does not exist", paymentName)
-	}
-
-	product := getProduct(owner, productName)
-	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", productName)
-	}
-
-	provider, err := product.getProvider(providerName)
+func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (*Payment, error, string) {
+	provider, err := getProvider(owner, providerName)
 	if err != nil {
-		return payment, err
+		panic(err)
 	}
 
 	pProvider, cert, err := provider.getPaymentProvider()
 	if err != nil {
-		return payment, err
+		panic(err)
+	}
+
+	payment, err := getPayment(owner, paymentName)
+	if err != nil {
+		panic(err)
+	}
+
+	if payment == nil {
+		err = fmt.Errorf("the payment: %s does not exist", paymentName)
+		return nil, err, pProvider.GetResponseError(err)
+	}
+
+	product, err := getProduct(owner, productName)
+	if err != nil {
+		panic(err)
+	}
+
+	if product == nil {
+		err = fmt.Errorf("the product: %s does not exist", productName)
+		return payment, err, pProvider.GetResponseError(err)
 	}
 
 	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey)
 	if err != nil {
-		return payment, err
+		return payment, err, pProvider.GetResponseError(err)
 	}
 
 	if productDisplayName != "" && productDisplayName != product.DisplayName {
-		return nil, fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
+		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
+		return payment, err, pProvider.GetResponseError(err)
 	}
 
 	if price != product.Price {
-		return nil, fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
+		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
+		return payment, err, pProvider.GetResponseError(err)
 	}
 
-	return payment, nil
+	err = nil
+	return payment, err, pProvider.GetResponseError(err)
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) bool {
-	payment, err := notifyPayment(request, body, owner, providerName, productName, paymentName)
-
+func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string) (error, string) {
+	payment, err, errorResponse := notifyPayment(request, body, owner, providerName, productName, paymentName)
 	if payment != nil {
 		if err != nil {
 			payment.State = "Error"
@@ -200,15 +209,21 @@ func NotifyPayment(request *http.Request, body []byte, owner string, providerNam
 			payment.State = "Paid"
 		}
 
-		UpdatePayment(payment.GetId(), payment)
+		_, err = UpdatePayment(payment.GetId(), payment)
+		if err != nil {
+			panic(err)
+		}
 	}
 
-	ok := err == nil
-	return ok
+	return err, errorResponse
 }
 
 func invoicePayment(payment *Payment) (string, error) {
-	provider := getProvider(payment.Owner, payment.Provider)
+	provider, err := getProvider(payment.Owner, payment.Provider)
+	if err != nil {
+		panic(err)
+	}
+
 	if provider == nil {
 		return "", fmt.Errorf("the payment provider: %s does not exist", payment.Provider)
 	}
@@ -237,7 +252,11 @@ func InvoicePayment(payment *Payment) (string, error) {
 	}
 
 	payment.InvoiceUrl = invoiceUrl
-	affected := UpdatePayment(payment.GetId(), payment)
+	affected, err := UpdatePayment(payment.GetId(), payment)
+	if err != nil {
+		return "", err
+	}
+
 	if !affected {
 		return "", fmt.Errorf("failed to update the payment: %s", payment.Name)
 	}

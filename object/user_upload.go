@@ -15,19 +15,25 @@
 package object
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/casdoor/xlsx"
 )
 
-func getUserMap(owner string) map[string]*User {
+func getUserMap(owner string) (map[string]*User, error) {
 	m := map[string]*User{}
 
-	users := GetUsers(owner)
+	users, err := GetUsers(owner)
+	if err != nil {
+		return m, err
+	}
 	for _, user := range users {
 		m[user.GetId()] = user
 	}
 
-	return m
+	return m, nil
 }
 
 func parseLineItem(line *[]string, i int) string {
@@ -47,10 +53,34 @@ func parseLineItemBool(line *[]string, i int) bool {
 	return parseLineItemInt(line, i) != 0
 }
 
-func UploadUsers(owner string, fileId string) bool {
+func parseListItem(lines *[]string, i int) []string {
+	if i >= len(*lines) {
+		return nil
+	}
+	line := (*lines)[i]
+	items := strings.Split(line, ";")
+	trimmedItems := make([]string, 0, len(items))
+
+	for _, item := range items {
+		trimmedItem := strings.TrimSpace(item)
+		if trimmedItem != "" {
+			trimmedItems = append(trimmedItems, trimmedItem)
+		}
+	}
+
+	sort.Strings(trimmedItems)
+
+	return trimmedItems
+}
+
+func UploadUsers(owner string, fileId string) (bool, error) {
 	table := xlsx.ReadXlsxFile(fileId)
 
-	oldUserMap := getUserMap(owner)
+	oldUserMap, err := getUserMap(owner)
+	if err != nil {
+		return false, err
+	}
+
 	newUsers := []*User{}
 	for index, line := range table {
 		if index == 0 || parseLineItem(&line, 0) == "" {
@@ -112,7 +142,7 @@ func UploadUsers(owner string, fileId string) bool {
 	}
 
 	if len(newUsers) == 0 {
-		return false
+		return false, nil
 	}
 	return AddUsersInBatch(newUsers)
 }

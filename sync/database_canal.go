@@ -66,13 +66,13 @@ func (db *Database) OnRow(e *canal.RowsEvent) error {
 		for i, row := range e.Rows {
 			for j, item := range row {
 				if i%2 == 0 {
-					if isChar[j] == true {
+					if isChar[j] {
 						oldColumnValue[j] = fmt.Sprintf("%s", item)
 					} else {
 						oldColumnValue[j] = fmt.Sprintf("%d", item)
 					}
 				} else {
-					if isChar[j] == true {
+					if isChar[j] {
 						if item == nil {
 							newColumnValue[j] = nil
 						} else {
@@ -103,7 +103,7 @@ func (db *Database) OnRow(e *canal.RowsEvent) error {
 		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
-				if isChar[j] == true {
+				if isChar[j] {
 					oldColumnValue[j] = fmt.Sprintf("%s", item)
 				} else {
 					oldColumnValue[j] = fmt.Sprintf("%d", item)
@@ -128,7 +128,7 @@ func (db *Database) OnRow(e *canal.RowsEvent) error {
 		db.engine.Exec("BEGIN")
 		for _, row := range e.Rows {
 			for j, item := range row {
-				if isChar[j] == true {
+				if isChar[j] {
 					if item == nil {
 						newColumnValue[j] = nil
 					} else {

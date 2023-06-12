@@ -78,6 +78,7 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
 
 export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) {
   const [form] = Form.useForm();
+  mfaProps = mfaProps ?? {type: ""};
 
   const onFinish = ({passcode}) => {
     const data = {passcode, type: mfaProps.type, ...user};
@@ -145,7 +146,11 @@ class MfaSetupPage extends React.Component {
     super(props);
     this.state = {
       account: props.account,
-      current: 0,
+      applicationName: (props.applicationName ?? props.account?.signupApplication) ?? "",
+      isAuthenticated: props.isAuthenticated ?? false,
+      isPromptPage: props.isPromptPage,
+      redirectUri: props.redirectUri,
+      current: props.current ?? 0,
       type: props.type ?? SmsMfaType,
       mfaProps: null,
     };
@@ -155,8 +160,25 @@ class MfaSetupPage extends React.Component {
     this.getApplication();
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.isAuthenticated === true && this.state.mfaProps === null) {
+      MfaBackend.MfaSetupInitiate({
+        type: this.state.type,
+        ...this.getUser(),
+      }).then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            mfaProps: res.data,
+          });
+        } else {
+          Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
+        }
+      });
+    }
+  }
+
   getApplication() {
-    ApplicationBackend.getApplication("admin", this.state.account.signupApplication)
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((application) => {
         if (application !== null) {
           this.setState({
@@ -181,18 +203,9 @@ class MfaSetupPage extends React.Component {
       return <CheckPasswordForm
         user={this.getUser()}
         onSuccess={() => {
-          MfaBackend.MfaSetupInitiate({
-            type: this.state.type,
-            ...this.getUser(),
-          }).then((res) => {
-            if (res.status === "ok") {
-              this.setState({
-                current: this.state.current + 1,
-                mfaProps: res.data,
-              });
-            } else {
-              Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
-            }
+          this.setState({
+            current: this.state.current + 1,
+            isAuthenticated: true,
           });
         }}
         onFail={(res) => {
@@ -200,8 +213,12 @@ class MfaSetupPage extends React.Component {
         }}
       />;
     case 1:
+      if (!this.state.isAuthenticated) {
+        return null;
+      }
+
       return <MfaVerifyForm
-        mfaProps={{...this.state.mfaProps}}
+        mfaProps={this.state.mfaProps}
         application={this.state.application}
         user={this.getUser()}
         onSuccess={() => {
@@ -214,10 +231,18 @@ class MfaSetupPage extends React.Component {
         }}
       />;
     case 2:
+      if (!this.state.isAuthenticated) {
+        return null;
+      }
+
       return <EnableMfaForm user={this.getUser()} mfaProps={{type: this.state.type, ...this.state.mfaProps}}
         onSuccess={() => {
           Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-          Setting.goToLinkSoft(this, "/account");
+          if (this.state.isPromptPage && this.state.redirectUri) {
+            Setting.goToLink(this.state.redirectUri);
+          } else {
+            Setting.goToLink("/account");
+          }
         }}
         onFail={(res) => {
           Setting.showMessage("error", `${i18next.t("general:Failed to enable")}: ${res.msg}`);
@@ -265,7 +290,9 @@ class MfaSetupPage extends React.Component {
           </Row>
         </Col>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{marginTop: "10px", textAlign: "center"}}>{this.renderStep()}</div>
+          <div style={{marginTop: "10px", textAlign: "center"}}>
+            {this.renderStep()}
+          </div>
         </Col>
       </Row>
     );

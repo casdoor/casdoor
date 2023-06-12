@@ -24,78 +24,98 @@ import (
 	"github.com/xorm-io/core"
 )
 
-func GetUserByField(organizationName string, field string, value string) *User {
+func GetUserByField(organizationName string, field string, value string) (*User, error) {
 	if field == "" || value == "" {
-		return nil
+		return nil, nil
 	}
 
 	user := User{Owner: organizationName}
 	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", strings.ToLower(field)), value).Get(&user)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &user
+		return &user, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
 func HasUserByField(organizationName string, field string, value string) bool {
-	return GetUserByField(organizationName, field, value) != nil
+	user, err := GetUserByField(organizationName, field, value)
+	if err != nil {
+		panic(err)
+	}
+	return user != nil
 }
 
-func GetUserByFields(organization string, field string) *User {
+func GetUserByFields(organization string, field string) (*User, error) {
 	// check username
-	user := GetUserByField(organization, "name", field)
-	if user != nil {
-		return user
+	user, err := GetUserByField(organization, "name", field)
+	if err != nil || user != nil {
+		return user, err
 	}
 
 	// check email
 	if strings.Contains(field, "@") {
-		user = GetUserByField(organization, "email", field)
-		if user != nil {
-			return user
+		user, err = GetUserByField(organization, "email", field)
+		if user != nil || err != nil {
+			return user, err
 		}
 	}
 
 	// check phone
-	user = GetUserByField(organization, "phone", field)
-	if user != nil {
-		return user
+	user, err = GetUserByField(organization, "phone", field)
+	if user != nil || err != nil {
+		return user, err
 	}
 
 	// check ID card
-	user = GetUserByField(organization, "id_card", field)
-	if user != nil {
-		return user
+	user, err = GetUserByField(organization, "id_card", field)
+	if user != nil || err != nil {
+		return user, err
 	}
 
-	return nil
+	return nil, nil
 }
 
-func SetUserField(user *User, field string, value string) bool {
+func SetUserField(user *User, field string, value string) (bool, error) {
+	bean := make(map[string]interface{})
 	if field == "password" {
-		organization := GetOrganizationByUser(user)
+		organization, err := GetOrganizationByUser(user)
+		if err != nil {
+			return false, err
+		}
+
 		user.UpdateUserPassword(organization)
-		value = user.Password
+		bean[strings.ToLower(field)] = user.Password
+		bean["password_type"] = user.PasswordType
+	} else {
+		bean[strings.ToLower(field)] = value
 	}
 
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(map[string]interface{}{strings.ToLower(field): value})
+	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	user = getUser(user.Owner, user.Name)
-	user.UpdateUserHash()
+	user, err = getUser(user.Owner, user.Name)
+	if err != nil {
+		return false, err
+	}
+
+	err = user.UpdateUserHash()
+	if err != nil {
+		return false, err
+	}
+
 	_, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func GetUserField(user *User, field string) string {
@@ -117,7 +137,7 @@ func setUserProperty(user *User, field string, value string) {
 	}
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) bool {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -160,11 +180,10 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 
-	affected := UpdateUserForAllFields(user.GetId(), user)
-	return affected
+	return UpdateUserForAllFields(user.GetId(), user)
 }
 
-func ClearUserOAuthProperties(user *User, providerType string) bool {
+func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 	for k := range user.Properties {
 		prefix := fmt.Sprintf("oauth_%s_", providerType)
 		if strings.HasPrefix(k, prefix) {
@@ -174,14 +193,18 @@ func ClearUserOAuthProperties(user *User, providerType string) bool {
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang string) (bool, string) {
-	organization := GetOrganizationByUser(oldUser)
+	organization, err := GetOrganizationByUser(oldUser)
+	if err != nil {
+		return false, err.Error()
+	}
+
 	var itemsChanged []*AccountItem
 
 	if oldUser.Owner != newUser.Owner {
@@ -272,6 +295,13 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	oldUserGroupsJson, _ := json.Marshal(oldUser.Groups)
+	newUserGroupsJson, _ := json.Marshal(newUser.Groups)
+	if string(oldUserGroupsJson) != string(newUserGroupsJson) {
+		item := GetAccountItemByName("Groups", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := GetAccountItemByName("Is admin", organization)
 		itemsChanged = append(itemsChanged, item)
@@ -306,7 +336,7 @@ func (user *User) GetCountryCode(countryCode string) string {
 		return user.CountryCode
 	}
 
-	if org := GetOrganizationByUser(user); org != nil && len(org.CountryCodes) > 0 {
+	if org, _ := GetOrganizationByUser(user); org != nil && len(org.CountryCodes) > 0 {
 		return org.CountryCodes[0]
 	}
 	return ""

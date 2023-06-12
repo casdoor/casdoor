@@ -65,6 +65,7 @@ class ApplicationListPage extends BaseListPage {
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
       expireInHours: 24 * 7,
+      refreshExpireInHours: 24 * 7,
       formOffset: 2,
     };
   }
@@ -175,7 +176,7 @@ class ApplicationListPage extends BaseListPage {
         // width: '600px',
         render: (text, record, index) => {
           const providers = text;
-          if (providers.length === 0) {
+          if (providers === null || providers.length === 0) {
             return `(${i18next.t("general:empty")})`;
           }
 
@@ -275,9 +276,11 @@ class ApplicationListPage extends BaseListPage {
     (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
       ApplicationBackend.getApplicationsByOrganization("admin", this.props.account.organization.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -289,9 +292,10 @@ class ApplicationListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

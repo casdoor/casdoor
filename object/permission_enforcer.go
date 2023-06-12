@@ -29,7 +29,11 @@ import (
 func getEnforcer(permission *Permission) *casbin.Enforcer {
 	tableName := "permission_rule"
 	if len(permission.Adapter) != 0 {
-		adapterObj := getCasbinAdapter(permission.Owner, permission.Adapter)
+		adapterObj, err := getCasbinAdapter(permission.Owner, permission.Adapter)
+		if err != nil {
+			panic(err)
+		}
+
 		if adapterObj != nil && adapterObj.Table != "" {
 			tableName = adapterObj.Table
 		}
@@ -42,7 +46,11 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 		panic(err)
 	}
 
-	permissionModel := getModel(permission.Owner, permission.Model)
+	permissionModel, err := getModel(permission.Owner, permission.Model)
+	if err != nil {
+		panic(err)
+	}
+
 	m := model.Model{}
 	if permissionModel != nil {
 		m, err = GetBuiltInModel(permissionModel.ModelText)
@@ -62,7 +70,11 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 		panic(err)
 	}
 
-	enforcer.InitWithModelAndAdapter(m, nil)
+	err = enforcer.InitWithModelAndAdapter(m, nil)
+	if err != nil {
+		panic(err)
+	}
+
 	enforcer.SetAdapter(adapter)
 
 	policyFilter := xormadapter.Filter{
@@ -118,21 +130,30 @@ func getPolicies(permission *Permission) [][]string {
 	return policies
 }
 
-func getRolesInRole(roleId string, visited map[string]struct{}) []*Role {
-	role := GetRole(roleId)
+func getRolesInRole(roleId string, visited map[string]struct{}) ([]*Role, error) {
+	role, err := GetRole(roleId)
+	if err != nil {
+		return []*Role{}, err
+	}
+
 	if role == nil {
-		return []*Role{}
+		return []*Role{}, nil
 	}
 	visited[roleId] = struct{}{}
 
 	roles := []*Role{role}
 	for _, subRole := range role.Roles {
 		if _, ok := visited[subRole]; !ok {
-			roles = append(roles, getRolesInRole(subRole, visited)...)
+			r, err := getRolesInRole(subRole, visited)
+			if err != nil {
+				return []*Role{}, err
+			}
+
+			roles = append(roles, r...)
 		}
 	}
 
-	return roles
+	return roles, nil
 }
 
 func getGroupingPolicies(permission *Permission) [][]string {
@@ -143,8 +164,10 @@ func getGroupingPolicies(permission *Permission) [][]string {
 
 	for _, roleId := range permission.Roles {
 		visited := map[string]struct{}{}
-		rolesInRole := getRolesInRole(roleId, visited)
-
+		rolesInRole, err := getRolesInRole(roleId, visited)
+		if err != nil {
+			panic(err)
+		}
 		for _, role := range rolesInRole {
 			roleId := role.GetId()
 			for _, subUser := range role.Users {
@@ -216,38 +239,46 @@ func removePolicies(permission *Permission) {
 	}
 }
 
-func Enforce(permissionRule *PermissionRule) bool {
-	permission := GetPermission(permissionRule.Id)
-	enforcer := getEnforcer(permission)
+type CasbinRequest = []interface{}
 
-	request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
-
-	allow, err := enforcer.Enforce(request...)
+func Enforce(permissionId string, request *CasbinRequest) (bool, error) {
+	permission, err := GetPermission(permissionId)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
-	return allow
+
+	enforcer := getEnforcer(permission)
+	return enforcer.Enforce(*request...)
 }
 
-func BatchEnforce(permissionRules []PermissionRule) []bool {
-	var requests [][]interface{}
-	for _, permissionRule := range permissionRules {
-		request, _ := permissionRule.GetRequest(builtInAdapter, permissionRule.Id)
-		requests = append(requests, request)
-	}
-	permission := GetPermission(permissionRules[0].Id)
-	enforcer := getEnforcer(permission)
-	allow, err := enforcer.BatchEnforce(requests)
+func BatchEnforce(permissionId string, requests *[]CasbinRequest) ([]bool, error) {
+	permission, err := GetPermission(permissionId)
 	if err != nil {
-		panic(err)
+		res := []bool{}
+		for i := 0; i < len(*requests); i++ {
+			res = append(res, false)
+		}
+
+		return res, err
 	}
-	return allow
+
+	enforcer := getEnforcer(permission)
+	return enforcer.BatchEnforce(*requests)
 }
 
 func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []string {
-	permissions := GetPermissionsByUser(userId)
+	permissions, err := GetPermissionsByUser(userId)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, role := range GetAllRoles(userId) {
-		permissions = append(permissions, GetPermissionsByRole(role)...)
+		permissionsByRole, err := GetPermissionsByRole(role)
+		if err != nil {
+			panic(err)
+		}
+
+		permissions = append(permissions, permissionsByRole...)
 	}
 
 	var values []string
@@ -271,7 +302,11 @@ func GetAllActions(userId string) []string {
 }
 
 func GetAllRoles(userId string) []string {
-	roles := GetRolesByUser(userId)
+	roles, err := GetRolesByUser(userId)
+	if err != nil {
+		panic(err)
+	}
+
 	var res []string
 	for _, role := range roles {
 		res = append(res, role.Name)

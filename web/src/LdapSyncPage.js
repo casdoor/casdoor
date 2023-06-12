@@ -94,7 +94,7 @@ class LdapSyncPage extends React.Component {
         if (res.status === "ok") {
           this.setState((prevState) => {
             prevState.users = res.data.users;
-            prevState.existUuids = res.data2?.length > 0 ? res.data2 : [];
+            prevState.existUuids = res.data.existUuids?.length > 0 ? res.data.existUuids.filter(uuid => uuid !== "") : [];
             return prevState;
           });
         } else {

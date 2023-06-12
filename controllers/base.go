@@ -48,7 +48,7 @@ func (c *ApiController) IsGlobalAdmin() bool {
 
 func (c *ApiController) IsAdmin() bool {
 	isGlobalAdmin, user := c.isGlobalAdmin()
-	if user == nil {
+	if !isGlobalAdmin && user == nil {
 		return false
 	}
 
@@ -72,11 +72,15 @@ func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 
 func (c *ApiController) getCurrentUser() *object.User {
 	var user *object.User
+	var err error
 	userId := c.GetSessionUsername()
 	if userId == "" {
 		user = nil
 	} else {
-		user = object.GetUser(userId)
+		user, err = object.GetUser(userId)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return user
 }
@@ -106,7 +110,11 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	if clientId == nil {
 		return nil
 	}
-	application := object.GetApplicationByClientId(clientId.(string))
+	application, err := object.GetApplicationByClientId(clientId.(string))
+	if err != nil {
+		panic(err)
+	}
+
 	return application
 }
 
@@ -192,8 +200,10 @@ func (c *ApiController) setExpireForSession() {
 	})
 }
 
-func wrapActionResponse(affected bool) *Response {
-	if affected {
+func wrapActionResponse(affected bool, e ...error) *Response {
+	if len(e) != 0 && e[0] != nil {
+		return &Response{Status: "error", Msg: e[0].Error()}
+	} else if affected {
 		return &Response{Status: "ok", Msg: "", Data: "Affected"}
 	} else {
 		return &Response{Status: "ok", Msg: "", Data: "Unaffected"}

@@ -224,13 +224,16 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
+	if application.RefreshExpireInHours == 0 {
+		refreshExpireTime = expireTime
+	}
 
 	user = refineUser(user)
 
 	_, originBackend := getOriginFromHost(host)
 
 	name := util.GenerateId()
-	jti := fmt.Sprintf("%s/%s", application.Owner, name)
+	jti := util.GetId(application.Owner, name)
 
 	claims := Claims{
 		User:      user,
@@ -270,7 +273,10 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
 	}
 
-	cert := getCertByApplication(application)
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return "", "", "", err
+	}
 
 	// RSA private key
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
@@ -313,5 +319,10 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 }
 
 func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
-	return ParseJwtToken(token, getCertByApplication(application))
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return nil, err
+	}
+
+	return ParseJwtToken(token, cert)
 }

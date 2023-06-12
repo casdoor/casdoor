@@ -18,7 +18,10 @@ var globalLdapAutoSynchronizer *LdapAutoSynchronizer
 
 func InitLdapAutoSynchronizer() {
 	globalLdapAutoSynchronizer = NewLdapAutoSynchronizer()
-	globalLdapAutoSynchronizer.LdapAutoSynchronizerStartUpAll()
+	err := globalLdapAutoSynchronizer.LdapAutoSynchronizerStartUpAll()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NewLdapAutoSynchronizer() *LdapAutoSynchronizer {
@@ -37,7 +40,11 @@ func (l *LdapAutoSynchronizer) StartAutoSync(ldapId string) error {
 	l.Lock()
 	defer l.Unlock()
 
-	ldap := GetLdap(ldapId)
+	ldap, err := GetLdap(ldapId)
+	if err != nil {
+		return err
+	}
+
 	if ldap == nil {
 		return fmt.Errorf("ldap %s doesn't exist", ldapId)
 	}
@@ -49,7 +56,12 @@ func (l *LdapAutoSynchronizer) StartAutoSync(ldapId string) error {
 	stopChan := make(chan struct{})
 	l.ldapIdToStopChan[ldapId] = stopChan
 	logs.Info(fmt.Sprintf("autoSync started for %s", ldap.Id))
-	util.SafeGoroutine(func() { l.syncRoutine(ldap, stopChan) })
+	util.SafeGoroutine(func() {
+		err := l.syncRoutine(ldap, stopChan)
+		if err != nil {
+			panic(err)
+		}
+	})
 	return nil
 }
 
@@ -63,18 +75,22 @@ func (l *LdapAutoSynchronizer) StopAutoSync(ldapId string) {
 }
 
 // autosync goroutine
-func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
+func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) error {
 	ticker := time.NewTicker(time.Duration(ldap.AutoSync) * time.Minute)
 	defer ticker.Stop()
 	for {
 		select {
 		case <-stopChan:
 			logs.Info(fmt.Sprintf("autoSync goroutine for %s stopped", ldap.Id))
-			return
+			return nil
 		case <-ticker.C:
 		}
 
-		UpdateLdapSyncTime(ldap.Id)
+		err := UpdateLdapSyncTime(ldap.Id)
+		if err != nil {
+			return err
+		}
+
 		// fetch all users
 		conn, err := ldap.GetLdapConn()
 		if err != nil {
@@ -87,35 +103,48 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) {
 			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
 			continue
 		}
-		existed, failed := SyncLdapUsers(ldap.Owner, LdapUsersToLdapRespUsers(users), ldap.Id)
-		if len(*failed) != 0 {
-			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(*existed)-len(*failed), len(*failed)), *failed)
+
+		existed, failed, err := SyncLdapUsers(ldap.Owner, AutoAdjustLdapUser(users), ldap.Id)
+		if len(failed) != 0 {
+			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(existed)-len(failed), len(failed)), failed)
+			logs.Warning(err.Error())
 		} else {
-			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(*existed), len(*existed)))
+			logs.Info(fmt.Sprintf("ldap autosync success, %d new users, %d existing users", len(users)-len(existed), len(existed)))
 		}
 	}
 }
 
 // LdapAutoSynchronizerStartUpAll
 // start all autosync goroutine for existing ldap servers in each organizations
-func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() {
+func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() error {
 	organizations := []*Organization{}
 	err := adapter.Engine.Desc("created_time").Find(&organizations)
 	if err != nil {
 		logs.Info("failed to Star up LdapAutoSynchronizer; ")
 	}
 	for _, org := range organizations {
-		for _, ldap := range GetLdaps(org.Name) {
+		ldaps, err := GetLdaps(org.Name)
+		if err != nil {
+			return err
+		}
+
+		for _, ldap := range ldaps {
 			if ldap.AutoSync != 0 {
-				l.StartAutoSync(ldap.Id)
+				err = l.StartAutoSync(ldap.Id)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
+	return nil
 }
 
-func UpdateLdapSyncTime(ldapId string) {
+func UpdateLdapSyncTime(ldapId string) error {
 	_, err := adapter.Engine.ID(ldapId).Update(&Ldap{LastSync: util.GetCurrentTime()})
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }

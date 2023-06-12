@@ -23,7 +23,8 @@ import (
 
 type LdapResp struct {
 	// Groups []LdapRespGroup `json:"groups"`
-	Users []object.LdapRespUser `json:"users"`
+	Users      []object.LdapUser `json:"users"`
+	ExistUuids []string          `json:"existUuids"`
 }
 
 //type LdapRespGroup struct {
@@ -32,8 +33,8 @@ type LdapResp struct {
 //}
 
 type LdapSyncResp struct {
-	Exist  []object.LdapRespUser `json:"exist"`
-	Failed []object.LdapRespUser `json:"failed"`
+	Exist  []object.LdapUser `json:"exist"`
+	Failed []object.LdapUser `json:"failed"`
 }
 
 // GetLdapUsers
@@ -44,7 +45,11 @@ func (c *ApiController) GetLdapUsers() {
 	id := c.Input().Get("id")
 
 	_, ldapId := util.GetOwnerAndNameFromId(id)
-	ldapServer := object.GetLdap(ldapId)
+	ldapServer, err := object.GetLdap(ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	conn, err := ldapServer.GetLdapConn()
 	if err != nil {
@@ -71,27 +76,21 @@ func (c *ApiController) GetLdapUsers() {
 		return
 	}
 
-	var resp LdapResp
 	uuids := make([]string, len(users))
-	for _, user := range users {
-		resp.Users = append(resp.Users, object.LdapRespUser{
-			UidNumber: user.UidNumber,
-			Uid:       user.Uid,
-			Cn:        user.Cn,
-			GroupId:   user.GidNumber,
-			// GroupName: groupsMap[user.GidNumber].Cn,
-			Uuid:        user.Uuid,
-			DisplayName: user.DisplayName,
-			Email:       util.GetMaxLenStr(user.Mail, user.Email, user.EmailAddress),
-			Phone:       util.GetMaxLenStr(user.TelephoneNumber, user.Mobile, user.MobileTelephoneNumber),
-			Address:     util.GetMaxLenStr(user.RegisteredAddress, user.PostalAddress),
-		})
-		uuids = append(uuids, user.Uuid)
+	for i, user := range users {
+		uuids[i] = user.GetLdapUuid()
+	}
+	existUuids, err := object.GetExistUuids(ldapServer.Owner, uuids)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
-	existUuids := object.GetExistUuids(ldapServer.Owner, uuids)
-
-	c.ResponseOk(resp, existUuids)
+	resp := LdapResp{
+		Users:      object.AutoAdjustLdapUser(users),
+		ExistUuids: existUuids,
+	}
+	c.ResponseOk(resp)
 }
 
 // GetLdaps
@@ -137,17 +136,23 @@ func (c *ApiController) AddLdap() {
 		return
 	}
 
-	if object.CheckLdapExist(&ldap) {
+	if ok, err := object.CheckLdapExist(&ldap); err != nil {
+		c.ResponseError(err.Error())
+		return
+	} else if ok {
 		c.ResponseError(c.T("ldap:Ldap server exist"))
 		return
 	}
 
-	affected := object.AddLdap(&ldap)
-	resp := wrapActionResponse(affected)
+	resp := wrapActionResponse(object.AddLdap(&ldap))
 	resp.Data2 = ldap
 
 	if ldap.AutoSync != 0 {
-		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		err = object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.Data["json"] = resp
@@ -166,11 +171,24 @@ func (c *ApiController) UpdateLdap() {
 		return
 	}
 
-	prevLdap := object.GetLdap(ldap.Id)
-	affected := object.UpdateLdap(&ldap)
+	prevLdap, err := object.GetLdap(ldap.Id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.UpdateLdap(&ldap)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	if ldap.AutoSync != 0 {
-		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		err := object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	} else if ldap.AutoSync == 0 && prevLdap.AutoSync != 0 {
 		object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	}
@@ -191,7 +209,11 @@ func (c *ApiController) DeleteLdap() {
 		return
 	}
 
-	affected := object.DeleteLdap(&ldap)
+	affected, err := object.DeleteLdap(&ldap)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 
@@ -206,19 +228,23 @@ func (c *ApiController) DeleteLdap() {
 func (c *ApiController) SyncLdapUsers() {
 	owner := c.Input().Get("owner")
 	ldapId := c.Input().Get("ldapId")
-	var users []object.LdapRespUser
+	var users []object.LdapUser
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	object.UpdateLdapSyncTime(ldapId)
+	err = object.UpdateLdapSyncTime(ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	exist, failed := object.SyncLdapUsers(owner, users, ldapId)
+	exist, failed, _ := object.SyncLdapUsers(owner, users, ldapId)
 
 	c.ResponseOk(&LdapSyncResp{
-		Exist:  *exist,
-		Failed: *failed,
+		Exist:  exist,
+		Failed: failed,
 	})
 }

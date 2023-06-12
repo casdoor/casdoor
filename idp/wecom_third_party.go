@@ -75,7 +75,9 @@ func (idp *WeComIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		ProviderSecret string `json:"provider_secret"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret}
 	data, err := idp.postWithBody(pTokenParams, "https://qyapi.weixin.qq.com/cgi-bin/service/get_provider_token")
-
+	if err != nil {
+		return nil, err
+	}
 	pToken := &WeComProviderToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {

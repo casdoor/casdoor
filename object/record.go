@@ -26,11 +26,7 @@ import (
 var logPostOnly bool
 
 func init() {
-	var err error
-	logPostOnly, err = conf.GetConfigBool("logPostOnly")
-	if err != nil {
-		// panic(err)
-	}
+	logPostOnly = conf.GetConfigBool("logPostOnly")
 }
 
 type Record struct {
@@ -47,7 +43,8 @@ type Record struct {
 	RequestUri   string `xorm:"varchar(1000)" json:"requestUri"`
 	Action       string `xorm:"varchar(1000)" json:"action"`
 
-	ExtendedUser *User `xorm:"-" json:"extendedUser"`
+	Object       string `xorm:"-" json:"object"`
+	ExtendedUser *User  `xorm:"-" json:"extendedUser"`
 
 	IsTriggered bool `json:"isTriggered"`
 }
@@ -60,6 +57,11 @@ func NewRecord(ctx *context.Context) *Record {
 		requestUri = requestUri[0:1000]
 	}
 
+	object := ""
+	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
+		object = string(ctx.Input.RequestBody)
+	}
+
 	record := Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
@@ -68,6 +70,7 @@ func NewRecord(ctx *context.Context) *Record {
 		Method:      ctx.Request.Method,
 		RequestUri:  requestUri,
 		Action:      action,
+		Object:      object,
 		IsTriggered: false,
 	}
 	return &record
@@ -101,49 +104,48 @@ func AddRecord(record *Record) bool {
 	return affected != 0
 }
 
-func GetRecordCount(field, value string, filterRecord *Record) int {
+func GetRecordCount(field, value string, filterRecord *Record) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
-	count, err := session.Count(filterRecord)
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(filterRecord)
 }
 
-func GetRecords() []*Record {
+func GetRecords() ([]*Record, error) {
 	records := []*Record{}
 	err := adapter.Engine.Desc("id").Find(&records)
 	if err != nil {
-		panic(err)
+		return records, err
 	}
 
-	return records
+	return records, nil
 }
 
-func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *Record) []*Record {
+func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *Record) ([]*Record, error) {
 	records := []*Record{}
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&records, filterRecord)
 	if err != nil {
-		panic(err)
+		return records, err
 	}
 
-	return records
+	return records, nil
 }
 
-func GetRecordsByField(record *Record) []*Record {
+func GetRecordsByField(record *Record) ([]*Record, error) {
 	records := []*Record{}
 	err := adapter.Engine.Find(&records, record)
 	if err != nil {
-		panic(err)
+		return records, err
 	}
 
-	return records
+	return records, nil
 }
 
 func SendWebhooks(record *Record) error {
-	webhooks := getWebhooksByOrganization(record.Organization)
+	webhooks, err := getWebhooksByOrganization(record.Organization)
+	if err != nil {
+		return err
+	}
+
 	for _, webhook := range webhooks {
 		if !webhook.IsEnabled {
 			continue
@@ -159,7 +161,11 @@ func SendWebhooks(record *Record) error {
 
 		if matched {
 			if webhook.IsUserExtended {
-				user := getUser(record.Organization, record.User)
+				user, err := GetMaskedUser(getUser(record.Organization, record.User))
+				if err != nil {
+					return err
+				}
+
 				record.ExtendedUser = user
 			}
 
