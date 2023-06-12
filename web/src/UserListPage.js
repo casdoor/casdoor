@@ -75,7 +75,7 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
-      groups: this.props.groupId !== undefined ? [this.props.groupId] : [],
+      groups: this.props.groupId !== "" ? [this.props.groupId] : [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
@@ -142,10 +142,12 @@ class UserListPage extends BaseListPage {
 
   getOrganization(organizationName) {
     OrganizationBackend.getOrganization("admin", organizationName)
-      .then((organization) => {
-        this.setState({
-          organization: organization,
-        });
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            organization: res.data,
+          });
+        }
       });
   }
 

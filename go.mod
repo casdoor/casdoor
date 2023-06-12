@@ -59,6 +59,7 @@ require (
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
+	github.com/xorm-io/builder v0.3.13 // indirect
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect

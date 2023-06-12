@@ -131,7 +131,7 @@ class App extends Component {
     });
     if (uri === "/") {
       this.setState({selectedMenuKey: "/"});
-    } else if (uri.includes("/organizations")) {
+    } else if (uri.includes("/organizations") || uri.includes("/trees")) {
       this.setState({selectedMenuKey: "/organizations"});
     } else if (uri.includes("/users")) {
       this.setState({selectedMenuKey: "/users"});
@@ -410,15 +410,13 @@ class App extends Component {
 
     res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
         "/organizations"));
 
       res.push(Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>,
         "/groups"));
-    }
 
-    if (Setting.isLocalAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>,
         "/users"
       ));
@@ -560,8 +558,8 @@ class App extends Component {
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/group-tree/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
-        <Route exact path="/group-tree/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/trees/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/trees/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
         <Route exact path="/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupListPage account={this.state.account} {...props} />)} />
         <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
@@ -632,7 +630,7 @@ class App extends Component {
 
   isWithoutCard() {
     return Setting.isMobile() || window.location.pathname === "/chat" ||
-      window.location.pathname.startsWith("/group-tree");
+      window.location.pathname.startsWith("/trees");
   }
 
   renderContent() {

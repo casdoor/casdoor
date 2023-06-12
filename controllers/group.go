@@ -143,5 +143,6 @@ func (c *ApiController) DeleteGroup() {
 		return
 	}
 
-	c.ResponseOk(wrapActionResponse(object.DeleteGroup(&group)))
+	c.Data["json"] = wrapActionResponse(object.DeleteGroup(&group))
+	c.ServeJSON()
 }

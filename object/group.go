@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
@@ -158,8 +159,41 @@ func AddGroups(groups []*Group) (bool, error) {
 }
 
 func DeleteGroup(group *Group) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	_, err := adapter.Engine.Get(group)
 	if err != nil {
+		return false, err
+	}
+
+	if count, err := adapter.Engine.Where("parent_group_id = ?", group.Id).Count(&Group{}); err != nil {
+		return false, err
+	} else if count > 0 {
+		return false, errors.New("group has children group")
+	}
+
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	if err := session.Begin(); err != nil {
+		return false, err
+	}
+
+	if _, err := session.Where("group_id = ?", group.Id).Delete(&UserGroupRelation{}); err != nil {
+		session.Rollback()
+		return false, err
+	}
+
+	if _, err := session.Exec("UPDATE user SET `groups` = REPLACE(`groups`, ?, '') WHERE `groups` LIKE ?", group.Id, "%"+group.Id+"%"); err != nil {
+		session.Rollback()
+		return false, err
+	}
+
+	affected, err := session.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	if err != nil {
+		session.Rollback()
+		return false, err
+	}
+
+	if err := session.Commit(); err != nil {
 		return false, err
 	}
 

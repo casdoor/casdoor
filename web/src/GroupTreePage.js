@@ -27,6 +27,7 @@ class GroupTreePage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       groupName: this.props.match?.params.groupName,
       groupId: "",
@@ -52,9 +53,8 @@ class GroupTreePage extends React.Component {
   getTreeData() {
     GroupBackend.getGroups(this.state.organizationName, true).then((res) => {
       if (res.status === "ok") {
-        const tree = res.data;
         this.setState({
-          treeData: tree,
+          treeData: res.data,
         });
       } else {
         Setting.showMessage("error", res.msg);
@@ -121,6 +121,7 @@ class GroupTreePage extends React.Component {
                 this.props.history.push(`/groups/${this.state.organizationName}/${treeData.key}`);
               }}
             />
+            {!haveChildren &&
             <DeleteOutlined
               style={{
                 visibility: "visible",
@@ -155,6 +156,7 @@ class GroupTreePage extends React.Component {
                   });
               }}
             />
+            }
           </React.Fragment>
         )}
       </Space>,
@@ -185,7 +187,7 @@ class GroupTreePage extends React.Component {
         groupName: info.node.key,
         groupId: info.node.id,
       });
-      this.props.history.push(`/group-tree/${this.state.organizationName}/${info.node.key}`);
+      this.props.history.push(`/trees/${this.state.organizationName}/${info.node.key}`);
     };
     const onExpand = (expandedKeysValue) => {
       this.setState({
@@ -203,6 +205,7 @@ class GroupTreePage extends React.Component {
         blockNode={true}
         defaultSelectedKeys={[this.state.groupName]}
         defaultExpandAll={true}
+        selectedKeys={this.state.selectedKeys}
         expandedKeys={this.state.expandedKeys}
         onSelect={onSelect}
         onExpand={onExpand}
@@ -213,16 +216,18 @@ class GroupTreePage extends React.Component {
   }
 
   renderOrganizationSelect() {
-    return <OrganizationSelect
-      initValue={this.state.organizationName}
-      style={{width: "100%"}}
-      onChange={(value) => {
-        this.setState({
-          organizationName: value,
-        });
-        this.props.history.push(`/group-tree/${value}`);
-      }}
-    />;
+    if (Setting.isAdminUser()) {
+      return <OrganizationSelect
+        initValue={this.state.organizationName}
+        style={{width: "100%"}}
+        onChange={(value) => {
+          this.setState({
+            organizationName: value,
+          });
+          this.props.history.push(`/trees/${value}`);
+        }}
+      />;
+    }
   }
 
   newGroup(isRoot) {
@@ -276,16 +281,15 @@ class GroupTreePage extends React.Component {
                 <Button
                   onClick={() => {
                     this.setState({
+                      selectedKeys: [],
                       groupName: null,
                       groupId: null,
                     });
-                    this.props.history.push(`/group-tree/${this.state.organizationName}`);
+                    this.props.history.push(`/trees/${this.state.organizationName}`);
                   }}>
                   {i18next.t("group:Show organization users")}
                 </Button>
-                <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}}
-                  onClick={() => this.addGroup(true)}
-                >
+                <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}} onClick={() => this.addGroup(true)}>
                   {i18next.t("general:Add")}
                 </Button>
               </Col>

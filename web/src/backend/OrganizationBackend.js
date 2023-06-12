@@ -24,8 +24,8 @@ export function getOrganizations(owner, page = "", pageSize = "", field = "", va
   }).then(res => res.json());
 }
 
-export function getOrganization(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-organization?id=${owner}/${encodeURIComponent(name)}`, {
+export function getOrganization(owner, name, isArray = false) {
+  return fetch(`${Setting.ServerUrl}/api/get-organization?id=${owner}/${encodeURIComponent(name)}&isArray=${isArray}`, {
     method: "GET",
     credentials: "include",
     headers: {

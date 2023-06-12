@@ -74,14 +74,18 @@ func (c *ApiController) GetOrganizations() {
 // @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
+	isArray := c.Input().Get("isArray")
 
 	maskedOrganization, err := object.GetMaskedOrganization(object.GetOrganization(id))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
 	}
 
-	c.Data["json"] = maskedOrganization
-	c.ServeJSON()
+	if isArray == "true" {
+		c.ResponseOk([]object.Organization{*maskedOrganization})
+		return
+	}
+	c.ResponseOk(maskedOrganization)
 }
 
 // UpdateOrganization ...
