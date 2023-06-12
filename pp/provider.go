@@ -17,8 +17,8 @@ package pp
 import "net/http"
 
 type PaymentProvider interface {
-	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error)
-	Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error)
+	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
+	Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
 }

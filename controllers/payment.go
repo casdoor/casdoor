@@ -178,10 +178,11 @@ func (c *ApiController) NotifyPayment() {
 	providerName := c.Ctx.Input.Param(":provider")
 	productName := c.Ctx.Input.Param(":product")
 	paymentName := c.Ctx.Input.Param(":payment")
+	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
+	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
 
 	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
 	if err2 != nil {
