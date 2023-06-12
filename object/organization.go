@@ -334,6 +334,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
+	group := new(Group)
+	group.Owner = newName
+	_, err = session.Where("owner=?", oldName).Update(group)
+	if err != nil {
+		return err
+	}
+
 	role := new(Role)
 	_, err = adapter.Engine.Where("owner=?", oldName).Get(role)
 	if err != nil {

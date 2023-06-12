@@ -528,7 +528,7 @@ func (c *ApiController) Login() {
 					}
 
 					properties := map[string]string{}
-					count, err := object.GetUserCount(application.Organization, "", "")
+					count, err := object.GetUserCount(application.Organization, "", "", "")
 					if err != nil {
 						c.ResponseError(err.Error())
 						return

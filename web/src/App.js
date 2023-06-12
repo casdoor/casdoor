@@ -15,6 +15,9 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
+import GroupTreePage from "./GroupTreePage";
+import GroupEditPage from "./GroupEdit";
+import GroupListPage from "./GroupList";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
@@ -132,6 +135,8 @@ class App extends Component {
       this.setState({selectedMenuKey: "/organizations"});
     } else if (uri.includes("/users")) {
       this.setState({selectedMenuKey: "/users"});
+    } else if (uri.includes("/groups")) {
+      this.setState({selectedMenuKey: "/groups"});
     } else if (uri.includes("/roles")) {
       this.setState({selectedMenuKey: "/roles"});
     } else if (uri.includes("/permissions")) {
@@ -408,6 +413,9 @@ class App extends Component {
     if (Setting.isAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
         "/organizations"));
+
+      res.push(Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>,
+        "/groups"));
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
@@ -552,6 +560,10 @@ class App extends Component {
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/group-tree/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/group-tree/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
         <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)} />
@@ -618,6 +630,11 @@ class App extends Component {
     });
   };
 
+  isWithoutCard() {
+    return Setting.isMobile() || window.location.pathname === "/chat" ||
+      window.location.pathname.startsWith("/group-tree");
+  }
+
   renderContent() {
     const onClick = ({key}) => {
       if (key === "/swagger") {
@@ -628,7 +645,6 @@ class App extends Component {
     };
     return (
       <Layout id="parent-area">
-        {/* https://github.com/ant-design/ant-design/issues/40394 ant design bug. If it will be fixed, we can delete the code for control the color of Header*/}
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
@@ -664,7 +680,7 @@ class App extends Component {
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >
-          {(Setting.isMobile() || window.location.pathname === "/chat") ?
+          {this.isWithoutCard() ?
             this.renderRouter() :
             <Card className="content-warp-card">
               {this.renderRouter()}

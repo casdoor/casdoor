@@ -77,6 +77,7 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	Groups            []string `xorm:"varchar(1000)" json:"groups"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -218,8 +219,20 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string) (int64, error) {
+func GetUserCount(owner, field, value string, groupId string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
+
+	if groupId != "" {
+		group, err := GetGroup(groupId)
+		if group == nil || err != nil {
+			return 0, err
+		}
+		// users count in group
+		return adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+			Where("user_group_relation.group_id = ?", group.Id).
+			Count(&UserGroupRelation{})
+	}
+
 	return session.Count(&User{})
 }
 
@@ -257,10 +270,44 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupId string) ([]*User, error) {
 	users := []*User{}
+
+	if groupId != "" {
+		group, err := GetGroup(groupId)
+		if group == nil || err != nil {
+			return []*User{}, err
+		}
+
+		session := adapter.Engine.Prepare()
+		if offset != -1 && limit != -1 {
+			session.Limit(limit, offset)
+		}
+
+		err = session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+			Where("user_group_relation.group_id = ?", group.Id).
+			Find(&users)
+		return users, err
+	}
+
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetUsersByGroup(groupId string) ([]*User, error) {
+	group, err := GetGroup(groupId)
+	if group == nil || err != nil {
+		return []*User{}, err
+	}
+
+	users := []*User{}
+	err = adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
+		Where("user_group_relation.group_id = ?", group.Id).
+		Find(&users)
 	if err != nil {
 		return nil, err
 	}
@@ -479,7 +526,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"owner", "display_name", "avatar",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
-			"signin_wrong_times", "last_signin_wrong_time",
+			"signin_wrong_times", "last_signin_wrong_time", "groups",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
@@ -493,12 +540,41 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
+	affected, err := updateUser(oldUser, user, columns)
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
+}
+
+func updateUser(oldUser, user *User, columns []string) (int64, error) {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	session.Begin()
+
+	if util.ContainsString(columns, "groups") {
+		affected, err := updateGroupRelation(session, user)
+		if err != nil {
+			session.Rollback()
+			return affected, err
+		}
+	}
+
+	affected, err := session.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+	if err != nil {
+		session.Rollback()
+		return affected, err
+	}
+
+	err = session.Commit()
+	if err != nil {
+		session.Rollback()
+		return 0, err
+	}
+
+	return affected, nil
 }
 
 func UpdateUserForAllFields(id string, user *User) (bool, error) {
@@ -580,7 +656,7 @@ func AddUser(user *User) (bool, error) {
 		}
 	}
 
-	count, err := GetUserCount(user.Owner, "", "")
+	count, err := GetUserCount(user.Owner, "", "", "")
 	if err != nil {
 		return false, err
 	}

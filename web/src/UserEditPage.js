@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -32,7 +33,7 @@ import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
-import {CheckCircleOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import {SmsMfaType} from "./auth/MfaSetupPage";
 import * as MfaBackend from "./backend/MfaBackend";
 
@@ -47,6 +48,7 @@ class UserEditPage extends React.Component {
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       application: null,
+      groups: null,
       organizations: [],
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -61,6 +63,12 @@ class UserEditPage extends React.Component {
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.application !== this.state.application) {
+      this.getGroups(this.state.organizationName);
+    }
   }
 
   getUser() {
@@ -107,7 +115,24 @@ class UserEditPage extends React.Component {
         this.setState({
           application: application,
         });
+
+        this.setState({
+          isGroupsVisible: application.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+        });
       });
+  }
+
+  getGroups(organizationName) {
+    if (this.state.isGroupsVisible) {
+      GroupBackend.getGroups(organizationName)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              groups: res.data,
+            });
+          }
+        });
+    }
   }
 
   setReturnUrl() {
@@ -212,14 +237,6 @@ class UserEditPage extends React.Component {
 
     const isAdmin = Setting.isAdminUser(this.props.account);
 
-    // return (
-    //   <div>
-    //     {
-    //       JSON.stringify({accountItem: accountItem, isSelf: isSelf, isAdmin: isAdmin})
-    //     }
-    //   </div>
-    // )
-
     if (accountItem.viewRule === "Self") {
       if (!this.isSelfOrAdmin()) {
         return null;
@@ -259,9 +276,39 @@ class UserEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
               this.getApplicationsByOrganization(value);
               this.updateUserField("owner", value);
+              this.getGroups(value);
             })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Groups") {
+      return (
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Groups"), i18next.t("general:Groups - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
+              if (this.state.groups?.filter(group => value.includes(group.id))
+                .filter(group => group.type === "Physical").length > 1) {
+                Setting.showMessage("error", i18next.t("general:You can only select one physical group"));
+                return;
+              }
+
+              this.updateUserField("groups", value);
+            })}
+            >
+              {
+                this.state.groups?.map((group) => <Option key={group.id} value={group.id}>
+                  <Space>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>
+                </Option>)
               }
             </Select>
           </Col>
@@ -925,7 +972,12 @@ class UserEditPage extends React.Component {
     UserBackend.deleteUser(this.state.user)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push("/users");
+          const userListUrl = sessionStorage.getItem("userListUrl");
+          if (userListUrl !== null) {
+            this.props.history.push(userListUrl);
+          } else {
+            this.props.history.push("/users");
+          }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

@@ -27,18 +27,41 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class UserListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.state = {
+      ...this.state,
+      organizationName: this.props.organizationName ?? this.props.match?.params.organizationName ?? this.props.account.owner,
+      organization: null,
+    };
   }
 
-  componentDidMount() {
-    this.setState({
-      organizationName: this.props.match.params.organizationName,
-      organization: null,
-    });
+  UNSAFE_componentWillMount() {
+    super.UNSAFE_componentWillMount();
+    this.getOrganization(this.state.organizationName);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.match.path !== prevProps.match.path || this.props.organizationName !== prevProps.organizationName) {
+      this.setState({
+        organizationName: this.props.organizationName ?? this.props.match?.params.organizationName,
+      });
+    }
+
+    if (this.state.organizationName !== prevState.organizationName) {
+      this.getOrganization(this.state.organizationName);
+    }
+
+    if (prevProps.groupName !== this.props.groupName || this.state.organizationName !== prevState.organizationName) {
+      this.fetch({
+        pagination: this.state.pagination,
+        searchText: this.state.searchText,
+        searchedColumn: this.state.searchedColumn,
+      });
+    }
   }
 
   newUser() {
     const randomName = Setting.getRandomName();
-    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
+    const owner = this.state.organizationName;
     return {
       owner: owner,
       name: `user_${randomName}`,
@@ -52,6 +75,7 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
+      groups: this.props.groupId !== undefined ? [this.props.groupId] : [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
@@ -114,6 +138,15 @@ class UserListPage extends BaseListPage {
     } else if (status === "error") {
       Setting.showMessage("error", "File failed to upload");
     }
+  }
+
+  getOrganization(organizationName) {
+    OrganizationBackend.getOrganization("admin", organizationName)
+      .then((organization) => {
+        this.setState({
+          organization: organization,
+        });
+      });
   }
 
   renderUpload() {
@@ -388,7 +421,7 @@ class UserListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    if (this.props.match.params.organizationName === undefined) {
+    if (this.props.match?.path === "/users") {
       (Setting.isAdminUser(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           this.setState({
@@ -404,15 +437,7 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
-
-            const users = res.data;
-            if (users.length > 0) {
-              this.getOrganization(users[0].owner);
-            } else {
-              this.getOrganization(this.state.organizationName);
-            }
           } else {
-
             if (Setting.isResponseDenied(res)) {
               this.setState({
                 isAuthorized: false,
@@ -423,7 +448,9 @@ class UserListPage extends BaseListPage {
           }
         });
     } else {
-      UserBackend.getUsers(this.props.match.params.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      (this.props.groupName ?
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, `${this.state.organizationName}/${this.props.groupName}`) :
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           this.setState({
             loading: false,
@@ -438,13 +465,6 @@ class UserListPage extends BaseListPage {
               searchText: params.searchText,
               searchedColumn: params.searchedColumn,
             });
-
-            const users = res.data;
-            if (users.length > 0) {
-              this.getOrganization(users[0].owner);
-            } else {
-              this.getOrganization(this.state.organizationName);
-            }
           } else {
             if (Setting.isResponseDenied(res)) {
               this.setState({
@@ -457,15 +477,6 @@ class UserListPage extends BaseListPage {
         });
     }
   };
-
-  getOrganization(organizationName) {
-    OrganizationBackend.getOrganization("admin", organizationName)
-      .then((organization) => {
-        this.setState({
-          organization: organization,
-        });
-      });
-  }
 }
 
 export default UserListPage;

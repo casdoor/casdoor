@@ -80,6 +80,7 @@ func (c *ApiController) GetGlobalUsers() {
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
+	groupId := c.Input().Get("groupId")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -88,6 +89,16 @@ func (c *ApiController) GetUsers() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
+		if groupId != "" {
+			maskedUsers, err := object.GetMaskedUsers(object.GetUsersByGroup(groupId))
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			c.ResponseOk(maskedUsers)
+			return
+		}
+
 		maskedUsers, err := object.GetMaskedUsers(object.GetUsers(owner))
 		if err != nil {
 			panic(err)
@@ -97,14 +108,14 @@ func (c *ApiController) GetUsers() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value)
+		count, err := object.GetUserCount(owner, field, value, groupId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -287,7 +298,7 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	count, err := object.GetUserCount("", "", "")
+	count, err := object.GetUserCount("", "", "", "")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -505,7 +516,7 @@ func (c *ApiController) GetUserCount() {
 	var count int64
 	var err error
 	if isOnline == "" {
-		count, err = object.GetUserCount(owner, "", "")
+		count, err = object.GetUserCount(owner, "", "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}
