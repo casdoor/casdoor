@@ -182,7 +182,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if _, err := session.Exec("UPDATE user SET `groups` = REPLACE(`groups`, ?, '') WHERE `groups` LIKE ?", group.Id, "%"+group.Id+"%"); err != nil {
+	if _, err := session.Exec("UPDATE user SET `groups` = REGEXP_REPLACE(`groups`, ?, '') WHERE `groups` REGEXP ?", fmt.Sprintf("(^|,)\\s*%s\\s*(,|$)", group.Id), fmt.Sprintf("(^|,)\\s*%s\\s*(,|$)", group.Id)); err != nil {
 		session.Rollback()
 		return false, err
 	}

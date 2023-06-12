@@ -32,7 +32,7 @@ class GroupTreePage extends React.Component {
       groupName: this.props.match?.params.groupName,
       groupId: "",
       treeData: [],
-      selectedKeys: [],
+      selectedKeys: [this.props.match?.params.groupName],
     };
   }
 
