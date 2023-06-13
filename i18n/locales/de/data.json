@@ -119,10 +119,14 @@
     "Token not found, invalid accessToken": "Token nicht gefunden, ungültiger Zugriffs-Token"
   },
   "user": {
+    "Aa123": "Aa123",
+    "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Anzeigename darf nicht leer sein",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
-    "New password must have at least 6 characters": "Das neue Passwort muss mindestens 6 Zeichen haben"
+    "New password must have at least 6 characters": "Das neue Passwort muss mindestens 6 Zeichen haben",
+    "NoRepeat": "NoRepeat",
+    "SpecialChar": "SpecialChar"
   },
   "user_upload": {
     "Failed to import users": "Fehler beim Importieren von Benutzern"

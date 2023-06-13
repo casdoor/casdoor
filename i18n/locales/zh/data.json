@@ -119,10 +119,14 @@
     "Token not found, invalid accessToken": "未查询到对应token, accessToken无效"
   },
   "user": {
+    "Aa123": "密码至少需要包含一个大写字母、一个小写字母和一个数字",
+    "AtLeast8": "密码长度至少为8位",
     "Display name cannot be empty": "显示名称不可为空",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "新密码不可以包含空格",
-    "New password must have at least 6 characters": "新密码至少需要6位字符"
+    "New password must have at least 6 characters": "新密码至少需要6位字符",
+    "NoRepeat": "密码不能包含连续字符",
+    "SpecialChar": "密码必须包括特殊字符（如!@#$%^&*等）"
   },
   "user_upload": {
     "Failed to import users": "导入用户失败"

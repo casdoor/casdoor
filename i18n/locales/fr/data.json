@@ -119,10 +119,14 @@
     "Token not found, invalid accessToken": "Jeton non trouvé, accessToken invalide"
   },
   "user": {
+    "Aa123": "Aa123",
+    "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Le nom d'affichage ne peut pas être vide",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "Le nouveau mot de passe ne peut pas contenir d'espace.",
-    "New password must have at least 6 characters": "Le nouveau mot de passe doit comporter au moins 6 caractères"
+    "New password must have at least 6 characters": "Le nouveau mot de passe doit comporter au moins 6 caractères",
+    "NoRepeat": "NoRepeat",
+    "SpecialChar": "SpecialChar"
   },
   "user_upload": {
     "Failed to import users": "Échec de l'importation des utilisateurs"

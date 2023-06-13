@@ -119,10 +119,14 @@
     "Token not found, invalid accessToken": "Токен не найден, недействительный accessToken"
   },
   "user": {
+    "Aa123": "Aa123",
+    "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Отображаемое имя не может быть пустым",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "Новый пароль не может содержать пробелы.",
-    "New password must have at least 6 characters": "Новый пароль должен содержать не менее 6 символов"
+    "New password must have at least 6 characters": "Новый пароль должен содержать не менее 6 символов",
+    "NoRepeat": "NoRepeat",
+    "SpecialChar": "SpecialChar"
   },
   "user_upload": {
     "Failed to import users": "Не удалось импортировать пользователей"

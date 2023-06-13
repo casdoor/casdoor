@@ -213,6 +213,16 @@ func CheckPasswordComplexity(user *User, password string, lang string) string {
 	return ""
 }
 
+func CheckPasswordComplexityByOrg(organization *Organization, password string, lang string) string {
+	// check if password match all complexity options
+	pwdComplexOptionList := organization.PasswordComplexOptions
+	msg := CheckPasswordComplexOption(password, pwdComplexOptionList, lang)
+	if msg != "" {
+		return msg
+	}
+	return ""
+}
+
 func CheckPasswordComplexOption(password string, complexOptions []string, lang string) string {
 	validators := map[string]ValidatorFunc{
 		/*
@@ -238,8 +248,15 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 		}
 		pwdCheckRes := validateFunc(password)
 		if pwdCheckRes != "" {
+			// TODO: better log
 			return i18n.Translate(lang, "user:"+pwdCheckRes)
+			//possible_log : "user:%s"
+			// i18n.Translate(lang, "user:AtLeast8")
+			// i18n.Translate(lang, "user:Aa123")
+			// i18n.Translate(lang, "user:NoRepeat")
+			// i18n.Translate(lang, "user:SpecialChar")
 		}
+
 	}
 	return ""
 }

@@ -140,6 +140,14 @@ func (c *ApiController) Signup() {
 		username = id
 	}
 
+	password := authForm.Password
+
+	msg = object.CheckPasswordComplexityByOrg(organization, password, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	initScore, err := organization.GetInitScore()
 	if err != nil {
 		c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())

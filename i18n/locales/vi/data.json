@@ -119,10 +119,14 @@
     "Token not found, invalid accessToken": "Token không tìm thấy, accessToken không hợp lệ"
   },
   "user": {
+    "Aa123": "Aa123",
+    "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Tên hiển thị không thể trống",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
-    "New password must have at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự"
+    "New password must have at least 6 characters": "Mật khẩu mới phải có ít nhất 6 ký tự",
+    "NoRepeat": "NoRepeat",
+    "SpecialChar": "SpecialChar"
   },
   "user_upload": {
     "Failed to import users": "Không thể nhập người dùng"
