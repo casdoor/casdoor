@@ -91,6 +91,7 @@ class AccountTable extends React.Component {
       {name: "Karma", label: i18next.t("user:Karma")},
       {name: "Ranking", label: i18next.t("user:Ranking")},
       {name: "Signup application", label: i18next.t("general:Signup application")},
+      {name: "API key", label: i18next.t("general:API key")},
       {name: "Roles", label: i18next.t("general:Roles")},
       {name: "Permissions", label: i18next.t("general:Permissions")},
       {name: "Groups", label: i18next.t("general:Groups")},

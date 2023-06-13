@@ -45,6 +45,17 @@ export function getUser(owner, name) {
   }).then(res => res.json());
 }
 
+export function addUserKeys(user) {
+  return fetch(`${Setting.ServerUrl}/api/add-user-keys`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(user),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function updateUser(owner, name, user) {
   const newUser = Setting.deepCopy(user);
   return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
