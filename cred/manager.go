@@ -15,8 +15,8 @@
 package cred
 
 type CredManager interface {
-	GetHashedPassword(password string, userSalt string, organizationSalt string) string
-	IsPasswordCorrect(password string, passwordHash string, userSalt string, organizationSalt string) bool
+	GetHashedPassword(password string, passwordSalt string) string
+	IsPasswordCorrect(password string, passwordHash string, passwordSalt string) bool
 }
 
 func GetCredManager(passwordType string) CredManager {

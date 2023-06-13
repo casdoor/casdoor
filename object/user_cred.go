@@ -14,7 +14,14 @@
 
 package object
 
-import "github.com/casdoor/casdoor/cred"
+import (
+	"math/rand"
+	"time"
+
+	"github.com/casdoor/casdoor/cred"
+)
+
+const saltLenth = 16
 
 func calculateHash(user *User) (string, error) {
 	syncer, err := getDbSyncerForUser(user)
@@ -42,8 +49,21 @@ func (user *User) UpdateUserHash() error {
 func (user *User) UpdateUserPassword(organization *Organization) {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
-		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
+		user.PasswordSalt = getRandomString(saltLenth)
+		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt)
 		user.Password = hashedPassword
 		user.PasswordType = organization.PasswordType
 	}
+}
+
+func getRandomString(n int) string {
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+}{|?><:`'.,")
+
+	rand.Seed(time.Now().UnixNano())
+	s := make([]rune, n)
+	for i := range s {
+		ix := rand.Intn(len(letters))
+		s[i] = letters[ix]
+	}
+	return string(s)
 }

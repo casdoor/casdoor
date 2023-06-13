@@ -186,13 +186,13 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 	credManager := cred.GetCredManager(passwordType)
 	if credManager != nil {
 		if organization.MasterPassword != "" {
-			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
+			if credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
 				resetUserSigninErrorTimes(user)
 				return ""
 			}
 		}
 
-		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
+		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
 			resetUserSigninErrorTimes(user)
 			return ""
 		}

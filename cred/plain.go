@@ -21,10 +21,10 @@ func NewPlainCredManager() *PlainCredManager {
 	return cm
 }
 
-func (cm *PlainCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *PlainCredManager) GetHashedPassword(password string, userSalt string) string {
 	return password
 }
 
-func (cm *PlainCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
+func (cm *PlainCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string) bool {
 	return hashedPwd == plainPwd
 }
