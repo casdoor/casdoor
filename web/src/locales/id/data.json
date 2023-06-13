@@ -188,6 +188,7 @@
     "Close": "Tutup",
     "Confirm": "Confirm",
     "Created time": "Waktu dibuat",
+    "Custom": "Custom",
     "Default application": "Aplikasi default",
     "Default application - Tooltip": "Aplikasi default untuk pengguna yang terdaftar langsung dari halaman organisasi",
     "Default avatar": "Avatar default",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

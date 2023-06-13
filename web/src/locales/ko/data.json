@@ -188,6 +188,7 @@
     "Close": "닫다",
     "Confirm": "Confirm",
     "Created time": "작성한 시간",
+    "Custom": "Custom",
     "Default application": "기본 애플리케이션",
     "Default application - Tooltip": "조직 페이지에서 직접 등록한 사용자의 기본 응용 프로그램",
     "Default avatar": "기본 아바타",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

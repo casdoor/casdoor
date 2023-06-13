@@ -188,6 +188,7 @@
     "Close": "Đóng lại",
     "Confirm": "Confirm",
     "Created time": "Thời gian tạo",
+    "Custom": "Custom",
     "Default application": "Ứng dụng mặc định",
     "Default application - Tooltip": "Ứng dụng mặc định cho người dùng đăng ký trực tiếp từ trang tổ chức",
     "Default avatar": "Hình đại diện mặc định",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

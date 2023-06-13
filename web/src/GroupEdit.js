@@ -44,6 +44,11 @@ class GroupEditPage extends React.Component {
     GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
       .then((res) => {
         if (res.status === "ok") {
+          if (res.data === null) {
+            this.props.history.push("/404");
+            return;
+          }
+
           this.setState({
             group: res.data,
           });

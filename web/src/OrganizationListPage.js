@@ -273,9 +273,7 @@ class OrganizationListPage extends BaseListPage {
       value = params.passwordType;
     }
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ?
-      OrganizationBackend.getOrganizations("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-      OrganizationBackend.getOrganization("admin", this.props.account.owner, true))
+    OrganizationBackend.getOrganizations("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

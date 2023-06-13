@@ -74,16 +74,9 @@ func (c *ApiController) GetOrganizations() {
 // @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
-	isArray := c.Input().Get("isArray")
-
 	maskedOrganization, err := object.GetMaskedOrganization(object.GetOrganization(id))
 	if err != nil {
 		c.ResponseError(err.Error())
-	}
-
-	if isArray == "true" {
-		c.ResponseOk([]object.Organization{*maskedOrganization})
-		return
 	}
 	c.ResponseOk(maskedOrganization)
 }

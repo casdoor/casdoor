@@ -188,6 +188,7 @@
     "Close": "Fechar",
     "Confirm": "Confirm",
     "Created time": "Hora de Criação",
+    "Custom": "Custom",
     "Default application": "Aplicação padrão",
     "Default application - Tooltip": "Aplicação padrão para usuários registrados diretamente na página da organização",
     "Default avatar": "Avatar padrão",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

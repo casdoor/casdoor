@@ -188,6 +188,7 @@
     "Close": "閉じる",
     "Confirm": "Confirm",
     "Created time": "作成された時間",
+    "Custom": "Custom",
     "Default application": "デフォルトアプリケーション",
     "Default application - Tooltip": "組織ページから直接登録されたユーザーのデフォルトアプリケーション",
     "Default avatar": "デフォルトのアバター",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

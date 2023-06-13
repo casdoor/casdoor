@@ -188,6 +188,7 @@
     "Close": "Cerca",
     "Confirm": "Confirm",
     "Created time": "Tiempo creado",
+    "Custom": "Custom",
     "Default application": "Aplicación predeterminada",
     "Default application - Tooltip": "Aplicación predeterminada para usuarios registrados directamente desde la página de la organización",
     "Default avatar": "Avatar predeterminado",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

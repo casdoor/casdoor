@@ -217,16 +217,18 @@ class GroupTreePage extends React.Component {
 
   renderOrganizationSelect() {
     if (Setting.isAdminUser()) {
-      return <OrganizationSelect
-        initValue={this.state.organizationName}
-        style={{width: "100%"}}
-        onChange={(value) => {
-          this.setState({
-            organizationName: value,
-          });
-          this.props.history.push(`/trees/${value}`);
-        }}
-      />;
+      return (
+        <OrganizationSelect
+          initValue={this.state.organizationName}
+          style={{width: "100%"}}
+          onChange={(value) => {
+            this.setState({
+              organizationName: value,
+            });
+            this.props.history.push(`/trees/${value}`);
+          }}
+        />
+      );
     }
   }
 
@@ -278,7 +280,7 @@ class GroupTreePage extends React.Component {
             </Row>
             <Row>
               <Col span={24} style={{marginTop: "10px", textAlign: "left"}}>
-                <Button
+                <Button size={"small"}
                   onClick={() => {
                     this.setState({
                       selectedKeys: [],
@@ -286,8 +288,9 @@ class GroupTreePage extends React.Component {
                       groupId: null,
                     });
                     this.props.history.push(`/trees/${this.state.organizationName}`);
-                  }}>
-                  {i18next.t("group:Show organization users")}
+                  }}
+                >
+                  {i18next.t("group:Show all")}
                 </Button>
                 <Button size={"small"} type={"primary"} style={{marginLeft: "10px"}} onClick={() => this.addGroup(true)}>
                   {i18next.t("general:Add")}
@@ -305,7 +308,8 @@ class GroupTreePage extends React.Component {
               organizationName={this.state.organizationName}
               groupName={this.state.groupName}
               groupId={this.state.groupId}
-              {...this.props} />
+              {...this.props}
+            />
           </Col>
         </Row>
       </div>

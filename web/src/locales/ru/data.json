@@ -188,6 +188,7 @@
     "Close": "Близко",
     "Confirm": "Confirm",
     "Created time": "Созданное время",
+    "Custom": "Custom",
     "Default application": "Приложение по умолчанию",
     "Default application - Tooltip": "По умолчанию приложение для пользователей, зарегистрированных непосредственно со страницы организации",
     "Default avatar": "Стандартный аватар",
@@ -337,6 +338,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {
