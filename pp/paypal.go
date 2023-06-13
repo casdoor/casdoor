@@ -59,12 +59,12 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 	bm := make(gopay.BodyMap)
 	bm.Set("intent", "CAPTURE")
 	bm.Set("purchase_units", pus)
-	bm.SetBodyMap("payment_source", func(b1 gopay.BodyMap) {
-		b1.SetBodyMap("paypal", func(b2 gopay.BodyMap) {
-			b2.Set("brand_name", "Casdoor")
-			b2.Set("return_url", returnUrl)
-		})
+	bm.SetBodyMap("application_context", func(b gopay.BodyMap) {
+		b.Set("brand_name", "Casdoor")
+		b.Set("locale", "en-PT")
+		b.Set("return_url", returnUrl)
 	})
+
 	ppRsp, err := pp.Client.CreateOrder(context.Background(), bm)
 	if err != nil {
 		return "", "", err
