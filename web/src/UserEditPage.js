@@ -91,6 +91,17 @@ class UserEditPage extends React.Component {
       });
   }
 
+  addUserKeys() {
+    UserBackend.addUserKeys(this.state.user)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.getUser();
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      });
+  }
+
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
@@ -264,6 +275,11 @@ class UserEditPage extends React.Component {
       if (this.state.user.owner === "built-in" && this.state.user.name === "admin") {
         disabled = true;
       }
+    }
+
+    let isKeysGenerated = false;
+    if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
+      isKeysGenerated = true;
     }
 
     if (accountItem.name === "Organization") {
@@ -688,6 +704,37 @@ class UserEditPage extends React.Component {
               onChange={(value => {this.updateUserField("signupApplication", value);})}
               options={this.state.applications.map((application) => Setting.getOption(application.name, application.name))
               } />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "API key") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:API key"), i18next.t("general:API key - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.accessKey} disabled={true} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:Secret key"), i18next.t("general:Secret key - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.secretKey} disabled={true} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col span={22} >
+                <Button onClick={() => this.addUserKeys()}>{i18next.t(isKeysGenerated ? "general:update" : "general:generate")}</Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
       );

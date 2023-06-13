@@ -78,6 +78,8 @@ type User struct {
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 	Groups            []string `xorm:"varchar(1000)" json:"groups"`
+	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
+	SecretKey         string   `xorm:"varchar(100)" json:"secretKey"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -422,6 +424,23 @@ func GetUserByUserId(owner string, userId string) (*User, error) {
 	}
 }
 
+func GetUserByAccessKey(accessKey string) (*User, error) {
+	if accessKey == "" {
+		return nil, nil
+	}
+	user := User{AccessKey: accessKey}
+	existed, err := adapter.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUser(id string) (*User, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getUser(owner, name)
@@ -526,7 +545,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"owner", "display_name", "avatar",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
-			"signin_wrong_times", "last_signin_wrong_time", "groups",
+			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "secret_key",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
@@ -927,4 +946,15 @@ func (user *User) GetPreferMfa(masked bool) *MfaProps {
 		}
 		return user.MultiFactorAuths[0]
 	}
+}
+
+func AddUserkeys(user *User, isAdmin bool) (bool, error) {
+	if user == nil {
+		return false, nil
+	}
+
+	user.AccessKey = util.GenerateId()
+	user.SecretKey = util.GenerateId()
+
+	return UpdateUser(user.GetId(), user, []string{}, isAdmin)
 }
