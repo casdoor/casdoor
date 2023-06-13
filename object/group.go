@@ -18,6 +18,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/xorm-io/builder"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -182,9 +184,18 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if _, err := session.Exec("UPDATE user SET `groups` = REGEXP_REPLACE(`groups`, ?, '') WHERE `groups` REGEXP ?", fmt.Sprintf("(^|,)\\s*%s\\s*(,|$)", group.Id), fmt.Sprintf("(^|,)\\s*%s\\s*(,|$)", group.Id)); err != nil {
+	users := []*User{}
+	err = session.Where(builder.Like{"`groups`", group.Id}).Find(&users)
+	if err != nil {
 		session.Rollback()
 		return false, err
+	}
+	for i, user := range users {
+		users[i].Groups = util.DeleteVal(user.Groups, group.Id)
+		if _, err := session.Cols("groups").Update(users[i]); err != nil {
+			session.Rollback()
+			return false, err
+		}
 	}
 
 	affected, err := session.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})

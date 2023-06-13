@@ -60,6 +60,8 @@ class UserListPage extends BaseListPage {
   }
 
   newUser() {
+    // eslint-disable-next-line no-console
+    console.log(this.props.groupId);
     const randomName = Setting.getRandomName();
     const owner = this.state.organizationName;
     return {

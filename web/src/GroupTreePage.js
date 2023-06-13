@@ -55,11 +55,27 @@ class GroupTreePage extends React.Component {
       if (res.status === "ok") {
         this.setState({
           treeData: res.data,
+          groupId: this.findNodeId({children: res.data}, this.state.groupName),
         });
       } else {
         Setting.showMessage("error", res.msg);
       }
     });
+  }
+
+  findNodeId(node, targetName) {
+    if (node.key === targetName) {
+      return node.id;
+    }
+    if (node.children) {
+      for (let i = 0; i < node.children.length; i++) {
+        const result = this.findNodeId(node.children[i], targetName);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return null;
   }
 
   setTreeTitle(treeData) {
@@ -216,7 +232,7 @@ class GroupTreePage extends React.Component {
   }
 
   renderOrganizationSelect() {
-    if (Setting.isAdminUser()) {
+    if (Setting.isAdminUser(this.props.account)) {
       return (
         <OrganizationSelect
           initValue={this.state.organizationName}
