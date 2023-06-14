@@ -31,6 +31,7 @@ import (
 // @router /get-payments [get]
 func (c *ApiController) GetPayments() {
 	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -48,13 +49,13 @@ func (c *ApiController) GetPayments() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetPaymentCount(owner, field, value)
+		count, err := object.GetPaymentCount(owner, organization, field, value)
 		if err != nil {
 			panic(err)
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		payments, err := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		payments, err := object.GetPaginationPayments(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			panic(err)
 		}
@@ -177,10 +178,11 @@ func (c *ApiController) NotifyPayment() {
 	providerName := c.Ctx.Input.Param(":provider")
 	productName := c.Ctx.Input.Param(":product")
 	paymentName := c.Ctx.Input.Param(":payment")
+	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
+	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
 
 	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
 	if err2 != nil {

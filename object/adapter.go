@@ -55,8 +55,12 @@ func InitAdapter() {
 
 func CreateTables(createDatabase bool) {
 	if createDatabase {
-		adapter.CreateDatabase()
+		err := adapter.CreateDatabase()
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	adapter.createTable()
 }
 
@@ -132,6 +136,16 @@ func (a *Adapter) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(User))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Group))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(UserGroupRelation))
 	if err != nil {
 		panic(err)
 	}

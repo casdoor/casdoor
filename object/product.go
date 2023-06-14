@@ -156,24 +156,24 @@ func (product *Product) getProvider(providerId string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, providerName string, user *User, host string) (string, error) {
+func BuyProduct(id string, providerName string, user *User, host string) (string, string, error) {
 	product, err := GetProduct(id)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	if product == nil {
-		return "", fmt.Errorf("the product: %s does not exist", id)
+		return "", "", fmt.Errorf("the product: %s does not exist", id)
 	}
 
 	provider, err := product.getProvider(providerName)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	pProvider, _, err := provider.getPaymentProvider()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	owner := product.Owner
@@ -186,9 +186,9 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
 
-	payUrl, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, returnUrl, notifyUrl)
+	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	payment := Payment{
@@ -217,14 +217,14 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 
 	affected, err := AddPayment(&payment)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	if !affected {
-		return "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
+		return "", "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
-	return payUrl, err
+	return payUrl, orderId, err
 }
 
 func ExtendProductWithProviders(product *Product) error {

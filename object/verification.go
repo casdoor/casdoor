@@ -224,7 +224,7 @@ func GetVerifyType(username string) (verificationCodeType string) {
 	if strings.Contains(username, "@") {
 		return VerifyTypeEmail
 	} else {
-		return VerifyTypeEmail
+		return VerifyTypePhone
 	}
 }
 

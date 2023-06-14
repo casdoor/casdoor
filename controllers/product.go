@@ -180,11 +180,11 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, err := object.BuyProduct(id, providerName, user, host)
+	payUrl, orderId, err := object.BuyProduct(id, providerName, user, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(payUrl)
+	c.ResponseOk(payUrl, orderId)
 }
