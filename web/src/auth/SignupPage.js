@@ -28,7 +28,7 @@ import CustomGithubCorner from "../common/CustomGithubCorner";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
-
+import {checkPasswordComplexOption} from "../common/modal/ComplexityValidator";
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -458,8 +458,15 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
-              min: 6,
-              message: i18next.t("login:Please input your password, at least 6 characters!"),
+              validator: (rule, value) => {
+                const passwordComplexOptions = application.organizationObj.passwordComplexOptions;
+                const pwdCheckRes = checkPasswordComplexOption(value, passwordComplexOptions);
+                if (pwdCheckRes === "") {
+                  return Promise.resolve();
+                } else {
+                  return Promise.reject(pwdCheckRes);
+                }
+              },
             },
           ]}
           hasFeedback

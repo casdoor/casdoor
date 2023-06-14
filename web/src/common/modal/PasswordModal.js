@@ -19,7 +19,7 @@ import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 import * as Setting from "../../Setting";
 import * as OrganizationBackend from "../../backend/OrganizationBackend";
-import * as PasswordValidator from "./ComplexityValidator";
+import {checkPasswordComplexOption} from "./ComplexityValidator";
 
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -49,40 +49,6 @@ export const PasswordModal = (props) => {
         console.error("Error fetching organizations:", error);
       });
   }, [user.owner]);
-
-  function checkPasswordComplexOption(password, complexOptions) {
-    /*
-      AtLeast8: The password length must be greater than 8
-      Aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
-      SpecialChar: The password must contain at least one special character
-      NoRepeat: The password must not contain any repeated characters
-    */
-    if (complexOptions.length < 1) {
-      return "";
-    }
-
-    const validators = {
-      AtLeast8: PasswordValidator.isValidOption_atLeast8,
-      Aa123: PasswordValidator.isValidOption_Aa123,
-      SpecialChar: PasswordValidator.isValidOption_SpecialChar,
-      NoRepeat: PasswordValidator.isValidOption_noRepeat,
-    };
-    for (const option of complexOptions) {
-      const validateFunc = validators[option];
-      if (validateFunc) {
-        const msg = validateFunc(password);
-        if (msg !== "") {
-          return msg;
-        }
-      } else {
-        // Invalid complex option
-        // return "InvalidOption";
-        return i18next.t("user:InvalidOption");
-      }
-    }
-
-    return "";
-  }
   const showModal = () => {
     setVisible(true);
   };

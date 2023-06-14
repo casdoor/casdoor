@@ -250,7 +250,7 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 		if pwdCheckRes != "" {
 			// TODO: better log
 			return i18n.Translate(lang, "user:"+pwdCheckRes)
-			//possible_log : "user:%s"
+			// possible_log : "user:%s"
 			// i18n.Translate(lang, "user:AtLeast8")
 			// i18n.Translate(lang, "user:Aa123")
 			// i18n.Translate(lang, "user:NoRepeat")

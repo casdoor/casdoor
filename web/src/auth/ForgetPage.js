@@ -24,6 +24,7 @@ import * as UserBackend from "../backend/UserBackend";
 import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {withRouter} from "react-router-dom";
+import {checkPasswordComplexOption} from "../common/modal/ComplexityValidator";
 const {Option} = Select;
 
 class ForgetPage extends React.Component {
@@ -45,7 +46,6 @@ class ForgetPage extends React.Component {
 
     this.form = React.createRef();
   }
-
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== undefined) {
@@ -66,7 +66,6 @@ class ForgetPage extends React.Component {
         this.onUpdateApplication(application);
       });
   }
-
   getApplicationObj() {
     return this.props.application;
   }
@@ -379,6 +378,17 @@ class ForgetPage extends React.Component {
                 {
                   required: true,
                   message: i18next.t("login:Please input your password!"),
+                },
+                {
+                  validator: (rule, value) => {
+                    const passwordComplexOptions = application.organizationObj.passwordComplexOptions;
+                    const pwdCheckRes = checkPasswordComplexOption(value, passwordComplexOptions);
+                    if (pwdCheckRes === "") {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject(pwdCheckRes);
+                    }
+                  },
                 },
               ]}
               hasFeedback
