@@ -210,6 +210,7 @@
     "Failed to delete": "削除に失敗しました",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "保存に失敗しました",
     "Failed to verify": "Failed to verify",
     "Favicon": "ファビコン",
@@ -302,10 +303,12 @@
     "Subscriptions": "サブスクリプション",
     "Successfully added": "正常に追加されました",
     "Successfully deleted": "正常に削除されました",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "成功的に保存されました",
     "Supported country codes": "サポートされている国コード",
     "Supported country codes - Tooltip": "組織でサポートされている国コード。これらのコードは、SMS認証コードのプレフィックスとして選択できます",
     "Sure to delete": "削除することが確実です",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "同期",
     "Syncers": "シンカーズ",
@@ -330,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "空",
+    "remove": "remove",
     "{total} in total": "総計{total}"
   },
   "group": {

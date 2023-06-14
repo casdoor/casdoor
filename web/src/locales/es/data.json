@@ -210,6 +210,7 @@
     "Failed to delete": "No se pudo eliminar",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "No se pudo guardar",
     "Failed to verify": "Failed to verify",
     "Favicon": "Favicon",
@@ -302,10 +303,12 @@
     "Subscriptions": "Suscripciones",
     "Successfully added": "Éxito al agregar",
     "Successfully deleted": "Éxito en la eliminación",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "Guardado exitosamente",
     "Supported country codes": "Códigos de país admitidos",
     "Supported country codes - Tooltip": "Códigos de país compatibles con la organización. Estos códigos se pueden seleccionar como prefijo al enviar códigos de verificación SMS",
     "Sure to delete": "Seguro que eliminar",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "Sincronización",
     "Syncers": "Sincronizadores",
@@ -330,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "vacío",
+    "remove": "remove",
     "{total} in total": "{total} en total"
   },
   "group": {

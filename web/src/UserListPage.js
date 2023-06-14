@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table, Upload} from "antd";
+import {Button, Space, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -60,8 +60,6 @@ class UserListPage extends BaseListPage {
   }
 
   newUser() {
-    // eslint-disable-next-line no-console
-    console.log(this.props.groupId);
     const randomName = Setting.getRandomName();
     const owner = this.state.organizationName;
     return {
@@ -77,7 +75,7 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
-      groups: this.props.groupId !== "" ? [this.props.groupId] : [],
+      groups: this.props.groupId ? [this.props.groupId] : [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
@@ -119,6 +117,26 @@ class UserListPage extends BaseListPage {
           });
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
+  removeUserFromGroup(i) {
+    const user = this.state.data[i];
+    const group = this.props.groupId;
+    UserBackend.removeUserFromGroup({groupId: group, owner: user.owner, name: user.name})
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully removed"));
+          this.setState({
+            data: Setting.deleteRow(this.state.data, i),
+            pagination: {total: this.state.pagination.total - 1},
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to remove")}: ${res.msg}`);
         }
       })
       .catch(error => {
@@ -376,20 +394,32 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          // eslint-disable-next-line no-console
+          console.log(this.props.groupId);
+          const isTreePage = this.props.groupId !== undefined;
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
-            <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => {
+            <Space>
+              <Button size={isTreePage ? "small" : "middle"} type="primary" onClick={() => {
                 sessionStorage.setItem("userListUrl", window.location.pathname);
                 this.props.history.push(`/users/${record.owner}/${record.name}`);
-              }}>{i18next.t("general:Edit")}</Button>
+              }}>{i18next.t("general:Edit")}
+              </Button>
+              {isTreePage ?
+                <PopconfirmModal
+                  text={i18next.t("general:remove")}
+                  title={i18next.t("general:Sure to remove") + `: ${record.name} ?`}
+                  onConfirm={() => this.removeUserFromGroup(index)}
+                  disabled={disabled}
+                  size="small"
+                /> : null}
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteUser(index)}
                 disabled={disabled}
-              >
-              </PopconfirmModal>
-            </div>
+                size={isTreePage ? "small" : "default"}
+              />
+            </Space>
           );
         },
       },

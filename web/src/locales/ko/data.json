@@ -210,6 +210,7 @@
     "Failed to delete": "삭제에 실패했습니다",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "저장에 실패했습니다",
     "Failed to verify": "Failed to verify",
     "Favicon": "파비콘",
@@ -302,10 +303,12 @@
     "Subscriptions": "구독",
     "Successfully added": "성공적으로 추가되었습니다",
     "Successfully deleted": "성공적으로 삭제되었습니다",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "성공적으로 저장되었습니다",
     "Supported country codes": "지원되는 국가 코드들",
     "Supported country codes - Tooltip": "조직에서 지원하는 국가 코드입니다. 이 코드들은 SMS 인증 코드를 보낼 때 접두사로 선택할 수 있습니다",
     "Sure to delete": "삭제하시겠습니까?",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "싱크",
     "Syncers": "싱크어스",
@@ -330,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "빈",
+    "remove": "remove",
     "{total} in total": "총 {total}개"
   },
   "group": {

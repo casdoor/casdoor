@@ -176,8 +176,8 @@ class GroupEditPage extends React.Component {
           <Col span={22} >
             <Select style={{width: "100%"}}
               options={this.getParentIdOptions()}
-              value={this.state.group.parentGroupId} onChange={(value => {
-                this.updateGroupField("parentGroupId", value);
+              value={this.state.group.parentId} onChange={(value => {
+                this.updateGroupField("parentId", value);
               }
               )} />
           </Col>
@@ -198,7 +198,7 @@ class GroupEditPage extends React.Component {
 
   submitGroupEdit(willExist) {
     const group = Setting.deepCopy(this.state.group);
-    group["isTopGroup"] = this.state.organizations.some((organization) => organization.name === group.parentGroupId);
+    group["isTopGroup"] = this.state.organizations.some((organization) => organization.name === group.parentId);
 
     GroupBackend.updateGroup(this.state.organizationName, this.state.groupName, group)
       .then((res) => {

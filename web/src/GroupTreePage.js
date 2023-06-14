@@ -30,7 +30,7 @@ class GroupTreePage extends React.Component {
       owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       groupName: this.props.match?.params.groupName,
-      groupId: "",
+      groupId: undefined,
       treeData: [],
       selectedKeys: [this.props.match?.params.groupName],
     };
@@ -257,7 +257,7 @@ class GroupTreePage extends React.Component {
       updatedTime: moment().format(),
       displayName: `New Group - ${randomName}`,
       type: "Virtual",
-      parentGroupId: isRoot ? this.state.organizationName : this.state.groupId,
+      parentId: isRoot ? this.state.organizationName : this.state.groupId,
       isTopGroup: isRoot,
       isEnabled: true,
     };
@@ -290,18 +290,18 @@ class GroupTreePage extends React.Component {
         <Row>
           <Col span={5}>
             <Row>
-              <Col span={24} style={{textAlign: "left"}}>
+              <Col span={24} style={{textAlign: "center"}}>
                 {this.renderOrganizationSelect()}
               </Col>
             </Row>
             <Row>
-              <Col span={24} style={{marginTop: "10px", textAlign: "left"}}>
+              <Col span={24} style={{marginTop: "10px"}}>
                 <Button size={"small"}
                   onClick={() => {
                     this.setState({
                       selectedKeys: [],
                       groupName: null,
-                      groupId: null,
+                      groupId: undefined,
                     });
                     this.props.history.push(`/trees/${this.state.organizationName}`);
                   }}

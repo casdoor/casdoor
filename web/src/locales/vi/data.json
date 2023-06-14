@@ -210,6 +210,7 @@
     "Failed to delete": "Không thể xoá",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "Không thể lưu được",
     "Failed to verify": "Failed to verify",
     "Favicon": "Favicon",
@@ -302,10 +303,12 @@
     "Subscriptions": "Đăng ký",
     "Successfully added": "Đã thêm thành công",
     "Successfully deleted": "Đã xóa thành công",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "Thành công đã được lưu lại",
     "Supported country codes": "Các mã quốc gia được hỗ trợ",
     "Supported country codes - Tooltip": "Mã quốc gia được hỗ trợ bởi tổ chức. Những mã này có thể được chọn làm tiền tố khi gửi mã xác nhận SMS",
     "Sure to delete": "Chắc chắn muốn xóa",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "Đồng bộ hoá",
     "Syncers": "Đồng bộ hóa",
@@ -330,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "trống",
+    "remove": "remove",
     "{total} in total": "Trong tổng số {total}"
   },
   "group": {

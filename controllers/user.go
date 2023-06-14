@@ -90,7 +90,7 @@ func (c *ApiController) GetUsers() {
 
 	if limit == "" || page == "" {
 		if groupId != "" {
-			maskedUsers, err := object.GetMaskedUsers(object.GetUsersByGroup(groupId))
+			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(groupId))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -526,5 +526,14 @@ func (c *ApiController) GetUserCount() {
 	}
 
 	c.Data["json"] = count
+	c.ServeJSON()
+}
+
+func (c *ApiController) RemoveUserFromGroup() {
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
+	groupId := c.Ctx.Request.Form.Get("groupId")
+
+	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupId))
 	c.ServeJSON()
 }
