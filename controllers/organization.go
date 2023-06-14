@@ -87,7 +87,9 @@ func (c *ApiController) GetOrganization() {
 	maskedOrganization, err := object.GetMaskedOrganization(object.GetOrganization(id))
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
+
 	c.ResponseOk(maskedOrganization)
 }
 
