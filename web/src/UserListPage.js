@@ -167,6 +167,8 @@ class UserListPage extends BaseListPage {
           this.setState({
             organization: res.data,
           });
+        } else {
+          Setting.showMessage("error", `Failed to get organization: ${res.msg}`);
         }
       });
   }
@@ -394,8 +396,6 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          // eslint-disable-next-line no-console
-          console.log(this.props.groupId);
           const isTreePage = this.props.groupId !== undefined;
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
