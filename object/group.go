@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
@@ -27,14 +28,14 @@ type Group struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id            string    `xorm:"varchar(100) not null index" json:"id"`
-	DisplayName   string    `xorm:"varchar(100)" json:"displayName"`
-	Manager       string    `xorm:"varchar(100)" json:"manager"`
-	ContactEmail  string    `xorm:"varchar(100)" json:"contactEmail"`
-	Type          string    `xorm:"varchar(100)" json:"type"`
-	ParentGroupId string    `xorm:"varchar(100)" json:"parentGroupId"`
-	IsTopGroup    bool      `xorm:"bool" json:"isTopGroup"`
-	Users         *[]string `xorm:"-" json:"users"`
+	Id           string    `xorm:"varchar(100) not null index" json:"id"`
+	DisplayName  string    `xorm:"varchar(100)" json:"displayName"`
+	Manager      string    `xorm:"varchar(100)" json:"manager"`
+	ContactEmail string    `xorm:"varchar(100)" json:"contactEmail"`
+	Type         string    `xorm:"varchar(100)" json:"type"`
+	ParentId     string    `xorm:"varchar(100)" json:"parentId"`
+	IsTopGroup   bool      `xorm:"bool" json:"isTopGroup"`
+	Users        *[]string `xorm:"-" json:"users"`
 
 	Title    string   `json:"title,omitempty"`
 	Key      string   `json:"key,omitempty"`
@@ -158,8 +159,42 @@ func AddGroups(groups []*Group) (bool, error) {
 }
 
 func DeleteGroup(group *Group) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	_, err := adapter.Engine.Get(group)
 	if err != nil {
+		return false, err
+	}
+
+	if count, err := adapter.Engine.Where("parent_id = ?", group.Id).Count(&Group{}); err != nil {
+		return false, err
+	} else if count > 0 {
+		return false, errors.New("group has children group")
+	}
+
+	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
+		return false, err
+	} else if count > 0 {
+		return false, errors.New("group has users")
+	}
+
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	if err := session.Begin(); err != nil {
+		return false, err
+	}
+
+	if _, err := session.Delete(&UserGroupRelation{GroupId: group.Id}); err != nil {
+		session.Rollback()
+		return false, err
+	}
+
+	affected, err := session.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	if err != nil {
+		session.Rollback()
+		return false, err
+	}
+
+	if err := session.Commit(); err != nil {
 		return false, err
 	}
 
@@ -170,11 +205,11 @@ func (group *Group) GetId() string {
 	return fmt.Sprintf("%s/%s", group.Owner, group.Name)
 }
 
-func ConvertToTreeData(groups []*Group, parentGroupId string) []*Group {
+func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	treeData := []*Group{}
 
 	for _, group := range groups {
-		if group.ParentGroupId == parentGroupId {
+		if group.ParentId == parentId {
 			node := &Group{
 				Title: group.DisplayName,
 				Key:   group.Name,

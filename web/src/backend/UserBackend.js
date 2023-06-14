@@ -222,3 +222,18 @@ export function checkUserPassword(values) {
     body: JSON.stringify(values),
   }).then(res => res.json());
 }
+
+export function removeUserFromGroup({owner, name, groupId}) {
+  const formData = new FormData();
+  formData.append("owner", owner);
+  formData.append("name", name);
+  formData.append("groupId", groupId);
+  return fetch(`${Setting.ServerUrl}/api/remove-user-from-group`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

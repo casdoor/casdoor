@@ -188,6 +188,7 @@
     "Close": "Fermer",
     "Confirm": "Confirm",
     "Created time": "Temps créé",
+    "Custom": "Custom",
     "Default application": "Application par défaut",
     "Default application - Tooltip": "Application par défaut pour les utilisateurs enregistrés directement depuis la page de l'organisation",
     "Default avatar": "Avatar par défaut",
@@ -209,6 +210,7 @@
     "Failed to delete": "Échec de la suppression",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "Échec de sauvegarde",
     "Failed to verify": "Failed to verify",
     "Favicon": "Favicon",
@@ -301,10 +303,12 @@
     "Subscriptions": "Abonnements",
     "Successfully added": "Ajouté avec succès",
     "Successfully deleted": "Supprimé avec succès",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "Succès enregistré",
     "Supported country codes": "Codes de pays pris en charge",
     "Supported country codes - Tooltip": "Codes de pays pris en charge par l'organisation. Ces codes peuvent être sélectionnés comme préfixe lors de l'envoi de codes de vérification SMS",
     "Sure to delete": "Sûr de supprimer",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "Synchronisation",
     "Syncers": "Synchroniseurs",
@@ -329,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "vide",
+    "remove": "remove",
     "{total} in total": "{total} au total"
   },
   "group": {
@@ -337,6 +342,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

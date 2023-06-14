@@ -188,6 +188,7 @@
     "Close": "关闭",
     "Confirm": "确认",
     "Created time": "创建时间",
+    "Custom": "自定义",
     "Default application": "默认应用",
     "Default application - Tooltip": "直接从组织页面注册的用户默认所属的应用",
     "Default avatar": "默认头像",
@@ -209,6 +210,7 @@
     "Failed to delete": "删除失败",
     "Failed to enable": "启用失败",
     "Failed to get answer": "获取回答失败",
+    "Failed to remove": "移除失败",
     "Failed to save": "保存失败",
     "Failed to verify": "验证失败",
     "Favicon": "Favicon",
@@ -301,10 +303,12 @@
     "Subscriptions": "订阅",
     "Successfully added": "添加成功",
     "Successfully deleted": "删除成功",
+    "Successfully removed": "移除成功",
     "Successfully saved": "保存成功",
     "Supported country codes": "支持的国家代码",
     "Supported country codes - Tooltip": "该组织所支持的国家代码，发送短信验证码时可以选择这些国家的代码前缀",
     "Sure to delete": "确定删除",
+    "Sure to remove": "确定移除",
     "Swagger": "API文档",
     "Sync": "同步",
     "Syncers": "同步器",
@@ -329,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "只能选择一个实体组",
     "empty": "无",
+    "remove": "移除",
     "{total} in total": "{total} 总计"
   },
   "group": {
@@ -337,6 +342,7 @@
     "Parent group": "上级组",
     "Parent group - Tooltip": "上级组",
     "Physical": "物理组",
+    "Show all": "显示全部",
     "Virtual": "虚拟组"
   },
   "ldap": {

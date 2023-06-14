@@ -188,6 +188,7 @@
     "Close": "Tutup",
     "Confirm": "Confirm",
     "Created time": "Waktu dibuat",
+    "Custom": "Custom",
     "Default application": "Aplikasi default",
     "Default application - Tooltip": "Aplikasi default untuk pengguna yang terdaftar langsung dari halaman organisasi",
     "Default avatar": "Avatar default",
@@ -209,6 +210,7 @@
     "Failed to delete": "Gagal menghapus",
     "Failed to enable": "Failed to enable",
     "Failed to get answer": "Failed to get answer",
+    "Failed to remove": "Failed to remove",
     "Failed to save": "Gagal menyimpan",
     "Failed to verify": "Failed to verify",
     "Favicon": "Favicon",
@@ -301,10 +303,12 @@
     "Subscriptions": "Langganan",
     "Successfully added": "Berhasil ditambahkan",
     "Successfully deleted": "Berhasil dihapus",
+    "Successfully removed": "Successfully removed",
     "Successfully saved": "Berhasil disimpan",
     "Supported country codes": "Kode negara yang didukung",
     "Supported country codes - Tooltip": "Kode negara yang didukung oleh organisasi. Kode-kode ini dapat dipilih sebagai awalan saat mengirim kode verifikasi SMS",
     "Sure to delete": "Pasti untuk menghapus",
+    "Sure to remove": "Sure to remove",
     "Swagger": "Swagger",
     "Sync": "Sinkronisasi",
     "Syncers": "Sinkronisasi",
@@ -329,6 +333,7 @@
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "kosong",
+    "remove": "remove",
     "{total} in total": "{total} secara keseluruhan"
   },
   "group": {
@@ -337,6 +342,7 @@
     "Parent group": "Parent group",
     "Parent group - Tooltip": "Parent group - Tooltip",
     "Physical": "Physical",
+    "Show all": "Show all",
     "Virtual": "Virtual"
   },
   "ldap": {

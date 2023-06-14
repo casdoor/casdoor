@@ -47,21 +47,31 @@ func (c *ApiController) GetOrganizations() {
 		c.Data["json"] = maskedOrganizations
 		c.ServeJSON()
 	} else {
-		limit := util.ParseInt(limit)
-		count, err := object.GetOrganizationCount(owner, field, value)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+		isGlobalAdmin := c.IsGlobalAdmin()
+		if !isGlobalAdmin {
+			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			c.ResponseOk(maskedOrganizations)
+		} else {
+			limit := util.ParseInt(limit)
+			count, err := object.GetOrganizationCount(owner, field, value)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+			paginator := pagination.SetPaginator(c.Ctx, limit, count)
+			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 
-		c.ResponseOk(organizations, paginator.Nums())
+			c.ResponseOk(organizations, paginator.Nums())
+		}
 	}
 }
 
@@ -74,14 +84,13 @@ func (c *ApiController) GetOrganizations() {
 // @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
-
 	maskedOrganization, err := object.GetMaskedOrganization(object.GetOrganization(id))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = maskedOrganization
-	c.ServeJSON()
+	c.ResponseOk(maskedOrganization)
 }
 
 // UpdateOrganization ...

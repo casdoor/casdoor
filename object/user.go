@@ -225,14 +225,7 @@ func GetUserCount(owner, field, value string, groupId string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 
 	if groupId != "" {
-		group, err := GetGroup(groupId)
-		if group == nil || err != nil {
-			return 0, err
-		}
-		// users count in group
-		return adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
-			Where("user_group_relation.group_id = ?", group.Id).
-			Count(&UserGroupRelation{})
+		return GetGroupUserCount(groupId, field, value)
 	}
 
 	return session.Count(&User{})
@@ -276,20 +269,7 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	users := []*User{}
 
 	if groupId != "" {
-		group, err := GetGroup(groupId)
-		if group == nil || err != nil {
-			return []*User{}, err
-		}
-
-		session := adapter.Engine.Prepare()
-		if offset != -1 && limit != -1 {
-			session.Limit(limit, offset)
-		}
-
-		err = session.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
-			Where("user_group_relation.group_id = ?", group.Id).
-			Find(&users)
-		return users, err
+		return GetPaginationGroupUsers(groupId, offset, limit, field, value, sortField, sortOrder)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
@@ -297,23 +277,6 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	if err != nil {
 		return nil, err
 	}
-	return users, nil
-}
-
-func GetUsersByGroup(groupId string) ([]*User, error) {
-	group, err := GetGroup(groupId)
-	if group == nil || err != nil {
-		return []*User{}, err
-	}
-
-	users := []*User{}
-	err = adapter.Engine.Table("user_group_relation").Join("INNER", "user AS u", "user_group_relation.user_id = u.id").
-		Where("user_group_relation.group_id = ?", group.Id).
-		Find(&users)
-	if err != nil {
-		return nil, err
-	}
-
 	return users, nil
 }
 
@@ -574,7 +537,7 @@ func updateUser(oldUser, user *User, columns []string) (int64, error) {
 	session.Begin()
 
 	if util.ContainsString(columns, "groups") {
-		affected, err := updateGroupRelation(session, user)
+		affected, err := updateUserGroupRelation(session, user)
 		if err != nil {
 			session.Rollback()
 			return affected, err
@@ -759,6 +722,11 @@ func DeleteUser(user *User) (bool, error) {
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
+	if err != nil {
+		return false, err
+	}
+
+	affected, err = deleteRelationByUser(user.Id)
 	if err != nil {
 		return false, err
 	}
