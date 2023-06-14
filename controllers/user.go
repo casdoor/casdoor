@@ -529,6 +529,28 @@ func (c *ApiController) GetUserCount() {
 	c.ServeJSON()
 }
 
+// AddUserkeys
+// @Title AddUserkeys
+// @router /add-user-keys [post]
+// @Tag User API
+func (c *ApiController) AddUserkeys() {
+	var user object.User
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	isAdmin := c.IsAdmin()
+	affected, err := object.AddUserkeys(&user, isAdmin)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(affected)
+}
+
 func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")

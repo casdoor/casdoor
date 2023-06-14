@@ -25,11 +25,18 @@ class PaymentResultPage extends React.Component {
       classes: props,
       paymentName: props.match.params.paymentName,
       payment: null,
+      timeout: null,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getPayment();
+  }
+
+  componentWillUnmount() {
+    if (this.state.timeout !== null) {
+      clearTimeout(this.state.timeout);
+    }
   }
 
   getPayment() {
@@ -40,7 +47,7 @@ class PaymentResultPage extends React.Component {
         });
 
         if (payment.state === "Created") {
-          setTimeout(() => this.getPayment(), 1000);
+          this.setState({timeout: setTimeout(() => this.getPayment(), 1000)});
         }
       });
   }
