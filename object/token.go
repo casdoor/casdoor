@@ -628,7 +628,12 @@ func GetPasswordToken(application *Application, username string, password string
 			ErrorDescription: "the user does not exist",
 		}, nil
 	}
-	msg := CheckPassword(user, password, "en")
+	var msg string
+	if user.Ldap != "" {
+		msg = checkLdapUserPassword(user, password, "en")
+	} else {
+		msg = CheckPassword(user, password, "en")
+	}
 	if msg != "" {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
