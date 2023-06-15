@@ -377,9 +377,7 @@ class ForgetPage extends React.Component {
               rules={[
                 {
                   required: true,
-                  message: i18next.t("login:Please input your password!"),
-                },
-                {
+                  validateTrigger: "onChange",
                   validator: (rule, value) => {
                     const passwordComplexOptions = application.organizationObj.passwordComplexOptions;
                     const pwdCheckRes = checkPasswordComplexOption(value, passwordComplexOptions);

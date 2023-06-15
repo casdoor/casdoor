@@ -8,6 +8,13 @@ function isValidOption_atLeast8(password) {
   return "";
 }
 
+function isValidOption_atLeast6(password) {
+  if (password.length < 6) {
+    return i18next.t("user:AtLeast6");
+  }
+  return "";
+}
+
 function isValidOption_Aa123(password) {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$/;
   if (!regex.test(password)) {
@@ -48,6 +55,7 @@ export function checkPasswordComplexOption(password, complexOptions) {
 
   const validators = {
     AtLeast8: isValidOption_atLeast8,
+    AtLeast6: isValidOption_atLeast6,
     Aa123: isValidOption_Aa123,
     SpecialChar: isValidOption_SpecialChar,
     NoRepeat: isValidOption_noRepeat,

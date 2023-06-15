@@ -226,12 +226,14 @@ func CheckPasswordComplexityByOrg(organization *Organization, password string, l
 func CheckPasswordComplexOption(password string, complexOptions []string, lang string) string {
 	validators := map[string]ValidatorFunc{
 		/*
-			atLeast8: The password length must be greater than 8
-			aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
-			specialChar: The password must contain at least one special character
-			noRepeat: The password must not contain any repeated characters
+			AtLeast6: The password length must be greater than 6
+			AtLeast8: The password length must be greater than 8
+			Aa123: The password must contain at least one lowercase letter, one uppercase letter, and one digit
+			SpecialChar: The password must contain at least one special character
+			NoRepeat: The password must not contain any repeated characters
 		*/
 		"AtLeast8":    isValidOptionAtLeast8,
+		"AtLeast6":    isValidOptionAtLeast6,
 		"Aa123":       isValidOptionAa123,
 		"SpecialChar": isValidOptionSpecialChar,
 		"NoRepeat":    isValidOptionNoRepeat,
@@ -251,6 +253,7 @@ func CheckPasswordComplexOption(password string, complexOptions []string, lang s
 			// TODO: better log
 			return i18n.Translate(lang, "user:"+pwdCheckRes)
 			// possible_log : "user:%s"
+			// i18n.Translate(lang, "user:AtLeast6")
 			// i18n.Translate(lang, "user:AtLeast8")
 			// i18n.Translate(lang, "user:Aa123")
 			// i18n.Translate(lang, "user:NoRepeat")

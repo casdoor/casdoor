@@ -120,6 +120,7 @@
   },
   "user": {
     "Aa123": "Aa123",
+    "AtLeast6": "AtLeast6",
     "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Nama tampilan tidak boleh kosong",
     "InvalidOption": "InvalidOption",

@@ -120,6 +120,7 @@
   },
   "user": {
     "Aa123": "密码至少需要包含一个大写字母、一个小写字母和一个数字",
+    "AtLeast6": "AtLeast6",
     "AtLeast8": "密码长度至少为8位",
     "Display name cannot be empty": "显示名称不可为空",
     "InvalidOption": "InvalidOption",

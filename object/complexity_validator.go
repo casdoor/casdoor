@@ -11,6 +11,13 @@ var (
 	regexSpecial   = regexp.MustCompile(`[!@#$%^&*]`)
 )
 
+func isValidOptionAtLeast6(password string) string {
+	if len(password) < 6 {
+		return "AtLeast6"
+	}
+	return ""
+}
+
 func isValidOptionAtLeast8(password string) string {
 	if len(password) < 8 {
 		return "AtLeast8"

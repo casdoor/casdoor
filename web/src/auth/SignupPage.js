@@ -458,6 +458,7 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
+              validateTrigger: "onChange",
               validator: (rule, value) => {
                 const passwordComplexOptions = application.organizationObj.passwordComplexOptions;
                 const pwdCheckRes = checkPasswordComplexOption(value, passwordComplexOptions);

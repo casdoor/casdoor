@@ -120,6 +120,7 @@
   },
   "user": {
     "Aa123": "Aa123",
+    "AtLeast6": "AtLeast6",
     "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "디스플레이 이름은 비어 있을 수 없습니다",
     "InvalidOption": "InvalidOption",

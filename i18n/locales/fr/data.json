@@ -120,6 +120,7 @@
   },
   "user": {
     "Aa123": "Aa123",
+    "AtLeast6": "AtLeast6",
     "AtLeast8": "AtLeast8",
     "Display name cannot be empty": "Le nom d'affichage ne peut pas être vide",
     "InvalidOption": "InvalidOption",
