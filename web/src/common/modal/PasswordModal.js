@@ -31,8 +31,10 @@ export const PasswordModal = (props) => {
   const {account} = props;
 
   const [passwordComplexityOptions, setPasswordComplexityOptions] = React.useState([]);
-  const [passwordValid, setPasswordValid] = React.useState(true);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [newPasswordValid, setNewPasswordValid] = React.useState(false);
+  const [rePasswordValid, setRePasswordValid] = React.useState(false);
+  const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState("");
+  const [rePasswordErrorMessage, setRePasswordErrorMessage] = React.useState("");
 
   React.useEffect(() => {
     OrganizationBackend.getOrganizations("admin")
@@ -55,6 +57,24 @@ export const PasswordModal = (props) => {
 
   const handleCancel = () => {
     setVisible(false);
+  };
+  const handleNewPassword = (value) => {
+    setNewPassword(value);
+
+    const errorMessage = checkPasswordComplexOption(value, passwordComplexityOptions);
+    setNewPasswordValid(errorMessage === "");
+    setNewPasswordErrorMessage(errorMessage);
+  };
+
+  const handleRePassword = (value) => {
+    setRePassword(value);
+
+    if (value !== newPassword) {
+      setRePasswordErrorMessage(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
+      setRePasswordValid(false);
+    } else {
+      setRePasswordValid(true);
+    }
   };
 
   const handleOk = () => {
@@ -132,18 +152,14 @@ export const PasswordModal = (props) => {
             <Input.Password
               addonBefore={i18next.t("user:New Password")}
               placeholder={i18next.t("user:input password")}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                const errorMessage = checkPasswordComplexOption(e.target.value, passwordComplexityOptions);
-                setPasswordValid(errorMessage === "");
-                setPasswordErrorMessage(errorMessage);
-              }}
+              onChange={(e) => {handleNewPassword(e.target.value);}}
             />
           </Row>
+          {!newPasswordValid && newPasswordErrorMessage && <div style={{color: "red", marginTop: "-20px"}}>{newPasswordErrorMessage}</div>}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => setRePassword(e.target.value)} />
+            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => handleRePassword(e.target.value)} />
           </Row>
-          {!passwordValid && <div style={{color: "red"}}>{passwordErrorMessage}</div>}
+          {!rePasswordValid && rePasswordErrorMessage && <div style={{color: "red", marginTop: "-20px"}}>{rePasswordErrorMessage}</div>}
         </Col>
       </Modal>
     </Row>

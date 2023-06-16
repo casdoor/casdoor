@@ -1,7 +1,9 @@
 import i18next from "i18next";
 
 function isValidOption_atLeast8(password) {
-  if (password.length < 8) {
+  if (password.length === 0) {
+    return i18next.t("user:InputPassword");
+  } else if (password.length < 8) {
     // return "AtLeast8";
     return i18next.t("user:AtLeast8");
   }
@@ -9,7 +11,9 @@ function isValidOption_atLeast8(password) {
 }
 
 function isValidOption_atLeast6(password) {
-  if (password.length < 6) {
+  if (password.length === 0) {
+    return i18next.t("user:InputPassword");
+  } else if (password.length < 6) {
     return i18next.t("user:AtLeast6");
   }
   return "";
