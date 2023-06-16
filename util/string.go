@@ -278,3 +278,13 @@ func GetEndPoint(endpoint string) string {
 	}
 	return endpoint
 }
+
+// HasString reports if slice has input string.
+func HasString(strs []string, str string) bool {
+	for _, i := range strs {
+		if i == str {
+			return true
+		}
+	}
+	return false
+}

@@ -777,12 +777,11 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		return
 	}
 
-	user.Roles, err = GetRolesByUser(user.GetId())
+	user.Permissions, user.Roles, err = GetPermissionsAndRolesByUser(user.GetId())
 	if err != nil {
-		return
+		return err
 	}
 
-	user.Permissions, err = GetPermissionsByUser(user.GetId())
 	return
 }
 
