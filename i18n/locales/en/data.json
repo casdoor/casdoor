@@ -120,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Display name cannot be empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "New password must have at least 6 characters": "New password must have at least 6 characters"
+    "New password cannot contain blank space.": "New password cannot contain blank space."
   },
   "user_upload": {
     "Failed to import users": "Failed to import users"

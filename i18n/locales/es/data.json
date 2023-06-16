@@ -120,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "El nombre de pantalla no puede estar vacío",
-    "New password cannot contain blank space.": "La nueva contraseña no puede contener espacios en blanco.",
-    "New password must have at least 6 characters": "La nueva contraseña debe tener al menos 6 caracteres"
+    "New password cannot contain blank space.": "La nueva contraseña no puede contener espacios en blanco."
   },
   "user_upload": {
     "Failed to import users": "Error al importar usuarios"

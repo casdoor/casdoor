@@ -120,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Le nom d'affichage ne peut pas être vide",
-    "New password cannot contain blank space.": "Le nouveau mot de passe ne peut pas contenir d'espace.",
-    "New password must have at least 6 characters": "Le nouveau mot de passe doit comporter au moins 6 caractères"
+    "New password cannot contain blank space.": "Le nouveau mot de passe ne peut pas contenir d'espace."
   },
   "user_upload": {
     "Failed to import users": "Échec de l'importation des utilisateurs"

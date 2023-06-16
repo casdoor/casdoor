@@ -120,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Nama tampilan tidak boleh kosong",
-    "New password cannot contain blank space.": "Kata sandi baru tidak boleh mengandung spasi kosong.",
-    "New password must have at least 6 characters": "Kata sandi baru harus memiliki setidaknya 6 karakter"
+    "New password cannot contain blank space.": "Kata sandi baru tidak boleh mengandung spasi kosong."
   },
   "user_upload": {
     "Failed to import users": "Gagal mengimpor pengguna"

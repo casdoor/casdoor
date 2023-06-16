@@ -410,10 +410,6 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
-	if len(newPassword) <= 5 {
-		c.ResponseError(c.T("user:New password must have at least 6 characters"))
-		return
-	}
 
 	userId := util.GetId(userOwner, userName)
 

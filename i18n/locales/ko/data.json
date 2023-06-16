@@ -120,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "디스플레이 이름은 비어 있을 수 없습니다",
-    "New password cannot contain blank space.": "새 비밀번호에는 공백이 포함될 수 없습니다.",
-    "New password must have at least 6 characters": "새로운 비밀번호는 최소 6자 이상이어야 합니다"
+    "New password cannot contain blank space.": "새 비밀번호에는 공백이 포함될 수 없습니다."
   },
   "user_upload": {
     "Failed to import users": "사용자 가져오기를 실패했습니다"
