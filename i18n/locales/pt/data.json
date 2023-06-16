@@ -120,8 +120,8 @@
   },
   "user": {
     "Aa123": "The password must contain at least one uppercase letter, one lowercase letter, and one digit.",
-    "AtLeast6": "AtLeast6",
-    "AtLeast8": "The password must have at least 6 characters.",
+    "AtLeast6": "The password must have at least 6 characters.",
+    "AtLeast8": "The password must have at least 8 characters.",
     "Display name cannot be empty": "Display name cannot be empty",
     "InvalidOption": "InvalidOption",
     "New password cannot contain blank space.": "New password cannot contain blank space.",
