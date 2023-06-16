@@ -68,7 +68,8 @@
     "Missing parameter": "不足しているパラメーター",
     "Please login first": "最初にログインしてください",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
-    "don't support captchaProvider: ": "captchaProviderをサポートしないでください"
+    "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "LDAPサーバーは存在します"

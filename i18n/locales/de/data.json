@@ -68,7 +68,8 @@
     "Missing parameter": "Fehlender Parameter",
     "Please login first": "Bitte zuerst einloggen",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
-    "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:"
+    "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Es gibt einen LDAP-Server"

@@ -68,7 +68,8 @@
     "Missing parameter": "缺少参数",
     "Please login first": "请先登录",
     "The user: %s doesn't exist": "用户: %s不存在",
-    "don't support captchaProvider: ": "不支持验证码提供商: "
+    "don't support captchaProvider: ": "不支持验证码提供商: ",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在"

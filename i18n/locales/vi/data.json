@@ -68,7 +68,8 @@
     "Missing parameter": "Thiếu tham số",
     "Please login first": "Vui lòng đăng nhập trước",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
-    "don't support captchaProvider: ": "không hỗ trợ captchaProvider: "
+    "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Máy chủ LDAP tồn tại"

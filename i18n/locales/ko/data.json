@@ -68,7 +68,8 @@
     "Missing parameter": "누락된 매개변수",
     "Please login first": "먼저 로그인 하십시오",
     "The user: %s doesn't exist": "사용자 %s는 존재하지 않습니다",
-    "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요"
+    "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "LDAP 서버가 존재합니다"
