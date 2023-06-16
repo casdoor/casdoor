@@ -226,7 +226,7 @@
     "Forget URL - Tooltip": "自定义忘记密码页面的URL，不设置时采用Casdoor默认的忘记密码页面，设置后Casdoor各类页面的忘记密码链接会跳转到该URL",
     "Found some texts still not translated? Please help us translate at": "发现有些文字尚未翻译？请移步这里帮我们翻译：",
     "Go to writable demo site?": "跳转至可写演示站点？",
-    "Groups": "用户组",
+    "Groups": "群组",
     "Groups - Tooltip": "Groups - Tooltip",
     "Home": "首页",
     "Home - Tooltip": "应用的首页",
@@ -343,11 +343,11 @@
     "{total} in total": "{total} 总计"
   },
   "group": {
-    "Edit Group": "编辑用户组",
-    "New Group": "新建用户组",
+    "Edit Group": "编辑群组",
+    "New Group": "新建群组",
     "Parent group": "上级组",
     "Parent group - Tooltip": "上级组",
-    "Physical": "物理组",
+    "Physical": "实体组",
     "Show all": "显示全部",
     "Virtual": "虚拟组"
   },
