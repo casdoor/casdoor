@@ -364,6 +364,7 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 				break
 			}
 		}
+
 		if isHit {
 			containsAsterisk := ContainsAsterisk(userId, permission.Users)
 			if containsAsterisk {
