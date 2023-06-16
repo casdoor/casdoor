@@ -43,6 +43,11 @@ class RoleEditPage extends React.Component {
   getRole() {
     RoleBackend.getRole(this.state.organizationName, this.state.roleName)
       .then((role) => {
+        if (role === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         this.setState({
           role: role,
         });

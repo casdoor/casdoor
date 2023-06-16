@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,56 +17,69 @@ import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
-import * as PaymentBackend from "./backend/PaymentBackend";
+import * as GroupBackend from "./backend/GroupBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
-import * as Provider from "./auth/Provider";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
-class PaymentListPage extends BaseListPage {
-  newPayment() {
+class GroupListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
+      groups: [],
+    };
+  }
+  UNSAFE_componentWillMount() {
+    super.UNSAFE_componentWillMount();
+    this.getGroups(this.state.owner);
+  }
+
+  getGroups(organizationName) {
+    GroupBackend.getGroups(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
+      });
+  }
+
+  newGroup() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin",
-      name: `payment_${randomName}`,
+      owner: this.props.account.owner,
+      name: `group_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Payment - ${randomName}`,
-      provider: "provider_pay_paypal",
-      type: "PayPal",
-      organization: this.props.account.owner,
-      user: "admin",
-      productName: "computer-1",
-      productDisplayName: "A notebook computer",
-      detail: "This is a computer with excellent CPU, memory and disk",
-      tag: "Promotion-1",
-      currency: "USD",
-      price: 300.00,
-      payUrl: "https://pay.com/pay.php",
-      returnUrl: "https://door.casdoor.com/payments",
-      state: "Paid",
-      message: "",
+      updatedTime: moment().format(),
+      displayName: `New Group - ${randomName}`,
+      type: "Virtual",
+      parentId: this.props.account.owner,
+      isTopGroup: true,
+      isEnabled: true,
     };
   }
 
-  addPayment() {
-    const newPayment = this.newPayment();
-    PaymentBackend.addPayment(newPayment)
+  addGroup() {
+    const newGroup = this.newGroup();
+    GroupBackend.addGroup(newGroup)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+          this.props.history.push({pathname: `/groups/${newGroup.owner}/${newGroup.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
-      }
-      )
+      })
       .catch(error => {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
-  deletePayment(i) {
-    PaymentBackend.deletePayment(this.state.data[i])
+  deleteGroup(i) {
+    GroupBackend.deleteGroup(this.state.data[i])
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));
@@ -83,35 +96,19 @@ class PaymentListPage extends BaseListPage {
       });
   }
 
-  renderTable(payments) {
+  renderTable(data) {
     const columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
-        width: "180px",
+        width: "120px",
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/payments/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/groups/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -119,11 +116,11 @@ class PaymentListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
+        dataIndex: "owner",
+        key: "owner",
         width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -133,99 +130,85 @@ class PaymentListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/users/${record.organization}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-
-      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "160px",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
         },
       },
-      // {
-      //   title: i18next.t("general:Display name"),
-      //   dataIndex: 'displayName',
-      //   key: 'displayName',
-      //   width: '160px',
-      //   sorter: true,
-      //   ...this.getColumnSearchProps('displayName'),
-      // },
       {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        align: "center",
-        filterMultiple: false,
-        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};}),
+        title: i18next.t("general:Updated time"),
+        dataIndex: "updatedTime",
+        key: "updatedTime",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
-          record.category = "Payment";
-          return Provider.getProviderLogoWidget(record);
+          return Setting.getFormattedDate(text);
         },
       },
       {
-        title: i18next.t("payment:Product"),
-        dataIndex: "productDisplayName",
-        key: "productDisplayName",
-        // width: '160px',
+        title: i18next.t("general:Display name"),
+        dataIndex: "displayName",
+        key: "displayName",
+        width: "100px",
         sorter: true,
-        ...this.getColumnSearchProps("productDisplayName"),
+        ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("product:Price"),
-        dataIndex: "price",
-        key: "price",
-        width: "120px",
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("price"),
+        filterMultiple: false,
+        filters: [
+          {text: i18next.t("group:Virtual"), value: "Virtual"},
+          {text: i18next.t("group:Physical"), value: "Physical"},
+        ],
+        render: (text, record, index) => {
+          return i18next.t("group:" + text);
+        },
       },
       {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
+        title: i18next.t("group:Parent group"),
+        dataIndex: "parentId",
+        key: "parentId",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("currency"),
-      },
-      {
-        title: i18next.t("general:State"),
-        dataIndex: "state",
-        key: "state",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("state"),
+        ...this.getColumnSearchProps("parentId"),
+        render: (text, record, index) => {
+          if (record.isTopGroup) {
+            return <Link to={`/organizations/${record.parentId}`}>
+              {record.parentId}
+            </Link>;
+          }
+          const parentGroup = this.state.groups.find((group) => group.id === text);
+          if (parentGroup === undefined) {
+            return "";
+          }
+          return <Link to={`/groups/${parentGroup.owner}/${parentGroup.name}`}>
+            {parentGroup?.displayName}
+          </Link>;
+        },
       },
       {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "240px",
+        width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const haveChildren = this.state.groups.find((group) => group.parentId === record.id) !== undefined;
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/payments/${record.name}/result`)}>{i18next.t("payment:Result")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/payments/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/groups/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
+                disabled={haveChildren}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deletePayment(index)}
+                onConfirm={() => this.deleteGroup(index)}
               >
               </PopconfirmModal>
             </div>
@@ -243,11 +226,11 @@ class PaymentListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={payments} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={data} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
-              {i18next.t("general:Payments")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addPayment.bind(this)}>{i18next.t("general:Add")}</Button>
+              {i18next.t("general:Groups")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
           loading={this.state.loading}
@@ -260,12 +243,15 @@ class PaymentListPage extends BaseListPage {
   fetch = (params = {}) => {
     let field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
-    if (params.type !== undefined && params.type !== null) {
+    if (params.category !== undefined && params.category !== null) {
+      field = "category";
+      value = params.category;
+    } else if (params.type !== undefined && params.type !== null) {
       field = "type";
       value = params.type;
     }
     this.setState({loading: true});
-    PaymentBackend.getPayments("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(this.state.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,
@@ -285,12 +271,16 @@ class PaymentListPage extends BaseListPage {
             this.setState({
               isAuthorized: false,
             });
-          } else {
-            Setting.showMessage("error", res.msg);
           }
         }
+      })
+      .catch(error => {
+        this.setState({
+          loading: false,
+        });
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   };
 }
 
-export default PaymentListPage;
+export default GroupListPage;

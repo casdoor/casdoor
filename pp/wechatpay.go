@@ -56,7 +56,7 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, mchCe
 	return pp, nil
 }
 
-func (pp *WechatPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *WechatPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
 	// pp.Client.DebugSwitch = gopay.DebugOn
 
 	bm := gopay.BodyMap{}
@@ -73,17 +73,17 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 
 	wxRsp, err := pp.Client.V3TransactionNative(context.Background(), bm)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	if wxRsp.Code != wechat.Success {
-		return "", errors.New(wxRsp.Error)
+		return "", "", errors.New(wxRsp.Error)
 	}
 
-	return wxRsp.Response.CodeUrl, nil
+	return wxRsp.Response.CodeUrl, "", nil
 }
 
-func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
 	notifyReq, err := wechat.V3ParseNotify(request)
 	if err != nil {
 		panic(err)

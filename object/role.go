@@ -259,11 +259,22 @@ func GetRolesByUser(userId string) ([]*Role, error) {
 		return roles, err
 	}
 
-	for i := range roles {
-		roles[i].Users = nil
+	allRolesIds := make([]string, 0, len(roles))
+
+	for _, role := range roles {
+		allRolesIds = append(allRolesIds, role.GetId())
 	}
 
-	return roles, nil
+	allRoles, err := GetAncestorRoles(allRolesIds...)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range allRoles {
+		allRoles[i].Users = nil
+	}
+
+	return allRoles, nil
 }
 
 func roleChangeTrigger(oldName string, newName string) error {
@@ -335,14 +346,22 @@ func GetRolesByNamePrefix(owner string, prefix string) ([]*Role, error) {
 	return roles, nil
 }
 
-func GetAncestorRoles(roleId string) ([]*Role, error) {
+// GetAncestorRoles returns a list of roles that contain the given roleIds
+func GetAncestorRoles(roleIds ...string) ([]*Role, error) {
 	var (
-		result  []*Role
+		result  = []*Role{}
 		roleMap = make(map[string]*Role)
 		visited = make(map[string]bool)
 	)
+	if len(roleIds) == 0 {
+		return result, nil
+	}
 
-	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleId)
+	for _, roleId := range roleIds {
+		visited[roleId] = true
+	}
+
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleIds[0])
 
 	allRoles, err := GetRoles(owner)
 	if err != nil {
@@ -360,7 +379,7 @@ func GetAncestorRoles(roleId string) ([]*Role, error) {
 			result = append(result, r)
 		} else if !ok {
 			rId := r.GetId()
-			visited[rId] = containsRole(r, roleId, roleMap, visited)
+			visited[rId] = containsRole(r, roleMap, visited, roleIds...)
 			if visited[rId] {
 				result = append(result, r)
 			}
@@ -370,19 +389,19 @@ func GetAncestorRoles(roleId string) ([]*Role, error) {
 	return result, nil
 }
 
-// containsRole is a helper function to check if a slice of roles contains a specific roleId
-func containsRole(role *Role, roleId string, roleMap map[string]*Role, visited map[string]bool) bool {
+// containsRole is a helper function to check if a roles is related to any role in the given list roles
+func containsRole(role *Role, roleMap map[string]*Role, visited map[string]bool, roleIds ...string) bool {
 	if isContain, ok := visited[role.GetId()]; ok {
 		return isContain
 	}
 
 	for _, subRole := range role.Roles {
-		if subRole == roleId {
+		if util.HasString(roleIds, subRole) {
 			return true
 		}
 
 		r, ok := roleMap[subRole]
-		if ok && containsRole(r, roleId, roleMap, visited) {
+		if ok && containsRole(r, roleMap, visited, roleIds...) {
 			return true
 		}
 	}

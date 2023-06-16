@@ -123,6 +123,11 @@ class WebhookEditPage extends React.Component {
   getWebhook() {
     WebhookBackend.getWebhook("admin", this.state.webhookName)
       .then((webhook) => {
+        if (webhook === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         this.setState({
           webhook: webhook,
         });

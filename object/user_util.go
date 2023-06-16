@@ -295,6 +295,13 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	oldUserGroupsJson, _ := json.Marshal(oldUser.Groups)
+	newUserGroupsJson, _ := json.Marshal(newUser.Groups)
+	if string(oldUserGroupsJson) != string(newUserGroupsJson) {
+		item := GetAccountItemByName("Groups", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := GetAccountItemByName("Is admin", organization)
 		itemsChanged = append(itemsChanged, item)

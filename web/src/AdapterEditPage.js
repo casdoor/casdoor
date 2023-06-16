@@ -50,6 +50,11 @@ class AdapterEditPage extends React.Component {
     AdapterBackend.getAdapter("admin", this.state.adapterName)
       .then((res) => {
         if (res.status === "ok") {
+          if (res.data === null) {
+            this.props.history.push("/404");
+            return;
+          }
+
           this.setState({
             adapter: res.data,
           });

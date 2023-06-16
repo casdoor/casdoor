@@ -22,6 +22,7 @@ import (
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )
 
@@ -76,11 +77,18 @@ func GetOrganizationCount(owner, field, value string) (int64, error) {
 	return session.Count(&Organization{})
 }
 
-func GetOrganizations(owner string) ([]*Organization, error) {
+func GetOrganizations(owner string, name ...string) ([]*Organization, error) {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
-	if err != nil {
-		return nil, err
+	if name != nil && len(name) > 0 {
+		err := adapter.Engine.Desc("created_time").Where(builder.In("name", name)).Find(&organizations)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return organizations, nil
@@ -331,6 +339,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	user := new(User)
 	user.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(user)
+	if err != nil {
+		return err
+	}
+
+	group := new(Group)
+	group.Owner = newName
+	_, err = session.Where("owner=?", oldName).Update(group)
 	if err != nil {
 		return err
 	}

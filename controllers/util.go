@@ -139,47 +139,46 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 	return true, isMaskEnabled
 }
 
-func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, *object.User, bool) {
+func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, error) {
 	providerName := c.Input().Get("provider")
 	if providerName != "" {
 		provider, err := object.GetProvider(util.GetId("admin", providerName))
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf(c.T("util:The provider: %s is not found"), providerName))
-			return nil, nil, false
+			err = fmt.Errorf(c.T("util:The provider: %s is not found"), providerName)
+			return nil, err
 		}
-		return provider, nil, true
+
+		return provider, nil
 	}
 
 	userId, ok := c.RequireSignedIn()
 	if !ok {
-		return nil, nil, false
+		return nil, fmt.Errorf(c.T("general:Please login first"))
 	}
 
-	application, user, err := object.GetApplicationByUserId(userId)
+	application, err := object.GetApplicationByUserId(userId)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("util:No application is found for userId: %s"), userId))
-		return nil, nil, false
+		return nil, fmt.Errorf(c.T("util:No application is found for userId: %s"), userId)
 	}
 
 	provider, err := application.GetProviderByCategory(category)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name))
-		return nil, nil, false
+		return nil, fmt.Errorf(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name)
 	}
 
-	return provider, user, true
+	return provider, nil
 }
 
 func checkQuotaForApplication(count int) error {
