@@ -162,6 +162,12 @@
     "Verify": "Verificar"
   },
   "general": {
+    "API key": "API key",
+    "API key - Tooltip": "API key - Tooltip",
+    "Access key": "Access key",
+    "Access key - Tooltip": "Access key - Tooltip",
+    "Access secret": "Access secret",
+    "Access secret - Tooltip": "Access secret - Tooltip",
     "Action": "Acción",
     "Adapter": "Adaptador",
     "Adapter - Tooltip": "Nombre de la tabla de la tienda de políticas",

@@ -162,6 +162,12 @@
     "Verify": "검증하다"
   },
   "general": {
+    "API key": "API key",
+    "API key - Tooltip": "API key - Tooltip",
+    "Access key": "Access key",
+    "Access key - Tooltip": "Access key - Tooltip",
+    "Access secret": "Access secret",
+    "Access secret - Tooltip": "Access secret - Tooltip",
     "Action": "동작",
     "Adapter": "어댑터",
     "Adapter - Tooltip": "정책 저장소의 테이블 이름",

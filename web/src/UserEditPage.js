@@ -724,10 +724,10 @@ class UserEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
-                {Setting.getLabel(i18next.t("general:Secret key"), i18next.t("general:Secret key - Tooltip"))} :
+                {Setting.getLabel(i18next.t("general:Access secret"), i18next.t("general:Access secret - Tooltip"))} :
               </Col>
               <Col span={22} >
-                <Input value={this.state.user.secretKey} disabled={true} />
+                <Input value={this.state.user.accessSecret} disabled={true} />
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >
