@@ -153,11 +153,17 @@ export const PasswordModal = (props) => {
               addonBefore={i18next.t("user:New Password")}
               placeholder={i18next.t("user:input password")}
               onChange={(e) => {handleNewPassword(e.target.value);}}
+              status={(!newPasswordValid && newPasswordErrorMessage) ? "error" : undefined}
             />
           </Row>
           {!newPasswordValid && newPasswordErrorMessage && <div style={{color: "red", marginTop: "-20px"}}>{newPasswordErrorMessage}</div>}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password addonBefore={i18next.t("user:Re-enter New")} placeholder={i18next.t("user:input password")} onChange={(e) => handleRePassword(e.target.value)} />
+            <Input.Password
+              addonBefore={i18next.t("user:Re-enter New")}
+              placeholder={i18next.t("user:input password")}
+              onChange={(e) => handleRePassword(e.target.value)}
+              status={(!rePasswordValid && rePasswordErrorMessage) ? "error" : undefined}
+            />
           </Row>
           {!rePasswordValid && rePasswordErrorMessage && <div style={{color: "red", marginTop: "-20px"}}>{rePasswordErrorMessage}</div>}
         </Col>
