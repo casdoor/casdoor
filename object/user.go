@@ -15,12 +15,10 @@
 package object
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/core"
@@ -841,46 +839,6 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
-}
-
-func (user *User) refreshAvatar() (bool, error) {
-	var err error
-	var fileBuffer *bytes.Buffer
-	var ext string
-
-	// Gravatar + Identicon
-	if strings.Contains(user.Avatar, "Gravatar") && user.Email != "" {
-		client := proxy.ProxyHttpClient
-		has, err := hasGravatar(client, user.Email)
-		if err != nil {
-			return false, err
-		}
-
-		if has {
-			fileBuffer, ext, err = getGravatarFileBuffer(client, user.Email)
-			if err != nil {
-				return false, err
-			}
-		}
-	}
-
-	if fileBuffer == nil && strings.Contains(user.Avatar, "Identicon") {
-		fileBuffer, ext, err = getIdenticonFileBuffer(user.Name)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	if fileBuffer != nil {
-		avatarUrl, err := getPermanentAvatarUrlFromBuffer(user.Owner, user.Name, fileBuffer, ext, true)
-		if err != nil {
-			return false, err
-		}
-		user.Avatar = avatarUrl
-		return true, nil
-	}
-
-	return false, nil
 }
 
 func (user *User) IsMfaEnabled() bool {
