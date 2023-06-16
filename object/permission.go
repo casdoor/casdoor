@@ -264,18 +264,48 @@ func DeletePermission(permission *Permission) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetPermissionsByUser(userId string) ([]*Permission, error) {
+func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
 	permissions := []*Permission{}
 	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
 	if err != nil {
-		return permissions, err
+		return nil, nil, err
 	}
 
-	for i := range permissions {
-		permissions[i].Users = nil
+	existedPerms := map[string]struct{}{}
+
+	for _, perm := range permissions {
+		perm.Users = nil
+
+		if _, ok := existedPerms[perm.Name]; !ok {
+			existedPerms[perm.Name] = struct{}{}
+		}
 	}
 
-	return permissions, nil
+	permFromRoles := []*Permission{}
+
+	roles, err := GetRolesByUser(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, role := range roles {
+		perms := []*Permission{}
+		err := adapter.Engine.Where("roles like ?", "%"+role.Name+"\"%").Find(&perms)
+		if err != nil {
+			return nil, nil, err
+		}
+		permFromRoles = append(permFromRoles, perms...)
+	}
+
+	for _, perm := range permFromRoles {
+		perm.Users = nil
+		if _, ok := existedPerms[perm.Name]; !ok {
+			existedPerms[perm.Name] = struct{}{}
+			permissions = append(permissions, perm)
+		}
+	}
+
+	return permissions, roles, nil
 }
 
 func GetPermissionsByRole(roleId string) ([]*Permission, error) {
