@@ -34,6 +34,7 @@ class OrganizationListPage extends BaseListPage {
       favicon: `${Setting.StaticBaseUrl}/img/favicon.png`,
       passwordType: "plain",
       PasswordSalt: "",
+      passwordOptions: [],
       countryCodes: ["CN"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",

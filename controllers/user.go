@@ -448,6 +448,12 @@ func (c *ApiController) SetPassword() {
 		}
 	}
 
+	msg := object.CheckPasswordComplexity(targetUser, newPassword)
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	targetUser.Password = newPassword
 	_, err = object.SetUserField(targetUser, "password", targetUser.Password)
 	if err != nil {

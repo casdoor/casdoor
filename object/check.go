@@ -203,6 +203,16 @@ func CheckPassword(user *User, password string, lang string, options ...bool) st
 	}
 }
 
+func CheckPasswordComplexityByOrg(organization *Organization, password string) string {
+	errorMsg := checkPasswordComplexity(password, organization.PasswordOptions)
+	return errorMsg
+}
+
+func CheckPasswordComplexity(user *User, password string) string {
+	organization, _ := GetOrganizationByUser(user)
+	return CheckPasswordComplexityByOrg(organization, password)
+}
+
 func checkLdapUserPassword(user *User, password string, lang string) string {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {

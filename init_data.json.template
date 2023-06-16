@@ -8,6 +8,7 @@
       "favicon": "",
       "passwordType": "plain",
       "passwordSalt": "",
+      "passwordOptions": ["AtLeast6"],
       "countryCodes": ["US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"],
       "defaultAvatar": "",
       "defaultApplication": "",
