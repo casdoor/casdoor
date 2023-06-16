@@ -30,13 +30,18 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-func main() {
-	createDatabase := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
+func getCreateDatabaseFlag() bool {
+	res := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
 	flag.Parse()
+	return *res
+}
+
+func main() {
+	createDatabase := getCreateDatabaseFlag()
 
 	object.InitAdapter()
+	object.CreateTables(createDatabase)
 	object.DoMigration()
-	object.CreateTables(*createDatabase)
 
 	object.InitDb()
 	object.InitFromFile()

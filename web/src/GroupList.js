@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,48 +17,57 @@ import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
-import * as ProviderBackend from "./backend/ProviderBackend";
-import * as Provider from "./auth/Provider";
+import * as GroupBackend from "./backend/GroupBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
-class ProviderListPage extends BaseListPage {
+class GroupListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.state = {
+      ...this.state,
+      owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
+      groups: [],
+    };
+  }
+  UNSAFE_componentWillMount() {
+    super.UNSAFE_componentWillMount();
+    this.getGroups(this.state.owner);
   }
 
-  componentDidMount() {
-    this.setState({
-      owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
-    });
+  getGroups(organizationName) {
+    GroupBackend.getGroups(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
+      });
   }
 
-  newProvider() {
+  newGroup() {
     const randomName = Setting.getRandomName();
     return {
-      owner: this.state.owner,
-      name: `provider_${randomName}`,
+      owner: this.props.account.owner,
+      name: `group_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Provider - ${randomName}`,
-      category: "OAuth",
-      type: "GitHub",
-      method: "Normal",
-      clientId: "",
-      clientSecret: "",
-      enableSignUp: true,
-      host: "",
-      port: 0,
-      providerUrl: "https://github.com/organizations/xxx/settings/applications/1234567",
+      updatedTime: moment().format(),
+      displayName: `New Group - ${randomName}`,
+      type: "Virtual",
+      parentId: this.props.account.owner,
+      isTopGroup: true,
+      isEnabled: true,
     };
   }
 
-  addProvider() {
-    const newProvider = this.newProvider();
-    ProviderBackend.addProvider(newProvider)
+  addGroup() {
+    const newGroup = this.newGroup();
+    GroupBackend.addGroup(newGroup)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/providers/${newProvider.owner}/${newProvider.name}`, mode: "add"});
+          this.props.history.push({pathname: `/groups/${newGroup.owner}/${newGroup.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -69,8 +78,8 @@ class ProviderListPage extends BaseListPage {
       });
   }
 
-  deleteProvider(i) {
-    ProviderBackend.deleteProvider(this.state.data[i])
+  deleteGroup(i) {
+    GroupBackend.deleteGroup(this.state.data[i])
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));
@@ -87,7 +96,7 @@ class ProviderListPage extends BaseListPage {
       });
   }
 
-  renderTable(providers) {
+  renderTable(data) {
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -99,7 +108,7 @@ class ProviderListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${record.owner}/${text}`}>
+            <Link to={`/groups/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -109,18 +118,32 @@ class ProviderListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
         key: "owner",
-        width: "150px",
+        width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
-          return (text !== "admin") ? text : i18next.t("provider:admin (Shared)");
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
         },
       },
       {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "180px",
+        width: "150px",
+        sorter: true,
+        render: (text, record, index) => {
+          return Setting.getFormattedDate(text);
+        },
+      },
+      {
+        title: i18next.t("general:Updated time"),
+        dataIndex: "updatedTime",
+        key: "updatedTime",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -130,74 +153,45 @@ class ProviderListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        // width: '100px',
+        width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("provider:Category"),
-        dataIndex: "category",
-        key: "category",
-        filterMultiple: false,
-        filters: [
-          {text: "OAuth", value: "OAuth"},
-          {text: "Email", value: "Email"},
-          {text: "SMS", value: "SMS"},
-          {text: "Storage", value: "Storage"},
-          {text: "SAML", value: "SAML"},
-          {text: "Captcha", value: "Captcha"},
-          {text: "Payment", value: "Payment"},
-        ],
-        width: "110px",
-        sorter: true,
-      },
-      {
-        title: i18next.t("provider:Type"),
+        title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
         width: "110px",
-        align: "center",
+        sorter: true,
         filterMultiple: false,
         filters: [
-          {text: "OAuth", value: "OAuth", children: Setting.getProviderTypeOptions("OAuth").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "Email", value: "Email", children: Setting.getProviderTypeOptions("Email").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "SMS", value: "SMS", children: Setting.getProviderTypeOptions("SMS").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "Storage", value: "Storage", children: Setting.getProviderTypeOptions("Storage").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "SAML", value: "SAML", children: Setting.getProviderTypeOptions("SAML").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "Captcha", value: "Captcha", children: Setting.getProviderTypeOptions("Captcha").map((o) => {return {text: o.id, value: o.name};})},
-          {text: "Payment", value: "Payment", children: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};})},
+          {text: i18next.t("group:Virtual"), value: "Virtual"},
+          {text: i18next.t("group:Physical"), value: "Physical"},
         ],
-        sorter: true,
         render: (text, record, index) => {
-          return Provider.getProviderLogoWidget(record);
+          return i18next.t("group:" + text);
         },
       },
       {
-        title: i18next.t("provider:Client ID"),
-        dataIndex: "clientId",
-        key: "clientId",
-        width: "100px",
+        title: i18next.t("group:Parent group"),
+        dataIndex: "parentId",
+        key: "parentId",
+        width: "110px",
         sorter: true,
-        ...this.getColumnSearchProps("clientId"),
+        ...this.getColumnSearchProps("parentId"),
         render: (text, record, index) => {
-          return Setting.getShortText(text);
-        },
-      },
-      {
-        title: i18next.t("provider:Provider URL"),
-        dataIndex: "providerUrl",
-        key: "providerUrl",
-        width: "150px",
-        sorter: true,
-        ...this.getColumnSearchProps("providerUrl"),
-        render: (text, record, index) => {
-          return (
-            <a target="_blank" rel="noreferrer" href={text}>
-              {
-                Setting.getShortText(text)
-              }
-            </a>
-          );
+          if (record.isTopGroup) {
+            return <Link to={`/organizations/${record.parentId}`}>
+              {record.parentId}
+            </Link>;
+          }
+          const parentGroup = this.state.groups.find((group) => group.id === text);
+          if (parentGroup === undefined) {
+            return "";
+          }
+          return <Link to={`/groups/${parentGroup.owner}/${parentGroup.name}`}>
+            {parentGroup?.displayName}
+          </Link>;
         },
       },
       {
@@ -207,13 +201,14 @@ class ProviderListPage extends BaseListPage {
         width: "170px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const haveChildren = this.state.groups.find((group) => group.parentId === record.id) !== undefined;
           return (
             <div>
-              <Button disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)} style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/providers/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/groups/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
+                disabled={haveChildren}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deleteProvider(index)}
-                disabled={!Setting.isAdminUser(this.props.account) && (record.owner !== this.props.account.owner)}
+                onConfirm={() => this.deleteGroup(index)}
               >
               </PopconfirmModal>
             </div>
@@ -231,11 +226,11 @@ class ProviderListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={providers} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={data} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
-              {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
+              {i18next.t("general:Groups")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
           loading={this.state.loading}
@@ -256,8 +251,7 @@ class ProviderListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : ProviderBackend.getProviders(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    GroupBackend.getGroups(this.state.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,
@@ -277,12 +271,16 @@ class ProviderListPage extends BaseListPage {
             this.setState({
               isAuthorized: false,
             });
-          } else {
-            Setting.showMessage("error", res.msg);
           }
         }
+      })
+      .catch(error => {
+        this.setState({
+          loading: false,
+        });
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   };
 }
 
-export default ProviderListPage;
+export default GroupListPage;

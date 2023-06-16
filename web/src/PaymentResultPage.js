@@ -25,6 +25,7 @@ class PaymentResultPage extends React.Component {
       classes: props,
       paymentName: props.match.params.paymentName,
       payment: null,
+      timeout: null,
     };
   }
 
@@ -32,15 +33,21 @@ class PaymentResultPage extends React.Component {
     this.getPayment();
   }
 
+  componentWillUnmount() {
+    if (this.state.timeout !== null) {
+      clearTimeout(this.state.timeout);
+    }
+  }
+
   getPayment() {
-    PaymentBackend.getPayment(this.props.account.owner, this.state.paymentName)
+    PaymentBackend.getPayment("admin", this.state.paymentName)
       .then((payment) => {
         this.setState({
           payment: payment,
         });
 
         if (payment.state === "Created") {
-          setTimeout(() => this.getPayment(), 1000);
+          this.setState({timeout: setTimeout(() => this.getPayment(), 1000)});
         }
       });
   }

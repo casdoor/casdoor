@@ -41,8 +41,8 @@ func InitConfig() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
 	InitAdapter()
-	DoMigration()
 	CreateTables(true)
+	DoMigration()
 }
 
 func InitAdapter() {
@@ -55,8 +55,12 @@ func InitAdapter() {
 
 func CreateTables(createDatabase bool) {
 	if createDatabase {
-		adapter.CreateDatabase()
+		err := adapter.CreateDatabase()
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	adapter.createTable()
 }
 
@@ -132,6 +136,16 @@ func (a *Adapter) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(User))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Group))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(UserGroupRelation))
 	if err != nil {
 		panic(err)
 	}
@@ -295,6 +309,9 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 	}
 	if field != "" && value != "" {
 		if filterField(field) {
+			if offset != -1 {
+				field = fmt.Sprintf("a.%s", field)
+			}
 			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
 		}
 	}
@@ -302,7 +319,8 @@ func GetSessionForUser(owner string, offset, limit int, field, value, sortField,
 		sortField = "created_time"
 	}
 
-	tableName := "user"
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	tableName := tableNamePrefix + "user"
 	if offset == -1 {
 		if sortOrder == "ascend" {
 			session = session.Asc(util.SnakeString(sortField))

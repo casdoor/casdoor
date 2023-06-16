@@ -66,6 +66,8 @@ func GetConfigString(key string) string {
 	if res == "" {
 		if key == "staticBaseUrl" {
 			res = "https://cdn.casbin.org"
+		} else if key == "logConfig" {
+			res = "{\"filename\": \"logs/casdoor.log\", \"maxdays\":99999, \"perm\":\"0770\"}"
 		}
 	}
 
@@ -108,10 +110,10 @@ func GetLanguage(language string) string {
 		return "en"
 	}
 
-	if len(language) < 2 {
+	if len(language) != 2 {
 		return "en"
 	} else {
-		return language[0:2]
+		return language
 	}
 }
 

@@ -26,12 +26,12 @@ func NewDummyPaymentProvider() (*DummyPaymentProvider, error) {
 	return pp, nil
 }
 
-func (pp *DummyPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *DummyPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
 	payUrl := fmt.Sprintf("/payments/%s/result", paymentName)
-	return payUrl, nil
+	return payUrl, "", nil
 }
 
-func (pp *DummyPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+func (pp *DummyPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
 	return "", "", 0, "", "", nil
 }
 

@@ -50,6 +50,11 @@ class PermissionEditPage extends React.Component {
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((permission) => {
+        if (permission === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         this.setState({
           permission: permission,
         });
@@ -264,10 +269,12 @@ class PermissionEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.permission.resourceType} onChange={(value => {
               this.updatePermissionField("resourceType", value);
+              this.updatePermissionField("resources", []);
             })}
             options={[
               {value: "Application", name: i18next.t("general:Application")},
               {value: "TreeNode", name: i18next.t("permission:TreeNode")},
+              {value: "Custom", name: i18next.t("general:Custom")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>
@@ -277,7 +284,7 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Resources"), i18next.t("permission:Resources - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.resources}
+            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.resources}
               onChange={(value => {this.updatePermissionField("resources", value);})}
               options={this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`))
               } />
