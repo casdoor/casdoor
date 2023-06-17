@@ -15,6 +15,7 @@
 package proxy
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net"
 	"net/http"
@@ -71,7 +72,7 @@ func getProxyHttpClient() *http.Client {
 		panic(err)
 	}
 
-	tr := &http.Transport{Dial: dialer.Dial}
+	tr := &http.Transport{Dial: dialer.Dial, TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 	return &http.Client{
 		Transport: tr,
 	}

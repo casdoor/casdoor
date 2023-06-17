@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/casdoor/casdoor/proxy"
@@ -58,7 +57,11 @@ func TestUpdateAvatars(t *testing.T) {
 	}
 
 	for _, user := range users {
-		if strings.HasPrefix(user.Avatar, "http") {
+		//if strings.HasPrefix(user.Avatar, "http") {
+		//	continue
+		//}
+
+		if user.AvatarType != "Favicon" {
 			continue
 		}
 
@@ -69,7 +72,7 @@ func TestUpdateAvatars(t *testing.T) {
 
 		if updated {
 			user.PermanentAvatar = "*"
-			_, err = UpdateUser(user.GetId(), user, []string{"avatar"}, true)
+			_, err = UpdateUser(user.GetId(), user, []string{"avatar", "avatar_type"}, true)
 			if err != nil {
 				panic(err)
 			}
