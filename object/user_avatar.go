@@ -54,19 +54,24 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 	// Get the content type and determine the file extension
 	contentType := resp.Header.Get("Content-Type")
 	fileExtension := ""
-	switch contentType {
-	case "image/jpeg":
-		fileExtension = ".jpg"
-	case "image/png":
-		fileExtension = ".png"
-	case "image/gif":
-		fileExtension = ".gif"
-	case "image/vnd.microsoft.icon":
-		fileExtension = ".ico"
-	case "image/x-icon":
-		fileExtension = ".ico"
-	default:
-		return nil, "", fmt.Errorf("unsupported content type: %s", contentType)
+
+	if strings.Contains(contentType, "text/html") {
+		fileExtension = ".html"
+	} else {
+		switch contentType {
+		case "image/jpeg":
+			fileExtension = ".jpg"
+		case "image/png":
+			fileExtension = ".png"
+		case "image/gif":
+			fileExtension = ".gif"
+		case "image/vnd.microsoft.icon":
+			fileExtension = ".ico"
+		case "image/x-icon":
+			fileExtension = ".ico"
+		default:
+			return nil, "", fmt.Errorf("unsupported content type: %s", contentType)
+		}
 	}
 
 	// Save the image to a bytes.Buffer

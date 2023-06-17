@@ -61,7 +61,7 @@ func TestUpdateAvatars(t *testing.T) {
 		//	continue
 		//}
 
-		if user.AvatarType != "Favicon" {
+		if user.AvatarType != "Auto" {
 			continue
 		}
 
