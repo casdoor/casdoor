@@ -16,14 +16,14 @@ package storage
 
 import "github.com/casdoor/oss"
 
-func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string, s3ForcePathStyle bool) oss.StorageInterface {
 	switch providerType {
 	case "Local File System":
 		return NewLocalFileSystemStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "AWS S3":
 		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "MinIO":
-		return NewMinIOS3StorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewMinIOS3StorageProvider(clientId, clientSecret, region, bucket, endpoint, s3ForcePathStyle)
 	case "Aliyun OSS":
 		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "Tencent Cloud COS":

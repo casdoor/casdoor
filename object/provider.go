@@ -61,6 +61,7 @@ type Provider struct {
 	Domain           string `xorm:"varchar(100)" json:"domain"`
 	Bucket           string `xorm:"varchar(100)" json:"bucket"`
 	PathPrefix       string `xorm:"varchar(100)" json:"pathPrefix"`
+	S3ForcePathStyle bool   `json:"s3ForcePathStyle"`
 
 	Metadata               string `xorm:"mediumtext" json:"metadata"`
 	IdP                    string `xorm:"mediumtext" json:"idP"`
