@@ -20,7 +20,7 @@ import (
 	"github.com/casdoor/oss/s3"
 )
 
-func NewMinIOS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+func NewMinIOS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string, s3ForcePathStyle bool) oss.StorageInterface {
 	sp := s3.New(&s3.Config{
 		AccessID:         clientId,
 		AccessKey:        clientSecret,
@@ -29,7 +29,7 @@ func NewMinIOS3StorageProvider(clientId string, clientSecret string, region stri
 		Endpoint:         endpoint,
 		S3Endpoint:       endpoint,
 		ACL:              awss3.BucketCannedACLPublicRead,
-		S3ForcePathStyle: false,
+		S3ForcePathStyle: s3ForcePathStyle,
 	})
 
 	return sp
