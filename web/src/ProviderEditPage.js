@@ -631,7 +631,7 @@ class ProviderEditPage extends React.Component {
             {["MinIO"].includes(this.state.provider.type) ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
-                  {Setting.getLabel(i18next.t("provider:Force Path Style"), i18next.t("provider:Force Path Style - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Force path style"), i18next.t("provider:Force path style - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Switch checked={this.state.provider.s3ForcePathStyle} onChange={checked => {
