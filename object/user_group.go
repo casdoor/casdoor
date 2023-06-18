@@ -10,15 +10,15 @@ import (
 )
 
 type UserGroupRelation struct {
-	UserId  string `xorm:"varchar(100) notnull pk" json:"userId"`
-	GroupId string `xorm:"varchar(100) notnull pk" json:"groupId"`
+	UserId    string `xorm:"varchar(100) notnull pk" json:"userId"`
+	GroupName string `xorm:"varchar(100) notnull pk" json:"groupName"`
 
 	CreatedTime string `xorm:"created" json:"createdTime"`
 	UpdatedTime string `xorm:"updated" json:"updatedTime"`
 }
 
 func updateUserGroupRelation(session *xorm.Session, user *User) (int64, error) {
-	physicalGroupCount, err := session.Where("type = ?", "Physical").In("id", user.Groups).Count(Group{})
+	physicalGroupCount, err := session.In("name", user.Groups).Count(Group{Type: "Physical"})
 	if err != nil {
 		return 0, err
 	}
@@ -27,7 +27,7 @@ func updateUserGroupRelation(session *xorm.Session, user *User) (int64, error) {
 	}
 
 	groups := []*Group{}
-	err = session.In("id", user.Groups).Find(&groups)
+	err = session.In("name", user.Groups).Find(&groups)
 	if err != nil {
 		return 0, err
 	}
@@ -42,7 +42,7 @@ func updateUserGroupRelation(session *xorm.Session, user *User) (int64, error) {
 
 	relations := []*UserGroupRelation{}
 	for _, group := range groups {
-		relations = append(relations, &UserGroupRelation{UserId: user.Id, GroupId: group.Id})
+		relations = append(relations, &UserGroupRelation{UserId: user.Id, GroupName: group.Name})
 	}
 	if len(relations) == 0 {
 		return 1, nil
@@ -76,35 +76,35 @@ func RemoveUserFromGroup(owner, name, groupId string) (bool, error) {
 	return true, nil
 }
 
-func deleteUserGroupRelation(session *xorm.Session, userId, groupId string) (int64, error) {
-	affected, err := session.ID(core.PK{userId, groupId}).Delete(&UserGroupRelation{})
+func DeleteUserGroupRelation(userId, groupId string) (int64, error) {
+	affected, err := adapter.Engine.ID(core.PK{userId, groupId}).Delete(&UserGroupRelation{})
 	return affected, err
 }
 
-func deleteRelationByUser(id string) (int64, error) {
+func DeleteRelationByUserId(id string) (int64, error) {
 	affected, err := adapter.Engine.Delete(&UserGroupRelation{UserId: id})
 	return affected, err
 }
 
-func GetGroupUserCount(id string, field, value string) (int64, error) {
-	group, err := GetGroup(id)
+func GetGroupUserCount(groupName string, field, value string) (int64, error) {
+	group, err := getGroupByName(groupName)
 	if group == nil || err != nil {
 		return 0, err
 	}
 
 	if field == "" && value == "" {
-		return adapter.Engine.Count(UserGroupRelation{GroupId: group.Id})
+		return adapter.Engine.Count(UserGroupRelation{GroupName: group.Name})
 	} else {
 		return adapter.Engine.Table("user").
 			Join("INNER", []string{"user_group_relation", "r"}, "user.id = r.user_id").
-			Where("r.group_id = ?", group.Id).
+			Where("r.group_name = ?", group.Name).
 			And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%").
 			Count()
 	}
 }
 
-func GetPaginationGroupUsers(id string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
-	group, err := GetGroup(id)
+func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+	group, err := getGroupByName(groupName)
 	if group == nil || err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func GetPaginationGroupUsers(id string, offset, limit int, field, value, sortFie
 	users := []*User{}
 	session := adapter.Engine.Table("user").
 		Join("INNER", []string{"user_group_relation", "r"}, "user.id = r.user_id").
-		Where("r.group_id = ?", group.Id)
+		Where("r.group_name = ?", group.Name)
 
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
@@ -139,16 +139,16 @@ func GetPaginationGroupUsers(id string, offset, limit int, field, value, sortFie
 	return users, nil
 }
 
-func GetGroupUsers(id string) ([]*User, error) {
-	group, err := GetGroup(id)
+func GetGroupUsers(groupName string) ([]*User, error) {
+	group, err := getGroupByName(groupName)
 	if group == nil || err != nil {
 		return []*User{}, err
 	}
 
 	users := []*User{}
-	err = adapter.Engine.Table("user_group_relation").Join("INNER", []string{"user", "u"}, "user_group_relation.user_id = u.id").
-		Where("user_group_relation.group_id = ?", group.Id).
-		Find(&users)
+	err = adapter.Engine.Table("user").
+		Join("INNER", []string{"user_group_relation", "r"}, "user.id = r.user_id").
+		Where("r.group_name = ?", group.Name).Find(&users)
 	if err != nil {
 		return nil, err
 	}

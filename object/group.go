@@ -24,11 +24,10 @@ import (
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id           string    `xorm:"varchar(100) not null index" json:"id"`
 	DisplayName  string    `xorm:"varchar(100)" json:"displayName"`
 	Manager      string    `xorm:"varchar(100)" json:"manager"`
 	ContactEmail string    `xorm:"varchar(100)" json:"contactEmail"`
@@ -95,12 +94,12 @@ func getGroup(owner string, name string) (*Group, error) {
 	}
 }
 
-func getGroupById(id string) (*Group, error) {
-	if id == "" {
+func getGroupByName(name string) (*Group, error) {
+	if name == "" {
 		return nil, nil
 	}
 
-	group := Group{Id: id}
+	group := Group{Name: name}
 	existed, err := adapter.Engine.Get(&group)
 	if err != nil {
 		return nil, err
@@ -135,10 +134,6 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 }
 
 func AddGroup(group *Group) (bool, error) {
-	if group.Id == "" {
-		group.Id = util.GenerateId()
-	}
-
 	affected, err := adapter.Engine.Insert(group)
 	if err != nil {
 		return false, err
@@ -164,7 +159,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if count, err := adapter.Engine.Where("parent_id = ?", group.Id).Count(&Group{}); err != nil {
+	if count, err := adapter.Engine.Where("parent_id = ?", group.Name).Count(&Group{}); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has children group")
@@ -183,7 +178,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if _, err := session.Delete(&UserGroupRelation{GroupId: group.Id}); err != nil {
+	if _, err := session.Delete(&UserGroupRelation{GroupName: group.Name}); err != nil {
 		session.Rollback()
 		return false, err
 	}
@@ -215,9 +210,8 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 				Key:   group.Name,
 				Type:  group.Type,
 				Owner: group.Owner,
-				Id:    group.Id,
 			}
-			children := ConvertToTreeData(groups, group.Id)
+			children := ConvertToTreeData(groups, group.Name)
 			if len(children) > 0 {
 				node.Children = children
 			}
