@@ -38,6 +38,7 @@ class OrganizationEditPage extends React.Component {
       applications: [],
       ldaps: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      size: {},
     };
   }
 
@@ -45,6 +46,7 @@ class OrganizationEditPage extends React.Component {
     this.getOrganization();
     this.getApplications();
     this.getLdaps();
+    this.initSize();
   }
 
   getOrganization() {
@@ -106,6 +108,31 @@ class OrganizationEditPage extends React.Component {
     });
   }
 
+  initSize() {
+    if (i18next.language === "zh") {
+      this.setState({
+        size: {
+          xxl: 2,
+          xl: 3,
+          lg: 4,
+          md: 5,
+          sm: 6,
+        },
+      });
+      return;
+    }
+
+    this.setState({
+      size: {
+        xxl: 3,
+        xl: 5,
+        lg: 6,
+        md: 7,
+        sm: 8,
+      },
+    });
+  }
+
   renderOrganization() {
     return (
       <Card size="small" title={
@@ -116,31 +143,31 @@ class OrganizationEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteOrganization()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Row style={{marginTop: "10px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "10px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.organization.name} disabled={this.state.organization.name === "built-in"} onChange={e => {
               this.updateOrganizationField("name", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.organization.displayName} onChange={e => {
               this.updateOrganizationField("displayName", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
@@ -163,41 +190,41 @@ class OrganizationEditPage extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Website URL"), i18next.t("organization:Website URL - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input prefix={<LinkOutlined />} value={this.state.organization.websiteUrl} onChange={e => {
               this.updateOrganizationField("websiteUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} style={{width: "100%"}} value={this.state.organization.passwordType} onChange={(value => {this.updateOrganizationField("passwordType", value);})}
               options={["plain", "salt", "md5-salt", "bcrypt", "pbkdf2-salt", "argon2id"].map(item => Setting.getOption(item, item))}
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.organization.passwordSalt} onChange={e => {
               this.updateOrganizationField("passwordSalt", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}}>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Password complexity options"), i18next.t("general:Password complexity options - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select
               virtual={false}
               style={{width: "100%"}}
@@ -216,11 +243,11 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Supported country codes"), i18next.t("general:Supported country codes - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} mode={"multiple"} style={{width: "100%"}} value={this.state.organization.countryCodes ?? []}
               onChange={value => {
                 this.updateOrganizationField("countryCodes", value);
@@ -233,11 +260,11 @@ class OrganizationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Languages"), i18next.t("general:Languages - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} mode="multiple" style={{width: "100%"}}
               options={Setting.Countries.map((item) => {
                 return Setting.getOption(item.label, item.key);
@@ -249,11 +276,11 @@ class OrganizationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Default avatar"), i18next.t("general:Default avatar - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
                 {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
@@ -276,21 +303,21 @@ class OrganizationEditPage extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Default application"), i18next.t("general:Default application - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} style={{width: "100%"}} value={this.state.organization.defaultApplication} onChange={(value => {this.updateOrganizationField("defaultApplication", value);})}
               options={this.state.applications?.map((item) => Setting.getOption(item.name, item.name))
               } />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Tags"), i18next.t("organization:Tags - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.organization.tags} onChange={(value => {this.updateOrganizationField("tags", value);})}>
               {
                 this.state.organization.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
@@ -298,18 +325,18 @@ class OrganizationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:Master password"), i18next.t("general:Master password - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <Input value={this.state.organization.masterPassword} onChange={e => {
               this.updateOrganizationField("masterPassword", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Init score"), i18next.t("organization:Init score - Tooltip"))} :
           </Col>
           <Col span={4} >
@@ -318,8 +345,8 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
           </Col>
           <Col span={1} >
@@ -328,8 +355,8 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Is profile public"), i18next.t("organization:Is profile public - Tooltip"))} :
           </Col>
           <Col span={1} >
@@ -338,11 +365,11 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("organization:Account items"), i18next.t("organization:Account items - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <AccountTable
               title={i18next.t("organization:Account items")}
               table={this.state.organization.accountItems}
@@ -350,11 +377,11 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:MFA items"), i18next.t("general:MFA items - Tooltip"))} :
           </Col>
-          <Col span={22} >
+          <Col flex="auto" >
             <MfaTable
               title={i18next.t("general:MFA items")}
               table={this.state.organization.mfaItems ?? []}
@@ -362,11 +389,11 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
           </Col>
-          <Col span={22} style={{marginTop: "5px"}}>
+          <Col flex="auto" style={{marginTop: "5px"}}>
             <Row>
               <Radio.Group value={this.state.organization.themeData?.isEnabled ?? false} onChange={e => {
                 const {_, ...theme} = this.state.organization.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
@@ -387,11 +414,11 @@ class OrganizationEditPage extends React.Component {
             }
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}}>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+        <Row style={{marginTop: "20px"}} wrap={false}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2} {...this.state.size}>
             {Setting.getLabel(i18next.t("general:LDAPs"), i18next.t("general:LDAPs - Tooltip"))} :
           </Col>
-          <Col span={22}>
+          <Col flex="auto">
             <LdapTable
               title={i18next.t("general:LDAPs")}
               table={this.state.ldaps}
