@@ -185,7 +185,7 @@ class GroupListPage extends BaseListPage {
               {record.parentId}
             </Link>;
           }
-          const parentGroup = this.state.groups.find((group) => group.id === text);
+          const parentGroup = this.state.groups.find((group) => group.name === text);
           if (parentGroup === undefined) {
             return "";
           }

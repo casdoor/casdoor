@@ -76,7 +76,6 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	Groups            []string `xorm:"varchar(1000)" json:"groups"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 
@@ -167,6 +166,7 @@ type User struct {
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
+	Groups      []string      `xorm:"groups varchar(1000)" json:"groups"`
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
@@ -725,7 +725,7 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	affected, err = deleteRelationByUser(user.Id)
+	affected, err = DeleteRelationByUserId(user.Id)
 	if err != nil {
 		return false, err
 	}

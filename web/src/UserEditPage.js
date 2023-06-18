@@ -309,7 +309,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
-              if (this.state.groups?.filter(group => value.includes(group.id))
+              if (this.state.groups?.filter(group => value.includes(group.name))
                 .filter(group => group.type === "Physical").length > 1) {
                 Setting.showMessage("error", i18next.t("general:You can only select one physical group"));
                 return;
@@ -319,7 +319,7 @@ class UserEditPage extends React.Component {
             })}
             >
               {
-                this.state.groups?.map((group) => <Option key={group.id} value={group.id}>
+                this.state.groups?.map((group) => <Option key={group.name} value={group.name}>
                   <Space>
                     {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
                     {group.displayName}

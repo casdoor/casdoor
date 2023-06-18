@@ -44,11 +44,6 @@ class GroupEditPage extends React.Component {
     GroupBackend.getGroup(this.state.organizationName, this.state.groupName)
       .then((res) => {
         if (res.status === "ok") {
-          if (res.data === null) {
-            this.props.history.push("/404");
-            return;
-          }
-
           this.setState({
             group: res.data,
           });
@@ -96,12 +91,12 @@ class GroupEditPage extends React.Component {
   }
 
   getParentIdOptions() {
-    const groups = this.state.groups.filter((group) => group.id !== this.state.group.id);
+    const groups = this.state.groups.filter((group) => group.name !== this.state.group.name);
     const organization = this.state.organizations.find((organization) => organization.name === this.state.group.owner);
     if (organization !== undefined) {
-      groups.push({id: organization.name, displayName: organization.displayName});
+      groups.push({name: organization.name, displayName: organization.displayName});
     }
-    return groups.map((group) => ({label: group.displayName, value: group.id}));
+    return groups.map((group) => ({label: group.displayName, value: group.name}));
   }
 
   renderGroup() {
@@ -136,7 +131,7 @@ class GroupEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.group.name} onChange={e => {
+            <Input disabled={true} value={this.state.group.name} onChange={e => {
               this.updateGroupField("name", e.target.value);
             }} />
           </Col>
