@@ -104,7 +104,7 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
 	endpoint := getProviderEndpoint(provider)
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint, provider.S3ForcePathStyle)
+	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
 		return "", "", fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}
@@ -155,7 +155,7 @@ func DeleteFile(provider *Provider, objectKey string, lang string) error {
 	}
 
 	endpoint := getProviderEndpoint(provider)
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint, provider.S3ForcePathStyle)
+	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
 		return fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}

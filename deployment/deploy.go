@@ -26,7 +26,7 @@ import (
 )
 
 func deployStaticFiles(provider *object.Provider) {
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint, provider.S3ForcePathStyle)
+	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, provider.Endpoint)
 	if storageProvider == nil {
 		panic(fmt.Sprintf("the provider type: %s is not supported", provider.Type))
 	}
