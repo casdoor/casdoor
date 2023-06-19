@@ -781,6 +781,10 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		return err
 	}
 
+	if user.Groups == nil {
+		user.Groups = []string{}
+	}
+
 	return
 }
 
