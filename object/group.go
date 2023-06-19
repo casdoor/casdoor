@@ -18,17 +18,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/xorm-io/builder"
-
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
-	CreatedTime string `xorm:"varchar(100) created" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100) updated" json:"updatedTime"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
 	Manager      string  `xorm:"varchar(100)" json:"manager"`
