@@ -745,7 +745,7 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 		resp.Name = user.Name
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
-		resp.Groups = []string{user.Owner}
+		resp.Groups = user.Groups
 	}
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
