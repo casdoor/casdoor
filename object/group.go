@@ -96,24 +96,6 @@ func getGroup(owner string, name string) (*Group, error) {
 	}
 }
 
-func getGroupByName(name string) (*Group, error) {
-	if name == "" {
-		return nil, nil
-	}
-
-	group := Group{Name: name}
-	existed, err := adapter.Engine.Get(&group)
-	if err != nil {
-		return nil, err
-	}
-
-	if existed {
-		return &group, nil
-	} else {
-		return nil, nil
-	}
-}
-
 func GetGroup(id string) (*Group, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getGroup(owner, name)
