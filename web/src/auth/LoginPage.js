@@ -232,6 +232,19 @@ class LoginPage extends React.Component {
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
 
+    AuthBackend.getAccount()
+      .then((res) => {
+        if (res.status === "ok") {
+          const account = res.data;
+
+          if (account.passwordChangeRequired) {
+            sessionStorage.setItem("from", window.location.pathname);
+            Setting.goToLink("/change-password");
+            return;
+          }
+        }
+      });
+
     if (Setting.hasPromptPage(application) || resp.msg === RequiredMfa) {
       AuthBackend.getAccount()
         .then((res) => {
