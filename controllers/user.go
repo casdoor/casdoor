@@ -556,8 +556,8 @@ func (c *ApiController) AddUserkeys() {
 func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
-	groupId := c.Ctx.Request.Form.Get("groupId")
+	groupName := c.Ctx.Request.Form.Get("groupName")
 
-	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupId))
+	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupName))
 	c.ServeJSON()
 }

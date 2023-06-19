@@ -26,6 +26,18 @@ func DeleteVal(values []string, val string) []string {
 	return newValues
 }
 
+func ReplaceVal(values []string, oldVal string, newVal string) []string {
+	newValues := []string{}
+	for _, v := range values {
+		if v == oldVal {
+			newValues = append(newValues, newVal)
+		} else {
+			newValues = append(newValues, v)
+		}
+	}
+	return newValues
+}
+
 func ContainsString(values []string, val string) bool {
 	sort.Strings(values)
 	return sort.SearchStrings(values, val) != len(values)
