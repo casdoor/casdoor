@@ -131,7 +131,7 @@ class GroupEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.group.name} onChange={e => {
+            <Input value={this.state.group.name} onChange={e => {
               this.updateGroupField("name", e.target.value);
             }} />
           </Col>

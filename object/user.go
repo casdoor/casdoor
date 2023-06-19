@@ -220,11 +220,11 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupId string) (int64, error) {
+func GetUserCount(owner, field, value string, groupName string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 
-	if groupId != "" {
-		return GetGroupUserCount(groupId, field, value)
+	if groupName != "" {
+		return GetGroupUserCount(groupName, field, value)
 	}
 
 	return session.Count(&User{})
@@ -264,11 +264,11 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupId string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string) ([]*User, error) {
 	users := []*User{}
 
-	if groupId != "" {
-		return GetPaginationGroupUsers(groupId, offset, limit, field, value, sortField, sortOrder)
+	if groupName != "" {
+		return GetPaginationGroupUsers(groupName, offset, limit, field, value, sortField, sortOrder)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
@@ -483,16 +483,12 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if name != user.Name {
 		err := userChangeTrigger(name, user.Name)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 	}
 
 	if user.Password == "***" {
 		user.Password = oldUser.Password
-	}
-	err = user.UpdateUserHash()
-	if err != nil {
-		panic(err)
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
@@ -521,7 +517,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
-	affected, err := updateUser(oldUser, user, columns)
+	affected, err := updateUser(id, user, columns)
 	if err != nil {
 		return false, err
 	}
@@ -529,32 +525,17 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	return affected != 0, nil
 }
 
-func updateUser(oldUser, user *User, columns []string) (int64, error) {
-	session := adapter.Engine.NewSession()
-	defer session.Close()
-
-	session.Begin()
-
-	if util.ContainsString(columns, "groups") {
-		affected, err := updateUserGroupRelation(session, user)
-		if err != nil {
-			session.Rollback()
-			return affected, err
-		}
-	}
-
-	affected, err := session.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+func updateUser(id string, user *User, columns []string) (int64, error) {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	err := user.UpdateUserHash()
 	if err != nil {
-		session.Rollback()
-		return affected, err
-	}
-
-	err = session.Commit()
-	if err != nil {
-		session.Rollback()
 		return 0, err
 	}
 
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
+	if err != nil {
+		return 0, err
+	}
 	return affected, nil
 }
 
@@ -721,11 +702,6 @@ func DeleteUser(user *User) (bool, error) {
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
-	if err != nil {
-		return false, err
-	}
-
-	affected, err = DeleteRelationByUserId(user.Id)
 	if err != nil {
 		return false, err
 	}
