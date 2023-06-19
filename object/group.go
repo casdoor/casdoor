@@ -274,7 +274,7 @@ func GroupChangeTrigger(oldName, newName string) error {
 	}
 
 	users := []*User{}
-	err = session.Where(builder.Like{"`groups`", oldName}).Find(&User{})
+	err = session.Where(builder.Like{"`groups`", oldName}).Find(&users)
 	if err != nil {
 		return err
 	}
@@ -287,5 +287,19 @@ func GroupChangeTrigger(oldName, newName string) error {
 		}
 	}
 
+	groups := []*Group{}
+	err = session.Where("parent_id = ?", oldName).Find(&groups)
+	for _, group := range groups {
+		group.ParentId = newName
+		_, err := session.ID(core.PK{group.Owner, group.Name}).Cols("parent_id").Update(group)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return err
+	}
 	return nil
 }
