@@ -34,7 +34,7 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("downloadImage() error for url [%s]: %s\n", url, err.Error())
-		if strings.Contains(err.Error(), "EOF") {
+		if strings.Contains(err.Error(), "EOF") || strings.Contains(err.Error(), "no such host") {
 			return nil, "", nil
 		} else {
 			return nil, "", err
