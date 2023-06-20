@@ -18,9 +18,9 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/net/html"
 )
 
@@ -206,10 +206,7 @@ func getFaviconFileBuffer(client *http.Client, email string) (*bytes.Buffer, str
 		}
 
 		if !strings.HasPrefix(faviconUrl, "http") {
-			faviconUrl, err = url.JoinPath(htmlUrl, faviconUrl)
-			if err != nil {
-				return nil, "", err
-			}
+			faviconUrl = util.UrlJoin(htmlUrl, faviconUrl)
 		}
 	}
 
