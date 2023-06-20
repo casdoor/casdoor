@@ -26,7 +26,7 @@ import (
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
-func getEnforcer(permission *Permission) *casbin.Enforcer {
+func getEnforcer(permission *Permission, permissionIDs ...string) *casbin.Enforcer {
 	tableName := "permission_rule"
 	if len(permission.Adapter) != 0 {
 		adapterObj, err := getCasbinAdapter(permission.Owner, permission.Adapter)
@@ -77,8 +77,13 @@ func getEnforcer(permission *Permission) *casbin.Enforcer {
 
 	enforcer.SetAdapter(adapter)
 
+	policyFilterV5 := []string{permission.GetId()}
+	if len(permissionIDs) != 0 {
+		policyFilterV5 = permissionIDs
+	}
+
 	policyFilter := xormadapter.Filter{
-		V5: []string{permission.GetId()},
+		V5: policyFilterV5,
 	}
 
 	if !HasRoleDefinition(m) {
@@ -251,7 +256,7 @@ func Enforce(permissionId string, request *CasbinRequest) (bool, error) {
 	return enforcer.Enforce(*request...)
 }
 
-func BatchEnforce(permissionId string, requests *[]CasbinRequest) ([]bool, error) {
+func BatchEnforce(permissionId string, requests *[]CasbinRequest, permissionIds ...string) ([]bool, error) {
 	permission, err := GetPermission(permissionId)
 	if err != nil {
 		res := []bool{}
@@ -262,7 +267,7 @@ func BatchEnforce(permissionId string, requests *[]CasbinRequest) ([]bool, error
 		return res, err
 	}
 
-	enforcer := getEnforcer(permission)
+	enforcer := getEnforcer(permission, permissionIds...)
 	return enforcer.BatchEnforce(*requests)
 }
 
