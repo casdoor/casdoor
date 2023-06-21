@@ -260,10 +260,17 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	// decompress
 	var buffer bytes.Buffer
 	rdr := flate.NewReader(bytes.NewReader(defated))
-	_, err = io.Copy(&buffer, rdr)
-	if err != nil {
-		return "", "", "", err
+
+	for {
+		_, err := io.CopyN(&buffer, rdr, 1024)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return "", "", "", err
+		}
 	}
+
 	var authnRequest saml.AuthnRequest
 	err = xml.Unmarshal(buffer.Bytes(), &authnRequest)
 	if err != nil {
