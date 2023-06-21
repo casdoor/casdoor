@@ -86,6 +86,7 @@ import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
 import MfaSetupPage from "./auth/MfaSetupPage";
+import OrganizationFilter from "./common/select/OrganizationFilter";
 
 const {Header, Footer, Content} = Layout;
 
@@ -396,6 +397,7 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
+          <OrganizationFilter account={this.state.account} />
         </React.Fragment>
       );
     }
@@ -670,7 +672,7 @@ class App extends Component {
               items={this.getMenuItems()}
               mode={"horizontal"}
               selectedKeys={[this.state.selectedMenuKey]}
-              style={{position: "absolute", left: "145px", right: "260px"}}
+              style={{position: "absolute", left: "145px", right: "285px"}}
             />
           }
           {

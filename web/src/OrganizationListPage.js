@@ -23,6 +23,14 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class OrganizationListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "name",
+    };
+  }
+
   newOrganization() {
     const randomName = Setting.getRandomName();
     return {

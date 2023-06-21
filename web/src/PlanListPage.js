@@ -21,12 +21,20 @@ import * as PlanBackend from "./backend/PlanBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class PlanListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   newPlan() {
     const randomName = Setting.getRandomName();
-    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
-
+    let owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
+    owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : owner;
     return {
       owner: owner,
       name: `plan_${randomName}`,

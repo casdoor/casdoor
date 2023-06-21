@@ -21,15 +21,24 @@ import * as WebhookBackend from "./backend/WebhookBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class WebhookListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   newWebhook() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
       owner: "admin", // this.props.account.webhookname,
       name: `webhook_${randomName}`,
       createdTime: moment().format(),
-      organization: this.props.account.owner,
+      organization: organizationName,
       url: "https://example.com/callback",
       method: "POST",
       contentType: "application/json",

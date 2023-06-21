@@ -23,6 +23,7 @@ import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -31,6 +32,7 @@ class UserListPage extends BaseListPage {
       ...this.state,
       organizationName: this.props.organizationName ?? this.props.match?.params.organizationName ?? this.props.account.owner,
       organization: null,
+      organizationKey: "owner",
     };
   }
 
@@ -61,7 +63,7 @@ class UserListPage extends BaseListPage {
 
   newUser() {
     const randomName = Setting.getRandomName();
-    const owner = this.state.organizationName;
+    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.organizationName;
     return {
       owner: owner,
       name: `user_${randomName}`,

@@ -22,13 +22,19 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class ApplicationListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
   }
 
   componentDidMount() {
+    super.componentDidMount();
     this.setState({
       organizationName: this.props.account.owner,
     });
@@ -36,10 +42,11 @@ class ApplicationListPage extends BaseListPage {
 
   newApplication() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.organizationName;
     return {
       owner: "admin", // this.props.account.applicationName,
       name: `application_${randomName}`,
-      organization: this.state.organizationName,
+      organization: organizationName,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
       logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,

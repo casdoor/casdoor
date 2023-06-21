@@ -22,7 +22,13 @@ import * as SessionBackend from "./backend/SessionBackend";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class SessionListPage extends BaseListPage {
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   deleteSession(i) {
     SessionBackend.deleteSession(this.state.data[i])
       .then((res) => {

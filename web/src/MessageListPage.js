@@ -21,15 +21,24 @@ import * as MessageBackend from "./backend/MessageBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class MessageListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   newMessage() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
       owner: "admin", // this.props.account.messagename,
       name: `message_${randomName}`,
       createdTime: moment().format(),
-      organization: this.props.account.owner,
+      organization: organizationName,
       chat: "",
       replyTo: "",
       author: `${this.props.account.owner}/${this.props.account.name}`,

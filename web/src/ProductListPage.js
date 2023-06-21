@@ -22,12 +22,21 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import {EditOutlined} from "@ant-design/icons";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class ProductListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   newProduct() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `product_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Product - ${randomName}`,

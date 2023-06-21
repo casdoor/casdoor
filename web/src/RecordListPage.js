@@ -22,6 +22,13 @@ import moment from "moment";
 import BaseListPage from "./BaseListPage";
 
 class RecordListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   UNSAFE_componentWillMount() {
     this.state.pagination.pageSize = 20;
     const {pagination} = this.state;

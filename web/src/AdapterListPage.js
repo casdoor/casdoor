@@ -21,12 +21,21 @@ import * as AdapterBackend from "./backend/AdapterBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class AdapterListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   newAdapter() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `adapter_${randomName}`,
       createdTime: moment().format(),
       type: "Database",

@@ -26,6 +26,10 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ResourceListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
   }
 
   componentDidMount() {

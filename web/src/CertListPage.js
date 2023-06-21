@@ -21,13 +21,19 @@ import * as CertBackend from "./backend/CertBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class CertListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
   }
 
   componentDidMount() {
+    super.componentDidMount();
     this.setState({
       owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
     });
@@ -35,8 +41,9 @@ class CertListPage extends BaseListPage {
 
   newCert() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.owner;
     return {
-      owner: this.state.owner,
+      owner: owner,
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,

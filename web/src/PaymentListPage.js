@@ -22,10 +22,19 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import * as Provider from "./auth/Provider";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class PaymentListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   newPayment() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
       owner: "admin",
       name: `payment_${randomName}`,
@@ -33,7 +42,7 @@ class PaymentListPage extends BaseListPage {
       displayName: `New Payment - ${randomName}`,
       provider: "provider_pay_paypal",
       type: "PayPal",
-      organization: this.props.account.owner,
+      organization: organizationName,
       user: "admin",
       productName: "computer-1",
       productDisplayName: "A notebook computer",

@@ -21,11 +21,20 @@ import * as SubscriptionBackend from "./backend/SubscriptionBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class SubscriptionListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   newSubscription() {
     const randomName = Setting.getRandomName();
-    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
+    let owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
+    owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : owner;
     const defaultDuration = 365;
 
     return {

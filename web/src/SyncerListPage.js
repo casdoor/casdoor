@@ -21,15 +21,24 @@ import * as SyncerBackend from "./backend/SyncerBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class SyncerListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   newSyncer() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
       owner: "admin",
       name: `syncer_${randomName}`,
       createdTime: moment().format(),
-      organization: this.props.account.owner,
+      organization: organizationName,
       type: "Database",
       host: "localhost",
       port: 3306,

@@ -21,6 +21,7 @@ import * as ModelBackend from "./backend/ModelBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 const rbacModel = `[request_definition]
 r = sub, obj, act
@@ -38,10 +39,18 @@ e = some(where (p.eft == allow))
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`;
 
 class ModelListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "owner",
+    };
+  }
   newModel() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `model_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Model - ${randomName}`,

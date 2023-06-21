@@ -21,16 +21,25 @@ import * as TokenBackend from "./backend/TokenBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import * as Conf from "./Conf";
 
 class TokenListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      organizationKey: "organization",
+    };
+  }
   newToken() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
     return {
       owner: "admin", // this.props.account.tokenname,
       name: `token_${randomName}`,
       createdTime: moment().format(),
       application: "app-built-in",
-      organization: this.props.account.owner,
+      organization: organizationName,
       user: "admin",
       accessToken: "",
       expiresIn: 7200,
