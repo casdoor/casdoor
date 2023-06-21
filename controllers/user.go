@@ -415,6 +415,7 @@ func (c *ApiController) SetPassword() {
 
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
+		c.ResponseError(c.T("user:Please login first.") + " " + c.T("user:Or enter the verification code."))
 		return
 	} else if code == "" {
 		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
@@ -424,7 +425,7 @@ func (c *ApiController) SetPassword() {
 		}
 	} else {
 		if code != c.GetSession("verifiedCode") {
-			c.ResponseError("")
+			c.ResponseError(c.T("user:Invalid verification code."))
 			return
 		}
 		c.SetSession("verifiedCode", "")
