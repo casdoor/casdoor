@@ -319,12 +319,12 @@ func getUserById(owner string, id string) (*User, error) {
 	}
 }
 
-func getUserByWechatId(wechatOpenId string, wechatUnionId string) (*User, error) {
+func getUserByWechatId(owner string, wechatOpenId string, wechatUnionId string) (*User, error) {
 	if wechatUnionId == "" {
 		wechatUnionId = wechatOpenId
 	}
 	user := &User{}
-	existed, err := adapter.Engine.Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
+	existed, err := adapter.Engine.Where("owner = ?", owner).Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
 	if err != nil {
 		return nil, err
 	}
