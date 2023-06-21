@@ -41,7 +41,8 @@ func (c *ApiController) GetGlobalUsers() {
 	if limit == "" || page == "" {
 		maskedUsers, err := object.GetMaskedUsers(object.GetGlobalUsers())
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = maskedUsers
@@ -101,7 +102,8 @@ func (c *ApiController) GetUsers() {
 
 		maskedUsers, err := object.GetMaskedUsers(object.GetUsers(owner))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = maskedUsers
@@ -153,7 +155,8 @@ func (c *ApiController) GetUser() {
 	if userId != "" && owner != "" {
 		userFromUserId, err = object.GetUserByUserId(owner, userId)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
@@ -165,7 +168,8 @@ func (c *ApiController) GetUser() {
 
 	organization, err := object.GetOrganization(util.GetId("admin", owner))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if !organization.IsProfilePublic {
@@ -190,17 +194,20 @@ func (c *ApiController) GetUser() {
 	}
 
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	maskedUser, err := object.GetMaskedUser(user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = maskedUser
@@ -496,7 +503,8 @@ func (c *ApiController) GetSortedUsers() {
 
 	maskedUsers, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = maskedUsers

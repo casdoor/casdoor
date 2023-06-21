@@ -94,7 +94,8 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return nil, false
 	}
 
 	if user == nil {

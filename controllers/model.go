@@ -41,7 +41,8 @@ func (c *ApiController) GetModels() {
 	if limit == "" || page == "" {
 		models, err := object.GetModels(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = models
@@ -77,7 +78,8 @@ func (c *ApiController) GetModel() {
 
 	model, err := object.GetModel(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = model

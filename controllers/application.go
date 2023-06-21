@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -50,7 +51,8 @@ func (c *ApiController) GetApplications() {
 		}
 
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)
@@ -59,13 +61,15 @@ func (c *ApiController) GetApplications() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetApplicationCount(owner, field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		app, err := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		applications := object.GetMaskedApplications(app, userId)
@@ -85,7 +89,8 @@ func (c *ApiController) GetApplication() {
 	id := c.Input().Get("id")
 	app, err := object.GetApplication(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = object.GetMaskedApplication(app, userId)
@@ -104,7 +109,8 @@ func (c *ApiController) GetUserApplication() {
 	id := c.Input().Get("id")
 	user, err := object.GetUser(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if user == nil {
@@ -114,7 +120,8 @@ func (c *ApiController) GetUserApplication() {
 
 	app, err := object.GetApplicationByUser(user)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = object.GetMaskedApplication(app, userId)
@@ -147,7 +154,8 @@ func (c *ApiController) GetOrganizationApplications() {
 	if limit == "" || page == "" {
 		applications, err := object.GetOrganizationApplications(owner, organization)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = object.GetMaskedApplications(applications, userId)

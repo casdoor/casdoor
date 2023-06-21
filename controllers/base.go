@@ -79,7 +79,8 @@ func (c *ApiController) getCurrentUser() *object.User {
 	} else {
 		user, err = object.GetUser(userId)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return nil
 		}
 	}
 	return user
@@ -112,7 +113,8 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	}
 	application, err := object.GetApplicationByClientId(clientId.(string))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return nil
 	}
 
 	return application

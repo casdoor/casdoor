@@ -46,7 +46,8 @@ func (c *ApiController) GetRecords() {
 	if limit == "" || page == "" {
 		records, err := object.GetRecords()
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = records
@@ -84,12 +85,14 @@ func (c *ApiController) GetRecordsByFilter() {
 	record := &object.Record{}
 	err := util.JsonToStruct(body, record)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	records, err := object.GetRecordsByField(record)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = records

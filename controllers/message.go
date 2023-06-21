@@ -53,7 +53,8 @@ func (c *ApiController) GetMessages() {
 		}
 
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = object.GetMaskedMessages(messages)
@@ -89,7 +90,8 @@ func (c *ApiController) GetMessage() {
 	id := c.Input().Get("id")
 	message, err := object.GetMessage(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = object.GetMaskedMessage(message)
@@ -100,7 +102,8 @@ func (c *ApiController) ResponseErrorStream(errorText string) {
 	event := fmt.Sprintf("event: myerror\ndata: %s\n\n", errorText)
 	_, err := c.Ctx.ResponseWriter.Write([]byte(event))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 }
 
@@ -196,7 +199,8 @@ func (c *ApiController) GetMessageAnswer() {
 	event := fmt.Sprintf("event: end\ndata: %s\n\n", "end")
 	_, err = c.Ctx.ResponseWriter.Write([]byte(event))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	answer := stringBuilder.String()
@@ -204,7 +208,8 @@ func (c *ApiController) GetMessageAnswer() {
 	message.Text = answer
 	_, err = object.UpdateMessage(message.GetId(), message)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 }
 
