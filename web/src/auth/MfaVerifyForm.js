@@ -27,8 +27,6 @@ export const mfaSetup = "mfaSetup";
 
 export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
   const [dest, setDest] = React.useState(mfaProps.secret ?? "");
-  // eslint-disable-next-line no-console
-  console.log(dest);
   const [form] = Form.useForm();
   const mfaType = mfaProps.mfaType;
 
