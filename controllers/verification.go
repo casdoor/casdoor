@@ -93,9 +93,10 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	// mfaSessionData != nil, means method is MfaSetupVerification
+	// mfaSessionData != nil, means method is MfaAuthVerification
 	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
 		user, err = object.GetUser(mfaSessionData.UserId)
+		c.setMfaSessionData(nil)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -157,9 +158,11 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
-		} else if vform.Method == ResetVerification {
-			if user = c.getCurrentUser(); user != nil {
-				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
+			if vform.CountryCode == "" {
+				if user = c.getCurrentUser(); user != nil {
+					vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+				}
 			}
 		} else if vform.Method == MfaAuthVerification {
 			mfaProps := user.GetPreferredMfaProps(false)

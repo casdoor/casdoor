@@ -14,6 +14,7 @@
 
 import React, {useEffect, useState} from "react";
 import {Button, Col, Form, Input, Result, Row, Steps} from "antd";
+import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as MfaBackend from "../backend/MfaBackend";
@@ -119,7 +120,7 @@ export function MfaVerifyForm({mfaType, application, user, onSuccess, onFail}) {
   }
 
   if (mfaType === SmsMfaType || mfaType === EmailMfaType) {
-    return <MfaSmsVerifyForm onFinish={onFinish} application={application} user={user} method={mfaSetup} mfaProps={mfaProps} />;
+    return <MfaSmsVerifyForm onFinish={onFinish} application={application} method={mfaSetup} mfaProps={mfaProps} />;
   } else if (mfaType === TotpMfaType) {
     return <MfaTotpVerifyForm onFinish={onFinish} />;
   } else {
@@ -166,7 +167,8 @@ class MfaSetupPage extends React.Component {
     super(props);
     this.state = {
       account: props.account,
-      application: this.props.application,
+      application: this.props.application ?? null,
+      applicationName: props.account.signupApplication ?? "",
       isAuthenticated: props.isAuthenticated ?? false,
       isPromptPage: props.isPromptPage,
       redirectUri: props.redirectUri,
@@ -174,6 +176,10 @@ class MfaSetupPage extends React.Component {
       mfaType: props.mfaType ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
       mfaProps: null,
     };
+  }
+
+  componentDidMount() {
+    this.getApplication();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -191,6 +197,23 @@ class MfaSetupPage extends React.Component {
         }
       });
     }
+  }
+
+  getApplication() {
+    if (this.state.application !== null) {
+      return;
+    }
+
+    ApplicationBackend.getApplication("admin", this.state.applicationName)
+      .then((application) => {
+        if (application !== null) {
+          this.setState({
+            application: application,
+          });
+        } else {
+          Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
+        }
+      });
   }
 
   getUser() {

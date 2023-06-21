@@ -849,12 +849,13 @@ class UserEditPage extends React.Component {
             </Col>
             <Col span={22} >
               <Card title={i18next.t("mfa:Multi-factor methods")}
-                extra={<PopconfirmModal
-                  text={i18next.t("general:Disable")}
-                  title={i18next.t("general:Sure to disable") + "?"}
-                  onConfirm={() => this.deleteMfa()}
-                >
-                </PopconfirmModal>}>
+                extra={this.state.multiFactorAuths?.some(mfaProps => mfaProps.enabled) ?
+                  <PopconfirmModal
+                    text={i18next.t("general:Disable")}
+                    title={i18next.t("general:Sure to disable") + "?"}
+                    onConfirm={() => this.deleteMfa()}
+                  /> : null
+                }>
                 <List
                   rowKey="mfaType"
                   itemLayout="horizontal"
@@ -863,15 +864,15 @@ class UserEditPage extends React.Component {
                     <List.Item>
                       <Space>
                         {i18next.t("general:Type")}: {item.mfaType}
-                        {item.enabled ?
-                          <Tag icon={<CheckCircleOutlined />} color="success">
-                            {i18next.t("general:Enabled")}
-                          </Tag> : null
-                        }
                         {item.secret}
                       </Space>
                       {item.enabled ? (
-                        <div>
+                        <Space>
+                          {item.enabled ?
+                            <Tag icon={<CheckCircleOutlined />} color="success">
+                              {i18next.t("general:Enabled")}
+                            </Tag> : null
+                          }
                           {item.isPreferred ?
                             <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
                               {i18next.t("mfa:preferred")}
@@ -893,7 +894,7 @@ class UserEditPage extends React.Component {
                               {i18next.t("mfa:Set preferred")}
                             </Button>
                           }
-                        </div>
+                        </Space>
                       ) : <Button type={"default"} onClick={() => {
                         Setting.goToLink(`/mfa-authentication/setup?mfaType=${item.mfaType}`);
                       }}>
