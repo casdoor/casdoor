@@ -19,13 +19,16 @@ import i18next from "i18next";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as AuthBackend from "./AuthBackend";
 import CustomGithubCorner from "../common/CustomGithubCorner";
+import * as OrganizationBackend from "../backend/OrganizationBackend";
+import {authConfig} from "./Auth";
 
 class ChangePasswordPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
-      applicationName: props.applicationName ?? props.match.params?.applicationName,
+      applicationName: props.application?.name ?? (props.match?.params?.applicationName ?? authConfig.appName) ?? null,
+      owner: props.owner ?? (props.match?.params?.owner ?? null),
     };
   }
 
@@ -33,8 +36,6 @@ class ChangePasswordPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== undefined) {
         this.getApplication();
-      } else {
-        Setting.showMessage("error", i18next.t("forget:Unknown forget type") + ": " + this.state.type);
       }
     }
   }
@@ -44,10 +45,26 @@ class ChangePasswordPage extends React.Component {
       return;
     }
 
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        this.onUpdateApplication(application);
-      });
+    if (this.state.owner === null || this.state.type === "saml") {
+      ApplicationBackend.getApplication("admin", this.state.applicationName)
+        .then((application) => {
+          this.onUpdateApplication(application);
+        });
+    } else {
+      OrganizationBackend.getDefaultApplication("admin", this.state.owner)
+        .then((res) => {
+          if (res.status === "ok") {
+            const application = res.data;
+            this.onUpdateApplication(application);
+            this.setState({
+              applicationName: res.data.name,
+            });
+          } else {
+            this.onUpdateApplication(null);
+            Setting.showMessage("error", res.msg);
+          }
+        });
+    }
   }
 
   getApplicationObj() {

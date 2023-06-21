@@ -268,6 +268,11 @@ class App extends Component {
 
           this.setLanguage(account);
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
+
+          if (account && !window.location.pathname.includes("/change-password") && account.passwordChangeRequired) {
+            sessionStorage.setItem("from", `${window.location.pathname}${window.location.search}`);
+            return Setting.goToLink(`/change-password${account?.owner ? `/${account?.owner}` : ""}`);
+          }
         } else {
           if (res.data !== "Please login first") {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -531,9 +536,6 @@ class App extends Component {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
       return <Redirect to="/login" />;
-    } else if (this.state.account?.passwordChangeRequired) {
-      sessionStorage.setItem("from", window.location.pathname);
-      return <Redirect to="/change-password" />;
     } else if (this.state.account === undefined) {
       return null;
     } else {

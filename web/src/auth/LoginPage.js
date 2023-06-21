@@ -30,8 +30,7 @@ import i18next from "i18next";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
 import LanguageSelect from "../common/select/LanguageSelect";
-import {CaptchaModal} from "../common/modal/CaptchaModal";
-import {CaptchaRule} from "../common/modal/CaptchaModal";
+import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
 
@@ -231,19 +230,6 @@ class LoginPage extends React.Component {
     const code = resp.data;
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
-
-    AuthBackend.getAccount()
-      .then((res) => {
-        if (res.status === "ok") {
-          const account = res.data;
-
-          if (account.passwordChangeRequired) {
-            sessionStorage.setItem("from", window.location.pathname);
-            Setting.goToLink("/change-password");
-            return;
-          }
-        }
-      });
 
     if (Setting.hasPromptPage(application) || resp.msg === RequiredMfa) {
       AuthBackend.getAccount()
