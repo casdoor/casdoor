@@ -16,7 +16,7 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "./AuthBackend";
-import {SmsMfaType} from "./MfaSetupPage";
+import {EmailMfaType, SmsMfaType} from "./MfaSetupPage";
 import {MfaSmsVerifyForm, mfaAuth} from "./MfaVerifyForm";
 
 export const NextMfa = "NextMfa";
@@ -38,8 +38,8 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
       } else {
         onFail(res.msg);
       }
-    }).catch((reason) => {
-      onFail(reason.message);
+    }).catch((res) => {
+      onFail(res.message);
     }).finally(() => {
       setLoading(false);
     });
@@ -49,19 +49,18 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     setLoading(true);
     AuthBackend.login({...formValues, recoveryCode}, oAuthParams).then(res => {
       if (res.status === "ok") {
-        onSuccess();
+        onSuccess(res);
       } else {
         onFail(res.msg);
       }
-    }).catch((reason) => {
-      onFail(reason.message);
+    }).catch((res) => {
+      onFail(res.message);
     }).finally(() => {
       setLoading(false);
     });
   };
 
-  switch (mfaType) {
-  case SmsMfaType:
+  if (mfaType === SmsMfaType || mfaType === EmailMfaType) {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
@@ -86,7 +85,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         </span>
       </div>
     );
-  case "recovery":
+  } else if (mfaType === "recovery") {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
@@ -116,7 +115,5 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         </span>
       </div>
     );
-  default:
-    return null;
   }
 }

@@ -21,7 +21,6 @@ import {CheckOutlined, KeyOutlined, LockOutlined, UserOutlined} from "@ant-desig
 
 import * as UserBackend from "../backend/UserBackend";
 import {MfaSmsVerifyForm, MfaTotpVerifyForm, mfaSetup} from "./MfaVerifyForm";
-import * as ApplicationBackend from "../backend/ApplicationBackend";
 
 export const EmailMfaType = "email";
 export const SmsMfaType = "sms";
@@ -167,7 +166,7 @@ class MfaSetupPage extends React.Component {
     super(props);
     this.state = {
       account: props.account,
-      applicationName: (props.applicationName ?? props.account?.signupApplication) ?? "",
+      application: this.props.application,
       isAuthenticated: props.isAuthenticated ?? false,
       isPromptPage: props.isPromptPage,
       redirectUri: props.redirectUri,
@@ -175,10 +174,6 @@ class MfaSetupPage extends React.Component {
       mfaType: props.mfaType ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
       mfaProps: null,
     };
-  }
-
-  componentDidMount() {
-    this.getApplication();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -196,19 +191,6 @@ class MfaSetupPage extends React.Component {
         }
       });
     }
-  }
-
-  getApplication() {
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        if (application !== null) {
-          this.setState({
-            application: application,
-          });
-        } else {
-          Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
-        }
-      });
   }
 
   getUser() {
@@ -256,7 +238,11 @@ class MfaSetupPage extends React.Component {
           <Col span={24} style={{display: "flex", justifyContent: "left"}}>
             {(this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) ? null :
               <Button type={"link"} onClick={() => {
-                this.props.history.push(`/mfa-authentication/setup?mfaType=${EmailMfaType}`);
+                if (this.state.isPromptPage) {
+                  this.props.history.push(`/prompt/${this.state.application.name}?promptType=mfa&mfaType=${EmailMfaType}`);
+                } else {
+                  this.props.history.push(`/mfa-authentication/setup?mfaType=${EmailMfaType}`);
+                }
                 this.setState({
                   mfaType: EmailMfaType,
                 });
@@ -266,7 +252,11 @@ class MfaSetupPage extends React.Component {
             {
               (this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) ? null :
                 <Button type={"link"} onClick={() => {
-                  this.props.history.push(`/mfa-authentication/setup?mfaType=${SmsMfaType}`);
+                  if (this.state.isPromptPage) {
+                    this.props.history.push(`/prompt/${this.state.application.name}?promptType=mfa&mfaType=${SmsMfaType}`);
+                  } else {
+                    this.props.history.push(`/mfa-authentication/setup?mfaType=${SmsMfaType}`);
+                  }
                   this.setState({
                     mfaType: SmsMfaType,
                   });

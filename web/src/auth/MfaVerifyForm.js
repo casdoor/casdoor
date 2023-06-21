@@ -28,7 +28,10 @@ export const mfaSetup = "mfaSetup";
 export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
   const [dest, setDest] = React.useState(mfaProps.secret ?? "");
   const [form] = Form.useForm();
-  const mfaType = mfaProps.mfaType;
+
+  const isEmail = () => {
+    return mfaProps.mfaType === EmailMfaType;
+  };
 
   return (
     <Form
@@ -39,16 +42,16 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
         countryCode: mfaProps.countryCode,
       }}
     >
-      {mfaProps.secret !== undefined && mfaProps.secret !== "" ?
+      {mfaProps.secret !== "" ?
         <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
-          {mfaType === EmailMfaType ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {mfaProps.secret}
+          {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {mfaProps.secret}
         </div> :
         (<React.Fragment>
-          <p>{mfaType === EmailMfaType ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
+          <p>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
             i18next.t("mfa:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
           </p>
           <Input.Group compact style={{width: "300Px", marginBottom: "30px"}}>
-            {mfaType === EmailMfaType ? null :
+            {isEmail() ? null :
               <Form.Item
                 name="countryCode"
                 noStyle
@@ -72,10 +75,10 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
               rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
             >
               <Input
-                style={{width: mfaType === EmailMfaType ? "100% " : "70%"}}
+                style={{width: isEmail() ? "100% " : "70%"}}
                 onChange={(e) => {setDest(e.target.value);}}
                 prefix={<UserOutlined />}
-                placeholder={mfaType === EmailMfaType ? i18next.t("general:Email") : i18next.t("general:Phone")}
+                placeholder={isEmail() ? i18next.t("general:Email") : i18next.t("general:Phone")}
               />
             </Form.Item>
           </Input.Group>
@@ -89,7 +92,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
         <SendCodeInput
           countryCode={form.getFieldValue("countryCode")}
           method={method}
-          onButtonClickArgs={[dest, mfaType === EmailMfaType ? "email" : "phone", Setting.getApplicationName(application)]}
+          onButtonClickArgs={[mfaProps.secret || dest, isEmail() ? "email" : "phone", Setting.getApplicationName(application)]}
           application={application}
         />
       </Form.Item>
