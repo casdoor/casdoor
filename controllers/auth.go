@@ -71,7 +71,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	if form.Password != "" && user.IsMfaEnabled() {
 		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
-		resp = &Response{Status: object.NextMfa, Data: user.GetPreferMfa(true)}
+		resp = &Response{Status: object.NextMfa, Data: user.GetPreferredMfaProps(true)}
 		return
 	}
 
@@ -656,15 +656,20 @@ func (c *ApiController) Login() {
 		}
 
 		if authForm.Passcode != "" {
-			MfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferMfa(false))
-			err = MfaUtil.Verify(authForm.Passcode)
+			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferredMfaProps(false))
+			if mfaUtil == nil {
+				c.ResponseError("Invalid multi-factor authentication type")
+				return
+			}
+
+			err = mfaUtil.Verify(authForm.Passcode)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
 		}
 		if authForm.RecoveryCode != "" {
-			err = object.RecoverTfs(user, authForm.RecoveryCode)
+			err = object.MfaRecover(user, authForm.RecoveryCode)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

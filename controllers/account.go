@@ -370,6 +370,7 @@ func (c *ApiController) GetAccount() {
 
 	user.Permissions = object.GetMaskedPermissions(user.Permissions)
 	user.Roles = object.GetMaskedRoles(user.Roles)
+	user.MultiFactorAuths = object.GetAllMfaProps(user, true)
 
 	organization, err := object.GetMaskedOrganization(object.GetOrganizationByUser(user))
 	if err != nil {

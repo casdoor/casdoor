@@ -27,9 +27,9 @@ type MfaSessionData struct {
 }
 
 type MfaProps struct {
-	Id            string   `json:"id"`
+	Enabled       bool     `json:"enabled"`
 	IsPreferred   bool     `json:"isPreferred"`
-	AuthType      string   `json:"type" form:"type"`
+	MfaType       string   `json:"mfaType" form:"mfaType"`
 	Secret        string   `json:"secret,omitempty"`
 	CountryCode   string   `json:"countryCode,omitempty"`
 	URL           string   `json:"url,omitempty"`
@@ -44,8 +44,9 @@ type MfaInterface interface {
 }
 
 const (
-	SmsType  = "sms"
-	TotpType = "app"
+	EmailType = "email"
+	SmsType   = "sms"
+	TotpType  = "app"
 )
 
 const (
@@ -54,10 +55,12 @@ const (
 	RequiredMfa      = "RequiredMfa"
 )
 
-func GetMfaUtil(providerType string, config *MfaProps) MfaInterface {
-	switch providerType {
+func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
+	switch mfaType {
 	case SmsType:
 		return NewSmsTwoFactor(config)
+	case EmailType:
+		return NewEmailTwoFactor(config)
 	case TotpType:
 		return nil
 	}
@@ -65,17 +68,17 @@ func GetMfaUtil(providerType string, config *MfaProps) MfaInterface {
 	return nil
 }
 
-func RecoverTfs(user *User, recoveryCode string) error {
+func MfaRecover(user *User, recoveryCode string) error {
 	hit := false
 
-	twoFactor := user.GetPreferMfa(false)
-	if len(twoFactor.RecoveryCodes) == 0 {
+	if len(user.RecoveryCodes) == 0 {
 		return fmt.Errorf("do not have recovery codes")
 	}
 
-	for _, code := range twoFactor.RecoveryCodes {
+	for _, code := range user.RecoveryCodes {
 		if code == recoveryCode {
 			hit = true
+			user.RecoveryCodes = util.DeleteVal(user.RecoveryCodes, code)
 			break
 		}
 	}
@@ -83,30 +86,92 @@ func RecoverTfs(user *User, recoveryCode string) error {
 		return fmt.Errorf("recovery code not found")
 	}
 
-	affected, err := UpdateUser(user.GetId(), user, []string{"two_factor_auth"}, user.IsAdminUser())
+	_, err := UpdateUser(user.GetId(), user, []string{"recovery_codes"}, user.IsAdminUser())
 	if err != nil {
 		return err
 	}
 
-	if !affected {
-		return fmt.Errorf("")
+	return nil
+}
+
+func GetAllMfaProps(user *User, masked bool) []*MfaProps {
+	mfaProps := []*MfaProps{}
+
+	if user.MfaPhoneEnabled {
+		mfaProps = append(mfaProps, user.GetMfaProps(SmsType, masked))
+	} else {
+		mfaProps = append(mfaProps, &MfaProps{
+			Enabled: false,
+			MfaType: SmsType,
+		})
+	}
+	if user.MfaEmailEnabled {
+		mfaProps = append(mfaProps, user.GetMfaProps(EmailType, masked))
+	} else {
+		mfaProps = append(mfaProps, &MfaProps{
+			Enabled: false,
+			MfaType: EmailType,
+		})
+	}
+
+	return mfaProps
+}
+
+func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
+	mfaProps := &MfaProps{}
+
+	if mfaType == SmsType {
+		mfaProps = &MfaProps{
+			Enabled:     user.MfaPhoneEnabled,
+			MfaType:     mfaType,
+			CountryCode: user.CountryCode,
+		}
+		if masked {
+			mfaProps.Secret = util.GetMaskedPhone(user.Phone)
+		} else {
+			mfaProps.Secret = user.Phone
+		}
+	} else if mfaType == EmailType {
+		mfaProps = &MfaProps{
+			Enabled: user.MfaEmailEnabled,
+			MfaType: mfaType,
+		}
+		if masked {
+			mfaProps.Secret = util.GetMaskedEmail(user.Email)
+		} else {
+			mfaProps.Secret = user.Email
+		}
+	} else if mfaType == TotpType {
+		mfaProps = &MfaProps{
+			MfaType: mfaType,
+		}
+	}
+
+	if user.PreferredMfaType == mfaType {
+		mfaProps.IsPreferred = true
+	}
+	return mfaProps
+}
+
+func DisabledMultiFactorAuth(user *User) error {
+	user.PreferredMfaType = ""
+	user.RecoveryCodes = []string{}
+	user.MfaPhoneEnabled = false
+	user.MfaEmailEnabled = false
+
+	_, err := UpdateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled"}, user.IsAdminUser())
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func GetMaskedProps(props *MfaProps) *MfaProps {
-	maskedProps := &MfaProps{
-		AuthType:    props.AuthType,
-		Id:          props.Id,
-		IsPreferred: props.IsPreferred,
-	}
+func SetPreferredMultiFactorAuth(user *User, mfaType string) error {
+	user.PreferredMfaType = mfaType
 
-	if props.AuthType == SmsType {
-		if !util.IsEmailValid(props.Secret) {
-			maskedProps.Secret = util.GetMaskedPhone(props.Secret)
-		} else {
-			maskedProps.Secret = util.GetMaskedEmail(props.Secret)
-		}
+	_, err := UpdateUser(user.GetId(), user, []string{"preferred_mfa_type"}, user.IsAdminUser())
+	if err != nil {
+		return err
 	}
-	return maskedProps
+	return nil
 }

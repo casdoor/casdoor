@@ -159,7 +159,11 @@ type User struct {
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
-	MultiFactorAuths    []*MfaProps           `json:"multiFactorAuths"`
+	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
+	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes,omitempty"`
+	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
+	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
+	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -425,6 +429,12 @@ func GetMaskedUser(user *User, errs ...error) (*User, error) {
 	if user.Password != "" {
 		user.Password = "***"
 	}
+	if user.AccessSecret != "" {
+		user.AccessSecret = "***"
+	}
+	if user.RecoveryCodes != nil {
+		user.RecoveryCodes = nil
+	}
 
 	if user.ManagedAccounts != nil {
 		for _, manageAccount := range user.ManagedAccounts {
@@ -432,11 +442,6 @@ func GetMaskedUser(user *User, errs ...error) (*User, error) {
 		}
 	}
 
-	if user.MultiFactorAuths != nil {
-		for i, props := range user.MultiFactorAuths {
-			user.MultiFactorAuths[i] = GetMaskedProps(props)
-		}
-	}
 	return user, nil
 }
 
@@ -823,35 +828,14 @@ func userChangeTrigger(oldName string, newName string) error {
 }
 
 func (user *User) IsMfaEnabled() bool {
-	return len(user.MultiFactorAuths) > 0
+	return user.PreferredMfaType != ""
 }
 
-func (user *User) GetPreferMfa(masked bool) *MfaProps {
-	if len(user.MultiFactorAuths) == 0 {
+func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
+	if user.PreferredMfaType == "" {
 		return nil
 	}
-
-	if masked {
-		if len(user.MultiFactorAuths) == 1 {
-			return GetMaskedProps(user.MultiFactorAuths[0])
-		}
-		for _, v := range user.MultiFactorAuths {
-			if v.IsPreferred {
-				return GetMaskedProps(v)
-			}
-		}
-		return GetMaskedProps(user.MultiFactorAuths[0])
-	} else {
-		if len(user.MultiFactorAuths) == 1 {
-			return user.MultiFactorAuths[0]
-		}
-		for _, v := range user.MultiFactorAuths {
-			if v.IsPreferred {
-				return v
-			}
-		}
-		return user.MultiFactorAuths[0]
-	}
+	return user.GetMfaProps(user.PreferredMfaType, masked)
 }
 
 func AddUserkeys(user *User, isAdmin bool) (bool, error) {
