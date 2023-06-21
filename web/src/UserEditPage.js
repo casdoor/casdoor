@@ -309,7 +309,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
-              if (this.state.groups?.filter(group => value.includes(group.id))
+              if (this.state.groups?.filter(group => value.includes(group.name))
                 .filter(group => group.type === "Physical").length > 1) {
                 Setting.showMessage("error", i18next.t("general:You can only select one physical group"));
                 return;
@@ -319,7 +319,7 @@ class UserEditPage extends React.Component {
             })}
             >
               {
-                this.state.groups?.map((group) => <Option key={group.id} value={group.id}>
+                this.state.groups?.map((group) => <Option key={group.name} value={group.name}>
                   <Space>
                     {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
                     {group.displayName}
@@ -410,7 +410,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} account={this.props.account} disabled={disabled} />
+            <PasswordModal user={this.state.user} organization={this.state.application?.organizationObj} account={this.props.account} disabled={disabled} />
           </Col>
         </Row>
       );
@@ -724,10 +724,10 @@ class UserEditPage extends React.Component {
             </Row>
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
-                {Setting.getLabel(i18next.t("general:Secret key"), i18next.t("general:Secret key - Tooltip"))} :
+                {Setting.getLabel(i18next.t("general:Access secret"), i18next.t("general:Access secret - Tooltip"))} :
               </Col>
               <Col span={22} >
-                <Input value={this.state.user.secretKey} disabled={true} />
+                <Input value={this.state.user.accessSecret} disabled={true} />
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >

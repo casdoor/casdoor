@@ -30,9 +30,8 @@ type CasbinAdapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	Type         string `xorm:"varchar(100)" json:"type"`
-	Model        string `xorm:"varchar(100)" json:"model"`
+	Type  string `xorm:"varchar(100)" json:"type"`
+	Model string `xorm:"varchar(100)" json:"model"`
 
 	Host         string `xorm:"varchar(100)" json:"host"`
 	Port         int    `json:"port"`
@@ -46,14 +45,14 @@ type CasbinAdapter struct {
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-func GetCasbinAdapterCount(owner, organization, field, value string) (int64, error) {
+func GetCasbinAdapterCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&CasbinAdapter{Organization: organization})
+	return session.Count(&CasbinAdapter{})
 }
 
-func GetCasbinAdapters(owner string, organization string) ([]*CasbinAdapter, error) {
+func GetCasbinAdapters(owner string) ([]*CasbinAdapter, error) {
 	adapters := []*CasbinAdapter{}
-	err := adapter.Engine.Where("owner = ? and organization = ?", owner, organization).Find(&adapters)
+	err := adapter.Engine.Desc("created_time").Find(&adapters, &CasbinAdapter{Owner: owner})
 	if err != nil {
 		return adapters, err
 	}
@@ -61,10 +60,10 @@ func GetCasbinAdapters(owner string, organization string) ([]*CasbinAdapter, err
 	return adapters, nil
 }
 
-func GetPaginationCasbinAdapters(owner, organization string, page, limit int, field, value, sort, order string) ([]*CasbinAdapter, error) {
-	session := GetSession(owner, page, limit, field, value, sort, order)
+func GetPaginationCasbinAdapters(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*CasbinAdapter, error) {
 	adapters := []*CasbinAdapter{}
-	err := session.Find(&adapters, &CasbinAdapter{Organization: organization})
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&adapters)
 	if err != nil {
 		return adapters, err
 	}
@@ -212,6 +211,10 @@ func SyncPolicies(casbinAdapter *CasbinAdapter) ([]*xormadapter.CasbinRule, erro
 	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	if err != nil {
 		return nil, err
+	}
+
+	if modelObj == nil {
+		return nil, fmt.Errorf("The model: %s does not exist", util.GetId(casbinAdapter.Owner, casbinAdapter.Model))
 	}
 
 	enforcer, err := initEnforcer(modelObj, casbinAdapter)

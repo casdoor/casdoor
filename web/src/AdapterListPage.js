@@ -26,10 +26,9 @@ class AdapterListPage extends BaseListPage {
   newAdapter() {
     const randomName = Setting.getRandomName();
     return {
-      owner: "admin",
+      owner: this.props.account.owner,
       name: `adapter_${randomName}`,
       createdTime: moment().format(),
-      organization: this.props.account.owner,
       type: "Database",
       host: "localhost",
       port: 3306,
@@ -47,7 +46,7 @@ class AdapterListPage extends BaseListPage {
     AdapterBackend.addAdapter(newAdapter)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/adapters/${newAdapter.organization}/${newAdapter.name}`, mode: "add"});
+          this.props.history.push({pathname: `/adapters/${newAdapter.owner}/${newAdapter.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -96,11 +95,11 @@ class AdapterListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
+        dataIndex: "owner",
+        key: "owner",
         width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -247,7 +246,7 @@ class AdapterListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    AdapterBackend.getAdapters("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    AdapterBackend.getAdapters(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

@@ -19,23 +19,23 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )
 
 type Group struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
+	Name        string `xorm:"varchar(100) notnull pk unique index" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
-	Id           string    `xorm:"varchar(100) not null index" json:"id"`
-	DisplayName  string    `xorm:"varchar(100)" json:"displayName"`
-	Manager      string    `xorm:"varchar(100)" json:"manager"`
-	ContactEmail string    `xorm:"varchar(100)" json:"contactEmail"`
-	Type         string    `xorm:"varchar(100)" json:"type"`
-	ParentId     string    `xorm:"varchar(100)" json:"parentId"`
-	IsTopGroup   bool      `xorm:"bool" json:"isTopGroup"`
-	Users        *[]string `xorm:"-" json:"users"`
+	DisplayName  string  `xorm:"varchar(100)" json:"displayName"`
+	Manager      string  `xorm:"varchar(100)" json:"manager"`
+	ContactEmail string  `xorm:"varchar(100)" json:"contactEmail"`
+	Type         string  `xorm:"varchar(100)" json:"type"`
+	ParentId     string  `xorm:"varchar(100)" json:"parentId"`
+	IsTopGroup   bool    `xorm:"bool" json:"isTopGroup"`
+	Users        []*User `xorm:"-" json:"users"`
 
 	Title    string   `json:"title,omitempty"`
 	Key      string   `json:"key,omitempty"`
@@ -95,24 +95,6 @@ func getGroup(owner string, name string) (*Group, error) {
 	}
 }
 
-func getGroupById(id string) (*Group, error) {
-	if id == "" {
-		return nil, nil
-	}
-
-	group := Group{Id: id}
-	existed, err := adapter.Engine.Get(&group)
-	if err != nil {
-		return nil, err
-	}
-
-	if existed {
-		return &group, nil
-	} else {
-		return nil, nil
-	}
-}
-
 func GetGroup(id string) (*Group, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getGroup(owner, name)
@@ -125,7 +107,13 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		return false, err
 	}
 
-	group.UpdatedTime = util.GetCurrentTime()
+	if name != group.Name {
+		err := GroupChangeTrigger(name, group.Name)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
 		return false, err
@@ -135,10 +123,6 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 }
 
 func AddGroup(group *Group) (bool, error) {
-	if group.Id == "" {
-		group.Id = util.GenerateId()
-	}
-
 	affected, err := adapter.Engine.Insert(group)
 	if err != nil {
 		return false, err
@@ -164,37 +148,20 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	if count, err := adapter.Engine.Where("parent_id = ?", group.Id).Count(&Group{}); err != nil {
+	if count, err := adapter.Engine.Where("parent_id = ?", group.Name).Count(&Group{}); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has children group")
 	}
 
-	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
+	if count, err := GetGroupUserCount(group.Name, "", ""); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has users")
 	}
 
-	session := adapter.Engine.NewSession()
-	defer session.Close()
-
-	if err := session.Begin(); err != nil {
-		return false, err
-	}
-
-	if _, err := session.Delete(&UserGroupRelation{GroupId: group.Id}); err != nil {
-		session.Rollback()
-		return false, err
-	}
-
-	affected, err := session.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	affected, err := adapter.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
 	if err != nil {
-		session.Rollback()
-		return false, err
-	}
-
-	if err := session.Commit(); err != nil {
 		return false, err
 	}
 
@@ -215,9 +182,8 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 				Key:   group.Name,
 				Type:  group.Type,
 				Owner: group.Owner,
-				Id:    group.Id,
 			}
-			children := ConvertToTreeData(groups, group.Id)
+			children := ConvertToTreeData(groups, group.Name)
 			if len(children) > 0 {
 				node.Children = children
 			}
@@ -225,4 +191,114 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 		}
 	}
 	return treeData
+}
+
+func RemoveUserFromGroup(owner, name, groupName string) (bool, error) {
+	user, err := getUser(owner, name)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, errors.New("user not exist")
+	}
+
+	user.Groups = util.DeleteVal(user.Groups, groupName)
+	affected, err := updateUser(user.GetId(), user, []string{"groups"})
+	if err != nil {
+		return false, err
+	}
+	return affected != 0, err
+}
+
+func GetGroupUserCount(groupName string, field, value string) (int64, error) {
+	if field == "" && value == "" {
+		return adapter.Engine.Where(builder.Like{"`groups`", groupName}).
+			Count(&User{})
+	} else {
+		return adapter.Engine.Table("user").
+			Where(builder.Like{"`groups`", groupName}).
+			And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%").
+			Count()
+	}
+}
+
+func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+	users := []*User{}
+	session := adapter.Engine.Table("user").
+		Where(builder.Like{"`groups`", groupName})
+
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
+
+	if field != "" && value != "" {
+		session = session.And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+	}
+
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "ascend" {
+		session = session.Asc(fmt.Sprintf("user.%s", util.SnakeString(sortField)))
+	} else {
+		session = session.Desc(fmt.Sprintf("user.%s", util.SnakeString(sortField)))
+	}
+
+	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func GetGroupUsers(groupName string) ([]*User, error) {
+	users := []*User{}
+	err := adapter.Engine.Table("user").
+		Where(builder.Like{"`groups`", groupName}).
+		Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func GroupChangeTrigger(oldName, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	users := []*User{}
+	err = session.Where(builder.Like{"`groups`", oldName}).Find(&users)
+	if err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		user.Groups = util.ReplaceVal(user.Groups, oldName, newName)
+		_, err := updateUser(user.GetId(), user, []string{"groups"})
+		if err != nil {
+			return err
+		}
+	}
+
+	groups := []*Group{}
+	err = session.Where("parent_id = ?", oldName).Find(&groups)
+	for _, group := range groups {
+		group.ParentId = newName
+		_, err := session.ID(core.PK{group.Owner, group.Name}).Cols("parent_id").Update(group)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
 }

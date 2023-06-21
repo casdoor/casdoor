@@ -145,11 +145,6 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(UserGroupRelation))
-	if err != nil {
-		panic(err)
-	}
-
 	err = a.Engine.Sync2(new(Role))
 	if err != nil {
 		panic(err)

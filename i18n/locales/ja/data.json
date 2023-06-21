@@ -68,7 +68,8 @@
     "Missing parameter": "不足しているパラメーター",
     "Please login first": "最初にログインしてください",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
-    "don't support captchaProvider: ": "captchaProviderをサポートしないでください"
+    "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "LDAPサーバーは存在します"
@@ -119,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "表示名は空にできません",
-    "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
-    "New password must have at least 6 characters": "新しいパスワードは少なくとも6文字必要です"
+    "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。"
   },
   "user_upload": {
     "Failed to import users": "ユーザーのインポートに失敗しました"

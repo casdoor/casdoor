@@ -80,7 +80,7 @@ func (c *ApiController) GetGlobalUsers() {
 // @router /get-users [get]
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
-	groupId := c.Input().Get("groupId")
+	groupName := c.Input().Get("groupName")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -89,8 +89,8 @@ func (c *ApiController) GetUsers() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		if groupId != "" {
-			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(groupId))
+		if groupName != "" {
+			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(groupName))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -108,14 +108,14 @@ func (c *ApiController) GetUsers() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value, groupId)
+		count, err := object.GetUserCount(owner, field, value, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupId)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -410,10 +410,6 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
-	if len(newPassword) <= 5 {
-		c.ResponseError(c.T("user:New password must have at least 6 characters"))
-		return
-	}
 
 	userId := util.GetId(userOwner, userName)
 
@@ -446,6 +442,12 @@ func (c *ApiController) SetPassword() {
 			c.ResponseError(msg)
 			return
 		}
+	}
+
+	msg := object.CheckPasswordComplexity(targetUser, newPassword)
+	if msg != "" {
+		c.ResponseError(msg)
+		return
 	}
 
 	targetUser.Password = newPassword
@@ -554,8 +556,8 @@ func (c *ApiController) AddUserkeys() {
 func (c *ApiController) RemoveUserFromGroup() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
-	groupId := c.Ctx.Request.Form.Get("groupId")
+	groupName := c.Ctx.Request.Form.Get("groupName")
 
-	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupId))
+	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupName))
 	c.ServeJSON()
 }

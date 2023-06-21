@@ -56,6 +56,7 @@ type Organization struct {
 	Favicon            string     `xorm:"varchar(100)" json:"favicon"`
 	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordOptions    []string   `xorm:"varchar(100)" json:"passwordOptions"`
 	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
 	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
@@ -401,7 +402,6 @@ func organizationChangeTrigger(oldName string, newName string) error {
 
 	casbinAdapter := new(CasbinAdapter)
 	casbinAdapter.Owner = newName
-	casbinAdapter.Organization = newName
 	_, err = session.Where("owner=?", oldName).Update(casbinAdapter)
 	if err != nil {
 		return err

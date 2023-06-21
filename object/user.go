@@ -15,12 +15,10 @@
 package object
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/core"
@@ -46,6 +44,7 @@ type User struct {
 	FirstName         string   `xorm:"varchar(100)" json:"firstName"`
 	LastName          string   `xorm:"varchar(100)" json:"lastName"`
 	Avatar            string   `xorm:"varchar(500)" json:"avatar"`
+	AvatarType        string   `xorm:"varchar(100)" json:"avatarType"`
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
@@ -77,9 +76,8 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
-	Groups            []string `xorm:"varchar(1000)" json:"groups"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
-	SecretKey         string   `xorm:"varchar(100)" json:"secretKey"`
+	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -168,6 +166,7 @@ type User struct {
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
+	Groups      []string      `xorm:"groups varchar(1000)" json:"groups"`
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
@@ -221,11 +220,11 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupId string) (int64, error) {
+func GetUserCount(owner, field, value string, groupName string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 
-	if groupId != "" {
-		return GetGroupUserCount(groupId, field, value)
+	if groupName != "" {
+		return GetGroupUserCount(groupName, field, value)
 	}
 
 	return session.Count(&User{})
@@ -265,11 +264,11 @@ func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	return users, nil
 }
 
-func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupId string) ([]*User, error) {
+func GetPaginationUsers(owner string, offset, limit int, field, value, sortField, sortOrder string, groupName string) ([]*User, error) {
 	users := []*User{}
 
-	if groupId != "" {
-		return GetPaginationGroupUsers(groupId, offset, limit, field, value, sortField, sortOrder)
+	if groupName != "" {
+		return GetPaginationGroupUsers(groupName, offset, limit, field, value, sortField, sortOrder)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
@@ -484,16 +483,12 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if name != user.Name {
 		err := userChangeTrigger(name, user.Name)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 	}
 
 	if user.Password == "***" {
 		user.Password = oldUser.Password
-	}
-	err = user.UpdateUserHash()
-	if err != nil {
-		panic(err)
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
@@ -508,7 +503,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"owner", "display_name", "avatar",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
-			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "secret_key",
+			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
@@ -522,7 +517,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
-	affected, err := updateUser(oldUser, user, columns)
+	affected, err := updateUser(id, user, columns)
 	if err != nil {
 		return false, err
 	}
@@ -530,32 +525,17 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	return affected != 0, nil
 }
 
-func updateUser(oldUser, user *User, columns []string) (int64, error) {
-	session := adapter.Engine.NewSession()
-	defer session.Close()
-
-	session.Begin()
-
-	if util.ContainsString(columns, "groups") {
-		affected, err := updateUserGroupRelation(session, user)
-		if err != nil {
-			session.Rollback()
-			return affected, err
-		}
-	}
-
-	affected, err := session.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+func updateUser(id string, user *User, columns []string) (int64, error) {
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
+	err := user.UpdateUserHash()
 	if err != nil {
-		session.Rollback()
-		return affected, err
-	}
-
-	err = session.Commit()
-	if err != nil {
-		session.Rollback()
 		return 0, err
 	}
 
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
+	if err != nil {
+		return 0, err
+	}
 	return affected, nil
 }
 
@@ -726,11 +706,6 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	affected, err = deleteRelationByUser(user.Id)
-	if err != nil {
-		return false, err
-	}
-
 	return affected != 0, nil
 }
 
@@ -746,7 +721,7 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 		resp.Name = user.Name
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
-		resp.Groups = []string{user.Owner}
+		resp.Groups = user.Groups
 	}
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
@@ -777,12 +752,15 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 		return
 	}
 
-	user.Roles, err = GetRolesByUser(user.GetId())
+	user.Permissions, user.Roles, err = GetPermissionsAndRolesByUser(user.GetId())
 	if err != nil {
-		return
+		return err
 	}
 
-	user.Permissions, err = GetPermissionsByUser(user.GetId())
+	if user.Groups == nil {
+		user.Groups = []string{}
+	}
+
 	return
 }
 
@@ -844,46 +822,6 @@ func userChangeTrigger(oldName string, newName string) error {
 	return session.Commit()
 }
 
-func (user *User) refreshAvatar() (bool, error) {
-	var err error
-	var fileBuffer *bytes.Buffer
-	var ext string
-
-	// Gravatar + Identicon
-	if strings.Contains(user.Avatar, "Gravatar") && user.Email != "" {
-		client := proxy.ProxyHttpClient
-		has, err := hasGravatar(client, user.Email)
-		if err != nil {
-			return false, err
-		}
-
-		if has {
-			fileBuffer, ext, err = getGravatarFileBuffer(client, user.Email)
-			if err != nil {
-				return false, err
-			}
-		}
-	}
-
-	if fileBuffer == nil && strings.Contains(user.Avatar, "Identicon") {
-		fileBuffer, ext, err = getIdenticonFileBuffer(user.Name)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	if fileBuffer != nil {
-		avatarUrl, err := getPermanentAvatarUrlFromBuffer(user.Owner, user.Name, fileBuffer, ext, true)
-		if err != nil {
-			return false, err
-		}
-		user.Avatar = avatarUrl
-		return true, nil
-	}
-
-	return false, nil
-}
-
 func (user *User) IsMfaEnabled() bool {
 	return len(user.MultiFactorAuths) > 0
 }
@@ -922,7 +860,7 @@ func AddUserkeys(user *User, isAdmin bool) (bool, error) {
 	}
 
 	user.AccessKey = util.GenerateId()
-	user.SecretKey = util.GenerateId()
+	user.AccessSecret = util.GenerateId()
 
 	return UpdateUser(user.GetId(), user, []string{}, isAdmin)
 }

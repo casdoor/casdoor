@@ -216,6 +216,9 @@ func refineUser(user *User) *User {
 	if user.Permissions == nil {
 		user.Permissions = []*Permission{}
 	}
+	if user.Groups == nil {
+		user.Groups = []string{}
+	}
 
 	return user
 }

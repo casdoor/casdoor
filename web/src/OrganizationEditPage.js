@@ -193,6 +193,29 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Password complexity options"), i18next.t("general:Password complexity options - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select
+              virtual={false}
+              style={{width: "100%"}}
+              mode="multiple"
+              value={this.state.organization.passwordOptions}
+              onChange={(value => {
+                this.updateOrganizationField("passwordOptions", value);
+              })}
+              options={[
+                {value: "AtLeast6", name: i18next.t("user:The password must have at least 6 characters")},
+                {value: "AtLeast8", name: i18next.t("user:The password must have at least 8 characters")},
+                {value: "Aa123", name: i18next.t("user:The password must contain at least one uppercase letter, one lowercase letter and one digit")},
+                {value: "SpecialChar", name: i18next.t("user:The password must contain at least one special character")},
+                {value: "NoRepeat", name: i18next.t("user:The password must not contain any repeated characters")},
+              ].map((item) => Setting.getOption(item.name, item.value))}
+            />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Supported country codes"), i18next.t("general:Supported country codes - Tooltip"))} :

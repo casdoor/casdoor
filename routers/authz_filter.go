@@ -26,10 +26,10 @@ import (
 )
 
 type Object struct {
-	Owner     string `json:"owner"`
-	Name      string `json:"name"`
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
+	AccessKey    string `json:"accessKey"`
+	AccessSecret string `json:"accessSecret"`
 }
 
 func getUsername(ctx *context.Context) (username string) {
@@ -107,14 +107,14 @@ func getKeys(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 
 	if method == http.MethodGet {
-		accessKey := ctx.Input.Query("accesskey")
-		secretKey := ctx.Input.Query("secretkey")
-		return accessKey, secretKey
+		accessKey := ctx.Input.Query("accessKey")
+		accessSecret := ctx.Input.Query("accessSecret")
+		return accessKey, accessSecret
 	} else {
 		body := ctx.Input.RequestBody
 
 		if len(body) == 0 {
-			return ctx.Request.Form.Get("accesskey"), ctx.Request.Form.Get("secretkey")
+			return ctx.Request.Form.Get("accessKey"), ctx.Request.Form.Get("accessSecret")
 		}
 
 		var obj Object
@@ -123,7 +123,7 @@ func getKeys(ctx *context.Context) (string, string) {
 			return "", ""
 		}
 
-		return obj.AccessKey, obj.SecretKey
+		return obj.AccessKey, obj.AccessSecret
 	}
 }
 

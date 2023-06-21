@@ -75,7 +75,7 @@ class UserListPage extends BaseListPage {
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
       address: [],
-      groups: this.props.groupId ? [this.props.groupId] : [],
+      groups: this.props.groupName ? [this.props.groupName] : [],
       affiliation: "Example Inc.",
       tag: "staff",
       region: "",
@@ -126,8 +126,8 @@ class UserListPage extends BaseListPage {
 
   removeUserFromGroup(i) {
     const user = this.state.data[i];
-    const group = this.props.groupId;
-    UserBackend.removeUserFromGroup({groupId: group, owner: user.owner, name: user.name})
+    const group = this.props.groupName;
+    UserBackend.removeUserFromGroup({groupName: group, owner: user.owner, name: user.name})
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully removed"));
@@ -396,7 +396,7 @@ class UserListPage extends BaseListPage {
         width: "190px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          const isTreePage = this.props.groupId !== undefined;
+          const isTreePage = this.props.groupName !== undefined;
           const disabled = (record.owner === this.props.account.owner && record.name === this.props.account.name) || (record.owner === "built-in" && record.name === "admin");
           return (
             <Space>
@@ -483,7 +483,7 @@ class UserListPage extends BaseListPage {
         });
     } else {
       (this.props.groupName ?
-        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, `${this.state.organizationName}/${this.props.groupName}`) :
+        UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder, this.props.groupName) :
         UserBackend.getUsers(this.state.organizationName, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           this.setState({
