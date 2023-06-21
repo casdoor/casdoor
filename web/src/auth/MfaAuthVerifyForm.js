@@ -17,7 +17,7 @@ import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import {SmsMfaType} from "./MfaSetupPage";
-import {MfaSmsVerifyForm} from "./MfaVerifyForm";
+import {MfaSmsVerifyForm, mfaAuth} from "./MfaVerifyForm";
 
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
@@ -26,12 +26,12 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
   formValues.password = "";
   formValues.username = "";
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState(mfaProps.type);
+  const [mfaType, setMfaType] = useState(mfaProps.mfaType);
   const [recoveryCode, setRecoveryCode] = useState("");
 
   const verify = ({passcode}) => {
     setLoading(true);
-    const values = {...formValues, passcode, mfaType: type};
+    const values = {...formValues, passcode, mfaType};
     AuthBackend.login(values, oAuthParams).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
@@ -60,7 +60,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     });
   };
 
-  switch (type) {
+  switch (mfaType) {
   case SmsMfaType:
     return (
       <div style={{width: 300, height: 350}}>
@@ -72,13 +72,14 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         </div>
         <MfaSmsVerifyForm
           mfaProps={mfaProps}
+          method={mfaAuth}
           onFinish={verify}
           application={application}
         />
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
-            setType("recovery");
+            setMfaType("recovery");
           }}>
             {i18next.t("mfa:Use a recovery code")}
           </a>
@@ -108,7 +109,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
-            setType(mfaProps.type);
+            setMfaType(mfaProps.mfaType);
           }}>
             {i18next.t("mfa:Use SMS verification code")}
           </a>

@@ -17,13 +17,17 @@ import * as Setting from "../../Setting";
 import React from "react";
 
 export const CountryCodeSelect = (props) => {
-  const {onChange, style, disabled} = props;
+  const {onChange, style, disabled, initValue} = props;
   const countryCodes = props.countryCodes ?? [];
   const [value, setValue] = React.useState("");
 
   React.useEffect(() => {
-    const initValue = countryCodes.length > 0 ? countryCodes[0] : "";
-    handleOnChange(initValue);
+    if (initValue !== undefined) {
+      setValue(initValue);
+    } else {
+      const initValue = countryCodes.length > 0 ? countryCodes[0] : "";
+      handleOnChange(initValue);
+    }
   }, []);
 
   const handleOnChange = (value) => {
