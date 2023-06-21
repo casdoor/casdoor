@@ -3,31 +3,50 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   webpack: {
-    configure: (webpackConfig) => {
-      // Split chunks to separate vendor dependencies from application code
-      webpackConfig.optimization.splitChunks = {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/](antd-token-previewer|code-mirror)[\\/]/,
-            name: "vendors",
-            chunks: "all",
-          },
-        },
-      };
-
-      // Enable tree shaking
-      webpackConfig.optimization.usedExports = true;
-
-      // Enable minification and compression
-      webpackConfig.optimization.minimizer = [
-        new TerserPlugin({
-          terserOptions: {
-            compress: {
-              drop_console: true,
+    configure: (webpackConfig, {env}) => {
+      if (env === "production") {
+        webpackConfig.devtool = false;
+        // Split chunks to separate vendor dependencies from application code
+        webpackConfig.optimization.splitChunks = {
+          cacheGroups: {
+            vendors: {
+              test: /[\\/]node_modules[\\/]/,
+              name: "vendors",
+              chunks: "all",
+              priority: -10,
+              enforce: true,
+            },
+            antdTokenPreviewer: {
+              test: /[\\/]node_modules[\\/](antd-token-previewer)[\\/]/,
+              name: "antd-token-previewer",
+              chunks: "all",
+              priority: -5,
+              enforce: true,
+            },
+            codeMirror: {
+              test: /[\\/]node_modules[\\/](codemirror)[\\/]/,
+              name: "codemirror",
+              chunks: "all",
+              priority: -5,
+              enforce: true,
             },
           },
-        }),
-      ];
+        };
+
+        // Enable tree shaking
+        webpackConfig.optimization.usedExports = true;
+
+        // Enable minification and compression
+        webpackConfig.optimization.minimizer = [
+          new TerserPlugin({
+            terserOptions: {
+              compress: {
+                drop_console: true,
+              },
+            },
+          }),
+        ];
+      }
 
       return webpackConfig;
     },
