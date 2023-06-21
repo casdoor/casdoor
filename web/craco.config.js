@@ -8,7 +8,7 @@ module.exports = {
       webpackConfig.optimization.splitChunks = {
         cacheGroups: {
           vendor: {
-            test: /[\\/]node_modules[\\/]/,
+            test: /[\\/]node_modules[\\/](antd-token-previewer|code-mirror)[\\/]/,
             name: "vendors",
             chunks: "all",
           },
