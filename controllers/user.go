@@ -193,6 +193,7 @@ func (c *ApiController) GetUser() {
 		panic(err)
 	}
 
+	user.MultiFactorAuths = object.GetAllMfaProps(user, true)
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		panic(err)

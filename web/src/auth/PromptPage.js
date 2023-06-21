@@ -28,14 +28,13 @@ import MfaSetupPage from "./MfaSetupPage";
 class PromptPage extends React.Component {
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
       type: props.type,
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
-      promptType: params.get("promptType"),
+      promptType: new URLSearchParams(this.props.location.search).get("promptType"),
     };
   }
 
@@ -233,19 +232,22 @@ class PromptPage extends React.Component {
       {this.renderContent(application)}
       <div style={{marginTop: "50px"}}>
         <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-      </div>;
+      </div>
     </>;
   }
 
   renderPromptMfa() {
-    return <MfaSetupPage
-      applicationName={this.getApplicationObj().name}
-      account={this.props.account}
-      current={1}
-      isAuthenticated={true}
-      isPromptPage={true}
-      redirectUri={this.getRedirectUrl()}
-    />;
+    return (
+      <MfaSetupPage
+        application={this.getApplicationObj()}
+        account={this.props.account}
+        current={1}
+        isAuthenticated={true}
+        isPromptPage={true}
+        redirectUri={this.getRedirectUrl()}
+        {...this.props}
+      />
+    );
   }
 
   render() {
