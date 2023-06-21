@@ -1,6 +1,37 @@
 const CracoLessPlugin = require("craco-less");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
+  webpack: {
+    configure: (webpackConfig) => {
+      // Split chunks to separate vendor dependencies from application code
+      webpackConfig.optimization.splitChunks = {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: "vendors",
+            chunks: "all",
+          },
+        },
+      };
+
+      // Enable tree shaking
+      webpackConfig.optimization.usedExports = true;
+
+      // Enable minification and compression
+      webpackConfig.optimization.minimizer = [
+        new TerserPlugin({
+          terserOptions: {
+            compress: {
+              drop_console: true,
+            },
+          },
+        }),
+      ];
+
+      return webpackConfig;
+    },
+  },
   devServer: {
     proxy: {
       "/api": {

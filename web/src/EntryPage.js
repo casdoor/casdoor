@@ -12,23 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {Suspense, lazy} from "react";
 import {Redirect, Route, Switch} from "react-router-dom";
 import {Spin} from "antd";
 import i18next from "i18next";
+import {authConfig} from "./auth/Auth";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
-import PricingPage from "./pricing/PricingPage";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
-import SignupPage from "./auth/SignupPage";
-import SelfLoginPage from "./auth/SelfLoginPage";
-import LoginPage from "./auth/LoginPage";
-import SelfForgetPage from "./auth/SelfForgetPage";
-import ForgetPage from "./auth/ForgetPage";
-import PromptPage from "./auth/PromptPage";
-import ResultPage from "./auth/ResultPage";
-import CasLogout from "./auth/CasLogout";
-import {authConfig} from "./auth/Auth";
+
+const PricingPage = lazy(() => import("./pricing/PricingPage"));
+const SignupPage = lazy(() => import("./auth/SignupPage"));
+const SelfLoginPage = lazy(() => import("./auth/SelfLoginPage"));
+const LoginPage = lazy(() => import("./auth/LoginPage"));
+const SelfForgetPage = lazy(() => import("./auth/SelfForgetPage"));
+const ForgetPage = lazy(() => import("./auth/ForgetPage"));
+const PromptPage = lazy(() => import("./auth/PromptPage"));
+const ResultPage = lazy(() => import("./auth/ResultPage"));
+const CasLogout = lazy(() => import("./auth/CasLogout"));
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -83,27 +84,29 @@ class EntryPage extends React.Component {
     return (
       <div className="loginBackground"
         style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
-        <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
-          style={{margin: "0 auto"}} />
-        <Switch>
-          <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/auto-signup/oauth/authorize" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"code"} mode={"signup"} onUpdateApplication={onUpdateApplication}{...props} />} />
-          <Route exact path="/signup/oauth/authorize" render={(props) => <SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />} />
-          <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"code"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />} />
-          <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"saml"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />} />
-          <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
-          <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
-          <Route exact path="/select-plan/:owner/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
-        </Switch>
+        <Suspense fallback={<Spin size="large" spinning tip={i18next.t("login:Loading")} style={{margin: "0 auto"}} />}>
+          <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
+            style={{margin: "0 auto"}} />
+          <Switch>
+            <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/login" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/login/:owner" render={(props) => this.renderHomeIfLoggedIn(<SelfLoginPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/auto-signup/oauth/authorize" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"code"} mode={"signup"} onUpdateApplication={onUpdateApplication}{...props} />} />
+            <Route exact path="/signup/oauth/authorize" render={(props) => <SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />} />
+            <Route exact path="/login/oauth/authorize" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"code"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />} />
+            <Route exact path="/login/saml/authorize/:owner/:applicationName" render={(props) => <LoginPage {...this.props} application={this.state.application} type={"saml"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />} />
+            <Route exact path="/forget" render={(props) => this.renderHomeIfLoggedIn(<SelfForgetPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/forget/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ForgetPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/prompt" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/prompt/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<PromptPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/result" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
+            <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
+            <Route exact path="/select-plan/:owner/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
+          </Switch>
+        </Suspense>
       </div>
     );
   }
