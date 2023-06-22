@@ -15,6 +15,7 @@
     "antd": "5.2.3",
     "antd-token-previewer": "^1.1.0-22",
     "codemirror": "^5.61.1",
+    "compression-webpack-plugin": "^10.0.0",
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.25.0",
     "craco-less": "^2.0.0",
