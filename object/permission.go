@@ -370,3 +370,24 @@ func GetMaskedPermissions(permissions []*Permission) []*Permission {
 
 	return permissions
 }
+
+// GroupPermissionsByModelAdapter group permissions by model and adapter.
+// Every model and adapter will be a key, and the value is a list of permission ids.
+// With each list of permission ids have the same key, we just need to init the
+// enforcer and do the enforce/batch-enforce once (with list of permission ids
+// as the policyFilter when the enforcer load policy).
+func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]string {
+	m := make(map[string][]string)
+
+	for _, permission := range permissions {
+		key := permission.Model + permission.Adapter
+		permissionIds, ok := m[key]
+		if !ok {
+			m[key] = []string{permission.GetId()}
+		} else {
+			m[key] = append(permissionIds, permission.GetId())
+		}
+	}
+
+	return m
+}
