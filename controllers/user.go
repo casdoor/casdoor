@@ -426,7 +426,7 @@ func (c *ApiController) SetPassword() {
 		}
 	} else {
 		if code != c.GetSession("verifiedCode") {
-			c.ResponseError(c.T("general:Missing parameter") + fmt.Sprintf(": code = %s, verifiedCode = %s", code, c.GetSession("verifiedCode")))
+			c.ResponseError(c.T("general:Missing parameter"))
 			return
 		}
 		c.SetSession("verifiedCode", "")
