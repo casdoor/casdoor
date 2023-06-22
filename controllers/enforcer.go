@@ -76,8 +76,10 @@ func (c *ApiController) Enforce() {
 	}
 
 	res := []bool{}
-	for _, permission := range permissions {
-		enforceResult, err := object.Enforce(permission.GetId(), &request)
+
+	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
+	for _, permissionIds := range listPermissionIdMap {
+		enforceResult, err := object.Enforce(permissionIds[0], &request, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -85,6 +87,7 @@ func (c *ApiController) Enforce() {
 
 		res = append(res, enforceResult)
 	}
+
 	c.ResponseOk(res)
 }
 
@@ -135,18 +138,8 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	res := [][]bool{}
-	listPermissionIdMap := map[string][]string{}
 
-	for _, permission := range permissions {
-		key := permission.Model + permission.Adapter
-		permissionIds, ok := listPermissionIdMap[key]
-		if !ok {
-			listPermissionIdMap[key] = []string{permission.GetId()}
-		} else {
-			listPermissionIdMap[key] = append(permissionIds, permission.GetId())
-		}
-	}
-
+	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
 		enforceResult, err := object.BatchEnforce(permissionIds[0], &requests, permissionIds...)
 		if err != nil {

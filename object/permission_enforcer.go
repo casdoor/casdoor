@@ -246,13 +246,13 @@ func removePolicies(permission *Permission) {
 
 type CasbinRequest = []interface{}
 
-func Enforce(permissionId string, request *CasbinRequest) (bool, error) {
+func Enforce(permissionId string, request *CasbinRequest, permissionIds ...string) (bool, error) {
 	permission, err := GetPermission(permissionId)
 	if err != nil {
 		return false, err
 	}
 
-	enforcer := getEnforcer(permission)
+	enforcer := getEnforcer(permission, permissionIds...)
 	return enforcer.Enforce(*request...)
 }
 
