@@ -44,14 +44,26 @@ func (c *ApiController) Enforce() {
 	}
 
 	if permissionId != "" {
-		enforceResult, err := object.Enforce(permissionId, &request)
+		permission, err := object.GetPermission(permissionId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		res := []bool{}
-		res = append(res, enforceResult)
+
+		if permission == nil {
+			res = append(res, false)
+		} else {
+			enforceResult, err := object.Enforce(permission, &request)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			res = append(res, enforceResult)
+		}
+
 		c.ResponseOk(res)
 		return
 	}
@@ -79,7 +91,13 @@ func (c *ApiController) Enforce() {
 
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
-		enforceResult, err := object.Enforce(permissionIds[0], &request, permissionIds...)
+		firstPermission, err := object.GetPermission(permissionIds[0])
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		enforceResult, err := object.Enforce(firstPermission, &request, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -112,14 +130,32 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	if permissionId != "" {
-		enforceResult, err := object.BatchEnforce(permissionId, &requests)
+		permission, err := object.GetPermission(permissionId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		res := [][]bool{}
-		res = append(res, enforceResult)
+
+		if permission == nil {
+			l := len(requests)
+			resRequest := make([]bool, l)
+			for i := 0; i < l; i++ {
+				resRequest[i] = false
+			}
+
+			res = append(res, resRequest)
+		} else {
+			enforceResult, err := object.BatchEnforce(permission, &requests)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			res = append(res, enforceResult)
+		}
+
 		c.ResponseOk(res)
 		return
 	}
@@ -141,7 +177,13 @@ func (c *ApiController) BatchEnforce() {
 
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
-		enforceResult, err := object.BatchEnforce(permissionIds[0], &requests, permissionIds...)
+		firstPermission, err := object.GetPermission(permissionIds[0])
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		enforceResult, err := object.BatchEnforce(firstPermission, &requests, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
