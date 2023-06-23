@@ -42,7 +42,7 @@
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
-    "build": "NODE_ENV=production craco build",
+    "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
