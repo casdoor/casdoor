@@ -270,7 +270,7 @@ class UserListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
-              <img src={text} alt={text} width={50} />
+              <img referrerPolicy="no-referrer" src={text} alt={text} width={50} />
             </a>
           );
         },
