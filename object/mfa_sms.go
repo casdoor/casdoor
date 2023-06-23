@@ -25,19 +25,18 @@ import (
 )
 
 const (
-	MfaSmsCountryCodeSession   = "mfa_country_code"
-	MfaSmsDestSession          = "mfa_dest"
-	MfaSmsRecoveryCodesSession = "mfa_recovery_codes"
+	MfaSmsCountryCodeSession = "mfa_country_code"
+	MfaSmsDestSession        = "mfa_dest"
 )
 
 type SmsMfa struct {
 	Config *MfaProps
 }
 
-func (mfa *SmsMfa) Initiate(ctx *context.Context, name string, secret string) (*MfaProps, error) {
+func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
 	recoveryCode := uuid.NewString()
 
-	err := ctx.Input.CruSession.Set(MfaSmsRecoveryCodesSession, []string{recoveryCode})
+	err := ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +62,9 @@ func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
 }
 
 func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
-	recoveryCodes := ctx.Input.CruSession.Get(MfaSmsRecoveryCodesSession).([]string)
+	recoveryCodes := ctx.Input.CruSession.Get(MfaRecoveryCodesSession).([]string)
 	if len(recoveryCodes) == 0 {
-		return fmt.Errorf("recovery codes is empty")
+		return fmt.Errorf("recovery codes is missing")
 	}
 
 	columns := []string{"recovery_codes", "preferred_mfa_type"}
@@ -111,7 +110,7 @@ func (mfa *SmsMfa) Verify(passCode string) error {
 	return nil
 }
 
-func NewSmsTwoFactor(config *MfaProps) *SmsMfa {
+func NewSmsMfaUtil(config *MfaProps) *SmsMfa {
 	if config == nil {
 		config = &MfaProps{
 			MfaType: SmsType,
@@ -122,7 +121,7 @@ func NewSmsTwoFactor(config *MfaProps) *SmsMfa {
 	}
 }
 
-func NewEmailTwoFactor(config *MfaProps) *SmsMfa {
+func NewEmailMfaUtil(config *MfaProps) *SmsMfa {
 	if config == nil {
 		config = &MfaProps{
 			MfaType: EmailType,
