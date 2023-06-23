@@ -18,9 +18,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/casdoor/casdoor/util"
-
 	"github.com/beego/beego/context"
+	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
 )
 
