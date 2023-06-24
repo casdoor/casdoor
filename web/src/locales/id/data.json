@@ -819,6 +819,8 @@
     "Error text": "Teks kesalahan",
     "Error text - Tooltip": "Teks kesalahan",
     "Is hashed": "Apakah di-hash?",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "Sinkronisasi Baru",
     "Sync interval": "Interval sinkronisasi",
     "Sync interval - Tooltip": "Satuan dalam detik",

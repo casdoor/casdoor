@@ -819,6 +819,8 @@
     "Error text": "エラーテキスト",
     "Error text - Tooltip": "エラーテキスト",
     "Is hashed": "ハッシュ化されました",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "新しいシンクロナイザー",
     "Sync interval": "同期の間隔",
     "Sync interval - Tooltip": "単位は秒です",

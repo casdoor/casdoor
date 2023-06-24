@@ -819,6 +819,8 @@
     "Error text": "Текст ошибки",
     "Error text - Tooltip": "Текст ошибки",
     "Is hashed": "Хешировано",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "Новый синхронизатор",
     "Sync interval": "Интервал синхронизации",
     "Sync interval - Tooltip": "Единица измерения в секундах",

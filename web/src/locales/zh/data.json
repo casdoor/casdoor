@@ -819,6 +819,8 @@
     "Error text": "错误信息",
     "Error text - Tooltip": "错误信息",
     "Is hashed": "是否参与哈希计算",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "添加同步器",
     "Sync interval": "同步间隔",
     "Sync interval - Tooltip": "单位为秒",

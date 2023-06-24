@@ -819,6 +819,8 @@
     "Error text": "Texto de error",
     "Error text - Tooltip": "Texto de error",
     "Is hashed": "Está encriptado",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "Nuevo Syncer",
     "Sync interval": "Intervalo de sincronización",
     "Sync interval - Tooltip": "Unidad en segundos",

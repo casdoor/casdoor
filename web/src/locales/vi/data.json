@@ -819,6 +819,8 @@
     "Error text": "Văn bản lỗi",
     "Error text - Tooltip": "Văn bản lỗi",
     "Is hashed": "Đã được băm mã hóa",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "New Syncer: Đồng bộ mới",
     "Sync interval": "Khoảng thời gian đồng bộ hóa",
     "Sync interval - Tooltip": "Đơn vị giây",

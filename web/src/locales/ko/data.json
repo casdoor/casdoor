@@ -819,6 +819,8 @@
     "Error text": "오류 메시지",
     "Error text - Tooltip": "에러 텍스트",
     "Is hashed": "해시화 되었습니다",
+    "Is read-only": "Is read-only",
+    "Is read-only - Tooltip": "Is read-only - Tooltip",
     "New Syncer": "신규 싱크어",
     "Sync interval": "동기화 간격",
     "Sync interval - Tooltip": "초 단위의 단위",
