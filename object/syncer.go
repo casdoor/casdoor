@@ -51,7 +51,7 @@ type Syncer struct {
 	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
 	SyncInterval     int            `json:"syncInterval"`
 	IsEnabled        bool           `json:"isEnabled"`
-	ReadOnlyEnabled  bool           `json:"readOnlyEnabled"`
+	IsReadOnly       bool           `json:"isReadOnly"`
 
 	Adapter *Adapter `xorm:"-" json:"-"`
 }

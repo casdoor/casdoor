@@ -63,7 +63,7 @@ func (syncer *Syncer) syncUsers() {
 				}
 			} else {
 				if user.PreHash == oHash {
-					if !syncer.ReadOnlyEnabled {
+					if !syncer.IsReadOnly {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
 						syncer.updateUser(updatedOUser)
 						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
@@ -93,7 +93,7 @@ func (syncer *Syncer) syncUsers() {
 		panic(err)
 	}
 
-	if !syncer.ReadOnlyEnabled {
+	if !syncer.IsReadOnly {
 		for _, user := range users {
 			id := user.Id
 			if _, ok := oUserMap[id]; !ok {
