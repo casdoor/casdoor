@@ -133,3 +133,22 @@ img {
 .ant-menu-horizontal {
   border-bottom: none !important;
 }
+
+.ant-menu-horizontal  {
+  .ant-menu-item-selected {
+    background-color: #f6f0ff !important;
+
+    &:after {
+      display: none;
+    }
+  }
+
+  .ant-menu-item:not(.ant-menu-item-selected):hover {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .ant-menu-item-active:after {
+    display: none;
+  }
+}
+
