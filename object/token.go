@@ -794,7 +794,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			ErrorDescription: "the wechat mini program session is invalid",
 		}, nil
 	}
-	user, err := getUserByWechatId(openId, unionId)
+	user, err := getUserByWechatId(application.Organization, openId, unionId)
 	if err != nil {
 		return nil, nil, err
 	}

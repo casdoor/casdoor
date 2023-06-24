@@ -19,13 +19,14 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
 func saveFile(path string, file *multipart.File) (err error) {
-	f, err := os.Create(path)
+	f, err := os.Create(filepath.Clean(path))
 	if err != nil {
 		return err
 	}

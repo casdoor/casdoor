@@ -396,11 +396,6 @@ func CheckUsername(username string, lang string) string {
 		return i18n.Translate(lang, "check:Username is too long (maximum is 39 characters).")
 	}
 
-	exclude, _ := regexp.Compile("^[\u0021-\u007E]+$")
-	if !exclude.MatchString(username) {
-		return ""
-	}
-
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
 	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 	if !re.MatchString(username) {

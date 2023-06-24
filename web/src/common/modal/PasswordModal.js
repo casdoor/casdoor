@@ -17,7 +17,6 @@ import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 import * as Setting from "../../Setting";
-import * as OrganizationBackend from "../../backend/OrganizationBackend";
 import * as PasswordChecker from "../PasswordChecker";
 
 export const PasswordModal = (props) => {
@@ -27,6 +26,7 @@ export const PasswordModal = (props) => {
   const [newPassword, setNewPassword] = React.useState("");
   const [rePassword, setRePassword] = React.useState("");
   const {user} = props;
+  const {organization} = props;
   const {account} = props;
 
   const [passwordOptions, setPasswordOptions] = React.useState([]);
@@ -36,18 +36,9 @@ export const PasswordModal = (props) => {
   const [rePasswordErrorMessage, setRePasswordErrorMessage] = React.useState("");
 
   React.useEffect(() => {
-    OrganizationBackend.getOrganizations("admin")
-      .then((res) => {
-        const organizations = (res.msg === undefined) ? res : [];
-        // Find the user's corresponding organization
-        const organization = organizations.find((org) => org.name === user.owner);
-        if (organization) {
-          setPasswordOptions(organization.passwordOptions);
-        }
-      })
-      .catch((error) => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
+    if (organization) {
+      setPasswordOptions(organization.passwordOptions);
+    }
   }, [user.owner]);
   const showModal = () => {
     setVisible(true);
@@ -86,44 +77,31 @@ export const PasswordModal = (props) => {
     }
     setConfirmLoading(true);
 
-    OrganizationBackend.getOrganizations("admin").then((res) => {
-      const organizations = (res.msg === undefined) ? res : [];
+    if (organization === null) {
+      Setting.showMessage("error", "organization is null");
+      setConfirmLoading(false);
+      return;
+    }
 
-      // find the users' corresponding organization
-      let organization = null;
-      for (let i = 0; i < organizations.length; i++) {
-        if (organizations[i].name === user.owner) {
-          organization = organizations[i];
-          break;
+    const errorMsg = PasswordChecker.checkPasswordComplexity(newPassword, organization.passwordOptions);
+    if (errorMsg !== "") {
+      Setting.showMessage("error", errorMsg);
+      setConfirmLoading(false);
+      return;
+    }
+
+    UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("user:Password set successfully"));
+          setVisible(false);
+        } else {
+          Setting.showMessage("error", i18next.t(`user:${res.msg}`));
         }
-      }
-
-      if (organization === null) {
-        Setting.showMessage("error", "organization is null");
+      })
+      .finally(() => {
         setConfirmLoading(false);
-        return;
-      }
-
-      const errorMsg = PasswordChecker.checkPasswordComplexity(newPassword, organization.passwordOptions);
-      if (errorMsg !== "") {
-        Setting.showMessage("error", errorMsg);
-        setConfirmLoading(false);
-        return;
-      }
-
-      UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword)
-        .then((res) => {
-          if (res.status === "ok") {
-            Setting.showMessage("success", i18next.t("user:Password set successfully"));
-            setVisible(false);
-          } else {
-            Setting.showMessage("error", i18next.t(`user:${res.msg}`));
-          }
-        })
-        .finally(() => {
-          setConfirmLoading(false);
-        });
-    });
+      });
   };
 
   const hasOldPassword = user.password !== "";

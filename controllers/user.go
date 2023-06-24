@@ -193,6 +193,7 @@ func (c *ApiController) GetUser() {
 		panic(err)
 	}
 
+	user.MultiFactorAuths = object.GetAllMfaProps(user, true)
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		panic(err)
@@ -415,6 +416,7 @@ func (c *ApiController) SetPassword() {
 
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
+		c.ResponseError(c.T("general:Please login first"), "Please login first")
 		return
 	} else if code == "" {
 		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
@@ -424,7 +426,7 @@ func (c *ApiController) SetPassword() {
 		}
 	} else {
 		if code != c.GetSession("verifiedCode") {
-			c.ResponseError("")
+			c.ResponseError(c.T("general:Missing parameter"))
 			return
 		}
 		c.SetSession("verifiedCode", "")

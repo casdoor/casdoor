@@ -70,7 +70,7 @@ func (fileSystem FileSystem) Put(path string, reader io.Reader) (*oss.Object, er
 		return nil, err
 	}
 
-	dst, err := os.Create(fullPath)
+	dst, err := os.Create(filepath.Clean(fullPath))
 
 	if err == nil {
 		if seeker, ok := reader.(io.ReadSeeker); ok {

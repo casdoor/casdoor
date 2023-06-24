@@ -12,60 +12,88 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Form, Input, Row} from "antd";
+import {Button, Col, Form, Input, QRCode, Space} from "antd";
 import i18next from "i18next";
 import {CopyOutlined, UserOutlined} from "@ant-design/icons";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as Setting from "../Setting";
-import React from "react";
+import React, {useEffect} from "react";
 import copy from "copy-to-clipboard";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
+import {EmailMfaType, SmsMfaType} from "./MfaSetupPage";
 
-export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
-  const [dest, setDest] = React.useState(mfaProps?.secret ?? "");
+export const mfaAuth = "mfaAuth";
+export const mfaSetup = "mfaSetup";
+
+export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method, user}) => {
+  const [dest, setDest] = React.useState(mfaProps.secret ?? "");
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (mfaProps.mfaType === SmsMfaType) {
+      setDest(user.phone);
+    }
+
+    if (mfaProps.mfaType === EmailMfaType) {
+      setDest(user.email);
+    }
+  }, [mfaProps.mfaType]);
+
+  const isEmail = () => {
+    return mfaProps.mfaType === EmailMfaType;
+  };
 
   return (
     <Form
       form={form}
       style={{width: "300px"}}
       onFinish={onFinish}
+      initialValues={{
+        countryCode: mfaProps.countryCode,
+      }}
     >
-      {mfaProps?.secret !== undefined ?
-        <div style={{marginBottom: 20}}>
-          {Setting.IsEmail(dest) ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
+      {dest !== "" ?
+        <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
+          {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
         </div> :
-        <Input.Group compact style={{width: "300Px", marginBottom: "30px"}}>
-          {Setting.IsEmail(dest) ? null :
+        (<React.Fragment>
+          <p>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
+            i18next.t("mfa:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
+          </p>
+          <Input.Group compact style={{width: "300Px", marginBottom: "30px"}}>
+            {isEmail() ? null :
+              <Form.Item
+                name="countryCode"
+                noStyle
+                rules={[
+                  {
+                    required: false,
+                    message: i18next.t("signup:Please select your country code!"),
+                  },
+                ]}
+              >
+                <CountryCodeSelect
+                  initValue={mfaProps.countryCode}
+                  style={{width: "30%"}}
+                  countryCodes={application.organizationObj.countryCodes}
+                />
+              </Form.Item>
+            }
             <Form.Item
-              name="countryCode"
+              name="dest"
               noStyle
-              rules={[
-                {
-                  required: false,
-                  message: i18next.t("signup:Please select your country code!"),
-                },
-              ]}
+              rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
             >
-              <CountryCodeSelect
-                style={{width: "30%"}}
-                countryCodes={application.organizationObj.countryCodes}
+              <Input
+                style={{width: isEmail() ? "100% " : "70%"}}
+                onChange={(e) => {setDest(e.target.value);}}
+                prefix={<UserOutlined />}
+                placeholder={isEmail() ? i18next.t("general:Email") : i18next.t("general:Phone")}
               />
             </Form.Item>
-          }
-          <Form.Item
-            name="dest"
-            noStyle
-            rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
-          >
-            <Input
-              style={{width: Setting.IsEmail(dest) ? "100% " : "70%"}}
-              onChange={(e) => {setDest(e.target.value);}}
-              prefix={<UserOutlined />}
-              placeholder={i18next.t("general:Phone or email")}
-            />
-          </Form.Item>
-        </Input.Group>
+          </Input.Group>
+        </React.Fragment>
+        )
       }
       <Form.Item
         name="passcode"
@@ -73,8 +101,8 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
       >
         <SendCodeInput
           countryCode={form.getFieldValue("countryCode")}
-          method={mfaProps?.id === undefined ? "mfaSetup" : "mfaAuth"}
-          onButtonClickArgs={[dest, Setting.IsEmail(dest) ? "email" : "phone", Setting.getApplicationName(application)]}
+          method={method}
+          onButtonClickArgs={[mfaProps.secret || dest, isEmail() ? "email" : "phone", Setting.getApplicationName(application)]}
           application={application}
         />
       </Form.Item>
@@ -96,44 +124,49 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish}) => {
 export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
   const [form] = Form.useForm();
 
+  const renderSecret = () => {
+    if (!mfaProps.secret) {
+      return null;
+    }
+
+    return (
+      <React.Fragment>
+        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+          <QRCode
+            errorLevel="H"
+            value={mfaProps.url}
+            icon={"https://cdn.casdoor.com/static/favicon.png"}
+          />
+        </Col>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Scan the QR code with your Authenticator App")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Or copy the secret to your Authenticator App")}</p>
+        <Col span={24}>
+          <Space>
+            <Input value={mfaProps.secret} />
+            <Button
+              type="primary"
+              shape="round"
+              icon={<CopyOutlined />}
+              onClick={() => {
+                copy(`${mfaProps.secret}`);
+                Setting.showMessage(
+                  "success",
+                  i18next.t("mfa:Multi-factor secret to clipboard successfully")
+                );
+              }}
+            />
+          </Space>
+        </Col>
+      </React.Fragment>
+    );
+  };
   return (
     <Form
       form={form}
       style={{width: "300px"}}
       onFinish={onFinish}
     >
-      <Row type="flex" justify="center" align="middle">
-        <Col>
-        </Col>
-      </Row>
-
-      <Row type="flex" justify="center" align="middle">
-        <Col>
-          {Setting.getLabel(
-            i18next.t("mfa:Multi-factor secret"),
-            i18next.t("mfa:Multi-factor secret - Tooltip")
-          )}
-        :
-        </Col>
-        <Col>
-          <Input value={mfaProps.secret} />
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            shape="round"
-            icon={<CopyOutlined />}
-            onClick={() => {
-              copy(`${mfaProps.secret}`);
-              Setting.showMessage(
-                "success",
-                i18next.t("mfa:Multi-factor secret to clipboard successfully")
-              );
-            }}
-          />
-        </Col>
-      </Row>
-
+      {renderSecret()}
       <Form.Item
         name="passcode"
         rules={[{required: true, message: "Please input your passcode"}]}
@@ -144,7 +177,6 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
           placeholder={i18next.t("mfa:Passcode")}
         />
       </Form.Item>
-
       <Form.Item>
         <Button
           style={{marginTop: 24}}
