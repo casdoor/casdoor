@@ -386,6 +386,16 @@ class SyncerEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("general:Read-only mod"), i18next.t("general:Read-only mod - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.syncer.readOnlyEnabled} onChange={checked => {
+              this.updateSyncerField("readOnlyEnabled", checked);
+            }} />
+          </Col>
+        </Row>
       </Card>
     );
   }
