@@ -1,5 +1,5 @@
 const CracoLessPlugin = require("craco-less");
-const CompressionPlugin = require('compression-webpack-plugin')
+const CompressionPlugin = require("compression-webpack-plugin")
 
 module.exports = {
   webpack: {
@@ -11,22 +11,24 @@ module.exports = {
             minSize: 30,
             cacheGroups: {
               default: {
-                name: 'common',
-                chunks: 'initial',
+                name: "common",
+                chunks: "initial",
                 minChunks: 2,
                 priority: -20
               },
               vendors: {
                 test: /[\\/]node_modules[\\/]/,
-                name: 'vendor',
-                chunks: 'initial',
-                priority: -10
+                name: "vendor",
+                chunks: "initial",
+                priority: -10,
+                maxSize: 1000000,
+                minSize: 500000,
               },
             }
           }
         };
         webpackConfig.plugins.push(new CompressionPlugin({
-          algorithm: 'gzip',
+          algorithm: "gzip",
           test: /\.js$|\.css$|\.html$/,
           threshold: 10240,
           minRatio: 0.8
