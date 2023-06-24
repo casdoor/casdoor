@@ -69,6 +69,7 @@
     "@babel/core": "^7.18.13",
     "@babel/eslint-parser": "^7.18.9",
     "@babel/preset-react": "^7.18.6",
+    "compression-webpack-plugin": "^10.0.0",
     "cross-env": "^7.0.3",
     "cypress": "^12.5.1",
     "eslint": "8.22.0",

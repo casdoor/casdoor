@@ -1,4 +1,5 @@
 const CracoLessPlugin = require("craco-less");
+const CompressionPlugin = require("compression-webpack-plugin")
 
 module.exports = {
   webpack: {
@@ -7,37 +8,42 @@ module.exports = {
         webpackConfig.devtool = false;
         // Split chunks to separate vendor dependencies from application code
         webpackConfig.optimization.splitChunks = {
-          maxSize: 250000, // 250KiB
-          minSize: 10000, // 10KiB
           cacheGroups: {
             vendors: {
               test: /[\\/]node_modules[\\/]/,
               name: "vendors",
-              chunks: "all",
               priority: -10,
               enforce: true,
               maxSize: 1000000, // 1MB
-              minSize: 500000, // 500KiB
+              minSize: 0, // Set minimum size to 0,
+              chunks: "initial", // Split initial chunks
             },
             antdTokenPreviewer: {
               test: /[\\/]node_modules[\\/](antd-token-previewer)[\\/]/,
               name: "antd-token-previewer",
-              chunks: "all",
               priority: -5,
               enforce: true,
+              chunks: "all",
             },
             codeMirror: {
               test: /[\\/]node_modules[\\/](codemirror)[\\/]/,
               name: "codemirror",
-              chunks: "all",
               priority: -5,
               enforce: true,
+              chunks: "all",
             },
           },
         };
 
         // Enable tree shaking
         webpackConfig.optimization.usedExports = true;
+
+        webpackConfig.plugins.push(new CompressionPlugin({
+          algorithm: "gzip",
+          test: /\.js$|\.css$|\.html$/,
+          threshold: 10240,
+          minRatio: 0.8
+        }))
       }
 
       return webpackConfig;
