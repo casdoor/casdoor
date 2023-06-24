@@ -250,7 +250,7 @@ class MfaSetupPage extends React.Component {
                   mfaType: EmailMfaType,
                 });
               }
-              }>{i18next.t("mfa:Use Email")}</Button>
+              }>{i18next.t("mfa:Use email")}</Button>
             }
             {
               (this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) ? null :
@@ -260,6 +260,15 @@ class MfaSetupPage extends React.Component {
                   });
                 }
                 }>{i18next.t("mfa:Use SMS")}</Button>
+            }
+            {
+              (this.state.mfaType === TotpMfaType) ? null :
+                <Button type={"link"} onClick={() => {
+                  this.setState({
+                    mfaType: TotpMfaType,
+                  });
+                }
+                }>{i18next.t("mfa:Use authenticator app")}</Button>
             }
           </Col>
         </div>

@@ -433,14 +433,17 @@ func GetMaskedUser(user *User, errs ...error) (*User, error) {
 	if user.AccessSecret != "" {
 		user.AccessSecret = "***"
 	}
-	if user.RecoveryCodes != nil {
-		user.RecoveryCodes = nil
-	}
-
 	if user.ManagedAccounts != nil {
 		for _, manageAccount := range user.ManagedAccounts {
 			manageAccount.Password = "***"
 		}
+	}
+
+	if user.TotpSecret != "" {
+		user.TotpSecret = ""
+	}
+	if user.RecoveryCodes != nil {
+		user.RecoveryCodes = nil
 	}
 
 	return user, nil
