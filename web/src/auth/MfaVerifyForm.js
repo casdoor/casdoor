@@ -138,8 +138,8 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
             icon={"https://cdn.casdoor.com/static/favicon.png"}
           />
         </Col>
-        <p style={{textAlign: "center"}}>{i18next.t("mfa:Scan the QR code with your authenticator app")}</p>
-        <p style={{textAlign: "center"}}>{i18next.t("mfa:Or copy the secret to your authenticator app")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Scan the QR code with your Authenticator App")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Or copy the secret to your Authenticator App")}</p>
         <Col span={24}>
           <Space>
             <Input value={mfaProps.secret} />
