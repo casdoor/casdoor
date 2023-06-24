@@ -341,9 +341,11 @@ class App extends Component {
     items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
       "/account"
     ));
-    items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
-      "/chat"
-    ));
+    if (Conf.EnableChatPages) {
+      items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
+        "/chat"
+      ));
+    }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
 
@@ -409,6 +411,14 @@ class App extends Component {
     res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
 
     if (Setting.isLocalAdminUser(this.state.account)) {
+      if (Conf.ShowGithubCorner) {
+        res.push(Setting.getItem(<a href={"https://casdoor.com"}>
+          <span style={{fontWeight: "bold", backgroundColor: "rgba(87,52,211,0.4)", marginTop: "12px", paddingLeft: "5px", paddingRight: "5px", display: "flex", alignItems: "center", height: "40px", borderRadius: "5px"}}>
+            🚀 SaaS Hosting 🔥
+          </span>
+        </a>, "#"));
+      }
+
       res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
         "/organizations"));
 
@@ -447,13 +457,15 @@ class App extends Component {
         "/providers"
       ));
 
-      res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
-        "/chats"
-      ));
+      if (Conf.EnableChatPages) {
+        res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
+          "/chats"
+        ));
 
-      res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
-        "/messages"
-      ));
+        res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
+          "/messages"
+        ));
+      }
 
       res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
         "/resources"
@@ -474,7 +486,6 @@ class App extends Component {
       res.push(Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>,
         "/subscriptions"
       ));
-
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
@@ -499,7 +510,6 @@ class App extends Component {
       ));
 
       if (Conf.EnableExtraPages) {
-
         res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>,
           "/products"
         ));
@@ -508,8 +518,8 @@ class App extends Component {
           "/payments"
         ));
       }
-
     }
+
     if (Setting.isAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
         "/sysinfo"
