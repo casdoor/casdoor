@@ -16,8 +16,8 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "./AuthBackend";
-import {EmailMfaType, SmsMfaType} from "./MfaSetupPage";
-import {MfaSmsVerifyForm, mfaAuth} from "./MfaVerifyForm";
+import {EmailMfaType, RecoveryMfaType, SmsMfaType} from "./MfaSetupPage";
+import {MfaSmsVerifyForm, MfaTotpVerifyForm, mfaAuth} from "./MfaVerifyForm";
 
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
@@ -60,7 +60,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     });
   };
 
-  if (mfaType === SmsMfaType || mfaType === EmailMfaType) {
+  if (mfaType !== RecoveryMfaType) {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
@@ -69,12 +69,18 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         <div style={{marginBottom: 24}}>
           {i18next.t("mfa:Multi-factor authentication description")}
         </div>
-        <MfaSmsVerifyForm
-          mfaProps={mfaProps}
-          method={mfaAuth}
-          onFinish={verify}
-          application={application}
-        />
+        {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
+          <MfaSmsVerifyForm
+            mfaProps={mfaProps}
+            method={mfaAuth}
+            onFinish={verify}
+            application={application}
+          />) : (
+          <MfaTotpVerifyForm
+            mfaProps={mfaProps}
+            onFinish={verify}
+          />
+        )}
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
@@ -85,7 +91,7 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         </span>
       </div>
     );
-  } else if (mfaType === "recovery") {
+  } else {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>

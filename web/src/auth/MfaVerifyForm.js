@@ -12,22 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Form, Input, Row} from "antd";
+import {Button, Col, Form, Input, QRCode, Space} from "antd";
 import i18next from "i18next";
 import {CopyOutlined, UserOutlined} from "@ant-design/icons";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as Setting from "../Setting";
-import React from "react";
+import React, {useEffect} from "react";
 import copy from "copy-to-clipboard";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
-import {EmailMfaType} from "./MfaSetupPage";
+import {EmailMfaType, SmsMfaType} from "./MfaSetupPage";
 
 export const mfaAuth = "mfaAuth";
 export const mfaSetup = "mfaSetup";
 
-export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
+export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method, user}) => {
   const [dest, setDest] = React.useState(mfaProps.secret ?? "");
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (mfaProps.mfaType === SmsMfaType) {
+      setDest(user.phone);
+    }
+
+    if (mfaProps.mfaType === EmailMfaType) {
+      setDest(user.email);
+    }
+  }, [mfaProps.mfaType]);
 
   const isEmail = () => {
     return mfaProps.mfaType === EmailMfaType;
@@ -42,9 +52,9 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
         countryCode: mfaProps.countryCode,
       }}
     >
-      {mfaProps.secret !== "" ?
+      {dest !== "" ?
         <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
-          {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {mfaProps.secret}
+          {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
         </div> :
         (<React.Fragment>
           <p>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
@@ -114,44 +124,49 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method}) => {
 export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
   const [form] = Form.useForm();
 
+  const renderSecret = () => {
+    if (!mfaProps.secret) {
+      return null;
+    }
+
+    return (
+      <React.Fragment>
+        <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+          <QRCode
+            errorLevel="H"
+            value={mfaProps.url}
+            icon={"https://cdn.casdoor.com/static/favicon.png"}
+          />
+        </Col>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Scan the QR code with your Authenticator App")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Or copy the secret to your Authenticator App")}</p>
+        <Col span={24}>
+          <Space>
+            <Input value={mfaProps.secret} />
+            <Button
+              type="primary"
+              shape="round"
+              icon={<CopyOutlined />}
+              onClick={() => {
+                copy(`${mfaProps.secret}`);
+                Setting.showMessage(
+                  "success",
+                  i18next.t("mfa:Multi-factor secret to clipboard successfully")
+                );
+              }}
+            />
+          </Space>
+        </Col>
+      </React.Fragment>
+    );
+  };
   return (
     <Form
       form={form}
       style={{width: "300px"}}
       onFinish={onFinish}
     >
-      <Row type="flex" justify="center" align="middle">
-        <Col>
-        </Col>
-      </Row>
-
-      <Row type="flex" justify="center" align="middle">
-        <Col>
-          {Setting.getLabel(
-            i18next.t("mfa:Multi-factor secret"),
-            i18next.t("mfa:Multi-factor secret - Tooltip")
-          )}
-        :
-        </Col>
-        <Col>
-          <Input value={mfaProps.secret} />
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            shape="round"
-            icon={<CopyOutlined />}
-            onClick={() => {
-              copy(`${mfaProps.secret}`);
-              Setting.showMessage(
-                "success",
-                i18next.t("mfa:Multi-factor secret to clipboard successfully")
-              );
-            }}
-          />
-        </Col>
-      </Row>
-
+      {renderSecret()}
       <Form.Item
         name="passcode"
         rules={[{required: true, message: "Please input your passcode"}]}
@@ -162,7 +177,6 @@ export const MfaTotpVerifyForm = ({mfaProps, onFinish}) => {
           placeholder={i18next.t("mfa:Passcode")}
         />
       </Form.Item>
-
       <Form.Item>
         <Button
           style={{marginTop: 24}}

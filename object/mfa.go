@@ -22,6 +22,8 @@ import (
 	"github.com/beego/beego/context"
 )
 
+const MfaRecoveryCodesSession = "mfa_recovery_codes"
+
 type MfaSessionData struct {
 	UserId string
 }
@@ -37,10 +39,10 @@ type MfaProps struct {
 }
 
 type MfaInterface interface {
-	SetupVerify(ctx *context.Context, passCode string) error
-	Verify(passCode string) error
-	Initiate(ctx *context.Context, name1 string, name2 string) (*MfaProps, error)
+	Initiate(ctx *context.Context, userId string) (*MfaProps, error)
+	SetupVerify(ctx *context.Context, passcode string) error
 	Enable(ctx *context.Context, user *User) error
+	Verify(passcode string) error
 }
 
 const (
@@ -58,11 +60,11 @@ const (
 func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 	switch mfaType {
 	case SmsType:
-		return NewSmsTwoFactor(config)
+		return NewSmsMfaUtil(config)
 	case EmailType:
-		return NewEmailTwoFactor(config)
+		return NewEmailMfaUtil(config)
 	case TotpType:
-		return nil
+		return NewTotpMfaUtil(config)
 	}
 
 	return nil
@@ -97,23 +99,9 @@ func MfaRecover(user *User, recoveryCode string) error {
 func GetAllMfaProps(user *User, masked bool) []*MfaProps {
 	mfaProps := []*MfaProps{}
 
-	if user.MfaPhoneEnabled {
-		mfaProps = append(mfaProps, user.GetMfaProps(SmsType, masked))
-	} else {
-		mfaProps = append(mfaProps, &MfaProps{
-			Enabled: false,
-			MfaType: SmsType,
-		})
+	for _, mfaType := range []string{SmsType, EmailType, TotpType} {
+		mfaProps = append(mfaProps, user.GetMfaProps(mfaType, masked))
 	}
-	if user.MfaEmailEnabled {
-		mfaProps = append(mfaProps, user.GetMfaProps(EmailType, masked))
-	} else {
-		mfaProps = append(mfaProps, &MfaProps{
-			Enabled: false,
-			MfaType: EmailType,
-		})
-	}
-
 	return mfaProps
 }
 
@@ -121,6 +109,13 @@ func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
 	mfaProps := &MfaProps{}
 
 	if mfaType == SmsType {
+		if !user.MfaPhoneEnabled {
+			return &MfaProps{
+				Enabled: false,
+				MfaType: mfaType,
+			}
+		}
+
 		mfaProps = &MfaProps{
 			Enabled:     user.MfaPhoneEnabled,
 			MfaType:     mfaType,
@@ -132,6 +127,13 @@ func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
 			mfaProps.Secret = user.Phone
 		}
 	} else if mfaType == EmailType {
+		if !user.MfaEmailEnabled {
+			return &MfaProps{
+				Enabled: false,
+				MfaType: mfaType,
+			}
+		}
+
 		mfaProps = &MfaProps{
 			Enabled: user.MfaEmailEnabled,
 			MfaType: mfaType,
@@ -142,8 +144,21 @@ func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
 			mfaProps.Secret = user.Email
 		}
 	} else if mfaType == TotpType {
+		if user.TotpSecret == "" {
+			return &MfaProps{
+				Enabled: false,
+				MfaType: mfaType,
+			}
+		}
+
 		mfaProps = &MfaProps{
+			Enabled: true,
 			MfaType: mfaType,
+		}
+		if masked {
+			mfaProps.Secret = ""
+		} else {
+			mfaProps.Secret = user.TotpSecret
 		}
 	}
 
@@ -158,8 +173,9 @@ func DisabledMultiFactorAuth(user *User) error {
 	user.RecoveryCodes = []string{}
 	user.MfaPhoneEnabled = false
 	user.MfaEmailEnabled = false
+	user.TotpSecret = ""
 
-	_, err := UpdateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled"}, user.IsAdminUser())
+	_, err := updateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled", "totp_secret"})
 	if err != nil {
 		return err
 	}

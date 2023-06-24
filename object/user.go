@@ -161,6 +161,7 @@ type User struct {
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
 	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes,omitempty"`
+	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret,omitempty"`
 	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
@@ -432,14 +433,17 @@ func GetMaskedUser(user *User, errs ...error) (*User, error) {
 	if user.AccessSecret != "" {
 		user.AccessSecret = "***"
 	}
-	if user.RecoveryCodes != nil {
-		user.RecoveryCodes = nil
-	}
-
 	if user.ManagedAccounts != nil {
 		for _, manageAccount := range user.ManagedAccounts {
 			manageAccount.Password = "***"
 		}
+	}
+
+	if user.TotpSecret != "" {
+		user.TotpSecret = ""
+	}
+	if user.RecoveryCodes != nil {
+		user.RecoveryCodes = nil
 	}
 
 	return user, nil
