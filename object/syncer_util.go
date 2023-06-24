@@ -170,6 +170,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 		originalUser := &OriginalUser{
 			Address:    []string{},
 			Properties: map[string]string{},
+			Groups:     []string{},
 		}
 
 		for _, tableColumn := range syncer.TableColumns {
