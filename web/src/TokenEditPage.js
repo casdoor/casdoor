@@ -35,14 +35,19 @@ class TokenEditPage extends React.Component {
 
   getToken() {
     TokenBackend.getToken("admin", this.state.tokenName)
-      .then((token) => {
-        if (token === null) {
+      .then((res) => {
+        if (res === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          token: token,
+          token: res,
         });
       });
   }

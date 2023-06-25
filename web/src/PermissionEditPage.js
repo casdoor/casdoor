@@ -49,21 +49,26 @@ class PermissionEditPage extends React.Component {
 
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
-      .then((permission) => {
-        if (permission === null) {
+      .then((res) => {
+        if (res === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          permission: permission,
+          permission: res,
         });
 
-        this.getUsers(permission.owner);
-        this.getRoles(permission.owner);
-        this.getModels(permission.owner);
-        this.getResources(permission.owner);
-        this.getModel(permission.owner, permission.model);
+        this.getUsers(res.owner);
+        this.getRoles(res.owner);
+        this.getModels(res.owner);
+        this.getResources(res.owner);
+        this.getModel(res.owner, res.model);
       });
   }
 
@@ -79,6 +84,10 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           users: res,
         });
@@ -88,6 +97,10 @@ class PermissionEditPage extends React.Component {
   getRoles(organizationName) {
     RoleBackend.getRoles(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           roles: res,
         });
@@ -97,6 +110,10 @@ class PermissionEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           models: res,
         });
@@ -106,6 +123,10 @@ class PermissionEditPage extends React.Component {
   getModel(organizationName, modelName) {
     ModelBackend.getModel(organizationName, modelName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           model: res,
         });

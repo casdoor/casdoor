@@ -64,6 +64,11 @@ class PricingPage extends React.Component {
 
     Promise.all(plans)
       .then(results => {
+        const hasError = results.some(result => result.status === "error");
+        if (hasError) {
+          Setting.showMessage("error", "Failed to get plans");
+          return;
+        }
         this.setState({
           plans: results,
           loading: false,
@@ -81,6 +86,11 @@ class PricingPage extends React.Component {
 
     PricingBackend.getPricing(this.state.owner, pricingName)
       .then((result) => {
+        if (result.status === "error") {
+          Setting.showMessage("error", result.msg);
+          return;
+        }
+
         this.setState({
           loading: false,
           pricing: result,

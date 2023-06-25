@@ -122,13 +122,17 @@ class UserEditPage extends React.Component {
 
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
-      .then((application) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          application: application,
+          application: res,
         });
 
         this.setState({
-          isGroupsVisible: application.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          isGroupsVisible: res?.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }

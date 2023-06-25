@@ -47,14 +47,19 @@ class SyncerEditPage extends React.Component {
 
   getSyncer() {
     SyncerBackend.getSyncer("admin", this.state.syncerName)
-      .then((syncer) => {
-        if (syncer === null) {
+      .then((res) => {
+        if (res === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          syncer: syncer,
+          syncer: res,
         });
       });
   }
