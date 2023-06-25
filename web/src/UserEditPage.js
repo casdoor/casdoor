@@ -132,7 +132,7 @@ class UserEditPage extends React.Component {
         });
 
         this.setState({
-          isGroupsVisible: res?.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          isGroupsVisible: res.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }

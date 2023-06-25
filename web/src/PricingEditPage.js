@@ -70,8 +70,12 @@ class PricingEditPage extends React.Component {
   getPlans(organizationName) {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          plans: (res.msg === undefined) ? res : [],
+          plans: res,
         });
       });
   }
