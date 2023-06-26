@@ -34,7 +34,7 @@ import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import * as MfaBackend from "./backend/MfaBackend";
 import {DeleteMfa} from "./backend/MfaBackend";
-import {CheckCircleOutlined} from "@ant-design/icons";
+import {CheckCircleOutlined, InfoCircleTwoTone} from "@ant-design/icons";
 import {SmsMfaType} from "./auth/MfaSetupPage";
 
 const {Option} = Select;
@@ -207,14 +207,10 @@ class UserEditPage extends React.Component {
     ths.modalOpen = true;
 
     const handleUserSessionsLogOut = () => {
-      AuthBackend.completeUserSessions(ths.state.user).then((res) => {
-        if (res.status === "ok") {
-          ths.setState({
-            isModalVisible: false,
-          });
-        } else {
-          Setting.showMessage("error", `${i18next.t("user:Failed to log out user")}`);
-        }
+      AuthBackend.completeUserSessions(ths.state.user).then(() => {
+        ths.setState({
+          isModalVisible: false,
+        });
       });
     };
 
@@ -227,20 +223,16 @@ class UserEditPage extends React.Component {
     return (
       <Modal title={
         <div>
-          {i18next.t("user:Log Out of All Sessions?")}
+          <InfoCircleTwoTone twoToneColor="rgb(45,120,213)" />
+          {" " + i18next.t("payment:Confirm your invoice information")}
         </div>
       }
       open={ths.state.isModalVisible}
       onOk={handleUserSessionsLogOut}
       onCancel={handleCancel}
-      width={420}
-      okText={i18next.t("user:Log Out")}
+      okText={i18next.t("payment:Issue Invoice")}
       cancelText={i18next.t("general:Cancel")}>
-        <Col>
-          <Row style={{width: "100%", marginBottom: "24px"}}>
-            This will log this user out from every device he is currently logged in. The logout might not be performed instantly, but after the expiration of the access token.
-          </Row>
-        </Col>
+        dgsdfgsd
       </Modal>
     );
   }
