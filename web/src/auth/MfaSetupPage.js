@@ -179,10 +179,14 @@ class MfaSetupPage extends React.Component {
 
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        if (application !== null) {
+      .then((res) => {
+        if (res !== null) {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
           this.setState({
-            application: application,
+            application: res,
           });
         } else {
           Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
