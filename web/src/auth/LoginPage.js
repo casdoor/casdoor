@@ -328,35 +328,49 @@ class LoginPage extends React.Component {
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const callback = (res) => {
-            const responseType = values["type"];
-
-            if (responseType === "login") {
-              if (res.msg === RequiredMfa) {
-                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-              } else {
-                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-                const link = Setting.getFromLink();
-                Setting.goToLink(link);
-              }
-            } else if (responseType === "code") {
-              this.postCodeLoginAction(res);
-            } else if (responseType === "token" || responseType === "id_token") {
-              const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
-              const accessToken = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
-            } else if (responseType === "saml") {
-              if (res.data2.method === "POST") {
+            this.checkIfUserPasswordChangeRequired().then((result) => {
+              if (result) {
                 this.setState({
-                  samlResponse: res.data,
-                  redirectUrl: res.data2.redirectUrl,
-                  relayState: oAuthParams.relayState,
+                  values: values,
                 });
-              } else {
-                const SAMLResponse = res.data;
-                const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+
+                this.setState({
+                  getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj()),
+                });
+
+                return;
               }
-            }
+
+              const responseType = values["type"];
+
+              if (responseType === "login") {
+                if (res.msg === RequiredMfa) {
+                  Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
+                } else {
+                  Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+                  const link = Setting.getFromLink();
+                  Setting.goToLink(link);
+                }
+              } else if (responseType === "code") {
+                this.postCodeLoginAction(res);
+              } else if (responseType === "token" || responseType === "id_token") {
+                const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
+                const accessToken = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+              } else if (responseType === "saml") {
+                if (res.data2.method === "POST") {
+                  this.setState({
+                    samlResponse: res.data,
+                    redirectUrl: res.data2.redirectUrl,
+                    relayState: oAuthParams.relayState,
+                  });
+                } else {
+                  const SAMLResponse = res.data;
+                  const redirectUri = res.data2.redirectUrl;
+                  Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+                }
+              }
+            });
           };
 
           if (res.status === "ok") {
@@ -382,6 +396,135 @@ class LoginPage extends React.Component {
           }
         });
     }
+  }
+
+  checkIfUserPasswordChangeRequired() {
+    return AuthBackend.getAccount().then((res) => {
+      if (res.status === "ok") {
+        return res.data.passwordChangeRequired;
+      }
+    });
+  }
+
+  renderChangePasswordForm(application) {
+    return (
+      <React.Fragment>
+        <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+        <Row type="flex" justify="center" align="middle">
+          <Col span={16} style={{width: 600}}>
+            <Form
+              labelCol={{span: 8}}
+              wrapperCol={{span: 16}}
+              ref={this.form}
+              name="changePassword"
+              onFinish={(values) => this.onChangePasswordFinish(values)}
+              initialValues={{
+                application: application.name,
+                organization: application.organization,
+              }}
+              size="large"
+              layout={Setting.isMobile() ? "vertical" : "horizontal"}
+              style={{width: Setting.isMobile() ? "300px" : "400px"}}
+            >
+              <Form.Item
+                name="application"
+                hidden={true}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your application!",
+                  },
+                ]}
+              >
+              </Form.Item>
+              <Form.Item
+                name="organization"
+                hidden={true}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your organization!",
+                  },
+                ]}
+              >
+              </Form.Item>
+              <Form.Item
+                name="currentPassword"
+                label={i18next.t("changePassword:Current password")}
+                rules={[
+                  {
+                    required: true,
+                    message: i18next.t("changePassword:Please input your old password"),
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label={i18next.t("changePassword:New password")}
+                rules={[
+                  {
+                    required: true,
+                    min: 6,
+                    message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="confirm"
+                label={i18next.t("changePassword:Re-enter new")}
+                dependencies={["password"]}
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: i18next.t("changePassword:Please confirm your password!"),
+                  },
+                  ({getFieldValue}) => ({
+                    validator(rule, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+
+                      return Promise.reject(i18next.t("changePassword:Your confirmed password is inconsistent with the password!"));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item
+                wrapperCol={{span: 24}}>
+                <Button type="primary" htmlType="submit">
+                  {i18next.t("changePassword:Change password")}
+                </Button>
+              </Form.Item>
+            </Form>
+          </Col>
+        </Row>
+      </React.Fragment>
+    );
+  }
+
+  onChangePasswordFinish(values) {
+    AuthBackend.setNewPassword(values)
+      .then((res) => {
+        if (res.status === "ok") {
+          const _values = {...this.state.values};
+          _values["password"] = values.password;
+          _values["username"] = _values.username ?? this.props?.account?.name;
+          Setting.showMessage("success", i18next.t("changePassword:Password successfully changed"));
+          this.login(_values);
+        } else {
+          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+        }
+      });
   }
 
   isProviderVisible(providerItem) {
@@ -671,6 +814,7 @@ class LoginPage extends React.Component {
         <SelfLoginButton account={this.props.account} onClick={() => {
           const values = {};
           values["application"] = application.name;
+          // values["username"] = this.props.account.name;
           this.login(values);
         }} />
         <br />

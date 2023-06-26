@@ -1,3 +1,4 @@
+/*
 // Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,111 +89,6 @@ class ChangePasswordPage extends React.Component {
       });
   }
 
-  onFinishFailed(values, errorFields, outOfDate) {
-    this.form.current.scrollToField(errorFields[0].name);
-  }
-
-  renderForm(application) {
-    return (
-      <Form
-        labelCol={{span: 8}}
-        wrapperCol={{span: 16}}
-        ref={this.form}
-        name="changePassword"
-        onFinish={(values) => this.onFinish(values)}
-        onFinishFailed={(errorInfo) => this.onFinishFailed(errorInfo.values, errorInfo.errorFields, errorInfo.outOfDate)}
-        initialValues={{
-          application: application.name,
-          organization: application.organization,
-        }}
-        size="large"
-        layout={Setting.isMobile() ? "vertical" : "horizontal"}
-        style={{width: Setting.isMobile() ? "300px" : "400px"}}
-      >
-        <Form.Item
-          name="application"
-          hidden={true}
-          rules={[
-            {
-              required: true,
-              message: "Please input your application!",
-            },
-          ]}
-        >
-        </Form.Item>
-        <Form.Item
-          name="organization"
-          hidden={true}
-          rules={[
-            {
-              required: true,
-              message: "Please input your organization!",
-            },
-          ]}
-        >
-        </Form.Item>
-        <Form.Item
-          name="currentPassword"
-          label={i18next.t("changePassword:Current password")}
-          rules={[
-            {
-              required: true,
-              message: i18next.t("changePassword:Please input your old password"),
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label={i18next.t("changePassword:New password")}
-          rules={[
-            {
-              required: true,
-              min: 6,
-              message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name="confirm"
-          label={i18next.t("changePassword:Re-enter new")}
-          dependencies={["password"]}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: i18next.t("changePassword:Please confirm your password!"),
-            },
-            ({getFieldValue}) => ({
-              validator(rule, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-
-                return Promise.reject(i18next.t("changePassword:Your confirmed password is inconsistent with the password!"));
-              },
-            }),
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-
-        <Form.Item
-          wrapperCol={{span: 24}}>
-          <Button type="primary" htmlType="submit">
-            {i18next.t("changePassword:Change password")}
-          </Button>
-        </Form.Item>
-      </Form>
-
-    );
-  }
-
   render() {
     const application = this.getApplicationObj();
     if (application === undefined || application === null) {
@@ -233,3 +129,4 @@ class ChangePasswordPage extends React.Component {
 }
 
 export default ChangePasswordPage;
+*/
