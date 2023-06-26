@@ -566,9 +566,9 @@ class LoginPage extends React.Component {
           {
             !application.signinStyle ? null : application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length !== 0 ? (
               <div style={{display: "flex", width: "320px", alignItems: "center", marginBottom: "-30px", justifyContent: "space-between"}}>
-                <img src={`${StaticBaseUrl}/img/left.png`} width="150px" />
+                <img src={`${StaticBaseUrl}/img/left_dividing_line.png`} width="150px" />
                 <span>or</span>
-                <img src={`${StaticBaseUrl}/img/right.png`} width="150px" />
+                <img src={`${StaticBaseUrl}/img/right_dividing_line.png`} width="150px" />
               </div>
             ) : null
           }
