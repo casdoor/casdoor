@@ -13,9 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Modal, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
 import * as UserBackend from "./backend/UserBackend";
-import * as AuthBackend from "./auth/AuthBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
@@ -32,10 +31,10 @@ import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as MfaBackend from "./backend/MfaBackend";
 import {DeleteMfa} from "./backend/MfaBackend";
-import {CheckCircleOutlined, InfoCircleTwoTone} from "@ant-design/icons";
+import {CheckCircleOutlined} from "@ant-design/icons";
 import {SmsMfaType} from "./auth/MfaSetupPage";
+import * as MfaBackend from "./backend/MfaBackend";
 
 const {Option} = Select;
 
@@ -53,7 +52,6 @@ class UserEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
       returnUrl: null,
-      isModalVisible: false,
     };
   }
 
@@ -201,41 +199,6 @@ class UserEditPage extends React.Component {
       });
     });
   };
-
-  renderModal() {
-    const ths = this;
-    ths.modalOpen = true;
-
-    const handleUserSessionsLogOut = () => {
-      AuthBackend.completeUserSessions(ths.state.user).then(() => {
-        ths.setState({
-          isModalVisible: false,
-        });
-      });
-    };
-
-    const handleCancel = () => {
-      ths.setState({
-        isModalVisible: false,
-      });
-    };
-
-    return (
-      <Modal title={
-        <div>
-          <InfoCircleTwoTone twoToneColor="rgb(45,120,213)" />
-          {" " + i18next.t("payment:Confirm your invoice information")}
-        </div>
-      }
-      open={ths.state.isModalVisible}
-      onOk={handleUserSessionsLogOut}
-      onCancel={handleCancel}
-      okText={i18next.t("payment:Issue Invoice")}
-      cancelText={i18next.t("general:Cancel")}>
-        dgsdfgsd
-      </Modal>
-    );
-  }
 
   renderAccountItem(accountItem) {
     if (!accountItem.visible) {
@@ -792,26 +755,16 @@ class UserEditPage extends React.Component {
       );
     } else if (accountItem.name === "Change password") {
       return (
-        <React.Fragment>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("user:Change password"), i18next.t("user:Change password - Tooltip"))} :
-            </Col>
-            <Col span={(Setting.isMobile()) ? 22 : 2} >
-              <Switch checked={this.state.user.passwordChangeRequired} onChange={checked => {
-                this.updateUserField("passwordChangeRequired", checked);
-              }} />
-            </Col>
-          </Row>
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("user:Log Out"), i18next.t("user:This will log this user out from every device he is currently logged in"))} :
-            </Col>
-            <Col span={(Setting.isMobile()) ? 22 : 2} >
-              <Button onClick={() => this.setState({isModalVisible: true})}>{i18next.t("user:Log Out of All Sessions")}</Button>
-            </Col>
-          </Row>
-        </React.Fragment>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Change password"), i18next.t("user:Change password - Tooltip"))} :
+          </Col>
+          <Col span={(Setting.isMobile()) ? 22 : 2} >
+            <Switch checked={this.state.user.passwordChangeRequired} onChange={checked => {
+              this.updateUserField("passwordChangeRequired", checked);
+            }} />
+          </Col>
+        </Row>
       );
     } else if (accountItem.name === "Multi-factor authentication") {
       return (
@@ -993,9 +946,6 @@ class UserEditPage extends React.Component {
   render() {
     return (
       <div>
-        {
-          this.renderModal()
-        }
         {
           this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
             this.state.user !== null ? this.renderUser() :

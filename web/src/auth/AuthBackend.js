@@ -160,14 +160,3 @@ export function setNewPassword(values) {
     },
   }).then(res => res.json());
 }
-
-export function completeUserSessions(values) {
-  return fetch(`${Setting.ServerUrl}/api/complete-user-sessions`, {
-    method: "post",
-    credentials: "include",
-    body: JSON.stringify(values),
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}
