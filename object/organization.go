@@ -104,10 +104,15 @@ func GetOrganizationsByFields(owner string, fields ...string) ([]*Organization, 
 	return organizations, nil
 }
 
-func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Organization, error) {
+func GetPaginationOrganizations(owner string, name string, offset, limit int, field, value, sortField, sortOrder string) ([]*Organization, error) {
 	organizations := []*Organization{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&organizations)
+	var err error
+	if name != "" {
+		err = session.Find(&organizations, &Organization{Name: name})
+	} else {
+		err = session.Find(&organizations)
+	}
 	if err != nil {
 		return nil, err
 	}

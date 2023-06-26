@@ -21,19 +21,11 @@ import * as SyncerBackend from "./backend/SyncerBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class SyncerListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "organization",
-    };
-  }
   newSyncer() {
     const randomName = Setting.getRandomName();
-    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin",
       name: `syncer_${randomName}`,
@@ -284,7 +276,7 @@ class SyncerListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    SyncerBackend.getSyncers("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SyncerBackend.getSyncers("admin", Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

@@ -22,27 +22,15 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class ApplicationListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "organization",
-    };
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    this.setState({
-      organizationName: this.props.account.owner,
-    });
   }
 
   newApplication() {
     const randomName = Setting.getRandomName();
-    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.organizationName;
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin", // this.props.account.applicationName,
       name: `application_${randomName}`,
@@ -280,8 +268,8 @@ class ApplicationListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-      ApplicationBackend.getApplicationsByOrganization("admin", this.props.account.organization.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
+      ApplicationBackend.getApplicationsByOrganization("admin", Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,

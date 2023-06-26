@@ -22,13 +22,6 @@ import moment from "moment";
 import BaseListPage from "./BaseListPage";
 
 class RecordListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "organization",
-    };
-  }
   UNSAFE_componentWillMount() {
     this.state.pagination.pageSize = 20;
     const {pagination} = this.state;
@@ -216,7 +209,7 @@ class RecordListPage extends BaseListPage {
       value = params.method;
     }
     this.setState({loading: true});
-    RecordBackend.getRecords(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    RecordBackend.getRecords(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

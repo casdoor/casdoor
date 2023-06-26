@@ -35,15 +35,12 @@ class BaseListPage extends React.Component {
       searchText: "",
       searchedColumn: "",
       isAuthorized: true,
-      organizationContext: Setting.getOrganization(),
-      organizationKey: null,
     };
   }
 
   handleOrganizationChange = () => {
-    this.setState({
-      organizationContext: Setting.getOrganization(),
-    });
+    const {pagination} = this.state;
+    this.fetch({pagination});
   };
 
   componentDidMount() {
@@ -149,13 +146,6 @@ class BaseListPage extends React.Component {
     });
   };
 
-  filterWithOrganizationContext(data) {
-    if (Object.is(this.state.organizationKey, null) || this.state.organizationContext === Conf.DefaultOrganization) {
-      return data;
-    }
-    return data.filter(item => item[this.state.organizationKey] === this.state.organizationContext);
-  }
-
   render() {
     if (!this.state.isAuthorized) {
       return (
@@ -171,7 +161,7 @@ class BaseListPage extends React.Component {
     return (
       <div>
         {
-          this.renderTable(this.filterWithOrganizationContext(this.state.data))
+          this.renderTable(this.state.data)
         }
       </div>
     );

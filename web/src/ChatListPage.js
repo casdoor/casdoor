@@ -21,19 +21,11 @@ import * as ChatBackend from "./backend/ChatBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class ChatListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "organization",
-    };
-  }
   newChat() {
     const randomName = Setting.getRandomName();
-    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin", // this.props.account.applicationName,
       name: `chat_${randomName}`,

@@ -21,7 +21,6 @@ import * as GroupBackend from "./backend/GroupBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class GroupListPage extends BaseListPage {
   constructor(props) {
@@ -30,7 +29,6 @@ class GroupListPage extends BaseListPage {
       ...this.state,
       owner: Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner,
       groups: [],
-      organizationKey: "owner",
     };
   }
   UNSAFE_componentWillMount() {
@@ -51,7 +49,7 @@ class GroupListPage extends BaseListPage {
 
   newGroup() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `group_${randomName}`,
@@ -254,7 +252,7 @@ class GroupListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    GroupBackend.getGroups(this.state.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

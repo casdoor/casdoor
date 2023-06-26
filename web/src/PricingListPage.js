@@ -21,20 +21,11 @@ import * as PricingBackend from "./backend/PricingBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class PricingListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
-  }
   newPricing() {
     const randomName = Setting.getRandomName();
-    let owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
-    owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : owner;
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `pricing_${randomName}`,
@@ -196,7 +187,7 @@ class PricingListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PricingBackend.getPricings(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PricingBackend.getPricings(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

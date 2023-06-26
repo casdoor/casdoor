@@ -21,19 +21,11 @@ import * as AdapterBackend from "./backend/AdapterBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class AdapterListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
-  }
   newAdapter() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `adapter_${randomName}`,
@@ -96,7 +88,7 @@ class AdapterListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/adapters/${record.organization}/${text}`}>
+            <Link to={`/adapters/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -255,7 +247,7 @@ class AdapterListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    AdapterBackend.getAdapters(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    AdapterBackend.getAdapters(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

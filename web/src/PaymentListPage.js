@@ -22,19 +22,11 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import * as Provider from "./auth/Provider";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class PaymentListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "organization",
-    };
-  }
   newPayment() {
     const randomName = Setting.getRandomName();
-    const organizationName = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin",
       name: `payment_${randomName}`,
@@ -274,7 +266,7 @@ class PaymentListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PaymentBackend.getPayments("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PaymentBackend.getPayments("admin", Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

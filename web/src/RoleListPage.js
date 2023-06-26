@@ -22,19 +22,11 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {UploadOutlined} from "@ant-design/icons";
-import * as Conf from "./Conf";
 
 class RoleListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
-  }
   newRole() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.props.account.owner;
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `role_${randomName}`,
@@ -267,7 +259,7 @@ class RoleListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    RoleBackend.getRoles(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    RoleBackend.getRoles(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

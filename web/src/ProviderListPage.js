@@ -22,15 +22,10 @@ import * as Provider from "./auth/Provider";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class ProviderListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
   }
 
   componentDidMount() {
@@ -42,7 +37,7 @@ class ProviderListPage extends BaseListPage {
 
   newProvider() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.owner;
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.owner : Setting.getRequestOrganization();
     return {
       owner: owner,
       name: `provider_${randomName}`,
@@ -263,8 +258,8 @@ class ProviderListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : ProviderBackend.getProviders(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? ProviderBackend.getGlobalProviders(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      : ProviderBackend.getProviders(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,

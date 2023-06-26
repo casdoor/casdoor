@@ -22,13 +22,6 @@ import * as SessionBackend from "./backend/SessionBackend";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class SessionListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
-  }
   deleteSession(i) {
     SessionBackend.deleteSession(this.state.data[i])
       .then((res) => {
@@ -140,7 +133,7 @@ class SessionListPage extends BaseListPage {
       value = params.contentType;
     }
     this.setState({loading: true});
-    SessionBackend.getSessions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SessionBackend.getSessions(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

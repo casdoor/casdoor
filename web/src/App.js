@@ -86,7 +86,7 @@ import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
 import MfaSetupPage from "./auth/MfaSetupPage";
-import OrganizationFilter from "./common/select/OrganizationFilter";
+import OrganizationSelect from "./common/select/OrganizationSelect";
 
 const {Header, Footer, Content} = Layout;
 
@@ -397,7 +397,17 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
-          <OrganizationFilter account={this.state.account} />
+          {Setting.isAdminUser(this.state.account) &&
+            <OrganizationSelect
+              initValue={Setting.getOrganization()}
+              withAll={true}
+              style={{width: "15%", display: "flex"}}
+              onChange={(value) => {
+                Setting.setOrganization(value);
+              }}
+              className="select-box"
+            />
+          }
         </React.Fragment>
       );
     }
@@ -603,7 +613,7 @@ class App extends Component {
         <Route exact path="/subscriptions" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionListPage account={this.state.account} {...props} />)} />
         <Route exact path="/subscriptions/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/products/:organizationName/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
@@ -643,6 +653,7 @@ class App extends Component {
         this.props.history.push(key);
       }
     };
+    const styleRight = Setting.isAdminUser(this.state.account) ? "calc(15% + 240px)" : "280px";
     return (
       <Layout id="parent-area">
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
@@ -672,7 +683,7 @@ class App extends Component {
               items={this.getMenuItems()}
               mode={"horizontal"}
               selectedKeys={[this.state.selectedMenuKey]}
-              style={{position: "absolute", left: "145px", right: "285px"}}
+              style={{position: "absolute", left: "145px", right: styleRight}}
             />
           }
           {

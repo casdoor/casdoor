@@ -422,6 +422,7 @@ class OrganizationEditPage extends React.Component {
           this.setState({
             organizationName: this.state.organization.name,
           });
+          window.dispatchEvent(new Event(Conf.StorageOrganizationsChangedEvent));
 
           if (willExist) {
             this.props.history.push("/organizations");
@@ -443,6 +444,7 @@ class OrganizationEditPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/organizations");
+          window.dispatchEvent(new Event(Conf.StorageOrganizationsChangedEvent));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

@@ -21,20 +21,11 @@ import * as SubscriptionBackend from "./backend/SubscriptionBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class SubscriptionListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
-  }
   newSubscription() {
     const randomName = Setting.getRandomName();
-    let owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
-    owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : owner;
+    const owner = Setting.getRequestOrganization(this.props.account);
     const defaultDuration = 365;
 
     return {
@@ -246,7 +237,7 @@ class SubscriptionListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    SubscriptionBackend.getSubscriptions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SubscriptionBackend.getSubscriptions(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

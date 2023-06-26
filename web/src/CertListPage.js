@@ -21,15 +21,10 @@ import * as CertBackend from "./backend/CertBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class CertListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.state = {
-      ...this.state,
-      organizationKey: "owner",
-    };
   }
 
   componentDidMount() {
@@ -41,7 +36,7 @@ class CertListPage extends BaseListPage {
 
   newCert() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.owner;
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.owner : Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `cert_${randomName}`,
@@ -243,8 +238,8 @@ class CertListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : CertBackend.getCerts(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      : CertBackend.getCerts(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,

@@ -17,9 +17,10 @@ import {Select} from "antd";
 import i18next from "i18next";
 import * as OrganizationBackend from "../../backend/OrganizationBackend";
 import * as Setting from "../../Setting";
+import * as Conf from "../../Conf";
 
 function OrganizationSelect(props) {
-  const {onChange, initValue, style, onSelect} = props;
+  const {onChange, initValue, style, onSelect, withAll, className} = props;
   const [organizations, setOrganizations] = React.useState([]);
   const [value, setValue] = React.useState(initValue);
 
@@ -27,15 +28,20 @@ function OrganizationSelect(props) {
     if (props.organizations === undefined) {
       getOrganizations();
     }
-  }, []);
+    window.addEventListener(Conf.StorageOrganizationsChangedEvent, getOrganizations);
+    return function() {
+      window.removeEventListener(Conf.StorageOrganizationsChangedEvent, getOrganizations);
+    };
+  }, [value]);
 
   const getOrganizations = () => {
     OrganizationBackend.getOrganizationNames("admin")
       .then((res) => {
         if (res.status === "ok") {
           setOrganizations(res.data);
-          if (initValue === undefined) {
-            setValue(organizations.length > 0 ? organizations[0] : "");
+          const selectedValueExist = res.data.filter(organization => organization.name === value).length > 0;
+          if (initValue === undefined || !selectedValueExist) {
+            handleOnChange(getOrganizationItems().length > 0 ? getOrganizationItems()[0].value : "");
           }
         }
       });
@@ -46,9 +52,24 @@ function OrganizationSelect(props) {
     onChange?.(value);
   };
 
+  const getOrganizationItems = () => {
+    const items = [];
+
+    organizations.forEach((organization) => items.push(Setting.getOption(organization.displayName, organization.name)));
+
+    if (withAll) {
+      items.unshift({
+        label: i18next.t(`organization:${Conf.DefaultOrganization}`),
+        value: Conf.DefaultOrganization,
+      });
+    }
+
+    return items;
+  };
+
   return (
     <Select
-      options={organizations.map((organization) => Setting.getOption(organization.displayName, organization.name))}
+      options={getOrganizationItems()}
       virtual={false}
       placeholder={i18next.t("login:Please select an organization")}
       value={value}
@@ -56,6 +77,7 @@ function OrganizationSelect(props) {
       filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
       style={style}
       onSelect={onSelect}
+      className={className}
     >
     </Select>
   );

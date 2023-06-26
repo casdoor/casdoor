@@ -23,7 +23,6 @@ import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -32,7 +31,6 @@ class UserListPage extends BaseListPage {
       ...this.state,
       organizationName: this.props.organizationName ?? this.props.match?.params.organizationName ?? this.props.account.owner,
       organization: null,
-      organizationKey: "owner",
     };
   }
 
@@ -63,7 +61,7 @@ class UserListPage extends BaseListPage {
 
   newUser() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.getOrganization() !== Conf.DefaultOrganization ? Setting.getOrganization() : this.state.organizationName;
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.organizationName : Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `user_${randomName}`,
@@ -458,7 +456,7 @@ class UserListPage extends BaseListPage {
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
     if (this.props.match?.path === "/users") {
-      (Setting.isAdminUser(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+      (Setting.isDefaultOrganizationSelected(this.props.account) ? UserBackend.getGlobalUsers(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) : UserBackend.getUsers(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
         .then((res) => {
           this.setState({
             loading: false,
