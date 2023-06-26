@@ -648,6 +648,21 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Signin UI style"), i18next.t("application:Signin UI style - Tooltip"))} :
+          </Col>
+          <Col span={22} style={{marginTop: "5px"}}>
+            <Row>
+              <Radio.Group value={this.state.application.signinStyle ?? false} onChange={e => {
+                this.updateApplicationField("signinStyle", e.target.value);
+              }} >
+                <Radio.Button value={false}>{i18next.t("theme:Default")}</Radio.Button>
+                <Radio.Button value={true}>{i18next.t("application:New signin UI")}</Radio.Button>
+              </Radio.Group>
+            </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           {

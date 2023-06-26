@@ -929,7 +929,15 @@ function renderLink(url, text, onClick) {
     return null;
   }
 
-  if (url.startsWith("/")) {
+  if (url.startsWith("/signup")) {
+    return (
+      <Link to={url} onClick={() => {
+        if (onClick !== null) {
+          onClick();
+        }
+      }}>{text}</Link>
+    );
+  } else if (url.startsWith("/")) {
     return (
       <Link style={{float: "right"}} to={url} onClick={() => {
         if (onClick !== null) {

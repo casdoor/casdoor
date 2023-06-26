@@ -35,6 +35,7 @@ import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
+import {StaticBaseUrl} from "../Setting";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -454,6 +455,21 @@ class LoginPage extends React.Component {
           size="large"
           ref={this.form}
         >
+          {
+            application.signinStyle ?
+              <div style={{textAlign: "center", marginTop: "-50px"}}>
+                <p style={{fontSize: "30px"}}>
+                  Sign in to your account
+                </p>
+                <ps>
+                  {
+                    this.renderFooter(application)
+                  }
+                  <br />
+                  <br />
+                </ps>
+              </div> : null
+          }
           <Form.Item
             hidden={true}
             name="application"
@@ -524,6 +540,19 @@ class LoginPage extends React.Component {
               this.renderPasswordOrCodeInput()
             }
           </Row>
+          {
+            application.signinStyle ? <Button
+              type="primary"
+              htmlType="submit"
+              style={{width: "100%", marginBottom: "5px"}}
+              disabled={!application.enablePassword}
+            >
+              {
+                this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
+                  i18next.t("login:Sign In")
+              }
+            </Button> : null
+          }
           <div style={{display: "inline-flex", justifyContent: "space-between", width: "320px", marginBottom: AgreementModal.isAgreementRequired(application) ? "5px" : "25px"}}>
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}} disabled={!application.enablePassword}>
@@ -534,30 +563,45 @@ class LoginPage extends React.Component {
               Setting.renderForgetLink(application, i18next.t("login:Forgot password?"))
             }
           </div>
+          {
+            !application.signinStyle ? null : application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length !== 0 ? (
+              <div style={{display: "flex", width: "320px", alignItems: "center", marginBottom: "-30px", justifyContent: "space-between"}}>
+                <img src={`${StaticBaseUrl}/img/left.png`} width="150px" />
+                <span>or</span>
+                <img src={`${StaticBaseUrl}/img/right.png`} width="150px" />
+              </div>
+            ) : null
+          }
           {AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null}
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              style={{width: "100%", marginBottom: "5px"}}
-              disabled={!application.enablePassword}
-            >
-              {
-                this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
-                  i18next.t("login:Sign In")
-              }
-            </Button>
+            {
+              !application.signinStyle ? <Button
+                type="primary"
+                htmlType="submit"
+                style={{width: "100%", marginBottom: "5px"}}
+                disabled={!application.enablePassword}
+              >
+                {
+                  this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
+                    i18next.t("login:Sign In")
+                }
+              </Button> : null
+            }
             {
               this.renderCaptchaModal(application)
             }
             {
-              this.renderFooter(application)
+              !application.signinStyle ? this.renderFooter(application) : null
             }
           </Form.Item>
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
+                if (application.signinStyle && application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length <= 2) {
+                  return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big", this.props.location);
+                } else {
+                  return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
+                }
               })
             }
           </Form.Item>
@@ -639,14 +683,22 @@ class LoginPage extends React.Component {
 
   renderFooter(application) {
     return (
-      <span style={{float: "right"}}>
+      <span style={!application.signinStyle ? {float: "right"} : null}>
         {
-          !application.enableSignUp ? null : (
+          !application.enableSignUp ? null : !application.signinStyle ? (
             <React.Fragment>
               {i18next.t("login:No account?")}&nbsp;
               {
                 Setting.renderSignupLink(application, i18next.t("login:sign up now"))
               }
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <div style={{marginTop: "-30px"}}>
+                {
+                  Setting.renderSignupLink(application, i18next.t("login:or create an account"))
+                }
+              </div>
             </React.Fragment>
           )
         }
