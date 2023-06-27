@@ -328,11 +328,11 @@ func (c *ApiController) SetPassword() {
 		}
 	}
 
-	sessionUserName := c.GetSessionUsername()
-	if sessionUserName == "" && changePasswordForm.Code == "" {
+	requestUserId := c.GetSessionUsername()
+	if requestUserId == "" && changePasswordForm.Code == "" {
 		return
 	} else if changePasswordForm.Code == "" {
-		hasPermission, err := object.CheckUserPermission(sessionUserName, userId, true, c.GetAcceptLanguage())
+		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
@@ -354,6 +354,15 @@ func (c *ApiController) SetPassword() {
 			return
 		}
 	}
+
+	if requestUserId == userId {
+		c.ClearUserSession()
+		util.LogInfo(c.Ctx, "API: current user '[%s]' logged out", targetUser.Name)
+	} else {
+		util.LogInfo(c.Ctx, "API: [%s] logged out", targetUser.Name)
+	}
+
+	object.DeleteSessionId(util.GetSessionId(targetUser.Owner, targetUser.Name, targetUser.SignupApplication), c.Ctx.Input.CruSession.SessionID())
 
 	targetUser.Password = changePasswordForm.Password
 	object.SetUserField(targetUser, "password", targetUser.Password)
