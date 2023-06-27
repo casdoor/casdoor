@@ -127,6 +127,11 @@ export const CropperDivModal = (props) => {
     setLoading(true);
     ResourceBackend.getResources(user.owner, user.name, "", "", "", "", "", "")
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          setLoading(false);
+          return;
+        }
         setLoading(false);
         setOptions(getOptions(res));
       });

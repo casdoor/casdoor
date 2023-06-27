@@ -27,6 +27,7 @@ class PricingPage extends React.Component {
     this.state = {
       classes: props,
       applications: null,
+      owner: props.owner ?? (props.match?.params?.owner ?? null),
       pricingName: (props.pricingName ?? props.match?.params?.pricingName) ?? null,
       pricing: props.pricing,
       plans: null,
@@ -63,6 +64,11 @@ class PricingPage extends React.Component {
 
     Promise.all(plans)
       .then(results => {
+        const hasError = results.some(result => result.status === "error");
+        if (hasError) {
+          Setting.showMessage("error", `${i18next.t("Failed to get plans")}`);
+          return;
+        }
         this.setState({
           plans: results,
           loading: false,
@@ -78,8 +84,13 @@ class PricingPage extends React.Component {
       return;
     }
 
-    PricingBackend.getPricing("built-in", pricingName)
+    PricingBackend.getPricing(this.state.owner, pricingName)
       .then((result) => {
+        if (result.status === "error") {
+          Setting.showMessage("error", result.msg);
+          return;
+        }
+
         this.setState({
           loading: false,
           pricing: result,

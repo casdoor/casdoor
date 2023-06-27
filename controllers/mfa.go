@@ -17,7 +17,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -34,7 +33,7 @@ import (
 func (c *ApiController) MfaSetupInitiate() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
-	authType := c.Ctx.Request.Form.Get("type")
+	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	userId := util.GetId(owner, name)
 
 	if len(userId) == 0 {
@@ -42,20 +41,23 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
-	MfaUtil := object.GetMfaUtil(authType, nil)
+	MfaUtil := object.GetMfaUtil(mfaType, nil)
 	if MfaUtil == nil {
 		c.ResponseError("Invalid auth type")
 	}
-	user := object.GetUser(userId)
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
 	}
 
-	issuer := beego.AppConfig.String("appname")
-	accountName := user.GetId()
-
-	mfaProps, err := MfaUtil.Initiate(c.Ctx, issuer, accountName)
+	mfaProps, err := MfaUtil.Initiate(c.Ctx, user.GetId())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -74,16 +76,20 @@ func (c *ApiController) MfaSetupInitiate() {
 // @Success 200 {object}  Response object
 // @router /mfa/setup/verify [post]
 func (c *ApiController) MfaSetupVerify() {
-	authType := c.Ctx.Request.Form.Get("type")
+	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	passcode := c.Ctx.Request.Form.Get("passcode")
 
-	if authType == "" || passcode == "" {
+	if mfaType == "" || passcode == "" {
 		c.ResponseError("missing auth type or passcode")
 		return
 	}
-	MfaUtil := object.GetMfaUtil(authType, nil)
+	mfaUtil := object.GetMfaUtil(mfaType, nil)
+	if mfaUtil == nil {
+		c.ResponseError("Invalid multi-factor authentication type")
+		return
+	}
 
-	err := MfaUtil.SetupVerify(c.Ctx, passcode)
+	err := mfaUtil.SetupVerify(c.Ctx, passcode)
 	if err != nil {
 		c.ResponseError(err.Error())
 	} else {
@@ -103,16 +109,26 @@ func (c *ApiController) MfaSetupVerify() {
 func (c *ApiController) MfaSetupEnable() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
-	authType := c.Ctx.Request.Form.Get("type")
+	mfaType := c.Ctx.Request.Form.Get("mfaType")
 
-	user := object.GetUser(util.GetId(owner, name))
+	user, err := object.GetUser(util.GetId(owner, name))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
 	}
 
-	twoFactor := object.GetMfaUtil(authType, nil)
-	err := twoFactor.Enable(c.Ctx, user)
+	mfaUtil := object.GetMfaUtil(mfaType, nil)
+	if mfaUtil == nil {
+		c.ResponseError("Invalid multi-factor authentication type")
+		return
+	}
+
+	err = mfaUtil.Enable(c.Ctx, user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -127,32 +143,30 @@ func (c *ApiController) MfaSetupEnable() {
 // @Description: Delete MFA
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
-// @param id	form	string	true	"id of user's MFA props"
 // @Success 200 {object}  Response object
 // @router /delete-mfa/ [post]
 func (c *ApiController) DeleteMfa() {
-	id := c.Ctx.Request.Form.Get("id")
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	userId := util.GetId(owner, name)
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
 	}
 
-	mfaProps := user.MultiFactorAuths[:0]
-	i := 0
-	for _, mfaProp := range mfaProps {
-		if mfaProp.Id != id {
-			mfaProps[i] = mfaProp
-			i++
-		}
+	err = object.DisabledMultiFactorAuth(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
-	user.MultiFactorAuths = mfaProps
-	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
-	c.ResponseOk(user.MultiFactorAuths)
+
+	c.ResponseOk(object.GetAllMfaProps(user, true))
 }
 
 // SetPreferredMfa
@@ -165,30 +179,25 @@ func (c *ApiController) DeleteMfa() {
 // @Success 200 {object}  Response object
 // @router /set-preferred-mfa [post]
 func (c *ApiController) SetPreferredMfa() {
-	id := c.Ctx.Request.Form.Get("id")
+	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	userId := util.GetId(owner, name)
 
-	user := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	if user == nil {
 		c.ResponseError("User doesn't exist")
 		return
 	}
 
-	mfaProps := user.MultiFactorAuths
-	for i, mfaProp := range user.MultiFactorAuths {
-		if mfaProp.Id == id {
-			mfaProps[i].IsPreferred = true
-		} else {
-			mfaProps[i].IsPreferred = false
-		}
+	err = object.SetPreferredMultiFactorAuth(user, mfaType)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
-
-	object.UpdateUser(userId, user, []string{"multi_factor_auths"}, user.IsAdminUser())
-
-	for i, mfaProp := range mfaProps {
-		mfaProps[i] = object.GetMaskedProps(mfaProp)
-	}
-	c.ResponseOk(mfaProps)
+	c.ResponseOk(object.GetAllMfaProps(user, true))
 }

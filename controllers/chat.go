@@ -37,13 +37,31 @@ func (c *ApiController) GetChats() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedChats(object.GetChats(owner))
+		maskedChats, err := object.GetMaskedChats(object.GetChats(owner))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = maskedChats
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetChatCount(owner, field, value)))
-		chats := object.GetMaskedChats(object.GetPaginationChats(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		count, err := object.GetChatCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		chats, err := object.GetMaskedChats(object.GetPaginationChats(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(chats, paginator.Nums())
 	}
 }
@@ -58,7 +76,13 @@ func (c *ApiController) GetChats() {
 func (c *ApiController) GetChat() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetMaskedChat(object.GetChat(id))
+	maskedChat, err := object.GetMaskedChat(object.GetChat(id))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = maskedChat
 	c.ServeJSON()
 }
 

@@ -45,12 +45,20 @@ class MessageEditPage extends React.Component {
 
   getMessage() {
     MessageBackend.getMessage("admin", this.state.messageName)
-      .then((message) => {
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          message: message,
+          message: res,
         });
 
-        this.getUsers(message.organization);
+        this.getUsers(res.organization);
       });
   }
 
@@ -75,6 +83,10 @@ class MessageEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           users: res,
         });

@@ -15,6 +15,9 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
+import GroupTreePage from "./GroupTreePage";
+import GroupEditPage from "./GroupEdit";
+import GroupListPage from "./GroupList";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
@@ -128,10 +131,12 @@ class App extends Component {
     });
     if (uri === "/") {
       this.setState({selectedMenuKey: "/"});
-    } else if (uri.includes("/organizations")) {
+    } else if (uri.includes("/organizations") || uri.includes("/trees")) {
       this.setState({selectedMenuKey: "/organizations"});
     } else if (uri.includes("/users")) {
       this.setState({selectedMenuKey: "/users"});
+    } else if (uri.includes("/groups")) {
+      this.setState({selectedMenuKey: "/groups"});
     } else if (uri.includes("/roles")) {
       this.setState({selectedMenuKey: "/roles"});
     } else if (uri.includes("/permissions")) {
@@ -223,7 +228,7 @@ class App extends Component {
 
   setLanguage(account) {
     const language = account?.language;
-    if (language !== "" && language !== i18next.language) {
+    if (language !== null && language !== "" && language !== i18next.language) {
       Setting.setLanguage(language);
     }
   }
@@ -338,9 +343,11 @@ class App extends Component {
     items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
       "/account"
     ));
-    items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
-      "/chat"
-    ));
+    if (Conf.EnableChatPages) {
+      items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
+        "/chat"
+      ));
+    }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
 
@@ -405,12 +412,21 @@ class App extends Component {
 
     res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
 
-    if (Setting.isAdminUser(this.state.account)) {
+    if (Setting.isLocalAdminUser(this.state.account)) {
+      if (Conf.ShowGithubCorner) {
+        res.push(Setting.getItem(<a href={"https://casdoor.com"}>
+          <span style={{fontWeight: "bold", backgroundColor: "rgba(87,52,211,0.4)", marginTop: "12px", paddingLeft: "5px", paddingRight: "5px", display: "flex", alignItems: "center", height: "40px", borderRadius: "5px"}}>
+            🚀 SaaS Hosting 🔥
+          </span>
+        </a>, "#"));
+      }
+
       res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
         "/organizations"));
-    }
 
-    if (Setting.isLocalAdminUser(this.state.account)) {
+      res.push(Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>,
+        "/groups"));
+
       res.push(Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>,
         "/users"
       ));
@@ -443,13 +459,15 @@ class App extends Component {
         "/providers"
       ));
 
-      res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
-        "/chats"
-      ));
+      if (Conf.EnableChatPages) {
+        res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
+          "/chats"
+        ));
 
-      res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
-        "/messages"
-      ));
+        res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
+          "/messages"
+        ));
+      }
 
       res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
         "/resources"
@@ -470,7 +488,6 @@ class App extends Component {
       res.push(Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>,
         "/subscriptions"
       ));
-
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
@@ -495,7 +512,6 @@ class App extends Component {
       ));
 
       if (Conf.EnableExtraPages) {
-
         res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>,
           "/products"
         ));
@@ -504,8 +520,8 @@ class App extends Component {
           "/payments"
         ));
       }
-
     }
+
     if (Setting.isAdminUser(this.state.account)) {
       res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
         "/sysinfo"
@@ -552,6 +568,10 @@ class App extends Component {
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/trees/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/trees/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
+        <Route exact path="/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
         <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)} />
@@ -585,11 +605,11 @@ class App extends Component {
         <Route exact path="/messages" render={(props) => this.renderLoginIfNotLoggedIn(<MessageListPage account={this.state.account} {...props} />)} />
         <Route exact path="/messages/:messageName" render={(props) => this.renderLoginIfNotLoggedIn(<MessageEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/plans" render={(props) => this.renderLoginIfNotLoggedIn(<PlanListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/plan/:organizationName/:planName" render={(props) => this.renderLoginIfNotLoggedIn(<PlanEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/plans/:organizationName/:planName" render={(props) => this.renderLoginIfNotLoggedIn(<PlanEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/pricings" render={(props) => this.renderLoginIfNotLoggedIn(<PricingListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/pricing/:organizationName/:pricingName" render={(props) => this.renderLoginIfNotLoggedIn(<PricingEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/pricings/:organizationName/:pricingName" render={(props) => this.renderLoginIfNotLoggedIn(<PricingEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/subscriptions" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/subscription/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/subscriptions/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
@@ -618,6 +638,11 @@ class App extends Component {
     });
   };
 
+  isWithoutCard() {
+    return Setting.isMobile() || window.location.pathname === "/chat" ||
+      window.location.pathname.startsWith("/trees");
+  }
+
   renderContent() {
     const onClick = ({key}) => {
       if (key === "/swagger") {
@@ -628,7 +653,6 @@ class App extends Component {
     };
     return (
       <Layout id="parent-area">
-        {/* https://github.com/ant-design/ant-design/issues/40394 ant design bug. If it will be fixed, we can delete the code for control the color of Header*/}
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
@@ -664,7 +688,7 @@ class App extends Component {
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >
-          {(Setting.isMobile() || window.location.pathname === "/chat") ?
+          {this.isWithoutCard() ?
             this.renderRouter() :
             <Card className="content-warp-card">
               {this.renderRouter()}

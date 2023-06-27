@@ -32,7 +32,12 @@ func AutoSigninFilter(ctx *context.Context) {
 	accessToken := util.GetMaxLenStr(ctx.Input.Query("accessToken"), ctx.Input.Query("access_token"), parseBearerToken(ctx))
 
 	if accessToken != "" {
-		token := object.GetTokenByAccessToken(accessToken)
+		token, err := object.GetTokenByAccessToken(accessToken)
+		if err != nil {
+			responseError(ctx, err.Error())
+			return
+		}
+
 		if token == nil {
 			responseError(ctx, "Access token doesn't exist")
 			return
@@ -44,7 +49,11 @@ func AutoSigninFilter(ctx *context.Context) {
 		}
 
 		userId := util.GetId(token.Organization, token.User)
-		application, _ := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
+		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
+		if err != nil {
+			panic(err)
+		}
+
 		setSessionUser(ctx, userId)
 		setSessionOidc(ctx, token.Scope, application.ClientId)
 		return

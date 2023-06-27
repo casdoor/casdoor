@@ -44,12 +44,29 @@ func (c *ApiController) GetProviders() {
 	}
 
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetProviders(owner), isMaskEnabled)
-		c.ServeJSON()
+		providers, err := object.GetProviders(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(object.GetMaskedProviders(providers, isMaskEnabled))
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetProviderCount(owner, field, value)))
-		providers := object.GetMaskedProviders(object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder), isMaskEnabled)
+		count, err := object.GetProviderCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginationProviders, err := object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		providers := object.GetMaskedProviders(paginationProviders, isMaskEnabled)
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }
@@ -74,12 +91,29 @@ func (c *ApiController) GetGlobalProviders() {
 	}
 
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetMaskedProviders(object.GetGlobalProviders(), isMaskEnabled)
-		c.ServeJSON()
+		globalProviders, err := object.GetGlobalProviders()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(object.GetMaskedProviders(globalProviders, isMaskEnabled))
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetGlobalProviderCount(field, value)))
-		providers := object.GetMaskedProviders(object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder), isMaskEnabled)
+		count, err := object.GetGlobalProviderCount(field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginationGlobalProviders, err := object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		providers := object.GetMaskedProviders(paginationGlobalProviders, isMaskEnabled)
 		c.ResponseOk(providers, paginator.Nums())
 	}
 }
@@ -98,9 +132,13 @@ func (c *ApiController) GetProvider() {
 	if !ok {
 		return
 	}
+	provider, err := object.GetProvider(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	c.Data["json"] = object.GetMaskedProvider(object.GetProvider(id), isMaskEnabled)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedProvider(provider, isMaskEnabled))
 }
 
 // UpdateProvider
@@ -140,8 +178,13 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	count := object.GetProviderCount("", "", "")
-	if err := checkQuotaForProvider(count); err != nil {
+	count, err := object.GetProviderCount("", "", "")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err := checkQuotaForProvider(int(count)); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}

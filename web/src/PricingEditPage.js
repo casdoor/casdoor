@@ -49,17 +49,31 @@ class PricingEditPage extends React.Component {
 
   getPricing() {
     PricingBackend.getPricing(this.state.organizationName, this.state.pricingName)
-      .then((pricing) => {
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          pricing: pricing,
+          pricing: res,
         });
-        this.getPlans(pricing.owner);
+        this.getPlans(res.owner);
       });
   }
 
   getPlans(organizationName) {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           plans: res,
         });
@@ -104,9 +118,13 @@ class PricingEditPage extends React.Component {
 
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
-      .then((application) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          application: application,
+          application: res,
         });
       });
   }
@@ -178,10 +196,10 @@ class PricingEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("pricing:Sub plans"), i18next.t("Pricing:Sub plans - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Plans"), i18next.t("general:Plans - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: "100%"}} value={this.state.pricing.plans}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.pricing.plans}
               onChange={(value => {
                 this.updatePricingField("plans", value);
               })}
@@ -190,21 +208,11 @@ class PricingEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("pricing:Has trial"), i18next.t("pricing:Has trial - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch disabled={true} checked={this.state.pricing.hasTrial} onChange={checked => {
-              this.updatePricingField("hasTrial", checked);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("pricing:Trial duration"), i18next.t("pricing:Trial duration - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber min={1} value={this.state.pricing.trialDuration} onChange={value => {
+            <InputNumber min={0} value={this.state.pricing.trialDuration} onChange={value => {
               this.updatePricingField("trialDuration", value);
             }} />
           </Col>
@@ -244,7 +252,7 @@ class PricingEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/pricings");
           } else {
-            this.props.history.push(`/pricing/${this.state.pricing.owner}/${this.state.pricing.name}`);
+            this.props.history.push(`/pricings/${this.state.pricing.owner}/${this.state.pricing.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
@@ -286,7 +294,7 @@ class PricingEditPage extends React.Component {
   }
 
   renderPreview() {
-    const pricingUrl = `/select-plan/${this.state.pricing.name}`;
+    const pricingUrl = `/select-plan/${this.state.pricing.owner}/${this.state.pricing.name}`;
     return (
       <React.Fragment>
         <Col>

@@ -41,9 +41,14 @@ class ProductBuyPage extends React.Component {
     }
 
     ProductBackend.getProduct(this.props.account.owner, this.state.productName)
-      .then((product) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          product: product,
+          product: res,
         });
       });
   }
@@ -151,7 +156,9 @@ class ProductBuyPage extends React.Component {
 
   getPayButton(provider) {
     let text = provider.type;
-    if (provider.type === "Alipay") {
+    if (provider.type === "Dummy") {
+      text = i18next.t("product:Dummy");
+    } else if (provider.type === "Alipay") {
       text = i18next.t("product:Alipay");
     } else if (provider.type === "WeChat Pay") {
       text = i18next.t("product:WeChat Pay");

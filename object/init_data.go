@@ -14,7 +14,10 @@
 
 package object
 
-import "github.com/casdoor/casdoor/util"
+import (
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
+)
 
 type InitData struct {
 	Organizations []*Organization `json:"organizations"`
@@ -35,7 +38,16 @@ type InitData struct {
 }
 
 func InitFromFile() {
-	initData := readInitDataFromFile("./init_data.json")
+	initDataFile := conf.GetConfigString("initDataFile")
+	if initDataFile == "" {
+		return
+	}
+
+	initData, err := readInitDataFromFile(initDataFile)
+	if err != nil {
+		panic(err)
+	}
+
 	if initData != nil {
 		for _, organization := range initData.Organizations {
 			initDefinedOrganization(organization)
@@ -85,9 +97,9 @@ func InitFromFile() {
 	}
 }
 
-func readInitDataFromFile(filePath string) *InitData {
+func readInitDataFromFile(filePath string) (*InitData, error) {
 	if !util.FileExist(filePath) {
-		return nil
+		return nil, nil
 	}
 
 	s := util.ReadStringFromPath(filePath)
@@ -111,7 +123,7 @@ func readInitDataFromFile(filePath string) *InitData {
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// transform nil slice to empty slice
@@ -170,142 +182,246 @@ func readInitDataFromFile(filePath string) *InitData {
 		}
 	}
 
-	return data
+	return data, nil
 }
 
 func initDefinedOrganization(organization *Organization) {
-	existed := getOrganization(organization.Owner, organization.Name)
+	existed, err := getOrganization(organization.Owner, organization.Name)
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	organization.CreatedTime = util.GetCurrentTime()
 	organization.AccountItems = getBuiltInAccountItems()
 
-	AddOrganization(organization)
+	_, err = AddOrganization(organization)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedApplication(application *Application) {
-	existed := getApplication(application.Owner, application.Name)
+	existed, err := getApplication(application.Owner, application.Name)
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	application.CreatedTime = util.GetCurrentTime()
-	AddApplication(application)
+	_, err = AddApplication(application)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedUser(user *User) {
-	existed := getUser(user.Owner, user.Name)
+	existed, err := getUser(user.Owner, user.Name)
+	if err != nil {
+		panic(err)
+	}
 	if existed != nil {
 		return
 	}
 	user.CreatedTime = util.GetCurrentTime()
 	user.Id = util.GenerateId()
 	user.Properties = make(map[string]string)
-	AddUser(user)
+	_, err = AddUser(user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedCert(cert *Cert) {
-	existed := getCert(cert.Owner, cert.Name)
+	existed, err := getCert(cert.Owner, cert.Name)
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	cert.CreatedTime = util.GetCurrentTime()
-	AddCert(cert)
+	_, err = AddCert(cert)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedLdap(ldap *Ldap) {
-	existed := GetLdap(ldap.Id)
+	existed, err := GetLdap(ldap.Id)
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
-	AddLdap(ldap)
+	_, err = AddLdap(ldap)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedProvider(provider *Provider) {
-	existed := GetProvider(util.GetId("admin", provider.Name))
+	existed, err := GetProvider(util.GetId("admin", provider.Name))
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
-	AddProvider(provider)
+	_, err = AddProvider(provider)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedModel(model *Model) {
-	existed := GetModel(model.GetId())
+	existed, err := GetModel(model.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	model.CreatedTime = util.GetCurrentTime()
-	AddModel(model)
+	_, err = AddModel(model)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedPermission(permission *Permission) {
-	existed := GetPermission(permission.GetId())
+	existed, err := GetPermission(permission.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	permission.CreatedTime = util.GetCurrentTime()
-	AddPermission(permission)
+	_, err = AddPermission(permission)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedPayment(payment *Payment) {
-	existed := GetPayment(payment.GetId())
+	existed, err := GetPayment(payment.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	payment.CreatedTime = util.GetCurrentTime()
-	AddPayment(payment)
+	_, err = AddPayment(payment)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedProduct(product *Product) {
-	existed := GetProduct(product.GetId())
+	existed, err := GetProduct(product.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	product.CreatedTime = util.GetCurrentTime()
-	AddProduct(product)
+	_, err = AddProduct(product)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedResource(resource *Resource) {
-	existed := GetResource(resource.GetId())
+	existed, err := GetResource(resource.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	resource.CreatedTime = util.GetCurrentTime()
-	AddResource(resource)
+	_, err = AddResource(resource)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedRole(role *Role) {
-	existed := GetRole(role.GetId())
+	existed, err := GetRole(role.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	role.CreatedTime = util.GetCurrentTime()
-	AddRole(role)
+	_, err = AddRole(role)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedSyncer(syncer *Syncer) {
-	existed := GetSyncer(syncer.GetId())
+	existed, err := GetSyncer(syncer.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	syncer.CreatedTime = util.GetCurrentTime()
-	AddSyncer(syncer)
+	_, err = AddSyncer(syncer)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedToken(token *Token) {
-	existed := GetToken(token.GetId())
+	existed, err := GetToken(token.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	token.CreatedTime = util.GetCurrentTime()
-	AddToken(token)
+	_, err = AddToken(token)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initDefinedWebhook(webhook *Webhook) {
-	existed := GetWebhook(webhook.GetId())
+	existed, err := GetWebhook(webhook.GetId())
+	if err != nil {
+		panic(err)
+	}
+
 	if existed != nil {
 		return
 	}
 	webhook.CreatedTime = util.GetCurrentTime()
-	AddWebhook(webhook)
+	_, err = AddWebhook(webhook)
+	if err != nil {
+		panic(err)
+	}
 }

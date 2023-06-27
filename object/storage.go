@@ -30,11 +30,7 @@ import (
 var isCloudIntranet bool
 
 func init() {
-	var err error
-	isCloudIntranet, err = conf.GetConfigBool("isCloudIntranet")
-	if err != nil {
-		// panic(err)
-	}
+	isCloudIntranet = conf.GetConfigBool("isCloudIntranet")
 }
 
 func getProviderEndpoint(provider *Provider) string {

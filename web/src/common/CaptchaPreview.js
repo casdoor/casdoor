@@ -29,9 +29,6 @@ export const CaptchaPreview = (props) => {
     provider.providerUrl = providerUrl;
     if (clientSecret !== "***") {
       provider.clientSecret = clientSecret;
-      // ProviderBackend.updateProvider(owner, providerName, provider).then(() => {
-      //   setOpen(true);
-      // });
       setVisible(true);
     } else {
       setVisible(true);

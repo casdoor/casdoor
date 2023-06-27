@@ -25,8 +25,8 @@ export function getGlobalUsers(page, pageSize, field = "", value = "", sortField
   }).then(res => res.json());
 }
 
-export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "", groupName = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -39,6 +39,17 @@ export function getUser(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function addUserKeys(user) {
+  return fetch(`${Setting.ServerUrl}/api/add-user-keys`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(user),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
@@ -200,5 +211,20 @@ export function checkUserPassword(values) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
+  }).then(res => res.json());
+}
+
+export function removeUserFromGroup({owner, name, groupName}) {
+  const formData = new FormData();
+  formData.append("owner", owner);
+  formData.append("name", name);
+  formData.append("groupName", groupName);
+  return fetch(`${Setting.ServerUrl}/api/remove-user-from-group`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
   }).then(res => res.json());
 }

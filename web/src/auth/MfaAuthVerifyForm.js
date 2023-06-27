@@ -16,8 +16,8 @@ import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "./AuthBackend";
-import {SmsMfaType} from "./MfaSetupPage";
-import {MfaSmsVerifyForm} from "./MfaVerifyForm";
+import {EmailMfaType, RecoveryMfaType, SmsMfaType} from "./MfaSetupPage";
+import {MfaSmsVerifyForm, MfaTotpVerifyForm, mfaAuth} from "./MfaVerifyForm";
 
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
@@ -26,20 +26,20 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
   formValues.password = "";
   formValues.username = "";
   const [loading, setLoading] = useState(false);
-  const [type, setType] = useState(mfaProps.type);
+  const [mfaType, setMfaType] = useState(mfaProps.mfaType);
   const [recoveryCode, setRecoveryCode] = useState("");
 
   const verify = ({passcode}) => {
     setLoading(true);
-    const values = {...formValues, passcode, mfaType: type};
+    const values = {...formValues, passcode, mfaType};
     AuthBackend.login(values, oAuthParams).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
         onFail(res.msg);
       }
-    }).catch((reason) => {
-      onFail(reason.message);
+    }).catch((res) => {
+      onFail(res.message);
     }).finally(() => {
       setLoading(false);
     });
@@ -49,19 +49,18 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     setLoading(true);
     AuthBackend.login({...formValues, recoveryCode}, oAuthParams).then(res => {
       if (res.status === "ok") {
-        onSuccess();
+        onSuccess(res);
       } else {
         onFail(res.msg);
       }
-    }).catch((reason) => {
-      onFail(reason.message);
+    }).catch((res) => {
+      onFail(res.message);
     }).finally(() => {
       setLoading(false);
     });
   };
 
-  switch (type) {
-  case SmsMfaType:
+  if (mfaType !== RecoveryMfaType) {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
@@ -70,22 +69,29 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         <div style={{marginBottom: 24}}>
           {i18next.t("mfa:Multi-factor authentication description")}
         </div>
-        <MfaSmsVerifyForm
-          mfaProps={mfaProps}
-          onFinish={verify}
-          application={application}
-        />
+        {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
+          <MfaSmsVerifyForm
+            mfaProps={mfaProps}
+            method={mfaAuth}
+            onFinish={verify}
+            application={application}
+          />) : (
+          <MfaTotpVerifyForm
+            mfaProps={mfaProps}
+            onFinish={verify}
+          />
+        )}
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
-            setType("recovery");
+            setMfaType("recovery");
           }}>
             {i18next.t("mfa:Use a recovery code")}
           </a>
         </span>
       </div>
     );
-  case "recovery":
+  } else {
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
@@ -108,14 +114,12 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
-            setType(mfaProps.type);
+            setMfaType(mfaProps.mfaType);
           }}>
             {i18next.t("mfa:Use SMS verification code")}
           </a>
         </span>
       </div>
     );
-  default:
-    return null;
   }
 }

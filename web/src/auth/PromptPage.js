@@ -28,14 +28,13 @@ import MfaSetupPage from "./MfaSetupPage";
 class PromptPage extends React.Component {
   constructor(props) {
     super(props);
-    const params = new URLSearchParams(this.props.location.search);
     this.state = {
       classes: props,
       type: props.type,
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
-      promptType: params.get("promptType"),
+      promptType: new URLSearchParams(this.props.location.search).get("promptType"),
     };
   }
 
@@ -50,9 +49,14 @@ class PromptPage extends React.Component {
     const organizationName = this.props.account.owner;
     const userName = this.props.account.name;
     UserBackend.getUser(organizationName, userName)
-      .then((user) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          user: user,
+          user: res,
         });
       });
   }
@@ -63,10 +67,15 @@ class PromptPage extends React.Component {
     }
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        this.onUpdateApplication(application);
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.onUpdateApplication(res);
         this.setState({
-          application: application,
+          application: res,
         });
       });
   }
@@ -233,19 +242,22 @@ class PromptPage extends React.Component {
       {this.renderContent(application)}
       <div style={{marginTop: "50px"}}>
         <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-      </div>;
+      </div>
     </>;
   }
 
   renderPromptMfa() {
-    return <MfaSetupPage
-      applicationName={this.getApplicationObj().name}
-      account={this.props.account}
-      current={1}
-      isAuthenticated={true}
-      isPromptPage={true}
-      redirectUri={this.getRedirectUrl()}
-    />;
+    return (
+      <MfaSetupPage
+        application={this.getApplicationObj()}
+        account={this.props.account}
+        current={1}
+        isAuthenticated={true}
+        isPromptPage={true}
+        redirectUri={this.getRedirectUrl()}
+        {...this.props}
+      />
+    );
   }
 
   render() {
@@ -254,9 +266,10 @@ class PromptPage extends React.Component {
       return null;
     }
 
-    if (!Setting.hasPromptPage(application)) {
+    if (!Setting.hasPromptPage(application) && this.state.promptType !== "mfa") {
       return (
         <Result
+          style={{display: "flex", flex: "1 1 0%", justifyContent: "center", flexDirection: "column"}}
           status="error"
           title={i18next.t("application:Sign Up Error")}
           subTitle={i18next.t("application:You are unexpected to see this prompt page")}

@@ -32,7 +32,7 @@ class AdapterEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
+      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       adapterName: props.match.params.adapterName,
       adapter: null,
       organizations: [],
@@ -47,20 +47,25 @@ class AdapterEditPage extends React.Component {
   }
 
   getAdapter() {
-    AdapterBackend.getAdapter("admin", this.state.adapterName)
+    AdapterBackend.getAdapter(this.state.organizationName, this.state.adapterName)
       .then((res) => {
         if (res.status === "ok") {
+          if (res.data === null) {
+            this.props.history.push("/404");
+            return;
+          }
+
           this.setState({
             adapter: res.data,
           });
 
-          this.getModels(this.state.owner);
+          this.getModels(this.state.organizationName);
         }
       });
   }
 
   getOrganizations() {
-    OrganizationBackend.getOrganizations(this.state.organizationName)
+    OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
@@ -71,6 +76,10 @@ class AdapterEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           models: res,
         });
@@ -109,9 +118,8 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.adapter.organization} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.adapter.owner} onChange={(value => {
               this.getModels(value);
-              this.updateAdapterField("organization", value);
               this.updateAdapterField("owner", value);
             })}>
               {
@@ -248,7 +256,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <PolicyTable owner={this.state.owner} name={this.state.adapterName} mode={this.state.mode} />
+            <PolicyTable owner={this.state.organizationName} name={this.state.adapterName} mode={this.state.mode} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -267,7 +275,7 @@ class AdapterEditPage extends React.Component {
 
   submitAdapterEdit(willExist) {
     const adapter = Setting.deepCopy(this.state.adapter);
-    AdapterBackend.updateAdapter(this.state.owner, this.state.adapterName, adapter)
+    AdapterBackend.updateAdapter(this.state.organizationName, this.state.adapterName, adapter)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
@@ -278,7 +286,7 @@ class AdapterEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/adapters");
           } else {
-            this.props.history.push(`/adapters/${this.state.owner}/${this.state.adapter.name}`);
+            this.props.history.push(`/adapters/${this.state.organizationName}/${this.state.adapter.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

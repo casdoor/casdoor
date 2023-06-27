@@ -13,7 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -32,8 +33,7 @@ import PropertyTable from "./table/propertyTable";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
-import {CheckCircleOutlined} from "@ant-design/icons";
-import {SmsMfaType} from "./auth/MfaSetupPage";
+import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as MfaBackend from "./backend/MfaBackend";
 
 const {Option} = Select;
@@ -47,6 +47,7 @@ class UserEditPage extends React.Component {
       userName: props.userName !== undefined ? props.userName : props.match.params.userName,
       user: null,
       application: null,
+      groups: null,
       organizations: [],
       applications: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
@@ -63,9 +64,20 @@ class UserEditPage extends React.Component {
     this.setReturnUrl();
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.application !== this.state.application) {
+      this.getGroups(this.state.organizationName);
+    }
+  }
+
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
       .then((data) => {
+        if (data === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
         if (data.status === null || data.status !== "error") {
           this.setState({
             user: data,
@@ -75,6 +87,17 @@ class UserEditPage extends React.Component {
         this.setState({
           loading: false,
         });
+      });
+  }
+
+  addUserKeys() {
+    UserBackend.addUserKeys(this.state.user)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.getUser();
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
   }
 
@@ -98,11 +121,32 @@ class UserEditPage extends React.Component {
 
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
-      .then((application) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          application: application,
+          application: res,
+        });
+
+        this.setState({
+          isGroupsVisible: res.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
+  }
+
+  getGroups(organizationName) {
+    if (this.state.isGroupsVisible) {
+      GroupBackend.getGroups(organizationName)
+        .then((res) => {
+          if (res.status === "ok") {
+            this.setState({
+              groups: res.data,
+            });
+          }
+        });
+    }
   }
 
   setReturnUrl() {
@@ -148,16 +192,6 @@ class UserEditPage extends React.Component {
     return this.props.account.countryCode;
   }
 
-  getMfaProps(type = "") {
-    if (!(this.state.multiFactorAuths?.length > 0)) {
-      return [];
-    }
-    if (type === "") {
-      return this.state.multiFactorAuths;
-    }
-    return this.state.multiFactorAuths.filter(mfaProps => mfaProps.type === type);
-  }
-
   loadMore = (table, type) => {
     return <div
       style={{
@@ -175,13 +209,12 @@ class UserEditPage extends React.Component {
     </div>;
   };
 
-  deleteMfa = (id) => {
+  deleteMfa = () => {
     this.setState({
       RemoveMfaLoading: true,
     });
 
     DeleteMfa({
-      id: id,
       owner: this.state.user.owner,
       name: this.state.user.name,
     }).then((res) => {
@@ -206,14 +239,6 @@ class UserEditPage extends React.Component {
     }
 
     const isAdmin = Setting.isAdminUser(this.props.account);
-
-    // return (
-    //   <div>
-    //     {
-    //       JSON.stringify({accountItem: accountItem, isSelf: isSelf, isAdmin: isAdmin})
-    //     }
-    //   </div>
-    // )
 
     if (accountItem.viewRule === "Self") {
       if (!this.isSelfOrAdmin()) {
@@ -244,6 +269,11 @@ class UserEditPage extends React.Component {
       }
     }
 
+    let isKeysGenerated = false;
+    if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
+      isKeysGenerated = true;
+    }
+
     if (accountItem.name === "Organization") {
       return (
         <Row style={{marginTop: "10px"}} >
@@ -254,9 +284,39 @@ class UserEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={disabled} value={this.state.user.owner} onChange={(value => {
               this.getApplicationsByOrganization(value);
               this.updateUserField("owner", value);
+              this.getGroups(value);
             })}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Groups") {
+      return (
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Groups"), i18next.t("general:Groups - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={disabled} value={this.state.user.groups ?? []} onChange={(value => {
+              if (this.state.groups?.filter(group => value.includes(group.name))
+                .filter(group => group.type === "Physical").length > 1) {
+                Setting.showMessage("error", i18next.t("general:You can only select one physical group"));
+                return;
+              }
+
+              this.updateUserField("groups", value);
+            })}
+            >
+              {
+                this.state.groups?.map((group) => <Option key={group.name} value={group.name}>
+                  <Space>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>
+                </Option>)
               }
             </Select>
           </Col>
@@ -342,7 +402,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} account={this.props.account} disabled={disabled} />
+            <PasswordModal user={this.state.user} organization={this.state.application?.organizationObj} account={this.props.account} disabled={disabled} />
           </Col>
         </Row>
       );
@@ -379,7 +439,7 @@ class UserEditPage extends React.Component {
               <CountryCodeSelect
                 style={{width: "30%"}}
                 // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-                value={this.state.user.countryCode}
+                initValue={this.state.user.countryCode}
                 onChange={(value) => {
                   this.updateUserField("countryCode", value);
                 }}
@@ -639,6 +699,37 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "API key") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:API key"), i18next.t("general:API key - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.accessKey} disabled={true} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:Access secret"), i18next.t("general:Access secret - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.user.accessSecret} disabled={true} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col span={22} >
+                <Button onClick={() => this.addUserKeys()}>{i18next.t(isKeysGenerated ? "general:update" : "general:generate")}</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Roles") {
       return (
         <Row style={{marginTop: "20px", alignItems: "center"}} >
@@ -774,61 +865,61 @@ class UserEditPage extends React.Component {
               {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
-              <Card title={i18next.t("mfa:Multi-factor methods")}>
-                <Card type="inner" title={i18next.t("mfa:SMS/Email message")}>
-                  <List
-                    itemLayout="horizontal"
-                    dataSource={this.getMfaProps(SmsMfaType)}
-                    loadMore={this.loadMore(this.state.multiFactorAuths, SmsMfaType)}
-                    renderItem={(item, index) => (
-                      <List.Item>
-                        <div>
-                          {item?.id === undefined ?
-                            <Button type={"default"} onClick={() => {
-                              Setting.goToLink("/mfa-authentication/setup");
-                            }}>
-                              {i18next.t("mfa:Setup")}
-                            </Button> :
+              <Card title={i18next.t("mfa:Multi-factor methods")}
+                extra={this.state.multiFactorAuths?.some(mfaProps => mfaProps.enabled) ?
+                  <PopconfirmModal
+                    text={i18next.t("general:Disable")}
+                    title={i18next.t("general:Sure to disable") + "?"}
+                    onConfirm={() => this.deleteMfa()}
+                  /> : null
+                }>
+                <List
+                  rowKey="mfaType"
+                  itemLayout="horizontal"
+                  dataSource={this.state.multiFactorAuths}
+                  renderItem={(item, index) => (
+                    <List.Item>
+                      <Space>
+                        {i18next.t("general:Type")}: {item.mfaType}
+                        {item.secret}
+                      </Space>
+                      {item.enabled ? (
+                        <Space>
+                          {item.enabled ?
                             <Tag icon={<CheckCircleOutlined />} color="success">
                               {i18next.t("general:Enabled")}
-                            </Tag>
+                            </Tag> : null
                           }
-                          {item.secret}
-                        </div>
-                        {item?.id === undefined ? null :
-                          <div>
-                            {item.isPreferred ?
-                              <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
-                                {i18next.t("mfa:preferred")}
-                              </Tag> :
-                              <Button type="primary" style={{marginRight: 20}} onClick={() => {
-                                const values = {
-                                  owner: this.state.user.owner,
-                                  name: this.state.user.name,
-                                  id: item.id,
-                                };
-                                MfaBackend.SetPreferredMfa(values).then((res) => {
-                                  if (res.status === "ok") {
-                                    this.setState({
-                                      multiFactorAuths: res.data,
-                                    });
-                                  }
-                                });
-                              }}>
-                                {i18next.t("mfa:Set preferred")}
-                              </Button>
-                            }
-                            <PopconfirmModal
-                              title={i18next.t("general:Sure to delete") + "?"}
-                              onConfirm={() => this.deleteMfa(item.id)}
-                            >
-                            </PopconfirmModal>
-                          </div>
-                        }
-                      </List.Item>
-                    )}
-                  />
-                </Card>
+                          {item.isPreferred ?
+                            <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
+                              {i18next.t("mfa:preferred")}
+                            </Tag> :
+                            <Button type="primary" style={{marginRight: 20}} onClick={() => {
+                              const values = {
+                                owner: this.state.user.owner,
+                                name: this.state.user.name,
+                                mfaType: item.mfaType,
+                              };
+                              MfaBackend.SetPreferredMfa(values).then((res) => {
+                                if (res.status === "ok") {
+                                  this.setState({
+                                    multiFactorAuths: res.data,
+                                  });
+                                }
+                              });
+                            }}>
+                              {i18next.t("mfa:Set preferred")}
+                            </Button>
+                          }
+                        </Space>
+                      ) : <Button type={"default"} onClick={() => {
+                        Setting.goToLink(`/mfa-authentication/setup?mfaType=${item.mfaType}`);
+                      }}>
+                        {i18next.t("mfa:Setup")}
+                      </Button>}
+                    </List.Item>
+                  )}
+                />
               </Card>
             </Col>
           </Row>
@@ -933,7 +1024,12 @@ class UserEditPage extends React.Component {
     UserBackend.deleteUser(this.state.user)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push("/users");
+          const userListUrl = sessionStorage.getItem("userListUrl");
+          if (userListUrl !== null) {
+            this.props.history.push(userListUrl);
+          } else {
+            this.props.history.push("/users");
+          }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

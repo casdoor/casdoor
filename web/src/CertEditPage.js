@@ -44,9 +44,19 @@ class CertEditPage extends React.Component {
 
   getCert() {
     CertBackend.getCert(this.state.owner, this.state.certName)
-      .then((cert) => {
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          cert: cert,
+          cert: res,
         });
       });
   }

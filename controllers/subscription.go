@@ -37,13 +37,31 @@ func (c *ApiController) GetSubscriptions() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetSubscriptions(owner)
+		subscriptions, err := object.GetSubscriptions(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = subscriptions
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetSubscriptionCount(owner, field, value)))
-		subscription := object.GetPaginationSubscriptions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetSubscriptionCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		subscription, err := object.GetPaginationSubscriptions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(subscription, paginator.Nums())
 	}
 }
@@ -58,7 +76,11 @@ func (c *ApiController) GetSubscriptions() {
 func (c *ApiController) GetSubscription() {
 	id := c.Input().Get("id")
 
-	subscription := object.GetSubscription(id)
+	subscription, err := object.GetSubscription(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.Data["json"] = subscription
 	c.ServeJSON()

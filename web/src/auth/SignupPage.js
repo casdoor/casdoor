@@ -28,6 +28,7 @@ import CustomGithubCorner from "../common/CustomGithubCorner";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
+import * as PasswordChecker from "../common/PasswordChecker";
 
 const formItemLayout = {
   labelCol: {
@@ -107,8 +108,13 @@ class SignupPage extends React.Component {
     }
 
     ApplicationBackend.getApplication("admin", applicationName)
-      .then((application) => {
-        this.onUpdateApplication(application);
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.onUpdateApplication(res);
       });
   }
 
@@ -458,8 +464,15 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
-              min: 6,
-              message: i18next.t("login:Please input your password, at least 6 characters!"),
+              validateTrigger: "onChange",
+              validator: (rule, value) => {
+                const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                if (errorMsg === "") {
+                  return Promise.resolve();
+                } else {
+                  return Promise.reject(errorMsg);
+                }
+              },
             },
           ]}
           hasFeedback

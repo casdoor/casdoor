@@ -37,13 +37,31 @@ func (c *ApiController) GetPricings() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPricings(owner)
+		pricings, err := object.GetPricings(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = pricings
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPricingCount(owner, field, value)))
-		pricing := object.GetPaginatedPricings(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetPricingCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		pricing, err := object.GetPaginatedPricings(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(pricing, paginator.Nums())
 	}
 }
@@ -58,7 +76,11 @@ func (c *ApiController) GetPricings() {
 func (c *ApiController) GetPricing() {
 	id := c.Input().Get("id")
 
-	pricing := object.GetPricing(id)
+	pricing, err := object.GetPricing(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.Data["json"] = pricing
 	c.ServeJSON()

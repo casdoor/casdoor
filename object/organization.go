@@ -22,6 +22,7 @@ import (
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
+	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )
 
@@ -55,6 +56,7 @@ type Organization struct {
 	Favicon            string     `xorm:"varchar(100)" json:"favicon"`
 	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordOptions    []string   `xorm:"varchar(100)" json:"passwordOptions"`
 	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
 	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
@@ -70,82 +72,109 @@ type Organization struct {
 	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
 }
 
-func GetOrganizationCount(owner, field, value string) int {
+func GetOrganizationCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Organization{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Organization{})
 }
 
-func GetOrganizations(owner string) []*Organization {
+func GetOrganizations(owner string, name ...string) ([]*Organization, error) {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
-	if err != nil {
-		panic(err)
+	if name != nil && len(name) > 0 {
+		err := adapter.Engine.Desc("created_time").Where(builder.In("name", name)).Find(&organizations)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return organizations
+	return organizations, nil
 }
 
-func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Organization {
+func GetOrganizationsByFields(owner string, fields ...string) ([]*Organization, error) {
+	organizations := []*Organization{}
+	err := adapter.Engine.Desc("created_time").Cols(fields...).Find(&organizations, &Organization{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return organizations, nil
+}
+
+func GetPaginationOrganizations(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Organization, error) {
 	organizations := []*Organization{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&organizations)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return organizations
+	return organizations, nil
 }
 
-func getOrganization(owner string, name string) *Organization {
+func getOrganization(owner string, name string) (*Organization, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	organization := Organization{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&organization)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &organization
+		return &organization, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func GetOrganization(id string) *Organization {
+func GetOrganization(id string) (*Organization, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getOrganization(owner, name)
 }
 
-func GetMaskedOrganization(organization *Organization) *Organization {
+func GetMaskedOrganization(organization *Organization, errs ...error) (*Organization, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
+	}
+
 	if organization == nil {
-		return nil
+		return nil, nil
 	}
 
 	if organization.MasterPassword != "" {
 		organization.MasterPassword = "***"
 	}
-	return organization
+	return organization, nil
 }
 
-func GetMaskedOrganizations(organizations []*Organization) []*Organization {
-	for _, organization := range organizations {
-		organization = GetMaskedOrganization(organization)
+func GetMaskedOrganizations(organizations []*Organization, errs ...error) ([]*Organization, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
 	}
-	return organizations
+
+	var err error
+	for _, organization := range organizations {
+		organization, err = GetMaskedOrganization(organization)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return organizations, nil
 }
 
-func UpdateOrganization(id string, organization *Organization) bool {
+func UpdateOrganization(id string, organization *Organization) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getOrganization(owner, name) == nil {
-		return false
+	if org, err := getOrganization(owner, name); err != nil {
+		return false, err
+	} else if org == nil {
+		return false, nil
 	}
 
 	if name == "built-in" {
@@ -155,7 +184,7 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	if name != organization.Name {
 		err := organizationChangeTrigger(name, organization.Name)
 		if err != nil {
-			return false
+			return false, nil
 		}
 	}
 
@@ -173,35 +202,35 @@ func UpdateOrganization(id string, organization *Organization) bool {
 	}
 	affected, err := session.Update(organization)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddOrganization(organization *Organization) bool {
+func AddOrganization(organization *Organization) (bool, error) {
 	affected, err := adapter.Engine.Insert(organization)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteOrganization(organization *Organization) bool {
+func DeleteOrganization(organization *Organization) (bool, error) {
 	if organization.Name == "built-in" {
-		return false
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func GetOrganizationByUser(user *User) *Organization {
+func GetOrganizationByUser(user *User) (*Organization, error) {
 	return getOrganization("admin", user.Owner)
 }
 
@@ -238,13 +267,21 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, isAdmin bool, lang str
 }
 
 func GetDefaultApplication(id string) (*Application, error) {
-	organization := GetOrganization(id)
+	organization, err := GetOrganization(id)
+	if err != nil {
+		return nil, err
+	}
+
 	if organization == nil {
 		return nil, fmt.Errorf("The organization: %s does not exist", id)
 	}
 
 	if organization.DefaultApplication != "" {
-		defaultApplication := getApplication("admin", organization.DefaultApplication)
+		defaultApplication, err := getApplication("admin", organization.DefaultApplication)
+		if err != nil {
+			return nil, err
+		}
+
 		if defaultApplication == nil {
 			return nil, fmt.Errorf("The default application: %s does not exist", organization.DefaultApplication)
 		} else {
@@ -253,9 +290,9 @@ func GetDefaultApplication(id string) (*Application, error) {
 	}
 
 	applications := []*Application{}
-	err := adapter.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
+	err = adapter.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if len(applications) == 0 {
@@ -270,8 +307,15 @@ func GetDefaultApplication(id string) (*Application, error) {
 		}
 	}
 
-	extendApplicationWithProviders(defaultApplication)
-	extendApplicationWithOrg(defaultApplication)
+	err = extendApplicationWithProviders(defaultApplication)
+	if err != nil {
+		return nil, err
+	}
+
+	err = extendApplicationWithOrg(defaultApplication)
+	if err != nil {
+		return nil, err
+	}
 
 	return defaultApplication, nil
 }
@@ -295,6 +339,13 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	user := new(User)
 	user.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(user)
+	if err != nil {
+		return err
+	}
+
+	group := new(Group)
+	group.Owner = newName
+	_, err = session.Where("owner=?", oldName).Update(group)
 	if err != nil {
 		return err
 	}
@@ -351,7 +402,6 @@ func organizationChangeTrigger(oldName string, newName string) error {
 
 	casbinAdapter := new(CasbinAdapter)
 	casbinAdapter.Owner = newName
-	casbinAdapter.Organization = newName
 	_, err = session.Where("owner=?", oldName).Update(casbinAdapter)
 	if err != nil {
 		return err

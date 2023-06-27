@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -32,19 +31,38 @@ import (
 // @router /get-payments [get]
 func (c *ApiController) GetPayments() {
 	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPayments(owner)
+		payments, err := object.GetPayments(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = payments
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPaymentCount(owner, field, value)))
-		payments := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetPaymentCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		payments, err := object.GetPaginationPayments(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(payments, paginator.Nums())
 	}
 }
@@ -63,7 +81,12 @@ func (c *ApiController) GetUserPayments() {
 	organization := c.Input().Get("organization")
 	user := c.Input().Get("user")
 
-	payments := object.GetUserPayments(owner, organization, user)
+	payments, err := object.GetUserPayments(owner, organization, user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(payments)
 }
 
@@ -77,7 +100,13 @@ func (c *ApiController) GetUserPayments() {
 func (c *ApiController) GetPayment() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetPayment(id)
+	payment, err := object.GetPayment(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = payment
 	c.ServeJSON()
 }
 
@@ -153,18 +182,20 @@ func (c *ApiController) NotifyPayment() {
 	providerName := c.Ctx.Input.Param(":provider")
 	productName := c.Ctx.Input.Param(":product")
 	paymentName := c.Ctx.Input.Param(":payment")
+	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	ok := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName)
-	if ok {
-		_, err := c.Ctx.ResponseWriter.Write([]byte("success"))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	} else {
-		panic(fmt.Errorf("NotifyPayment() failed: %v", ok))
+	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
+
+	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
+	if err2 != nil {
+		panic(err2)
+	}
+
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 }
 
@@ -178,7 +209,12 @@ func (c *ApiController) NotifyPayment() {
 func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
-	payment := object.GetPayment(id)
+	payment, err := object.GetPayment(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
 		c.ResponseError(err.Error())

@@ -19,13 +19,14 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
 func saveFile(path string, file *multipart.File) (err error) {
-	f, err := os.Create(path)
+	f, err := os.Create(filepath.Clean(path))
 	if err != nil {
 		return err
 	}
@@ -57,7 +58,12 @@ func (c *ApiController) UploadUsers() {
 		return
 	}
 
-	affected := object.UploadUsers(owner, fileId)
+	affected, err := object.UploadUsers(owner, fileId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if affected {
 		c.ResponseOk()
 	} else {

@@ -14,8 +14,12 @@
 
 package object
 
-func (application *Application) GetProviderByCategory(category string) *Provider {
-	providers := GetProviders(application.Organization)
+func (application *Application) GetProviderByCategory(category string) (*Provider, error) {
+	providers, err := GetProviders(application.Organization)
+	if err != nil {
+		return nil, err
+	}
+
 	m := map[string]*Provider{}
 	for _, provider := range providers {
 		if provider.Category != category {
@@ -27,22 +31,22 @@ func (application *Application) GetProviderByCategory(category string) *Provider
 
 	for _, providerItem := range application.Providers {
 		if provider, ok := m[providerItem.Name]; ok {
-			return provider
+			return provider, nil
 		}
 	}
 
-	return nil
+	return nil, nil
 }
 
-func (application *Application) GetEmailProvider() *Provider {
+func (application *Application) GetEmailProvider() (*Provider, error) {
 	return application.GetProviderByCategory("Email")
 }
 
-func (application *Application) GetSmsProvider() *Provider {
+func (application *Application) GetSmsProvider() (*Provider, error) {
 	return application.GetProviderByCategory("SMS")
 }
 
-func (application *Application) GetStorageProvider() *Provider {
+func (application *Application) GetStorageProvider() (*Provider, error) {
 	return application.GetProviderByCategory("Storage")
 }
 

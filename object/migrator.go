@@ -45,5 +45,8 @@ func DoMigration() {
 	}
 
 	m := migrate.New(adapter.Engine, options, migrations)
-	m.Migrate()
+	err := m.Migrate()
+	if err != nil {
+		panic(err)
+	}
 }

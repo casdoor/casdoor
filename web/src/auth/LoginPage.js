@@ -14,8 +14,9 @@
 
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
-import {LockOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
 import * as UserBackend from "../backend/UserBackend";
@@ -57,6 +58,7 @@ class LoginPage extends React.Component {
       redirectUrl: "",
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
+      orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -157,8 +159,12 @@ class LoginPage extends React.Component {
 
     if (this.state.owner === null || this.state.type === "saml") {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
-        .then((application) => {
-          this.onUpdateApplication(application);
+        .then((res) => {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+          this.onUpdateApplication(res);
         });
     } else {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
@@ -941,6 +947,102 @@ class LoginPage extends React.Component {
     }
   }
 
+  renderLoginPanel(application) {
+    const orgChoiceMode = application.orgChoiceMode;
+
+    if (this.isOrganizationChoiceBoxVisible(orgChoiceMode)) {
+      return this.renderOrganizationChoiceBox(orgChoiceMode);
+    }
+
+    if (this.state.getVerifyTotp !== undefined) {
+      return this.state.getVerifyTotp();
+    } else {
+      return (
+        <React.Fragment>
+          {this.renderSignedInBox()}
+          {this.renderForm(application)}
+        </React.Fragment>
+      );
+    }
+  }
+
+  renderOrganizationChoiceBox(orgChoiceMode) {
+    const renderChoiceBox = () => {
+      switch (orgChoiceMode) {
+      case "None":
+        return null;
+      case "Select":
+        return (
+          <div>
+            <p style={{fontSize: "large"}}>
+              {i18next.t("login:Please select an organization to sign in")}
+            </p>
+            <OrganizationSelect style={{width: "70%"}}
+              onSelect={(value) => {
+                Setting.goToLink(`/login/${value}?orgChoiceMode=None`);
+              }} />
+          </div>
+        );
+      case "Input":
+        return (
+          <div>
+            <p style={{fontSize: "large"}}>
+              {i18next.t("login:Please type an organization to sign in")}
+            </p>
+            <Form
+              name="basic"
+              onFinish={(values) => {Setting.goToLink(`/login/${values.organizationName}?orgChoiceMode=None`);}}
+            >
+              <Form.Item
+                name="organizationName"
+                rules={[{required: true, message: i18next.t("login:Please input your organization name!")}]}
+              >
+                <Input style={{width: "70%"}} onPressEnter={(e) => {
+                  Setting.goToLink(`/login/${e.target.value}?orgChoiceMode=None`);
+                }} />
+              </Form.Item>
+              <Button type="primary" htmlType="submit">
+                {i18next.t("general:Confirm")}
+              </Button>
+            </Form>
+          </div>
+        );
+      default:
+        return null;
+      }
+    };
+
+    return (
+      <div style={{height: 300, width: 300}}>
+        {renderChoiceBox()}
+      </div>
+    );
+  }
+
+  isOrganizationChoiceBoxVisible(orgChoiceMode) {
+    if (this.state.orgChoiceMode === "None") {
+      return false;
+    }
+
+    const path = this.props.match?.path;
+    if (path === "/login" || path === "/login/:owner") {
+      return orgChoiceMode === "Select" || orgChoiceMode === "Input";
+    }
+
+    return false;
+  }
+
+  renderBackButton() {
+    if (this.state.orgChoiceMode === "None") {
+      return (
+        <Button type="text" size="large" icon={<ArrowLeftOutlined />}
+          style={{top: "65px", left: "15px", position: "absolute"}}
+          onClick={() => history.back()}>
+        </Button>
+      );
+    }
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === undefined) {
@@ -989,10 +1091,13 @@ class LoginPage extends React.Component {
                   {
                     Setting.renderLogo(application)
                   }
+                  {
+                    this.renderBackButton()
+                  }
                   <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
-                  {this.state.getVerifyTotp !== undefined ? null : this.renderSignedInBox()}
-                  {this.state.getVerifyTotp !== undefined ? null : this.renderForm(application)}
-                  {this.state.getVerifyTotp !== undefined ? this.state.getVerifyTotp() : null}
+                  {
+                    this.renderLoginPanel(application)
+                  }
                 </div>
               </div>
             </div>

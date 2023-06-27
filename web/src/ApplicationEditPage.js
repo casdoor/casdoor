@@ -118,15 +118,25 @@ class ApplicationEditPage extends React.Component {
 
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
-          application.grantTypes = ["authorization_code"];
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        if (res.grantTypes === null || res.grantTypes === undefined || res.grantTypes.length === 0) {
+          res.grantTypes = ["authorization_code"];
         }
         this.setState({
-          application: application,
+          application: res,
         });
 
-        this.getCerts(application.organization);
+        this.getCerts(res.organization);
       });
   }
 
@@ -155,11 +165,16 @@ class ApplicationEditPage extends React.Component {
   }
 
   getProviders() {
-    ProviderBackend.getProviders(this.state.owner).then((res => {
-      this.setState({
-        providers: res,
+    ProviderBackend.getProviders(this.state.owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            providers: res.data,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
       });
-    }));
   }
 
   getSamlMetadata() {
@@ -443,6 +458,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Org choice mode"), i18next.t("application:Org choice mode - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}}
+              options={[
+                {label: i18next.t("general:None"), value: "None"},
+                {label: i18next.t("application:Select"), value: "Select"},
+                {label: i18next.t("application:Input"), value: "Input"},
+              ].map((item) => {
+                return Setting.getOption(item.label, item.value);
+              })}
+              value={this.state.application.orgChoiceMode ?? []}
+              onChange={(value => {
+                this.updateApplicationField("orgChoiceMode", value);
+              })} >
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -544,7 +579,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}}
               value={this.state.application.grantTypes}
               onChange={(value => {
                 this.updateApplicationField("grantTypes", value);

@@ -37,7 +37,7 @@ func (syncer *Syncer) syncUsers() {
 
 	var affiliationMap map[int]string
 	if syncer.AffiliationTable != "" {
-		_, affiliationMap = syncer.getAffiliationMap()
+		_, affiliationMap, err = syncer.getAffiliationMap()
 	}
 
 	newUsers := []*User{}
@@ -63,9 +63,11 @@ func (syncer *Syncer) syncUsers() {
 				}
 			} else {
 				if user.PreHash == oHash {
-					updatedOUser := syncer.createOriginalUserFromUser(user)
-					syncer.updateUser(updatedOUser)
-					fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+					if !syncer.IsReadOnly {
+						updatedOUser := syncer.createOriginalUserFromUser(user)
+						syncer.updateUser(updatedOUser)
+						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+					}
 
 					// update preHash
 					user.PreHash = user.Hash
@@ -86,14 +88,22 @@ func (syncer *Syncer) syncUsers() {
 			}
 		}
 	}
-	AddUsersInBatch(newUsers)
+	_, err = AddUsersInBatch(newUsers)
+	if err != nil {
+		panic(err)
+	}
 
-	for _, user := range users {
-		id := user.Id
-		if _, ok := oUserMap[id]; !ok {
-			newOUser := syncer.createOriginalUserFromUser(user)
-			syncer.addUser(newOUser)
-			fmt.Printf("New oUser: %v\n", newOUser)
+	if !syncer.IsReadOnly {
+		for _, user := range users {
+			id := user.Id
+			if _, ok := oUserMap[id]; !ok {
+				newOUser := syncer.createOriginalUserFromUser(user)
+				_, err = syncer.addUser(newOUser)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Printf("New oUser: %v\n", newOUser)
+			}
 		}
 	}
 }

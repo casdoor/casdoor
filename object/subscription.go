@@ -29,15 +29,14 @@ type Subscription struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	Duration    int    `json:"duration"`
 
-	Description string `xorm:"varchar(100)" json:"description"`
-	Plan        string `xorm:"varchar(100)" json:"plan"`
-
-	StartDate time.Time `json:"startDate"`
-	EndDate   time.Time `json:"endDate"`
+	StartDate   time.Time `json:"startDate"`
+	EndDate     time.Time `json:"endDate"`
+	Duration    int       `json:"duration"`
+	Description string    `xorm:"varchar(100)" json:"description"`
 
 	User string `xorm:"mediumtext" json:"user"`
+	Plan string `xorm:"varchar(100)" json:"plan"`
 
 	IsEnabled   bool   `json:"isEnabled"`
 	Submitter   string `xorm:"varchar(100)" json:"submitter"`
@@ -63,90 +62,87 @@ func NewSubscription(owner string, user string, plan string, duration int) *Subs
 	}
 }
 
-func GetSubscriptionCount(owner, field, value string) int {
+func GetSubscriptionCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Subscription{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Subscription{})
 }
 
-func GetSubscriptions(owner string) []*Subscription {
+func GetSubscriptions(owner string) ([]*Subscription, error) {
 	subscriptions := []*Subscription{}
 	err := adapter.Engine.Desc("created_time").Find(&subscriptions, &Subscription{Owner: owner})
 	if err != nil {
-		panic(err)
+		return subscriptions, err
 	}
 
-	return subscriptions
+	return subscriptions, nil
 }
 
-func GetPaginationSubscriptions(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Subscription {
+func GetPaginationSubscriptions(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Subscription, error) {
 	subscriptions := []*Subscription{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&subscriptions)
 	if err != nil {
-		panic(err)
+		return subscriptions, err
 	}
 
-	return subscriptions
+	return subscriptions, nil
 }
 
-func getSubscription(owner string, name string) *Subscription {
+func getSubscription(owner string, name string) (*Subscription, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	subscription := Subscription{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&subscription)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &subscription
+		return &subscription, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetSubscription(id string) *Subscription {
+func GetSubscription(id string) (*Subscription, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getSubscription(owner, name)
 }
 
-func UpdateSubscription(id string, subscription *Subscription) bool {
+func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getSubscription(owner, name) == nil {
-		return false
+	if s, err := getSubscription(owner, name); err != nil {
+		return false, err
+	} else if s == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddSubscription(subscription *Subscription) bool {
+func AddSubscription(subscription *Subscription) (bool, error) {
 	affected, err := adapter.Engine.Insert(subscription)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteSubscription(subscription *Subscription) bool {
+func DeleteSubscription(subscription *Subscription) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{subscription.Owner, subscription.Name}).Delete(&Subscription{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (subscription *Subscription) GetId() string {

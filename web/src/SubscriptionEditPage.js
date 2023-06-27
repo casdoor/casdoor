@@ -46,13 +46,23 @@ class SubscriptionEditPage extends React.Component {
 
   getSubscription() {
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
-      .then((subscription) => {
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          subscription: subscription,
+          subscription: res,
         });
 
-        this.getUsers(subscription.owner);
-        this.getPlanes(subscription.owner);
+        this.getUsers(res.owner);
+        this.getPlanes(res.owner);
       });
   }
 
@@ -68,6 +78,10 @@ class SubscriptionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
           users: res,
         });
@@ -156,7 +170,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Start Date"), i18next.t("subscription:Start Date - Tooltip"))}
+            {Setting.getLabel(i18next.t("subscription:Start date"), i18next.t("subscription:Start date - Tooltip"))}
           </Col>
           <Col span={22} >
             <DatePicker value={dayjs(this.state.subscription.startDate)} onChange={value => {
@@ -166,7 +180,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:End Date"), i18next.t("subscription:End Date - Tooltip"))}
+            {Setting.getLabel(i18next.t("subscription:End date"), i18next.t("subscription:End date - Tooltip"))}
           </Col>
           <Col span={22} >
             <DatePicker value={dayjs(this.state.subscription.endDate)} onChange={value => {
@@ -176,7 +190,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Sub users"), i18next.t("subscription:Sub users - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select style={{width: "100%"}} value={this.state.subscription.user}
@@ -188,7 +202,7 @@ class SubscriptionEditPage extends React.Component {
 
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Sub plan"), i18next.t("subscription:Sub plan - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Plan"), i18next.t("general:Plan - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.plan} onChange={(value => {this.updateSubscriptionField("plan", value);})}
@@ -218,7 +232,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Submitter"), i18next.t("general:Submitter - Tooltip"))} :
+            {Setting.getLabel(i18next.t("permission:Submitter"), i18next.t("permission:Submitter - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.subscription.submitter} onChange={e => {
@@ -228,7 +242,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Approver"), i18next.t("general:Approver - Tooltip"))} :
+            {Setting.getLabel(i18next.t("permission:Approver"), i18next.t("permission:Approver - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.subscription.approver} onChange={e => {
@@ -238,7 +252,7 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Approve time"), i18next.t("general:Approve time - Tooltip"))} :
+            {Setting.getLabel(i18next.t("permission:Approve time"), i18next.t("permission:Approve time - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={true} value={Setting.getFormattedDate(this.state.subscription.approveTime)} onChange={e => {
@@ -265,8 +279,8 @@ class SubscriptionEditPage extends React.Component {
               this.updateSubscriptionField("state", value);
             })}
             options={[
-              {value: "Approved", name: i18next.t("subscription:Approved")},
-              {value: "Pending", name: i18next.t("subscription:Pending")},
+              {value: "Approved", name: i18next.t("permission:Approved")},
+              {value: "Pending", name: i18next.t("permission:Pending")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>
@@ -288,7 +302,7 @@ class SubscriptionEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/subscriptions");
           } else {
-            this.props.history.push(`/subscription/${this.state.subscription.owner}/${this.state.subscription.name}`);
+            this.props.history.push(`/subscriptions/${this.state.subscription.owner}/${this.state.subscription.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

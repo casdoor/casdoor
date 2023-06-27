@@ -16,6 +16,7 @@ package object
 
 import (
 	"encoding/base64"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -24,14 +25,14 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-func GetWebAuthnObject(host string) *webauthn.WebAuthn {
+func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 	var err error
 
 	_, originBackend := getOriginFromHost(host)
 
 	localUrl, err := url.Parse(originBackend)
 	if err != nil {
-		panic("error when parsing origin:" + err.Error())
+		return nil, fmt.Errorf("error when parsing origin:" + err.Error())
 	}
 
 	webAuthn, err := webauthn.New(&webauthn.Config{
@@ -41,10 +42,10 @@ func GetWebAuthnObject(host string) *webauthn.WebAuthn {
 		// RPIcon:     "https://duo.com/logo.png",           // Optional icon URL for your site
 	})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return webAuthn
+	return webAuthn, nil
 }
 
 // WebAuthnID
@@ -84,17 +85,17 @@ func (user *User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	return credentialExcludeList
 }
 
-func (user *User) AddCredentials(credential webauthn.Credential, isGlobalAdmin bool) bool {
+func (user *User) AddCredentials(credential webauthn.Credential, isGlobalAdmin bool) (bool, error) {
 	user.WebauthnCredentials = append(user.WebauthnCredentials, credential)
 	return UpdateUser(user.GetId(), user, []string{"webauthnCredentials"}, isGlobalAdmin)
 }
 
-func (user *User) DeleteCredentials(credentialIdBase64 string) bool {
+func (user *User) DeleteCredentials(credentialIdBase64 string) (bool, error) {
 	for i, credential := range user.WebauthnCredentials {
 		if base64.StdEncoding.EncodeToString(credential.ID) == credentialIdBase64 {
 			user.WebauthnCredentials = append(user.WebauthnCredentials[0:i], user.WebauthnCredentials[i+1:]...)
 			return UpdateUserForAllFields(user.GetId(), user)
 		}
 	}
-	return false
+	return false, nil
 }

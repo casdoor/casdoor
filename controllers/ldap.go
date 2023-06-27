@@ -45,7 +45,11 @@ func (c *ApiController) GetLdapUsers() {
 	id := c.Input().Get("id")
 
 	_, ldapId := util.GetOwnerAndNameFromId(id)
-	ldapServer := object.GetLdap(ldapId)
+	ldapServer, err := object.GetLdap(ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	conn, err := ldapServer.GetLdapConn()
 	if err != nil {
@@ -76,7 +80,11 @@ func (c *ApiController) GetLdapUsers() {
 	for i, user := range users {
 		uuids[i] = user.GetLdapUuid()
 	}
-	existUuids := object.GetExistUuids(ldapServer.Owner, uuids)
+	existUuids, err := object.GetExistUuids(ldapServer.Owner, uuids)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	resp := LdapResp{
 		Users:      object.AutoAdjustLdapUser(users),
@@ -128,17 +136,23 @@ func (c *ApiController) AddLdap() {
 		return
 	}
 
-	if object.CheckLdapExist(&ldap) {
+	if ok, err := object.CheckLdapExist(&ldap); err != nil {
+		c.ResponseError(err.Error())
+		return
+	} else if ok {
 		c.ResponseError(c.T("ldap:Ldap server exist"))
 		return
 	}
 
-	affected := object.AddLdap(&ldap)
-	resp := wrapActionResponse(affected)
+	resp := wrapActionResponse(object.AddLdap(&ldap))
 	resp.Data2 = ldap
 
 	if ldap.AutoSync != 0 {
-		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		err = object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.Data["json"] = resp
@@ -157,11 +171,24 @@ func (c *ApiController) UpdateLdap() {
 		return
 	}
 
-	prevLdap := object.GetLdap(ldap.Id)
-	affected := object.UpdateLdap(&ldap)
+	prevLdap, err := object.GetLdap(ldap.Id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	affected, err := object.UpdateLdap(&ldap)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	if ldap.AutoSync != 0 {
-		object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		err := object.GetLdapAutoSynchronizer().StartAutoSync(ldap.Id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	} else if ldap.AutoSync == 0 && prevLdap.AutoSync != 0 {
 		object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 	}
@@ -182,7 +209,11 @@ func (c *ApiController) DeleteLdap() {
 		return
 	}
 
-	affected := object.DeleteLdap(&ldap)
+	affected, err := object.DeleteLdap(&ldap)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	object.GetLdapAutoSynchronizer().StopAutoSync(ldap.Id)
 
@@ -204,7 +235,11 @@ func (c *ApiController) SyncLdapUsers() {
 		return
 	}
 
-	object.UpdateLdapSyncTime(ldapId)
+	err = object.UpdateLdapSyncTime(ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	exist, failed, _ := object.SyncLdapUsers(owner, users, ldapId)
 

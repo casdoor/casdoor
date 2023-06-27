@@ -19,6 +19,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -30,7 +31,7 @@ import (
 var (
 	oldStaticBaseUrl = "https://cdn.casbin.org"
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
-	enableGzip, _    = conf.GetConfigBool("enableGzip")
+	enableGzip       = conf.GetConfigBool("enableGzip")
 )
 
 func StaticFilter(ctx *context.Context) {
@@ -72,7 +73,7 @@ func StaticFilter(ctx *context.Context) {
 }
 
 func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, old string, new string) {
-	f, err := os.Open(name)
+	f, err := os.Open(filepath.Clean(name))
 	if err != nil {
 		panic(err)
 	}

@@ -45,7 +45,7 @@ func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey
 	return pp, nil
 }
 
-func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, returnUrl string, notifyUrl string) (string, error) {
+func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
 	// pp.Client.DebugSwitch = gopay.DebugOn
 
 	bm := gopay.BodyMap{}
@@ -62,12 +62,12 @@ func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, pa
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return payUrl, nil
+	return payUrl, "", nil
 }
 
-func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string) (string, string, float64, string, string, error) {
+func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
 	bm, err := alipay.ParseNotifyToBodyMap(request)
 	if err != nil {
 		return "", "", 0, "", "", err
@@ -93,4 +93,12 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 func (pp *AlipayPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
 	return "", nil
+}
+
+func (pp *AlipayPaymentProvider) GetResponseError(err error) string {
+	if err == nil {
+		return "success"
+	} else {
+		return "fail"
+	}
 }

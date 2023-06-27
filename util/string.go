@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -201,7 +202,7 @@ func GetMinLenStr(strs ...string) string {
 }
 
 func ReadStringFromPath(path string) string {
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		panic(err)
 	}
@@ -277,4 +278,14 @@ func GetEndPoint(endpoint string) string {
 		endpoint = strings.TrimPrefix(endpoint, prefix)
 	}
 	return endpoint
+}
+
+// HasString reports if slice has input string.
+func HasString(strs []string, str string) bool {
+	for _, i := range strs {
+		if i == str {
+			return true
+		}
+	}
+	return false
 }

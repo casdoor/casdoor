@@ -40,12 +40,21 @@ class ChatEditPage extends React.Component {
 
   getChat() {
     ChatBackend.getChat("admin", this.state.chatName)
-      .then((chat) => {
+      .then((res) => {
+        if (res === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          chat: chat,
+          chat: res,
         });
 
-        this.getUsers(chat.organization);
+        this.getUsers(res.organization);
       });
   }
 
@@ -61,6 +70,11 @@ class ChatEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
           users: res,
         });
@@ -175,7 +189,7 @@ class ChatEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Users"), i18next.t("chat:Users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select mode="tags" style={{width: "100%"}} value={this.state.chat.users}
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.chat.users}
               onChange={(value => {this.updateChatField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />

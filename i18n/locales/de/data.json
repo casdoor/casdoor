@@ -68,7 +68,8 @@
     "Missing parameter": "Fehlender Parameter",
     "Please login first": "Bitte zuerst einloggen",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
-    "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:"
+    "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Es gibt einen LDAP-Server"
@@ -119,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Anzeigename darf nicht leer sein",
-    "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
-    "New password must have at least 6 characters": "Das neue Passwort muss mindestens 6 Zeichen haben"
+    "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten."
   },
   "user_upload": {
     "Failed to import users": "Fehler beim Importieren von Benutzern"

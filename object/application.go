@@ -51,6 +51,7 @@ type Application struct {
 	EnableSamlCompress  bool            `json:"enableSamlCompress"`
 	EnableWebAuthn      bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail bool            `json:"enableLinkWithEmail"`
+	OrgChoiceMode       string          `json:"orgChoiceMode"`
 	SamlReplyUrl        string          `xorm:"varchar(100)" json:"samlReplyUrl"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
@@ -78,134 +79,155 @@ type Application struct {
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 }
 
-func GetApplicationCount(owner, field, value string) int {
+func GetApplicationCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Application{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Application{})
 }
 
-func GetOrganizationApplicationCount(owner, Organization, field, value string) int {
+func GetOrganizationApplicationCount(owner, Organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Application{Organization: Organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Application{Organization: Organization})
 }
 
-func GetApplications(owner string) []*Application {
+func GetApplications(owner string) ([]*Application, error) {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
 	if err != nil {
-		panic(err)
+		return applications, err
 	}
 
-	return applications
+	return applications, nil
 }
 
-func GetOrganizationApplications(owner string, organization string) []*Application {
+func GetOrganizationApplications(owner string, organization string) ([]*Application, error) {
 	applications := []*Application{}
 	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
 	if err != nil {
-		panic(err)
+		return applications, err
 	}
 
-	return applications
+	return applications, nil
 }
 
-func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
+func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Application, error) {
 	var applications []*Application
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&applications)
 	if err != nil {
-		panic(err)
+		return applications, err
 	}
 
-	return applications
+	return applications, nil
 }
 
-func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Application {
+func GetPaginationOrganizationApplications(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Application, error) {
 	applications := []*Application{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&applications, &Application{Organization: organization})
 	if err != nil {
-		panic(err)
+		return applications, err
 	}
 
-	return applications
+	return applications, nil
 }
 
-func getProviderMap(owner string) map[string]*Provider {
-	providers := GetProviders(owner)
-	m := map[string]*Provider{}
+func getProviderMap(owner string) (m map[string]*Provider, err error) {
+	providers, err := GetProviders(owner)
+	if err != nil {
+		return nil, err
+	}
+
+	m = map[string]*Provider{}
 	for _, provider := range providers {
 		// Get QRCode only once
 		if provider.Type == "WeChat" && provider.DisableSsl && provider.Content == "" {
-			provider.Content, _ = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
+			provider.Content, err = idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2)
+			if err != nil {
+				return
+			}
 			UpdateProvider(provider.Owner+"/"+provider.Name, provider)
 		}
 
 		m[provider.Name] = GetMaskedProvider(provider, true)
 	}
-	return m
+
+	return m, err
 }
 
-func extendApplicationWithProviders(application *Application) {
-	m := getProviderMap(application.Organization)
+func extendApplicationWithProviders(application *Application) (err error) {
+	m, err := getProviderMap(application.Organization)
+	if err != nil {
+		return err
+	}
+
 	for _, providerItem := range application.Providers {
 		if provider, ok := m[providerItem.Name]; ok {
 			providerItem.Provider = provider
 		}
 	}
+
+	return
 }
 
-func extendApplicationWithOrg(application *Application) {
-	organization := getOrganization(application.Owner, application.Organization)
+func extendApplicationWithOrg(application *Application) (err error) {
+	organization, err := getOrganization(application.Owner, application.Organization)
 	application.OrganizationObj = organization
+	return
 }
 
-func getApplication(owner string, name string) *Application {
+func getApplication(owner string, name string) (*Application, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	application := Application{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&application)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		extendApplicationWithProviders(&application)
-		extendApplicationWithOrg(&application)
-		return &application
+		err = extendApplicationWithProviders(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithOrg(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		return &application, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetApplicationByOrganizationName(organization string) *Application {
+func GetApplicationByOrganizationName(organization string) (*Application, error) {
 	application := Application{}
 	existed, err := adapter.Engine.Where("organization=?", organization).Get(&application)
 	if err != nil {
-		panic(err)
+		return nil, nil
 	}
 
 	if existed {
-		extendApplicationWithProviders(&application)
-		extendApplicationWithOrg(&application)
-		return &application
+		err = extendApplicationWithProviders(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithOrg(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		return &application, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetApplicationByUser(user *User) *Application {
+func GetApplicationByUser(user *User) (*Application, error) {
 	if user.SignupApplication != "" {
 		return getApplication("admin", user.SignupApplication)
 	} else {
@@ -213,38 +235,46 @@ func GetApplicationByUser(user *User) *Application {
 	}
 }
 
-func GetApplicationByUserId(userId string) (*Application, *User) {
-	var application *Application
-
+func GetApplicationByUserId(userId string) (application *Application, err error) {
 	owner, name := util.GetOwnerAndNameFromId(userId)
 	if owner == "app" {
-		application = getApplication("admin", name)
-		return application, nil
+		application, err = getApplication("admin", name)
+		return
 	}
 
-	user := GetUser(userId)
-	application = GetApplicationByUser(user)
-
-	return application, user
+	user, err := GetUser(userId)
+	if err != nil {
+		return nil, err
+	}
+	application, err = GetApplicationByUser(user)
+	return
 }
 
-func GetApplicationByClientId(clientId string) *Application {
+func GetApplicationByClientId(clientId string) (*Application, error) {
 	application := Application{}
 	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		extendApplicationWithProviders(&application)
-		extendApplicationWithOrg(&application)
-		return &application
+		err = extendApplicationWithProviders(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithOrg(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		return &application, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetApplication(id string) *Application {
+func GetApplication(id string) (*Application, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getApplication(owner, name)
 }
@@ -287,11 +317,11 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
-func UpdateApplication(id string, application *Application) bool {
+func UpdateApplication(id string, application *Application) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	oldApplication := getApplication(owner, name)
+	oldApplication, err := getApplication(owner, name)
 	if oldApplication == nil {
-		return false
+		return false, err
 	}
 
 	if name == "app-built-in" {
@@ -299,14 +329,19 @@ func UpdateApplication(id string, application *Application) bool {
 	}
 
 	if name != application.Name {
-		err := applicationChangeTrigger(name, application.Name)
+		err = applicationChangeTrigger(name, application.Name)
 		if err != nil {
-			return false
+			return false, err
 		}
 	}
 
-	if oldApplication.ClientId != application.ClientId && GetApplicationByClientId(application.ClientId) != nil {
-		return false
+	applicationByClientId, err := GetApplicationByClientId(application.ClientId)
+	if err != nil {
+		return false, err
+	}
+
+	if oldApplication.ClientId != application.ClientId && applicationByClientId != nil {
+		return false, err
 	}
 
 	for _, providerItem := range application.Providers {
@@ -319,13 +354,13 @@ func UpdateApplication(id string, application *Application) bool {
 	}
 	affected, err := session.Update(application)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddApplication(application *Application) bool {
+func AddApplication(application *Application) (bool, error) {
 	if application.Owner == "" {
 		application.Owner = "admin"
 	}
@@ -338,32 +373,39 @@ func AddApplication(application *Application) bool {
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
 	}
-	if GetApplicationByClientId(application.ClientId) != nil {
-		return false
+
+	app, err := GetApplicationByClientId(application.ClientId)
+	if err != nil {
+		return false, err
 	}
+
+	if app != nil {
+		return false, nil
+	}
+
 	for _, providerItem := range application.Providers {
 		providerItem.Provider = nil
 	}
 
 	affected, err := adapter.Engine.Insert(application)
 	if err != nil {
-		panic(err)
+		return false, nil
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteApplication(application *Application) bool {
+func DeleteApplication(application *Application) (bool, error) {
 	if application.Name == "app-built-in" {
-		return false
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (application *Application) GetId() string {
@@ -382,33 +424,43 @@ func (application *Application) IsRedirectUriValid(redirectUri string) bool {
 	return isValid
 }
 
-func IsOriginAllowed(origin string) bool {
-	applications := GetApplications("")
+func IsOriginAllowed(origin string) (bool, error) {
+	applications, err := GetApplications("")
+	if err != nil {
+		return false, err
+	}
+
 	for _, application := range applications {
 		if application.IsRedirectUriValid(origin) {
-			return true
+			return true, nil
 		}
 	}
-	return false
+	return false, nil
 }
 
-func getApplicationMap(organization string) map[string]*Application {
-	applications := GetOrganizationApplications("admin", organization)
-
+func getApplicationMap(organization string) (map[string]*Application, error) {
 	applicationMap := make(map[string]*Application)
+	applications, err := GetOrganizationApplications("admin", organization)
+	if err != nil {
+		return applicationMap, err
+	}
+
 	for _, application := range applications {
 		applicationMap[application.Name] = application
 	}
 
-	return applicationMap
+	return applicationMap, nil
 }
 
-func ExtendManagedAccountsWithUser(user *User) *User {
+func ExtendManagedAccountsWithUser(user *User) (*User, error) {
 	if user.ManagedAccounts == nil || len(user.ManagedAccounts) == 0 {
-		return user
+		return user, nil
 	}
 
-	applicationMap := getApplicationMap(user.Owner)
+	applicationMap, err := getApplicationMap(user.Owner)
+	if err != nil {
+		return user, err
+	}
 
 	var managedAccounts []ManagedAccount
 	for _, managedAccount := range user.ManagedAccounts {
@@ -420,7 +472,7 @@ func ExtendManagedAccountsWithUser(user *User) *User {
 	}
 	user.ManagedAccounts = managedAccounts
 
-	return user
+	return user, nil
 }
 
 func applicationChangeTrigger(oldName string, newName string) error {

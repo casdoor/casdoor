@@ -502,6 +502,32 @@ paths:
       tags:
       - HandleOfficialAccountEvent API
       operationId: ApiController.HandleOfficialAccountEvent
+  /api/batch-enforce:
+    post:
+      tags:
+      - Enforce API
+      description: perform enforce
+      operationId: ApiController.BatchEnforce
+      parameters:
+      - in: body
+        name: body
+        description: casbin request array
+        required: true
+        schema:
+          $ref: '#/definitions/object.CasbinRequest'
+      - in: query
+        name: permissionId
+        description: permission id
+        type: string
+      - in: query
+        name: modelId
+        description: model id
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/buy-product:
     post:
       tags:
@@ -893,6 +919,36 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/enforce:
+    post:
+      tags:
+      - Enforce API
+      description: perform enforce
+      operationId: ApiController.Enforce
+      parameters:
+      - in: body
+        name: body
+        description: casbin request
+        required: true
+        schema:
+          $ref: '#/definitions/object.CasbinRequest'
+      - in: query
+        name: permissionId
+        description: permission id
+        type: string
+      - in: query
+        name: modelId
+        description: model id
+        type: string
+      - in: query
+        name: resourceId
+        description: resource id
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/get-account:
     get:
       tags:
@@ -1267,6 +1323,25 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Application'
+  /api/get-organization-names:
+    get:
+      tags:
+      - Organization API
+      description: get all organization names
+      operationId: ApiController.GetOrganizationNames
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Organization'
   /api/get-organizations:
     get:
       tags:
@@ -1841,7 +1916,6 @@ paths:
       - in: query
         name: id
         description: The id ( owner/name ) of the user
-        required: true
         type: string
       - in: query
         name: owner
@@ -1994,6 +2068,17 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Webhook'
+  /api/health:
+    get:
+      tags:
+      - System API
+      description: check if the system is live
+      operationId: ApiController.Health
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/invoice-payment:
     post:
       tags:
@@ -2940,10 +3025,10 @@ paths:
           schema:
             $ref: '#/definitions/Response'
 definitions:
-  1183.0x1400042eb70.false:
+  1225.0xc0002e2ae0.false:
     title: "false"
     type: object
-  1217.0x1400042eba0.false:
+  1260.0xc0002e2b10.false:
     title: "false"
     type: object
   LaravelResponse:
@@ -2979,9 +3064,9 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1183.0x1400042eb70.false'
+        $ref: '#/definitions/1225.0xc0002e2ae0.false'
       data2:
-        $ref: '#/definitions/1217.0x1400042eba0.false'
+        $ref: '#/definitions/1260.0xc0002e2b10.false'
       msg:
         type: string
       name:
@@ -3004,6 +3089,9 @@ definitions:
           type: string
   jose.JSONWebKey:
     title: JSONWebKey
+    type: object
+  object.&{179844 0xc000a02f90 false}:
+    title: '&{179844 0xc000a02f90 false}'
     type: object
   object.AccountItem:
     title: AccountItem
@@ -3072,6 +3160,8 @@ definitions:
         type: string
       formCss:
         type: string
+      formCssMobile:
+        type: string
       formOffset:
         type: integer
         format: int64
@@ -3086,6 +3176,8 @@ definitions:
       logo:
         type: string
       name:
+        type: string
+      orgChoiceMode:
         type: string
       organization:
         type: string
@@ -3124,6 +3216,11 @@ definitions:
         $ref: '#/definitions/object.ThemeData'
       tokenFormat:
         type: string
+  object.CasbinRequest:
+    title: CasbinRequest
+    type: array
+    items:
+      $ref: '#/definitions/object.&{179844 0xc000a02f90 false}'
   object.Cert:
     title: Cert
     type: object
@@ -3284,6 +3381,14 @@ definitions:
         type: string
       text:
         type: string
+  object.MfaItem:
+    title: MfaItem
+    type: object
+    properties:
+      name:
+        type: string
+      rule:
+        type: string
   object.MfaProps:
     title: MfaProps
     type: object
@@ -3407,6 +3512,10 @@ definitions:
           type: string
       masterPassword:
         type: string
+      mfaItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.MfaItem'
       name:
         type: string
       owner:
@@ -3544,8 +3653,14 @@ definitions:
         type: string
       displayName:
         type: string
+      isEnabled:
+        type: boolean
       name:
         type: string
+      options:
+        type: array
+        items:
+          type: string
       owner:
         type: string
       pricePerMonth:
@@ -3556,8 +3671,6 @@ definitions:
         format: double
       role:
         type: string
-      options:
-        type: array
   object.Pricing:
     title: Pricing
     type: object
@@ -3774,6 +3887,8 @@ definitions:
       method:
         type: string
       name:
+        type: string
+      object:
         type: string
       organization:
         type: string
@@ -4181,6 +4296,8 @@ definitions:
         type: string
       passwordSalt:
         type: string
+      passwordType:
+        type: string
       patreon:
         type: string
       paypal:
@@ -4290,6 +4407,8 @@ definitions:
       iss:
         type: string
       name:
+        type: string
+      organization:
         type: string
       phone:
         type: string

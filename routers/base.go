@@ -72,12 +72,29 @@ func getUsernameByClientIdSecret(ctx *context.Context) string {
 		return ""
 	}
 
-	application := object.GetApplicationByClientId(clientId)
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		panic(err)
+	}
+
 	if application == nil || application.ClientSecret != clientSecret {
 		return ""
 	}
 
 	return fmt.Sprintf("app/%s", application.Name)
+}
+
+func getUsernameByKeys(ctx *context.Context) string {
+	accessKey, accessSecret := getKeys(ctx)
+	user, err := object.GetUserByAccessKey(accessKey)
+	if err != nil {
+		panic(err)
+	}
+
+	if user != nil && accessSecret == user.AccessSecret {
+		return user.GetId()
+	}
+	return ""
 }
 
 func getSessionUser(ctx *context.Context) string {

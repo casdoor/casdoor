@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -155,7 +156,7 @@ func GetVersionInfoFromFile() (*VersionInfo, error) {
 
 	_, filename, _, _ := runtime.Caller(0)
 	rootPath := path.Dir(path.Dir(filename))
-	file, err := os.Open(path.Join(rootPath, "version_info.txt"))
+	file, err := os.Open(filepath.Clean(path.Join(rootPath, "version_info.txt")))
 	if err != nil {
 		return res, err
 	}

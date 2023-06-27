@@ -34,6 +34,7 @@ import (
 // @router /get-messages [get]
 func (c *ApiController) GetMessages() {
 	owner := c.Input().Get("owner")
+	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -41,21 +42,39 @@ func (c *ApiController) GetMessages() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	chat := c.Input().Get("chat")
-	organization := c.Input().Get("organization")
+
 	if limit == "" || page == "" {
 		var messages []*object.Message
+		var err error
 		if chat == "" {
-			messages = object.GetMessages(owner)
+			messages, err = object.GetMessages(owner)
 		} else {
-			messages = object.GetChatMessages(chat)
+			messages, err = object.GetChatMessages(chat)
+		}
+
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = object.GetMaskedMessages(messages)
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetMessageCount(owner, organization, field, value)))
-		messages := object.GetMaskedMessages(object.GetPaginationMessages(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder))
+		count, err := object.GetMessageCount(owner, organization, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		paginationMessages, err := object.GetPaginationMessages(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		messages := object.GetMaskedMessages(paginationMessages)
 		c.ResponseOk(messages, paginator.Nums())
 	}
 }
@@ -69,8 +88,13 @@ func (c *ApiController) GetMessages() {
 // @router /get-message [get]
 func (c *ApiController) GetMessage() {
 	id := c.Input().Get("id")
+	message, err := object.GetMessage(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-	c.Data["json"] = object.GetMaskedMessage(object.GetMessage(id))
+	c.Data["json"] = object.GetMaskedMessage(message)
 	c.ServeJSON()
 }
 
@@ -78,7 +102,8 @@ func (c *ApiController) ResponseErrorStream(errorText string) {
 	event := fmt.Sprintf("event: myerror\ndata: %s\n\n", errorText)
 	_, err := c.Ctx.ResponseWriter.Write([]byte(event))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 }
 
@@ -96,7 +121,12 @@ func (c *ApiController) GetMessageAnswer() {
 	c.Ctx.ResponseWriter.Header().Set("Cache-Control", "no-cache")
 	c.Ctx.ResponseWriter.Header().Set("Connection", "keep-alive")
 
-	message := object.GetMessage(id)
+	message, err := object.GetMessage(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if message == nil {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The message: %s is not found"), id))
 		return
@@ -108,7 +138,12 @@ func (c *ApiController) GetMessageAnswer() {
 	}
 
 	chatId := util.GetId("admin", message.Chat)
-	chat := object.GetChat(chatId)
+	chat, err := object.GetChat(chatId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if chat == nil || chat.Organization != message.Organization {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
 		return
@@ -119,14 +154,19 @@ func (c *ApiController) GetMessageAnswer() {
 		return
 	}
 
-	questionMessage := object.GetMessage(message.ReplyTo)
+	questionMessage, err := object.GetMessage(message.ReplyTo)
 	if questionMessage == nil {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The message: %s is not found"), id))
 		return
 	}
 
 	providerId := util.GetId(chat.Owner, chat.User2)
-	provider := object.GetProvider(providerId)
+	provider, err := object.GetProvider(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if provider == nil {
 		c.ResponseErrorStream(fmt.Sprintf(c.T("chat:The provider: %s is not found"), providerId))
 		return
@@ -148,7 +188,7 @@ func (c *ApiController) GetMessageAnswer() {
 	fmt.Printf("Question: [%s]\n", questionMessage.Text)
 	fmt.Printf("Answer: [")
 
-	err := ai.QueryAnswerStream(authToken, question, c.Ctx.ResponseWriter, &stringBuilder)
+	err = ai.QueryAnswerStream(authToken, question, c.Ctx.ResponseWriter, &stringBuilder)
 	if err != nil {
 		c.ResponseErrorStream(err.Error())
 		return
@@ -159,13 +199,18 @@ func (c *ApiController) GetMessageAnswer() {
 	event := fmt.Sprintf("event: end\ndata: %s\n\n", "end")
 	_, err = c.Ctx.ResponseWriter.Write([]byte(event))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	answer := stringBuilder.String()
 
 	message.Text = answer
-	object.UpdateMessage(message.GetId(), message)
+	_, err = object.UpdateMessage(message.GetId(), message)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 }
 
 // UpdateMessage
@@ -208,14 +253,24 @@ func (c *ApiController) AddMessage() {
 	var chat *object.Chat
 	if message.Chat != "" {
 		chatId := util.GetId("admin", message.Chat)
-		chat = object.GetChat(chatId)
+		chat, err = object.GetChat(chatId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		if chat == nil || chat.Organization != message.Organization {
 			c.ResponseError(fmt.Sprintf(c.T("chat:The chat: %s is not found"), chatId))
 			return
 		}
 	}
 
-	affected := object.AddMessage(&message)
+	affected, err := object.AddMessage(&message)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	if affected {
 		if chat != nil && chat.Type == "AI" {
 			answerMessage := &object.Message{
@@ -228,7 +283,11 @@ func (c *ApiController) AddMessage() {
 				Author:       "AI",
 				Text:         "",
 			}
-			object.AddMessage(answerMessage)
+			_, err = object.AddMessage(answerMessage)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	}
 

@@ -82,6 +82,7 @@ class ChatListPage extends BaseListPage {
         dataIndex: "organization",
         key: "organization",
         width: "150px",
+        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("organization"),
         render: (text, record, index) => {
@@ -165,7 +166,6 @@ class ChatListPage extends BaseListPage {
         dataIndex: "user1",
         key: "user1",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("user1"),
         render: (text, record, index) => {
@@ -181,7 +181,6 @@ class ChatListPage extends BaseListPage {
         dataIndex: "user2",
         key: "user2",
         width: "120px",
-        fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("user2"),
         render: (text, record, index) => {
@@ -268,9 +267,11 @@ class ChatListPage extends BaseListPage {
     this.setState({loading: true});
     ChatBackend.getChats("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -282,9 +283,10 @@ class ChatListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

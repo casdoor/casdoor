@@ -68,7 +68,8 @@
     "Missing parameter": "Parameter hilang",
     "Please login first": "Silahkan login terlebih dahulu",
     "The user: %s doesn't exist": "Pengguna: %s tidak ada",
-    "don't support captchaProvider: ": "Jangan mendukung captchaProvider:"
+    "don't support captchaProvider: ": "Jangan mendukung captchaProvider:",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "Server ldap ada"
@@ -119,8 +120,7 @@
   },
   "user": {
     "Display name cannot be empty": "Nama tampilan tidak boleh kosong",
-    "New password cannot contain blank space.": "Kata sandi baru tidak boleh mengandung spasi kosong.",
-    "New password must have at least 6 characters": "Kata sandi baru harus memiliki setidaknya 6 karakter"
+    "New password cannot contain blank space.": "Kata sandi baru tidak boleh mengandung spasi kosong."
   },
   "user_upload": {
     "Failed to import users": "Gagal mengimpor pengguna"

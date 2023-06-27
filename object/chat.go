@@ -37,92 +37,104 @@ type Chat struct {
 	MessageCount int      `json:"messageCount"`
 }
 
-func GetMaskedChat(chat *Chat) *Chat {
+func GetMaskedChat(chat *Chat, err ...error) (*Chat, error) {
+	if len(err) > 0 && err[0] != nil {
+		return nil, err[0]
+	}
+
 	if chat == nil {
-		return nil
+		return nil, nil
 	}
 
-	return chat
+	return chat, nil
 }
 
-func GetMaskedChats(chats []*Chat) []*Chat {
+func GetMaskedChats(chats []*Chat, errs ...error) ([]*Chat, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
+	}
+	var err error
 	for _, chat := range chats {
-		chat = GetMaskedChat(chat)
+		chat, err = GetMaskedChat(chat)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return chats
+	return chats, nil
 }
 
-func GetChatCount(owner, field, value string) int {
+func GetChatCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Chat{})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Chat{})
 }
 
-func GetChats(owner string) []*Chat {
+func GetChats(owner string) ([]*Chat, error) {
 	chats := []*Chat{}
 	err := adapter.Engine.Desc("created_time").Find(&chats, &Chat{Owner: owner})
 	if err != nil {
-		panic(err)
+		return chats, err
 	}
 
-	return chats
+	return chats, nil
 }
 
-func GetPaginationChats(owner string, offset, limit int, field, value, sortField, sortOrder string) []*Chat {
+func GetPaginationChats(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Chat, error) {
 	chats := []*Chat{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&chats)
 	if err != nil {
-		panic(err)
+		return chats, err
 	}
 
-	return chats
+	return chats, nil
 }
 
-func getChat(owner string, name string) *Chat {
+func getChat(owner string, name string) (*Chat, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	chat := Chat{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&chat)
 	if err != nil {
-		panic(err)
+		return &chat, err
 	}
 
 	if existed {
-		return &chat
+		return &chat, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetChat(id string) *Chat {
+func GetChat(id string) (*Chat, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getChat(owner, name)
 }
 
-func UpdateChat(id string, chat *Chat) bool {
+func UpdateChat(id string, chat *Chat) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getChat(owner, name) == nil {
-		return false
+	if c, err := getChat(owner, name); err != nil {
+		return false, err
+	} else if c == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(chat)
 	if err != nil {
-		panic(err)
+		return false, nil
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddChat(chat *Chat) bool {
+func AddChat(chat *Chat) (bool, error) {
 	if chat.Type == "AI" && chat.User2 == "" {
-		provider := getDefaultAiProvider()
+		provider, err := getDefaultAiProvider()
+		if err != nil {
+			return false, err
+		}
+
 		if provider != nil {
 			chat.User2 = provider.Name
 		}
@@ -130,23 +142,23 @@ func AddChat(chat *Chat) bool {
 
 	affected, err := adapter.Engine.Insert(chat)
 	if err != nil {
-		panic(err)
+		return false, nil
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteChat(chat *Chat) bool {
+func DeleteChat(chat *Chat) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{chat.Owner, chat.Name}).Delete(&Chat{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	if affected != 0 {
 		return DeleteChatMessages(chat.Name)
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Chat) GetId() string {

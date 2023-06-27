@@ -61,6 +61,7 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Signup application", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Roles", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "Permissions", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
+		{Name: "Groups", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "3rd-party logins", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Properties", Visible: false, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
@@ -75,7 +76,11 @@ func getBuiltInAccountItems() []*AccountItem {
 }
 
 func initBuiltInOrganization() bool {
-	organization := getOrganization("admin", "built-in")
+	organization, err := getOrganization("admin", "built-in")
+	if err != nil {
+		panic(err)
+	}
+
 	if organization != nil {
 		return true
 	}
@@ -88,6 +93,7 @@ func initBuiltInOrganization() bool {
 		WebsiteUrl:         "https://example.com",
 		Favicon:            fmt.Sprintf("%s/img/casbin/favicon.ico", conf.GetConfigString("staticBaseUrl")),
 		PasswordType:       "plain",
+		PasswordOptions:    []string{"AtLeast6"},
 		CountryCodes:       []string{"US", "ES", "CN", "FR", "DE", "GB", "JP", "KR", "VN", "ID", "SG", "IN"},
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
 		Tags:               []string{},
@@ -97,12 +103,19 @@ func initBuiltInOrganization() bool {
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
 	}
-	AddOrganization(organization)
+	_, err = AddOrganization(organization)
+	if err != nil {
+		panic(err)
+	}
+
 	return false
 }
 
 func initBuiltInUser() {
-	user := getUser("built-in", "admin")
+	user, err := getUser("built-in", "admin")
+	if err != nil {
+		panic(err)
+	}
 	if user != nil {
 		return
 	}
@@ -132,11 +145,18 @@ func initBuiltInUser() {
 		CreatedIp:         "127.0.0.1",
 		Properties:        make(map[string]string),
 	}
-	AddUser(user)
+	_, err = AddUser(user)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initBuiltInApplication() {
-	application := getApplication("admin", "app-built-in")
+	application, err := getApplication("admin", "app-built-in")
+	if err != nil {
+		panic(err)
+	}
+
 	if application != nil {
 		return
 	}
@@ -169,7 +189,10 @@ func initBuiltInApplication() {
 		ExpireInHours: 168,
 		FormOffset:    2,
 	}
-	AddApplication(application)
+	_, err = AddApplication(application)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func readTokenFromFile() (string, string) {
@@ -188,7 +211,11 @@ func readTokenFromFile() (string, string) {
 
 func initBuiltInCert() {
 	tokenJwtCertificate, tokenJwtPrivateKey := readTokenFromFile()
-	cert := getCert("admin", "cert-built-in")
+	cert, err := getCert("admin", "cert-built-in")
+	if err != nil {
+		panic(err)
+	}
+
 	if cert != nil {
 		return
 	}
@@ -206,11 +233,18 @@ func initBuiltInCert() {
 		Certificate:     tokenJwtCertificate,
 		PrivateKey:      tokenJwtPrivateKey,
 	}
-	AddCert(cert)
+	_, err = AddCert(cert)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initBuiltInLdap() {
-	ldap := GetLdap("ldap-built-in")
+	ldap, err := GetLdap("ldap-built-in")
+	if err != nil {
+		panic(err)
+	}
+
 	if ldap != nil {
 		return
 	}
@@ -227,11 +261,18 @@ func initBuiltInLdap() {
 		AutoSync:   0,
 		LastSync:   "",
 	}
-	AddLdap(ldap)
+	_, err = AddLdap(ldap)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initBuiltInProvider() {
-	provider := GetProvider(util.GetId("admin", "provider_captcha_default"))
+	provider, err := GetProvider(util.GetId("admin", "provider_captcha_default"))
+	if err != nil {
+		panic(err)
+	}
+
 	if provider != nil {
 		return
 	}
@@ -244,7 +285,10 @@ func initBuiltInProvider() {
 		Category:    "Captcha",
 		Type:        "Default",
 	}
-	AddProvider(provider)
+	_, err = AddProvider(provider)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initWebAuthn() {
@@ -252,7 +296,11 @@ func initWebAuthn() {
 }
 
 func initBuiltInModel() {
-	model := GetModel("built-in/model-built-in")
+	model, err := GetModel("built-in/model-built-in")
+	if err != nil {
+		panic(err)
+	}
+
 	if model != nil {
 		return
 	}
@@ -275,11 +323,17 @@ e = some(where (p.eft == allow))
 [matchers]
 m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`,
 	}
-	AddModel(model)
+	_, err = AddModel(model)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func initBuiltInPermission() {
-	permission := GetPermission("built-in/permission-built-in")
+	permission, err := GetPermission("built-in/permission-built-in")
+	if err != nil {
+		panic(err)
+	}
 	if permission != nil {
 		return
 	}
@@ -299,5 +353,8 @@ func initBuiltInPermission() {
 		Effect:       "Allow",
 		IsEnabled:    true,
 	}
-	AddPermission(permission)
+	_, err = AddPermission(permission)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -32,16 +32,18 @@ class SubscriptionListPage extends BaseListPage {
       owner: owner,
       name: `subscription_${randomName}`,
       createdTime: moment().format(),
+      displayName: `New Subscription - ${randomName}`,
       startDate: moment().format(),
       endDate: moment().add(defaultDuration, "d").format(),
-      displayName: `New Subscription - ${randomName}`,
-      tag: "",
-      users: [],
-      expireInDays: defaultDuration,
+      duration: defaultDuration,
+      description: "",
+      user: "",
+      plan: "",
+      isEnabled: true,
       submitter: this.props.account.name,
-      approver: "",
-      approveTime: "",
-      state: "Pending",
+      approver: this.props.account.name,
+      approveTime: moment().format(),
+      state: "Approved",
     };
   }
 
@@ -50,7 +52,7 @@ class SubscriptionListPage extends BaseListPage {
     SubscriptionBackend.addSubscription(newSubscription)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/subscription/${newSubscription.owner}/${newSubscription.name}`, mode: "add"});
+          this.props.history.push({pathname: `/subscriptions/${newSubscription.owner}/${newSubscription.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -91,7 +93,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/subscriptions/${text}`}>
+            <Link to={`/subscriptions/${record.owner}/${record.name}`}>
               {text}
             </Link>
           );
@@ -138,18 +140,32 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("duration"),
       },
       {
-        title: i18next.t("subscription:Sub plane"),
+        title: i18next.t("general:Plan"),
         dataIndex: "plan",
         key: "plan",
         width: "140px",
         ...this.getColumnSearchProps("plan"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/plans/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
-        title: i18next.t("subscription:Sub user"),
+        title: i18next.t("general:User"),
         dataIndex: "user",
         key: "user",
         width: "140px",
         ...this.getColumnSearchProps("user"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/users/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("general:State"),
@@ -158,6 +174,16 @@ class SubscriptionListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("state"),
+        render: (text, record, index) => {
+          switch (text) {
+          case "Approved":
+            return Setting.getTag("success", i18next.t("permission:Approved"));
+          case "Pending":
+            return Setting.getTag("error", i18next.t("permission:Pending"));
+          default:
+            return null;
+          }
+        },
       },
       {
         title: i18next.t("general:Action"),
@@ -168,7 +194,7 @@ class SubscriptionListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/subscription/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/subscriptions/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteSubscription(index)}
@@ -211,11 +237,13 @@ class SubscriptionListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    SubscriptionBackend.getSubscriptions("", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SubscriptionBackend.getSubscriptions(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
+        this.setState({
+          loading: false,
+        });
         if (res.status === "ok") {
           this.setState({
-            loading: false,
             data: res.data,
             pagination: {
               ...params.pagination,
@@ -227,9 +255,10 @@ class SubscriptionListPage extends BaseListPage {
         } else {
           if (Setting.isResponseDenied(res)) {
             this.setState({
-              loading: false,
               isAuthorized: false,
             });
+          } else {
+            Setting.showMessage("error", res.msg);
           }
         }
       });

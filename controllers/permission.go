@@ -37,13 +37,31 @@ func (c *ApiController) GetPermissions() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPermissions(owner)
+		permissions, err := object.GetPermissions(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = permissions
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPermissionCount(owner, field, value)))
-		permissions := object.GetPaginationPermissions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetPermissionCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		permissions, err := object.GetPaginationPermissions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(permissions, paginator.Nums())
 	}
 }
@@ -60,7 +78,12 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 		return
 	}
 
-	permissions := object.GetPermissionsBySubmitter(user.Owner, user.Name)
+	permissions, err := object.GetPermissionsBySubmitter(user.Owner, user.Name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(permissions, len(permissions))
 	return
 }
@@ -74,7 +97,12 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 // @router /get-permissions-by-role [get]
 func (c *ApiController) GetPermissionsByRole() {
 	id := c.Input().Get("id")
-	permissions := object.GetPermissionsByRole(id)
+	permissions, err := object.GetPermissionsByRole(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.ResponseOk(permissions, len(permissions))
 	return
 }
@@ -89,7 +117,13 @@ func (c *ApiController) GetPermissionsByRole() {
 func (c *ApiController) GetPermission() {
 	id := c.Input().Get("id")
 
-	c.Data["json"] = object.GetPermission(id)
+	permission, err := object.GetPermission(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = permission
 	c.ServeJSON()
 }
 

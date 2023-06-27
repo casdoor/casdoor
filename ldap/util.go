@@ -84,6 +84,7 @@ func stringInSlice(value string, list []string) bool {
 }
 
 func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) {
+	var err error
 	r := m.GetSearchRequest()
 
 	name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.FilterString())
@@ -93,11 +94,19 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 
 	if name == "*" && m.Client.IsOrgAdmin { // get all users from organization 'org'
 		if m.Client.IsGlobalAdmin && org == "*" {
-			filteredUsers = object.GetGlobalUsers()
+
+			filteredUsers, err = object.GetGlobalUsers()
+			if err != nil {
+				panic(err)
+			}
 			return filteredUsers, ldap.LDAPResultSuccess
 		}
 		if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
-			filteredUsers = object.GetUsers(org)
+			filteredUsers, err = object.GetUsers(org)
+			if err != nil {
+				panic(err)
+			}
+
 			return filteredUsers, ldap.LDAPResultSuccess
 		} else {
 			return nil, ldap.LDAPResultInsufficientAccessRights
@@ -112,13 +121,21 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			return nil, ldap.LDAPResultInsufficientAccessRights
 		}
 
-		user := object.GetUser(userId)
+		user, err := object.GetUser(userId)
+		if err != nil {
+			panic(err)
+		}
+
 		if user != nil {
 			filteredUsers = append(filteredUsers, user)
 			return filteredUsers, ldap.LDAPResultSuccess
 		}
 
-		organization := object.GetOrganization(util.GetId("admin", org))
+		organization, err := object.GetOrganization(util.GetId("admin", org))
+		if err != nil {
+			panic(err)
+		}
+
 		if organization == nil {
 			return nil, ldap.LDAPResultNoSuchObject
 		}
@@ -127,7 +144,11 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			return nil, ldap.LDAPResultNoSuchObject
 		}
 
-		users := object.GetUsersByTag(org, name)
+		users, err := object.GetUsersByTag(org, name)
+		if err != nil {
+			panic(err)
+		}
+
 		filteredUsers = append(filteredUsers, users...)
 		return filteredUsers, ldap.LDAPResultSuccess
 	}
@@ -137,7 +158,11 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 // TODO not handle salt yet
 // @return {md5}5f4dcc3b5aa765d61d8327deb882cf99
 func getUserPasswordWithType(user *object.User) string {
-	org := object.GetOrganizationByUser(user)
+	org, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		panic(err)
+	}
+
 	if org.PasswordType == "" || org.PasswordType == "plain" {
 		return user.Password
 	}

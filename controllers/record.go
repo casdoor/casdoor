@@ -42,14 +42,32 @@ func (c *ApiController) GetRecords() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetRecords()
+		records, err := object.GetRecords()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = records
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
 		filterRecord := &object.Record{Organization: organization}
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetRecordCount(field, value, filterRecord)))
-		records := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
+		count, err := object.GetRecordCount(field, value, filterRecord)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		records, err := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(records, paginator.Nums())
 	}
 }
@@ -71,7 +89,13 @@ func (c *ApiController) GetRecordsByFilter() {
 		return
 	}
 
-	c.Data["json"] = object.GetRecordsByField(record)
+	records, err := object.GetRecordsByField(record)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = records
 	c.ServeJSON()
 }
 

@@ -80,17 +80,44 @@ export function getCasParameters(params) {
   };
 }
 
+function getRawGetParameter(key) {
+  const fullUrl = window.location.href;
+  const token = fullUrl.split(`${key}=`)[1];
+  if (!token) {
+    return "";
+  }
+
+  let res = token.split("&")[0];
+  if (!res) {
+    return "";
+  }
+
+  res = decodeURIComponent(res);
+  return res;
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));
   const responseType = getRefinedValue(queries.get("response_type"));
-  const redirectUri = getRefinedValue(queries.get("redirect_uri"));
-  const scope = getRefinedValue(queries.get("scope"));
+
+  let redirectUri = getRawGetParameter("redirect_uri");
+  if (redirectUri === "") {
+    redirectUri = getRefinedValue(queries.get("redirect_uri"));
+  }
+
+  let scope = getRefinedValue(queries.get("scope"));
+  if (redirectUri.includes("#") && scope === "") {
+    scope = getRawGetParameter("scope");
+  }
 
   let state = getRefinedValue(queries.get("state"));
   if (state.startsWith("/auth/oauth2/login.php?wantsurl=")) {
     // state contains URL param encoding for Moodle, URLSearchParams automatically decoded it, so here encode it again
     state = encodeURIComponent(state);
+  }
+  if (redirectUri.includes("#") && state === "") {
+    state = getRawGetParameter("state");
   }
 
   const nonce = getRefinedValue(queries.get("nonce"));

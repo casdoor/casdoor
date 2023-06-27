@@ -48,109 +48,94 @@ func GetMaskedMessages(messages []*Message) []*Message {
 	return messages
 }
 
-func GetMessageCount(owner, organization, field, value string) int {
+func GetMessageCount(owner, organization, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	count, err := session.Count(&Message{Organization: organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return int(count)
+	return session.Count(&Message{Organization: organization})
 }
 
-func GetMessages(owner string) []*Message {
+func GetMessages(owner string) ([]*Message, error) {
 	messages := []*Message{}
 	err := adapter.Engine.Desc("created_time").Find(&messages, &Message{Owner: owner})
-	if err != nil {
-		panic(err)
-	}
-
-	return messages
+	return messages, err
 }
 
-func GetChatMessages(chat string) []*Message {
+func GetChatMessages(chat string) ([]*Message, error) {
 	messages := []*Message{}
 	err := adapter.Engine.Asc("created_time").Find(&messages, &Message{Chat: chat})
-	if err != nil {
-		panic(err)
-	}
-
-	return messages
+	return messages, err
 }
 
-func GetPaginationMessages(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) []*Message {
+func GetPaginationMessages(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Message, error) {
 	messages := []*Message{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&messages, &Message{Organization: organization})
-	if err != nil {
-		panic(err)
-	}
-
-	return messages
+	return messages, err
 }
 
-func getMessage(owner string, name string) *Message {
+func getMessage(owner string, name string) (*Message, error) {
 	if owner == "" || name == "" {
-		return nil
+		return nil, nil
 	}
 
 	message := Message{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&message)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	if existed {
-		return &message
+		return &message, nil
 	} else {
-		return nil
+		return nil, nil
 	}
 }
 
-func GetMessage(id string) *Message {
+func GetMessage(id string) (*Message, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getMessage(owner, name)
 }
 
-func UpdateMessage(id string, message *Message) bool {
+func UpdateMessage(id string, message *Message) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if getMessage(owner, name) == nil {
-		return false
+	if m, err := getMessage(owner, name); err != nil {
+		return false, err
+	} else if m == nil {
+		return false, nil
 	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(message)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddMessage(message *Message) bool {
+func AddMessage(message *Message) (bool, error) {
 	affected, err := adapter.Engine.Insert(message)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteMessage(message *Message) bool {
+func DeleteMessage(message *Message) (bool, error) {
 	affected, err := adapter.Engine.ID(core.PK{message.Owner, message.Name}).Delete(&Message{})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
-func DeleteChatMessages(chat string) bool {
+func DeleteChatMessages(chat string) (bool, error) {
 	affected, err := adapter.Engine.Delete(&Message{Chat: chat})
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
-	return affected != 0
+	return affected != 0, nil
 }
 
 func (p *Message) GetId() string {

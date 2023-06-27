@@ -37,13 +37,31 @@ func (c *ApiController) GetPlans() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
 	if limit == "" || page == "" {
-		c.Data["json"] = object.GetPlans(owner)
+		plans, err := object.GetPlans(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.Data["json"] = plans
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
-		paginator := pagination.SetPaginator(c.Ctx, limit, int64(object.GetPlanCount(owner, field, value)))
-		plan := object.GetPaginatedPlans(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		count, err := object.GetPlanCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		plan, err := object.GetPaginatedPlans(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
 		c.ResponseOk(plan, paginator.Nums())
 	}
 }
@@ -60,10 +78,18 @@ func (c *ApiController) GetPlan() {
 	id := c.Input().Get("id")
 	includeOption := c.Input().Get("includeOption") == "true"
 
-	plan := object.GetPlan(id)
+	plan, err := object.GetPlan(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	if includeOption {
-		options := object.GetPermissionsByRole(plan.Role)
+		options, err := object.GetPermissionsByRole(plan.Role)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		for _, option := range options {
 			plan.Options = append(plan.Options, option.DisplayName)
