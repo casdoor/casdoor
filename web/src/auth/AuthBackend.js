@@ -149,14 +149,3 @@ export function getCaptchaStatus(values) {
     },
   }).then(res => res.json());
 }
-
-export function setNewPassword(values) {
-  return fetch(`${Setting.ServerUrl}/api/change-current-user-password`, {
-    method: "POST",
-    credentials: "include",
-    body: JSON.stringify(values),
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}

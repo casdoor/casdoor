@@ -64,5 +64,7 @@ type ChangePasswordForm struct {
 	Application     string `json:"application"`
 	CurrentPassword string `json:"currentPassword"`
 	Password        string `json:"password"`
-	Confirm         string `json:"confirm"`
+	Code            string `json:"code"`
+	UserOwner       string `json:"userOwner"`
+	UserName        string `json:"userName"`
 }

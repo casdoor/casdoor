@@ -28,6 +28,11 @@ import (
 
 var Enforcer *casbin.Enforcer
 
+var methodAllowedIfPasswordChangeRequested = map[string]struct{}{
+	"/api/set-password": {},
+	"/api/login":        {},
+}
+
 func InitAuthz() {
 	var err error
 
@@ -107,7 +112,6 @@ p, *, *, POST, /api/invoice-payment, *, *
 p, *, *, POST, /api/notify-payment, *, *
 p, *, *, POST, /api/unlink, *, *
 p, *, *, POST, /api/set-password, *, *
-p, *, *, POST, /api/change-current-user-password, *, *
 p, *, *, POST, /api/send-verification-code, *, *
 p, *, *, GET, /api/get-captcha, *, *
 p, *, *, POST, /api/verify-captcha, *, *
@@ -164,7 +168,12 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
-	return res
+	return res && (user == nil || !user.PasswordChangeRequired || allowedIfPasswordChangeRequested(urlPath))
+}
+
+func allowedIfPasswordChangeRequested(key string) bool {
+	_, ok := methodAllowedIfPasswordChangeRequested[key]
+	return ok
 }
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {

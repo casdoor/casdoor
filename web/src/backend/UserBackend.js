@@ -93,20 +93,11 @@ export function getAffiliationOptions(url, code) {
   }).then(res => res.json());
 }
 
-export function setPassword(userOwner, userName, oldPassword, newPassword, code = "") {
-  const formData = new FormData();
-  formData.append("userOwner", userOwner);
-  formData.append("userName", userName);
-  formData.append("oldPassword", oldPassword);
-  formData.append("newPassword", newPassword);
-  if (code) {
-    formData.append("code", code);
-  }
-
+export function setPassword(values) {
   return fetch(`${Setting.ServerUrl}/api/set-password`, {
     method: "POST",
     credentials: "include",
-    body: formData,
+    body: JSON.stringify(values),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },

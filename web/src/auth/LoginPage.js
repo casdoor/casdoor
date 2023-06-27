@@ -18,6 +18,7 @@ import {LockOutlined, UserOutlined} from "@ant-design/icons";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
+import * as UserBackend from "../backend/UserBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
@@ -502,7 +503,7 @@ class LoginPage extends React.Component {
   }
 
   onChangePasswordFinish(values) {
-    AuthBackend.setNewPassword(values)
+    UserBackend.setPassword(values)
       .then((res) => {
         if (res.status === "ok") {
           const _values = {...this.state.values};

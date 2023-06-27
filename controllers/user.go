@@ -290,46 +290,55 @@ func (c *ApiController) GetEmailAndPhone() {
 // @Title SetPassword
 // @Tag Account API
 // @Description set password
-// @Param   userOwner   formData    string  true        "The owner of the user"
-// @Param   userName   formData    string  true        "The name of the user"
-// @Param   oldPassword   formData    string  true        "The old password of the user"
-// @Param   newPassword   formData    string  true        "The new password of the user"
+// @Param   form   body   form.ChangePasswordForm  true        "Change password information"
 // @Success 200 {object} controllers.Response The Response object
 // @router /set-password [post]
 func (c *ApiController) SetPassword() {
-	userOwner := c.Ctx.Request.Form.Get("userOwner")
-	userName := c.Ctx.Request.Form.Get("userName")
-	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
-	newPassword := c.Ctx.Request.Form.Get("newPassword")
-	code := c.Ctx.Request.Form.Get("code")
+	var changePasswordForm form.ChangePasswordForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &changePasswordForm)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	//if userOwner == "built-in" && userName == "admin" {
 	//	c.ResponseError(c.T("auth:Unauthorized operation"))
 	//	return
 	//}
 
-	if strings.Contains(newPassword, " ") {
+	if strings.Contains(changePasswordForm.Password, " ") {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
-	if len(newPassword) <= 5 {
+	if len(changePasswordForm.Password) <= 5 {
 		c.ResponseError(c.T("user:New password must have at least 6 characters"))
 		return
 	}
 
-	userId := util.GetId(userOwner, userName)
+	userOwner := changePasswordForm.UserOwner
+	userName := changePasswordForm.UserName
 
-	requestUserId := c.GetSessionUsername()
-	if requestUserId == "" && code == "" {
+	userId := ""
+	if userOwner != "" && userName != "" {
+		userId = util.GetId(userOwner, userName)
+	} else {
+		user := c.getCurrentUser()
+		if user != nil {
+			userId = user.GetId()
+		}
+	}
+
+	sessionUserName := c.GetSessionUsername()
+	if sessionUserName == "" && changePasswordForm.Code == "" {
 		return
-	} else if code == "" {
-		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
+	} else if changePasswordForm.Code == "" {
+		hasPermission, err := object.CheckUserPermission(sessionUserName, userId, true, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
 		}
 	} else {
-		if code != c.GetSession("verifiedCode") {
+		if changePasswordForm.Code != c.GetSession("verifiedCode") {
 			c.ResponseError("")
 			return
 		}
@@ -338,72 +347,17 @@ func (c *ApiController) SetPassword() {
 
 	targetUser := object.GetUser(userId)
 
-	if oldPassword != "" {
-		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+	if changePasswordForm.CurrentPassword != "" {
+		msg := object.CheckPassword(targetUser, changePasswordForm.CurrentPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
 			return
 		}
 	}
 
-	targetUser.Password = newPassword
+	targetUser.Password = changePasswordForm.Password
 	object.SetUserField(targetUser, "password", targetUser.Password)
 	c.ResponseOk()
-}
-
-// ChangeCurrentUserPassword ...
-// @Tag Account API
-// @Description change current user's password
-// @Param   form   body   form.ChangePasswordForm  true        "Change password information"
-// @Success 200 {object} Response The Response object
-// @router /api/change-current-user-password [POST]
-func (c *ApiController) ChangeCurrentUserPassword() {
-	resp := &Response{}
-
-	var changePasswordForm form.ChangePasswordForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &changePasswordForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	lang := c.GetAcceptLanguage()
-	password := changePasswordForm.CurrentPassword
-	user, msg := object.CheckUserPassword(changePasswordForm.Organization, c.getCurrentUser().Name, password, lang, false)
-
-	if msg != "" {
-		resp = &Response{Status: "error", Msg: msg}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-	if changePasswordForm.Confirm != changePasswordForm.Password {
-		resp = &Response{Status: "error", Msg: c.T("auth:Password doesn't match confirmation")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-	if changePasswordForm.CurrentPassword == changePasswordForm.Password {
-		resp = &Response{Status: "error", Msg: c.T("auth:Password shouldn't be the same as old one")}
-		c.Data["json"] = resp
-		c.ServeJSON()
-		return
-	}
-
-	c.ClearUserSession()
-	object.DeleteSessionId(util.GetSessionId(user.Owner, user.Name, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
-
-	util.LogInfo(c.Ctx, "API: [%s] logged out", user.Name)
-
-	user.Password = changePasswordForm.Password
-	object.SetUserField(user, "password", changePasswordForm.Password)
-
-	application := c.GetSessionApplication()
-	if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
-		c.ResponseOk(user)
-	} else {
-		c.ResponseOk(user, application.HomepageUrl)
-	}
 }
 
 // CompleteUserSessions
