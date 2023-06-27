@@ -10,8 +10,6 @@
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
     "Failed to login in: %s": "登录失败: %s",
     "Invalid token": "无效token",
-    "Password doesn't match confirmation" : "密碼與確認不符",
-    "Password shouldn't be the same as old one" : "密碼不應與舊密碼相同",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",

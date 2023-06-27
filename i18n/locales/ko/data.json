@@ -10,8 +10,6 @@
     "Failed to create user, user information is invalid: %s": "사용자를 만들지 못했습니다. 사용자 정보가 잘못되었습니다: %s",
     "Failed to login in: %s": "로그인에 실패했습니다.: %s",
     "Invalid token": "유효하지 않은 토큰",
-    "Password doesn't match confirmation" : "비밀번호가 확인과 일치하지 않습니다",
-    "Password shouldn't be the same as old one" : "암호는 이전 암호와 동일하면 안 됩니다.",
     "State expected: %s, but got: %s": "예상한 상태: %s, 실제 상태: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "제공자 계정: %s와 사용자 이름: %s (%s)은(는) 존재하지 않으며 %%s를 통해 새 계정으로 가입하는 것이 허용되지 않습니다. 다른 방법으로 가입하십시오",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "공급자 계정 %s과 사용자 이름 %s (%s)는 존재하지 않으며 새 계정으로 등록할 수 없습니다. IT 지원팀에 문의하십시오",
