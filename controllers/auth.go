@@ -40,12 +40,12 @@ var (
 	lock           sync.RWMutex
 )
 
-func codeToResponse(code *object.Code) *Response {
+func codeToResponse(code *object.Code, passwordChangeRequired bool) *Response {
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	}
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code}
+	return &Response{Status: "ok", Msg: "", Data: code.Code, Data2: passwordChangeRequired}
 }
 
 func tokenToResponse(token *object.Token) *Response {
@@ -58,6 +58,7 @@ func tokenToResponse(token *object.Token) *Response {
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
+	passwordChangeRequired := user.PasswordChangeRequired
 
 	allowed, err := object.CheckAccessPermission(userId, application)
 	if err != nil {
@@ -78,7 +79,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId}
+
+		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: passwordChangeRequired}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -94,9 +96,9 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 		code := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
-		resp = codeToResponse(code)
+		resp = codeToResponse(code, passwordChangeRequired)
 
-		if application.EnableSigninSession || application.HasPromptPage() {
+		if application.EnableSigninSession || application.HasPromptPage() || passwordChangeRequired {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
@@ -127,7 +129,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				resp.Data = st
 			}
 		}
-		if application.EnableSigninSession || application.HasPromptPage() {
+		if application.EnableSigninSession || application.HasPromptPage() || passwordChangeRequired {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
