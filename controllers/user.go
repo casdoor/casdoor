@@ -460,12 +460,12 @@ func (c *ApiController) SetPassword() {
 		}
 	}
 
-    msg := object.CheckPasswordComplexity(targetUser, changePasswordForm.Password)
+	msg := object.CheckPasswordComplexity(targetUser, changePasswordForm.Password)
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
-	
+
 	if requestUserId == userId {
 		c.ClearUserSession()
 		util.LogInfo(c.Ctx, "API: current user '[%s]' logged out", targetUser.Name)
@@ -477,10 +477,10 @@ func (c *ApiController) SetPassword() {
 
 	targetUser.Password = changePasswordForm.Password
 	_, err = object.SetUserField(targetUser, "password", targetUser.Password)
-    if err != nil {
-        c.ResponseError(err.Error())
-        return
-    }
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	c.ResponseOk()
 }
 

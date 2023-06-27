@@ -45,7 +45,7 @@ type User struct {
 	FirstName              string   `xorm:"varchar(100)" json:"firstName"`
 	LastName               string   `xorm:"varchar(100)" json:"lastName"`
 	Avatar                 string   `xorm:"varchar(500)" json:"avatar"`
-	AvatarType        string   `xorm:"varchar(100)" json:"avatarType"`
+	AvatarType             string   `xorm:"varchar(100)" json:"avatarType"`
 	PermanentAvatar        string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email                  string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified          bool     `json:"emailVerified"`
@@ -77,8 +77,8 @@ type User struct {
 	SignupApplication      string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash                   string   `xorm:"varchar(100)" json:"hash"`
 	PreHash                string   `xorm:"varchar(100)" json:"preHash"`
-	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
-	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
+	AccessKey              string   `xorm:"varchar(100)" json:"accessKey"`
+	AccessSecret           string   `xorm:"varchar(100)" json:"accessSecret"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
