@@ -68,9 +68,14 @@ class OrganizationEditPage extends React.Component {
 
   getApplications() {
     ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName)
-      .then((applications) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          applications: applications,
+          applications: res,
         });
       });
   }

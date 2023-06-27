@@ -41,7 +41,8 @@ func (c *ApiController) GetSubscriptions() {
 	if limit == "" || page == "" {
 		subscriptions, err := object.GetSubscriptions(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = subscriptions
@@ -77,7 +78,8 @@ func (c *ApiController) GetSubscription() {
 
 	subscription, err := object.GetSubscription(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = subscription

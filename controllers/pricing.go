@@ -41,7 +41,8 @@ func (c *ApiController) GetPricings() {
 	if limit == "" || page == "" {
 		pricings, err := object.GetPricings(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = pricings
@@ -77,7 +78,8 @@ func (c *ApiController) GetPricing() {
 
 	pricing, err := object.GetPricing(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = pricing

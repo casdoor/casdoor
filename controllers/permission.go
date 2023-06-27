@@ -41,7 +41,8 @@ func (c *ApiController) GetPermissions() {
 	if limit == "" || page == "" {
 		permissions, err := object.GetPermissions(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = permissions
@@ -50,13 +51,15 @@ func (c *ApiController) GetPermissions() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPermissionCount(owner, field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		permissions, err := object.GetPaginationPermissions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(permissions, paginator.Nums())
@@ -116,7 +119,8 @@ func (c *ApiController) GetPermission() {
 
 	permission, err := object.GetPermission(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = permission

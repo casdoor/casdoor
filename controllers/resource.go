@@ -53,7 +53,8 @@ func (c *ApiController) GetResources() {
 	if limit == "" || page == "" {
 		resources, err := object.GetResources(owner, user)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = resources
@@ -86,7 +87,8 @@ func (c *ApiController) GetResource() {
 
 	resource, err := object.GetResource(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = resource

@@ -41,7 +41,8 @@ func (c *ApiController) GetChats() {
 	if limit == "" || page == "" {
 		maskedChats, err := object.GetMaskedChats(object.GetChats(owner))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = maskedChats
@@ -77,7 +78,8 @@ func (c *ApiController) GetChat() {
 
 	maskedChat, err := object.GetMaskedChat(object.GetChat(id))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = maskedChat

@@ -41,7 +41,8 @@ func (c *ApiController) GetOrganizations() {
 	if limit == "" || page == "" {
 		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = maskedOrganizations

@@ -74,8 +74,12 @@ class EntryPage extends React.Component {
       });
 
       ApplicationBackend.getApplication("admin", pricing.application)
-        .then((application) => {
-          const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
+        .then((res) => {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+          const themeData = res !== null ? Setting.getThemeData(res.organizationObj, res) : Conf.ThemeDefault;
           this.props.updataThemeData(themeData);
         });
     };
