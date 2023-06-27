@@ -319,16 +319,13 @@ func (c *ApiController) SetPassword() {
 	userName := changePasswordForm.UserName
 
 	userId := ""
+	requestUserId := c.GetSessionUsername()
 	if userOwner != "" && userName != "" {
 		userId = util.GetId(userOwner, userName)
 	} else {
-		user := c.getCurrentUser()
-		if user != nil {
-			userId = user.GetId()
-		}
+		userId = requestUserId
 	}
 
-	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && changePasswordForm.Code == "" {
 		return
 	} else if changePasswordForm.Code == "" {
