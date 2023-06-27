@@ -328,49 +328,46 @@ class LoginPage extends React.Component {
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const callback = (res) => {
-            this.checkIfUserPasswordChangeRequired().then((result) => {
-              if (result) {
-                this.setState({
-                  values: values,
-                });
+            const responseType = values["type"];
+            if (responseType !== "saml" && res.data2) {
+              this.setState({
+                values: values,
+              });
 
-                this.setState({
-                  getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj()),
-                });
+              this.setState({
+                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj()),
+              });
 
-                return;
+              return;
+            }
+
+            if (responseType === "login") {
+              if (res.msg === RequiredMfa) {
+                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
+              } else {
+                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+                const link = Setting.getFromLink();
+                Setting.goToLink(link);
               }
-
-              const responseType = values["type"];
-
-              if (responseType === "login") {
-                if (res.msg === RequiredMfa) {
-                  Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-                } else {
-                  Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-                  const link = Setting.getFromLink();
-                  Setting.goToLink(link);
-                }
-              } else if (responseType === "code") {
-                this.postCodeLoginAction(res);
-              } else if (responseType === "token" || responseType === "id_token") {
-                const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
-                const accessToken = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
-              } else if (responseType === "saml") {
-                if (res.data2.method === "POST") {
-                  this.setState({
-                    samlResponse: res.data,
-                    redirectUrl: res.data2.redirectUrl,
-                    relayState: oAuthParams.relayState,
-                  });
-                } else {
-                  const SAMLResponse = res.data;
-                  const redirectUri = res.data2.redirectUrl;
-                  Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
-                }
+            } else if (responseType === "code") {
+              this.postCodeLoginAction(res);
+            } else if (responseType === "token" || responseType === "id_token") {
+              const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
+              const accessToken = res.data;
+              Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+            } else if (responseType === "saml") {
+              if (res.data2.method === "POST") {
+                this.setState({
+                  samlResponse: res.data,
+                  redirectUrl: res.data2.redirectUrl,
+                  relayState: oAuthParams.relayState,
+                });
+              } else {
+                const SAMLResponse = res.data;
+                const redirectUri = res.data2.redirectUrl;
+                Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
               }
-            });
+            }
           };
 
           if (res.status === "ok") {
@@ -396,14 +393,6 @@ class LoginPage extends React.Component {
           }
         });
     }
-  }
-
-  checkIfUserPasswordChangeRequired() {
-    return AuthBackend.getAccount().then((res) => {
-      if (res.status === "ok") {
-        return res.data.passwordChangeRequired;
-      }
-    });
   }
 
   renderChangePasswordForm(application) {
