@@ -39,7 +39,7 @@ func (c *ApiController) GetOrganizations() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
