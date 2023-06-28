@@ -96,6 +96,8 @@
     "Signup items": "Les éléments d'inscription",
     "Signup items - Tooltip": "Eléments à remplir par les utilisateurs lors de l'inscription de nouveaux comptes",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL de la page d'inscription copiée avec succès dans le presse-papiers, veuillez la coller dans la fenêtre de navigation privée ou dans un autre navigateur",
+    "Tags": "Étiquettes",
+    "Tags - Tooltip": "Collection d'étiquettes disponibles pour les utilisateurs à choisir",
     "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte",
     "Token expire": "Le jeton expire",
     "Token expire - Tooltip": "Temps d'expiration de jeton d'accès",

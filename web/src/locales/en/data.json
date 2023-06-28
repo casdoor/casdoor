@@ -96,6 +96,8 @@
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Items for users to fill in when registering new accounts",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+    "Tags": "Tags",
+    "Tags - Tooltip": "Collection of tags available for users to choose from",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account",
     "Token expire": "Token expire",
     "Token expire - Tooltip": "Access token expiration time",
