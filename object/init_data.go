@@ -145,6 +145,9 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.RedirectUris == nil {
 			application.RedirectUris = []string{}
 		}
+		if application.Tags == nil {
+			application.Tags = []string{}
+		}
 	}
 	for _, permission := range data.Permissions {
 		if permission.Actions == nil {

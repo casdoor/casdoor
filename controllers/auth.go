@@ -69,6 +69,15 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
+	// check user's tag
+	if !user.IsGlobalAdmin && !user.IsAdmin && len(application.Tags) > 0 {
+		// only users with the tag that is listed in the application tags can login
+		if !util.InSlice(application.Tags, user.Tag) {
+			c.ResponseError(fmt.Sprintf(c.T("auth:User's tag: %s is not listed in the application's tags"), user.Tag))
+			return
+		}
+	}
+
 	if form.Password != "" && user.IsMfaEnabled() {
 		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
 		resp = &Response{Status: object.NextMfa, Data: user.GetPreferredMfaProps(true)}

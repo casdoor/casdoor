@@ -127,6 +127,9 @@ class ApplicationEditPage extends React.Component {
         if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
           application.grantTypes = ["authorization_code"];
         }
+        if (application.tags === null) {
+          application.tags = [];
+        }
         this.setState({
           application: application,
         });
@@ -303,6 +306,18 @@ class ApplicationEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Tags"), i18next.t("application:Tags - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.application.tags} onChange={(value => {this.updateApplicationField("tags", value);})}>
+              {
+                this.state.application.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>

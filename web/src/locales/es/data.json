@@ -96,6 +96,8 @@
     "Signup items": "Artículos de registro",
     "Signup items - Tooltip": "Elementos para que los usuarios los completen al registrar nuevas cuentas",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "La URL de la página de registro se ha copiado correctamente en el portapapeles. Por favor, péguela en una ventana de incógnito o en otro navegador",
+    "Tags": "Etiquetas",
+    "Tags - Tooltip": "Colección de etiquetas disponibles para que los usuarios elijan",
     "The application does not allow to sign up new account": "La aplicación no permite registrarse una cuenta nueva",
     "Token expire": "Token expirado",
     "Token expire - Tooltip": "Tiempo de expiración del token de acceso",

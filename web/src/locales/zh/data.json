@@ -96,6 +96,8 @@
     "Signup items": "注册项",
     "Signup items - Tooltip": "注册用户注册时需要填写的项目",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "注册页面URL已成功复制到剪贴板，请粘贴到当前浏览器的隐身模式窗口或另一个浏览器访问",
+    "Tags": "标签集合",
+    "Tags - Tooltip": "可供用户选择的标签集合",
     "The application does not allow to sign up new account": "该应用不允许注册新账户",
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
