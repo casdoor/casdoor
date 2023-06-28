@@ -31,6 +31,8 @@ var Enforcer *casbin.Enforcer
 var methodAllowedIfPasswordChangeRequested = map[string]struct{}{
 	"/api/set-password": {},
 	"/api/login":        {},
+	"/api/logout":       {},
+	"/api/login/oauth":  {},
 }
 
 func InitAuthz() {
