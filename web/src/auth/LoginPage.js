@@ -35,6 +35,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
+import * as PasswordChecker from "../common/PasswordChecker";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -446,11 +447,11 @@ class LoginPage extends React.Component {
               </Form.Item>
               <Form.Item
                 name="currentPassword"
-                label={i18next.t("changePassword:Current password")}
+                label={i18next.t("user:Old Password")}
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("changePassword:Please input your old password"),
+                    message: i18next.t("user:Empty input!"),
                   },
                 ]}
                 hasFeedback
@@ -459,12 +460,21 @@ class LoginPage extends React.Component {
               </Form.Item>
               <Form.Item
                 name="password"
-                label={i18next.t("changePassword:New password")}
+                label={i18next.t("user:New Password")}
                 rules={[
                   {
                     required: true,
-                    min: 6,
-                    message: i18next.t("changePassword:Please input your password, at least 6 characters!"),
+                    message: i18next.t("user:Empty input!"),
+                  },
+                  {
+                    validator(rule, value) {
+                      const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                      if (errorMsg === "") {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject(errorMsg);
+                      }
+                    },
                   },
                 ]}
                 hasFeedback
@@ -473,13 +483,13 @@ class LoginPage extends React.Component {
               </Form.Item>
               <Form.Item
                 name="confirm"
-                label={i18next.t("changePassword:Re-enter new")}
+                label={i18next.t("user:Re-enter New")}
                 dependencies={["password"]}
                 hasFeedback
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("changePassword:Please confirm your password!"),
+                    message: i18next.t("user:Empty input!"),
                   },
                   ({getFieldValue}) => ({
                     validator(rule, value) {
@@ -487,7 +497,7 @@ class LoginPage extends React.Component {
                         return Promise.resolve();
                       }
 
-                      return Promise.reject(i18next.t("changePassword:Your confirmed password is inconsistent with the password!"));
+                      return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
                     },
                   }),
                 ]}
