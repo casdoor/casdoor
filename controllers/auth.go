@@ -247,7 +247,7 @@ func isProxyProviderType(providerType string) bool {
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
 // @Param   form   body   controllers.AuthForm  true        "Login information"
-// @Success 200 {object} Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{}

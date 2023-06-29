@@ -28,7 +28,7 @@ import (
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
 // @param type	form	string	true	"MFA auth type"
-// @Success 200 {object}   The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/initiate [post]
 func (c *ApiController) MfaSetupInitiate() {
 	owner := c.Ctx.Request.Form.Get("owner")

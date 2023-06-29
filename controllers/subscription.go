@@ -71,7 +71,7 @@ func (c *ApiController) GetSubscriptions() {
 // @Tag Subscription API
 // @Description get subscription
 // @Param   id     query    string  true        "The id ( owner/name ) of the subscription"
-// @Success 200 {object} object.subscription The Response object
+// @Success 200 {object} object.Subscription The Response object
 // @router /get-subscription [get]
 func (c *ApiController) GetSubscription() {
 	id := c.Input().Get("id")
