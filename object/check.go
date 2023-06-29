@@ -28,20 +28,10 @@ import (
 	goldap "github.com/go-ldap/ldap/v3"
 )
 
-var (
-	reWhiteSpace     *regexp.Regexp
-	reFieldWhiteList *regexp.Regexp
-)
-
 const (
 	SigninWrongTimesLimit     = 5
 	LastSignWrongTimeDuration = time.Minute * 15
 )
-
-func init() {
-	reWhiteSpace, _ = regexp.Compile(`\s`)
-	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
-}
 
 func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
 	if organization == nil {
@@ -58,7 +48,7 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 		if util.IsEmailValid(form.Username) {
 			return i18n.Translate(lang, "check:Username cannot be an email address")
 		}
-		if reWhiteSpace.MatchString(form.Username) {
+		if util.ReWhiteSpace.MatchString(form.Username) {
 			return i18n.Translate(lang, "check:Username cannot contain white spaces")
 		}
 
@@ -292,10 +282,6 @@ func CheckUserPassword(organization string, username string, password string, la
 		}
 	}
 	return user, ""
-}
-
-func filterField(field string) bool {
-	return reFieldWhiteList.MatchString(field)
 }
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {

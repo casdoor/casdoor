@@ -25,13 +25,13 @@ import (
 var (
 	rePhone          *regexp.Regexp
 	ReWhiteSpace     *regexp.Regexp
-	reFieldWhiteList *regexp.Regexp
+	ReFieldWhiteList *regexp.Regexp
 )
 
 func init() {
 	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
-	reFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
+	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 }
 
 func IsEmailValid(email string) bool {
@@ -78,5 +78,5 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 }
 
 func FilterField(field string) bool {
-	return reFieldWhiteList.MatchString(field)
+	return ReFieldWhiteList.MatchString(field)
 }
