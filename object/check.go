@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -383,8 +382,8 @@ func CheckUsername(username string, lang string) string {
 	}
 
 	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
-	re, _ := regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
-	if !re.MatchString(username) {
+
+	if !util.ReUserName.MatchString(username) {
 		return i18n.Translate(lang, "check:The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.")
 	}
 

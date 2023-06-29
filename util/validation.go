@@ -26,12 +26,14 @@ var (
 	rePhone          *regexp.Regexp
 	ReWhiteSpace     *regexp.Regexp
 	ReFieldWhiteList *regexp.Regexp
+	ReUserName       *regexp.Regexp
 )
 
 func init() {
 	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
 	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
+	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 }
 
 func IsEmailValid(email string) bool {
