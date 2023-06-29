@@ -132,9 +132,11 @@ class ApplicationEditPage extends React.Component {
         if (res.grantTypes === null || res.grantTypes === undefined || res.grantTypes.length === 0) {
           res.grantTypes = ["authorization_code"];
         }
-        if (application.tags === null) {
-          application.tags = [];
+
+        if (res.tags === null || res.tags === undefined) {
+          res.tags = [];
         }
+
         this.setState({
           application: res,
         });
