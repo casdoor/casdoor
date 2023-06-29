@@ -38,8 +38,17 @@ func (c *ApiController) GetOrganizations() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
+	isGlobalAdmin := c.IsGlobalAdmin()
 	if limit == "" || page == "" {
-		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+		var maskedOrganizations []*object.Organization
+		var err error
+
+		if isGlobalAdmin {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		} else {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+		}
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -48,7 +57,6 @@ func (c *ApiController) GetOrganizations() {
 		c.Data["json"] = maskedOrganizations
 		c.ServeJSON()
 	} else {
-		isGlobalAdmin := c.IsGlobalAdmin()
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 			if err != nil {
