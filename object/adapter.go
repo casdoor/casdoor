@@ -57,7 +57,7 @@ func CreateTables(createDatabase bool) {
 	if createDatabase {
 		err := adapter.CreateDatabase()
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 	}
 
