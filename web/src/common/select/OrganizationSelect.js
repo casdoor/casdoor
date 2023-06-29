@@ -17,7 +17,6 @@ import {Select} from "antd";
 import i18next from "i18next";
 import * as OrganizationBackend from "../../backend/OrganizationBackend";
 import * as Setting from "../../Setting";
-import * as Conf from "../../Conf";
 
 function OrganizationSelect(props) {
   const {onChange, initValue, style, onSelect, withAll, className} = props;
@@ -28,9 +27,9 @@ function OrganizationSelect(props) {
     if (props.organizations === undefined) {
       getOrganizations();
     }
-    window.addEventListener(Conf.StorageOrganizationsChangedEvent, getOrganizations);
+    window.addEventListener("storageOrganizationsChanged", getOrganizations);
     return function() {
-      window.removeEventListener(Conf.StorageOrganizationsChangedEvent, getOrganizations);
+      window.removeEventListener("storageOrganizationsChanged", getOrganizations);
     };
   }, [value]);
 
@@ -59,8 +58,8 @@ function OrganizationSelect(props) {
 
     if (withAll) {
       items.unshift({
-        label: i18next.t(`organization:${Conf.DefaultOrganization}`),
-        value: Conf.DefaultOrganization,
+        label: i18next.t("organization:All"),
+        value: "All",
       });
     }
 

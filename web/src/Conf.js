@@ -32,8 +32,3 @@ export const ThemeDefault = {
 };
 
 export const CustomFooter = null;
-
-export const DefaultOrganization = "All"; // i18next.t("organization:All")
-
-export const StorageOrganizationChangedEvent = "storageOrganizationChanged";
-export const StorageOrganizationsChangedEvent = "storageOrganizationsChanged";

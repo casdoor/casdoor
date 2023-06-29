@@ -25,7 +25,6 @@ import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
 import moment from "moment";
-import {DefaultOrganization} from "./Conf";
 
 const {Option} = Select;
 
@@ -1168,24 +1167,24 @@ export function inIframe() {
 
 export function getOrganization() {
   const organization = localStorage.getItem("organization");
-  return organization !== null ? organization : DefaultOrganization;
+  return organization !== null ? organization : "All";
 }
 
 export function setOrganization(organization) {
   localStorage.setItem("organization", organization);
-  window.dispatchEvent(new Event(Conf.StorageOrganizationChangedEvent));
+  window.dispatchEvent(new Event("storageOrganizationChanged"));
 }
 
 export function getRequestOrganization(account) {
   if (isAdminUser(account)) {
-    return getOrganization() === DefaultOrganization ? account.owner : getOrganization();
+    return getOrganization() === "All" ? account.owner : getOrganization();
   }
   return account.owner;
 }
 
 export function isDefaultOrganizationSelected(account) {
   if (isAdminUser(account)) {
-    return getOrganization() === DefaultOrganization;
+    return getOrganization() === "All";
   }
   return false;
 }

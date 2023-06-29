@@ -21,7 +21,6 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import * as Conf from "./Conf";
 
 class OrganizationListPage extends BaseListPage {
   newOrganization() {
@@ -84,7 +83,7 @@ class OrganizationListPage extends BaseListPage {
         if (res.status === "ok") {
           this.props.history.push({pathname: `/organizations/${newOrganization.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
-          window.dispatchEvent(new Event(Conf.StorageOrganizationsChangedEvent));
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
@@ -105,7 +104,7 @@ class OrganizationListPage extends BaseListPage {
               ...this.state.pagination,
               total: this.state.pagination.total - 1},
           });
-          window.dispatchEvent(new Event(Conf.StorageOrganizationsChangedEvent));
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }
