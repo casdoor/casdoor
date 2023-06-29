@@ -403,7 +403,7 @@ class App extends Component {
             <OrganizationSelect
               initValue={Setting.getOrganization()}
               withAll={true}
-              style={{width: "15%", display: "flex"}}
+              style={{marginRight: "20px", width: "180px", display: "flex"}}
               onChange={(value) => {
                 Setting.setOrganization(value);
               }}
@@ -663,7 +663,7 @@ class App extends Component {
         this.props.history.push(key);
       }
     };
-    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(15% + 260px)" : "260px";
+    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
