@@ -397,7 +397,7 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
-          {Setting.isAdminUser(this.state.account) &&
+          {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
             <OrganizationSelect
               initValue={Setting.getOrganization()}
               withAll={true}
@@ -653,7 +653,7 @@ class App extends Component {
         this.props.history.push(key);
       }
     };
-    const styleRight = Setting.isAdminUser(this.state.account) ? "calc(15% + 240px)" : "280px";
+    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(15% + 260px)" : "260px";
     return (
       <Layout id="parent-area">
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
@@ -683,7 +683,7 @@ class App extends Component {
               items={this.getMenuItems()}
               mode={"horizontal"}
               selectedKeys={[this.state.selectedMenuKey]}
-              style={{position: "absolute", left: "145px", right: styleRight}}
+              style={{position: "absolute", left: "145px", right: menuStyleRight}}
             />
           }
           {
