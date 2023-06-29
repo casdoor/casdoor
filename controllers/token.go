@@ -195,6 +195,7 @@ func (c *ApiController) GetOAuthToken() {
 	host := c.Ctx.Request.Host
 	oAuthtoken, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	if err != nil {
+		util.LogError(c.Ctx, "OAuth token generation error: %s", err.Error())
 		c.ResponseError(err.Error())
 		return
 	}
