@@ -18,7 +18,8 @@
     "The login method: login with password is not enabled for the application": "El método de inicio de sesión: inicio de sesión con contraseña no está habilitado para la aplicación",
     "The provider: %s is not enabled for the application": "El proveedor: %s no está habilitado para la aplicación",
     "Unauthorized operation": "Operación no autorizada",
-    "Unknown authentication type (not password or provider), form = %s": "Tipo de autenticación desconocido (no es contraseña o proveedor), formulario = %s"
+    "Unknown authentication type (not password or provider), form = %s": "Tipo de autenticación desconocido (no es contraseña o proveedor), formulario = %s",
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
   },
   "cas": {
     "Service %s and %s do not match": "Los servicios %s y %s no coinciden"

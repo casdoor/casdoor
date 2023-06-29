@@ -96,6 +96,7 @@
     "Signup items": "Registrierungs Items",
     "Signup items - Tooltip": "Items, die Benutzer ausfüllen müssen, wenn sie neue Konten registrieren",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Die URL der Registrierungsseite wurde in die Zwischenablage kopiert. Bitte fügen Sie sie in einen Inkognito-Tab oder einen anderen Browser ein",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "Die Anwendung erlaubt es nicht, ein neues Konto zu registrieren",
     "Token expire": "Token läuft ab",
     "Token expire - Tooltip": "Ablaufzeit des Access-Tokens",

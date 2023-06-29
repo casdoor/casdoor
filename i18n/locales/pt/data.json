@@ -18,7 +18,8 @@
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s"
+    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"

@@ -18,7 +18,8 @@
     "The login method: login with password is not enabled for the application": "Метод входа: вход с паролем не включен для приложения",
     "The provider: %s is not enabled for the application": "Провайдер: %s не включен для приложения",
     "Unauthorized operation": "Несанкционированная операция",
-    "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s"
+    "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s",
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
   },
   "cas": {
     "Service %s and %s do not match": "Сервисы %s и %s не совпадают"
