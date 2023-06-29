@@ -43,7 +43,7 @@ func (c *ApiController) GetOrganizations() {
 		var maskedOrganizations []*object.Organization
 		var err error
 
-		if (isGlobalAdmin) {
+		if isGlobalAdmin {
 			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
 		} else {
 			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
