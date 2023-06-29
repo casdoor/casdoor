@@ -234,6 +234,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	user = refineUser(user)
 	if user.PasswordChangeRequired {
 		user.Permissions = []*Permission{}
+		user.Roles = []*Role{}
 	}
 
 	_, originBackend := getOriginFromHost(host)
