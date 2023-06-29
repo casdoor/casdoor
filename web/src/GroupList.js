@@ -49,8 +49,9 @@ class GroupListPage extends BaseListPage {
 
   newGroup() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `group_${randomName}`,
       createdTime: moment().format(),
       updatedTime: moment().format(),
@@ -251,7 +252,7 @@ class GroupListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    GroupBackend.getGroups(this.state.owner, false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    GroupBackend.getGroups(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), false, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

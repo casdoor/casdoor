@@ -17,6 +17,9 @@ import {Button, Input, Result, Space} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import i18next from "i18next";
+import * as Setting from "./Setting";
+import * as Conf from "./Conf";
+import {DefaultOrganization} from "./Conf";
 
 class BaseListPage extends React.Component {
   constructor(props) {
@@ -33,6 +36,22 @@ class BaseListPage extends React.Component {
       searchedColumn: "",
       isAuthorized: true,
     };
+  }
+
+  handleOrganizationChange = () => {
+    const {pagination} = this.state;
+    this.fetch({pagination});
+  };
+
+  componentDidMount() {
+    window.addEventListener(Conf.StorageOrganizationChangedEvent, this.handleOrganizationChange);
+    if (!Setting.isAdminUser(this.props.account)) {
+      Setting.setOrganization(DefaultOrganization);
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(Conf.StorageOrganizationChangedEvent, this.handleOrganizationChange);
   }
 
   UNSAFE_componentWillMount() {
