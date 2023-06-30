@@ -200,6 +200,22 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
+func (u *User) setPasswordChangeRequirement() {
+	if u.passwordChangingAllowed() {
+		u.PasswordChangeRequired = true
+	}
+}
+
+func (u *User) clearUnsupportedPasswordChangeRequirement() {
+	if !u.passwordChangingAllowed() && u.PasswordChangeRequired {
+		u.PasswordChangeRequired = false
+	}
+}
+
+func (u *User) passwordChangingAllowed() bool {
+	return u.Type != "" || u.Ldap == ""
+}
+
 func GetGlobalUserCount(field, value string) (int64, error) {
 	session := GetSession("", -1, -1, field, value, "", "")
 	return session.Count(&User{})
@@ -542,6 +558,7 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 		return 0, err
 	}
 
+	user.clearUnsupportedPasswordChangeRequirement()
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		return 0, err
@@ -579,6 +596,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 			return false, err
 		}
 	}
+	user.clearUnsupportedPasswordChangeRequirement()
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
@@ -633,7 +651,7 @@ func AddUser(user *User) (bool, error) {
 		return false, err
 	}
 	user.Ranking = int(count + 1)
-	user.PasswordChangeRequired = true
+	user.setPasswordChangeRequirement()
 
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
@@ -665,7 +683,7 @@ func AddUsers(users []*User) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		user.PasswordChangeRequired = true
+		user.setPasswordChangeRequirement()
 	}
 
 	affected, err := adapter.Engine.Insert(users)

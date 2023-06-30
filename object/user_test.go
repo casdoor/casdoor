@@ -133,3 +133,65 @@ func TestGetEmailsForUsers(t *testing.T) {
 	text := strings.Join(emails, "\n")
 	println(text)
 }
+
+func Test_passwordChangingAllowed(t *testing.T) {
+	tests := []struct {
+		name     string
+		userType string
+		ldap     string
+		expected bool
+	}{
+		{
+			name:     "built-in",
+			userType: "normal-user",
+			ldap:     "",
+			expected: true,
+		},
+		{
+			name:     "ldap",
+			userType: "",
+			ldap:     "123",
+			expected: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := User{Type: tt.userType, Ldap: tt.ldap}
+			actual := u.passwordChangingAllowed()
+			if actual != tt.expected {
+				t.Errorf("passwordChangingAllowed() expected %t actual %t", tt.expected, actual)
+			}
+		})
+	}
+}
+
+func Test_clearUnsupportedPasswordChangeRequirement(t *testing.T) {
+	tests := []struct {
+		name     string
+		userType string
+		ldap     string
+		expected bool
+	}{
+		{
+			name:     "built-in",
+			userType: "normal-user",
+			ldap:     "",
+			expected: true,
+		},
+		{
+			name:     "ldap",
+			userType: "",
+			ldap:     "123",
+			expected: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := User{Type: tt.userType, Ldap: tt.ldap, PasswordChangeRequired: true}
+			u.clearUnsupportedPasswordChangeRequirement()
+			if u.PasswordChangeRequired != tt.expected {
+				t.Errorf("pclearUnsupportedPasswordChangeRequirement() expected %t actual %t", tt.expected, u.PasswordChangeRequired)
+			}
+		})
+	}
+}
