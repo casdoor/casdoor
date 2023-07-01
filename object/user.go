@@ -160,8 +160,8 @@ type User struct {
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`
-	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes,omitempty"`
-	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret,omitempty"`
+	RecoveryCodes       []string              `xorm:"varchar(1000)" json:"recoveryCodes"`
+	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret"`
 	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`

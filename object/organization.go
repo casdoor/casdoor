@@ -476,10 +476,18 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	return session.Commit()
 }
 
-func (org *Organization) HasRequiredMfa() bool {
+func IsNeedPromptMfa(org *Organization, user *User) bool {
 	for _, item := range org.MfaItems {
 		if item.Rule == "Required" {
-			return true
+			if item.Name == EmailType && !user.MfaEmailEnabled {
+				return true
+			}
+			if item.Name == SmsType && !user.MfaPhoneEnabled {
+				return true
+			}
+			if item.Name == TotpType && user.TotpSecret == "" {
+				return true
+			}
 		}
 	}
 	return false

@@ -26,18 +26,38 @@ export const mfaAuth = "mfaAuth";
 export const mfaSetup = "mfaSetup";
 
 export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method, user}) => {
-  const [dest, setDest] = React.useState(mfaProps.secret ?? "");
+  const [dest, setDest] = React.useState("");
   const [form] = Form.useForm();
 
   useEffect(() => {
+    if (method === mfaAuth) {
+      setDest(mfaProps.secret);
+      return;
+    }
     if (mfaProps.mfaType === SmsMfaType) {
       setDest(user.phone);
+      return;
     }
 
     if (mfaProps.mfaType === EmailMfaType) {
       setDest(user.email);
     }
   }, [mfaProps.mfaType]);
+
+  const isShowText = () => {
+    // eslint-disable-next-line no-console
+    console.log(mfaProps.secret);
+    if (method === mfaAuth) {
+      return true;
+    }
+    if (mfaProps.mfaType === SmsMfaType && user.phone !== "") {
+      return true;
+    }
+    if (mfaProps.mfaType === EmailMfaType && user.email !== "") {
+      return true;
+    }
+    return false;
+  };
 
   const isEmail = () => {
     return mfaProps.mfaType === EmailMfaType;
@@ -52,7 +72,7 @@ export const MfaSmsVerifyForm = ({mfaProps, application, onFinish, method, user}
         countryCode: mfaProps.countryCode,
       }}
     >
-      {dest !== "" ?
+      {isShowText() ?
         <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
           {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
         </div> :

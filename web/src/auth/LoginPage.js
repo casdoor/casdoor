@@ -255,18 +255,13 @@ class LoginPage extends React.Component {
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
 
-    if (Setting.hasPromptPage(application) || resp.msg === RequiredMfa) {
+    if (Setting.hasPromptPage(application)) {
       AuthBackend.getAccount()
         .then((res) => {
           if (res.status === "ok") {
             const account = res.data;
             account.organization = res.data2;
             this.onUpdateAccount(account);
-
-            if (resp.msg === RequiredMfa) {
-              Setting.goToLink(`/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&promptType=mfa`);
-              return;
-            }
 
             if (Setting.isPromptAnswered(account, application)) {
               Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
@@ -352,23 +347,24 @@ class LoginPage extends React.Component {
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const callback = (res) => {
+            if (res.msg === RequiredMfa) {
+              AuthBackend.getAccount().then((res) => {
+                if (res.status === "ok") {
+                  const account = res.data;
+                  account.organization = res.data2;
+                  this.onUpdateAccount(account);
+                }
+              });
+              Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
+              return;
+            }
+
             const responseType = values["type"];
 
             if (responseType === "login") {
-              if (res.msg === RequiredMfa) {
-                AuthBackend.getAccount().then((res) => {
-                  if (res.status === "ok") {
-                    const account = res.data;
-                    account.organization = res.data2;
-                    this.onUpdateAccount(account);
-                  }
-                });
-                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-              } else {
-                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-                const link = Setting.getFromLink();
-                Setting.goToLink(link);
-              }
+              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+              const link = Setting.getFromLink();
+              Setting.goToLink(link);
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
@@ -391,23 +387,25 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            callback(res);
-          } else if (res.status === NextMfa) {
-            this.setState({
-              getVerifyTotp: () => {
-                return (
-                  <MfaAuthVerifyForm
-                    mfaProps={res.data}
-                    formValues={values}
-                    oAuthParams={oAuthParams}
-                    application={this.getApplicationObj()}
-                    onFail={() => {
-                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
-                    }}
-                    onSuccess={(res) => callback(res)}
-                  />);
-              },
-            });
+            if (res.msg === NextMfa) {
+              this.setState({
+                getVerifyTotp: () => {
+                  return (
+                    <MfaAuthVerifyForm
+                      mfaProps={res.data}
+                      formValues={values}
+                      oAuthParams={oAuthParams}
+                      application={this.getApplicationObj()}
+                      onFail={() => {
+                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                      }}
+                      onSuccess={(res) => callback(res)}
+                    />);
+                },
+              });
+            } else {
+              callback(res);
+            }
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }

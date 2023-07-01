@@ -189,7 +189,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	if vform.Method == MfaSetupVerification {
 		c.SetSession(object.MfaSmsCountryCodeSession, vform.CountryCode)
-		c.SetSession(object.MfaSmsDestSession, vform.Dest)
+		c.SetSession(object.MfaDestSession, vform.Dest)
 	}
 
 	if sendResp != nil {

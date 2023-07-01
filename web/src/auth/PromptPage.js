@@ -23,7 +23,7 @@ import AffiliationSelect from "../common/select/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
-import MfaSetupPage from "./MfaSetupPage";
+import MfaSetupPage, {EmailMfaType, SmsMfaType, TotpMfaType} from "./MfaSetupPage";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -34,7 +34,9 @@ class PromptPage extends React.Component {
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
-      promptType: new URLSearchParams(this.props.location.search).get("promptType"),
+      promptType: new URLSearchParams(this.props.location.search).get("promptType") || "provider",
+      steps: null,
+      current: 0,
     };
   }
 
@@ -42,6 +44,14 @@ class PromptPage extends React.Component {
     this.getUser();
     if (this.getApplicationObj() === null) {
       this.getApplication();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.user !== null && this.getApplicationObj() !== null && this.state.steps === null) {
+      // eslint-disable-next-line no-console
+      console.log(this.getApplicationObj());
+      this.initSteps(this.state.user, this.getApplicationObj());
     }
   }
 
@@ -193,7 +203,7 @@ class PromptPage extends React.Component {
     return `${redirectUri}?code=${code}&state=${state}`;
   }
 
-  logout() {
+  finishAndJump() {
     AuthBackend.logout()
       .then((res) => {
         if (res.status === "ok") {
@@ -221,8 +231,7 @@ class PromptPage extends React.Component {
         if (res.status === "ok") {
           if (isFinal) {
             Setting.showMessage("success", i18next.t("general:Successfully saved"));
-
-            this.logout();
+            this.finishAndJump();
           }
         } else {
           if (isFinal) {
@@ -237,13 +246,58 @@ class PromptPage extends React.Component {
       });
   }
 
+  isFinishedAllPrompts(application) {
+    if (application === null || this.state.user === null) {
+      return false;
+    }
+
+    return !this.state.steps.some((step) => {return step.finished !== true;});
+  }
+
   renderPromptProvider(application) {
-    return <>
-      {this.renderContent(application)}
-      <div style={{marginTop: "50px"}}>
-        <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-      </div>
-    </>;
+    return (
+      <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+        {this.renderContent(application)}
+        <Button style={{marginTop: "50px", width: "200px"}}
+          disabled={!Setting.isPromptAnswered(this.state.user, application)}
+          type="primary" size="large" onClick={() => {
+            this.submitUserEdit(true);
+          }}>
+          {i18next.t("code:Submit and complete")}
+        </Button>
+      </div>);
+  }
+
+  getRequiredMfaTypes(organization) {
+    const types = organization.mfaItems.map((mfaItem) => {
+      if (mfaItem.rule === "Required") {
+        return mfaItem.name;
+      } else {
+        return "";
+      }
+    });
+
+    return types.filter((type) => {return type !== "";});
+  }
+
+  isPromptMfaEnable(organization) {
+    const requiredMfaTypes = this.getRequiredMfaTypes(organization);
+    if (requiredMfaTypes.length === 0) {
+      return false;
+    }
+
+    return requiredMfaTypes.some((mfaType) => {
+      if (mfaType === EmailMfaType && !this.state.user.mfaEmailEnabled) {
+        return true;
+      }
+      if (mfaType === SmsMfaType && !this.state.user.mfaPhoneEnabled) {
+        return true;
+      }
+      if (mfaType === TotpMfaType && this.state.user.totpSecret === "") {
+        return true;
+      }
+      return false;
+    });
   }
 
   renderPromptMfa() {
@@ -255,8 +309,50 @@ class PromptPage extends React.Component {
         isAuthenticated={true}
         isPromptPage={true}
         redirectUri={this.getRedirectUrl()}
+        requiredMfaTypes={this.getRequiredMfaTypes(this.getApplicationObj().organizationObj)}
+        onFinished={() => {
+          this.finishAndJump();
+        }}
         {...this.props}
       />
+    );
+  }
+
+  initSteps(user, application) {
+    const steps = [];
+
+    if (this.isPromptMfaEnable(application.organizationObj) && this.state.promptType === "mfa") {
+      steps.push({
+        content: this.renderPromptMfa(application),
+        name: "mfa",
+        title: i18next.t("mfa:Protect your account with Multi-factor authentication"),
+      });
+    }
+
+    if (!Setting.isPromptAnswered(user, application) && this.state.promptType === "provider") {
+      steps.push({
+        content: this.renderPromptProvider(application),
+        name: "provider",
+        title: i18next.t("application:Binding providers"),
+      });
+    }
+
+    this.setState({
+      steps: steps,
+    });
+  }
+
+  renderSteps() {
+    if (this.state.steps === null || this.state.steps?.length === 0) {
+      return null;
+    }
+
+    return (
+      <Card
+        title={this.state.steps[this.state.current].title}
+      >
+        <div >{this.state.steps[this.state.current].content}</div>
+      </Card>
     );
   }
 
@@ -266,7 +362,7 @@ class PromptPage extends React.Component {
       return null;
     }
 
-    if (!Setting.hasPromptPage(application) && this.state.promptType !== "mfa") {
+    if (this.state.steps?.length === 0) {
       return (
         <Result
           style={{display: "flex", flex: "1 1 0%", justifyContent: "center", flexDirection: "column"}}
@@ -287,17 +383,7 @@ class PromptPage extends React.Component {
 
     return (
       <div style={{display: "flex", flex: "1", justifyContent: "center"}}>
-        <Card>
-          <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            {
-              Setting.renderLogo(application)
-            }
-            {this.state.promptType !== "mfa" ? this.renderPromptProvider(application) : this.renderPromptMfa(application)}
-          </div>
-        </Card>
+        {this.renderSteps()}
       </div>
     );
   }

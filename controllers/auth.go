@@ -80,7 +80,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 	if form.Password != "" && user.IsMfaEnabled() {
 		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
-		resp = &Response{Status: object.NextMfa, Data: user.GetPreferredMfaProps(true)}
+		resp = &Response{Status: "ok", Msg: object.NextMfa, Data: user.GetPreferredMfaProps(true)}
 		return
 	}
 
@@ -360,8 +360,11 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 			}
 
-			if user != nil && organization.HasRequiredMfa() && !user.IsMfaEnabled() {
+			if user != nil && object.IsNeedPromptMfa(organization, user) {
+				// The prompt page needs the user to be signed in
+				c.SetSessionUsername(user.GetId())
 				resp.Msg = object.RequiredMfa
+				resp.Data = nil
 			}
 
 			record := object.NewRecord(c.Ctx)

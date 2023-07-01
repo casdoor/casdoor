@@ -113,7 +113,7 @@ export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) 
 
 function EnableMfaForm({user, mfaType, recoveryCodes, onSuccess, onFail}) {
   const [loading, setLoading] = useState(false);
-  const requestEnableTotp = () => {
+  const requestEnableMfa = () => {
     const data = {
       mfaType,
       ...user,
@@ -137,7 +137,7 @@ function EnableMfaForm({user, mfaType, recoveryCodes, onSuccess, onFail}) {
       <br />
       <code style={{fontStyle: "solid"}}>{recoveryCodes[0]}</code>
       <Button style={{marginTop: 24}} loading={loading} onClick={() => {
-        requestEnableTotp();
+        requestEnableMfa();
       }} block type="primary">
         {i18next.t("general:Enable")}
       </Button>
@@ -156,29 +156,21 @@ class MfaSetupPage extends React.Component {
       isPromptPage: props.isPromptPage,
       redirectUri: props.redirectUri,
       current: props.current ?? 0,
-      mfaType: props.mfaType ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
+      mfaType: props.requiredMfaTypes?.[0] ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
       mfaProps: null,
     };
   }
 
   componentDidMount() {
     this.getApplication();
+    if (this.state.isPromptPage === true) {
+      this.initMfaProps();
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.isAuthenticated === true && (this.state.mfaProps === null || this.state.mfaType !== prevState.mfaType)) {
-      MfaBackend.MfaSetupInitiate({
-        mfaType: this.state.mfaType,
-        ...this.getUser(),
-      }).then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            mfaProps: res.data,
-          });
-        } else {
-          Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
-        }
-      });
+      this.initMfaProps();
     }
   }
 
@@ -203,11 +195,74 @@ class MfaSetupPage extends React.Component {
       });
   }
 
+  initMfaProps() {
+    MfaBackend.MfaSetupInitiate({
+      mfaType: this.state.mfaType,
+      ...this.getUser(),
+    }).then((res) => {
+      if (res.status === "ok") {
+        this.setState({
+          mfaProps: res.data,
+        });
+      } else {
+        Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
+      }
+    });
+  }
+
   getUser() {
-    return {
-      name: this.state.account.name,
-      owner: this.state.account.owner,
+    return this.props.account;
+  }
+
+  renderMfaTypeSwitch() {
+    // eslint-disable-next-line no-console
+    console.log(this.state.mfaType);
+    const renderSmsLink = () => {
+      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(SmsMfaType)) || this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) {
+        return null;
+      }
+      return (<Button type={"link"} onClick={() => {
+        this.setState({
+          mfaType: SmsMfaType,
+        });
+      }
+      }>{i18next.t("mfa:Use SMS")}</Button>
+      );
     };
+
+    const renderEmailLink = () => {
+      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(EmailMfaType)) || this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) {
+        return null;
+      }
+      return (<Button type={"link"} onClick={() => {
+        this.setState({
+          mfaType: EmailMfaType,
+        });
+      }
+      }>{i18next.t("mfa:Use Email")}</Button>
+      );
+    };
+
+    const renderTotpLink = () => {
+      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(TotpMfaType)) || this.state.mfaType === TotpMfaType || this.props.account.totpSecret !== "") {
+        return null;
+      }
+      return (<Button type={"link"} onClick={() => {
+        this.setState({
+          mfaType: TotpMfaType,
+        });
+      }
+      }>{i18next.t("mfa:Use Authenticator App")}</Button>
+      );
+    };
+
+    return (
+      <React.Fragment>
+        {renderSmsLink()}
+        {renderEmailLink()}
+        {renderTotpLink()}
+      </React.Fragment>
+    );
   }
 
   renderStep() {
@@ -248,32 +303,7 @@ class MfaSetupPage extends React.Component {
             }}
           />
           <Col span={24} style={{display: "flex", justifyContent: "left"}}>
-            {(this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) ? null :
-              <Button type={"link"} onClick={() => {
-                this.setState({
-                  mfaType: EmailMfaType,
-                });
-              }
-              }>{i18next.t("mfa:Use Email")}</Button>
-            }
-            {
-              (this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) ? null :
-                <Button type={"link"} onClick={() => {
-                  this.setState({
-                    mfaType: SmsMfaType,
-                  });
-                }
-                }>{i18next.t("mfa:Use SMS")}</Button>
-            }
-            {
-              (this.state.mfaType === TotpMfaType) ? null :
-                <Button type={"link"} onClick={() => {
-                  this.setState({
-                    mfaType: TotpMfaType,
-                  });
-                }
-                }>{i18next.t("mfa:Use Authenticator App")}</Button>
-            }
+            {this.renderMfaTypeSwitch()}
           </Col>
         </div>
       );
@@ -286,8 +316,8 @@ class MfaSetupPage extends React.Component {
         <EnableMfaForm user={this.getUser()} mfaType={this.state.mfaType} recoveryCodes={this.state.mfaProps.recoveryCodes}
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-            if (this.state.isPromptPage && this.state.redirectUri) {
-              Setting.goToLink(this.state.redirectUri);
+            if (this.state.isPromptPage) {
+              this.props.onFinished("mfa");
             } else {
               Setting.goToLink("/account");
             }

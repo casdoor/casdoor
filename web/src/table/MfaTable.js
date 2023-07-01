@@ -15,14 +15,16 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Table, Tooltip} from "antd";
+import {EmailMfaType, SmsMfaType, TotpMfaType} from "../auth/MfaSetupPage";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
 
 const MfaItems = [
-  {name: "Phone"},
-  {name: "Email"},
+  {name: "Phone", value: SmsMfaType},
+  {name: "Email", value: EmailMfaType},
+  {name: "App", value: TotpMfaType},
 ];
 
 class MfaTable extends React.Component {
@@ -80,7 +82,7 @@ class MfaTable extends React.Component {
                 this.updateField(table, index, "name", value);
               }} >
               {
-                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.value}>{item.name}</Option>)
               }
             </Select>
           );

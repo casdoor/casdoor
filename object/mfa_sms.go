@@ -25,7 +25,7 @@ import (
 
 const (
 	MfaSmsCountryCodeSession = "mfa_country_code"
-	MfaSmsDestSession        = "mfa_dest"
+	MfaDestSession           = "mfa_dest"
 )
 
 type SmsMfa struct {
@@ -48,7 +48,7 @@ func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, err
 }
 
 func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
-	dest := ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
+	dest := ctx.Input.CruSession.Get(MfaDestSession).(string)
 	countryCode := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
 	if !util.IsEmailValid(dest) {
 		dest, _ = util.GetE164Number(dest, countryCode)
@@ -78,7 +78,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_phone_enabled")
 
 		if user.Phone == "" {
-			user.Phone = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
+			user.Phone = ctx.Input.CruSession.Get(MfaDestSession).(string)
 			user.CountryCode = ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
 			columns = append(columns, "phone", "country_code")
 		}
@@ -87,7 +87,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_email_enabled")
 
 		if user.Email == "" {
-			user.Email = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
+			user.Email = ctx.Input.CruSession.Get(MfaDestSession).(string)
 			columns = append(columns, "email")
 		}
 	}
