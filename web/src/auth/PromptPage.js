@@ -358,7 +358,7 @@ class PromptPage extends React.Component {
     }
 
     return (
-      <Card
+      <Card style={{marginTop: "20px", marginBottom: "20px"}}
         title={this.state.steps[this.state.current].title}
       >
         <div >{this.state.steps[this.state.current].content}</div>
