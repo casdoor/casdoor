@@ -16,13 +16,13 @@ import React from "react";
 import {Button, Card, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
-import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import AffiliationSelect from "../common/select/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
+import * as AuthBackend from "./AuthBackend";
 import MfaSetupPage, {EmailMfaType, SmsMfaType, TotpMfaType} from "./MfaSetupPage";
 
 class PromptPage extends React.Component {
@@ -37,6 +37,7 @@ class PromptPage extends React.Component {
       promptType: new URLSearchParams(this.props.location.search).get("promptType") || "provider",
       steps: null,
       current: 0,
+      finished: false,
     };
   }
 
@@ -47,13 +48,27 @@ class PromptPage extends React.Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener("beforeunload", this.handleBeforeUnload);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.user !== null && this.getApplicationObj() !== null && this.state.steps === null) {
-      // eslint-disable-next-line no-console
-      console.log(this.getApplicationObj());
       this.initSteps(this.state.user, this.getApplicationObj());
     }
   }
+
+  handleBeforeUnload = (e) => {
+    if (!this.state.finished) {
+      e.preventDefault();
+      this.logout();
+      e.returnValue = "";
+    }
+  };
 
   getUser() {
     const organizationName = this.props.account.owner;
@@ -203,25 +218,28 @@ class PromptPage extends React.Component {
     return `${redirectUri}?code=${code}&state=${state}`;
   }
 
-  finishAndJump() {
+  logout() {
     AuthBackend.logout()
       .then((res) => {
         if (res.status === "ok") {
           this.onUpdateAccount(null);
-
-          let redirectUrl = this.getRedirectUrl();
-          if (redirectUrl === "") {
-            redirectUrl = res.data2;
-          }
-          if (redirectUrl !== "" && redirectUrl !== null) {
-            Setting.goToLink(redirectUrl);
-          } else {
-            Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
-          }
         } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", res.msg);
         }
       });
+  }
+
+  finishAndJump() {
+    this.setState({
+      finished: true,
+    }, () => {
+      const redirectUrl = this.getRedirectUrl();
+      if (redirectUrl !== "" && redirectUrl !== null) {
+        Setting.goToLink(redirectUrl);
+      } else {
+        Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
+      }
+    });
   }
 
   submitUserEdit(isFinal) {
@@ -244,14 +262,6 @@ class PromptPage extends React.Component {
           Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
         }
       });
-  }
-
-  isFinishedAllPrompts(application) {
-    if (application === null || this.state.user === null) {
-      return false;
-    }
-
-    return !this.state.steps.some((step) => {return step.finished !== true;});
   }
 
   renderPromptProvider(application) {
