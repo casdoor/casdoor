@@ -179,6 +179,8 @@ class LoginPage extends React.Component {
           } else {
             this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
+
+            this.props.history.push("/404");
           }
         });
     }
@@ -189,13 +191,13 @@ class LoginPage extends React.Component {
   }
 
   getDefaultLoginMethod(application) {
-    if (application.enablePassword) {
+    if (application?.enablePassword) {
       return "password";
     }
-    if (application.enableCodeSignin) {
+    if (application?.enableCodeSignin) {
       return "verificationCode";
     }
-    if (application.enableWebAuthn) {
+    if (application?.enableWebAuthn) {
       return "webAuthn";
     }
 
