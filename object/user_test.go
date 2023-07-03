@@ -165,7 +165,7 @@ func Test_passwordChangingAllowed(t *testing.T) {
 	}
 }
 
-func Test_clearUnsupportedPasswordChangeRequirement(t *testing.T) {
+func Test_validateUnsupportedPasswordChange(t *testing.T) {
 	tests := []struct {
 		name     string
 		userType string
@@ -188,9 +188,9 @@ func Test_clearUnsupportedPasswordChangeRequirement(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := User{Type: tt.userType, Ldap: tt.ldap, PasswordChangeRequired: true}
-			u.clearUnsupportedPasswordChangeRequirement()
-			if u.PasswordChangeRequired != tt.expected {
-				t.Errorf("pclearUnsupportedPasswordChangeRequirement() expected %t actual %t", tt.expected, u.PasswordChangeRequired)
+			err := u.validateUnsupportedPasswordChange()
+			if err == nil && !tt.expected {
+				t.Errorf("validateUnsupportedPasswordChange() tried to change PasswordChangeRequired when it's unsupported")
 			}
 		})
 	}

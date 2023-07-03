@@ -206,10 +206,11 @@ func (u *User) setPasswordChangeRequirement() {
 	}
 }
 
-func (u *User) clearUnsupportedPasswordChangeRequirement() {
+func (u *User) validateUnsupportedPasswordChange() error {
 	if !u.passwordChangingAllowed() && u.PasswordChangeRequired {
-		u.PasswordChangeRequired = false
+		return fmt.Errorf("PasswordChangeRequired not allowed for user '%s' due to be external one", u.Name)
 	}
+	return nil
 }
 
 func (u *User) passwordChangingAllowed() bool {
@@ -558,7 +559,11 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 		return 0, err
 	}
 
-	user.clearUnsupportedPasswordChangeRequirement()
+	err = user.validateUnsupportedPasswordChange()
+	if err != nil {
+		return 0, err
+	}
+
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		return 0, err
@@ -596,7 +601,10 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 			return false, err
 		}
 	}
-	user.clearUnsupportedPasswordChangeRequirement()
+	err = user.validateUnsupportedPasswordChange()
+	if err != nil {
+		return false, err
+	}
 
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
