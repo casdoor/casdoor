@@ -72,6 +72,9 @@ func UrlJoin(base string, path string) string {
 
 func GetUrlPath(urlString string) string {
 	u, _ := url.Parse(urlString)
+	if u == nil {
+		return ""
+	}
 	return u.Path
 }
 
