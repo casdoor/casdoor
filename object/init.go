@@ -185,6 +185,7 @@ func initBuiltInApplication() {
 			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
 		},
+		Tags:          []string{},
 		RedirectUris:  []string{},
 		ExpireInHours: 168,
 		FormOffset:    2,

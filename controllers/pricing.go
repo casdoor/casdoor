@@ -71,7 +71,7 @@ func (c *ApiController) GetPricings() {
 // @Tag Pricing API
 // @Description get pricing
 // @Param   id     query    string  true        "The id ( owner/name ) of the pricing"
-// @Success 200 {object} object.pricing The Response object
+// @Success 200 {object} object.Pricing The Response object
 // @router /get-pricing [get]
 func (c *ApiController) GetPricing() {
 	id := c.Input().Get("id")

@@ -28,6 +28,7 @@ class CertListPage extends BaseListPage {
   }
 
   componentDidMount() {
+    super.componentDidMount();
     this.setState({
       owner: Setting.isAdminUser(this.props.account) ? "admin" : this.props.account.owner,
     });
@@ -35,8 +36,9 @@ class CertListPage extends BaseListPage {
 
   newCert() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.owner : Setting.getRequestOrganization(this.props.account);
     return {
-      owner: this.state.owner,
+      owner: owner,
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
@@ -236,8 +238,8 @@ class CertListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
-      : CertBackend.getCerts(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+      : CertBackend.getCerts(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,

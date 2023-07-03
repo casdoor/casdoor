@@ -96,6 +96,7 @@
     "Signup items": "Itens de registro",
     "Signup items - Tooltip": "Itens para os usuários preencherem ao registrar novas contas",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "URL da página de registro copiada para a área de transferência com sucesso. Cole-a na janela anônima ou em outro navegador",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "A aplicação não permite o registro de novas contas",
     "Token expire": "Expiração do Token",
     "Token expire - Tooltip": "Tempo de expiração do token de acesso",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "Itens da Conta",
     "Account items - Tooltip": "Itens na página de Configurações Pessoais",
+    "All": "Todos",
     "Edit Organization": "Editar Organização",
     "Follow global theme": "Seguir tema global",
     "Init score": "Pontuação inicial",

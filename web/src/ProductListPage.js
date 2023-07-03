@@ -26,8 +26,9 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ProductListPage extends BaseListPage {
   newProduct() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `product_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Product - ${randomName}`,
@@ -47,7 +48,7 @@ class ProductListPage extends BaseListPage {
     ProductBackend.addProduct(newProduct)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/products/${newProduct.name}`, mode: "add"});
+          this.props.history.push({pathname: `/products/${newProduct.owner}/${newProduct.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -88,7 +89,7 @@ class ProductListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/products/${text}`}>
+            <Link to={`/products/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -201,7 +202,7 @@ class ProductListPage extends BaseListPage {
                 size="small"
                 locale={{emptyText: " "}}
                 dataSource={providers}
-                renderItem={(providerName, i) => {
+                renderItem={(providerName, record, i) => {
                   return (
                     <List.Item>
                       <div style={{display: "inline"}}>
@@ -247,7 +248,7 @@ class ProductListPage extends BaseListPage {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/products/${record.name}/buy`)}>{i18next.t("product:Buy")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/products/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/products/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProduct(index)}
@@ -268,7 +269,7 @@ class ProductListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={products} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={products} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Products")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -290,7 +291,7 @@ class ProductListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    ProductBackend.getProducts(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    ProductBackend.getProducts(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

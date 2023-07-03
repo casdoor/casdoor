@@ -96,6 +96,7 @@
     "Signup items": "注册项",
     "Signup items - Tooltip": "注册用户注册时需要填写的项目",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "注册页面URL已成功复制到剪贴板，请粘贴到当前浏览器的隐身模式窗口或另一个浏览器访问",
+    "Tags - Tooltip": "用户的标签在应用的标签集合中时，用户才可以登录该应用",
     "The application does not allow to sign up new account": "该应用不允许注册新账户",
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "个人页设置项",
     "Account items - Tooltip": "用户的个人设置页面中可配置的选项",
+    "All": "全部",
     "Edit Organization": "编辑组织",
     "Follow global theme": "使用全局默认主题",
     "Init score": "初始积分",

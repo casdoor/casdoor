@@ -26,6 +26,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class PaymentListPage extends BaseListPage {
   newPayment() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin",
       name: `payment_${randomName}`,
@@ -33,7 +34,7 @@ class PaymentListPage extends BaseListPage {
       displayName: `New Payment - ${randomName}`,
       provider: "provider_pay_paypal",
       type: "PayPal",
-      organization: this.props.account.owner,
+      organization: organizationName,
       user: "admin",
       productName: "computer-1",
       productDisplayName: "A notebook computer",
@@ -265,7 +266,7 @@ class PaymentListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PaymentBackend.getPayments("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PaymentBackend.getPayments("admin", Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,
