@@ -41,10 +41,25 @@ class EntryPage extends React.Component {
 
   renderHomeIfLoggedIn(component) {
     if (this.props.account !== null && this.props.account !== undefined) {
-      return <Redirect to="/" />;
+      return this.renderPromptIfNotEnabledMfa(component);
     } else {
+      // eslint-disable-next-line no-console
+      console.log("this.props.account", this.props.account, this.props.account !== null);
       return component;
     }
+  }
+
+  renderPromptIfNotEnabledMfa() {
+    // // eslint-disable-next-line no-console
+    // console.log("renderPromptIfNotEnabledMfa", this.props.account, this.props.account.organization);
+    // if (Setting.isPromptEnableMfa(this.props.account, this.props.account.organization)) {
+    //   // eslint-disable-next-line no-console
+    //   console.log("renderPromptIfNotEnabledMfa");
+    //   return <Redirect to={`/prompt/${this.state.application.name}?promptType=mfa`} />;
+    // } else {
+    //   return <Redirect to="/" />;
+    // }
+    return <Redirect to="/" />;
   }
 
   renderLoginIfNotLoggedIn(component) {

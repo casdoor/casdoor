@@ -34,7 +34,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa} from "./MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -69,6 +69,8 @@ class LoginPage extends React.Component {
   }
 
   componentDidMount() {
+    // eslint-disable-next-line no-console
+    console.log(this.getApplicationObj());
     if (this.getApplicationObj() === undefined) {
       if (this.state.type === "login" || this.state.type === "cas" || this.state.type === "saml") {
         this.getApplication();
@@ -347,18 +349,6 @@ class LoginPage extends React.Component {
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const callback = (res) => {
-            if (res.msg === RequiredMfa) {
-              AuthBackend.getAccount().then((res) => {
-                if (res.status === "ok") {
-                  const account = res.data;
-                  account.organization = res.data2;
-                  this.onUpdateAccount(account);
-                }
-              });
-              Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-              return;
-            }
-
             const responseType = values["type"];
 
             if (responseType === "login") {

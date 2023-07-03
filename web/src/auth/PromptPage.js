@@ -23,7 +23,6 @@ import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
-import MfaSetupPage, {EmailMfaType, SmsMfaType, TotpMfaType} from "./MfaSetupPage";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -34,7 +33,6 @@ class PromptPage extends React.Component {
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
-      promptType: new URLSearchParams(this.props.location.search).get("promptType") || "provider",
       steps: null,
       current: 0,
       finished: false,
@@ -48,27 +46,11 @@ class PromptPage extends React.Component {
     }
   }
 
-  componentDidMount() {
-    window.addEventListener("beforeunload", this.handleBeforeUnload);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("beforeunload", this.handleBeforeUnload);
-  }
-
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.state.user !== null && this.getApplicationObj() !== null && this.state.steps === null) {
       this.initSteps(this.state.user, this.getApplicationObj());
     }
   }
-
-  handleBeforeUnload = (e) => {
-    if (!this.state.finished) {
-      e.preventDefault();
-      this.logout();
-      e.returnValue = "";
-    }
-  };
 
   getUser() {
     const organizationName = this.props.account.owner;
@@ -278,67 +260,8 @@ class PromptPage extends React.Component {
       </div>);
   }
 
-  getRequiredMfaTypes(organization) {
-    const types = organization.mfaItems.map((mfaItem) => {
-      if (mfaItem.rule === "Required") {
-        return mfaItem.name;
-      } else {
-        return "";
-      }
-    });
-
-    return types.filter((type) => {return type !== "";});
-  }
-
-  isPromptMfaEnable(organization) {
-    const requiredMfaTypes = this.getRequiredMfaTypes(organization);
-    if (requiredMfaTypes.length === 0) {
-      return false;
-    }
-
-    return requiredMfaTypes.some((mfaType) => {
-      if (mfaType === EmailMfaType && !this.state.user.mfaEmailEnabled) {
-        return true;
-      }
-      if (mfaType === SmsMfaType && !this.state.user.mfaPhoneEnabled) {
-        return true;
-      }
-      if (mfaType === TotpMfaType && this.state.user.totpSecret === "") {
-        return true;
-      }
-      return false;
-    });
-  }
-
-  renderPromptMfa() {
-    return (
-      <MfaSetupPage
-        application={this.getApplicationObj()}
-        account={this.props.account}
-        current={1}
-        isAuthenticated={true}
-        isPromptPage={true}
-        redirectUri={this.getRedirectUrl()}
-        requiredMfaTypes={this.getRequiredMfaTypes(this.getApplicationObj().organizationObj)}
-        onFinished={() => {
-          this.finishAndJump();
-        }}
-        {...this.props}
-      />
-    );
-  }
-
   initSteps(user, application) {
     const steps = [];
-
-    if (this.isPromptMfaEnable(application.organizationObj) && this.state.promptType === "mfa") {
-      steps.push({
-        content: this.renderPromptMfa(application),
-        name: "mfa",
-        title: i18next.t("mfa:Protect your account with Multi-factor authentication"),
-      });
-    }
-
     if (!Setting.isPromptAnswered(user, application) && this.state.promptType === "provider") {
       steps.push({
         content: this.renderPromptProvider(application),

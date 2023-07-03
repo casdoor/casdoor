@@ -102,6 +102,7 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      isPromptEnableMfa: false,
     };
 
     Setting.initServerUrl();
@@ -116,11 +117,17 @@ class App extends Component {
     this.getAccount();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
     if (this.state.uri !== uri) {
       this.updateMenuKey();
+    }
+
+    if (this.state.account !== prevState.account && this.state.account !== undefined && this.state.account !== null) {
+      this.setState({
+        isPromptEnableMfa: Setting.isPromptEnableMfa(this.state.account, this.state.account.organization),
+      });
     }
   }
 
@@ -547,14 +554,6 @@ class App extends Component {
     return res;
   }
 
-  renderHomeIfLoggedIn(component) {
-    if (this.state.account !== null && this.state.account !== undefined) {
-      return <Redirect to="/" />;
-    } else {
-      return component;
-    }
-  }
-
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
@@ -562,14 +561,12 @@ class App extends Component {
     } else if (this.state.account === undefined) {
       return null;
     } else {
-      return component;
+      if (this.state.isPromptEnableMfa) {
+        return <MfaSetupPage account={this.state.account} isPromptPage={true} isAuthenticated={true} current={1} {...this.props} />;
+      } else {
+        return component;
+      }
     }
-  }
-
-  isStartPages() {
-    return window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/signup") ||
-        window.location.pathname === "/";
   }
 
   renderRouter() {
@@ -666,7 +663,7 @@ class App extends Component {
     const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
-        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
+        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
               <div className="logo" style={{background: `url(${this.state.logo})`}} />

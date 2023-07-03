@@ -48,9 +48,19 @@ func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, err
 }
 
 func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
-	dest := ctx.Input.CruSession.Get(MfaDestSession).(string)
-	countryCode := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+	destSession := ctx.Input.CruSession.Get(MfaDestSession)
+	if destSession == nil {
+		return errors.New("dest session is missing")
+	}
+	dest := destSession.(string)
+
 	if !util.IsEmailValid(dest) {
+		countryCodeSession := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession)
+		if countryCodeSession == nil {
+			return errors.New("country code is missing")
+		}
+		countryCode := countryCodeSession.(string)
+
 		dest, _ = util.GetE164Number(dest, countryCode)
 	}
 

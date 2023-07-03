@@ -79,7 +79,6 @@ function CheckPasswordForm({user, onSuccess, onFail}) {
 
 export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) {
   const [form] = Form.useForm();
-
   const onFinish = ({passcode}) => {
     const data = {passcode, mfaType: mfaProps.mfaType, ...user};
     MfaBackend.MfaSetupVerify(data)
@@ -98,7 +97,7 @@ export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) 
       });
   };
 
-  if (mfaProps === undefined || mfaProps === null) {
+  if (mfaProps === undefined || mfaProps === null || application === undefined || application === null || user === undefined || user === null) {
     return <div></div>;
   }
 
@@ -148,6 +147,7 @@ function EnableMfaForm({user, mfaType, recoveryCodes, onSuccess, onFail}) {
 class MfaSetupPage extends React.Component {
   constructor(props) {
     super(props);
+    const requiredMfaTypes = Setting.getRequiredMfaTypes(props.account.organization);
     this.state = {
       account: props.account,
       application: this.props.application ?? null,
@@ -156,13 +156,18 @@ class MfaSetupPage extends React.Component {
       isPromptPage: props.isPromptPage,
       redirectUri: props.redirectUri,
       current: props.current ?? 0,
-      mfaType: props.requiredMfaTypes?.[0] ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
+      mfaType: requiredMfaTypes?.[0] ?? new URLSearchParams(props.location?.search)?.get("mfaType") ?? SmsMfaType,
       mfaProps: null,
+      requiredMfaTypes: requiredMfaTypes,
     };
+    // eslint-disable-next-line no-console
+    console.log(this.props);
   }
 
   componentDidMount() {
     this.getApplication();
+    // eslint-disable-next-line no-console
+    console.log(this.state);
     if (this.state.isPromptPage === true) {
       this.initMfaProps();
     }
@@ -215,10 +220,8 @@ class MfaSetupPage extends React.Component {
   }
 
   renderMfaTypeSwitch() {
-    // eslint-disable-next-line no-console
-    console.log(this.state.mfaType);
     const renderSmsLink = () => {
-      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(SmsMfaType)) || this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) {
+      if ((this.state.isPromptPage && !this.state.requiredMfaTypes.includes(SmsMfaType)) || this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
@@ -231,7 +234,7 @@ class MfaSetupPage extends React.Component {
     };
 
     const renderEmailLink = () => {
-      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(EmailMfaType)) || this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) {
+      if ((this.state.isPromptPage && !this.state.requiredMfaTypes.includes(EmailMfaType)) || this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
@@ -244,7 +247,7 @@ class MfaSetupPage extends React.Component {
     };
 
     const renderTotpLink = () => {
-      if ((this.state.isPromptPage && !this.props.requiredMfaTypes.includes(TotpMfaType)) || this.state.mfaType === TotpMfaType || this.props.account.totpSecret !== "") {
+      if ((this.state.isPromptPage && !this.state.requiredMfaTypes.includes(TotpMfaType)) || this.state.mfaType === TotpMfaType || this.props.account.totpSecret !== "") {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
