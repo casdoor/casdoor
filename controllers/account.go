@@ -391,8 +391,7 @@ func (c *ApiController) GetAccount() {
 		Data:   u,
 		Data2:  organization,
 	}
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 // GetUserinfo
@@ -412,8 +411,7 @@ func (c *ApiController) GetUserinfo() {
 	host := c.Ctx.Request.Host
 	userInfo := object.GetUserInfo(user, scope, aud, host)
 
-	c.Data["json"] = userInfo
-	c.ServeJSON()
+	c.ResponseOk(userInfo)
 }
 
 // GetUserinfo2
@@ -449,8 +447,7 @@ func (c *ApiController) GetUserinfo2() {
 		UpdatedAt:       user.UpdatedTime,
 	}
 
-	c.Data["json"] = response
-	c.ServeJSON()
+	c.ResponseOk(response)
 }
 
 // GetCaptcha ...

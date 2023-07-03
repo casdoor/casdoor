@@ -24,8 +24,8 @@ import "github.com/casdoor/casdoor/object"
 // @router /.well-known/openid-configuration [get]
 func (c *RootController) GetOidcDiscovery() {
 	host := c.Ctx.Request.Host
-	c.Data["json"] = object.GetOidcDiscovery(host)
-	c.ServeJSON()
+	oidc := object.GetOidcDiscovery(host)
+	c.ResponseOk(oidc)
 }
 
 // GetJwks
@@ -39,6 +39,5 @@ func (c *RootController) GetJwks() {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.Data["json"] = jwks
-	c.ServeJSON()
+	c.ResponseOk(jwks)
 }

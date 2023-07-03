@@ -45,8 +45,8 @@ func (c *ApiController) GetSessions() {
 			return
 		}
 
-		c.Data["json"] = sessions
-		c.ServeJSON()
+		c.ResponseOk(sessions)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSessionCount(owner, field, value)
@@ -81,8 +81,7 @@ func (c *ApiController) GetSingleSession() {
 		return
 	}
 
-	c.Data["json"] = session
-	c.ServeJSON()
+	c.ResponseOk(session)
 }
 
 // UpdateSession
@@ -100,8 +99,8 @@ func (c *ApiController) UpdateSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateSession(util.GetSessionId(session.Owner, session.Name, session.Application), &session))
+	c.ResponseOk(resp)
 }
 
 // AddSession
@@ -120,8 +119,8 @@ func (c *ApiController) AddSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSession(&session))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddSession(&session))
+	c.ResponseOk(resp)
 }
 
 // DeleteSession
@@ -139,8 +138,8 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
+	c.ResponseOk(resp)
 }
 
 // IsSessionDuplicated
@@ -161,7 +160,6 @@ func (c *ApiController) IsSessionDuplicated() {
 		return
 	}
 
-	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
-
-	c.ServeJSON()
+	resp := &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
+	c.ResponseOk(resp)
 }

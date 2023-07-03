@@ -46,8 +46,8 @@ func (c *ApiController) GetPayments() {
 			return
 		}
 
-		c.Data["json"] = payments
-		c.ServeJSON()
+		c.ResponseOk(payments)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPaymentCount(owner, organization, field, value)
@@ -106,8 +106,7 @@ func (c *ApiController) GetPayment() {
 		return
 	}
 
-	c.Data["json"] = payment
-	c.ServeJSON()
+	c.ResponseOk(payment)
 }
 
 // UpdatePayment
@@ -128,8 +127,8 @@ func (c *ApiController) UpdatePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdatePayment(id, &payment))
+	c.ResponseOk(resp)
 }
 
 // AddPayment
@@ -147,8 +146,8 @@ func (c *ApiController) AddPayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPayment(&payment))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddPayment(&payment))
+	c.ResponseOk(resp)
 }
 
 // DeletePayment
@@ -166,8 +165,8 @@ func (c *ApiController) DeletePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePayment(&payment))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeletePayment(&payment))
+	c.ResponseOk(resp)
 }
 
 // NotifyPayment

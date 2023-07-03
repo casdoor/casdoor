@@ -45,8 +45,8 @@ func (c *ApiController) GetPermissions() {
 			return
 		}
 
-		c.Data["json"] = permissions
-		c.ServeJSON()
+		c.ResponseOk(permissions)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPermissionCount(owner, field, value)
@@ -123,8 +123,7 @@ func (c *ApiController) GetPermission() {
 		return
 	}
 
-	c.Data["json"] = permission
-	c.ServeJSON()
+	c.ResponseOk(permission)
 }
 
 // UpdatePermission
@@ -145,8 +144,8 @@ func (c *ApiController) UpdatePermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePermission(id, &permission))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdatePermission(id, &permission))
+	c.ResponseOk(resp)
 }
 
 // AddPermission
@@ -164,8 +163,8 @@ func (c *ApiController) AddPermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPermission(&permission))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddPermission(&permission))
+	c.ResponseOk(resp)
 }
 
 // DeletePermission
@@ -183,6 +182,6 @@ func (c *ApiController) DeletePermission() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePermission(&permission))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeletePermission(&permission))
+	c.ResponseOk(resp)
 }

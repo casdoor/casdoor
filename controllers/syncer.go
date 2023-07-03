@@ -46,8 +46,8 @@ func (c *ApiController) GetSyncers() {
 			return
 		}
 
-		c.Data["json"] = organizationSyncers
-		c.ServeJSON()
+		c.ResponseOk(organizationSyncers)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSyncerCount(owner, organization, field, value)
@@ -83,8 +83,7 @@ func (c *ApiController) GetSyncer() {
 		return
 	}
 
-	c.Data["json"] = syncer
-	c.ServeJSON()
+	c.ResponseOk(syncer)
 }
 
 // UpdateSyncer
@@ -105,8 +104,8 @@ func (c *ApiController) UpdateSyncer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSyncer(id, &syncer))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateSyncer(id, &syncer))
+	c.ResponseOk(resp)
 }
 
 // AddSyncer
@@ -124,8 +123,8 @@ func (c *ApiController) AddSyncer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSyncer(&syncer))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddSyncer(&syncer))
+	c.ResponseOk(resp)
 }
 
 // DeleteSyncer
@@ -143,8 +142,8 @@ func (c *ApiController) DeleteSyncer() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSyncer(&syncer))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteSyncer(&syncer))
+	c.ResponseOk(resp)
 }
 
 // RunSyncer

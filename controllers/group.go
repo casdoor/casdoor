@@ -105,8 +105,8 @@ func (c *ApiController) UpdateGroup() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateGroup(id, &group))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateGroup(id, &group))
+	c.ResponseOk(resp)
 }
 
 // AddGroup
@@ -124,8 +124,8 @@ func (c *ApiController) AddGroup() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddGroup(&group))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddGroup(&group))
+	c.ResponseOk(resp)
 }
 
 // DeleteGroup
@@ -143,6 +143,6 @@ func (c *ApiController) DeleteGroup() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteGroup(&group))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteGroup(&group))
+	c.ResponseOk(resp)
 }

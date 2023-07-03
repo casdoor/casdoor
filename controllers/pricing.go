@@ -45,8 +45,8 @@ func (c *ApiController) GetPricings() {
 			return
 		}
 
-		c.Data["json"] = pricings
-		c.ServeJSON()
+		c.ResponseOk(pricings)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPricingCount(owner, field, value)
@@ -82,8 +82,7 @@ func (c *ApiController) GetPricing() {
 		return
 	}
 
-	c.Data["json"] = pricing
-	c.ServeJSON()
+	c.ResponseOk(pricing)
 }
 
 // UpdatePricing
@@ -104,8 +103,8 @@ func (c *ApiController) UpdatePricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePricing(id, &pricing))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdatePricing(id, &pricing))
+	c.ResponseOk(resp)
 }
 
 // AddPricing
@@ -123,8 +122,8 @@ func (c *ApiController) AddPricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPricing(&pricing))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddPricing(&pricing))
+	c.ResponseOk(resp)
 }
 
 // DeletePricing
@@ -142,6 +141,6 @@ func (c *ApiController) DeletePricing() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePricing(&pricing))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeletePricing(&pricing))
+	c.ResponseOk(resp)
 }

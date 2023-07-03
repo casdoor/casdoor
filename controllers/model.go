@@ -45,8 +45,8 @@ func (c *ApiController) GetModels() {
 			return
 		}
 
-		c.Data["json"] = models
-		c.ServeJSON()
+		c.ResponseOk(models)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetModelCount(owner, field, value)
@@ -82,8 +82,7 @@ func (c *ApiController) GetModel() {
 		return
 	}
 
-	c.Data["json"] = model
-	c.ServeJSON()
+	c.ResponseOk(model)
 }
 
 // UpdateModel
@@ -104,8 +103,8 @@ func (c *ApiController) UpdateModel() {
 		return
 	}
 
-	c.Data["json"] = wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
-	c.ServeJSON()
+	resp := wrapErrorResponse(object.UpdateModelWithCheck(id, &model))
+	c.ResponseOk(resp)
 }
 
 // AddModel
@@ -123,8 +122,8 @@ func (c *ApiController) AddModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddModel(&model))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddModel(&model))
+	c.ResponseOk(resp)
 }
 
 // DeleteModel
@@ -142,6 +141,6 @@ func (c *ApiController) DeleteModel() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteModel(&model))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteModel(&model))
+	c.ResponseOk(resp)
 }

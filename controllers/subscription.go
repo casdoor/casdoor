@@ -45,8 +45,8 @@ func (c *ApiController) GetSubscriptions() {
 			return
 		}
 
-		c.Data["json"] = subscriptions
-		c.ServeJSON()
+		c.ResponseOk(subscriptions)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSubscriptionCount(owner, field, value)
@@ -82,8 +82,7 @@ func (c *ApiController) GetSubscription() {
 		return
 	}
 
-	c.Data["json"] = subscription
-	c.ServeJSON()
+	c.ResponseOk(subscription)
 }
 
 // UpdateSubscription
@@ -104,8 +103,8 @@ func (c *ApiController) UpdateSubscription() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateSubscription(id, &subscription))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateSubscription(id, &subscription))
+	c.ResponseOk(resp)
 }
 
 // AddSubscription
@@ -123,8 +122,8 @@ func (c *ApiController) AddSubscription() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddSubscription(&subscription))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddSubscription(&subscription))
+	c.ResponseOk(resp)
 }
 
 // DeleteSubscription
@@ -142,6 +141,6 @@ func (c *ApiController) DeleteSubscription() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSubscription(&subscription))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteSubscription(&subscription))
+	c.ResponseOk(resp)
 }

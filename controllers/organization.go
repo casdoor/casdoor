@@ -55,8 +55,8 @@ func (c *ApiController) GetOrganizations() {
 			return
 		}
 
-		c.Data["json"] = maskedOrganizations
-		c.ServeJSON()
+		c.ResponseOk(maskedOrganizations)
+		return
 	} else {
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
@@ -121,8 +121,8 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateOrganization(id, &organization))
+	c.ResponseOk(resp)
 }
 
 // AddOrganization ...
@@ -151,8 +151,8 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddOrganization(&organization))
+	c.ResponseOk(resp)
 }
 
 // DeleteOrganization ...
@@ -170,8 +170,8 @@ func (c *ApiController) DeleteOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteOrganization(&organization))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteOrganization(&organization))
+	c.ResponseOk(resp)
 }
 
 // GetDefaultApplication ...

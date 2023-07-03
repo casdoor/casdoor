@@ -45,8 +45,8 @@ func (c *ApiController) GetRoles() {
 			return
 		}
 
-		c.Data["json"] = roles
-		c.ServeJSON()
+		c.ResponseOk(roles)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetRoleCount(owner, field, value)
@@ -82,8 +82,7 @@ func (c *ApiController) GetRole() {
 		return
 	}
 
-	c.Data["json"] = role
-	c.ServeJSON()
+	c.ResponseOk(role)
 }
 
 // UpdateRole
@@ -104,8 +103,8 @@ func (c *ApiController) UpdateRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateRole(id, &role))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateRole(id, &role))
+	c.ResponseOk(resp)
 }
 
 // AddRole
@@ -123,8 +122,8 @@ func (c *ApiController) AddRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddRole(&role))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddRole(&role))
+	c.ResponseOk(resp)
 }
 
 // DeleteRole
@@ -142,6 +141,6 @@ func (c *ApiController) DeleteRole() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteRole(&role))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteRole(&role))
+	c.ResponseOk(resp)
 }

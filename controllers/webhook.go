@@ -46,8 +46,8 @@ func (c *ApiController) GetWebhooks() {
 			return
 		}
 
-		c.Data["json"] = webhooks
-		c.ServeJSON()
+		c.ResponseOk(webhooks)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetWebhookCount(owner, organization, field, value)
@@ -84,8 +84,7 @@ func (c *ApiController) GetWebhook() {
 		return
 	}
 
-	c.Data["json"] = webhook
-	c.ServeJSON()
+	c.ResponseOk(webhook)
 }
 
 // UpdateWebhook
@@ -106,8 +105,8 @@ func (c *ApiController) UpdateWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateWebhook(id, &webhook))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateWebhook(id, &webhook))
+	c.ResponseOk(resp)
 }
 
 // AddWebhook
@@ -125,8 +124,8 @@ func (c *ApiController) AddWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddWebhook(&webhook))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddWebhook(&webhook))
+	c.ResponseOk(resp)
 }
 
 // DeleteWebhook
@@ -144,6 +143,6 @@ func (c *ApiController) DeleteWebhook() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteWebhook(&webhook))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteWebhook(&webhook))
+	c.ResponseOk(resp)
 }

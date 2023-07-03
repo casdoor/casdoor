@@ -159,8 +159,8 @@ func (c *ApiController) UpdateProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateProvider(id, &provider))
+	c.ResponseOk(resp)
 }
 
 // AddProvider
@@ -189,8 +189,8 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddProvider(&provider))
+	c.ResponseOk(resp)
 }
 
 // DeleteProvider
@@ -208,6 +208,6 @@ func (c *ApiController) DeleteProvider() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteProvider(&provider))
+	c.ResponseOk(resp)
 }

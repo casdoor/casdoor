@@ -46,8 +46,8 @@ func (c *ApiController) GetProducts() {
 			return
 		}
 
-		c.Data["json"] = products
-		c.ServeJSON()
+		c.ResponseOk(products)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProductCount(owner, field, value)
@@ -89,8 +89,7 @@ func (c *ApiController) GetProduct() {
 		return
 	}
 
-	c.Data["json"] = product
-	c.ServeJSON()
+	c.ResponseOk(product)
 }
 
 // UpdateProduct
@@ -111,8 +110,8 @@ func (c *ApiController) UpdateProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateProduct(id, &product))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateProduct(id, &product))
+	c.ResponseOk(resp)
 }
 
 // AddProduct
@@ -130,8 +129,8 @@ func (c *ApiController) AddProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddProduct(&product))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddProduct(&product))
+	c.ResponseOk(resp)
 }
 
 // DeleteProduct
@@ -149,8 +148,8 @@ func (c *ApiController) DeleteProduct() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteProduct(&product))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteProduct(&product))
+	c.ResponseOk(resp)
 }
 
 // BuyProduct

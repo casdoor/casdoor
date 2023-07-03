@@ -54,8 +54,9 @@ func (c *ApiController) GetApplications() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		maskedApplication := object.GetMaskedApplications(applications, userId)
+		c.ResponseOk(maskedApplication)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetApplicationCount(owner, field, value)
@@ -92,8 +93,8 @@ func (c *ApiController) GetApplication() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	maskedApplication := object.GetMaskedApplication(app, userId)
+	c.ResponseOk(maskedApplication)
 }
 
 // GetUserApplication
@@ -123,8 +124,8 @@ func (c *ApiController) GetUserApplication() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	maskedApplication := object.GetMaskedApplication(app, userId)
+	c.ResponseOk(maskedApplication)
 }
 
 // GetOrganizationApplications
@@ -157,8 +158,9 @@ func (c *ApiController) GetOrganizationApplications() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		maskedApplication := object.GetMaskedApplications(applications, userId)
+		c.ResponseOk(maskedApplication)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 
@@ -198,8 +200,8 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application))
-	c.ServeJSON()
+	maskedApplication := wrapActionResponse(object.UpdateApplication(id, &application))
+	c.ResponseOk(maskedApplication)
 }
 
 // AddApplication
@@ -228,8 +230,8 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddApplication(&application))
-	c.ServeJSON()
+	maskedApplication := wrapActionResponse(object.AddApplication(&application))
+	c.ResponseOk(maskedApplication)
 }
 
 // DeleteApplication
@@ -247,6 +249,6 @@ func (c *ApiController) DeleteApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
-	c.ServeJSON()
+	maskedApplication := wrapActionResponse(object.DeleteApplication(&application))
+	c.ResponseOk(maskedApplication)
 }

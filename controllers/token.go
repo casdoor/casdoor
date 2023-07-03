@@ -47,8 +47,8 @@ func (c *ApiController) GetTokens() {
 			return
 		}
 
-		c.Data["json"] = token
-		c.ServeJSON()
+		c.ResponseOk(token)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetTokenCount(owner, organization, field, value)
@@ -83,8 +83,7 @@ func (c *ApiController) GetToken() {
 		return
 	}
 
-	c.Data["json"] = token
-	c.ServeJSON()
+	c.ResponseOk(token)
 }
 
 // UpdateToken
@@ -105,8 +104,8 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateToken(id, &token))
+	c.ResponseOk(resp)
 }
 
 // AddToken
@@ -124,8 +123,8 @@ func (c *ApiController) AddToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddToken(&token))
+	c.ResponseOk(resp)
 }
 
 // DeleteToken
@@ -143,8 +142,8 @@ func (c *ApiController) DeleteToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteToken(&token))
+	c.ResponseOk(resp)
 }
 
 // GetOAuthToken

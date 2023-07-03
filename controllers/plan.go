@@ -45,8 +45,8 @@ func (c *ApiController) GetPlans() {
 			return
 		}
 
-		c.Data["json"] = plans
-		c.ServeJSON()
+		c.ResponseOk(plans)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPlanCount(owner, field, value)
@@ -95,11 +95,10 @@ func (c *ApiController) GetPlan() {
 			plan.Options = append(plan.Options, option.DisplayName)
 		}
 
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	} else {
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	}
-	c.ServeJSON()
 }
 
 // UpdatePlan
@@ -120,8 +119,8 @@ func (c *ApiController) UpdatePlan() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePlan(id, &plan))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdatePlan(id, &plan))
+	c.ResponseOk(resp)
 }
 
 // AddPlan
@@ -139,8 +138,8 @@ func (c *ApiController) AddPlan() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddPlan(&plan))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddPlan(&plan))
+	c.ResponseOk(resp)
 }
 
 // DeletePlan
@@ -158,6 +157,6 @@ func (c *ApiController) DeletePlan() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeletePlan(&plan))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeletePlan(&plan))
+	c.ResponseOk(resp)
 }

@@ -45,8 +45,8 @@ func (c *ApiController) GetChats() {
 			return
 		}
 
-		c.Data["json"] = maskedChats
-		c.ServeJSON()
+		c.ResponseOk(maskedChats)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetChatCount(owner, field, value)
@@ -82,8 +82,7 @@ func (c *ApiController) GetChat() {
 		return
 	}
 
-	c.Data["json"] = maskedChat
-	c.ServeJSON()
+	c.ResponseOk(maskedChat)
 }
 
 // UpdateChat
@@ -104,8 +103,8 @@ func (c *ApiController) UpdateChat() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateChat(id, &chat))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateChat(id, &chat))
+	c.ResponseOk(resp)
 }
 
 // AddChat
@@ -123,8 +122,8 @@ func (c *ApiController) AddChat() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddChat(&chat))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddChat(&chat))
+	c.ResponseOk(resp)
 }
 
 // DeleteChat
@@ -142,6 +141,6 @@ func (c *ApiController) DeleteChat() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteChat(&chat))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteChat(&chat))
+	c.ResponseOk(resp)
 }

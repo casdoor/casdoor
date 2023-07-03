@@ -729,8 +729,7 @@ func (c *ApiController) Login() {
 		}
 	}
 
-	c.Data["json"] = resp
-	c.ServeJSON()
+	c.ResponseOk(resp)
 }
 
 func (c *ApiController) GetSamlLogin() {
@@ -800,9 +799,8 @@ func (c *ApiController) GetWebhookEventType() {
 		Msg:    "",
 		Data:   wechatScanType,
 	}
-	c.Data["json"] = resp
+	c.ResponseOk(resp)
 	wechatScanType = ""
-	c.ServeJSON()
 }
 
 // GetCaptchaStatus

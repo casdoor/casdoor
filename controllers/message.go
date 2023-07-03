@@ -57,8 +57,9 @@ func (c *ApiController) GetMessages() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedMessages(messages)
-		c.ServeJSON()
+		maskedMessage := object.GetMaskedMessages(messages)
+		c.ResponseOk(maskedMessage)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetMessageCount(owner, organization, field, value)
@@ -94,8 +95,8 @@ func (c *ApiController) GetMessage() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedMessage(message)
-	c.ServeJSON()
+	maskedMessage := object.GetMaskedMessage(message)
+	c.ResponseOk(maskedMessage)
 }
 
 func (c *ApiController) ResponseErrorStream(errorText string) {
@@ -231,8 +232,8 @@ func (c *ApiController) UpdateMessage() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateMessage(id, &message))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateMessage(id, &message))
+	c.ResponseOk(resp)
 }
 
 // AddMessage
@@ -291,8 +292,8 @@ func (c *ApiController) AddMessage() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	resp := wrapActionResponse(affected)
+	c.ResponseOk(resp)
 }
 
 // DeleteMessage
@@ -310,6 +311,6 @@ func (c *ApiController) DeleteMessage() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteMessage(&message))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteMessage(&message))
+	c.ResponseOk(resp)
 }

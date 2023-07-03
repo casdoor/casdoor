@@ -57,8 +57,8 @@ func (c *ApiController) GetResources() {
 			return
 		}
 
-		c.Data["json"] = resources
-		c.ServeJSON()
+		c.ResponseOk(resources)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetResourceCount(owner, user, field, value)
@@ -91,8 +91,7 @@ func (c *ApiController) GetResource() {
 		return
 	}
 
-	c.Data["json"] = resource
-	c.ServeJSON()
+	c.ResponseOk(resource)
 }
 
 // UpdateResource
@@ -109,8 +108,8 @@ func (c *ApiController) UpdateResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateResource(id, &resource))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.UpdateResource(id, &resource))
+	c.ResponseOk(resp)
 }
 
 // AddResource
@@ -125,8 +124,8 @@ func (c *ApiController) AddResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddResource(&resource))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddResource(&resource))
+	c.ResponseOk(resp)
 }
 
 // DeleteResource
@@ -153,8 +152,8 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteResource(&resource))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteResource(&resource))
+	c.ResponseOk(resp)
 }
 
 // UploadResource

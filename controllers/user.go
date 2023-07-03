@@ -45,8 +45,8 @@ func (c *ApiController) GetGlobalUsers() {
 			return
 		}
 
-		c.Data["json"] = maskedUsers
-		c.ServeJSON()
+		c.ResponseOk(maskedUsers)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalUserCount(field, value)
@@ -106,8 +106,8 @@ func (c *ApiController) GetUsers() {
 			return
 		}
 
-		c.Data["json"] = maskedUsers
-		c.ServeJSON()
+		c.ResponseOk(maskedUsers)
+		return
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetUserCount(owner, field, value, groupName)
@@ -211,8 +211,7 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	c.Data["json"] = maskedUser
-	c.ServeJSON()
+	c.ResponseOk(maskedUser)
 }
 
 // UpdateUser
@@ -287,8 +286,8 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
+	resp := wrapActionResponse(affected)
+	c.ResponseOk(resp)
 }
 
 // AddUser
@@ -323,8 +322,8 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.AddUser(&user))
+	c.ResponseOk(resp)
 }
 
 // DeleteUser
@@ -347,8 +346,8 @@ func (c *ApiController) DeleteUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteUser(&user))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.DeleteUser(&user))
+	c.ResponseOk(resp)
 }
 
 // GetEmailAndPhone
@@ -509,8 +508,7 @@ func (c *ApiController) GetSortedUsers() {
 		return
 	}
 
-	c.Data["json"] = maskedUsers
-	c.ServeJSON()
+	c.ResponseOk(maskedUsers)
 }
 
 // GetUserCount
@@ -537,8 +535,7 @@ func (c *ApiController) GetUserCount() {
 		return
 	}
 
-	c.Data["json"] = count
-	c.ServeJSON()
+	c.ResponseOk(count)
 }
 
 // AddUserkeys
@@ -568,6 +565,6 @@ func (c *ApiController) RemoveUserFromGroup() {
 	name := c.Ctx.Request.Form.Get("name")
 	groupName := c.Ctx.Request.Form.Get("groupName")
 
-	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupName))
-	c.ServeJSON()
+	resp := wrapActionResponse(object.RemoveUserFromGroup(owner, name, groupName))
+	c.ResponseOk(resp)
 }
