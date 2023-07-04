@@ -102,7 +102,7 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
-      isPromptEnableMfa: false,
+      forceEnableMfa: false,
     };
 
     Setting.initServerUrl();
@@ -126,7 +126,7 @@ class App extends Component {
 
     if (this.state.account !== prevState.account && this.state.account !== undefined && this.state.account !== null) {
       this.setState({
-        isPromptEnableMfa: Setting.isPromptEnableMfa(this.state.account, this.state.account.organization),
+        forceEnableMfa: Setting.isRequiredEnableMfa(this.state.account, this.state.account.organization),
       });
     }
   }
@@ -561,10 +561,10 @@ class App extends Component {
     } else if (this.state.account === undefined) {
       return null;
     } else {
-      if (this.state.isPromptEnableMfa) {
+      if (this.state.forceEnableMfa) {
         return <MfaSetupPage account={this.state.account} isPromptPage={true} isAuthenticated={true} current={1}
           onfinish={() => {
-            this.setState({isPromptEnableMfa: false});
+            this.setState({forceEnableMfa: false});
             window.location.href = "/account";
           }
           }{...this.props} />;
@@ -631,7 +631,7 @@ class App extends Component {
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/mfa-authentication/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
+        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}

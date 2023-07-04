@@ -34,7 +34,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextMfa} from "./MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa} from "./mfaForm/MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -387,7 +387,7 @@ class LoginPage extends React.Component {
                       oAuthParams={oAuthParams}
                       application={this.getApplicationObj()}
                       onFail={() => {
-                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                        Setting.showMessage("error", i18next.t("mfaForm:Verification failed"));
                       }}
                       onSuccess={(res) => callback(res)}
                     />);

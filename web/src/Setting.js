@@ -483,20 +483,13 @@ export function isPromptAnswered(user, application) {
   return true;
 }
 
-export function getRequiredMfaTypes(organization) {
-  const types = organization.mfaItems.map((mfaItem) => {
-    if (mfaItem.rule === "Required") {
-      return mfaItem.name;
-    } else {
-      return "";
-    }
-  });
-
-  return types.filter((type) => {return type !== "";});
+export function getMfaTypesByRule(organization, rule = "") {
+  const types = organization.mfaItems?.filter((mfaItem) => mfaItem.rule === rule);
+  return types.map((mfaItem) => mfaItem.name);
 }
 
-export function isPromptEnableMfa(user, organization) {
-  const requiredMfaTypes = getRequiredMfaTypes(organization);
+export function isRequiredEnableMfa(user, organization) {
+  const requiredMfaTypes = getMfaTypesByRule(organization, "Required");
   if (requiredMfaTypes.length === 0) {
     return false;
   }
@@ -515,6 +508,25 @@ export function isPromptEnableMfa(user, organization) {
   });
 }
 
+export function isPromptedEnableMfa(user, organization) {
+  const promptedMfaTypes = getMfaTypesByRule(organization, "Prompted");
+  if (promptedMfaTypes.length === 0) {
+    return false;
+  }
+
+  return promptedMfaTypes.some((mfaType) => {
+    if (mfaType === EmailMfaType && !user.mfaEmailEnabled) {
+      return true;
+    }
+    if (mfaType === SmsMfaType && !user.mfaPhoneEnabled) {
+      return true;
+    }
+    if (mfaType === TotpMfaType && user.totpSecret === "") {
+      return true;
+    }
+    return false;
+  });
+}
 export function parseObject(s) {
   try {
     return eval("(" + s + ")");

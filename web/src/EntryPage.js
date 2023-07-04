@@ -55,7 +55,7 @@ class EntryPage extends React.Component {
     // if (Setting.isPromptEnableMfa(this.props.account, this.props.account.organization)) {
     //   // eslint-disable-next-line no-console
     //   console.log("renderPromptIfNotEnabledMfa");
-    //   return <Redirect to={`/prompt/${this.state.application.name}?promptType=mfa`} />;
+    //   return <Redirect to={`/prompt/${this.state.application.name}?promptType=mfaForm`} />;
     // } else {
     //   return <Redirect to="/" />;
     // }
