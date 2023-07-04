@@ -562,7 +562,12 @@ class App extends Component {
       return null;
     } else {
       if (this.state.isPromptEnableMfa) {
-        return <MfaSetupPage account={this.state.account} isPromptPage={true} isAuthenticated={true} current={1} {...this.props} />;
+        return <MfaSetupPage account={this.state.account} isPromptPage={true} isAuthenticated={true} current={1}
+          onfinish={() => {
+            this.setState({isPromptEnableMfa: false});
+            window.location.href = "/account";
+          }
+          }{...this.props} />;
       } else {
         return component;
       }

@@ -302,7 +302,7 @@ class MfaSetupPage extends React.Component {
               });
             }}
             onFail={(res) => {
-              Setting.showMessage("error", i18next.t("general:Failed to verify"));
+              Setting.showMessage("error", i18next.t("general:Failed to verify") + ": " + res.msg);
             }}
           />
           <Col span={24} style={{display: "flex", justifyContent: "left"}}>
@@ -320,7 +320,7 @@ class MfaSetupPage extends React.Component {
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
             if (this.state.isPromptPage) {
-              this.props.onFinished("mfa");
+              this.props.onfinish("mfa");
             } else {
               Setting.goToLink("/account");
             }

@@ -27,6 +27,12 @@ const MfaItems = [
   {name: "App", value: TotpMfaType},
 ];
 
+const RuleItems = [
+  {value: "Optional", label: i18next.t("organization:Optional")},
+  {value: "Prompt", label: i18next.t("organization:Prompt")},
+  {value: "Required", label: i18next.t("organization:Required")},
+];
+
 class MfaTable extends React.Component {
   constructor(props) {
     super(props);
@@ -98,12 +104,22 @@ class MfaTable extends React.Component {
             <Select virtual={false} style={{width: "100%"}}
               value={text}
               defaultValue="Optional"
-              options={[
-                {value: "Optional", label: i18next.t("organization:Optional")},
-                {value: "Required", label: i18next.t("organization:Required")}].map((item) =>
+              options={RuleItems.map((item) =>
                 Setting.getOption(item.label, item.value))
               }
               onChange={value => {
+                let requiredCount = 0;
+                table.forEach((item) => {
+                  if (item.rule === "Required") {
+                    requiredCount++;
+                  }
+                });
+                // eslint-disable-next-line no-console
+                console.log(requiredCount);
+                if (value === "Required" && requiredCount >= 1) {
+                  Setting.showMessage("error", "Only 1 MFA methods can be required");
+                  return;
+                }
                 this.updateField(table, index, "rule", value);
               }} >
             </Select>
@@ -137,7 +153,7 @@ class MfaTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={table.length >= MfaItems.length} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />

@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	MfaSmsCountryCodeSession = "mfa_country_code"
-	MfaDestSession           = "mfa_dest"
+	MfaCountryCodeSession = "mfa_country_code"
+	MfaDestSession        = "mfa_dest"
 )
 
 type SmsMfa struct {
@@ -55,7 +55,7 @@ func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
 	dest := destSession.(string)
 
 	if !util.IsEmailValid(dest) {
-		countryCodeSession := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession)
+		countryCodeSession := ctx.Input.CruSession.Get(MfaCountryCodeSession)
 		if countryCodeSession == nil {
 			return errors.New("country code is missing")
 		}
@@ -89,7 +89,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 
 		if user.Phone == "" {
 			user.Phone = ctx.Input.CruSession.Get(MfaDestSession).(string)
-			user.CountryCode = ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+			user.CountryCode = ctx.Input.CruSession.Get(MfaCountryCodeSession).(string)
 			columns = append(columns, "phone", "country_code")
 		}
 	} else if mfa.Config.MfaType == EmailType {

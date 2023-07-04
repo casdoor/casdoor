@@ -180,7 +180,7 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 
 func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
 	if data == nil {
-		c.SetSession(object.MfaSessionUserId, nil)
+		c.Input().Del(object.MfaSessionUserId)
 		return
 	}
 	c.SetSession(object.MfaSessionUserId, data.UserId)
