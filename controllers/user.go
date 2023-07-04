@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
-	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -397,29 +396,28 @@ func (c *ApiController) GetEmailAndPhone() {
 // @Title SetPassword
 // @Tag Account API
 // @Description set password
-// @Param   form   body   form.ChangePasswordForm  true        "Change password information"
+// @Param   userOwner   formData    string  true        "The owner of the user"
+// @Param   userName   formData    string  true        "The name of the user"
+// @Param   oldPassword   formData    string  true        "The old password of the user"
+// @Param   newPassword   formData    string  true        "The new password of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /set-password [post]
 func (c *ApiController) SetPassword() {
-	var changePasswordForm form.ChangePasswordForm
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &changePasswordForm)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
+	userOwner := c.Ctx.Request.Form.Get("userOwner")
+	userName := c.Ctx.Request.Form.Get("userName")
+	oldPassword := c.Ctx.Request.Form.Get("oldPassword")
+	newPassword := c.Ctx.Request.Form.Get("newPassword")
+	code := c.Ctx.Request.Form.Get("code")
 
 	//if userOwner == "built-in" && userName == "admin" {
 	//	c.ResponseError(c.T("auth:Unauthorized operation"))
 	//	return
 	//}
 
-	if strings.Contains(changePasswordForm.Password, " ") {
+	if strings.Contains(newPassword, " ") {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
-
-	userOwner := changePasswordForm.UserOwner
-	userName := changePasswordForm.UserName
 
 	userId := ""
 	requestUserId := c.GetSessionUsername()
@@ -429,17 +427,17 @@ func (c *ApiController) SetPassword() {
 		userId = requestUserId
 	}
 
-	if requestUserId == "" && changePasswordForm.Code == "" {
+	if requestUserId == "" && code == "" {
 		c.ResponseError(c.T("general:Please login first"), "Please login first")
 		return
-	} else if changePasswordForm.Code == "" {
+	} else if code == "" {
 		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
 		if !hasPermission {
 			c.ResponseError(err.Error())
 			return
 		}
 	} else {
-		if changePasswordForm.Code != c.GetSession("verifiedCode") {
+		if code != c.GetSession("verifiedCode") {
 			c.ResponseError(c.T("general:Missing parameter"))
 			return
 		}
@@ -452,15 +450,15 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	if changePasswordForm.CurrentPassword != "" {
-		msg := object.CheckPassword(targetUser, changePasswordForm.CurrentPassword, c.GetAcceptLanguage())
+	if oldPassword != "" {
+		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
 			return
 		}
 	}
 
-	msg := object.CheckPasswordComplexity(targetUser, changePasswordForm.Password)
+	msg := object.CheckPasswordComplexity(targetUser, newPassword)
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -475,7 +473,7 @@ func (c *ApiController) SetPassword() {
 
 	object.DeleteSessionId(util.GetSessionId(targetUser.Owner, targetUser.Name, targetUser.SignupApplication), c.Ctx.Input.CruSession.SessionID())
 
-	targetUser.Password = changePasswordForm.Password
+	targetUser.Password = newPassword
 	_, err = object.SetUserField(targetUser, "password", targetUser.Password)
 	if err != nil {
 		c.ResponseError(err.Error())

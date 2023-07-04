@@ -461,7 +461,7 @@ class LoginPage extends React.Component {
               >
               </Form.Item>
               <Form.Item
-                name="currentPassword"
+                name="oldPassword"
                 label={i18next.t("user:Old Password")}
                 rules={[
                   {
@@ -474,7 +474,7 @@ class LoginPage extends React.Component {
                 <Input.Password />
               </Form.Item>
               <Form.Item
-                name="password"
+                name="newPassword"
                 label={i18next.t("user:New Password")}
                 rules={[
                   {
@@ -499,7 +499,7 @@ class LoginPage extends React.Component {
               <Form.Item
                 name="confirm"
                 label={i18next.t("user:Re-enter New")}
-                dependencies={["password"]}
+                dependencies={["newPassword"]}
                 hasFeedback
                 rules={[
                   {
@@ -508,7 +508,7 @@ class LoginPage extends React.Component {
                   },
                   ({getFieldValue}) => ({
                     validator(rule, value) {
-                      if (!value || getFieldValue("password") === value) {
+                      if (!value || getFieldValue("newPassword") === value) {
                         return Promise.resolve();
                       }
 
@@ -534,7 +534,8 @@ class LoginPage extends React.Component {
   }
 
   onChangePasswordFinish(values) {
-    UserBackend.setPassword(values)
+    // userOwner and userName will be taken from session if any
+    UserBackend.setPassword(null, null, values.oldPassword, values.newPassword)
       .then((res) => {
         if (res.status === "ok") {
           const _values = {...this.state.values};
