@@ -29,7 +29,7 @@ import (
 // @param name	form	string	true	"name of user"
 // @param type	form	string	true	"MFA auth type"
 // @Success 200 {object} controllers.Response The Response object
-// @router /mfaForm/setup/initiate [post]
+// @router /mfa/setup/initiate [post]
 func (c *ApiController) MfaSetupInitiate() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
@@ -74,7 +74,7 @@ func (c *ApiController) MfaSetupInitiate() {
 // @param	secret		form	string	true	"MFA secret"
 // @param	passcode	form 	string 	true	"MFA passcode"
 // @Success 200 {object}  Response object
-// @router /mfaForm/setup/verify [post]
+// @router /mfa/setup/verify [post]
 func (c *ApiController) MfaSetupVerify() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	passcode := c.Ctx.Request.Form.Get("passcode")
@@ -105,7 +105,7 @@ func (c *ApiController) MfaSetupVerify() {
 // @param name	form	string	true	"name of user"
 // @param type	form	string	true	"MFA auth type"
 // @Success 200 {object}  Response object
-// @router /mfaForm/setup/enable [post]
+// @router /mfa/setup/enable [post]
 func (c *ApiController) MfaSetupEnable() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
@@ -144,7 +144,7 @@ func (c *ApiController) MfaSetupEnable() {
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
 // @Success 200 {object}  Response object
-// @router /delete-mfaForm/ [post]
+// @router /delete-mfa/ [post]
 func (c *ApiController) DeleteMfa() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
@@ -177,7 +177,7 @@ func (c *ApiController) DeleteMfa() {
 // @param name	form	string	true	"name of user"
 // @param id	form	string	true	"id of user's MFA props"
 // @Success 200 {object}  Response object
-// @router /set-preferred-mfaForm [post]
+// @router /set-preferred-mfa [post]
 func (c *ApiController) SetPreferredMfa() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	owner := c.Ctx.Request.Form.Get("owner")

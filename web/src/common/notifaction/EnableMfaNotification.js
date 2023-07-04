@@ -1,5 +1,7 @@
 import {Button, Space, notification} from "antd";
 import i18next from "i18next";
+import react from "react";
+import {MfaRuleRequired} from "../../Setting";
 
 const close = () => {
   // eslint-disable-next-line no-console
@@ -7,9 +9,20 @@ const close = () => {
     "Notification was closed. Either the close button was clicked or duration time elapsed."
   );
 };
-const EnableMfaNotification = ({onupdate}) => {
+const EnableMfaNotification = ({mfaItems, onupdate}) => {
   const [api, contextHolder] = notification.useNotification();
-  const openNotification = () => {
+
+  react.useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log(mfaItems);
+    if (mfaItems.some((item) => item.rule === MfaRuleRequired)) {
+      openRequiredEnableNotification();
+    } else {
+      openPromptEnableNotification();
+    }
+  }, []);
+
+  const openPromptEnableNotification = () => {
     const key = `open${Date.now()}`;
     const btn = (
       <Space>
@@ -19,8 +32,8 @@ const EnableMfaNotification = ({onupdate}) => {
         <Button type="primary" size="small" onClick={() => {
           onupdate(false);
           api.destroy(key);
-        }
-        }>
+        }}
+        >
           {i18next.t("general:later")}
         </Button>
       </Space>
@@ -28,18 +41,38 @@ const EnableMfaNotification = ({onupdate}) => {
     api.open({
       message: "Notification Title",
       description:
-        "A function will be be called after the notification is closed (automatically after the \"duration\" time of manually).",
+        i18next.t("mfa: "),
       btn,
       key,
       onClose: close,
     });
   };
+
+  const openRequiredEnableNotification = () => {
+    const key = `open${Date.now()}`;
+    const btn = (
+      <Space>
+        <Button type="primary" size="small" onClick={() => {
+          api.destroy(key);
+        }}
+        >
+          {i18next.t("general:close")}
+        </Button>
+      </Space>
+    );
+    api.open({
+      message: "Notification Title",
+      description:
+        i18next.t("mfa: "),
+      btn,
+      key,
+      onClose: close,
+    });
+  };
+
   return (
     <>
       {contextHolder}
-      <Button type="primary" onClick={openNotification}>
-        Open the notification box
-      </Button>
     </>
   );
 };

@@ -16,6 +16,7 @@ import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Table, Tooltip} from "antd";
 import {EmailMfaType, SmsMfaType, TotpMfaType} from "../auth/MfaSetupPage";
+import {MfaRuleOptional, MfaRulePrompted, MfaRuleRequired} from "../Setting";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -28,9 +29,9 @@ const MfaItems = [
 ];
 
 const RuleItems = [
-  {value: "Optional", label: i18next.t("organization:Optional")},
-  {value: "Prompt", label: i18next.t("organization:Prompt")},
-  {value: "Required", label: i18next.t("organization:Required")},
+  {value: MfaRuleRequired, label: i18next.t("organization:Optional")},
+  {value: MfaRulePrompted, label: i18next.t("organization:Prompt")},
+  {value: MfaRuleOptional, label: i18next.t("organization:Required")},
 ];
 
 class MfaTable extends React.Component {
@@ -114,8 +115,7 @@ class MfaTable extends React.Component {
                     requiredCount++;
                   }
                 });
-                // eslint-disable-next-line no-console
-                console.log(requiredCount);
+
                 if (value === "Required" && requiredCount >= 1) {
                   Setting.showMessage("error", "Only 1 MFA methods can be required");
                   return;

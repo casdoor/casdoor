@@ -22,7 +22,6 @@ import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
-import {EmailMfaType, SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
 import moment from "moment";
@@ -483,50 +482,28 @@ export function isPromptAnswered(user, application) {
   return true;
 }
 
-export function getMfaTypesByRule(organization, rule = "") {
-  const types = organization.mfaItems?.filter((mfaItem) => mfaItem.rule === rule);
-  return types.map((mfaItem) => mfaItem.name);
-}
+export const MfaRuleRequired = "Required";
+export const MfaRulePrompted = "Prompted";
+export const MfaRuleOptional = "Optional";
 
-export function isRequiredEnableMfa(user, organization) {
-  const requiredMfaTypes = getMfaTypesByRule(organization, "Required");
-  if (requiredMfaTypes.length === 0) {
+export function isPromptEnableMfa(user, organization) {
+  if (!organization || !organization.mfaItems || organization.mfaItems.length === 0) {
     return false;
   }
-
-  return requiredMfaTypes.some((mfaType) => {
-    if (mfaType === EmailMfaType && !user.mfaEmailEnabled) {
-      return true;
-    }
-    if (mfaType === SmsMfaType && !user.mfaPhoneEnabled) {
-      return true;
-    }
-    if (mfaType === TotpMfaType && user.totpSecret === "") {
-      return true;
-    }
-    return false;
-  });
+  return getPromptedMfaItems(user, organization).length > 0;
 }
 
-export function isPromptedEnableMfa(user, organization) {
-  const promptedMfaTypes = getMfaTypesByRule(organization, "Prompted");
-  if (promptedMfaTypes.length === 0) {
-    return false;
+export function getPromptedMfaItems(user, organization) {
+  if (!organization || !organization.mfaItems || organization.mfaItems.length === 0) {
+    return [];
   }
 
-  return promptedMfaTypes.some((mfaType) => {
-    if (mfaType === EmailMfaType && !user.mfaEmailEnabled) {
-      return true;
-    }
-    if (mfaType === SmsMfaType && !user.mfaPhoneEnabled) {
-      return true;
-    }
-    if (mfaType === TotpMfaType && user.totpSecret === "") {
-      return true;
-    }
-    return false;
-  });
+  return organization.mfaItems.filter((mfaItem) => mfaItem.rule === MfaRuleRequired || mfaItem.rule === MfaRulePrompted)
+    .filter((mfaItem) => {
+      return user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled);
+    });
 }
+
 export function parseObject(s) {
   try {
     return eval("(" + s + ")");

@@ -15,6 +15,7 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
+import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
@@ -64,6 +65,13 @@ import ProductBuyPage from "./ProductBuyPage";
 import PaymentListPage from "./PaymentListPage";
 import PaymentEditPage from "./PaymentEditPage";
 import PaymentResultPage from "./PaymentResultPage";
+import ModelListPage from "./ModelListPage";
+import ModelEditPage from "./ModelEditPage";
+import AdapterListPage from "./AdapterListPage";
+import AdapterEditPage from "./AdapterEditPage";
+import SessionListPage from "./SessionListPage";
+import MfaSetupPage from "./auth/MfaSetupPage";
+import SystemInfo from "./SystemInfo";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./common/CustomGithubCorner";
@@ -73,19 +81,12 @@ import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
-import LanguageSelect from "./common/select/LanguageSelect";
-import i18next from "i18next";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
-import ModelListPage from "./ModelListPage";
-import ModelEditPage from "./ModelEditPage";
-import SystemInfo from "./SystemInfo";
-import AdapterListPage from "./AdapterListPage";
-import AdapterEditPage from "./AdapterEditPage";
+import i18next from "i18next";
 import {withTranslation} from "react-i18next";
+import LanguageSelect from "./common/select/LanguageSelect";
 import ThemeSelect from "./common/select/ThemeSelect";
-import SessionListPage from "./SessionListPage";
-import MfaSetupPage from "./auth/MfaSetupPage";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 
 const {Header, Footer, Content} = Layout;
@@ -102,7 +103,7 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
-      forceEnableMfa: false,
+      promptEnableMfa: false,
     };
 
     Setting.initServerUrl();
@@ -124,10 +125,18 @@ class App extends Component {
       this.updateMenuKey();
     }
 
-    if (this.state.account !== prevState.account && this.state.account !== undefined && this.state.account !== null) {
-      this.setState({
-        forceEnableMfa: Setting.isRequiredEnableMfa(this.state.account, this.state.account.organization),
-      });
+    if (this.state.account !== prevState.account) {
+      if (this.state.account) {
+        this.setState({
+          promptEnableMfa: Setting.isPromptEnableMfa(this.state.account, this.state.account.organization),
+        });
+        // eslint-disable-next-line no-console
+        console.log("promptEnableMfa", Setting.isPromptEnableMfa(this.state.account, this.state.account.organization));
+      } else {
+        this.setState({
+          promptEnableMfa: false,
+        });
+      }
     }
   }
 
@@ -561,10 +570,11 @@ class App extends Component {
     } else if (this.state.account === undefined) {
       return null;
     } else {
-      if (this.state.forceEnableMfa) {
-        return <MfaSetupPage account={this.state.account} isPromptPage={true} isAuthenticated={true} current={1}
+      if (this.state.promptEnableMfa) {
+        return <MfaSetupPage account={this.state.account} isPromptPage={true} current={1}
+          visibleMfaTypes={Setting.getPromptedMfaItems(this.state.account, this.state.account?.organization).map((item) => item.name)}
           onfinish={() => {
-            this.setState({forceEnableMfa: false});
+            this.setState({promptEnableMfa: false});
             window.location.href = "/account";
           }
           }{...this.props} />;
@@ -668,6 +678,7 @@ class App extends Component {
     const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
+        {this.state.promptEnableMfa && <EnableMfaNotification onupdate={(value) => this.setState({promptEnableMfa: value})} mfaItems={Setting.getPromptedMfaItems(this.state.account, this.state.account?.organization)} />}
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
