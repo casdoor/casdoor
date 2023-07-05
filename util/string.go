@@ -290,8 +290,10 @@ func HasString(strs []string, str string) bool {
 	return false
 }
 
-func ParseId(input interface{}) (string, error) {
+func ParseIdToString(input interface{}) (string, error) {
 	switch v := input.(type) {
+	case string:
+		return v, nil
 	case int:
 		return strconv.Itoa(v), nil
 	case int64:

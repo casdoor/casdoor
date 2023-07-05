@@ -108,7 +108,7 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	}
 
 	// try to parse id to string
-	id, err := util.ParseId(dataMap["id"])
+	id, err := util.ParseIdToString(dataMap["id"])
 	if err != nil {
 		return nil, err
 	}
