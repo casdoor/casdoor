@@ -571,9 +571,9 @@ class App extends Component {
       if (this.state.requiredEnableMfa) {
         return <MfaSetupPage account={this.state.account} isPromptPage={true} current={1}
           visibleMfaTypes={Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [Setting.MfaRuleRequired]).map((item) => item.name)}
-          onfinish={() => {
+          onfinish={(redirectUri) => {
             this.setState({requiredEnableMfa: false});
-            window.location.href = "/account";
+            this.props.history.push(redirectUri === "" ? "/account" : redirectUri);
           }
           }{...this.props} />;
       } else {
@@ -670,7 +670,11 @@ class App extends Component {
       if (key === "/swagger") {
         window.open(Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger", "_blank");
       } else {
-        this.props.history.push(key);
+        if (this.state.requiredEnableMfa) {
+          Setting.showMessage("info", "Please enable MFA first!");
+        } else {
+          this.props.history.push(key);
+        }
       }
     };
     const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";

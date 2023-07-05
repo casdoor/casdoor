@@ -28,8 +28,6 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   }, [mfaProps.mfaType]);
 
   const isShowText = () => {
-    // eslint-disable-next-line no-console
-    console.log(mfaProps.secret);
     if (method === mfaAuth) {
       return true;
     }

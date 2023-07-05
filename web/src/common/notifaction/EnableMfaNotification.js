@@ -18,16 +18,16 @@ const EnableMfaNotification = ({account, onupdate}) => {
     const mfaItems = Setting.getMfaItemsByRules(account, account?.organization, [MfaRuleRequired, MfaRulePrompted]);
     if (location.state?.from === "/login" && mfaItems.length !== 0) {
       if (mfaItems.some((item) => item.rule === MfaRuleRequired)) {
-        openRequiredEnableNotification(mfaItems.find((item) => item.rule === MfaRuleRequired).map((item) => item.name));
+        // eslint-disable-next-line no-console
+        console.log(mfaItems);
+        openRequiredEnableNotification(mfaItems.find((item) => item.rule === MfaRuleRequired).name);
       } else {
-        openPromptEnableNotification(mfaItems.filter((item) => item.rule === MfaRulePrompted).map((item) => item.name));
+        openPromptEnableNotification(mfaItems.filter((item) => item.rule === MfaRulePrompted)?.map((item) => item.name));
       }
     }
   }, [account]);
 
   const openPromptEnableNotification = (mfaTypes) => {
-    // eslint-disable-next-line no-console
-    console.log(mfaTypes);
     const key = `open${Date.now()}`;
     const btn = (
       <Space>
@@ -35,7 +35,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
           {i18next.t("general:Later")}
         </Button>
         <Button type="primary" size="small" onClick={() => {
-          history.push("/mfa/setup", {from: "notification"});
+          history.push(`/mfa/setup?mfaType=${mfaTypes[0]}`, {from: "notification"});
           api.destroy(key);
         }}
         >
@@ -55,7 +55,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
     });
   };
 
-  const openRequiredEnableNotification = (mfaTypes) => {
+  const openRequiredEnableNotification = (mfaType) => {
     const key = `open${Date.now()}`;
     const btn = (
       <Space>
@@ -72,7 +72,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
       description:
       <Space direction={"vertical"}>
         {i18next.t("mfa:To ensure the security of your account, it is required to enable multi-factor authentication")}
-        <Space><Tag color="orange">{mfaTypes}</Tag></Space>
+        <Space><Tag color="orange">{mfaType}</Tag></Space>
       </Space>,
       btn,
       key,

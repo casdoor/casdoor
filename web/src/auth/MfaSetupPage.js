@@ -208,10 +208,10 @@ class MfaSetupPage extends React.Component {
         <MfaEnableForm user={this.getUser()} mfaType={this.state.mfaType} recoveryCodes={this.state.mfaProps.recoveryCodes}
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-            if (this.state.isPromptPage) {
+            if (this.state.isPromptPage && this.props.onfinish !== undefined) {
               this.setState({finished: true});
             } else {
-              Setting.goToLink("/account");
+              this.props.history.push("/account");
             }
           }}
           onFail={(res) => {
