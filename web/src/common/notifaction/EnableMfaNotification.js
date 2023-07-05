@@ -47,7 +47,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
       message: i18next.t("mfa:Enable multi-factor authentication"),
       description:
       <Space direction={"vertical"}>
-        {i18next.t("mfa:To ensure the security of your account, please enable multi-factor authentication")}
+        {i18next.t("mfa:To ensure the security of your account, it is recommended that you enable multi-factor authentication")}
         <Space>{mfaTypes.map((item) => <Tag color="orange" key={item}>{item}</Tag>)}</Space>
       </Space>,
       btn,
