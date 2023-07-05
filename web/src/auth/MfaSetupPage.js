@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Col, Result, Row, Steps} from "antd";
+import {withRouter} from "react-router-dom";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
@@ -32,19 +33,19 @@ class MfaSetupPage extends React.Component {
   constructor(props) {
     super(props);
     const params = new URLSearchParams(props.location.search);
+    const {location} = this.props;
+    const current = location.state?.from === "notification" ? 1 : 0;
     this.state = {
       account: props.account,
       application: null,
       applicationName: props.account.signupApplication ?? "",
-      current: props.current ?? 0,
+      current: props.current ?? current,
       mfaProps: null,
       mfaType: props.visibleMfaTypes?.[0] ?? params.get("mfaType") ?? SmsMfaType,
-      isPromptPage: props.isPromptPage,
+      isPromptPage: props.isPromptPage || location.state?.from === "notification",
       redirectUri: params.get("redirectUri"),
       finished: false,
     };
-    // eslint-disable-next-line no-console
-    console.log(this.props);
   }
 
   componentDidMount() {
@@ -264,4 +265,4 @@ class MfaSetupPage extends React.Component {
   }
 }
 
-export default MfaSetupPage;
+export default withRouter(MfaSetupPage);

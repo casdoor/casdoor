@@ -103,7 +103,7 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
-      promptEnableMfa: false,
+      requiredEnableMfa: false,
     };
 
     Setting.initServerUrl();
@@ -128,13 +128,11 @@ class App extends Component {
     if (this.state.account !== prevState.account) {
       if (this.state.account) {
         this.setState({
-          promptEnableMfa: Setting.isPromptEnableMfa(this.state.account, this.state.account.organization),
+          requiredEnableMfa: Setting.isRequiredEnableMfa(this.state.account, this.state.account.organization),
         });
-        // eslint-disable-next-line no-console
-        console.log("promptEnableMfa", Setting.isPromptEnableMfa(this.state.account, this.state.account.organization));
       } else {
         this.setState({
-          promptEnableMfa: false,
+          requiredEnableMfa: false,
         });
       }
     }
@@ -263,7 +261,7 @@ class App extends Component {
     }
   };
 
-  getAccount() {
+  getAccount(callback) {
     const params = new URLSearchParams(this.props.location.search);
 
     let query = this.getAccessTokenParam(params);
@@ -298,7 +296,7 @@ class App extends Component {
 
         this.setState({
           account: account,
-        });
+        }, callback);
       });
   }
 
@@ -570,11 +568,11 @@ class App extends Component {
     } else if (this.state.account === undefined) {
       return null;
     } else {
-      if (this.state.promptEnableMfa) {
+      if (this.state.requiredEnableMfa) {
         return <MfaSetupPage account={this.state.account} isPromptPage={true} current={1}
-          visibleMfaTypes={Setting.getPromptedMfaItems(this.state.account, this.state.account?.organization).map((item) => item.name)}
+          visibleMfaTypes={Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [Setting.MfaRuleRequired]).map((item) => item.name)}
           onfinish={() => {
-            this.setState({promptEnableMfa: false});
+            this.setState({requiredEnableMfa: false});
             window.location.href = "/account";
           }
           }{...this.props} />;
@@ -678,7 +676,7 @@ class App extends Component {
     const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
-        {this.state.promptEnableMfa && <EnableMfaNotification onupdate={(value) => this.setState({promptEnableMfa: value})} mfaItems={Setting.getPromptedMfaItems(this.state.account, this.state.account?.organization)} />}
+        <EnableMfaNotification onupdate={(value) => this.setState({requiredEnableMfa: value})} account={this.state.account} />
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
@@ -772,9 +770,13 @@ class App extends Component {
                 <EntryPage
                   account={this.state.account}
                   theme={this.state.themeData}
-                  onUpdateAccount={(account) => {
-                    this.onUpdateAccount(account);
+                  onLoginSuccess={() => {
+                    this.getAccount(() => {
+                      const link = Setting.getFromLink();
+                      this.props.history.push(link, {from: "/login"});
+                    });
                   }}
+                  onUpdateAccount={(account) => this.onUpdateAccount(account)}
                   updataThemeData={this.setTheme}
                 /> :
                 <Switch>

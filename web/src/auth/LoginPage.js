@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
@@ -69,8 +70,6 @@ class LoginPage extends React.Component {
   }
 
   componentDidMount() {
-    // eslint-disable-next-line no-console
-    console.log(this.getApplicationObj());
     if (this.getApplicationObj() === undefined) {
       if (this.state.type === "login" || this.state.type === "cas" || this.state.type === "saml") {
         this.getApplication();
@@ -353,8 +352,7 @@ class LoginPage extends React.Component {
 
             if (responseType === "login") {
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-              const link = Setting.getFromLink();
-              Setting.goToLink(link);
+              this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
@@ -986,4 +984,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+export default withRouter(LoginPage);

@@ -29,9 +29,9 @@ const MfaItems = [
 ];
 
 const RuleItems = [
-  {value: MfaRuleRequired, label: i18next.t("organization:Optional")},
+  {value: MfaRuleOptional, label: i18next.t("organization:Optional")},
   {value: MfaRulePrompted, label: i18next.t("organization:Prompt")},
-  {value: MfaRuleOptional, label: i18next.t("organization:Required")},
+  {value: MfaRuleRequired, label: i18next.t("organization:Required")},
 ];
 
 class MfaTable extends React.Component {
@@ -111,12 +111,12 @@ class MfaTable extends React.Component {
               onChange={value => {
                 let requiredCount = 0;
                 table.forEach((item) => {
-                  if (item.rule === "Required") {
+                  if (item.rule === MfaRuleRequired) {
                     requiredCount++;
                   }
                 });
 
-                if (value === "Required" && requiredCount >= 1) {
+                if (value === MfaRuleRequired && requiredCount >= 1) {
                   Setting.showMessage("error", "Only 1 MFA methods can be required");
                   return;
                 }

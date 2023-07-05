@@ -486,22 +486,20 @@ export const MfaRuleRequired = "Required";
 export const MfaRulePrompted = "Prompted";
 export const MfaRuleOptional = "Optional";
 
-export function isPromptEnableMfa(user, organization) {
-  if (!organization || !organization.mfaItems || organization.mfaItems.length === 0) {
+export function isRequiredEnableMfa(user, organization) {
+  if (!user || !organization || !organization.mfaItems) {
     return false;
   }
-  return getPromptedMfaItems(user, organization).length > 0;
+  return getMfaItemsByRules(user, organization, [MfaRuleRequired]).length > 0;
 }
 
-export function getPromptedMfaItems(user, organization) {
-  if (!organization || !organization.mfaItems || organization.mfaItems.length === 0) {
+export function getMfaItemsByRules(user, organization, mfaRules = []) {
+  if (!user || !organization || !organization.mfaItems) {
     return [];
   }
 
-  return organization.mfaItems.filter((mfaItem) => mfaItem.rule === MfaRuleRequired || mfaItem.rule === MfaRulePrompted)
-    .filter((mfaItem) => {
-      return user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled);
-    });
+  return organization.mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
+    .filter((mfaItem) => user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled));
 }
 
 export function parseObject(s) {

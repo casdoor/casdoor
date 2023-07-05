@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {withRouter} from "react-router-dom";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -900,7 +901,7 @@ class UserEditPage extends React.Component {
                           }
                         </Space>
                       ) : <Button type={"default"} onClick={() => {
-                        Setting.goToLink(`/mfa/setup?mfaType=${item.mfaType}`);
+                        this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
                       }}>
                         {i18next.t("mfaForm:Setup")}
                       </Button>}
@@ -1053,4 +1054,4 @@ class UserEditPage extends React.Component {
   }
 }
 
-export default UserEditPage;
+export default withRouter(UserEditPage);
