@@ -57,11 +57,11 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
     >
       {isShowText() ?
         <div style={{marginBottom: 20, textAlign: "left", gap: 8}}>
-          {isEmail() ? i18next.t("mfaForm:Your email is") : i18next.t("mfaForm:Your phone is")} {dest}
+          {isEmail() ? i18next.t("mfa:Your email is") : i18next.t("mfa:Your phone is")} {dest}
         </div> :
         (<React.Fragment>
-          <p>{isEmail() ? i18next.t("mfaForm:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
-            i18next.t("mfaForm:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
+          <p>{isEmail() ? i18next.t("mfa:Please bind your email first, the system will automatically uses the mail for multi-factor authentication") :
+            i18next.t("mfa:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
           </p>
           <Input.Group compact style={{width: "300Px", marginBottom: "30px"}}>
             {isEmail() ? null :

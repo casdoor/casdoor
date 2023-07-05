@@ -850,10 +850,10 @@ class UserEditPage extends React.Component {
         !this.isSelfOrAdmin() ? null : (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
-              {Setting.getLabel(i18next.t("mfaForm:Multi-factor authentication"), i18next.t("mfaForm:Multi-factor authentication - Tooltip "))} :
+              {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
-              <Card title={i18next.t("mfaForm:Multi-factor methods")}
+              <Card title={i18next.t("mfa:Multi-factor methods")}
                 extra={this.state.multiFactorAuths?.some(mfaProps => mfaProps.enabled) ?
                   <PopconfirmModal
                     text={i18next.t("general:Disable")}
@@ -880,7 +880,7 @@ class UserEditPage extends React.Component {
                           }
                           {item.isPreferred ?
                             <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
-                              {i18next.t("mfaForm:preferred")}
+                              {i18next.t("mfa:preferred")}
                             </Tag> :
                             <Button type="primary" style={{marginRight: 20}} onClick={() => {
                               const values = {
@@ -896,14 +896,14 @@ class UserEditPage extends React.Component {
                                 }
                               });
                             }}>
-                              {i18next.t("mfaForm:Set preferred")}
+                              {i18next.t("mfa:Set preferred")}
                             </Button>
                           }
                         </Space>
                       ) : <Button type={"default"} onClick={() => {
                         this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
                       }}>
-                        {i18next.t("mfaForm:Setup")}
+                        {i18next.t("mfa:Setup")}
                       </Button>}
                     </List.Item>
                   )}

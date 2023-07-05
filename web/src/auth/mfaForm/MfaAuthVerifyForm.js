@@ -66,10 +66,10 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
-          {i18next.t("mfaForm:Multi-factor authentication")}
+          {i18next.t("mfa:Multi-factor authentication")}
         </div>
         <div style={{marginBottom: 24}}>
-          {i18next.t("mfaForm:Multi-factor authentication description")}
+          {i18next.t("mfa:Multi-factor authentication description")}
         </div>
         {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
           <MfaVerifySmsForm
@@ -84,11 +84,11 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
           />
         )}
         <span style={{float: "right"}}>
-          {i18next.t("mfaForm:Have problems?")}
+          {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
             setMfaType("recovery");
           }}>
-            {i18next.t("mfaForm:Use a recovery code")}
+            {i18next.t("mfa:Use a recovery code")}
           </a>
         </span>
       </div>
@@ -97,12 +97,12 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
     return (
       <div style={{width: 300, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
-          {i18next.t("mfaForm:Multi-factor recover")}
+          {i18next.t("mfa:Multi-factor recover")}
         </div>
         <div style={{marginBottom: 24}}>
-          {i18next.t("mfaForm:Multi-factor recover description")}
+          {i18next.t("mfa:Multi-factor recover description")}
         </div>
-        <Input placeholder={i18next.t("mfaForm:Recovery code")}
+        <Input placeholder={i18next.t("mfa:Recovery code")}
           style={{marginBottom: 24}}
           type={"passcode"}
           size={"large"}
@@ -114,11 +114,11 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
           }}>{i18next.t("forget:Verify")}
         </Button>
         <span style={{float: "right"}}>
-          {i18next.t("mfaForm:Have problems?")}
+          {i18next.t("mfa:Have problems?")}
           <a onClick={() => {
             setMfaType(mfaProps.mfaType);
           }}>
-            {i18next.t("mfaForm:Use SMS verification code")}
+            {i18next.t("mfa:Use SMS verification code")}
           </a>
         </span>
       </div>

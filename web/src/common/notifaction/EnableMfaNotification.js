@@ -38,7 +38,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
     const btn = (
       <Space>
         <Button type="link" size="small" onClick={() => api.destroy(key)}>
-          {i18next.t("general:later")}
+          {i18next.t("general:Later")}
         </Button>
         <Button type="primary" size="small" onClick={() => {
           history.push("/mfa/setup", {from: "notification"});
@@ -52,7 +52,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
     api.open({
       message: i18next.t("mfa:Enable multi-factor authentication"),
       description:
-        i18next.t("mfa:To ensure the security of your account, the organization recommends you to enable multi-factor authentication."),
+        i18next.t("mfa:To ensure the security of your account, the organization recommends you to enable multi-factor authentication"),
       btn,
       key,
       onClose: close,
@@ -67,14 +67,14 @@ const EnableMfaNotification = ({account, onupdate}) => {
           api.destroy(key);
         }}
         >
-          {i18next.t("general:close")}
+          {i18next.t("general:Close")}
         </Button>
       </Space>
     );
     api.open({
       message: i18next.t("mfa:Enable multi-factor authentication"),
       description:
-        i18next.t("mfa:To ensure the security of your account, the organization requires you to enable multi-factor authentication."),
+        i18next.t("mfa:To ensure the security of your account, the organization requires you to enable multi-factor authentication"),
       btn,
       key,
       onClose: close,

@@ -20,9 +20,9 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as MfaBackend from "../backend/MfaBackend";
 import {CheckOutlined, KeyOutlined, UserOutlined} from "@ant-design/icons";
-import CheckPasswordForm from "./mfaForm/CheckPasswordForm";
-import MfaEnableForm from "./mfaForm/MfaEnableForm";
-import {MfaVerifyForm} from "./mfaForm/MfaVerifyForm";
+import CheckPasswordForm from "./mfa/CheckPasswordForm";
+import MfaEnableForm from "./mfa/MfaEnableForm";
+import {MfaVerifyForm} from "./mfa/MfaVerifyForm";
 
 export const EmailMfaType = "email";
 export const SmsMfaType = "sms";
@@ -90,7 +90,7 @@ class MfaSetupPage extends React.Component {
             application: res,
           });
         } else {
-          Setting.showMessage("error", i18next.t("mfaForm:Failed to get application"));
+          Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
         }
       });
   }
@@ -105,7 +105,7 @@ class MfaSetupPage extends React.Component {
           mfaProps: res.data,
         });
       } else {
-        Setting.showMessage("error", i18next.t("mfaForm:Failed to initiate MFA"));
+        Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
       }
     });
   }
@@ -125,7 +125,7 @@ class MfaSetupPage extends React.Component {
         });
         this.props.history.push(`/mfa/setup?mfaType=${SmsMfaType}`);
       }
-      }>{i18next.t("mfaForm:Use SMS")}</Button>
+      }>{i18next.t("mfa:Use SMS")}</Button>
       );
     };
 
@@ -139,7 +139,7 @@ class MfaSetupPage extends React.Component {
         });
         this.props.history.push(`/mfa/setup?mfaType=${EmailMfaType}`);
       }
-      }>{i18next.t("mfaForm:Use Email")}</Button>
+      }>{i18next.t("mfa:Use Email")}</Button>
       );
     };
 
@@ -153,7 +153,7 @@ class MfaSetupPage extends React.Component {
         });
         this.props.history.push(`/mfa/setup?mfaType=${TotpMfaType}`);
       }
-      }>{i18next.t("mfaForm:Use Authenticator App")}</Button>
+      }>{i18next.t("mfa:Use Authenticator App")}</Button>
       );
     };
 
@@ -178,7 +178,7 @@ class MfaSetupPage extends React.Component {
             });
           }}
           onFail={(res) => {
-            Setting.showMessage("error", i18next.t("mfaForm:Failed to initiate MFA") + ": " + res.msg);
+            Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA") + ": " + res.msg);
           }}
         />
       );
@@ -241,14 +241,14 @@ class MfaSetupPage extends React.Component {
           <Row>
             <Col span={24}>
               <p style={{textAlign: "center", fontSize: "28px"}}>
-                {i18next.t("mfaForm:Protect your account with Multi-factor authentication")}</p>
-              <p style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfaForm:Each time you sign in to your Account, you'll need your password and a authentication code")}</p>
+                {i18next.t("mfa:Protect your account with Multi-factor authentication")}</p>
+              <p style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</p>
             </Col>
           </Row>
           <Steps current={this.state.current}
             items={[
-              {title: i18next.t("mfaForm:Verify Password"), icon: <UserOutlined />},
-              {title: i18next.t("mfaForm:Verify Code"), icon: <KeyOutlined />},
+              {title: i18next.t("mfa:Verify Password"), icon: <UserOutlined />},
+              {title: i18next.t("mfa:Verify Code"), icon: <KeyOutlined />},
               {title: i18next.t("general:Enable"), icon: <CheckOutlined />},
             ]}
             style={{width: "90%", maxWidth: "500px", margin: "auto", marginTop: "50px",

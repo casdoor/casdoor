@@ -22,8 +22,8 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
             icon={"https://cdn.casdoor.com/static/favicon.png"}
           />
         </Col>
-        <p style={{textAlign: "center"}}>{i18next.t("mfaForm:Scan the QR code with your Authenticator App")}</p>
-        <p style={{textAlign: "center"}}>{i18next.t("mfaForm:Or copy the secret to your Authenticator App")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Scan the QR code with your Authenticator App")}</p>
+        <p style={{textAlign: "center"}}>{i18next.t("mfa:Or copy the secret to your Authenticator App")}</p>
         <Col span={24}>
           <Space>
             <Input value={mfaProps.secret} />
@@ -35,7 +35,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
                 copy(`${mfaProps.secret}`);
                 Setting.showMessage(
                   "success",
-                  i18next.t("mfaForm:Multi-factor secret to clipboard successfully")
+                  i18next.t("mfa:Multi-factor secret to clipboard successfully")
                 );
               }}
             />
@@ -58,7 +58,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
         <Input
           style={{marginTop: 24}}
           prefix={<UserOutlined />}
-          placeholder={i18next.t("mfaForm:Passcode")}
+          placeholder={i18next.t("mfa:Passcode")}
         />
       </Form.Item>
       <Form.Item>
