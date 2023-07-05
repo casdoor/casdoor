@@ -65,10 +65,13 @@ func getOriginFromHost(host string) (string, string) {
 		return origin, origin
 	}
 
+	// "door.casdoor.com"
 	protocol := "https://"
-	if strings.HasPrefix(host, "localhost") {
+	if !strings.Contains(host, ".") {
+		// "localhost:8000" or "computer-name:80"
 		protocol = "http://"
 	} else if isIpAddress(host) {
+		// "192.168.0.10"
 		protocol = "http://"
 	}
 
