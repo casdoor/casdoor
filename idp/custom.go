@@ -20,32 +20,37 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	_ "net/url"
-	_ "time"
 
+	"github.com/casdoor/casdoor/util"
+	"github.com/mitchellh/mapstructure"
 	"golang.org/x/oauth2"
 )
 
 type CustomIdProvider struct {
-	Client      *http.Client
-	Config      *oauth2.Config
-	UserInfoUrl string
+	Client *http.Client
+	Config *oauth2.Config
+
+	UserInfoURL string
+	TokenURL    string
+	AuthURL     string
+	UserMapping map[string]string
+	Scopes      []string
 }
 
-func NewCustomIdProvider(clientId string, clientSecret string, redirectUrl string, authUrl string, tokenUrl string, userInfoUrl string) *CustomIdProvider {
+func NewCustomIdProvider(idpInfo *ProviderInfo, redirectUrl string) *CustomIdProvider {
 	idp := &CustomIdProvider{}
-	idp.UserInfoUrl = userInfoUrl
 
-	config := &oauth2.Config{
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
+	idp.Config = &oauth2.Config{
+		ClientID:     idpInfo.ClientId,
+		ClientSecret: idpInfo.ClientSecret,
 		RedirectURL:  redirectUrl,
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  authUrl,
-			TokenURL: tokenUrl,
+			AuthURL:  idpInfo.AuthURL,
+			TokenURL: idpInfo.TokenURL,
 		},
 	}
-	idp.Config = config
+	idp.UserInfoURL = idpInfo.UserInfoURL
+	idp.UserMapping = idpInfo.UserMapping
 
 	return idp
 }
@@ -60,22 +65,20 @@ func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
 }
 
 type CustomUserInfo struct {
-	Id          string `json:"sub"`
-	Name        string `json:"preferred_username,omitempty"`
-	DisplayName string `json:"name"`
-	Email       string `json:"email"`
-	AvatarUrl   string `json:"picture"`
-	Status      string `json:"status"`
-	Msg         string `json:"msg"`
+	Id          string `mapstructure:"id"`
+	Username    string `mapstructure:"username"`
+	DisplayName string `mapstructure:"displayName"`
+	Email       string `mapstructure:"email"`
+	AvatarUrl   string `mapstructure:"avatarUrl"`
 }
 
 func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	ctUserinfo := &CustomUserInfo{}
 	accessToken := token.AccessToken
-	request, err := http.NewRequest("GET", idp.UserInfoUrl, nil)
+	request, err := http.NewRequest("GET", idp.UserInfoURL, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	// add accessToken to request header
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 	resp, err := idp.Client.Do(request)
@@ -89,21 +92,40 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
-	err = json.Unmarshal(data, ctUserinfo)
+	var dataMap map[string]interface{}
+	err = json.Unmarshal(data, &dataMap)
 	if err != nil {
 		return nil, err
 	}
 
-	if ctUserinfo.Status != "" {
-		return nil, fmt.Errorf("err: %s", ctUserinfo.Msg)
+	// map user info
+	for k, v := range idp.UserMapping {
+		_, ok := dataMap[v]
+		if !ok {
+			return nil, fmt.Errorf("cannot find %s in user from castom provider", v)
+		}
+		dataMap[k] = dataMap[v]
+	}
+
+	// try to parse id to string
+	id, err := util.ParseId(dataMap["id"])
+	if err != nil {
+		return nil, err
+	}
+	dataMap["id"] = id
+
+	customUserinfo := &CustomUserInfo{}
+	err = mapstructure.Decode(dataMap, customUserinfo)
+	if err != nil {
+		return nil, err
 	}
 
 	userInfo := &UserInfo{
-		Id:          ctUserinfo.Id,
-		Username:    ctUserinfo.Name,
-		DisplayName: ctUserinfo.DisplayName,
-		Email:       ctUserinfo.Email,
-		AvatarUrl:   ctUserinfo.AvatarUrl,
+		Id:          customUserinfo.Id,
+		Username:    customUserinfo.Username,
+		DisplayName: customUserinfo.DisplayName,
+		Email:       customUserinfo.Email,
+		AvatarUrl:   customUserinfo.AvatarUrl,
 	}
 	return userInfo, nil
 }

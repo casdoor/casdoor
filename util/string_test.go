@@ -246,3 +246,22 @@ func TestSnakeString(t *testing.T) {
 		})
 	}
 }
+
+func TestParseId(t *testing.T) {
+	scenarios := []struct {
+		description string
+		input       interface{}
+		expected    interface{}
+	}{
+		{"Should be return 123456", 123456, "123456"},
+		{"Should be return 123456", int64(123456), "123456"},
+		{"Should be return 123456", float64(123456), "123456"},
+	}
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			actual, err := ParseId(scenery.input)
+			assert.Nil(t, err, "The returned value not is expected")
+			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
+		})
+	}
+}

@@ -39,6 +39,7 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
 	github.com/markbates/goth v1.75.2
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pkoukk/tiktoken-go v0.1.1

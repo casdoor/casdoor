@@ -737,6 +737,8 @@
     "Token URL - Tooltip": "Токен URL",
     "Type": "Тип",
     "Type - Tooltip": "Выберите тип",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "URL информации о пользователе",
     "UserInfo URL - Tooltip": "URL пользовательской информации (URL информации о пользователе)",
     "admin (Shared)": "администратор (общий)"
