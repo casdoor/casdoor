@@ -568,6 +568,7 @@
   "pricing": {
     "Copy pricing page URL": "Preisseite URL kopieren",
     "Edit Pricing": "Edit Pricing",
+    "Failed to get plans": "Es konnten keine Pläne abgerufen werden",
     "Free": "Kostenlos",
     "Getting started": "Loslegen",
     "New Pricing": "New Pricing",
