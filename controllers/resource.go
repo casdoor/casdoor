@@ -207,7 +207,7 @@ func (c *ApiController) UploadResource() {
 	}
 
 	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 175)
-	if tag != "avatar" && tag != "termsOfUse" {
+	if tag != "avatar" && tag != "termsOfUse" && !strings.HasPrefix(tag, "IdCard") {
 		ext := filepath.Ext(filepath.Base(fullFilePath))
 		index := len(fullFilePath) - len(ext)
 		for i := 1; ; i++ {
@@ -303,6 +303,25 @@ func (c *ApiController) UploadResource() {
 
 		applicationObj.TermsOfUse = fileUrl
 		_, err = object.UpdateApplication(applicationId, applicationObj)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	case "IdCardFront", "IdCardBack", "IdCardPerson":
+		user, err := object.GetUserNoCheck(util.GetId(owner, username))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if user == nil {
+			c.ResponseError(c.T("resource:User is nil for tag: avatar"))
+			return
+		}
+
+		user.Properties[tag] = fileUrl
+		user.Properties["isIdCardVerified"] = "false"
+		_, err = object.UpdateUser(user.GetId(), user, []string{"properties"}, false)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

@@ -899,7 +899,7 @@
     "Homepage": "个人主页",
     "Homepage - Tooltip": "个人主页链接",
     "ID card": "身份证号",
-    "ID card - Tooltip": "身份证号 - Tooltip",
+    "ID card - Tooltip": "身份证号 - Tooltip,验证成功后如要修改请联系管理员",
     "ID card type": "身份证类型",
     "ID card type - Tooltip": "身份证类型 - Tooltip",
     "Input your email": "请输入邮箱",
@@ -944,6 +944,9 @@
     "Select a photo...": "选择图片...",
     "Set Password": "设置密码",
     "Set new profile picture": "设置新头像",
+    "Set new IdCardFront picture": "上传身份证正面照片",
+    "Set new IdCardBack picture": "上传身份证国徽面照片",
+    "Set new IdCardPerson picture": "上传手持身份证照片",
     "Set password...": "设置密码...",
     "Tag": "标签",
     "Tag - Tooltip": "用户的标签",
@@ -961,7 +964,10 @@
     "Values": "值",
     "Verification code sent": "验证码已发送",
     "WebAuthn credentials": "WebAuthn凭据",
-    "input password": "输入密码"
+    "input password": "输入密码",
+    "IdCardFront" : "身份证正面人像",
+    "IdCardBack": "身份证国徽面",
+    "IdCardPerson": "手持身份证照片"
   },
   "webhook": {
     "Content type": "内容类型",

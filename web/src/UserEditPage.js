@@ -53,6 +53,7 @@ class UserEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
       returnUrl: null,
+      IdCards: ["IdCardFront", "IdCardBack", "IdCardPerson"],
     };
   }
 
@@ -269,6 +270,12 @@ class UserEditPage extends React.Component {
       }
     }
 
+    if (accountItem.name === "ID card") {
+      if (this.state.user.properties?.isIdCardVerified === "true") {
+        disabled = true;
+      }
+    }
+
     let isKeysGenerated = false;
     if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
       isKeysGenerated = true;
@@ -365,20 +372,11 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
-              <Col span={22} >
-                <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}} />
-                </a>
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}}>
-              <CropperDivModal buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
-            </Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Preview")}:
+          </Col>
+          <Col>
+            {this.renderImage(this.state.user.avatar, i18next.t("user:Upload a photo"), i18next.t("user:Set new profile picture"), "avatar", false)}
           </Col>
         </Row>
       );
@@ -536,9 +534,19 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:ID card"), i18next.t("user:ID card - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.idCard} onChange={e => {
+            <Input value={this.state.user.idCard} disabled={disabled} onChange={e => {
               this.updateUserField("idCard", e.target.value);
             }} />
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              {
+                this.state.IdCards.map((key, index) => {
+                  return this.renderImage(this.state.user.properties[key] || "", i18next.t(`user:${key}`), i18next.t(`user:Set new ${key} picture`), key, disabled);
+                })
+              }
+            </Row>
           </Col>
         </Row>
       );
@@ -940,6 +948,25 @@ class UserEditPage extends React.Component {
         </Row>
       );
     }
+  }
+
+  renderImage(imgUrl, title, set, tag, disabled) {
+    return (
+      <Col span={4} style={{textAlign: "center", margin: "auto"}} key={tag}>
+        {
+          imgUrl ?
+            <a target="_blank" rel="noreferrer" href={imgUrl} style={{marginBottom: "10px"}}>
+              <img src={imgUrl} alt={imgUrl} height={90} style={{marginBottom: "20px"}} />
+            </a>
+            :
+            <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: 5}}>
+              <div style={{fontSize: 30, margin: 10}}>+</div>
+              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`请上传${title}...`}</div>
+            </Col>
+        }
+        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
+      </Col>
+    );
   }
 
   renderUser() {
