@@ -10,7 +10,7 @@ HOST ?= test.com
 MYSQL_ROOT_PASSWORD ?= 123456
 MYSQL_DATA ?= /usr/local/docker/mysql
 CONF_DIR ?= ./conf
-NO_CREATE_DATABASE ?=
+CREATE_DATABASE ?= true
 
 # Get the currently used golang install path (in GOPATH/bin, unless GOBIN is set)
 ifeq (,$(shell go env GOBIN))
@@ -90,12 +90,16 @@ docker-build: ## Build docker image with the manager.
 docker-push: ## Push docker image with the manager.
 	docker push ${REGISTRY}/${IMG}:${IMG_TAG}
 
-.PHONY: docker-run
-docker-run: ## Run with docker compose.
+.PHONY: docker-build-standard
+docker-build-standard: ## Build docker standard image with the docker compose.
+	docker-compose build casdoor
+
+.PHONY: docker-run-standard
+docker-run-standard: ## Run with docker compose.
 	CASDOOR_IMG=${REGISTRY}/${IMG} CASDOOR_TAG=${IMG_TAG} \
 	CONF_DIR=${CONF_DIR} \
 	MYSQL_DATA=${MYSQL_DATA} MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} \
-	NO_CREATE_DATABASE=${NO_CREATE_DATABASE} \
+	CREATE_DATABASE=${CREATE_DATABASE} \
 	docker-compose up
 
 lint-install: ## Install golangci-lint
