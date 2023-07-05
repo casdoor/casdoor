@@ -19,8 +19,6 @@ import (
 	"runtime"
 
 	"github.com/beego/beego"
-	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
@@ -28,6 +26,9 @@ import (
 	"github.com/xorm-io/core"
 	"github.com/xorm-io/xorm"
 	_ "modernc.org/sqlite" // db = sqlite
+
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 var adapter *Adapter
@@ -57,7 +58,7 @@ func CreateTables(createDatabase bool) {
 	if createDatabase {
 		err := adapter.CreateDatabase()
 		if err != nil {
-			fmt.Println(err)
+			panic(err)
 		}
 	}
 
