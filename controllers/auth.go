@@ -355,16 +355,17 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			organization, err := object.GetOrganizationByUser(user)
-			if err != nil {
-				c.ResponseError(err.Error())
-			}
+			if authForm.Type == ResponseTypeLogin {
+				organization, err := object.GetOrganizationByUser(user)
+				if err != nil {
+					c.ResponseError(err.Error())
+				}
 
-			if user != nil && object.IsNeedPromptMfa(organization, user) {
-				// The prompt page needs the user to be signed in
-				c.SetSessionUsername(user.GetId())
-				resp.Msg = object.RequiredMfa
-				resp.Data = nil
+				if user != nil && object.IsNeedPromptMfa(organization, user) {
+					// The prompt page needs the user to be signed in
+					c.SetSessionUsername(user.GetId())
+					resp.Msg = object.RequiredMfa
+				}
 			}
 
 			record := object.NewRecord(c.Ctx)
