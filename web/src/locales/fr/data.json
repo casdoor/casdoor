@@ -739,6 +739,8 @@
     "Token URL - Tooltip": "URL de jeton",
     "Type": "Type",
     "Type - Tooltip": "Sélectionnez un type",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "URL d'informations utilisateur",
     "UserInfo URL - Tooltip": "URL d'informations sur l'utilisateur",
     "admin (Shared)": "admin (Partagé)"

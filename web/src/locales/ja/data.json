@@ -739,6 +739,8 @@
     "Token URL - Tooltip": "トークンURL",
     "Type": "タイプ",
     "Type - Tooltip": "タイプを選択してください",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo URLを日本語に翻訳すると、「ユーザー情報のURL」となります",
     "UserInfo URL - Tooltip": "ユーザー情報URL",
     "admin (Shared)": "管理者（共有）"

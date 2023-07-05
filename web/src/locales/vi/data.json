@@ -739,6 +739,8 @@
     "Token URL - Tooltip": "Địa chỉ URL của Token",
     "Type": "Kiểu",
     "Type - Tooltip": "Chọn loại",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "Đường dẫn UserInfo",
     "UserInfo URL - Tooltip": "Địa chỉ URL của Thông tin người dùng",
     "admin (Shared)": "quản trị viên (Chung)"

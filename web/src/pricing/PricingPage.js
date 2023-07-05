@@ -66,7 +66,7 @@ class PricingPage extends React.Component {
       .then(results => {
         const hasError = results.some(result => result.status === "error");
         if (hasError) {
-          Setting.showMessage("error", `${i18next.t("Failed to get plans")}`);
+          Setting.showMessage("error", i18next.t("pricing:Failed to get plans"));
           return;
         }
         this.setState({
@@ -75,7 +75,7 @@ class PricingPage extends React.Component {
         });
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to get plans: ${error}`);
+        Setting.showMessage("error", i18next.t("pricing:Failed to get plans") + `: ${error}`);
       });
   }
 
