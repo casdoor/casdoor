@@ -55,7 +55,7 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	path2 := strings.TrimLeft(path, "web/build/images/")
+	path2 := strings.TrimPrefix(path, "web/build/images/")
 	if util.FileExist(path2) {
 		makeGzipResponse(ctx.ResponseWriter, ctx.Request, path2)
 		return

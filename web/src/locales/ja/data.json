@@ -96,6 +96,7 @@
     "Signup items": "サインアップアイテム",
     "Signup items - Tooltip": "新しいアカウントを登録する際にユーザーが入力するアイテム",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "サインアップページのURLがクリップボードに正常にコピーされました。シークレットウィンドウまたは別のブラウザに貼り付けてください",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",    
     "The application does not allow to sign up new account": "アプリケーションでは新しいアカウントの登録ができません",
     "Token expire": "トークンの有効期限が切れました",
     "Token expire - Tooltip": "アクセストークンの有効期限",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "アカウントアイテム",
     "Account items - Tooltip": "個人設定ページのアイテム",
+    "All": "全て",
     "Edit Organization": "組織の編集",
     "Follow global theme": "グローバルテーマに従ってください",
     "Init score": "イニットスコア",
@@ -737,6 +739,8 @@
     "Token URL - Tooltip": "トークンURL",
     "Type": "タイプ",
     "Type - Tooltip": "タイプを選択してください",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo URLを日本語に翻訳すると、「ユーザー情報のURL」となります",
     "UserInfo URL - Tooltip": "ユーザー情報URL",
     "admin (Shared)": "管理者（共有）"

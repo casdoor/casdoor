@@ -96,6 +96,7 @@
     "Signup items": "가입 항목",
     "Signup items - Tooltip": "새로운 계정 등록시 사용자가 작성해야하는 항목들",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "가입 페이지 URL이 클립보드에 성공적으로 복사되었습니다. 시크릿 창이나 다른 브라우저에 붙여넣어 주십시오",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "이 어플리케이션은 새 계정 등록을 허용하지 않습니다",
     "Token expire": "토큰 만료",
     "Token expire - Tooltip": "액세스 토큰 만료 시간",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "계정 항목들",
     "Account items - Tooltip": "개인 설정 페이지의 항목들",
+    "All": "모두",
     "Edit Organization": "단체 수정",
     "Follow global theme": "글로벌 테마를 따르세요",
     "Init score": "처음 점수",
@@ -737,6 +739,8 @@
     "Token URL - Tooltip": "토큰 URL",
     "Type": "타입",
     "Type - Tooltip": "유형을 선택하세요",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "사용자 정보 URL",
     "UserInfo URL - Tooltip": "UserInfo URL: 사용자 정보 URL",
     "admin (Shared)": "관리자 (공유)"

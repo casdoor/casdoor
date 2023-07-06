@@ -1164,3 +1164,27 @@ export function inIframe() {
     return true;
   }
 }
+
+export function getOrganization() {
+  const organization = localStorage.getItem("organization");
+  return organization !== null ? organization : "All";
+}
+
+export function setOrganization(organization) {
+  localStorage.setItem("organization", organization);
+  window.dispatchEvent(new Event("storageOrganizationChanged"));
+}
+
+export function getRequestOrganization(account) {
+  if (isAdminUser(account)) {
+    return getOrganization() === "All" ? account.owner : getOrganization();
+  }
+  return account.owner;
+}
+
+export function isDefaultOrganizationSelected(account) {
+  if (isAdminUser(account)) {
+    return getOrganization() === "All";
+  }
+  return false;
+}

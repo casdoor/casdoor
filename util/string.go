@@ -289,3 +289,18 @@ func HasString(strs []string, str string) bool {
 	}
 	return false
 }
+
+func ParseIdToString(input interface{}) (string, error) {
+	switch v := input.(type) {
+	case string:
+		return v, nil
+	case int:
+		return strconv.Itoa(v), nil
+	case int64:
+		return strconv.FormatInt(v, 10), nil
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64), nil
+	default:
+		return "", fmt.Errorf("unsupported id type: %T", input)
+	}
+}

@@ -96,6 +96,7 @@
     "Signup items": "Signup items",
     "Signup items - Tooltip": "Items for users to fill in when registering new accounts",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "The application does not allow to sign up new account",
     "Token expire": "Token expire",
     "Token expire - Tooltip": "Access token expiration time",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "Account items",
     "Account items - Tooltip": "Items in the Personal settings page",
+    "All": "All",
     "Edit Organization": "Edit Organization",
     "Follow global theme": "Follow global theme",
     "Init score": "Init score",
@@ -737,6 +739,8 @@
     "Token URL - Tooltip": "Token URL",
     "Type": "Type",
     "Type - Tooltip": "Select a type",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "UserInfo URL",
     "admin (Shared)": "admin (Shared)"

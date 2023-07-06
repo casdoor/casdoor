@@ -69,6 +69,15 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
+	// check user's tag
+	if !user.IsGlobalAdmin && !user.IsAdmin && len(application.Tags) > 0 {
+		// only users with the tag that is listed in the application tags can login
+		if !util.InSlice(application.Tags, user.Tag) {
+			c.ResponseError(fmt.Sprintf(c.T("auth:User's tag: %s is not listed in the application's tags"), user.Tag))
+			return
+		}
+	}
+
 	if form.Password != "" && user.IsMfaEnabled() {
 		c.setMfaSessionData(&object.MfaSessionData{UserId: userId})
 		resp = &Response{Status: object.NextMfa, Data: user.GetPreferredMfaProps(true)}
@@ -238,7 +247,7 @@ func isProxyProviderType(providerType string) bool {
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
 // @Param   form   body   controllers.AuthForm  true        "Login information"
-// @Success 200 {object} Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{}
@@ -407,15 +416,8 @@ func (c *ApiController) Login() {
 			}
 		} else if provider.Category == "OAuth" {
 			// OAuth
-
-			clientId := provider.ClientId
-			clientSecret := provider.ClientSecret
-			if provider.Type == "WeChat" && strings.Contains(c.Ctx.Request.UserAgent(), "MicroMessenger") {
-				clientId = provider.ClientId2
-				clientSecret = provider.ClientSecret2
-			}
-
-			idProvider := idp.GetIdProvider(provider.Type, provider.SubType, clientId, clientSecret, provider.AppId, authForm.RedirectUri, provider.Domain, provider.CustomAuthUrl, provider.CustomTokenUrl, provider.CustomUserInfoUrl)
+			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
+			idProvider := idp.GetIdProvider(idpInfo, authForm.RedirectUri)
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf(c.T("storage:The provider type: %s is not supported"), provider.Type))
 				return

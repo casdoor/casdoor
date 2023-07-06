@@ -25,11 +25,12 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class SyncerListPage extends BaseListPage {
   newSyncer() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin",
       name: `syncer_${randomName}`,
       createdTime: moment().format(),
-      organization: this.props.account.owner,
+      organization: organizationName,
       type: "Database",
       host: "localhost",
       port: 3306,
@@ -276,7 +277,7 @@ class SyncerListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    SyncerBackend.getSyncers("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    SyncerBackend.getSyncers("admin", Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

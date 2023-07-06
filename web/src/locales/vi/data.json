@@ -96,6 +96,7 @@
     "Signup items": "Các mục đăng ký",
     "Signup items - Tooltip": "Các thông tin cần được người dùng điền khi đăng ký tài khoản mới",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Đã sao chép thành công đường dẫn trang đăng ký vào clipboard, vui lòng dán nó vào cửa sổ ẩn danh hoặc trình duyệt khác",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới",
     "Token expire": "Mã thông báo hết hạn",
     "Token expire - Tooltip": "Thời gian hết hạn của mã truy cập",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "Mục tài khoản",
     "Account items - Tooltip": "Các mục trong trang Cài đặt cá nhân",
+    "All": "Tất cả",
     "Edit Organization": "Chỉnh sửa tổ chức",
     "Follow global theme": "Theo chủ đề toàn cầu",
     "Init score": "Điểm khởi tạo",
@@ -737,6 +739,8 @@
     "Token URL - Tooltip": "Địa chỉ URL của Token",
     "Type": "Kiểu",
     "Type - Tooltip": "Chọn loại",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "Đường dẫn UserInfo",
     "UserInfo URL - Tooltip": "Địa chỉ URL của Thông tin người dùng",
     "admin (Shared)": "quản trị viên (Chung)"

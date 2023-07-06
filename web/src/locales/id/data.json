@@ -96,6 +96,7 @@
     "Signup items": "Item pendaftaran",
     "Signup items - Tooltip": "Item-item yang harus diisi pengguna saat mendaftar untuk akun baru",
     "Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser": "Tautan halaman pendaftaran URL berhasil disalin ke papan klip, silakan tempelkan ke dalam jendela incognito atau browser lain",
+    "Tags - Tooltip": "Only users with the tag that is listed in the application tags can login",
     "The application does not allow to sign up new account": "Aplikasi tidak memperbolehkan untuk mendaftar akun baru",
     "Token expire": "Token kadaluarsa",
     "Token expire - Tooltip": "Waktu kadaluwarsa token akses",
@@ -466,6 +467,7 @@
   "organization": {
     "Account items": "Item akun",
     "Account items - Tooltip": "Item pada halaman pengaturan personal",
+    "All": "Semua",
     "Edit Organization": "Edit Organisasi",
     "Follow global theme": "Ikuti tema global",
     "Init score": "Skor awal",
@@ -737,6 +739,8 @@
     "Token URL - Tooltip": "Token URL: URL Token",
     "Type": "Jenis",
     "Type - Tooltip": "Pilih tipe",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "URL UserInfo",
     "UserInfo URL - Tooltip": "URL Informasi Pengguna",
     "admin (Shared)": "Admin (Berbagi)"

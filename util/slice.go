@@ -43,6 +43,15 @@ func ContainsString(values []string, val string) bool {
 	return sort.SearchStrings(values, val) != len(values)
 }
 
+func InSlice(slice []string, elem string) bool {
+	for _, val := range slice {
+		if val == elem {
+			return true
+		}
+	}
+	return false
+}
+
 func ReturnAnyNotEmpty(strs ...string) string {
 	for _, str := range strs {
 		if str != "" {

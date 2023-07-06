@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export const DefaultApplication = "app-built-in";
+
 export const ShowGithubCorner = false;
-export const GithubRepo = "https://github.com/casdoor/casdoor";
 export const IsDemoMode = false;
 
 export const ForceLanguage = "";
 export const DefaultLanguage = "en";
 
 export const EnableExtraPages = true;
-
 export const EnableChatPages = true;
 
 export const InitThemeAlgorithm = true;

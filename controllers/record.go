@@ -42,6 +42,7 @@ func (c *ApiController) GetRecords() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organizationName := c.Input().Get("organizationName")
 
 	if limit == "" || page == "" {
 		records, err := object.GetRecords()
@@ -54,6 +55,9 @@ func (c *ApiController) GetRecords() {
 		c.ServeJSON()
 	} else {
 		limit := util.ParseInt(limit)
+		if c.IsGlobalAdmin() && organizationName != "" {
+			organization = organizationName
+		}
 		filterRecord := &object.Record{Organization: organization}
 		count, err := object.GetRecordCount(field, value, filterRecord)
 		if err != nil {
