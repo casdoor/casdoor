@@ -34,10 +34,10 @@ export const ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
+  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Indonesia", key: "id", country: "ID", alt: "Indonesia"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},

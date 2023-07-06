@@ -69,7 +69,7 @@ type Organization struct {
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
-	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
+	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
 }
 
 func GetOrganizationCount(owner, field, value string) (int64, error) {

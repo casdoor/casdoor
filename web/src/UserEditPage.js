@@ -54,7 +54,6 @@ class UserEditPage extends React.Component {
       loading: true,
       returnUrl: null,
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
-      idCardKey: ["idCardFront", "idCardBack", "idCardWithPerson"],
     };
   }
 
@@ -553,9 +552,12 @@ class UserEditPage extends React.Component {
                 {i18next.t("general:Preview")}:
               </Col>
               {
-                this.state.idCardInfo.map((key, index) => {
-                  const newKey = this.state.idCardKey[index];
-                  return this.renderImage(this.state.user.properties[newKey] || "", this.getIdCardType(key), this.getIdCardText(key), newKey, disabled);
+                [
+                  {name: "ID card front", value: "idCardFront"},
+                  {name: "ID card back", value: "idCardBack"},
+                  {name: "ID card with person", value: "idCardWithPerson"},
+                ].map((entry) => {
+                  return this.renderImage(this.state.user.properties[entry.value] || "", this.getIdCardType(entry.name), this.getIdCardText(entry.name), entry.value, disabled);
                 })
               }
             </Row>
@@ -1014,7 +1016,7 @@ class UserEditPage extends React.Component {
     } else if (key === "ID card with person") {
       return i18next.t("user:ID card with person");
     } else {
-      return "Unknown Id card type";
+      return "Unknown Id card name: " + key;
     }
   }
 
@@ -1026,7 +1028,7 @@ class UserEditPage extends React.Component {
     } else if (key === "ID card with person") {
       return i18next.t("user:Upload ID card with person picture");
     } else {
-      return "Unknown Id card text";
+      return "Unknown Id card name: " + key;
     }
   }
 
