@@ -54,6 +54,7 @@ class UserEditPage extends React.Component {
       loading: true,
       returnUrl: null,
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
+      idCardKey: ["idCardFront", "idCardBack", "idCardWithPerson"],
     };
   }
 
@@ -553,11 +554,7 @@ class UserEditPage extends React.Component {
               </Col>
               {
                 this.state.idCardInfo.map((key, index) => {
-                  const newKey = key.replace(/([A-Z])/g, function(match, p1) {
-                    return p1.toLowerCase();
-                  }).replace(/(\s[a-z])/g, function(match) {
-                    return match.toUpperCase().replace(/\s/g, "");
-                  });
+                  const newKey = this.state.idCardKey[index];
                   return this.renderImage(this.state.user.properties[newKey] || "", this.getIdCardType(key), this.getIdCardText(key), newKey, disabled);
                 })
               }
