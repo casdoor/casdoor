@@ -193,6 +193,7 @@ class MfaSetupPage extends React.Component {
             this.props.onfinish(true);
             if (localStorage.getItem("mfaRedirectUrl") !== null) {
               Setting.goToLink(localStorage.getItem("mfaRedirectUrl"));
+              localStorage.removeItem("mfaRedirectUrl");
             } else {
               this.props.history.push("/account");
             }
