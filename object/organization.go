@@ -236,6 +236,10 @@ func DeleteOrganization(organization *Organization) (bool, error) {
 }
 
 func GetOrganizationByUser(user *User) (*Organization, error) {
+	if user == nil {
+		return nil, nil
+	}
+
 	return getOrganization("admin", user.Owner)
 }
 

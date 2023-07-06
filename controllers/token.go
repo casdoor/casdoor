@@ -326,7 +326,7 @@ func (c *ApiController) IntrospectToken() {
 		Sub:       jwtToken.Subject,
 		Aud:       jwtToken.Audience,
 		Iss:       jwtToken.Issuer,
-		Jti:       jwtToken.Id,
+		Jti:       jwtToken.ID,
 	}
 	c.ServeJSON()
 }

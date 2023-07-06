@@ -56,8 +56,10 @@ class ProviderEditPage extends React.Component {
         }
 
         if (res.status === "ok") {
+          const provider = res.data;
+          provider.userMapping = provider.userMapping || {};
           this.setState({
-            provider: res.data,
+            provider: provider,
           });
         } else {
           Setting.showMessage("error", res.msg);
@@ -93,6 +95,40 @@ class ProviderEditPage extends React.Component {
     });
   }
 
+  updateUserMappingField(key, value) {
+    const provider = this.state.provider;
+    provider.userMapping[key] = value;
+    this.setState({
+      provider: provider,
+    });
+  }
+
+  renderUserMappingInput() {
+    return (
+      <React.Fragment>
+        {Setting.getLabel(i18next.t("general:ID"), i18next.t("general:ID - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.id} onChange={e => {
+          this.updateUserMappingField("id", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.username} onChange={e => {
+          this.updateUserMappingField("username", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.displayName} onChange={e => {
+          this.updateUserMappingField("displayName", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.email} onChange={e => {
+          this.updateUserMappingField("email", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.avatarUrl} onChange={e => {
+          this.updateUserMappingField("avatarUrl", e.target.value);
+        }} />
+      </React.Fragment>
+    );
+  }
   getClientIdLabel(provider) {
     switch (provider.category) {
     case "Email":
@@ -350,7 +386,7 @@ class ProviderEditPage extends React.Component {
               }
               if (value === "Custom") {
                 this.updateProviderField("customAuthUrl", "https://door.casdoor.com/login/oauth/authorize");
-                this.updateProviderField("customScope", "openid profile email");
+                this.updateProviderField("scopes", "openid profile email");
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
                 this.updateProviderField("customUserInfoUrl", "https://door.casdoor.com/api/userinfo");
               }
@@ -418,21 +454,21 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customScope} onChange={e => {
-                    this.updateProviderField("customScope", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.customTokenUrl} onChange={e => {
                     this.updateProviderField("customTokenUrl", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.scopes} onChange={e => {
+                    this.updateProviderField("scopes", e.target.value);
                   }} />
                 </Col>
               </Row>
@@ -444,6 +480,14 @@ class ProviderEditPage extends React.Component {
                   <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
                     this.updateProviderField("customUserInfoUrl", e.target.value);
                   }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  {this.renderUserMappingInput()}
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >

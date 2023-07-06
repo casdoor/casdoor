@@ -570,8 +570,8 @@
   "pricing": {
     "Copy pricing page URL": "Preisseite URL kopieren",
     "Edit Pricing": "Edit Pricing",
-    "Free": "Kostenlos",
     "Failed to get plans": "Es konnten keine Pläne abgerufen werden",
+    "Free": "Kostenlos",
     "Getting started": "Loslegen",
     "New Pricing": "New Pricing",
     "Trial duration": "Testphase Dauer",
@@ -739,6 +739,8 @@
     "Token URL - Tooltip": "Token-URL",
     "Type": "Typ",
     "Type - Tooltip": "Wählen Sie einen Typ aus",
+    "User mapping": "User mapping",
+    "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo-URL",
     "UserInfo URL - Tooltip": "UserInfo-URL",
     "admin (Shared)": "admin (Shared)"
