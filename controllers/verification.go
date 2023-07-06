@@ -93,10 +93,9 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	// mfaSessionData != nil, means method is MfaAuthVerification
-	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
-		user, err = object.GetUser(mfaSessionData.UserId)
-		c.setMfaSessionData(nil)
+	// mfaUserSession != "", means method is MfaAuthVerification
+	if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
+		user, err = object.GetUser(mfaUserSession)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

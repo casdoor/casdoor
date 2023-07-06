@@ -34,49 +34,31 @@ class MfaSetupPage extends React.Component {
     super(props);
     const params = new URLSearchParams(props.location.search);
     const {location} = this.props;
-    const current = location.state?.from === "notification" ? 1 : 0;
     this.state = {
       account: props.account,
       application: null,
       applicationName: props.account.signupApplication ?? "",
-      current: props.current ?? current,
+      current: location.state?.from !== undefined ? 1 : 0,
       mfaProps: null,
-      mfaType: props.visibleMfaTypes?.[0] ?? params.get("mfaType") ?? SmsMfaType,
-      isPromptPage: props.isPromptPage || location.state?.from === "notification",
-      redirectUri: params.get("redirectUri"),
-      finished: false,
+      mfaType: params.get("mfaType") ?? SmsMfaType,
+      isPromptPage: props.isPromptPage || location.state?.from !== undefined,
     };
   }
 
   componentDidMount() {
     this.getApplication();
-    if (this.state.isPromptPage === true) {
+    if (this.state.current === 1) {
       this.initMfaProps();
     }
-
-    addEventListener("beforeunload", this.handleBeforeUnload);
-  }
-
-  componentWillUnmount() {
-    removeEventListener("beforeunload", this.handleBeforeUnload);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.current === 1 && (this.state.mfaProps === null || this.state.mfaType !== prevState.mfaType)) {
-      this.initMfaProps();
-    }
-
-    if (this.state.finished === true) {
-      this.props.onfinish(this.state.redirectUri);
+    if (this.state.mfaType !== prevState.mfaType || this.state.current !== prevState.current) {
+      if (this.state.current === 1) {
+        this.initMfaProps();
+      }
     }
   }
-
-  handleBeforeUnload = (e) => {
-    if (this.state.current !== 0 && this.state.finished === false) {
-      e.preventDefault();
-      e.returnValue = true;
-    }
-  };
 
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
@@ -157,13 +139,13 @@ class MfaSetupPage extends React.Component {
       );
     };
 
-    return (
+    return !this.state.isPromptPage ? (
       <React.Fragment>
         {renderSmsLink()}
         {renderEmailLink()}
         {renderTotpLink()}
       </React.Fragment>
-    );
+    ) : null;
   }
 
   renderStep() {
@@ -208,8 +190,9 @@ class MfaSetupPage extends React.Component {
         <MfaEnableForm user={this.getUser()} mfaType={this.state.mfaType} recoveryCodes={this.state.mfaProps.recoveryCodes}
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-            if (this.state.isPromptPage && this.props.onfinish !== undefined) {
-              this.setState({finished: true});
+            this.props.onfinish(true);
+            if (localStorage.getItem("mfaRedirectUrl") !== null) {
+              Setting.goToLink(localStorage.getItem("mfaRedirectUrl"));
             } else {
               this.props.history.push("/account");
             }

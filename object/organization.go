@@ -477,6 +477,9 @@ func organizationChangeTrigger(oldName string, newName string) error {
 }
 
 func IsNeedPromptMfa(org *Organization, user *User) bool {
+	if org == nil || user == nil {
+		return false
+	}
 	for _, item := range org.MfaItems {
 		if item.Rule == "Required" {
 			if item.Name == EmailType && !user.MfaEmailEnabled {

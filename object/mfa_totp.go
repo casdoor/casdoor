@@ -72,8 +72,11 @@ func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, er
 }
 
 func (mfa *TotpMfa) SetupVerify(ctx *context.Context, passcode string) error {
-	secret := ctx.Input.CruSession.Get(MfaTotpSecretSession).(string)
-	result := totp.Validate(passcode, secret)
+	secret := ctx.Input.CruSession.Get(MfaTotpSecretSession)
+	if secret == nil {
+		return errors.New("totp secret is missing")
+	}
+	result := totp.Validate(passcode, secret.(string))
 
 	if result {
 		return nil
@@ -104,6 +107,10 @@ func (mfa *TotpMfa) Enable(ctx *context.Context, user *User) error {
 	if err != nil {
 		return err
 	}
+
+	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
+	ctx.Input.CruSession.Delete(MfaTotpSecretSession)
+
 	return nil
 }
 

@@ -832,11 +832,14 @@ func userChangeTrigger(oldName string, newName string) error {
 }
 
 func (user *User) IsMfaEnabled() bool {
+	if user == nil {
+		return false
+	}
 	return user.PreferredMfaType != ""
 }
 
 func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
-	if user.PreferredMfaType == "" {
+	if user == nil || user.PreferredMfaType == "" {
 		return nil
 	}
 	return user.GetMfaProps(user.PreferredMfaType, masked)

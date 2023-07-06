@@ -35,7 +35,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextMfa} from "./mfa/MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -255,6 +255,11 @@ class LoginPage extends React.Component {
     const code = resp.data;
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
+    const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`;
+    if (resp.data === RequiredMfa) {
+      this.props.onLoginSuccess(window.location.href);
+      return;
+    }
 
     if (Setting.hasPromptPage(application)) {
       AuthBackend.getAccount()
@@ -265,7 +270,7 @@ class LoginPage extends React.Component {
             this.onUpdateAccount(account);
 
             if (Setting.isPromptAnswered(account, application)) {
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+              Setting.goToLink(redirectUrl);
             } else {
               Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
             }
@@ -276,7 +281,7 @@ class LoginPage extends React.Component {
     } else {
       if (noRedirect === "true") {
         window.close();
-        const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        const newWindow = window.open(redirectUrl);
         if (newWindow) {
           setInterval(() => {
             if (!newWindow.closed) {
@@ -285,7 +290,7 @@ class LoginPage extends React.Component {
           }, 1000);
         }
       } else {
-        Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        Setting.goToLink(redirectUrl);
         this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
       }
     }
@@ -375,12 +380,12 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            if (res.msg === NextMfa) {
+            if (res.data === NextMfa) {
               this.setState({
                 getVerifyTotp: () => {
                   return (
                     <MfaAuthVerifyForm
-                      mfaProps={res.data}
+                      mfaProps={res.data2}
                       formValues={values}
                       oAuthParams={oAuthParams}
                       application={this.getApplicationObj()}

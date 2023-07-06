@@ -106,6 +106,11 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	if err != nil {
 		return err
 	}
+
+	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
+	ctx.Input.CruSession.Delete(MfaDestSession)
+	ctx.Input.CruSession.Delete(MfaCountryCodeSession)
+
 	return nil
 }
 

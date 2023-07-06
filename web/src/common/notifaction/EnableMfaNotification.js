@@ -5,7 +5,7 @@ import {useHistory, useLocation} from "react-router-dom";
 import * as Setting from "../../Setting";
 import {MfaRulePrompted, MfaRuleRequired} from "../../Setting";
 
-const EnableMfaNotification = ({account, onupdate}) => {
+const EnableMfaNotification = ({account}) => {
   const [api, contextHolder] = notification.useNotification();
   const history = useHistory();
   const location = useLocation();
@@ -18,14 +18,12 @@ const EnableMfaNotification = ({account, onupdate}) => {
     const mfaItems = Setting.getMfaItemsByRules(account, account?.organization, [MfaRuleRequired, MfaRulePrompted]);
     if (location.state?.from === "/login" && mfaItems.length !== 0) {
       if (mfaItems.some((item) => item.rule === MfaRuleRequired)) {
-        // eslint-disable-next-line no-console
-        console.log(mfaItems);
         openRequiredEnableNotification(mfaItems.find((item) => item.rule === MfaRuleRequired).name);
       } else {
         openPromptEnableNotification(mfaItems.filter((item) => item.rule === MfaRulePrompted)?.map((item) => item.name));
       }
     }
-  }, [account]);
+  }, [account, location.state?.from]);
 
   const openPromptEnableNotification = (mfaTypes) => {
     const key = `open${Date.now()}`;
@@ -35,7 +33,7 @@ const EnableMfaNotification = ({account, onupdate}) => {
           {i18next.t("general:Later")}
         </Button>
         <Button type="primary" size="small" onClick={() => {
-          history.push(`/mfa/setup?mfaType=${mfaTypes[0]}`, {from: "notification"});
+          history.push(`/mfa/setup?mfaType=${mfaTypes[0]}`, {from: "/"});
           api.destroy(key);
         }}
         >

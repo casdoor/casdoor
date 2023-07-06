@@ -178,24 +178,16 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
-func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
-	if data == nil {
-		c.Input().Del(object.MfaSessionUserId)
-		return
-	}
-	c.SetSession(object.MfaSessionUserId, data.UserId)
+func (c *ApiController) setMfaUserSession(userId string) {
+	c.SetSession(object.MfaSessionUserId, userId)
 }
 
-func (c *ApiController) getMfaSessionData() *object.MfaSessionData {
-	userId := c.GetSession(object.MfaSessionUserId)
+func (c *ApiController) getMfaUserSession() string {
+	userId := c.Ctx.Input.CruSession.Get(object.MfaSessionUserId)
 	if userId == nil {
-		return nil
+		return ""
 	}
-
-	data := &object.MfaSessionData{
-		UserId: userId.(string),
-	}
-	return data
+	return userId.(string)
 }
 
 func (c *ApiController) setExpireForSession() {

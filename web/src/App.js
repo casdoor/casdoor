@@ -19,6 +19,7 @@ import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
+import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
@@ -119,21 +120,25 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
     if (this.state.uri !== uri) {
       this.updateMenuKey();
     }
 
     if (this.state.account !== prevState.account) {
-      if (this.state.account) {
-        this.setState({
-          requiredEnableMfa: Setting.isRequiredEnableMfa(this.state.account, this.state.account.organization),
-        });
-      } else {
-        this.setState({
-          requiredEnableMfa: false,
-        });
+      const requiredEnableMfa = Setting.isRequiredEnableMfa(this.state.account, this.state.account?.organization);
+      this.setState({
+        requiredEnableMfa: requiredEnableMfa,
+      });
+    }
+
+    if (this.state.requiredEnableMfa !== prevState.requiredEnableMfa || this.state.account !== prevState.account) {
+      if (this.state.requiredEnableMfa === true) {
+        const mfaType = Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [MfaRuleRequired])
+          .find((item) => item.rule === MfaRuleRequired)?.name;
+        if (mfaType !== undefined) {
+          this.props.history.push(`/mfa/setup?mfaType=${mfaType}`, {from: "/login"});
+        }
       }
     }
   }
@@ -261,7 +266,7 @@ class App extends Component {
     }
   };
 
-  getAccount(callback) {
+  getAccount() {
     const params = new URLSearchParams(this.props.location.search);
 
     let query = this.getAccessTokenParam(params);
@@ -296,7 +301,7 @@ class App extends Component {
 
         this.setState({
           account: account,
-        }, callback);
+        });
       });
   }
 
@@ -355,13 +360,15 @@ class App extends Component {
 
   renderRightDropdown() {
     const items = [];
-    items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
-      "/account"
-    ));
-    if (Conf.EnableChatPages) {
-      items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
-        "/chat"
+    if (this.state.requiredEnableMfa === false) {
+      items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
+        "/account"
       ));
+      if (Conf.EnableChatPages) {
+        items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
+          "/chat"
+        ));
+      }
     }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
@@ -568,17 +575,7 @@ class App extends Component {
     } else if (this.state.account === undefined) {
       return null;
     } else {
-      if (this.state.requiredEnableMfa) {
-        return <MfaSetupPage account={this.state.account} isPromptPage={true} current={1}
-          visibleMfaTypes={Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [Setting.MfaRuleRequired]).map((item) => item.name)}
-          onfinish={(redirectUri) => {
-            this.setState({requiredEnableMfa: false});
-            this.props.history.push(redirectUri === "" ? "/account" : redirectUri);
-          }
-          }{...this.props} />;
-      } else {
-        return component;
-      }
+      return component;
     }
   }
 
@@ -639,7 +636,7 @@ class App extends Component {
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
+        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={result => this.setState({requiredEnableMfa: result})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
@@ -680,14 +677,14 @@ class App extends Component {
     const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
-        <EnableMfaNotification onupdate={(value) => this.setState({requiredEnableMfa: value})} account={this.state.account} />
+        <EnableMfaNotification account={this.state.account} />
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
               <div className="logo" style={{background: `url(${this.state.logo})`}} />
             </Link>
           )}
-          {Setting.isMobile() ?
+          {this.state.requiredEnableMfa || (Setting.isMobile() ?
             <React.Fragment>
               <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
                 <Menu
@@ -710,7 +707,7 @@ class App extends Component {
               selectedKeys={[this.state.selectedMenuKey]}
               style={{position: "absolute", left: "145px", right: menuStyleRight}}
             />
-          }
+          )}
           {
             this.renderAccountMenu()
           }
@@ -774,11 +771,9 @@ class App extends Component {
                 <EntryPage
                   account={this.state.account}
                   theme={this.state.themeData}
-                  onLoginSuccess={() => {
-                    this.getAccount(() => {
-                      const link = Setting.getFromLink();
-                      this.props.history.push(link, {from: "/login"});
-                    });
+                  onLoginSuccess={(redirectUrl) => {
+                    localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                    this.getAccount();
                   }}
                   onUpdateAccount={(account) => this.onUpdateAccount(account)}
                   updataThemeData={this.setTheme}
