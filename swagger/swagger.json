@@ -476,7 +476,26 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.AddResource"
+                "operationId": "ApiController.AddResource",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "resource",
+                        "description": "Resource object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success or error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/add-role": {
@@ -1344,7 +1363,26 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.DeleteResource"
+                "operationId": "ApiController.DeleteResource",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "resource",
+                        "description": "Resource object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success or error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/delete-role": {
@@ -2797,7 +2835,25 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.GetResource"
+                "description": "get resource",
+                "operationId": "ApiController.GetResource",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of resource",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Resource"
+                        }
+                    }
+                }
             }
         },
         "/api/get-resources": {
@@ -2805,7 +2861,71 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.GetResources"
+                "description": "get resources",
+                "operationId": "ApiController.GetResources",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "Owner",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "description": "User",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "Page Size",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "p",
+                        "description": "Page Number",
+                        "type": "integer"
+                    },
+                    {
+                        "in": "query",
+                        "name": "field",
+                        "description": "Field",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "value",
+                        "description": "Value",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortField",
+                        "description": "Sort Field",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortOrder",
+                        "description": "Sort Order",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Resource"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/get-role": {
@@ -4532,7 +4652,34 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.UpdateResource"
+                "description": "get resource",
+                "operationId": "ApiController.UpdateResource",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of resource",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "resource",
+                        "description": "The resource object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success or error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/update-role": {
@@ -4779,7 +4926,76 @@
                 "tags": [
                     "Resource API"
                 ],
-                "operationId": "ApiController.UploadResource"
+                "operationId": "ApiController.UploadResource",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "Owner",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user",
+                        "description": "User",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "application",
+                        "description": "Application",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "tag",
+                        "description": "Tag",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "parent",
+                        "description": "Parent",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "fullFilePath",
+                        "description": "Full File Path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "createdTime",
+                        "description": "Created Time",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "description",
+                        "description": "Description",
+                        "type": "string"
+                    },
+                    {
+                        "in": "formData",
+                        "name": "file",
+                        "description": "Resource file",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "FileUrl, objectKey",
+                        "schema": {
+                            "$ref": "#/definitions/object.Resource"
+                        }
+                    }
+                }
             }
         },
         "/api/user": {
@@ -4974,13 +5190,13 @@
             "properties": {
                 "data": {
                     "additionalProperties": {
-                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "description": "support string, struct or []struct",
                         "type": "string"
                     }
                 },
                 "data2": {
                     "additionalProperties": {
-                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "description": "support string, struct or []struct",
                         "type": "string"
                     }
                 },
@@ -5195,6 +5411,12 @@
                 },
                 "signupUrl": {
                     "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "termsOfUse": {
                     "type": "string"
@@ -6126,9 +6348,6 @@
                 "customLogo": {
                     "type": "string"
                 },
-                "scopes": {
-                    "type": "string"
-                },
                 "customTokenUrl": {
                     "type": "string"
                 },
@@ -6190,6 +6409,9 @@
                 "regionId": {
                     "type": "string"
                 },
+                "scopes": {
+                    "type": "string"
+                },
                 "signName": {
                     "type": "string"
                 },
@@ -6204,6 +6426,11 @@
                 },
                 "type": {
                     "type": "string"
+                },
+                "userMapping": {
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -6279,6 +6506,55 @@
                     "type": "string"
                 },
                 "requestUri": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Resource": {
+            "title": "Resource",
+            "type": "object",
+            "properties": {
+                "application": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "fileFormat": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fileSize": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "fileType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parent": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 },
                 "user": {
