@@ -7,21 +7,15 @@ services:
       context: ./
       dockerfile: Dockerfile
       target: STANDARD
-      tags:
-        - "${CASDOOR_IMG:-casbin/casdoor}:${CASDOOR_TAG:-latest}"
     ports:
       - "8000:8000"
     depends_on:
       - db
     environment:
       RUNNING_IN_DOCKER: "true"
-      CREATE_DATABASE: "${CREATE_DATABASE:-true}"
+      NO_CREATE_DATABASE: "${NO_CREATE_DATABASE:-}"
     volumes:
       - ${CONF_DIR:-./conf}:/conf/
-    entrypoint:
-      - /server
-      - --createDatabase
-      - ${CREATE_DATABASE:-true}
   db:
     restart: always
     image: mysql:8.0.25
