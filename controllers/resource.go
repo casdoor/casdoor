@@ -229,12 +229,12 @@ func (c *ApiController) UploadResource() {
 
 	fileType := "unknown"
 	contentType := header.Header.Get("Content-Type")
-	fileType, _ = util.GetOwnerAndNameFromId(contentType)
+	fileType, _ = util.GetOwnerAndNameFromIdNoCheck(contentType + "/")
 
 	if fileType != "image" && fileType != "video" {
 		ext := filepath.Ext(filename)
 		mimeType := mime.TypeByExtension(ext)
-		fileType, _ = util.GetOwnerAndNameFromId(mimeType)
+		fileType, _ = util.GetOwnerAndNameFromIdNoCheck(mimeType + "/")
 	}
 
 	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 175)
