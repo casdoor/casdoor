@@ -75,7 +75,7 @@
     "eslint-plugin-react": "^7.31.1",
     "husky": "^4.3.8",
     "lint-staged": "^13.0.3",
-    "stylelint": "^14.11.0",
+    "stylelint": "^15.10.1",
     "stylelint-config-recommended-less": "^1.0.4",
     "stylelint-config-standard": "^28.0.0"
   },
