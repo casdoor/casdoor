@@ -541,7 +541,7 @@ class LoginPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const _values = {...this.state.values};
-          _values["password"] = values.password;
+          _values["password"] = values.newPassword;
           _values["username"] = _values.username ?? this.props?.account?.name;
           Setting.showMessage("success", i18next.t("changePassword:Password successfully changed"));
           this.login(_values);
