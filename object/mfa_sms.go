@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	MfaSmsCountryCodeSession = "mfa_country_code"
-	MfaSmsDestSession        = "mfa_dest"
+	MfaCountryCodeSession = "mfa_country_code"
+	MfaDestSession        = "mfa_dest"
 )
 
 type SmsMfa struct {
@@ -48,9 +48,19 @@ func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, err
 }
 
 func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
-	dest := ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
-	countryCode := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+	destSession := ctx.Input.CruSession.Get(MfaDestSession)
+	if destSession == nil {
+		return errors.New("dest session is missing")
+	}
+	dest := destSession.(string)
+
 	if !util.IsEmailValid(dest) {
+		countryCodeSession := ctx.Input.CruSession.Get(MfaCountryCodeSession)
+		if countryCodeSession == nil {
+			return errors.New("country code is missing")
+		}
+		countryCode := countryCodeSession.(string)
+
 		dest, _ = util.GetE164Number(dest, countryCode)
 	}
 
@@ -78,8 +88,8 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_phone_enabled")
 
 		if user.Phone == "" {
-			user.Phone = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
-			user.CountryCode = ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+			user.Phone = ctx.Input.CruSession.Get(MfaDestSession).(string)
+			user.CountryCode = ctx.Input.CruSession.Get(MfaCountryCodeSession).(string)
 			columns = append(columns, "phone", "country_code")
 		}
 	} else if mfa.Config.MfaType == EmailType {
@@ -87,7 +97,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_email_enabled")
 
 		if user.Email == "" {
-			user.Email = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
+			user.Email = ctx.Input.CruSession.Get(MfaDestSession).(string)
 			columns = append(columns, "email")
 		}
 	}
@@ -96,6 +106,11 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	if err != nil {
 		return err
 	}
+
+	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
+	ctx.Input.CruSession.Delete(MfaDestSession)
+	ctx.Input.CruSession.Delete(MfaCountryCodeSession)
+
 	return nil
 }
 

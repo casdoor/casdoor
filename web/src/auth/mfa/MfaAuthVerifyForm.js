@@ -15,9 +15,11 @@
 import React, {useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
-import * as AuthBackend from "./AuthBackend";
-import {EmailMfaType, RecoveryMfaType, SmsMfaType} from "./MfaSetupPage";
-import {MfaSmsVerifyForm, MfaTotpVerifyForm, mfaAuth} from "./MfaVerifyForm";
+import * as AuthBackend from "../AuthBackend";
+import {EmailMfaType, RecoveryMfaType, SmsMfaType} from "../MfaSetupPage";
+import {mfaAuth} from "./MfaVerifyForm";
+import MfaVerifySmsForm from "./MfaVerifySmsForm";
+import MfaVerifyTotpForm from "./MfaVerifyTotpForm";
 
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
@@ -70,13 +72,13 @@ export function MfaAuthVerifyForm({formValues, oAuthParams, mfaProps, applicatio
           {i18next.t("mfa:Multi-factor authentication description")}
         </div>
         {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
-          <MfaSmsVerifyForm
+          <MfaVerifySmsForm
             mfaProps={mfaProps}
             method={mfaAuth}
             onFinish={verify}
             application={application}
           />) : (
-          <MfaTotpVerifyForm
+          <MfaVerifyTotpForm
             mfaProps={mfaProps}
             onFinish={verify}
           />

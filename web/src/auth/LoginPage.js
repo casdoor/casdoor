@@ -15,6 +15,7 @@
 import React from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Row, Spin, Tabs} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
@@ -34,7 +35,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
-import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./MfaAuthVerifyForm";
+import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -254,8 +255,13 @@ class LoginPage extends React.Component {
     const code = resp.data;
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
     const noRedirect = oAuthParams.noRedirect;
+    const redirectUrl = `${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`;
+    if (resp.data === RequiredMfa) {
+      this.props.onLoginSuccess(window.location.href);
+      return;
+    }
 
-    if (Setting.hasPromptPage(application) || resp.msg === RequiredMfa) {
+    if (Setting.hasPromptPage(application)) {
       AuthBackend.getAccount()
         .then((res) => {
           if (res.status === "ok") {
@@ -263,13 +269,8 @@ class LoginPage extends React.Component {
             account.organization = res.data2;
             this.onUpdateAccount(account);
 
-            if (resp.msg === RequiredMfa) {
-              Setting.goToLink(`/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}&promptType=mfa`);
-              return;
-            }
-
             if (Setting.isPromptAnswered(account, application)) {
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+              Setting.goToLink(redirectUrl);
             } else {
               Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
             }
@@ -280,7 +281,7 @@ class LoginPage extends React.Component {
     } else {
       if (noRedirect === "true") {
         window.close();
-        const newWindow = window.open(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        const newWindow = window.open(redirectUrl);
         if (newWindow) {
           setInterval(() => {
             if (!newWindow.closed) {
@@ -289,7 +290,7 @@ class LoginPage extends React.Component {
           }, 1000);
         }
       } else {
-        Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+        Setting.goToLink(redirectUrl);
         this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
       }
     }
@@ -355,20 +356,8 @@ class LoginPage extends React.Component {
             const responseType = values["type"];
 
             if (responseType === "login") {
-              if (res.msg === RequiredMfa) {
-                AuthBackend.getAccount().then((res) => {
-                  if (res.status === "ok") {
-                    const account = res.data;
-                    account.organization = res.data2;
-                    this.onUpdateAccount(account);
-                  }
-                });
-                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-              } else {
-                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-                const link = Setting.getFromLink();
-                Setting.goToLink(link);
-              }
+              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+              this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
@@ -391,23 +380,25 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            callback(res);
-          } else if (res.status === NextMfa) {
-            this.setState({
-              getVerifyTotp: () => {
-                return (
-                  <MfaAuthVerifyForm
-                    mfaProps={res.data}
-                    formValues={values}
-                    oAuthParams={oAuthParams}
-                    application={this.getApplicationObj()}
-                    onFail={() => {
-                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
-                    }}
-                    onSuccess={(res) => callback(res)}
-                  />);
-              },
-            });
+            if (res.data === NextMfa) {
+              this.setState({
+                getVerifyTotp: () => {
+                  return (
+                    <MfaAuthVerifyForm
+                      mfaProps={res.data2}
+                      formValues={values}
+                      oAuthParams={oAuthParams}
+                      application={this.getApplicationObj()}
+                      onFail={() => {
+                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                      }}
+                      onSuccess={(res) => callback(res)}
+                    />);
+                },
+              });
+            } else {
+              callback(res);
+            }
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
@@ -998,4 +989,4 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+export default withRouter(LoginPage);
