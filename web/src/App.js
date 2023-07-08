@@ -130,10 +130,8 @@ class App extends Component {
       this.setState({
         requiredEnableMfa: requiredEnableMfa,
       });
-    }
 
-    if (this.state.requiredEnableMfa !== prevState.requiredEnableMfa || this.state.account !== prevState.account) {
-      if (this.state.requiredEnableMfa === true) {
+      if (requiredEnableMfa === true) {
         const mfaType = Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [MfaRuleRequired])
           .find((item) => item.rule === MfaRuleRequired)?.name;
         if (mfaType !== undefined) {
@@ -144,7 +142,6 @@ class App extends Component {
   }
 
   updateMenuKey() {
-    // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
     this.setState({
       uri: uri,
@@ -636,7 +633,7 @@ class App extends Component {
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={result => this.setState({requiredEnableMfa: result})} {...props} />)} />
+        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
