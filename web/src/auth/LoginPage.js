@@ -82,6 +82,10 @@ class LoginPage extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevState.loginMethod === undefined && this.state.loginMethod === undefined) {
+      const application = this.getApplicationObj();
+      this.setState({loginMethod: this.getDefaultLoginMethod(application)});
+    }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
 
