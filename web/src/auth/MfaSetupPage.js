@@ -190,7 +190,7 @@ class MfaSetupPage extends React.Component {
         <MfaEnableForm user={this.getUser()} mfaType={this.state.mfaType} recoveryCodes={this.state.mfaProps.recoveryCodes}
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
-            this.props.onfinish(true);
+            this.props.onfinish();
             if (localStorage.getItem("mfaRedirectUrl") !== null) {
               Setting.goToLink(localStorage.getItem("mfaRedirectUrl"));
               localStorage.removeItem("mfaRedirectUrl");
