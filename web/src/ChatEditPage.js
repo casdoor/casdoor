@@ -40,17 +40,21 @@ class ChatEditPage extends React.Component {
 
   getChat() {
     ChatBackend.getChat("admin", this.state.chatName)
-      .then((chat) => {
-        if (chat === null) {
+      .then((res) => {
+        if (res === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          chat: chat,
+          chat: res,
         });
 
-        this.getUsers(chat.organization);
+        this.getUsers(res.organization);
       });
   }
 
@@ -66,6 +70,11 @@ class ChatEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
           users: res,
         });

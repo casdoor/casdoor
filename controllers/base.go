@@ -79,7 +79,8 @@ func (c *ApiController) getCurrentUser() *object.User {
 	} else {
 		user, err = object.GetUser(userId)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return nil
 		}
 	}
 	return user
@@ -112,7 +113,8 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	}
 	application, err := object.GetApplicationByClientId(clientId.(string))
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return nil
 	}
 
 	return application
@@ -176,24 +178,16 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
-func (c *ApiController) setMfaSessionData(data *object.MfaSessionData) {
-	if data == nil {
-		c.SetSession(object.MfaSessionUserId, nil)
-		return
-	}
-	c.SetSession(object.MfaSessionUserId, data.UserId)
+func (c *ApiController) setMfaUserSession(userId string) {
+	c.SetSession(object.MfaSessionUserId, userId)
 }
 
-func (c *ApiController) getMfaSessionData() *object.MfaSessionData {
-	userId := c.GetSession(object.MfaSessionUserId)
+func (c *ApiController) getMfaUserSession() string {
+	userId := c.Ctx.Input.CruSession.Get(object.MfaSessionUserId)
 	if userId == nil {
-		return nil
+		return ""
 	}
-
-	data := &object.MfaSessionData{
-		UserId: userId.(string),
-	}
-	return data
+	return userId.(string)
 }
 
 func (c *ApiController) setExpireForSession() {

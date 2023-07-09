@@ -30,7 +30,7 @@ class CustomGithubCorner extends React.Component {
     }
 
     return (
-      <GithubCorner href={Conf.GithubRepo} size={60} />
+      <GithubCorner href={"https://github.com/casdoor/casdoor"} size={60} />
     );
   }
 }

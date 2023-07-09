@@ -42,7 +42,8 @@ func (c *ApiController) GetSyncers() {
 	if limit == "" || page == "" {
 		organizationSyncers, err := object.GetOrganizationSyncers(owner, organization)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = organizationSyncers
@@ -78,7 +79,8 @@ func (c *ApiController) GetSyncer() {
 
 	syncer, err := object.GetSyncer(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = syncer

@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {withRouter} from "react-router-dom";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -53,6 +54,7 @@ class UserEditPage extends React.Component {
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
       loading: true,
       returnUrl: null,
+      idCardInfo: ["ID card front", "ID card back", "ID card with person"],
     };
   }
 
@@ -121,13 +123,17 @@ class UserEditPage extends React.Component {
 
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
-      .then((application) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
         this.setState({
-          application: application,
+          application: res,
         });
 
         this.setState({
-          isGroupsVisible: application.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          isGroupsVisible: res.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }
@@ -265,6 +271,12 @@ class UserEditPage extends React.Component {
       }
     }
 
+    if (accountItem.name === "ID card info" || accountItem.name === "ID card") {
+      if (this.state.user.properties?.isIdCardVerified === "true") {
+        disabled = true;
+      }
+    }
+
     let isKeysGenerated = false;
     if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
       isKeysGenerated = true;
@@ -361,20 +373,11 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
-              <Col span={22} >
-                <a target="_blank" rel="noreferrer" href={this.state.user.avatar}>
-                  <img src={this.state.user.avatar} alt={this.state.user.avatar} height={90} style={{marginBottom: "20px"}} />
-                </a>
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}}>
-              <CropperDivModal buttonText={`${i18next.t("user:Upload a photo")}...`} title={i18next.t("user:Upload a photo")} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
-            </Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Preview")}:
+          </Col>
+          <Col>
+            {this.renderImage(this.state.user.avatar, i18next.t("user:Upload a photo"), i18next.t("user:Set new profile picture"), "avatar", false)}
           </Col>
         </Row>
       );
@@ -532,9 +535,33 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:ID card"), i18next.t("user:ID card - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.idCard} onChange={e => {
+            <Input value={this.state.user.idCard} disabled={disabled} onChange={e => {
               this.updateUserField("idCard", e.target.value);
             }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "ID card info") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:ID card info"), i18next.t("user:ID card info - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              {
+                [
+                  {name: "ID card front", value: "idCardFront"},
+                  {name: "ID card back", value: "idCardBack"},
+                  {name: "ID card with person", value: "idCardWithPerson"},
+                ].map((entry) => {
+                  return this.renderImage(this.state.user.properties[entry.value] || "", this.getIdCardType(entry.name), this.getIdCardText(entry.name), entry.value, disabled);
+                })
+              }
+            </Row>
           </Col>
         </Row>
       );
@@ -896,7 +923,7 @@ class UserEditPage extends React.Component {
                           }
                         </Space>
                       ) : <Button type={"default"} onClick={() => {
-                        Setting.goToLink(`/mfa-authentication/setup?mfaType=${item.mfaType}`);
+                        this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
                       }}>
                         {i18next.t("mfa:Setup")}
                       </Button>}
@@ -938,6 +965,25 @@ class UserEditPage extends React.Component {
     }
   }
 
+  renderImage(imgUrl, title, set, tag, disabled) {
+    return (
+      <Col span={4} style={{textAlign: "center", margin: "auto"}} key={tag}>
+        {
+          imgUrl ?
+            <a target="_blank" rel="noreferrer" href={imgUrl} style={{marginBottom: "10px"}}>
+              <img src={imgUrl} alt={imgUrl} height={90} style={{marginBottom: "20px"}} />
+            </a>
+            :
+            <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: 5}}>
+              <div style={{fontSize: 30, margin: 10}}>+</div>
+              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`请上传${title}...`}</div>
+            </Col>
+        }
+        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
+      </Col>
+    );
+  }
+
   renderUser() {
     return (
       <Card size="small" title={
@@ -961,6 +1007,30 @@ class UserEditPage extends React.Component {
         }
       </Card>
     );
+  }
+
+  getIdCardType(key) {
+    if (key === "ID card front") {
+      return i18next.t("user:ID card front");
+    } else if (key === "ID card back") {
+      return i18next.t("user:ID card back");
+    } else if (key === "ID card with person") {
+      return i18next.t("user:ID card with person");
+    } else {
+      return "Unknown Id card name: " + key;
+    }
+  }
+
+  getIdCardText(key) {
+    if (key === "ID card front") {
+      return i18next.t("user:Upload ID card front picture");
+    } else if (key === "ID card back") {
+      return i18next.t("user:Upload ID card back picture");
+    } else if (key === "ID card with person") {
+      return i18next.t("user:Upload ID card with person picture");
+    } else {
+      return "Unknown Id card name: " + key;
+    }
   }
 
   submitUserEdit(needExit) {
@@ -1049,4 +1119,4 @@ class UserEditPage extends React.Component {
   }
 }
 
-export default UserEditPage;
+export default withRouter(UserEditPage);

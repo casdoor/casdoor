@@ -18,26 +18,24 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/casdoor/casdoor/util"
-
 	"github.com/beego/beego/context"
+	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
 )
 
 const (
-	MfaSmsCountryCodeSession   = "mfa_country_code"
-	MfaSmsDestSession          = "mfa_dest"
-	MfaSmsRecoveryCodesSession = "mfa_recovery_codes"
+	MfaCountryCodeSession = "mfa_country_code"
+	MfaDestSession        = "mfa_dest"
 )
 
 type SmsMfa struct {
 	Config *MfaProps
 }
 
-func (mfa *SmsMfa) Initiate(ctx *context.Context, name string, secret string) (*MfaProps, error) {
+func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
 	recoveryCode := uuid.NewString()
 
-	err := ctx.Input.CruSession.Set(MfaSmsRecoveryCodesSession, []string{recoveryCode})
+	err := ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
 	if err != nil {
 		return nil, err
 	}
@@ -50,9 +48,19 @@ func (mfa *SmsMfa) Initiate(ctx *context.Context, name string, secret string) (*
 }
 
 func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
-	dest := ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
-	countryCode := ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+	destSession := ctx.Input.CruSession.Get(MfaDestSession)
+	if destSession == nil {
+		return errors.New("dest session is missing")
+	}
+	dest := destSession.(string)
+
 	if !util.IsEmailValid(dest) {
+		countryCodeSession := ctx.Input.CruSession.Get(MfaCountryCodeSession)
+		if countryCodeSession == nil {
+			return errors.New("country code is missing")
+		}
+		countryCode := countryCodeSession.(string)
+
 		dest, _ = util.GetE164Number(dest, countryCode)
 	}
 
@@ -63,9 +71,9 @@ func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
 }
 
 func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
-	recoveryCodes := ctx.Input.CruSession.Get(MfaSmsRecoveryCodesSession).([]string)
+	recoveryCodes := ctx.Input.CruSession.Get(MfaRecoveryCodesSession).([]string)
 	if len(recoveryCodes) == 0 {
-		return fmt.Errorf("recovery codes is empty")
+		return fmt.Errorf("recovery codes is missing")
 	}
 
 	columns := []string{"recovery_codes", "preferred_mfa_type"}
@@ -80,8 +88,8 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_phone_enabled")
 
 		if user.Phone == "" {
-			user.Phone = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
-			user.CountryCode = ctx.Input.CruSession.Get(MfaSmsCountryCodeSession).(string)
+			user.Phone = ctx.Input.CruSession.Get(MfaDestSession).(string)
+			user.CountryCode = ctx.Input.CruSession.Get(MfaCountryCodeSession).(string)
 			columns = append(columns, "phone", "country_code")
 		}
 	} else if mfa.Config.MfaType == EmailType {
@@ -89,7 +97,7 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		columns = append(columns, "mfa_email_enabled")
 
 		if user.Email == "" {
-			user.Email = ctx.Input.CruSession.Get(MfaSmsDestSession).(string)
+			user.Email = ctx.Input.CruSession.Get(MfaDestSession).(string)
 			columns = append(columns, "email")
 		}
 	}
@@ -98,6 +106,11 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 	if err != nil {
 		return err
 	}
+
+	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
+	ctx.Input.CruSession.Delete(MfaDestSession)
+	ctx.Input.CruSession.Delete(MfaCountryCodeSession)
+
 	return nil
 }
 
@@ -111,7 +124,7 @@ func (mfa *SmsMfa) Verify(passCode string) error {
 	return nil
 }
 
-func NewSmsTwoFactor(config *MfaProps) *SmsMfa {
+func NewSmsMfaUtil(config *MfaProps) *SmsMfa {
 	if config == nil {
 		config = &MfaProps{
 			MfaType: SmsType,
@@ -122,7 +135,7 @@ func NewSmsTwoFactor(config *MfaProps) *SmsMfa {
 	}
 }
 
-func NewEmailTwoFactor(config *MfaProps) *SmsMfa {
+func NewEmailMfaUtil(config *MfaProps) *SmsMfa {
 	if config == nil {
 		config = &MfaProps{
 			MfaType: EmailType,

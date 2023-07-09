@@ -25,12 +25,13 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ChatListPage extends BaseListPage {
   newChat() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin", // this.props.account.applicationName,
       name: `chat_${randomName}`,
       createdTime: moment().format(),
       updatedTime: moment().format(),
-      organization: this.props.account.owner,
+      organization: organizationName,
       displayName: `New Chat - ${randomName}`,
       type: "Single",
       category: "Chat Category - 1",

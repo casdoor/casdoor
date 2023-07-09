@@ -22,10 +22,18 @@ import (
 	"github.com/nyaruka/phonenumbers"
 )
 
-var rePhone *regexp.Regexp
+var (
+	rePhone          *regexp.Regexp
+	ReWhiteSpace     *regexp.Regexp
+	ReFieldWhiteList *regexp.Regexp
+	ReUserName       *regexp.Regexp
+)
 
 func init() {
 	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
+	ReWhiteSpace, _ = regexp.Compile(`\s`)
+	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
+	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
 }
 
 func IsEmailValid(email string) bool {
@@ -69,4 +77,8 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 	}
 
 	return countryCode, nil
+}
+
+func FilterField(field string) bool {
+	return ReFieldWhiteList.MatchString(field)
 }

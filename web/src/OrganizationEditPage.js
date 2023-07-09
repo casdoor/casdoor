@@ -68,9 +68,14 @@ class OrganizationEditPage extends React.Component {
 
   getApplications() {
     ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName)
-      .then((applications) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          applications: applications,
+          applications: res,
         });
       });
   }
@@ -422,6 +427,7 @@ class OrganizationEditPage extends React.Component {
           this.setState({
             organizationName: this.state.organization.name,
           });
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
 
           if (willExist) {
             this.props.history.push("/organizations");
@@ -443,6 +449,7 @@ class OrganizationEditPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/organizations");
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

@@ -18,7 +18,8 @@
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "Unauthorized operation": "未授权的操作",
-    "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s"
+    "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
+    "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中"
   },
   "cas": {
     "Service %s and %s do not match": "服务%s与%s不匹配"

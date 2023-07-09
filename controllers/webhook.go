@@ -42,7 +42,8 @@ func (c *ApiController) GetWebhooks() {
 	if limit == "" || page == "" {
 		webhooks, err := object.GetWebhooks(owner, organization)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = webhooks
@@ -79,7 +80,8 @@ func (c *ApiController) GetWebhook() {
 
 	webhook, err := object.GetWebhook(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = webhook

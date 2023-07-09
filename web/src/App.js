@@ -15,9 +15,11 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
+import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
+import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
@@ -64,6 +66,13 @@ import ProductBuyPage from "./ProductBuyPage";
 import PaymentListPage from "./PaymentListPage";
 import PaymentEditPage from "./PaymentEditPage";
 import PaymentResultPage from "./PaymentResultPage";
+import ModelListPage from "./ModelListPage";
+import ModelEditPage from "./ModelEditPage";
+import AdapterListPage from "./AdapterListPage";
+import AdapterEditPage from "./AdapterEditPage";
+import SessionListPage from "./SessionListPage";
+import MfaSetupPage from "./auth/MfaSetupPage";
+import SystemInfo from "./SystemInfo";
 import AccountPage from "./account/AccountPage";
 import HomePage from "./basic/HomePage";
 import CustomGithubCorner from "./common/CustomGithubCorner";
@@ -73,19 +82,13 @@ import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
-import LanguageSelect from "./common/select/LanguageSelect";
-import i18next from "i18next";
 import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
-import ModelListPage from "./ModelListPage";
-import ModelEditPage from "./ModelEditPage";
-import SystemInfo from "./SystemInfo";
-import AdapterListPage from "./AdapterListPage";
-import AdapterEditPage from "./AdapterEditPage";
+import i18next from "i18next";
 import {withTranslation} from "react-i18next";
+import LanguageSelect from "./common/select/LanguageSelect";
 import ThemeSelect from "./common/select/ThemeSelect";
-import SessionListPage from "./SessionListPage";
-import MfaSetupPage from "./auth/MfaSetupPage";
+import OrganizationSelect from "./common/select/OrganizationSelect";
 
 const {Header, Footer, Content} = Layout;
 
@@ -101,12 +104,13 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      requiredEnableMfa: false,
     };
 
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
-      appName: "app-built-in", // the application name of Casdoor itself, do not change it
+      appName: Conf.DefaultApplication, // the application used in Casdoor root path: "/"
     });
   }
 
@@ -115,16 +119,29 @@ class App extends Component {
     this.getAccount();
   }
 
-  componentDidUpdate() {
-    // eslint-disable-next-line no-restricted-globals
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const uri = location.pathname;
     if (this.state.uri !== uri) {
       this.updateMenuKey();
     }
+
+    if (this.state.account !== prevState.account) {
+      const requiredEnableMfa = Setting.isRequiredEnableMfa(this.state.account, this.state.account?.organization);
+      this.setState({
+        requiredEnableMfa: requiredEnableMfa,
+      });
+
+      if (requiredEnableMfa === true) {
+        const mfaType = Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [MfaRuleRequired])
+          .find((item) => item.rule === MfaRuleRequired)?.name;
+        if (mfaType !== undefined) {
+          this.props.history.push(`/mfa/setup?mfaType=${mfaType}`, {from: "/login"});
+        }
+      }
+    }
   }
 
   updateMenuKey() {
-    // eslint-disable-next-line no-restricted-globals
     const uri = location.pathname;
     this.setState({
       uri: uri,
@@ -340,13 +357,15 @@ class App extends Component {
 
   renderRightDropdown() {
     const items = [];
-    items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
-      "/account"
-    ));
-    if (Conf.EnableChatPages) {
-      items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
-        "/chat"
+    if (this.state.requiredEnableMfa === false) {
+      items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
+        "/account"
       ));
+      if (Conf.EnableChatPages) {
+        items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
+          "/chat"
+        ));
+      }
     }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
@@ -398,6 +417,17 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
+          {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
+            <OrganizationSelect
+              initValue={Setting.getOrganization()}
+              withAll={true}
+              style={{marginRight: "20px", width: "180px", display: "flex"}}
+              onChange={(value) => {
+                Setting.setOrganization(value);
+              }}
+              className="select-box"
+            />
+          }
         </React.Fragment>
       );
     }
@@ -535,14 +565,6 @@ class App extends Component {
     return res;
   }
 
-  renderHomeIfLoggedIn(component) {
-    if (this.state.account !== null && this.state.account !== undefined) {
-      return <Redirect to="/" />;
-    } else {
-      return component;
-    }
-  }
-
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
@@ -552,12 +574,6 @@ class App extends Component {
     } else {
       return component;
     }
-  }
-
-  isStartPages() {
-    return window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/signup") ||
-        window.location.pathname === "/";
   }
 
   renderRouter() {
@@ -611,13 +627,13 @@ class App extends Component {
         <Route exact path="/subscriptions" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionListPage account={this.state.account} {...props} />)} />
         <Route exact path="/subscriptions/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/products/:organizationName/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
         <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/mfa-authentication/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} {...props} />)} />
+        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
         <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
@@ -648,18 +664,24 @@ class App extends Component {
       if (key === "/swagger") {
         window.open(Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger", "_blank");
       } else {
-        this.props.history.push(key);
+        if (this.state.requiredEnableMfa) {
+          Setting.showMessage("info", "Please enable MFA first!");
+        } else {
+          this.props.history.push(key);
+        }
       }
     };
+    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
     return (
       <Layout id="parent-area">
-        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
+        <EnableMfaNotification account={this.state.account} />
+        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
               <div className="logo" style={{background: `url(${this.state.logo})`}} />
             </Link>
           )}
-          {Setting.isMobile() ?
+          {this.state.requiredEnableMfa || (Setting.isMobile() ?
             <React.Fragment>
               <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
                 <Menu
@@ -680,9 +702,9 @@ class App extends Component {
               items={this.getMenuItems()}
               mode={"horizontal"}
               selectedKeys={[this.state.selectedMenuKey]}
-              style={{position: "absolute", left: "145px", right: "260px"}}
+              style={{position: "absolute", left: "145px", right: menuStyleRight}}
             />
-          }
+          )}
           {
             this.renderAccountMenu()
           }
@@ -746,9 +768,11 @@ class App extends Component {
                 <EntryPage
                   account={this.state.account}
                   theme={this.state.themeData}
-                  onUpdateAccount={(account) => {
-                    this.onUpdateAccount(account);
+                  onLoginSuccess={(redirectUrl) => {
+                    localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                    this.getAccount();
                   }}
+                  onUpdateAccount={(account) => this.onUpdateAccount(account)}
                   updataThemeData={this.setTheme}
                 /> :
                 <Switch>

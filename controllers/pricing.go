@@ -41,7 +41,8 @@ func (c *ApiController) GetPricings() {
 	if limit == "" || page == "" {
 		pricings, err := object.GetPricings(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = pricings
@@ -70,14 +71,15 @@ func (c *ApiController) GetPricings() {
 // @Tag Pricing API
 // @Description get pricing
 // @Param   id     query    string  true        "The id ( owner/name ) of the pricing"
-// @Success 200 {object} object.pricing The Response object
+// @Success 200 {object} object.Pricing The Response object
 // @router /get-pricing [get]
 func (c *ApiController) GetPricing() {
 	id := c.Input().Get("id")
 
 	pricing, err := object.GetPricing(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = pricing

@@ -50,6 +50,7 @@ type Syncer struct {
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
 	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
 	SyncInterval     int            `json:"syncInterval"`
+	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
 	Adapter *Adapter `xorm:"-" json:"-"`

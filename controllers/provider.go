@@ -46,7 +46,8 @@ func (c *ApiController) GetProviders() {
 	if limit == "" || page == "" {
 		providers, err := object.GetProviders(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(object.GetMaskedProviders(providers, isMaskEnabled))
@@ -92,7 +93,8 @@ func (c *ApiController) GetGlobalProviders() {
 	if limit == "" || page == "" {
 		globalProviders, err := object.GetGlobalProviders()
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(object.GetMaskedProviders(globalProviders, isMaskEnabled))

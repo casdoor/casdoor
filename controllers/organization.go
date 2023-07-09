@@ -37,17 +37,27 @@ func (c *ApiController) GetOrganizations() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organizationName := c.Input().Get("organizationName")
 
+	isGlobalAdmin := c.IsGlobalAdmin()
 	if limit == "" || page == "" {
-		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		var maskedOrganizations []*object.Organization
+		var err error
+
+		if isGlobalAdmin {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		} else {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+		}
+
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = maskedOrganizations
 		c.ServeJSON()
 	} else {
-		isGlobalAdmin := c.IsGlobalAdmin()
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 			if err != nil {
@@ -64,7 +74,7 @@ func (c *ApiController) GetOrganizations() {
 			}
 
 			paginator := pagination.SetPaginator(c.Ctx, limit, count)
-			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, organizationName, paginator.Offset(), limit, field, value, sortField, sortOrder))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

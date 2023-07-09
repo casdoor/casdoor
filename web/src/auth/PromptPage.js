@@ -16,14 +16,13 @@ import React from "react";
 import {Button, Card, Col, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
-import * as AuthBackend from "./AuthBackend";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import AffiliationSelect from "../common/select/AffiliationSelect";
 import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
-import MfaSetupPage from "./MfaSetupPage";
+import * as AuthBackend from "./AuthBackend";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -34,7 +33,9 @@ class PromptPage extends React.Component {
       applicationName: props.applicationName ?? (props.match === undefined ? null : props.match.params.applicationName),
       application: null,
       user: null,
-      promptType: new URLSearchParams(this.props.location.search).get("promptType"),
+      steps: null,
+      current: 0,
+      finished: false,
     };
   }
 
@@ -45,13 +46,24 @@ class PromptPage extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.user !== null && this.getApplicationObj() !== null && this.state.steps === null) {
+      this.initSteps(this.state.user, this.getApplicationObj());
+    }
+  }
+
   getUser() {
     const organizationName = this.props.account.owner;
     const userName = this.props.account.name;
     UserBackend.getUser(organizationName, userName)
-      .then((user) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          user: user,
+          user: res,
         });
       });
   }
@@ -62,10 +74,15 @@ class PromptPage extends React.Component {
     }
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((application) => {
-        this.onUpdateApplication(application);
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.onUpdateApplication(res);
         this.setState({
-          application: application,
+          application: res,
         });
       });
   }
@@ -188,20 +205,23 @@ class PromptPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.onUpdateAccount(null);
-
-          let redirectUrl = this.getRedirectUrl();
-          if (redirectUrl === "") {
-            redirectUrl = res.data2;
-          }
-          if (redirectUrl !== "" && redirectUrl !== null) {
-            Setting.goToLink(redirectUrl);
-          } else {
-            Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
-          }
         } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", res.msg);
         }
       });
+  }
+
+  finishAndJump() {
+    this.setState({
+      finished: true,
+    }, () => {
+      const redirectUrl = this.getRedirectUrl();
+      if (redirectUrl !== "" && redirectUrl !== null) {
+        Setting.goToLink(redirectUrl);
+      } else {
+        Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
+      }
+    });
   }
 
   submitUserEdit(isFinal) {
@@ -211,8 +231,7 @@ class PromptPage extends React.Component {
         if (res.status === "ok") {
           if (isFinal) {
             Setting.showMessage("success", i18next.t("general:Successfully saved"));
-
-            this.logout();
+            this.finishAndJump();
           }
         } else {
           if (isFinal) {
@@ -228,25 +247,45 @@ class PromptPage extends React.Component {
   }
 
   renderPromptProvider(application) {
-    return <>
-      {this.renderContent(application)}
-      <div style={{marginTop: "50px"}}>
-        <Button disabled={!Setting.isPromptAnswered(this.state.user, application)} type="primary" size="large" onClick={() => {this.submitUserEdit(true);}}>{i18next.t("code:Submit and complete")}</Button>
-      </div>
-    </>;
+    return (
+      <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+        {this.renderContent(application)}
+        <Button style={{marginTop: "50px", width: "200px"}}
+          disabled={!Setting.isPromptAnswered(this.state.user, application)}
+          type="primary" size="large" onClick={() => {
+            this.submitUserEdit(true);
+          }}>
+          {i18next.t("code:Submit and complete")}
+        </Button>
+      </div>);
   }
 
-  renderPromptMfa() {
+  initSteps(user, application) {
+    const steps = [];
+    if (!Setting.isPromptAnswered(user, application) && this.state.promptType === "provider") {
+      steps.push({
+        content: this.renderPromptProvider(application),
+        name: "provider",
+        title: i18next.t("application:Binding providers"),
+      });
+    }
+
+    this.setState({
+      steps: steps,
+    });
+  }
+
+  renderSteps() {
+    if (this.state.steps === null || this.state.steps?.length === 0) {
+      return null;
+    }
+
     return (
-      <MfaSetupPage
-        application={this.getApplicationObj()}
-        account={this.props.account}
-        current={1}
-        isAuthenticated={true}
-        isPromptPage={true}
-        redirectUri={this.getRedirectUrl()}
-        {...this.props}
-      />
+      <Card style={{marginTop: "20px", marginBottom: "20px"}}
+        title={this.state.steps[this.state.current].title}
+      >
+        <div >{this.state.steps[this.state.current].content}</div>
+      </Card>
     );
   }
 
@@ -256,7 +295,7 @@ class PromptPage extends React.Component {
       return null;
     }
 
-    if (!Setting.hasPromptPage(application) && this.state.promptType !== "mfa") {
+    if (this.state.steps?.length === 0) {
       return (
         <Result
           style={{display: "flex", flex: "1 1 0%", justifyContent: "center", flexDirection: "column"}}
@@ -277,17 +316,7 @@ class PromptPage extends React.Component {
 
     return (
       <div style={{display: "flex", flex: "1", justifyContent: "center"}}>
-        <Card>
-          <div style={{marginTop: "30px", marginBottom: "30px", textAlign: "center"}}>
-            {
-              Setting.renderHelmet(application)
-            }
-            {
-              Setting.renderLogo(application)
-            }
-            {this.state.promptType !== "mfa" ? this.renderPromptProvider(application) : this.renderPromptMfa(application)}
-          </div>
-        </Card>
+        {this.renderSteps()}
       </div>
     );
   }

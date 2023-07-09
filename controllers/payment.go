@@ -42,7 +42,8 @@ func (c *ApiController) GetPayments() {
 	if limit == "" || page == "" {
 		payments, err := object.GetPayments(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.Data["json"] = payments
@@ -51,13 +52,15 @@ func (c *ApiController) GetPayments() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPaymentCount(owner, organization, field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		payments, err := object.GetPaginationPayments(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(payments, paginator.Nums())
@@ -99,7 +102,8 @@ func (c *ApiController) GetPayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = payment
@@ -190,7 +194,8 @@ func (c *ApiController) NotifyPayment() {
 	}
 
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 }
 

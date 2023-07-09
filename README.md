@@ -37,8 +37,8 @@
   <a href="https://crowdin.com/project/casdoor-site">
     <img alt="Crowdin" src="https://badges.crowdin.net/casdoor-site/localized.svg">
   </a>
-  <a href="https://gitter.im/casbin/casdoor">
-    <img alt="Gitter" src="https://badges.gitter.im/casbin/casdoor.svg">
+  <a href="https://discord.gg/5rPsrAzK7S">
+    <img alt="Discord" src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=discord&color=5865F2">
   </a>
 </p>
 
@@ -71,7 +71,7 @@ https://casdoor.org/docs/category/integrations
 
 ## How to contact?
 
-- Gitter: https://gitter.im/casbin/casdoor
+- Discord: https://discord.gg/5rPsrAzK7S
 - Forum: https://forum.casbin.com
 - Contact: https://tawk.to/chat/623352fea34c2456412b8c51/1fuc7od6e
 
