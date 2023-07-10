@@ -322,6 +322,8 @@ class LoginPage extends React.Component {
   }
 
   login(values) {
+    const userOwner = values.organization;
+    const userName = values.username;
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
       // CAS
@@ -359,20 +361,8 @@ class LoginPage extends React.Component {
                 values: values,
               });
 
-              if (res.data === "") {
-                Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-                return;
-              }
-
-              const parts = res.data.split("/");
-
-              if (parts.length !== 2) {
-                Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-                return;
-              }
-
               this.setState({
-                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj(), parts[0], parts[1]),
+                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj(), userOwner, userName),
               });
 
               return;
