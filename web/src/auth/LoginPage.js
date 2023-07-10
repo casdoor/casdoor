@@ -862,7 +862,6 @@ class LoginPage extends React.Component {
         <SelfLoginButton account={this.props.account} onClick={() => {
           const values = {};
           values["application"] = application.name;
-          // values["username"] = this.props.account.name;
           this.login(values);
         }} />
         <br />
