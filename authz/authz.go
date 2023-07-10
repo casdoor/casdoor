@@ -33,6 +33,7 @@ var methodAllowedIfPasswordChangeRequested = map[string]struct{}{
 	"/api/login":        {},
 	"/api/logout":       {},
 	"/api/login/oauth":  {},
+	"/api/get-account":  {},
 }
 
 func InitAuthz() {
