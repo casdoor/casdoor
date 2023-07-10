@@ -51,7 +51,7 @@ type Application struct {
 	EnableSamlCompress  bool            `json:"enableSamlCompress"`
 	EnableWebAuthn      bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail bool            `json:"enableLinkWithEmail"`
-	SigninStyle         bool            `json:"signinStyle"`
+	SignInStyle         string          `xorm:"varchar(100)" json:"signInStyle"`
 	OrgChoiceMode       string          `json:"orgChoiceMode"`
 	SamlReplyUrl        string          `xorm:"varchar(100)" json:"samlReplyUrl"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`

@@ -652,11 +652,11 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} style={{marginTop: "5px"}}>
             <Row>
-              <Radio.Group value={this.state.application.signinStyle ?? false} onChange={e => {
-                this.updateApplicationField("signinStyle", e.target.value);
+              <Radio.Group value={this.state.application.signInStyle ?? "default"} onChange={e => {
+                this.updateApplicationField("signInStyle", e.target.value);
               }} >
-                <Radio.Button value={false}>{i18next.t("theme:Default")}</Radio.Button>
-                <Radio.Button value={true}>{i18next.t("application:New signin UI")}</Radio.Button>
+                <Radio.Button value={"default"}>{i18next.t("theme:Default")}</Radio.Button>
+                <Radio.Button value={"business"}>{i18next.t("application:Business Style")}</Radio.Button>
               </Radio.Group>
             </Row>
           </Col>

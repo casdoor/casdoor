@@ -456,7 +456,7 @@ class LoginPage extends React.Component {
           ref={this.form}
         >
           {
-            application.signinStyle ?
+            application.signInStyle === "business" ?
               <div style={{textAlign: "center", marginTop: "-50px"}}>
                 <p style={{fontSize: "30px"}}>
                   Sign in to your account
@@ -541,7 +541,7 @@ class LoginPage extends React.Component {
             }
           </Row>
           {
-            application.signinStyle ? <Button
+            application.signInStyle === "business" ? <Button
               type="primary"
               htmlType="submit"
               style={{width: "100%", marginBottom: "5px"}}
@@ -564,7 +564,7 @@ class LoginPage extends React.Component {
             }
           </div>
           {
-            !application.signinStyle ? null : application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length !== 0 ? (
+            application.signInStyle === "default" ? null : application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length !== 0 ? (
               <div style={{display: "flex", width: "320px", alignItems: "center", marginBottom: "-30px", justifyContent: "space-between"}}>
                 <img src={`${StaticBaseUrl}/img/left_dividing_line.png`} width="150px" />
                 <span>or</span>
@@ -575,7 +575,7 @@ class LoginPage extends React.Component {
           {AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null}
           <Form.Item>
             {
-              !application.signinStyle ? <Button
+              application.signInStyle === "default" ? <Button
                 type="primary"
                 htmlType="submit"
                 style={{width: "100%", marginBottom: "5px"}}
@@ -591,13 +591,13 @@ class LoginPage extends React.Component {
               this.renderCaptchaModal(application)
             }
             {
-              !application.signinStyle ? this.renderFooter(application) : null
+              application.signInStyle === "default" ? this.renderFooter(application) : null
             }
           </Form.Item>
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                if (application.signinStyle && application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length <= 2) {
+                if (application.signInStyle === "business" && application.providers.filter(providerItem => this.isProviderVisible(providerItem)).length <= 2) {
                   return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big", this.props.location);
                 } else {
                   return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
@@ -683,9 +683,9 @@ class LoginPage extends React.Component {
 
   renderFooter(application) {
     return (
-      <span style={!application.signinStyle ? {float: "right"} : null}>
+      <span style={application.signInStyle === "default" ? {float: "right"} : null}>
         {
-          !application.enableSignUp ? null : !application.signinStyle ? (
+          !application.enableSignUp ? null : application.signInStyle === "default" ? (
             <React.Fragment>
               {i18next.t("login:No account?")}&nbsp;
               {
