@@ -165,6 +165,10 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
+	if user != nil && user.PasswordChangeRequired && !allowedIfPasswordChangeRequested(urlPath) {
+		return false
+	}
+
 	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 		return true
 	}
@@ -174,7 +178,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
-	return res && (user == nil || !user.PasswordChangeRequired || allowedIfPasswordChangeRequested(urlPath))
+	return res
 }
 
 func allowedIfPasswordChangeRequested(key string) bool {
