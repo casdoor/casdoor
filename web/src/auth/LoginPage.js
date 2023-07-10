@@ -359,8 +359,20 @@ class LoginPage extends React.Component {
                 values: values,
               });
 
+              if (res.data === "") {
+                Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                return;
+              }
+
+              const parts = res.data.split("/");
+
+              if (parts.length !== 2) {
+                Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                return;
+              }
+
               this.setState({
-                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj()),
+                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj(), parts[0], parts[1]),
               });
 
               return;
@@ -420,7 +432,7 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderChangePasswordForm(application) {
+  renderChangePasswordForm(application, userOwner, userName) {
     return (
       <React.Fragment>
         <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
@@ -435,6 +447,8 @@ class LoginPage extends React.Component {
               initialValues={{
                 application: application.name,
                 organization: application.organization,
+                userOwner: userOwner,
+                userName: userName,
               }}
               size="large"
               layout={Setting.isMobile() ? "vertical" : "horizontal"}
@@ -458,6 +472,28 @@ class LoginPage extends React.Component {
                   {
                     required: true,
                     message: "Please input your organization!",
+                  },
+                ]}
+              >
+              </Form.Item>
+              <Form.Item
+                name="userOwner"
+                hidden={true}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input user owner!",
+                  },
+                ]}
+              >
+              </Form.Item>
+              <Form.Item
+                name="userName"
+                hidden={true}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input user name!",
                   },
                 ]}
               >
@@ -536,8 +572,7 @@ class LoginPage extends React.Component {
   }
 
   onChangePasswordFinish(values) {
-    // userOwner and userName will be taken from session if any
-    UserBackend.setPassword(null, null, values.oldPassword, values.newPassword)
+    UserBackend.setPassword(values.userOwner, values.userName, values.oldPassword, values.newPassword)
       .then((res) => {
         if (res.status === "ok") {
           const _values = {...this.state.values};
@@ -729,7 +764,7 @@ class LoginPage extends React.Component {
                 {application.displayName}
               </span>
             </a>
-              :
+            :
           </div>
           <br />
           {

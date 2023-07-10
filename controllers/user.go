@@ -419,12 +419,13 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	userId := ""
+	var userId string
 	requestUserId := c.GetSessionUsername()
 	if userOwner != "" && userName != "" {
 		userId = util.GetId(userOwner, userName)
-	} else {
-		userId = requestUserId
+		if requestUserId == "" {
+			requestUserId = userId
+		}
 	}
 
 	if requestUserId == "" && code == "" {
@@ -463,15 +464,6 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(msg)
 		return
 	}
-
-	if requestUserId == userId {
-		c.ClearUserSession()
-		util.LogInfo(c.Ctx, "API: current user '[%s]' logged out", targetUser.Name)
-	} else {
-		util.LogInfo(c.Ctx, "API: [%s] logged out", targetUser.Name)
-	}
-
-	object.DeleteSessionId(util.GetSessionId(targetUser.Owner, targetUser.Name, targetUser.SignupApplication), c.Ctx.Input.CruSession.SessionID())
 
 	targetUser.Password = newPassword
 	_, err = object.SetUserField(targetUser, "password", targetUser.Password)

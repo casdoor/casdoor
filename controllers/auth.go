@@ -86,7 +86,9 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 
 	if form.Type == ResponseTypeLogin {
-		c.SetSessionUsername(userId)
+		if !passwordChangeRequired {
+			c.SetSessionUsername(userId)
+		}
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 
 		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: passwordChangeRequired}
@@ -112,7 +114,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		resp = codeToResponse(code, passwordChangeRequired)
 
-		if application.EnableSigninSession || application.HasPromptPage() || passwordChangeRequired {
+		if (application.EnableSigninSession || application.HasPromptPage()) && !passwordChangeRequired {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
@@ -143,7 +145,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				resp.Data = st
 			}
 		}
-		if application.EnableSigninSession || application.HasPromptPage() || passwordChangeRequired {
+		if (application.EnableSigninSession || application.HasPromptPage()) && !passwordChangeRequired {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
