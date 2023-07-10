@@ -131,7 +131,6 @@ func initAPI() {
 	beego.Router("/api/verify-captcha", &controllers.ApiController{}, "POST:VerifyCaptcha")
 	beego.Router("/api/reset-email-or-phone", &controllers.ApiController{}, "POST:ResetEmailOrPhone")
 	beego.Router("/api/get-captcha", &controllers.ApiController{}, "GET:GetCaptcha")
-	beego.Router("/api/complete-user-sessions", &controllers.ApiController{}, "POST:CompleteUserSessions")
 
 	beego.Router("/api/get-ldap-users", &controllers.ApiController{}, "GET:GetLdapUsers")
 	beego.Router("/api/get-ldaps", &controllers.ApiController{}, "GET:GetLdaps")

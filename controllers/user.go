@@ -482,29 +482,6 @@ func (c *ApiController) SetPassword() {
 	c.ResponseOk()
 }
 
-// CompleteUserSessions
-// @Title CompleteUserSessions
-// @Tag User API
-// @Description completes all user sessions
-// @Param   body    body   object.User  true        "The details of the user"
-// @Success 200 {object} controllers.Response The Response object
-// @router /api/complete-user-sessions [post]
-func (c *ApiController) CompleteUserSessions() {
-	var user object.User
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if user.Owner == "built-in" && user.Name == "admin" {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
-	// TODO: implement this
-	c.ResponseOk()
-}
-
 // CheckUserPassword
 // @Title CheckUserPassword
 // @router /check-user-password [post]
