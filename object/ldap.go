@@ -26,12 +26,14 @@ type Ldap struct {
 	ServerName   string   `xorm:"varchar(100)" json:"serverName"`
 	Host         string   `xorm:"varchar(100)" json:"host"`
 	Port         int      `xorm:"int" json:"port"`
-	EnableSsl    bool     `xorm:"bool" json:"enableSsl"`
 	Username     string   `xorm:"varchar(100)" json:"username"`
 	Password     string   `xorm:"varchar(100)" json:"password"`
 	BaseDn       string   `xorm:"varchar(100)" json:"baseDn"`
 	Filter       string   `xorm:"varchar(200)" json:"filter"`
 	FilterFields []string `xorm:"varchar(100)" json:"filterFields"`
+
+	EnableSsl        bool   `xorm:"bool" json:"enableSsl"`
+	SslCaCertificate string `xorm:"mediumtext" json:"ssl_ca_certificate"`
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
@@ -110,8 +112,11 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
+	affected, err := adapter.Engine.ID(ldap.Id).
+		Cols("owner", "server_name", "host",
+			"port", "enable_ssl", "username", "password", "base_dn",
+			"filter", "filter_fields", "auto_sync", "ssl_ca_certificate").
+		Update(ldap)
 	if err != nil {
 		return false, nil
 	}

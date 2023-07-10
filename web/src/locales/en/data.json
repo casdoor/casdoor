@@ -371,6 +371,8 @@
     "Edit LDAP": "Edit LDAP",
     "Enable SSL": "Enable SSL",
     "Enable SSL - Tooltip": "Whether to enable SSL",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Trusted X.509 certification authority (CA) certificate in PEM format. Used to establish a trusted SSL connection with the LDAP server",
     "Filter fields": "Filter fields",
     "Filter fields - Tooltip": "Filter fields - Tooltip",
     "Group ID": "Group ID",
