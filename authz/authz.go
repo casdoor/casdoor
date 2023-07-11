@@ -29,14 +29,12 @@ import (
 var Enforcer *casbin.Enforcer
 
 var methodAllowedIfPasswordChangeRequested = map[string]struct{}{
-	"/api/set-password":        {},
-	"/api/login":               {},
-	"/api/logout":              {},
-	"/api/login/oauth":         {},
-	"/api/get-account":         {},
-	"/api/get-user":            {}, // to work when casdoor just deployed and working using SDK to change default organization
-	"/api/get-organization":    {}, // to work when casdoor just deployed and working using SDK to change default organization
-	"/api/update-organization": {}, // to work when casdoor just deployed and working using SDK to change default organization
+	"/api/set-password": {},
+	"/api/login":        {},
+	"/api/logout":       {},
+	"/api/login/oauth":  {},
+	"/api/get-account":  {},
+	"/api/get-user":     {}, // to work when casdoor just deployed and working using SDK to change default organization
 }
 
 func InitAuthz() {
