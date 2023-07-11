@@ -29,11 +29,14 @@ import (
 var Enforcer *casbin.Enforcer
 
 var methodAllowedIfPasswordChangeRequested = map[string]struct{}{
-	"/api/set-password": {},
-	"/api/login":        {},
-	"/api/logout":       {},
-	"/api/login/oauth":  {},
-	"/api/get-account":  {},
+	"/api/set-password":        {},
+	"/api/login":               {},
+	"/api/logout":              {},
+	"/api/login/oauth":         {},
+	"/api/get-account":         {},
+	"/api/get-user":            {}, // to work when casdoor just deployed and working using SDK to change default organization
+	"/api/get-organization":    {}, // to work when casdoor just deployed and working using SDK to change default organization
+	"/api/update-organization": {}, // to work when casdoor just deployed and working using SDK to change default organization
 }
 
 func InitAuthz() {
@@ -166,12 +169,13 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
-	if user != nil && user.PasswordChangeRequired && !allowedIfPasswordChangeRequested(urlPath) {
-		return false
-	}
-
-	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
-		return true
+	if user != nil {
+		if user.PasswordChangeRequired && !allowedIfPasswordChangeRequested(urlPath) {
+			return false
+		}
+		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
+			return true
+		}
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)
