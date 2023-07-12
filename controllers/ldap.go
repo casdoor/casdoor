@@ -226,8 +226,9 @@ func (c *ApiController) DeleteLdap() {
 // @Title SyncLdapUsers
 // @router /sync-ldap-users [post]
 func (c *ApiController) SyncLdapUsers() {
-	owner := c.Input().Get("owner")
-	ldapId := c.Input().Get("ldapId")
+	id := c.Input().Get("id")
+
+	owner, ldapId := util.GetOwnerAndNameFromId(id)
 	var users []object.LdapUser
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
