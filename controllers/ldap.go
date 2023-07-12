@@ -100,7 +100,7 @@ func (c *ApiController) GetLdapUsers() {
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
-	c.ResponseOk(object.GetLdaps(owner))
+	c.ResponseOk(object.GetMaskedLdaps(object.GetLdaps(owner)))
 }
 
 // GetLdap
@@ -116,7 +116,7 @@ func (c *ApiController) GetLdap() {
 	}
 
 	_, name := util.GetOwnerAndNameFromId(id)
-	c.ResponseOk(object.GetLdap(name))
+	c.ResponseOk(object.GetMaskedLdap(object.GetLdap(name)))
 }
 
 // AddLdap

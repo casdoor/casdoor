@@ -103,6 +103,37 @@ func GetLdap(id string) (*Ldap, error) {
 	}
 }
 
+func GetMaskedLdap(ldap *Ldap, errs ...error) (*Ldap, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
+	}
+
+	if ldap == nil {
+		return nil, nil
+	}
+
+	if ldap.Password != "" {
+		ldap.Password = "***"
+	}
+
+	return ldap, nil
+}
+
+func GetMaskedLdaps(ldaps []*Ldap, errs ...error) ([]*Ldap, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
+	}
+
+	var err error
+	for _, ldap := range ldaps {
+		ldap, err = GetMaskedLdap(ldap)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return ldaps, nil
+}
+
 func UpdateLdap(ldap *Ldap) (bool, error) {
 	if l, err := GetLdap(ldap.Id); err != nil {
 		return false, nil
