@@ -123,6 +123,10 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	// link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	// or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
 	for _, cert := range certs {
+		if cert.Type != "x509" {
+			continue
+		}
+
 		certPemBlock := []byte(cert.Certificate)
 		certDerBlock, _ := pem.Decode(certPemBlock)
 		x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)

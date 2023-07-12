@@ -151,6 +151,7 @@ class CertListPage extends BaseListPage {
         filterMultiple: false,
         filters: [
           {text: "x509", value: "x509"},
+          {text: "Payment", value: "Payment"},
         ],
         width: "110px",
         sorter: true,
