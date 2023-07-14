@@ -129,7 +129,7 @@ func QueryAnswerStream(authToken string, question string, writer io.Writer, buil
 		fmt.Printf("%s", data)
 
 		// Write the streamed data as Server-Sent Events
-		if _, err = fmt.Fprintf(writer, "data: %s\n\n", data); err != nil {
+		if _, err = fmt.Fprintf(writer, "event: message\ndata: %s\n\n", data); err != nil {
 			return err
 		}
 		flusher.Flush()
