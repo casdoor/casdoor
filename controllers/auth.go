@@ -439,21 +439,59 @@ func (c *ApiController) Login() {
 			}
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-			token, err := idProvider.GetToken(authForm.Code)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
+			if authForm.Simple {
+				token := authForm.Code
+				parts := strings.Split(token, ".")
+				payloadJSON, err := base64.RawURLEncoding.DecodeString(parts[1])
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 
-			if !token.Valid() {
-				c.ResponseError(c.T("auth:Invalid token"))
-				return
-			}
+				type GoogleJWTInfo struct {
+					Iss           string `json:"iss"`
+					Nbf           int64  `json:"nbf"`
+					Aud           string `json:"aud"`
+					Sub           string `json:"sub"`
+					Email         string `json:"email"`
+					EmailVerified bool   `json:"email_verified"`
+					Azp           string `json:"azp"`
+					Name          string `json:"name"`
+					Picture       string `json:"picture"`
+					Iat           int64  `json:"iat"`
+					Exp           int64  `json:"exp"`
+					Jti           string `json:"jti"`
+				}
 
-			userInfo, err = idProvider.GetUserInfo(token)
-			if err != nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:Failed to login in: %s"), err.Error()))
-				return
+				var googleUserInfo GoogleJWTInfo
+				err = json.Unmarshal(payloadJSON, &googleUserInfo)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				userInfo.Id = googleUserInfo.Sub
+				userInfo.Username = googleUserInfo.Email
+				userInfo.DisplayName = googleUserInfo.Name
+				userInfo.Email = googleUserInfo.Email
+				userInfo.AvatarUrl = googleUserInfo.Picture
+			} else {
+				token, err := idProvider.GetToken(authForm.Code)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				if !token.Valid() {
+					c.ResponseError(c.T("auth:Invalid token"))
+					return
+				}
+
+				userInfo, err = idProvider.GetUserInfo(token)
+				if err != nil {
+					c.ResponseError(fmt.Sprintf(c.T("auth:Failed to login in: %s"), err.Error()))
+					return
+				}
 			}
 		}
 

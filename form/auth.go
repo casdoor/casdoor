@@ -36,6 +36,7 @@ type AuthForm struct {
 	State       string `json:"state"`
 	RedirectUri string `json:"redirectUri"`
 	Method      string `json:"method"`
+	Simple      bool   `json:"simple"`
 
 	EmailCode   string `json:"emailCode"`
 	PhoneCode   string `json:"phoneCode"`

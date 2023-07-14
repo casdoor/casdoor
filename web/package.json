@@ -31,6 +31,7 @@
     "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-github-corner": "^2.5.0",
+    "react-google-one-tap-login": "^0.1.1",
     "react-helmet": "^6.1.0",
     "react-highlight-words": "^0.18.0",
     "react-i18next": "^11.8.7",
