@@ -123,6 +123,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]string{"redirectUrl": redirectUrl, "method": method}}
+
+		if application.EnableSigninSession || application.HasPromptPage() {
+			// The prompt page needs the user to be signed in
+			c.SetSessionUsername(userId)
+		}
 	} else if form.Type == ResponseTypeCas {
 		// not oauth but CAS SSO protocol
 		service := c.Input().Get("service")
@@ -135,11 +140,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				resp.Data = st
 			}
 		}
+
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
-
 	} else {
 		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
 	}
