@@ -125,7 +125,9 @@
     "Private key - Tooltip": "Private key corresponding to the public key certificate",
     "Private key copied to clipboard successfully": "Private key copied to clipboard successfully",
     "Scope - Tooltip": "Usage scenarios of the certificate",
-    "Type - Tooltip": "Type of certificate"
+    "Type - Tooltip": "Type of certificate",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Certification authority (CA) certificate in PEM format"
   },
   "chat": {
     "AI": "AI",

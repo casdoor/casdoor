@@ -58,20 +58,26 @@ type LdapUser struct {
 	Address string `json:"address"`
 }
 
-func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
-	var conn *goldap.Conn
+func (ldap *Ldap) GetLdapConn() (*LdapConn, error) {
+	var (
+		conn *goldap.Conn
+		err  error
+	)
+
 	if ldap.EnableSsl {
-		mTLSConfig := &tls.Config{
+		rootCACert, err := getCertByName(ldap.Cert)
+		if err != nil {
+			return nil, err
+		}
+
+		ca := x509.NewCertPool()
+		// it is assumed that the certificate is saved to the database only after validation
+		_ = ca.AppendCertsFromPEM([]byte(rootCACert.CACertificate))
+
+		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tls.Config{
 			PreferServerCipherSuites: true,
-		}
-
-		if len(ldap.SslCaCertificate) > 0 {
-			ca := x509.NewCertPool()
-			ca.AppendCertsFromPEM([]byte(ldap.SslCaCertificate))
-			mTLSConfig.RootCAs = ca
-		}
-
-		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), mTLSConfig)
+			RootCAs:                  ca,
+		})
 	} else {
 		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
 	}

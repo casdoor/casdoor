@@ -14,14 +14,14 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
-import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
+import {ClearOutlined, EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import * as LddpBackend from "./backend/LdapBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
-const {TextArea} = Input;
 
 class LdapEditPage extends React.Component {
   constructor(props) {
@@ -31,12 +31,27 @@ class LdapEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       ldap: null,
       organizations: [],
+      certs: [],
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getLdap();
     this.getOrganizations();
+    this.getCerts();
+  }
+
+  getCerts() {
+    CertBackend.getCerts(this.state.organizationName, -1, -1, "scope", Setting.CertScopeCACertID, "", "")
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            certs: res.data,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      });
   }
 
   getLdap() {
@@ -46,6 +61,7 @@ class LdapEditPage extends React.Component {
           this.setState({
             ldap: res.data,
           });
+          this.getCerts(this.state.organizationName);
         } else {
           Setting.showMessage("error", res.msg);
         }
@@ -147,6 +163,32 @@ class LdapEditPage extends React.Component {
               }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Enable SSL"), i18next.t("ldap:Enable SSL - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <Switch checked={this.state.ldap.enableSsl} onChange={checked => {
+              this.updateLdapField("enableSsl", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:CA Certificate"), i18next.t("ldap:CA Certificate - Tooltip"))} :
+          </Col>
+          <Col span={20} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.cert} onChange={(value => {this.updateLdapField("cert", value);})}>
+              {
+                this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+              }
+            </Select>
+          </Col>
+          <Col style={{paddingLeft: "5px"}} span={1} >
+            <Button icon={<ClearOutlined />} type="text" onClick={() => {this.updateLdapField("cert", "");}} >
+            </Button>
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Base DN"), i18next.t("ldap:Base DN - Tooltip"))} :
@@ -215,26 +257,6 @@ class LdapEditPage extends React.Component {
                 this.updateLdapField("autoSync", value);
               }} /><span>&nbsp;mins</span>
             {this.renderAutoSyncWarn()}
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Enable SSL"), i18next.t("ldap:Enable SSL - Tooltip"))} :
-          </Col>
-          <Col span={21} >
-            <Switch checked={this.state.ldap.enableSsl} onChange={checked => {
-              this.updateLdapField("enableSsl", checked);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:CA Certificate"), i18next.t("ldap:CA Certificate - Tooltip"))} :
-          </Col>
-          <Col span={21} >
-            <TextArea autoSize={{minRows: 20, maxRows: 20}} value={this.state.ldap.ssl_ca_certificate} onChange={e => {
-              this.updateLdapField("ssl_ca_certificate", e.target.value);
-            }} />
           </Col>
         </Row>
       </Card>

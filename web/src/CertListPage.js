@@ -42,13 +42,14 @@ class CertListPage extends BaseListPage {
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
-      scope: "JWT",
+      scope: Setting.CertScopeJWTID,
       type: "x509",
       cryptoAlgorithm: "RS256",
       bitSize: 4096,
       expireInYears: 20,
       certificate: "",
       privateKey: "",
+      caCertificate: "",
     };
   }
 

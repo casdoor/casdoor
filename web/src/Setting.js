@@ -1208,3 +1208,6 @@ export function isDefaultOrganizationSelected(account) {
   }
   return false;
 }
+
+export const CertScopeJWTID = "JWT";
+export const CertScopeCACertID = "CACert";

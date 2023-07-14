@@ -141,111 +141,146 @@ class CertEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: "JWT", name: "JWT"},
+                  {id: Setting.CertScopeJWTID, name: "JWT"},
+                  {id: Setting.CertScopeCACertID, name: "CA certificates"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Type"), i18next.t("cert:Type - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.cert.type} onChange={(value => {
-              this.updateCertField("type", value);
-            })}>
-              {
-                [
-                  {id: "x509", name: "x509"},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Crypto algorithm"), i18next.t("cert:Crypto algorithm - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
-              this.updateCertField("cryptoAlgorithm", value);
-            })}>
-              {
-                [
-                  {id: "RS256", name: "RS256"},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber value={this.state.cert.bitSize} onChange={value => {
-              this.updateCertField("bitSize", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Expire in years"), i18next.t("cert:Expire in years - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber value={this.state.cert.expireInYears} onChange={value => {
-              this.updateCertField("expireInYears", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
-          </Col>
-          <Col span={editorWidth} >
-            <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
-              copy(this.state.cert.certificate);
-              Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
-            }}
-            >
-              {i18next.t("cert:Copy certificate")}
-            </Button>
-            <Button type="primary" onClick={() => {
-              const blob = new Blob([this.state.cert.certificate], {type: "text/plain;charset=utf-8"});
-              FileSaver.saveAs(blob, "token_jwt_key.pem");
-            }}
-            >
-              {i18next.t("cert:Download certificate")}
-            </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.certificate} onChange={e => {
-              this.updateCertField("certificate", e.target.value);
-            }} />
-          </Col>
-          <Col span={1} />
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Private key"), i18next.t("cert:Private key - Tooltip"))} :
-          </Col>
-          <Col span={editorWidth} >
-            <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
-              copy(this.state.cert.privateKey);
-              Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
-            }}
-            >
-              {i18next.t("cert:Copy private key")}
-            </Button>
-            <Button type="primary" onClick={() => {
-              const blob = new Blob([this.state.cert.privateKey], {type: "text/plain;charset=utf-8"});
-              FileSaver.saveAs(blob, "token_jwt_key.key");
-            }}
-            >
-              {i18next.t("cert:Download private key")}
-            </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.privateKey} onChange={e => {
-              this.updateCertField("privateKey", e.target.value);
-            }} />
-          </Col>
-        </Row>
+        {
+          this.state.cert.scope !== Setting.CertScopeCACertID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:CA Certificate"), i18next.t("cert:CA Certificate - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <TextArea autoSize={{minRows: 20, maxRows: 30}} value={this.state.cert.caCertificate} onChange={e => {
+                  this.updateCertField("caCertificate", e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.cert.scope !== Setting.CertScopeJWTID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Type"), i18next.t("cert:Type - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.cert.type} onChange={(value => {
+                  this.updateCertField("type", value);
+                })}>
+                  {
+                    [
+                      {id: "x509", name: "x509"},
+                    ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.cert.scope !== Setting.CertScopeJWTID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Crypto algorithm"), i18next.t("cert:Crypto algorithm - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
+                  this.updateCertField("cryptoAlgorithm", value);
+                })}>
+                  {
+                    [
+                      {id: "RS256", name: "RS256"},
+                    ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.cert.scope !== Setting.CertScopeJWTID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <InputNumber value={this.state.cert.bitSize} onChange={value => {
+                  this.updateCertField("bitSize", value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.cert.scope !== Setting.CertScopeJWTID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Expire in years"), i18next.t("cert:Expire in years - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <InputNumber value={this.state.cert.expireInYears} onChange={value => {
+                  this.updateCertField("expireInYears", value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
+          this.state.cert.scope !== Setting.CertScopeJWTID ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
+              </Col>
+              <Col span={editorWidth} >
+                <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
+                  copy(this.state.cert.certificate);
+                  Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
+                }}
+                >
+                  {i18next.t("cert:Copy certificate")}
+                </Button>
+                <Button type="primary" onClick={() => {
+                  const blob = new Blob([this.state.cert.certificate], {type: "text/plain;charset=utf-8"});
+                  FileSaver.saveAs(blob, "token_jwt_key.pem");
+                }}
+                >
+                  {i18next.t("cert:Download certificate")}
+                </Button>
+                <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.certificate} onChange={e => {
+                  this.updateCertField("certificate", e.target.value);
+                }} />
+              </Col>
+              <Col span={1} />
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Private key"), i18next.t("cert:Private key - Tooltip"))} :
+              </Col>
+              <Col span={editorWidth} >
+                <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
+                  copy(this.state.cert.privateKey);
+                  Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
+                }}
+                >
+                  {i18next.t("cert:Copy private key")}
+                </Button>
+                <Button type="primary" onClick={() => {
+                  const blob = new Blob([this.state.cert.privateKey], {type: "text/plain;charset=utf-8"});
+                  FileSaver.saveAs(blob, "token_jwt_key.key");
+                }}
+                >
+                  {i18next.t("cert:Download private key")}
+                </Button>
+                <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.cert.privateKey} onChange={e => {
+                  this.updateCertField("privateKey", e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
       </Card>
     );
   }

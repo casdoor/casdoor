@@ -125,7 +125,9 @@
     "Private key - Tooltip": "Приватный ключ, соответствующий сертификату открытого ключа",
     "Private key copied to clipboard successfully": "Приватный ключ успешно скопирован в буфер обмена",
     "Scope - Tooltip": "Сценарии использования сертификата",
-    "Type - Tooltip": "Тип сертификата"
+    "Type - Tooltip": "Тип сертификата",
+    "CA Certificate": "Сертификат УЦ",
+    "CA Certificate - Tooltip": "Cертификат удостоверяющего центра (УЦ) в PEM-формате"
   },
   "chat": {
     "AI": "AI",
