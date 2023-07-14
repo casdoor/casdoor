@@ -17,6 +17,7 @@ import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
+import {LoginViaMetaMask} from "./Web3Auth";
 import QqLoginButton from "./QqLoginButton";
 import FacebookLoginButton from "./FacebookLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
@@ -117,6 +118,13 @@ function goToSamlUrl(provider, location) {
   });
 }
 
+function goToWeb3Url(provider, location) {
+  window.console.log("Provider:", provider, "Location:", location);
+  if (provider.type === "MetaMask") {
+    return LoginViaMetaMask(provider);
+  }
+}
+
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
@@ -153,6 +161,12 @@ export function renderProviderLogo(provider, application, width, margin, size, l
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       );
+    } else if (provider.category === "Web3") {
+      return (
+        <a key={provider.displayName} onClick={() => goToWeb3Url(provider, location)}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
+        </a>
+      );
     }
   } else if (provider.type === "Custom") {
     // style definition
@@ -186,6 +200,16 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
           <a onClick={() => goToSamlUrl(provider, location)}>
+            {
+              getSigninButton(provider)
+            }
+          </a>
+        </div>
+      );
+    } else if (provider.category === "Web3") {
+      return (
+        <div key={provider.displayName} style={{marginBottom: "10px"}}>
+          <a onClick={() => goToWeb3Url(provider, location)}>
             {
               getSigninButton(provider)
             }

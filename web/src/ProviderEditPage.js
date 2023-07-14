@@ -355,6 +355,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Default");
               } else if (value === "AI") {
                 this.updateProviderField("type", "OpenAI API - GPT");
+              } else if (value === "Web3") {
+                this.updateProviderField("type", "MetaMask");
               }
             })}>
               {
@@ -367,6 +369,7 @@ class ProviderEditPage extends React.Component {
                   {id: "SAML", name: "SAML"},
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
+                  {id: "Web3", name: "Web3"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -521,7 +524,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.category === "Captcha" && this.state.provider.type === "Default" ? null : (
+          (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") || this.state.provider.category === "Web3" ? null : (
             <React.Fragment>
               {
                 this.state.provider.category === "AI" ? null : (

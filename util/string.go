@@ -161,6 +161,10 @@ func GetSessionId(owner, name, application string) string {
 	return fmt.Sprintf("%s/%s/%s", owner, name, application)
 }
 
+func GetNonceId(owner, name, application string) string {
+	return fmt.Sprintf("%s/%s/%s", owner, name, application)
+}
+
 func GetMd5Hash(text string) string {
 	hash := md5.Sum([]byte(text))
 	return hex.EncodeToString(hash[:])

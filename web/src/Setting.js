@@ -216,6 +216,12 @@ export const OtherProviderInfo = {
       url: "https://platform.openai.com",
     },
   },
+  Web3: {
+    "MetaMask": {
+      logo: `${StaticBaseUrl}/img/social_openai.svg`, // TODO
+      url: "https://metamask.io/",
+    },
+  },
 };
 
 export function initCountries() {
@@ -288,7 +294,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.category !== "OAuth" && providerItem.provider.category !== "SAML") {
+  if (!["OAuth", "SAML", "Web3"].includes(providerItem.provider.category)) {
     return false;
   }
 
@@ -890,6 +896,10 @@ export function getProviderTypeOptions(category) {
   } else if (category === "AI") {
     return ([
       {id: "OpenAI API - GPT", name: "OpenAI API - GPT"},
+    ]);
+  } else if (category === "Web3") {
+    return ([
+      {id: "MetaMask", name: "MetaMask"},
     ]);
   } else {
     return [];

@@ -156,6 +156,7 @@ type User struct {
 	Yammer          string `xorm:"yammer varchar(100)" json:"yammer"`
 	Yandex          string `xorm:"yandex varchar(100)" json:"yandex"`
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
+	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
