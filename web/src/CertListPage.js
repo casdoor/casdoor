@@ -238,6 +238,9 @@ class CertListPage extends BaseListPage {
     } else if (params.type !== undefined && params.type !== null) {
       field = "type";
       value = params.type;
+    } else if (params.scope !== undefined && params.scope !== null) {
+      field = "scope";
+      value = params.scope;
     }
     this.setState({loading: true});
     (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
