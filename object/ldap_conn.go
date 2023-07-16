@@ -21,9 +21,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type LdapConn struct {
@@ -58,6 +59,8 @@ type LdapUser struct {
 	Address string `json:"address"`
 }
 
+var ErrX509CertsPEMParse = errors.New("x509: malformed CA certificate")
+
 func (ldap *Ldap) GetLdapConn() (*LdapConn, error) {
 	var (
 		conn *goldap.Conn
@@ -71,8 +74,9 @@ func (ldap *Ldap) GetLdapConn() (*LdapConn, error) {
 		}
 
 		ca := x509.NewCertPool()
-		// it is assumed that the certificate is saved to the database only after validation
-		_ = ca.AppendCertsFromPEM([]byte(rootCACert.CACertificate))
+		if ok := ca.AppendCertsFromPEM([]byte(rootCACert.CACertificate)); !ok {
+			return nil, ErrX509CertsPEMParse
+		}
 
 		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tls.Config{
 			PreferServerCipherSuites: true,

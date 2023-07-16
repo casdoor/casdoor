@@ -114,7 +114,6 @@ class ApplicationEditPage extends React.Component {
     this.getOrganizations();
     this.getProviders();
     this.getSamlMetadata();
-    this.getCerts();
   }
 
   getApplication() {
@@ -141,6 +140,8 @@ class ApplicationEditPage extends React.Component {
         this.setState({
           application: res,
         });
+
+        this.getCerts(res.organization);
       });
   }
 
@@ -159,16 +160,12 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts() {
-    CertBackend.getCerts(this.state.owner, -1, -1, "scope", Setting.CertScopeJWTID, "", "")
+  getCerts(owner) {
+    CertBackend.getCerts(owner, -1, -1, "scope", Setting.CertScopeJWT, "", "")
       .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            certs: res.data,
-          });
-        } else {
-          Setting.showMessage("error", res.msg);
-        }
+        this.setState({
+          certs: (res.status === "ok") ? res.data : [],
+        });
       });
   }
 

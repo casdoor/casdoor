@@ -15,61 +15,17 @@
 package object
 
 import (
-	"crypto/x509"
-	"errors"
 	"fmt"
-	"strings"
+
+	"github.com/xorm-io/core"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/xorm-io/core"
 )
-
-type ScopeCertType uint
 
 const (
-	InvalidCertScope ScopeCertType = iota
-	JWTCertScope
-	CACertificateCertScope
+	scopeCertJWT    = "JWT"
+	scopeCertCACert = "CA Certificate"
 )
-
-var (
-	ErrX509CertsPEMParse = errors.New("x509: malformed CA certificate")
-	ErrInvalideScope     = errors.New("invalide certs Scope")
-)
-
-func parseScopeCertType(in string) ScopeCertType {
-	var s ScopeCertType
-	switch strings.ToLower(in) {
-	case "jwt":
-		s = JWTCertScope
-	case "cacert":
-		s = CACertificateCertScope
-	default:
-		s = InvalidCertScope
-	}
-	return s
-}
-
-func (s ScopeCertType) Validate() error {
-	if s > InvalidCertScope {
-		return nil
-	}
-	return ErrInvalideScope
-}
-
-func (s ScopeCertType) String() string {
-	var out string
-	switch s {
-	case JWTCertScope:
-		out = "JWT"
-	case CACertificateCertScope:
-		out = "CACert"
-	default:
-		out = "INVALID"
-	}
-	return out
-}
 
 type Cert struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -218,20 +174,6 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 		}
 	}
 
-	scope := parseScopeCertType(cert.Scope)
-	switch scope {
-	case InvalidCertScope:
-		return false, ErrInvalideScope
-	case JWTCertScope:
-		if err := validateRSAPair([]byte(cert.PrivateKey), []byte(cert.Certificate)); err != nil {
-			return false, err
-		}
-	case CACertificateCertScope:
-		if err := validateX509CAPEMCert([]byte(cert.CACertificate)); err != nil {
-			return false, err
-		}
-	}
-
 	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
 	if err != nil {
 		return false, err
@@ -245,17 +187,6 @@ func AddCert(cert *Cert) (bool, error) {
 		certificate, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
 		cert.Certificate = certificate
 		cert.PrivateKey = privateKey
-	}
-
-	scope := parseScopeCertType(cert.Scope)
-	switch scope {
-	case InvalidCertScope:
-		return false, ErrInvalideScope
-	// do not need RSA pair validate
-	case CACertificateCertScope:
-		if err := validateX509CAPEMCert([]byte(cert.CACertificate)); err != nil {
-			return false, err
-		}
 	}
 
 	affected, err := adapter.Engine.Insert(cert)
@@ -308,22 +239,4 @@ func certChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
-}
-
-func validateX509CAPEMCert(certs []byte) error {
-	ca := x509.NewCertPool()
-	if !ca.AppendCertsFromPEM(certs) {
-		return ErrX509CertsPEMParse
-	}
-	return nil
-}
-
-func validateRSAPair(key, cert []byte) error {
-	if _, err := jwt.ParseRSAPrivateKeyFromPEM(key); err != nil {
-		return err
-	}
-	if _, err := jwt.ParseRSAPublicKeyFromPEM(cert); err != nil {
-		return err
-	}
-	return nil
 }

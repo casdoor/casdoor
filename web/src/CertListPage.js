@@ -42,7 +42,7 @@ class CertListPage extends BaseListPage {
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
-      scope: Setting.CertScopeJWTID,
+      scope: Setting.CertScopeJWT,
       type: "x509",
       cryptoAlgorithm: "RS256",
       bitSize: 4096,
@@ -140,7 +140,8 @@ class CertListPage extends BaseListPage {
         key: "scope",
         filterMultiple: false,
         filters: [
-          {text: "JWT", value: "JWT"},
+          {text: Setting.CertScopeJWT, value: Setting.CertScopeJWT},
+          {text: Setting.CertScopeCACert, value: Setting.CertScopeCACert},
         ],
         width: "110px",
         sorter: true,

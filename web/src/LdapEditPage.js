@@ -38,19 +38,14 @@ class LdapEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getLdap();
     this.getOrganizations();
-    this.getCerts();
   }
 
-  getCerts() {
-    CertBackend.getCerts(this.state.organizationName, -1, -1, "scope", Setting.CertScopeCACertID, "", "")
+  getCerts(owner) {
+    CertBackend.getCerts(owner, -1, -1, "scope", Setting.CertScopeCACert, "", "")
       .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            certs: res.data,
-          });
-        } else {
-          Setting.showMessage("error", res.msg);
-        }
+        this.setState({
+          certs: (res.status === "ok") ? res.data : [],
+        });
       });
   }
 
@@ -61,7 +56,7 @@ class LdapEditPage extends React.Component {
           this.setState({
             ldap: res.data,
           });
-          this.getCerts(this.state.organizationName);
+          this.getCerts(res.data.owner);
         } else {
           Setting.showMessage("error", res.msg);
         }

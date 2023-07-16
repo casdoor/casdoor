@@ -1209,5 +1209,5 @@ export function isDefaultOrganizationSelected(account) {
   return false;
 }
 
-export const CertScopeJWTID = "JWT";
-export const CertScopeCACertID = "CACert";
+export const CertScopeJWT = "JWT";
+export const CertScopeCACert = "CA Certificate";
