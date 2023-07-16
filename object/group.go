@@ -225,7 +225,7 @@ func GetGroupUserCount(groupName string, field, value string) (int64, error) {
 func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
 	session := adapter.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName})
+		Where(builder.Like{"`groups`", groupName + "\""})
 
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
@@ -255,7 +255,7 @@ func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, 
 func GetGroupUsers(groupName string) ([]*User, error) {
 	users := []*User{}
 	err := adapter.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName}).
+		Where(builder.Like{"`groups`", groupName + "\""}).
 		Find(&users)
 	if err != nil {
 		return nil, err
