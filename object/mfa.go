@@ -24,10 +24,6 @@ import (
 
 const MfaRecoveryCodesSession = "mfa_recovery_codes"
 
-type MfaSessionData struct {
-	UserId string
-}
-
 type MfaProps struct {
 	Enabled       bool     `json:"enabled"`
 	IsPreferred   bool     `json:"isPreferred"`

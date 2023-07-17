@@ -34,10 +34,10 @@ export const ServerUrl = "";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
+  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Indonesia", key: "id", country: "ID", alt: "Indonesia"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
@@ -480,6 +480,26 @@ export function isPromptAnswered(user, application) {
     }
   }
   return true;
+}
+
+export const MfaRuleRequired = "Required";
+export const MfaRulePrompted = "Prompted";
+export const MfaRuleOptional = "Optional";
+
+export function isRequiredEnableMfa(user, organization) {
+  if (!user || !organization || !organization.mfaItems) {
+    return false;
+  }
+  return getMfaItemsByRules(user, organization, [MfaRuleRequired]).length > 0;
+}
+
+export function getMfaItemsByRules(user, organization, mfaRules = []) {
+  if (!user || !organization || !organization.mfaItems) {
+    return [];
+  }
+
+  return organization.mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
+    .filter((mfaItem) => user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled));
 }
 
 export function parseObject(s) {

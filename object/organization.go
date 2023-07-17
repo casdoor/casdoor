@@ -69,7 +69,7 @@ type Organization struct {
 	IsProfilePublic    bool       `json:"isProfilePublic"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
-	AccountItems []*AccountItem `xorm:"varchar(3000)" json:"accountItems"`
+	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
 }
 
 func GetOrganizationCount(owner, field, value string) (int64, error) {
@@ -476,10 +476,21 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	return session.Commit()
 }
 
-func (org *Organization) HasRequiredMfa() bool {
+func IsNeedPromptMfa(org *Organization, user *User) bool {
+	if org == nil || user == nil {
+		return false
+	}
 	for _, item := range org.MfaItems {
 		if item.Rule == "Required" {
-			return true
+			if item.Name == EmailType && !user.MfaEmailEnabled {
+				return true
+			}
+			if item.Name == SmsType && !user.MfaPhoneEnabled {
+				return true
+			}
+			if item.Name == TotpType && user.TotpSecret == "" {
+				return true
+			}
 		}
 	}
 	return false
