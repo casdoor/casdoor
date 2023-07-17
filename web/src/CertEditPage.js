@@ -158,6 +158,7 @@ class CertEditPage extends React.Component {
               {
                 [
                   {id: "x509", name: "x509"},
+                  {id: "Payment", name: "Payment"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

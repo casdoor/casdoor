@@ -100,7 +100,7 @@ func (c *ApiController) GetLdapUsers() {
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
 
-	c.ResponseOk(object.GetLdaps(owner))
+	c.ResponseOk(object.GetMaskedLdaps(object.GetLdaps(owner)))
 }
 
 // GetLdap
@@ -116,7 +116,7 @@ func (c *ApiController) GetLdap() {
 	}
 
 	_, name := util.GetOwnerAndNameFromId(id)
-	c.ResponseOk(object.GetLdap(name))
+	c.ResponseOk(object.GetMaskedLdap(object.GetLdap(name)))
 }
 
 // AddLdap
@@ -226,8 +226,9 @@ func (c *ApiController) DeleteLdap() {
 // @Title SyncLdapUsers
 // @router /sync-ldap-users [post]
 func (c *ApiController) SyncLdapUsers() {
-	owner := c.Input().Get("owner")
-	ldapId := c.Input().Get("ldapId")
+	id := c.Input().Get("id")
+
+	owner, ldapId := util.GetOwnerAndNameFromId(id)
 	var users []object.LdapUser
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
