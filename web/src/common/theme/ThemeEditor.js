@@ -17,7 +17,7 @@ import ThemePicker from "./ThemePicker";
 import ColorPicker, {GREEN_COLOR, PINK_COLOR} from "./ColorPicker";
 import RadiusPicker from "./RadiusPicker";
 import * as React from "react";
-import {useEffect} from "react";
+import {useEffect, useLayoutEffect} from "react";
 import {Content} from "antd/es/layout/layout";
 import i18next from "i18next";
 import * as Conf from "../../Conf";
@@ -58,6 +58,11 @@ export default function ThemeEditor(props) {
   }, [isLight, isCompact]);
 
   useEffect(() => {
+    onThemeChange(null, themeData);
+    form.setFieldsValue(themeData);
+  }, []);
+
+  useLayoutEffect(() => {
     const mergedData = Object.assign(Object.assign(Object.assign({}, Conf.ThemeDefault), {themeType}), ThemesInfo[themeType]);
     onThemeChange(null, mergedData);
     form.setFieldsValue(mergedData);
