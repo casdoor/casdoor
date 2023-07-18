@@ -200,20 +200,14 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
-func (u *User) setPasswordChangeRequirement() {
-	if u.passwordChangingAllowed() {
-		u.PasswordChangeRequired = true
-	}
-}
-
 func (u *User) validateUnsupportedPasswordChange() error {
-	if !u.passwordChangingAllowed() && u.PasswordChangeRequired {
+	if !u.isAllowedChangePasswordRequirement() && u.PasswordChangeRequired {
 		return fmt.Errorf("PasswordChangeRequired not allowed for user '%s' due to be external one", u.Name)
 	}
 	return nil
 }
 
-func (u *User) passwordChangingAllowed() bool {
+func (u *User) isAllowedChangePasswordRequirement() bool {
 	return u.Type != "" || u.Ldap == ""
 }
 
@@ -659,7 +653,6 @@ func AddUser(user *User) (bool, error) {
 		return false, err
 	}
 	user.Ranking = int(count + 1)
-	user.setPasswordChangeRequirement()
 
 	affected, err := adapter.Engine.Insert(user)
 	if err != nil {
@@ -691,7 +684,6 @@ func AddUsers(users []*User) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		user.setPasswordChangeRequirement()
 	}
 
 	affected, err := adapter.Engine.Insert(users)
