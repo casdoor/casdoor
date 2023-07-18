@@ -12,16 +12,35 @@
 // // See the License for the specific language governing permissions and
 // // limitations under the License.
 
-import {showMessage} from "../Setting";
+import {goToLink, showMessage} from "../Setting";
 import i18next from "i18next";
 import {v4 as uuidv4} from "uuid";
-// import {Buffer} from "buffer";
 import {SignTypedDataVersion, recoverTypedSignature} from "@metamask/eth-sig-util";
+import {getAuthUrl} from "./Provider";
 // import {toChecksumAddress} from "ethereumjs-util";
 
 export function generateNonce() {
   const nonce = uuidv4();
   return nonce;
+}
+
+export function getWeb3AuthTokenKey(address) {
+  return `Web3AuthToken_${address}`;
+}
+
+export function setWeb3AuthToken(token) {
+  const key = getWeb3AuthTokenKey(token.address);
+  localStorage.setItem(key, JSON.stringify(token));
+}
+
+export function getWeb3AuthToken(address) {
+  const key = getWeb3AuthTokenKey(address);
+  return JSON.parse(localStorage.getItem(key));
+}
+
+export function detectMetaMaskPlugin() {
+  // check if ethereum extension MetaMask is installed
+  return window.ethereum && window.ethereum.isMetaMask;
 }
 
 export function requestEthereumAccount() {
@@ -33,8 +52,9 @@ export function requestEthereumAccount() {
   return selectedAccount;
 }
 
-export function createEthereumSignedAuthToken(from, nonce) {
+export function signEthereumTypedData(from, nonce) {
   // https://docs.metamask.io/wallet/how-to/sign-data/
+  const date = new Date();
   const typedData = JSON.stringify({
     domain: {
       chainId: window.ethereum.chainId,
@@ -44,6 +64,7 @@ export function createEthereumSignedAuthToken(from, nonce) {
     message: {
       prompt: "In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
       nonce: nonce,
+      createAt: `${date}`,
     },
     primaryType: "AuthRequest",
     types: {
@@ -55,6 +76,7 @@ export function createEthereumSignedAuthToken(from, nonce) {
       AuthRequest: [
         {name: "prompt", type: "string"},
         {name: "nonce", type: "string"},
+        {name: "createAt", type: "string"},
       ],
     },
   });
@@ -66,19 +88,18 @@ export function createEthereumSignedAuthToken(from, nonce) {
     .then((sign) => {
       return {
         address: from,
+        createAt: Math.floor(date.getTime() / 1000),
         typedData: typedData,
         signature: sign,
       };
     });
 }
 
-export function checkEthereumSignedAuthToken(token) {
+export function checkEthereumSignedTypedData(token) {
   if (token === undefined || token === null) {
     return false;
   }
   if (token.address && token.typedData && token.signature) {
-    // Buffer.from("anything", "base64");
-    // window.Buffer = window.Buffer || require("buffer").Buffer;
     const recoveredAddr = recoverTypedSignature({
       data: JSON.parse(token.typedData),
       signature: token.signature,
@@ -92,40 +113,22 @@ export function checkEthereumSignedAuthToken(token) {
   return false;
 }
 
-export function setWeb3AuthToken(token) {
-  const key = `Web3AuthToken_${token.address}`;
-  localStorage.setItem(key, JSON.stringify(token));
-}
-
-export function getWeb3AuthToken(address) {
-  const key = `Web3AuthToken_${address}`;
-  return JSON.parse(localStorage.getItem(key));
-}
-
-export function detectMetaMaskPlugin() {
-  // check if ethereum extension MetaMask is installed
-  if (window.ethereum && window.ethereum.isMetaMask) {
-    return true;
-  }
-  return false;
-}
-
-export async function LoginViaMetaMask(provider) {
-  if (detectMetaMaskPlugin()) {
-    window.console.log("detect MetaMask plugin");
-  } else {
+export async function authViaMetaMask(application, provider) {
+  if (!detectMetaMaskPlugin()) {
     showMessage("error", `${i18next.t("auth:MetaMask plugin not detected")}`);
     return;
   }
   try {
     const account = await requestEthereumAccount();
     let token = getWeb3AuthToken(account);
-    if (!checkEthereumSignedAuthToken(token)) {
+    if (!checkEthereumSignedTypedData(token)) {
       const nonce = generateNonce();
-      token = await createEthereumSignedAuthToken(account, nonce);
+      token = await signEthereumTypedData(account, nonce);
       setWeb3AuthToken(token);
     }
     window.console.log("Web3AuthToken=", token);
+    const redirectUri = `${getAuthUrl(application, provider, "signup")}&localStorageKey=${getWeb3AuthTokenKey(account)}`;
+    goToLink(redirectUri);
   } catch (err) {
     showMessage("error", `${i18next.t("auth:Signin via MetaMask failed")}: ${err.message}`);
   }

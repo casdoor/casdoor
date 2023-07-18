@@ -33,6 +33,7 @@ const (
 	ResponseTypeIdToken = "id_token"
 	ResponseTypeSaml    = "saml"
 	ResponseTypeCas     = "cas"
+	ResponseTypeWeb3    = "web3"
 )
 
 type Response struct {

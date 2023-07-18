@@ -48,6 +48,7 @@ class AuthCallback extends React.Component {
     const authServerUrl = authConfig.serverUrl;
 
     const innerParams = this.getInnerParams();
+    window.console.log("innerParams=", innerParams);
     const method = innerParams.get("method");
     if (method === "signup") {
       const realRedirectUri = innerParams.get("redirect_uri");
@@ -95,11 +96,15 @@ class AuthCallback extends React.Component {
     if (code === null) {
       code = params.get("authCode");
     }
+    // MetaMask store code in localStorage
+    if (code === null) {
+      code = params.get("localStorageKey");
+      code = localStorage.getItem(code);
+    }
     // Steam don't use code, so we should use all params as code.
     if (isSteam !== null && code === null) {
       code = this.props.location.search;
     }
-
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");

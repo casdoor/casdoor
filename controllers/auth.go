@@ -410,6 +410,10 @@ func (c *ApiController) Login() {
 		}
 
 		userInfo := &idp.UserInfo{}
+		if provider.Category == "Web3" {
+			// Processing Web3 in a way similar to OAuth
+			provider.Category = "OAuth"
+		}
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo.Id, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
