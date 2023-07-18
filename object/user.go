@@ -201,13 +201,13 @@ type ManagedAccount struct {
 }
 
 func (u *User) checkPasswordChangeRequiestAllowed() error {
-	if !u.isAllowedChangePasswordRequirement() && u.PasswordChangeRequired {
+	if !u.isPasswordChangeRequiestAllowed() && u.PasswordChangeRequired {
 		return fmt.Errorf("PasswordChangeRequired not allowed for user '%s' due to be external one", u.Name)
 	}
 	return nil
 }
 
-func (u *User) isAllowedChangePasswordRequirement() bool {
+func (u *User) isPasswordChangeRequiestAllowed() bool {
 	return u.Type != "" || u.Ldap == ""
 }
 
