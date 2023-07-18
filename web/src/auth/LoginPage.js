@@ -364,10 +364,8 @@ class LoginPage extends React.Component {
             if (responseType !== "saml" && res.data2) {
               this.setState({
                 values: values,
-              });
-
-              this.setState({
-                getVerifyTotp: () => this.renderChangePasswordForm(this.getApplicationObj(), userOwner, userName),
+                getVerifyTotp: undefined,
+                getChangePasswordForm: () => this.renderChangePasswordForm(this.getApplicationObj(), userOwner, userName),
               });
 
               return;
@@ -578,6 +576,7 @@ class LoginPage extends React.Component {
           _values["username"] = _values.username ?? this.props?.account?.name;
           Setting.showMessage("success", i18next.t("changePassword:Password successfully changed"));
           this.login(_values);
+          this.setState({getChangePasswordForm: undefined});
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
         }
@@ -1015,6 +1014,8 @@ class LoginPage extends React.Component {
 
     if (this.state.getVerifyTotp !== undefined) {
       return this.state.getVerifyTotp();
+    } else if (this.state.getChangePasswordForm !== undefined) {
+      return this.state.getChangePasswordForm();
     } else {
       return (
         <React.Fragment>
