@@ -188,7 +188,7 @@ func Test_validateUnsupportedPasswordChange(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			u := User{Type: tt.userType, Ldap: tt.ldap, PasswordChangeRequired: true}
-			err := u.validateUnsupportedPasswordChange()
+			err := u.checkPasswordChangeRequiestAllowed()
 			if err == nil && !tt.expected {
 				t.Errorf("validateUnsupportedPasswordChange() tried to change PasswordChangeRequired when it's unsupported")
 			}
