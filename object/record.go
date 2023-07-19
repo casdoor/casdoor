@@ -161,7 +161,8 @@ func SendWebhooks(record *Record) error {
 
 		if matched {
 			if webhook.IsUserExtended {
-				user, err := GetMaskedUser(getUser(record.Organization, record.User))
+				user, err := getUser(record.Organization, record.User)
+				user, err = GetMaskedUser(user, false, err)
 				if err != nil {
 					return err
 				}

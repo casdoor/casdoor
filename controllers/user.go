@@ -208,7 +208,8 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	maskedUser, err := object.GetMaskedUser(user)
+	isAdminOrSelf := c.IsAdminOrSelf(user)
+	maskedUser, err := object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
