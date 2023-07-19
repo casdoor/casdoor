@@ -976,7 +976,7 @@ class UserEditPage extends React.Component {
             :
             <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: 5}}>
               <div style={{fontSize: 30, margin: 10}}>+</div>
-              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`请上传${title}...`}</div>
+              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`Upload ${title}...`}</div>
             </Col>
         }
         <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
