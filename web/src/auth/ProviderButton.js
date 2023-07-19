@@ -118,10 +118,10 @@ function goToSamlUrl(provider, location) {
   });
 }
 
-function goToWeb3Url(application, provider) {
+export function goToWeb3Url(application, provider, method) {
   window.console.log("Application:", application, "Provider:", provider);
   if (provider.type === "MetaMask") {
-    return authViaMetaMask(application, provider);
+    authViaMetaMask(application, provider, method);
   }
 }
 
@@ -163,7 +163,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       );
     } else if (provider.category === "Web3") {
       return (
-        <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider)}>
+        <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       );
@@ -209,7 +209,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     } else if (provider.category === "Web3") {
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
-          <a onClick={() => goToWeb3Url(application, provider)}>
+          <a onClick={() => goToWeb3Url(application, provider, "signup")}>
             {
               getSigninButton(provider)
             }

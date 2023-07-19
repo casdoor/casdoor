@@ -791,10 +791,23 @@ class UserEditPage extends React.Component {
                 {
                   (this.state.application === null || this.state.user === null) ? null : (
                     this.state.application?.providers.filter(providerItem => Setting.isProviderVisible(providerItem)).map((providerItem) =>
-                      (providerItem.provider.category === "OAuth") ? (
-                        <OAuthWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} account={this.props.account} onUnlinked={() => {return this.unlinked();}} />
+                      (providerItem.provider.category === "OAuth" || providerItem.provider.category === "Web3") ? (
+                        <OAuthWidget
+                          key={providerItem.name}
+                          labelSpan={(Setting.isMobile()) ? 10 : 3}
+                          user={this.state.user}
+                          application={this.state.application}
+                          providerItem={providerItem}
+                          account={this.props.account}
+                          onUnlinked={() => {return this.unlinked();}} />
                       ) : (
-                        <SamlWidget key={providerItem.name} labelSpan={(Setting.isMobile()) ? 10 : 3} user={this.state.user} application={this.state.application} providerItem={providerItem} onUnlinked={() => {return this.unlinked();}} />
+                        <SamlWidget
+                          key={providerItem.name}
+                          labelSpan={(Setting.isMobile()) ? 10 : 3}
+                          user={this.state.user}
+                          application={this.state.application}
+                          providerItem={providerItem}
+                          onUnlinked={() => {return this.unlinked();}} />
                       )
                     )
                   )

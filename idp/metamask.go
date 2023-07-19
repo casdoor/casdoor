@@ -26,7 +26,6 @@ const Web3AuthTokenKey = "web3AuthToken"
 
 type MetaMaskIdProvider struct {
 	Client *http.Client
-	Config *oauth2.Config
 }
 
 type Web3AuthToken struct {

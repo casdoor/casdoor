@@ -38,6 +38,20 @@ export function getWeb3AuthToken(address) {
   return JSON.parse(localStorage.getItem(key));
 }
 
+export function delWeb3AuthToken(address) {
+  const key = getWeb3AuthTokenKey(address);
+  localStorage.removeItem(key);
+}
+
+export function clearWeb3AuthToken() {
+  const keys = Object.keys(localStorage);
+  keys.forEach(key => {
+    if (key.startsWith("Web3AuthToken_")) {
+      localStorage.removeItem(key);
+    }
+  });
+}
+
 export function detectMetaMaskPlugin() {
   // check if ethereum extension MetaMask is installed
   return window.ethereum && window.ethereum.isMetaMask;
@@ -64,7 +78,7 @@ export function signEthereumTypedData(from, nonce) {
     message: {
       prompt: "In order to authenticate to this website, sign this request and your public address will be sent to the server in a verifiable way.",
       nonce: nonce,
-      createAt: `${date}`,
+      createAt: `${date.toLocaleString()}`,
     },
     primaryType: "AuthRequest",
     types: {
@@ -113,7 +127,7 @@ export function checkEthereumSignedTypedData(token) {
   return false;
 }
 
-export async function authViaMetaMask(application, provider) {
+export async function authViaMetaMask(application, provider, method) {
   if (!detectMetaMaskPlugin()) {
     showMessage("error", `${i18next.t("auth:MetaMask plugin not detected")}`);
     return;
@@ -126,8 +140,8 @@ export async function authViaMetaMask(application, provider) {
       token = await signEthereumTypedData(account, nonce);
       setWeb3AuthToken(token);
     }
-    window.console.log("Web3AuthToken=", token);
-    const redirectUri = `${getAuthUrl(application, provider, "signup")}&localStorageKey=${getWeb3AuthTokenKey(account)}`;
+    // window.console.log("Web3AuthToken=", token);
+    const redirectUri = `${getAuthUrl(application, provider, method)}&localStorageKey=${getWeb3AuthTokenKey(account)}`;
     goToLink(redirectUri);
   } catch (err) {
     showMessage("error", `${i18next.t("auth:Signin via MetaMask failed")}: ${err.message}`);

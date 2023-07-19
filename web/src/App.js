@@ -89,6 +89,7 @@ import {withTranslation} from "react-i18next";
 import LanguageSelect from "./common/select/LanguageSelect";
 import ThemeSelect from "./common/select/ThemeSelect";
 import OrganizationSelect from "./common/select/OrganizationSelect";
+import {clearWeb3AuthToken} from "./auth/Web3Auth";
 
 const {Header, Footer, Content} = Layout;
 
@@ -312,12 +313,11 @@ class App extends Component {
       .then((res) => {
         if (res.status === "ok") {
           const owner = this.state.account.owner;
-
           this.setState({
             account: null,
             themeAlgorithm: ["default"],
           });
-
+          clearWeb3AuthToken();
           Setting.showMessage("success", i18next.t("application:Logged out successfully"));
           const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
