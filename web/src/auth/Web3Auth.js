@@ -17,7 +17,9 @@ import i18next from "i18next";
 import {v4 as uuidv4} from "uuid";
 import {SignTypedDataVersion, recoverTypedSignature} from "@metamask/eth-sig-util";
 import {getAuthUrl} from "./Provider";
+import {Buffer} from "buffer";
 // import {toChecksumAddress} from "ethereumjs-util";
+global.Buffer = Buffer;
 
 export function generateNonce() {
   const nonce = uuidv4();
@@ -120,7 +122,7 @@ export function checkEthereumSignedTypedData(token) {
       version: SignTypedDataVersion.V4,
     });
     // const recoveredAddr = token.address;
-    window.console.log("recoverdAddr=", recoveredAddr, ",tokenAddr=", token.address);
+    // window.console.log("recoverdAddr=", recoveredAddr, ",tokenAddr=", token.address);
     return recoveredAddr === token.address;
     // return toChecksumAddress(recoveredAddr) === toChecksumAddress(token.address);
   }
@@ -129,7 +131,7 @@ export function checkEthereumSignedTypedData(token) {
 
 export async function authViaMetaMask(application, provider, method) {
   if (!detectMetaMaskPlugin()) {
-    showMessage("error", `${i18next.t("auth:MetaMask plugin not detected")}`);
+    showMessage("error", `${i18next.t("login:MetaMask plugin not detected")}`);
     return;
   }
   try {
@@ -140,10 +142,9 @@ export async function authViaMetaMask(application, provider, method) {
       token = await signEthereumTypedData(account, nonce);
       setWeb3AuthToken(token);
     }
-    // window.console.log("Web3AuthToken=", token);
     const redirectUri = `${getAuthUrl(application, provider, method)}&localStorageKey=${getWeb3AuthTokenKey(account)}`;
     goToLink(redirectUri);
   } catch (err) {
-    showMessage("error", `${i18next.t("auth:Signin via MetaMask failed")}: ${err.message}`);
+    showMessage("error", `${i18next.t("login:Failed to obtain MetaMask authorization")}: ${err.message}`);
   }
 }

@@ -48,7 +48,6 @@ class AuthCallback extends React.Component {
     const authServerUrl = authConfig.serverUrl;
 
     const innerParams = this.getInnerParams();
-    window.console.log("innerParams=", innerParams);
     const method = innerParams.get("method");
     if (method === "signup") {
       const realRedirectUri = innerParams.get("redirect_uri");

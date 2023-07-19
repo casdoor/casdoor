@@ -119,7 +119,6 @@ function goToSamlUrl(provider, location) {
 }
 
 export function goToWeb3Url(application, provider, method) {
-  window.console.log("Application:", application, "Provider:", provider);
   if (provider.type === "MetaMask") {
     authViaMetaMask(application, provider, method);
   }

@@ -17,9 +17,10 @@ package idp
 import (
 	"encoding/json"
 	"errors"
-	"golang.org/x/oauth2"
 	"net/http"
 	"time"
+
+	"golang.org/x/oauth2"
 )
 
 const Web3AuthTokenKey = "web3AuthToken"

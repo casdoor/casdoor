@@ -50,4 +50,30 @@ module.exports = {
       },
     },
   ],
+  webpack: {
+    // https://craco.js.org/docs/configuration/webpack/
+    configure: (webpackConfig, { env, paths }) => {
+      webpackConfig.resolve.fallback = {
+        // "process": require.resolve('process/browser'),
+        // "util": require.resolve("util/"),
+        // "url": require.resolve("url/"),
+        // "zlib": require.resolve("browserify-zlib"),
+        // "stream": require.resolve("stream-browserify"),
+        // "http": require.resolve("stream-http"),
+        // "https": require.resolve("https-browserify"),
+        // "assert": require.resolve("assert/"),
+        "buffer": require.resolve('buffer/'),    
+        "process": false,
+        "util": false,
+        "url": false,
+        "zlib": false,
+        "stream": false,
+        "http": false,
+        "https": false,
+        "assert": false,
+        "buffer": false,   
+      };
+      return webpackConfig;
+    },
+  }
 };

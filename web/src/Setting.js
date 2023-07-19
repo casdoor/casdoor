@@ -218,7 +218,7 @@ export const OtherProviderInfo = {
   },
   Web3: {
     "MetaMask": {
-      logo: `${StaticBaseUrl}/img/social_openai.svg`, // TODO
+      logo: `${StaticBaseUrl}/img/social_metamask.svg`, // TODO
       url: "https://metamask.io/",
     },
   },
