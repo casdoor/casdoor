@@ -372,9 +372,9 @@ class LoginPage extends React.Component {
                           <ChangePasswordForm
                             application={this.getApplicationObj()}
                             userOwner={values.organization}
-                            userName={values.username}
+                            userName={this.state.username}
                             onSuccess={(result) => {
-                              this.login({...this.state.values, password: result.newPassword});
+                              this.login({...this.state.values, username: this.state.username, password: result.newPassword});
                               this.setState({values: undefined});
                             }}
                             onFail={(res) => {
