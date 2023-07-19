@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "Ukuran bit",
     "Bit size - Tooltip": "Panjang kunci rahasia",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Certification authority (CA) certificate in PEM format",
     "Certificate": "Sertifikat",
     "Certificate - Tooltip": "Sertifikat kunci publik, digunakan untuk mendekripsi tanda tangan JWT pada Access Token. Sertifikat ini biasanya perlu diimplementasikan pada sisi SDK Casdoor (yaitu aplikasi) untuk memecahkan JWT",
     "Certificate copied to clipboard successfully": "Sertifikat berhasil disalin ke clipboard",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "Konfigurasi auto-sync dimatikan pada 0",
     "Base DN": "DN dasar",
     "Base DN - Tooltip": "Base DN selama pencarian LDAP",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Trusted X.509 certification authority (CA) certificate in PEM format. Used to establish a trusted SSL connection with the LDAP server",
     "CN": "CN",
     "Edit LDAP": "Mengedit LDAP",
     "Enable SSL": "Aktifkan SSL",

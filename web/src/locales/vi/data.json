@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "Kích cỡ bit",
     "Bit size - Tooltip": "Độ dài khóa bí mật",
+    "CA Certificate": "Сертификат УЦ",
+    "CA Certificate - Tooltip": "Cертификат удостоверяющего центра (УЦ) в PEM-формате",
     "Certificate": "Giấy chứng nhận",
     "Certificate - Tooltip": "Chứng chỉ khóa công khai, được sử dụng để giải mã chữ ký JWT của Mã Token Truy cập. Chứng chỉ này thường cần được triển khai trên phía SDK Casdoor (tức là ứng dụng) để phân tích cú pháp JWT",
     "Certificate copied to clipboard successfully": "Chứng chỉ đã được sao chép vào bộ nhớ tạm thành công",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "Đồng bộ hóa tự động cấu hình, bị tắt tại 0",
     "Base DN": "DN cơ sở",
     "Base DN - Tooltip": "Đơn vị căn bản (Base DN) trong quá trình tìm kiếm LDAP",
+    "CA Certificate": "Сертификат УЦ",
+    "CA Certificate - Tooltip": "Доверенный X.509 сертификат удостоверяющего центра (УЦ) в PEM-формате. Используется для устновки доверенного SSL-соединения с сервером LDAP",
     "CN": "CN",
     "Edit LDAP": "Chỉnh sửa LDAP",
     "Enable SSL": "Kích hoạt SSL",

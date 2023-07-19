@@ -21,6 +21,11 @@ import (
 	"github.com/xorm-io/core"
 )
 
+const (
+	scopeCertJWT    = "JWT"
+	scopeCertCACert = "CA Certificate"
+)
+
 type Cert struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`

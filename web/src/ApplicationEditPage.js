@@ -161,7 +161,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getCerts(owner) {
-    CertBackend.getCerts(owner)
+    CertBackend.getCerts(owner, -1, -1, "scope", Setting.CertScopeJWT, "", "")
       .then((res) => {
         this.setState({
           certs: (res.msg === undefined) ? res : [],

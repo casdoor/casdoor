@@ -15,6 +15,8 @@
 package object
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"strings"
@@ -56,10 +58,29 @@ type LdapUser struct {
 	Address string `json:"address"`
 }
 
-func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
-	var conn *goldap.Conn
+var ErrX509CertsPEMParse = errors.New("x509: malformed CA certificate")
+
+func (ldap *Ldap) GetLdapConn() (*LdapConn, error) {
+	var (
+		conn *goldap.Conn
+		err  error
+	)
+
 	if ldap.EnableSsl {
-		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), nil)
+		rootCACert, err := getCertByName(ldap.Cert)
+		if err != nil {
+			return nil, err
+		}
+
+		ca := x509.NewCertPool()
+		if ok := ca.AppendCertsFromPEM([]byte(rootCACert.Certificate)); !ok {
+			return nil, ErrX509CertsPEMParse
+		}
+
+		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tls.Config{
+			PreferServerCipherSuites: true,
+			RootCAs:                  ca,
+		})
 	} else {
 		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
 	}

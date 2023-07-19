@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "Tamanho do bit",
     "Bit size - Tooltip": "Comprimento da chave secreta",
+    "CA Certificate": "Сертификат УЦ",
+    "CA Certificate - Tooltip": "Cертификат удостоверяющего центра (УЦ) в PEM-формате",
     "Certificate": "Certificado",
     "Certificate - Tooltip": "Certificado de chave pública, usado para descriptografar a assinatura JWT do Token de Acesso. Este certificado geralmente precisa ser implantado no lado do SDK do Casdoor (ou seja, no aplicativo) para analisar o JWT",
     "Certificate copied to clipboard successfully": "Certificado copiado para a área de transferência com sucesso",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "Configuração de sincronização automática, desativada em 0",
     "Base DN": "Base DN",
     "Base DN - Tooltip": "Base DN durante a busca LDAP",
+    "CA Certificate": "Сертификат УЦ",
+    "CA Certificate - Tooltip": "Доверенный X.509 сертификат удостоверяющего центра (УЦ) в PEM-формате. Используется для устновки доверенного SSL-соединения с сервером LDAP",
     "CN": "CN",
     "Edit LDAP": "Editar LDAP",
     "Enable SSL": "Habilitar SSL",

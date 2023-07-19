@@ -14,9 +14,10 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
-import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
+import {ClearOutlined, EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
 import * as LddpBackend from "./backend/LdapBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -30,6 +31,7 @@ class LdapEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       ldap: null,
       organizations: [],
+      certs: [],
     };
   }
 
@@ -45,6 +47,7 @@ class LdapEditPage extends React.Component {
           this.setState({
             ldap: res.data,
           });
+          this.getCerts(res.data.owner);
         } else {
           Setting.showMessage("error", res.msg);
         }
@@ -56,6 +59,15 @@ class LdapEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: (res.msg === undefined) ? res : [],
+        });
+      });
+  }
+
+  getCerts(owner) {
+    CertBackend.getCerts(owner, -1, -1, "scope", Setting.CertScopeCACert, "", "")
+      .then((res) => {
+        this.setState({
+          certs: (res.status === "ok") ? res.data : [],
         });
       });
   }
@@ -154,6 +166,22 @@ class LdapEditPage extends React.Component {
             <Switch checked={this.state.ldap.enableSsl} onChange={checked => {
               this.updateLdapField("enableSsl", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:CA Certificate"), i18next.t("ldap:CA Certificate - Tooltip"))} :
+          </Col>
+          <Col span={20} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.cert} onChange={(value => {this.updateLdapField("cert", value);})}>
+              {
+                this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+              }
+            </Select>
+          </Col>
+          <Col style={{paddingLeft: "5px"}} span={1} >
+            <Button icon={<ClearOutlined />} type="text" onClick={() => {this.updateLdapField("cert", "");}} >
+            </Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>

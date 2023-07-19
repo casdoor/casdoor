@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "Bit size",
     "Bit size - Tooltip": "Secret key length",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Certification authority (CA) certificate in PEM format",
     "Certificate": "Certificate",
     "Certificate - Tooltip": "Public key certificate, used for decrypting the JWT signature of the Access Token. This certificate usually needs to be deployed on the Casdoor SDK side (i.e., the application) to parse the JWT",
     "Certificate copied to clipboard successfully": "Certificate copied to clipboard successfully",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "Auto-sync configuration, disabled at 0",
     "Base DN": "Base DN",
     "Base DN - Tooltip": "Base DN during LDAP search",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Trusted X.509 certification authority (CA) certificate in PEM format. Used to establish a trusted SSL connection with the LDAP server",
     "CN": "CN",
     "Edit LDAP": "Edit LDAP",
     "Enable SSL": "Enable SSL",

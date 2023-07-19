@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "ビットサイズ",
     "Bit size - Tooltip": "秘密鍵の長さ",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Certification authority (CA) certificate in PEM format",
     "Certificate": "証明書 ",
     "Certificate - Tooltip": "アクセストークンのJWT署名を復号化するために使用される公開鍵証明書。この証明書は通常、Casdoor SDK側（つまり、アプリケーション）に展開する必要があります",
     "Certificate copied to clipboard successfully": "証明書はクリップボードに正常にコピーされました",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "自動同期の設定は、0で無効になっています",
     "Base DN": "ベース DN",
     "Base DN - Tooltip": "LDAP検索中のBase DN",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Trusted X.509 certification authority (CA) certificate in PEM format. Used to establish a trusted SSL connection with the LDAP server",
     "CN": "CN",
     "Edit LDAP": "LDAPを編集",
     "Enable SSL": "SSL を有効にする",

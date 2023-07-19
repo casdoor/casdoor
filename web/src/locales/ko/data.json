@@ -108,6 +108,8 @@
   "cert": {
     "Bit size": "비트 크기",
     "Bit size - Tooltip": "비밀 키 길이",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Certification authority (CA) certificate in PEM format",
     "Certificate": "증명서",
     "Certificate - Tooltip": "액세스 토큰의 JWT 서명을 해독하는 데 사용되는 공개 키 인증서입니다. 이 인증서는 보통 Casdoor SDK 측 (즉, 어플리케이션)에 배치되어 JWT를 구문 분석하는 데 사용됩니다",
     "Certificate copied to clipboard successfully": "인증서가 클립보드에 성공적으로 복사되었습니다",
@@ -367,6 +369,8 @@
     "Auto Sync - Tooltip": "자동 동기화 구성, 0에서 비활성화됨",
     "Base DN": "기본 DN",
     "Base DN - Tooltip": "LDAP 검색 중 기본 DN",
+    "CA Certificate": "CA Certificate",
+    "CA Certificate - Tooltip": "Trusted X.509 certification authority (CA) certificate in PEM format. Used to establish a trusted SSL connection with the LDAP server",
     "CN": "CN",
     "Edit LDAP": "LDAP 수정",
     "Enable SSL": "SSL 활성화",

@@ -42,7 +42,7 @@ class CertListPage extends BaseListPage {
       name: `cert_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Cert - ${randomName}`,
-      scope: "JWT",
+      scope: Setting.CertScopeJWT,
       type: "x509",
       cryptoAlgorithm: "RS256",
       bitSize: 4096,
@@ -139,7 +139,8 @@ class CertListPage extends BaseListPage {
         key: "scope",
         filterMultiple: false,
         filters: [
-          {text: "JWT", value: "JWT"},
+          {text: Setting.CertScopeJWT, value: Setting.CertScopeJWT},
+          {text: Setting.CertScopeCACert, value: Setting.CertScopeCACert},
         ],
         width: "110px",
         sorter: true,
@@ -237,6 +238,9 @@ class CertListPage extends BaseListPage {
     } else if (params.type !== undefined && params.type !== null) {
       field = "type";
       value = params.type;
+    } else if (params.scope !== undefined && params.scope !== null) {
+      field = "scope";
+      value = params.scope;
     }
     this.setState({loading: true});
     (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)

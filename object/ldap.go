@@ -35,6 +35,7 @@ type Ldap struct {
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
+	Cert string `xorm:"varchar(100)" json:"cert"`
 }
 
 func AddLdap(ldap *Ldap) (bool, error) {
@@ -142,7 +143,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	}
 
 	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
+		"port", "enable_ssl", "cert", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
 	if err != nil {
 		return false, nil
 	}
