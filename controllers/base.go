@@ -55,6 +55,18 @@ func (c *ApiController) IsAdmin() bool {
 	return isGlobalAdmin || user.IsAdmin
 }
 
+func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin || (user != nil && user.IsAdmin) {
+		return true
+	}
+
+	if user.Owner == user2.Owner && user.Name == user2.Name {
+		return true
+	}
+	return false
+}
+
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
 	if strings.HasPrefix(username, "app/") {
