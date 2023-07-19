@@ -50,16 +50,6 @@ class PermissionEditPage extends React.Component {
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
         this.setState({
           permission: res,
         });
@@ -84,10 +74,7 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           users: res,
         });
@@ -97,10 +84,7 @@ class PermissionEditPage extends React.Component {
   getRoles(organizationName) {
     RoleBackend.getRoles(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           roles: res,
         });
@@ -110,10 +94,7 @@ class PermissionEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           models: res,
         });
@@ -123,10 +104,7 @@ class PermissionEditPage extends React.Component {
   getModel(organizationName, modelName) {
     ModelBackend.getModel(organizationName, modelName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           model: res,
         });

@@ -42,10 +42,6 @@ class ProductBuyPage extends React.Component {
 
     ProductBackend.getProduct(this.props.account.owner, this.state.productName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
 
         this.setState({
           product: res,

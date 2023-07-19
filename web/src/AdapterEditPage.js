@@ -76,10 +76,7 @@ class AdapterEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           models: res,
         });

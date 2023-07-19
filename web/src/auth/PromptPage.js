@@ -57,10 +57,6 @@ class PromptPage extends React.Component {
     const userName = this.props.account.name;
     UserBackend.getUser(organizationName, userName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
 
         this.setState({
           user: res,
@@ -75,10 +71,6 @@ class PromptPage extends React.Component {
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
 
         this.onUpdateApplication(res.data);
         this.setState({

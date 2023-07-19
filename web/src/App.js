@@ -16,6 +16,8 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
+import NotFindResult from "./common/result/NotFindResult";
+import UnauthorizedResult from "./common/result/UnauthorizedResult";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
@@ -290,10 +292,6 @@ class App extends Component {
 
           this.setLanguage(account);
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
-        } else {
-          if (res.data !== "Please login first") {
-            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-          }
         }
 
         this.setState({
@@ -636,8 +634,8 @@ class App extends Component {
         <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
-        <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+        <Route path="/404" render={() => NotFindResult} />
+        <Route path="/403" render={() => UnauthorizedResult} />
       </Switch>
     );
   }

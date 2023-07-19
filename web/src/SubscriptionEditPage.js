@@ -47,16 +47,6 @@ class SubscriptionEditPage extends React.Component {
   getSubscription() {
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
         this.setState({
           subscription: res,
         });
@@ -78,10 +68,7 @@ class SubscriptionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           users: res,
         });

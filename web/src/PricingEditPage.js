@@ -50,16 +50,6 @@ class PricingEditPage extends React.Component {
   getPricing() {
     PricingBackend.getPricing(this.state.organizationName, this.state.pricingName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
         this.setState({
           pricing: res,
         });
@@ -70,10 +60,7 @@ class PricingEditPage extends React.Component {
   getPlans(organizationName) {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           plans: res,
         });
@@ -119,10 +106,6 @@ class PricingEditPage extends React.Component {
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
         this.setState({
           application: res,
         });

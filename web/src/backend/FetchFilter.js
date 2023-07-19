@@ -39,6 +39,29 @@ const demoModeCallback = (res) => {
   });
 };
 
+const checkResponse = (response) => {
+  return response.json().then(res => {
+    if (res.status === "ok") {
+      if (res.data === null) {
+        this.props.history.push("/404");
+      }
+    } else if (res.status === "error") {
+      if (response.url.endsWith("/api/get-account")) {
+        if (res.data !== "Please login first") {
+          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+        }
+        return;
+      }
+
+      if (Setting.isResponseDenied(res)) {
+        this.props.history.push("/403");
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    }
+  });
+};
+
 const requestFilters = [];
 const responseFilters = [];
 
@@ -53,6 +76,9 @@ window.fetch = async(url, option = {}) => {
     originalFetch(url, option).then(res => {
       if (!url.startsWith("/api/get-organizations")) {
         responseFilters.forEach(filter => filter(res.clone()));
+      }
+      if (url.startsWith("/api/get-")) {
+        checkResponse(res.clone());
       }
       resolve(res);
     });

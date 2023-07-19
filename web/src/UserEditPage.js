@@ -124,10 +124,7 @@ class UserEditPage extends React.Component {
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
           application: res,
         });
