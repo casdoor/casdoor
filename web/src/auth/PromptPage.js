@@ -59,7 +59,7 @@ class PromptPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          user: res,
+          user: res.data,
         });
       });
   }
@@ -74,7 +74,7 @@ class PromptPage extends React.Component {
 
         this.onUpdateApplication(res.data);
         this.setState({
-          application: res,
+          application: res.data,
         });
       });
   }

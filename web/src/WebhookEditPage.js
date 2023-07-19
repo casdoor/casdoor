@@ -122,14 +122,9 @@ class WebhookEditPage extends React.Component {
 
   getWebhook() {
     WebhookBackend.getWebhook("admin", this.state.webhookName)
-      .then((webhook) => {
-        if (webhook === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
+      .then((res) => {
         this.setState({
-          webhook: webhook,
+          webhook: res.data,
         });
       });
   }
@@ -138,7 +133,7 @@ class WebhookEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

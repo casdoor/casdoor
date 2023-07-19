@@ -49,7 +49,7 @@ class SyncerEditPage extends React.Component {
     SyncerBackend.getSyncer("admin", this.state.syncerName)
       .then((res) => {
         this.setState({
-          syncer: res,
+          syncer: res.data,
         });
       });
   }
@@ -58,7 +58,7 @@ class SyncerEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

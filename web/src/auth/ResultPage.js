@@ -47,7 +47,7 @@ class ResultPage extends React.Component {
 
         this.onUpdateApplication(res.data);
         this.setState({
-          application: res,
+          application: res.data,
         });
       });
   }

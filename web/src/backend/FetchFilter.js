@@ -40,10 +40,10 @@ const demoModeCallback = (res) => {
 };
 
 const checkResponse = (response) => {
-  return response.json().then(res => {
+  response.json().then(res => {
     if (res.status === "ok") {
       if (res.data === null) {
-        this.props.history.push("/404");
+        window.location.href = "/404";
       }
     } else if (res.status === "error") {
       if (response.url.endsWith("/api/get-account")) {
@@ -54,10 +54,10 @@ const checkResponse = (response) => {
       }
 
       if (Setting.isResponseDenied(res)) {
-        this.props.history.push("/403");
-      } else {
-        Setting.showMessage("error", res.msg);
+        window.location.href = "/404";
+        return;
       }
+      Setting.showMessage("error", res.msg);
     }
   });
 };

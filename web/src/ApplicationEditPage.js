@@ -176,7 +176,7 @@ class ApplicationEditPage extends React.Component {
     ApplicationBackend.getSamlMetadata("admin", this.state.applicationName)
       .then((res) => {
         this.setState({
-          samlMetadata: res,
+          samlMetadata: res.data,
         });
       });
   }

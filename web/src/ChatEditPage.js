@@ -42,7 +42,7 @@ class ChatEditPage extends React.Component {
     ChatBackend.getChat("admin", this.state.chatName)
       .then((res) => {
         this.setState({
-          chat: res,
+          chat: res.data,
         });
 
         this.getUsers(res.organization);
@@ -53,7 +53,7 @@ class ChatEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }
@@ -63,7 +63,7 @@ class ChatEditPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }

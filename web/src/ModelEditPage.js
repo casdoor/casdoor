@@ -49,7 +49,7 @@ class ModelEditPage extends React.Component {
     ModelBackend.getModel(this.state.organizationName, this.state.modelName)
       .then((res) => {
         this.setState({
-          model: res,
+          model: res.data,
         });
       });
   }
@@ -58,7 +58,7 @@ class ModelEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

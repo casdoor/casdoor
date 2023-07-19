@@ -82,8 +82,7 @@ func (c *ApiController) GetSyncer() {
 		return
 	}
 
-	c.Data["json"] = syncer
-	c.ServeJSON()
+	c.ResponseOk(syncer)
 }
 
 // UpdateSyncer

@@ -93,8 +93,7 @@ func (c *ApiController) GetMessage() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedMessage(message)
-	c.ServeJSON()
+	c.ResponseOk(message)
 }
 
 func (c *ApiController) ResponseErrorStream(errorText string) {

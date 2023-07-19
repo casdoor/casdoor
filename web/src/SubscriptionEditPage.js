@@ -48,7 +48,7 @@ class SubscriptionEditPage extends React.Component {
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
       .then((res) => {
         this.setState({
-          subscription: res,
+          subscription: res.data,
         });
 
         this.getUsers(res.owner);
@@ -60,7 +60,7 @@ class SubscriptionEditPage extends React.Component {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
         this.setState({
-          planes: res,
+          planes: res.data,
         });
       });
   }
@@ -68,9 +68,8 @@ class SubscriptionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
-
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -79,7 +78,7 @@ class SubscriptionEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

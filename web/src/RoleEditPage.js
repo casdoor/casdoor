@@ -44,7 +44,7 @@ class RoleEditPage extends React.Component {
     RoleBackend.getRole(this.state.organizationName, this.state.roleName)
       .then((res) => {
         this.setState({
-          role: res,
+          role: res.data,
         });
 
         this.getUsers(res.owner);
@@ -56,7 +56,7 @@ class RoleEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }
@@ -66,7 +66,7 @@ class RoleEditPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -76,7 +76,7 @@ class RoleEditPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          roles: res,
+          roles: res.data,
         });
       });
   }

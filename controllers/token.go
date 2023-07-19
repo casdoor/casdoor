@@ -82,8 +82,7 @@ func (c *ApiController) GetToken() {
 		return
 	}
 
-	c.Data["json"] = token
-	c.ServeJSON()
+	c.ResponseOk(token)
 }
 
 // UpdateToken

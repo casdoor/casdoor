@@ -634,8 +634,8 @@ class App extends Component {
         <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
-        <Route path="/404" render={() => NotFindResult} />
-        <Route path="/403" render={() => UnauthorizedResult} />
+        <Route path="/404" render={() => <NotFindResult />} />
+        <Route path="/403" render={() => <UnauthorizedResult />} />
       </Switch>
     );
   }

@@ -66,7 +66,7 @@ class PlanEditPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          roles: res,
+          roles: res.data,
         });
       });
   }
@@ -76,7 +76,7 @@ class PlanEditPage extends React.Component {
       .then((res) => {
 
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -85,7 +85,7 @@ class PlanEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

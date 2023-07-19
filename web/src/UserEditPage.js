@@ -74,18 +74,11 @@ class UserEditPage extends React.Component {
 
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
-      .then((data) => {
-        if (data === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (data.status === null || data.status !== "error") {
-          this.setState({
-            user: data,
-            multiFactorAuths: data?.multiFactorAuths ?? [],
-          });
-        }
+      .then((res) => {
+        this.setState({
+          user: res.data,
+          multiFactorAuths: res.data?.multiFactorAuths ?? [],
+        });
         this.setState({
           loading: false,
         });
@@ -107,7 +100,7 @@ class UserEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }
@@ -116,7 +109,7 @@ class UserEditPage extends React.Component {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
         this.setState({
-          applications: (res.msg === undefined) ? res : [],
+          applications: res.data || [],
         });
       });
   }
@@ -124,13 +117,9 @@ class UserEditPage extends React.Component {
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((res) => {
-
         this.setState({
-          application: res,
-        });
-
-        this.setState({
-          isGroupsVisible: res.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          application: res.data,
+          isGroupsVisible: res.data.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }

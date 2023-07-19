@@ -41,14 +41,9 @@ class PaymentEditPage extends React.Component {
 
   getPayment() {
     PaymentBackend.getPayment("admin", this.state.paymentName)
-      .then((payment) => {
-        if (payment === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
+      .then((res) => {
         this.setState({
-          payment: payment,
+          payment: res.data,
         });
 
         Setting.scrollToDiv("invoice-area");
