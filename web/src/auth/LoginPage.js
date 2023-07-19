@@ -20,7 +20,6 @@ import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
-import * as UserBackend from "../backend/UserBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
@@ -36,7 +35,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
-import * as PasswordChecker from "../common/PasswordChecker";
+import {ChangePasswordForm} from "./ChangePasswordForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -327,8 +326,6 @@ class LoginPage extends React.Component {
   }
 
   login(values) {
-    const userOwner = values.organization;
-    const userName = values.username;
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     if (this.state.type === "cas") {
       // CAS
@@ -361,11 +358,33 @@ class LoginPage extends React.Component {
         .then((res) => {
           const callback = (res) => {
             const responseType = values["type"];
-            if (responseType !== "saml" && res.data2) {
+            if (responseType !== "saml" && res.data2 === true) {
+              this.setState({getVerifyTotp: undefined});
+
               this.setState({
                 values: values,
-                getVerifyTotp: undefined,
-                getChangePasswordForm: () => this.renderChangePasswordForm(this.getApplicationObj(), userOwner, userName),
+                getChangePasswordForm: () => {
+                  return (
+                    <React.Fragment>
+                      <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+                      <Row type="flex" justify="center" align="middle">
+                        <Col span={16} style={{width: 600}}>
+                          <ChangePasswordForm
+                            application={this.getApplicationObj()}
+                            userOwner={values.organization}
+                            userName={values.username}
+                            onSuccess={(result) => {
+                              this.login({...this.state.values, password: result.newPassword});
+                              this.setState({values: undefined});
+                            }}
+                            onFail={(res) => {
+                              Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </React.Fragment>);
+                },
               });
 
               return;
@@ -428,161 +447,6 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderChangePasswordForm(application, userOwner, userName) {
-    return (
-      <React.Fragment>
-        <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
-        <Row type="flex" justify="center" align="middle">
-          <Col span={16} style={{width: 600}}>
-            <Form
-              labelCol={{span: 8}}
-              wrapperCol={{span: 16}}
-              ref={this.form}
-              name="changePassword"
-              onFinish={(values) => this.onChangePasswordFinish(values)}
-              initialValues={{
-                application: application.name,
-                organization: application.organization,
-                userOwner: userOwner,
-                userName: userName,
-              }}
-              size="large"
-              layout={Setting.isMobile() ? "vertical" : "horizontal"}
-              style={{width: Setting.isMobile() ? "300px" : "400px"}}
-            >
-              <Form.Item
-                name="application"
-                hidden={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your application!",
-                  },
-                ]}
-              >
-              </Form.Item>
-              <Form.Item
-                name="organization"
-                hidden={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your organization!",
-                  },
-                ]}
-              >
-              </Form.Item>
-              <Form.Item
-                name="userOwner"
-                hidden={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input user owner!",
-                  },
-                ]}
-              >
-              </Form.Item>
-              <Form.Item
-                name="userName"
-                hidden={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input user name!",
-                  },
-                ]}
-              >
-              </Form.Item>
-              <Form.Item
-                name="oldPassword"
-                label={i18next.t("user:Old Password")}
-                rules={[
-                  {
-                    required: true,
-                    message: i18next.t("user:Empty input!"),
-                  },
-                ]}
-                hasFeedback
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                name="newPassword"
-                label={i18next.t("user:New Password")}
-                rules={[
-                  {
-                    required: true,
-                    message: i18next.t("user:Empty input!"),
-                  },
-                  {
-                    validator(rule, value) {
-                      const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-                      if (errorMsg === "") {
-                        return Promise.resolve();
-                      } else {
-                        return Promise.reject(errorMsg);
-                      }
-                    },
-                  },
-                ]}
-                hasFeedback
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                name="confirm"
-                label={i18next.t("user:Re-enter New")}
-                dependencies={["newPassword"]}
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: i18next.t("user:Empty input!"),
-                  },
-                  ({getFieldValue}) => ({
-                    validator(rule, value) {
-                      if (!value || getFieldValue("newPassword") === value) {
-                        return Promise.resolve();
-                      }
-
-                      return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                wrapperCol={{span: 24}}>
-                <Button type="primary" htmlType="submit">
-                  {i18next.t("changePassword:Change password")}
-                </Button>
-              </Form.Item>
-            </Form>
-          </Col>
-        </Row>
-      </React.Fragment>
-    );
-  }
-
-  onChangePasswordFinish(values) {
-    UserBackend.setPassword(values.userOwner, values.userName, values.oldPassword, values.newPassword)
-      .then((res) => {
-        if (res.status === "ok") {
-          const _values = {...this.state.values};
-          _values["password"] = values.newPassword;
-          _values["username"] = _values.username ?? this.props?.account?.name;
-          Setting.showMessage("success", i18next.t("changePassword:Password successfully changed"));
-          this.login(_values);
-          this.setState({getChangePasswordForm: undefined});
-        } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-        }
-      });
-  }
-
   isProviderVisible(providerItem) {
     if (this.state.mode === "signup") {
       return Setting.isProviderVisibleForSignUp(providerItem);
@@ -630,7 +494,6 @@ class LoginPage extends React.Component {
         <Form
           name="normal_login"
           initialValues={{
-
             organization: application.organization,
             application: application.name,
             autoSignin: true,
