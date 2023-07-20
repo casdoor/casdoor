@@ -229,7 +229,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		session = session.Omit("client_secret2")
 	}
 
-	if provider.Type != "Keycloak" {
+	if provider.Type == "Tencent Cloud COS" {
 		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
 		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 	}
@@ -243,7 +243,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 }
 
 func AddProvider(provider *Provider) (bool, error) {
-	if provider.Type != "Keycloak" {
+	if provider.Type == "Tencent Cloud COS" {
 		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
 		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 	}

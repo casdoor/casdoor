@@ -42,7 +42,11 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		return err
 	}
 
-	if provider.Type == sender.Aliyun {
+	if provider.Type == sender.Twilio {
+		if provider.AppId != "" {
+			phoneNumbers = append([]string{provider.AppId}, phoneNumbers...)
+		}
+	} else if provider.Type == sender.Aliyun {
 		for i, number := range phoneNumbers {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
 		}

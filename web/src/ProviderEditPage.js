@@ -236,7 +236,10 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:Agent ID - Tooltip");
       }
     } else if (provider.category === "SMS") {
-      if (provider.type === "Tencent Cloud SMS") {
+      if (provider.type === "Twilio SMS") {
+        text = i18next.t("provider:Sender number");
+        tooltip = i18next.t("provider:Sender number - Tooltip");
+      } else if (provider.type === "Tencent Cloud SMS") {
         text = i18next.t("provider:App ID");
         tooltip = i18next.t("provider:App ID - Tooltip");
       } else if (provider.type === "Volc Engine SMS") {
@@ -677,6 +680,7 @@ class ProviderEditPage extends React.Component {
             ) : null}
           </div>
         ) : null}
+        {this.getAppIdRow(this.state.provider)}
         {
           this.state.provider.category === "Email" ? (
             <React.Fragment>
@@ -922,7 +926,6 @@ class ProviderEditPage extends React.Component {
             </Row>
           ) : null
         }
-        {this.getAppIdRow(this.state.provider)}
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Provider URL"), i18next.t("provider:Provider URL - Tooltip"))} :

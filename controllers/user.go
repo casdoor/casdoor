@@ -198,14 +198,18 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
-	user.MultiFactorAuths = object.GetAllMfaProps(user, true)
+	if user != nil {
+		user.MultiFactorAuths = object.GetAllMfaProps(user, true)
+	}
+
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	maskedUser, err := object.GetMaskedUser(user)
+	isAdminOrSelf := c.IsAdminOrSelf(user)
+	maskedUser, err := object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

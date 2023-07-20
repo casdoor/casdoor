@@ -109,10 +109,10 @@ func getPolicies(permission *Permission) [][]string {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{user, domain, resource, strings.ToLower(action), "", permissionId})
+						policies = append(policies, []string{user, domain, resource, strings.ToLower(action), permission.Effect, permissionId})
 					}
 				} else {
-					policies = append(policies, []string{user, resource, strings.ToLower(action), "", "", permissionId})
+					policies = append(policies, []string{user, resource, strings.ToLower(action), permission.Effect, "", permissionId})
 				}
 			}
 		}

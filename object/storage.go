@@ -25,6 +25,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/storage"
 	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/oss"
 )
 
 var isCloudIntranet bool
@@ -102,11 +103,11 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	return fileUrl, objectKey
 }
 
-func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
+func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, error) {
 	endpoint := getProviderEndpoint(provider)
 	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
 	if storageProvider == nil {
-		return "", "", fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
+		return nil, fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}
 
 	if provider.Domain == "" {
@@ -114,9 +115,18 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 		UpdateProvider(provider.GetId(), provider)
 	}
 
+	return storageProvider, nil
+}
+
+func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffer, lang string) (string, string, error) {
+	storageProvider, err := getStorageProvider(provider, lang)
+	if err != nil {
+		return "", "", err
+	}
+
 	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 
-	_, err := storageProvider.Put(objectKey, fileBuffer)
+	_, err = storageProvider.Put(objectKey, fileBuffer)
 	if err != nil {
 		return "", "", err
 	}
@@ -154,15 +164,9 @@ func DeleteFile(provider *Provider, objectKey string, lang string) error {
 		return fmt.Errorf(i18n.Translate(lang, "storage:The objectKey: %s is not allowed"), objectKey)
 	}
 
-	endpoint := getProviderEndpoint(provider)
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
-	if storageProvider == nil {
-		return fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
-	}
-
-	if provider.Domain == "" {
-		provider.Domain = storageProvider.GetEndpoint()
-		UpdateProvider(provider.GetId(), provider)
+	storageProvider, err := getStorageProvider(provider, lang)
+	if err != nil {
+		return err
 	}
 
 	return storageProvider.Delete(objectKey)

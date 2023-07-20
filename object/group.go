@@ -107,6 +107,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		return false, err
 	}
 
+	err = checkGroupName(group.Name)
+	if err != nil {
+		return false, err
+	}
+
 	if name != group.Name {
 		err := GroupChangeTrigger(name, group.Name)
 		if err != nil {
@@ -123,6 +128,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 }
 
 func AddGroup(group *Group) (bool, error) {
+	err := checkGroupName(group.Name)
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := adapter.Engine.Insert(group)
 	if err != nil {
 		return false, err
@@ -166,6 +176,17 @@ func DeleteGroup(group *Group) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+func checkGroupName(name string) error {
+	exist, err := adapter.Engine.Exist(&Organization{Owner: "admin", Name: name})
+	if err != nil {
+		return err
+	}
+	if exist {
+		return errors.New("group name can't be same as the organization name")
+	}
+	return nil
 }
 
 func (group *Group) GetId() string {
@@ -225,7 +246,7 @@ func GetGroupUserCount(groupName string, field, value string) (int64, error) {
 func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
 	session := adapter.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName})
+		Where(builder.Like{"`groups`", groupName + "\""})
 
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
@@ -255,7 +276,7 @@ func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, 
 func GetGroupUsers(groupName string) ([]*User, error) {
 	users := []*User{}
 	err := adapter.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName}).
+		Where(builder.Like{"`groups`", groupName + "\""}).
 		Find(&users)
 	if err != nil {
 		return nil, err
