@@ -21,9 +21,13 @@ import * as Setting from "../Setting";
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
 
-const demoModeCallback = (response) => {
-  response.json().then(res => {
-    if (Setting.isResponseDenied(res)) {
+const demoModeFilter = (res) => {
+  if (!Conf.IsDemoMode) {
+    return;
+  }
+
+  res.json().then(data => {
+    if (Setting.isResponseDenied(data)) {
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
@@ -39,38 +43,29 @@ const demoModeCallback = (response) => {
   });
 };
 
-const checkResponse = (response) => {
-  response.json().then(res => {
-    if (res.status === "ok") {
-      if (res.data === null) {
-        window.location.href = "/404";
-      }
-    } else if (res.status === "error") {
-      if (res.code === 403) {
-        return;
-      }
-      Setting.showMessage("error", res.msg);
+const GetResponseFilter = (res, url) => {
+  if (url.startsWith("/api/get-") && res.status === "ok") {
+    if (res.data === null) {
+      window.location.href = "/404";
+      return;
     }
-  });
+  }
+  if (res.status === "error") {
+    if (res.code === 403) {
+      return;
+    }
+    Setting.showMessage("error", res.msg);
+  }
 };
 
-const requestFilters = [];
-const responseFilters = [];
-
-if (Conf.IsDemoMode) {
-  responseFilters.push(demoModeCallback);
-}
-
 window.fetch = async(url, option = {}) => {
-  requestFilters.forEach(filter => filter(url, option));
-
   return new Promise((resolve, reject) => {
     originalFetch(url, option).then(res => {
       if (!url.startsWith("/api/get-organizations")) {
-        responseFilters.forEach(filter => filter(res.clone()));
+        demoModeFilter(res.clone());
       }
       if (url.startsWith("/api/get-")) {
-        checkResponse(res.clone());
+        GetResponseFilter(res.clone(), url);
       }
       resolve(res);
     });
