@@ -95,15 +95,17 @@ class AuthCallback extends React.Component {
     if (code === null) {
       code = params.get("authCode");
     }
-    // MetaMask store code in localStorage
+    // The code for Metamask is the JSON-serialized string of Web3AuthToken
+    // Due to the limited length of URLs, we only pass the web3AuthTokenKey
     if (code === null) {
-      code = params.get("localStorageKey");
+      code = params.get("web3AuthTokenKey");
       code = localStorage.getItem(code);
     }
     // Steam don't use code, so we should use all params as code.
     if (isSteam !== null && code === null) {
       code = this.props.location.search;
     }
+
     const innerParams = this.getInnerParams();
     const applicationName = innerParams.get("application");
     const providerName = innerParams.get("provider");

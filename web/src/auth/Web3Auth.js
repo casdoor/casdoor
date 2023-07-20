@@ -122,7 +122,6 @@ export function checkEthereumSignedTypedData(token) {
       version: SignTypedDataVersion.V4,
     });
     // const recoveredAddr = token.address;
-    // window.console.log("recoverdAddr=", recoveredAddr, ",tokenAddr=", token.address);
     return recoveredAddr === token.address;
     // return toChecksumAddress(recoveredAddr) === toChecksumAddress(token.address);
   }
@@ -142,7 +141,7 @@ export async function authViaMetaMask(application, provider, method) {
       token = await signEthereumTypedData(account, nonce);
       setWeb3AuthToken(token);
     }
-    const redirectUri = `${getAuthUrl(application, provider, method)}&localStorageKey=${getWeb3AuthTokenKey(account)}`;
+    const redirectUri = `${getAuthUrl(application, provider, method)}&web3AuthTokenKey=${getWeb3AuthTokenKey(account)}`;
     goToLink(redirectUri);
   } catch (err) {
     showMessage("error", `${i18next.t("login:Failed to obtain MetaMask authorization")}: ${err.message}`);

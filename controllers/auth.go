@@ -410,10 +410,6 @@ func (c *ApiController) Login() {
 		}
 
 		userInfo := &idp.UserInfo{}
-		if provider.Category == "Web3" {
-			// Processing Web3 in a way similar to OAuth
-			provider.Category = "OAuth"
-		}
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo.Id, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
@@ -421,7 +417,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			}
-		} else if provider.Category == "OAuth" {
+		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
 			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
 			idProvider := idp.GetIdProvider(idpInfo, authForm.RedirectUri)
@@ -464,7 +460,7 @@ func (c *ApiController) Login() {
 					c.ResponseError(err.Error())
 					return
 				}
-			} else if provider.Category == "OAuth" {
+			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				user, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -485,7 +481,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
-			} else if provider.Category == "OAuth" {
+			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
 					if userInfo.Email != "" {

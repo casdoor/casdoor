@@ -17,6 +17,7 @@ package idp
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -73,7 +74,7 @@ func (idp *MetaMaskIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		Id:          web3AuthToken.Address,
 		Username:    web3AuthToken.Address,
 		DisplayName: web3AuthToken.Address,
-		AvatarUrl:   "https://cdn.casbin.org/img/casbin.svg", // TODO
+		AvatarUrl:   fmt.Sprintf("metamask:%v", web3AuthToken.Address),
 	}
 	return userInfo, nil
 }

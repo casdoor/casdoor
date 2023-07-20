@@ -23,6 +23,7 @@ import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import AccountAvatar from "./account/AccountAvatar";
 
 class UserListPage extends BaseListPage {
   constructor(props) {
@@ -270,7 +271,7 @@ class UserListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <a target="_blank" rel="noreferrer" href={text}>
-              <img referrerPolicy="no-referrer" src={text} alt={text} width={50} />
+              <AccountAvatar referrerPolicy="no-referrer" src={text} alt={text} size={50} />
             </a>
           );
         },

@@ -36,6 +36,7 @@
     "react-helmet": "^6.1.0",
     "react-highlight-words": "^0.18.0",
     "react-i18next": "^11.8.7",
+    "react-metamask-avatar": "^1.2.1",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",
     "react-social-login-buttons": "^3.4.0"

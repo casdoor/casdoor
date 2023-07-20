@@ -36,6 +36,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as MfaBackend from "./backend/MfaBackend";
+import AccountAvatar from "./account/AccountAvatar";
 
 const {Option} = Select;
 
@@ -984,7 +985,7 @@ class UserEditPage extends React.Component {
         {
           imgUrl ?
             <a target="_blank" rel="noreferrer" href={imgUrl} style={{marginBottom: "10px"}}>
-              <img src={imgUrl} alt={imgUrl} height={90} style={{marginBottom: "20px"}} />
+              <AccountAvatar src={imgUrl} alt={imgUrl} size={90} style={{marginBottom: "20px"}} />
             </a>
             :
             <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: 5}}>

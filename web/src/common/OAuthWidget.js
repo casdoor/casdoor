@@ -21,6 +21,7 @@ import * as Provider from "../auth/Provider";
 import * as AuthBackend from "../auth/AuthBackend";
 import {goToWeb3Url} from "../auth/ProviderButton";
 import {delWeb3AuthToken} from "../auth/Web3Auth";
+import AccountAvatar from "../account/AccountAvatar";
 
 class OAuthWidget extends React.Component {
   constructor(props) {
@@ -156,7 +157,7 @@ class OAuthWidget extends React.Component {
           </span>
         </Col>
         <Col span={24 - this.props.labelSpan} >
-          <img style={{marginRight: "10px"}} width={30} height={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
+          <AccountAvatar style={{marginRight: "10px"}} size={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
           <span style={{width: this.props.labelSpan === 3 ? "300px" : "200px", display: (Setting.isMobile()) ? "inline" : "inline-block"}}>
             {
               linkedValue === "" ? (

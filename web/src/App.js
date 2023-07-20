@@ -90,6 +90,7 @@ import LanguageSelect from "./common/select/LanguageSelect";
 import ThemeSelect from "./common/select/ThemeSelect";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
+import AccountAvatar from "./account/AccountAvatar";
 
 const {Header, Footer, Content} = Layout;
 
@@ -348,7 +349,9 @@ class App extends Component {
       );
     } else {
       return (
-        <Avatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size="large">
+        <Avatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size="large"
+          icon={<AccountAvatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size={40} />}
+        >
           {Setting.getShortName(this.state.account.name)}
         </Avatar>
       );

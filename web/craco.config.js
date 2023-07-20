@@ -51,6 +51,8 @@ module.exports = {
     },
   ],
   webpack: {
+    // use polyfill Buffer with Webpack 5
+    // https://viglucci.io/articles/how-to-polyfill-buffer-with-webpack-5
     // https://craco.js.org/docs/configuration/webpack/
     configure: (webpackConfig, { env, paths }) => {
       webpackConfig.resolve.fallback = {
