@@ -96,5 +96,5 @@ export function getSamlMetadata(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.text());
+  });
 }

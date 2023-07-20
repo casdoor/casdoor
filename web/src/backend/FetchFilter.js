@@ -43,7 +43,7 @@ const demoModeFilter = (response, url, option = {}) => {
   });
 };
 
-const GetResponseFilter = (response, url, option = {}) => {
+const ResponseGetFilter = (response, url, option = {}) => {
   if (!url.startsWith("/api/get-")) {
     return;
   }
@@ -64,8 +64,17 @@ const GetResponseFilter = (response, url, option = {}) => {
   });
 };
 
+const ResponseTransferFilter = (res) => {
+  const contentType = res.headers.get("content-type");
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    return res.json();
+  } else {
+    return res.text();
+  }
+};
+
 const requestFilters = [];
-const responseFilters = [GetResponseFilter];
+const responseFilters = [ResponseGetFilter];
 if (Conf.IsDemoMode) {
   responseFilters.push(demoModeFilter);
 }
@@ -80,7 +89,9 @@ window.fetch = async(url, option = {}) => {
       responseFilters.forEach(filter => {
         filter(res.clone(), url, option);
       });
-      resolve(res = res.json());
+
+      res = ResponseTransferFilter(res);
+      resolve(res);
     }).catch(error => {
       reject(error);
     });

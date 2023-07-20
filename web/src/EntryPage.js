@@ -76,10 +76,6 @@ class EntryPage extends React.Component {
 
       ApplicationBackend.getApplication("admin", pricing.application)
         .then((res) => {
-          if (res.status === "error") {
-            Setting.showMessage("error", res.msg);
-            return;
-          }
           const application = res.data;
           const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
           this.props.updataThemeData(themeData);
