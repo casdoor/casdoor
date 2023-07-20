@@ -4,6 +4,8 @@ import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 
+export const NextChangePasswordForm = "NextChangePasswordForm";
+
 function CheckPasswordForm({user, onSuccess, onFail}) {
   const [form] = Form.useForm();
 
