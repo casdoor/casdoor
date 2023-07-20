@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -46,6 +47,14 @@ func (c *ApiController) ResponseOk(data ...interface{}) {
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	resp := &util.Response{Status: "error", Msg: error}
 	c.ResponseJsonData(resp, data...)
+}
+
+func (c *ApiController) denyRequest(msg string) {
+	resp := util.Response{Status: "error", Msg: msg, Code: http.StatusForbidden}
+	err := c.Ctx.Output.JSON(resp, true, false)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (c *ApiController) T(error string) string {
@@ -82,7 +91,7 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 func (c *ApiController) RequireSignedIn() (string, bool) {
 	userId := c.GetSessionUsername()
 	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"), "Please login first")
+		c.denyRequest(c.T("general:Please login first"))
 		return "", false
 	}
 	return userId, true

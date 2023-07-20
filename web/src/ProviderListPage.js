@@ -37,7 +37,7 @@ class ProviderListPage extends BaseListPage {
 
   newProvider() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.owner : Setting.getRequestOrganization();
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.owner : Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `provider_${randomName}`,
@@ -264,6 +264,12 @@ class ProviderListPage extends BaseListPage {
         this.setState({
           loading: false,
         });
+        if (Setting.isResponseDenied(res)) {
+          this.setState({
+            isAuthorized: false,
+          });
+          return;
+        }
         if (res.status === "ok") {
           this.setState({
             data: res.data,
@@ -274,12 +280,6 @@ class ProviderListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
-        } else {
-          if (Setting.isResponseDenied(res)) {
-            this.setState({
-              isAuthorized: false,
-            });
-          }
         }
       });
   };

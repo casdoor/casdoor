@@ -179,6 +179,6 @@ func AuthzFilter(ctx *context.Context) {
 	}
 
 	if !isAllowed {
-		DenyRequest(ctx)
+		denyRequest(ctx)
 	}
 }

@@ -51,7 +51,7 @@ func T(ctx *context.Context, error string) string {
 	return i18n.Translate(getAcceptLanguage(ctx), error)
 }
 
-func DenyRequest(ctx *context.Context) {
+func denyRequest(ctx *context.Context) {
 	resp := util.Response{Status: "error", Msg: T(ctx, "auth:Unauthorized operation"), Code: http.StatusForbidden}
 	err := ctx.Output.JSON(resp, true, false)
 	if err != nil {

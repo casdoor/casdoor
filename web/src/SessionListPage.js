@@ -138,6 +138,12 @@ class SessionListPage extends BaseListPage {
         this.setState({
           loading: false,
         });
+        if (Setting.isResponseDenied(res)) {
+          this.setState({
+            isAuthorized: false,
+          });
+          return;
+        }
         if (res.status === "ok") {
           this.setState({
             data: res.data,
@@ -148,12 +154,6 @@ class SessionListPage extends BaseListPage {
             searchText: params.searchText,
             searchedColumn: params.searchedColumn,
           });
-        } else {
-          if (Setting.isResponseDenied(res)) {
-            this.setState({
-              isAuthorized: false,
-            });
-          }
         }
       });
   };

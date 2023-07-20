@@ -21,9 +21,9 @@ import * as Setting from "../Setting";
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
 
-const demoModeCallback = (res) => {
-  res.json().then(data => {
-    if (Setting.isResponseDenied(data)) {
+const demoModeCallback = (response) => {
+  response.json().then(res => {
+    if (Setting.isResponseDenied(res)) {
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
@@ -46,10 +46,7 @@ const checkResponse = (response) => {
         window.location.href = "/404";
       }
     } else if (res.status === "error") {
-      if (response.url.endsWith("/api/get-account")) {
-        if (res.data !== "Please login first") {
-          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-        }
+      if (res.code === 403) {
         return;
       }
       Setting.showMessage("error", res.msg);
