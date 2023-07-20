@@ -36,6 +36,7 @@ import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {ChangePasswordForm} from "./ChangePasswordForm";
+import {NextChangePasswordForm} from "./mfa/CheckPasswordForm";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -420,7 +421,35 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            if (res.data === NextMfa) {
+            if (res.data === NextChangePasswordForm) {
+              this.setState({
+                values: values,
+                getChangePasswordForm: () => {
+                  return (
+                    <React.Fragment>
+                      <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+                      <Row type="flex" justify="center" align="middle">
+                        <Col span={16} style={{width: 600}}>
+                          <ChangePasswordForm
+                            application={this.getApplicationObj()}
+                            userOwner={values.organization}
+                            userName={this.state.username}
+                            onSuccess={(result) => {
+                              this.login({...this.state.values, username: this.state.username, password: result.newPassword});
+                              this.setState({values: undefined});
+                            }}
+                            onFail={(res) => {
+                              Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </React.Fragment>);
+                },
+              });
+
+              return;
+            } else if (res.data === NextMfa) {
               this.setState({
                 getVerifyTotp: () => {
                   return (
