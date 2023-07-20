@@ -281,6 +281,14 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		return "", "", "", err
 	}
 
+	if cert == nil {
+		if application.Cert == "" {
+			return "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
+		} else {
+			return "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
+		}
+	}
+
 	// RSA private key
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	if err != nil {
