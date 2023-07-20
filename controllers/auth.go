@@ -40,12 +40,12 @@ var (
 	lock           sync.RWMutex
 )
 
-func codeToResponse(code *object.Code, passwordChangeRequired bool) *Response {
+func codeToResponse(code *object.Code) *Response {
 	if code.Code == "" {
 		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
 	}
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code, Data2: passwordChangeRequired}
+	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
 func tokenToResponse(token *object.Token) *Response {
@@ -58,7 +58,6 @@ func tokenToResponse(token *object.Token) *Response {
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
-	passwordChangeRequired := user.PasswordChangeRequired
 
 	allowed, err := object.CheckAccessPermission(userId, application)
 	if err != nil {
@@ -83,7 +82,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 
-		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: passwordChangeRequired}
+		resp = &Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -104,7 +103,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		resp = codeToResponse(code, passwordChangeRequired)
+		resp = codeToResponse(code)
 
 		if (application.EnableSigninSession || application.HasPromptPage()) {
 			// The prompt page needs the user to be signed in
