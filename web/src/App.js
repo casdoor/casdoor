@@ -17,7 +17,6 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import NotFindResult from "./common/result/NotFindResult";
-import UnauthorizedResult from "./common/result/UnauthorizedResult";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
@@ -25,7 +24,7 @@ import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
-import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -634,8 +633,7 @@ class App extends Component {
         <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
-        <Route path="/404" render={() => <NotFindResult />} />
-        <Route path="/403" render={() => <UnauthorizedResult />} />
+        <Route path="" render={() => <NotFindResult />} />
       </Switch>
     );
   }
@@ -776,8 +774,7 @@ class App extends Component {
                 <Switch>
                   <Route exact path="/callback" component={AuthCallback} />
                   <Route exact path="/callback/saml" component={SamlCallback} />
-                  <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                    extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+                  <Route path="" render={() => <NotFindResult />} />
                 </Switch>
             }
           </Content>

@@ -40,23 +40,23 @@ var (
 	lock           sync.RWMutex
 )
 
-func codeToResponse(code *object.Code) *Response {
+func codeToResponse(code *object.Code) *util.Response {
 	if code.Code == "" {
-		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
+		return &util.Response{Status: "error", Msg: code.Message, Data: code.Code}
 	}
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code}
+	return &util.Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
-func tokenToResponse(token *object.Token) *Response {
+func tokenToResponse(token *object.Token) *util.Response {
 	if token.AccessToken == "" {
-		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
+		return &util.Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
 	}
-	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken}
+	return &util.Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken}
 }
 
 // HandleLoggedIn ...
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.Auth) (resp *util.Response) {
 	userId := user.GetId()
 
 	allowed, err := object.CheckAccessPermission(userId, application)
@@ -81,7 +81,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId}
+		resp = &util.Response{Status: "ok", Msg: "", Data: userId}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -110,7 +110,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
+			resp = &util.Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
 		} else {
 			scope := c.Input().Get("scope")
 			token, _ := object.GetTokenByUser(application, user, scope, c.Ctx.Request.Host)
@@ -122,7 +122,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
-		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]string{"redirectUrl": redirectUrl, "method": method}}
+		resp = &util.Response{Status: "ok", Msg: "", Data: res, Data2: map[string]string{"redirectUrl": redirectUrl, "method": method}}
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
@@ -245,13 +245,13 @@ func isProxyProviderType(providerType string) bool {
 // @Param nonce     query    string  false nonce
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
-// @Param   form   body   controllers.AuthForm  true        "Login information"
+// @Param   form   body   controllers.Auth  true        "Login information"
 // @Success 200 {object} controllers.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
-	resp := &Response{}
+	resp := &util.Response{}
 
-	var authForm form.AuthForm
+	var authForm form.Auth
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -339,7 +339,7 @@ func (c *ApiController) Login() {
 		}
 
 		if msg != "" {
-			resp = &Response{Status: "error", Msg: msg}
+			resp = &util.Response{Status: "error", Msg: msg}
 		} else {
 			application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
 			if err != nil {
@@ -611,7 +611,7 @@ func (c *ApiController) Login() {
 				record2.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record2) })
 			} else if provider.Category == "SAML" {
-				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
+				resp = &util.Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // authForm.Method != "signup"
@@ -652,9 +652,9 @@ func (c *ApiController) Login() {
 			}
 
 			if isLinked {
-				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+				resp = &util.Response{Status: "ok", Msg: "", Data: isLinked}
 			} else {
-				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+				resp = &util.Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
 			}
 		}
 	} else if c.getMfaUserSession() != "" {
@@ -802,7 +802,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 func (c *ApiController) GetWebhookEventType() {
 	lock.Lock()
 	defer lock.Unlock()
-	resp := &Response{
+	resp := &util.Response{
 		Status: "ok",
 		Msg:    "",
 		Data:   wechatScanType,

@@ -24,7 +24,7 @@ import (
 )
 
 // ResponseJsonData ...
-func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
+func (c *ApiController) ResponseJsonData(resp *util.Response, data ...interface{}) {
 	switch len(data) {
 	case 2:
 		resp.Data2 = data[1]
@@ -38,13 +38,13 @@ func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
-	resp := &Response{Status: "ok"}
+	resp := &util.Response{Status: "ok"}
 	c.ResponseJsonData(resp, data...)
 }
 
 // ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
-	resp := &Response{Status: "error", Msg: error}
+	resp := &util.Response{Status: "error", Msg: error}
 	c.ResponseJsonData(resp, data...)
 }
 

@@ -188,7 +188,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 
-	var authForm form.AuthForm
+	var authForm form.Auth
 	authForm.Type = responseType
 	resp := c.HandleLoggedIn(application, user, &authForm)
 	c.Data["json"] = resp

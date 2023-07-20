@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -25,15 +26,8 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-type Response struct {
-	Status string      `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"`
-	Data2  interface{} `json:"data2"`
-}
-
 func responseError(ctx *context.Context, error string, data ...interface{}) {
-	resp := Response{Status: "error", Msg: error}
+	resp := util.Response{Status: "error", Msg: error}
 	switch len(data) {
 	case 2:
 		resp.Data2 = data[1]
@@ -57,8 +51,12 @@ func T(ctx *context.Context, error string) string {
 	return i18n.Translate(getAcceptLanguage(ctx), error)
 }
 
-func denyRequest(ctx *context.Context) {
-	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
+func DenyRequest(ctx *context.Context) {
+	resp := util.Response{Status: "error", Msg: T(ctx, "auth:Unauthorized operation"), Code: http.StatusForbidden}
+	err := ctx.Output.JSON(resp, true, false)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) string {

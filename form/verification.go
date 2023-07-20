@@ -20,7 +20,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 )
 
-type VerificationForm struct {
+type Verification struct {
 	Dest          string `form:"dest"`
 	Type          string `form:"type"`
 	CountryCode   string `form:"countryCode"`
@@ -38,7 +38,7 @@ const (
 	VerifyCaptcha  = 1
 )
 
-func (form *VerificationForm) CheckParameter(checkType int, lang string) string {
+func (form *Verification) CheckParameter(checkType int, lang string) string {
 	if checkType == SendVerifyCode {
 		if form.Type == "" {
 			return i18n.Translate(lang, "general:Missing parameter") + ": type."

@@ -32,7 +32,7 @@ const (
 	LastSignWrongTimeDuration = time.Minute * 15
 )
 
-func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
+func CheckUserSignup(application *Application, organization *Organization, form *form.Auth, lang string) string {
 	if organization == nil {
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}

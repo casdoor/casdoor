@@ -159,7 +159,5 @@ func (c *ApiController) IsSessionDuplicated() {
 		return
 	}
 
-	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
-
-	c.ServeJSON()
+	c.ResponseOk(isUserSessionDuplicated)
 }

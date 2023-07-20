@@ -210,21 +210,21 @@ func (c *ApiController) setExpireForSession() {
 	})
 }
 
-func wrapActionResponse(affected bool, e ...error) *Response {
+func wrapActionResponse(affected bool, e ...error) *util.Response {
 	if len(e) != 0 && e[0] != nil {
-		return &Response{Status: "error", Msg: e[0].Error()}
+		return &util.Response{Status: "error", Msg: e[0].Error()}
 	} else if affected {
-		return &Response{Status: "ok", Msg: "", Data: "Affected"}
+		return &util.Response{Status: "ok", Msg: "", Data: "Affected"}
 	} else {
-		return &Response{Status: "ok", Msg: "", Data: "Unaffected"}
+		return &util.Response{Status: "ok", Msg: "", Data: "Unaffected"}
 	}
 }
 
-func wrapErrorResponse(err error) *Response {
+func wrapErrorResponse(err error) *util.Response {
 	if err == nil {
-		return &Response{Status: "ok", Msg: ""}
+		return &util.Response{Status: "ok", Msg: ""}
 	} else {
-		return &Response{Status: "error", Msg: err.Error()}
+		return &util.Response{Status: "error", Msg: err.Error()}
 	}
 }
 

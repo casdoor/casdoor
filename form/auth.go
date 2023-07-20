@@ -14,7 +14,7 @@
 
 package form
 
-type AuthForm struct {
+type Auth struct {
 	Type string `json:"type"`
 
 	Organization string `json:"organization"`

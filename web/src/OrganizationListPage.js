@@ -314,8 +314,6 @@ class OrganizationListPage extends BaseListPage {
             this.setState({
               isAuthorized: false,
             });
-          } else {
-            Setting.showMessage("error", res.msg);
           }
         }
       });

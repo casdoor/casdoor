@@ -52,11 +52,6 @@ const checkResponse = (response) => {
         }
         return;
       }
-
-      if (Setting.isResponseDenied(res)) {
-        window.location.href = "/404";
-        return;
-      }
       Setting.showMessage("error", res.msg);
     }
   });

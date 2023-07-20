@@ -40,7 +40,7 @@ const (
 // @Tag Verification API
 // @router /send-verification-code [post]
 func (c *ApiController) SendVerificationCode() {
-	var vform form.VerificationForm
+	var vform form.Verification
 	err := c.ParseForm(&vform)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -205,7 +205,7 @@ func (c *ApiController) SendVerificationCode() {
 // @Tag Verification API
 // @router /verify-captcha [post]
 func (c *ApiController) VerifyCaptcha() {
-	var vform form.VerificationForm
+	var vform form.Verification
 	err := c.ParseForm(&vform)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -331,7 +331,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 // @Title VerifyCode
 // @router /api/verify-code [post]
 func (c *ApiController) VerifyCode() {
-	var authForm form.AuthForm
+	var authForm form.Auth
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())

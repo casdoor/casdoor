@@ -35,15 +35,6 @@ const (
 	ResponseTypeCas     = "cas"
 )
 
-type Response struct {
-	Status string      `json:"status"`
-	Msg    string      `json:"msg"`
-	Sub    string      `json:"sub"`
-	Name   string      `json:"name"`
-	Data   interface{} `json:"data"`
-	Data2  interface{} `json:"data2"`
-}
-
 type Captcha struct {
 	Type          string `json:"type"`
 	AppKey        string `json:"appKey"`
@@ -71,7 +62,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	var authForm form.AuthForm
+	var authForm form.Auth
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -387,7 +378,7 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
-	resp := Response{
+	resp := util.Response{
 		Status: "ok",
 		Sub:    user.Id,
 		Name:   user.Name,
