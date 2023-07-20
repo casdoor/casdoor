@@ -359,37 +359,6 @@ class LoginPage extends React.Component {
         .then((res) => {
           const callback = (res) => {
             const responseType = values["type"];
-            if (responseType !== "saml" && res.data2 === true) {
-              this.setState({getVerifyTotp: undefined});
-
-              this.setState({
-                values: values,
-                getChangePasswordForm: () => {
-                  return (
-                    <React.Fragment>
-                      <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
-                      <Row type="flex" justify="center" align="middle">
-                        <Col span={16} style={{width: 600}}>
-                          <ChangePasswordForm
-                            application={this.getApplicationObj()}
-                            userOwner={values.organization}
-                            userName={this.state.username}
-                            onSuccess={() => {
-                              this.setState({values: undefined});
-                            }}
-                            onFail={(res) => {
-                              Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-                            }}
-                          />
-                        </Col>
-                      </Row>
-                    </React.Fragment>);
-                },
-              });
-
-              return;
-            }
-
             if (responseType === "login") {
               if (res.msg === RequiredMfa) {
                 Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
@@ -434,10 +403,8 @@ class LoginPage extends React.Component {
                             application={this.getApplicationObj()}
                             userOwner={values.organization}
                             userName={this.state.username}
-                            onSuccess={(result) => {
-                              this.login({...this.state.values, username: this.state.username, password: result.newPassword});
-                              this.setState({values: undefined});
-                            }}
+                            onSuccess={() => callback(values)}
+                            // this.setState({values: undefined});
                             onFail={(res) => {
                               Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
                             }}
