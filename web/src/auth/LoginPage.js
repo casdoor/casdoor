@@ -390,7 +390,29 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            if (res.data === NextChangePasswordForm) {
+            if (res.data === NextMfa) {
+              this.setState({
+                getVerifyTotp: () => {
+                  return (
+                    <MfaAuthVerifyForm
+                      mfaProps={res.data2}
+                      formValues={values}
+                      oAuthParams={oAuthParams}
+                      application={this.getApplicationObj()}
+                      onFail={() => {
+                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                      }}
+                      onSuccess={(res) => {
+                        if (res.data === NextChangePasswordForm) {
+                          this.setState({values: values});
+                        } else {
+                          return callback(res);
+                        }
+                      }}
+                    />);
+                },
+              });
+            } else if (res.data === NextChangePasswordForm) {
               this.setState({
                 values: values,
                 getChangePasswordForm: () => {
@@ -404,7 +426,6 @@ class LoginPage extends React.Component {
                             userOwner={values.organization}
                             userName={this.state.username}
                             onSuccess={() => callback(values)}
-                            // this.setState({values: undefined});
                             onFail={(res) => {
                               Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
                             }}
@@ -412,24 +433,6 @@ class LoginPage extends React.Component {
                         </Col>
                       </Row>
                     </React.Fragment>);
-                },
-              });
-
-              return;
-            } else if (res.data === NextMfa) {
-              this.setState({
-                getVerifyTotp: () => {
-                  return (
-                    <MfaAuthVerifyForm
-                      mfaProps={res.data2}
-                      formValues={values}
-                      oAuthParams={oAuthParams}
-                      application={this.getApplicationObj()}
-                      onFail={() => {
-                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
-                      }}
-                      onSuccess={(res) => callback(res)}
-                    />);
                 },
               });
             } else {

@@ -706,6 +706,11 @@ func (c *ApiController) Login() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
+		
+		if user.PasswordChangeRequired {		
+			c.ResponseOk(object.NextChangePasswordForm)
+			return
+		}
 
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
