@@ -67,20 +67,24 @@ func (ldap *Ldap) GetLdapConn() (*LdapConn, error) {
 	)
 
 	if ldap.EnableSsl {
-		rootCACert, err := getCertByName(ldap.Cert)
-		if err != nil {
-			return nil, err
-		}
+		if ldap.Cert == "" {
+			conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), nil)
+		} else {
+			rootCACert, err := getCertByName(ldap.Cert)
+			if err != nil {
+				return nil, err
+			}
 
-		ca := x509.NewCertPool()
-		if ok := ca.AppendCertsFromPEM([]byte(rootCACert.Certificate)); !ok {
-			return nil, ErrX509CertsPEMParse
-		}
+			ca := x509.NewCertPool()
+			if ok := ca.AppendCertsFromPEM([]byte(rootCACert.Certificate)); !ok {
+				return nil, ErrX509CertsPEMParse
+			}
 
-		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tls.Config{
-			PreferServerCipherSuites: true,
-			RootCAs:                  ca,
-		})
+			conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tls.Config{
+				PreferServerCipherSuites: true,
+				RootCAs:                  ca,
+			})
+		}
 	} else {
 		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
 	}

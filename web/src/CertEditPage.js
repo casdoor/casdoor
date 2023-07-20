@@ -143,15 +143,15 @@ class CertEditPage extends React.Component {
             })}>
               {
                 [
-                  {id: Setting.CertScopeJWT, name: Setting.CertScopeJWT},
-                  {id: Setting.CertScopeCACert, name: Setting.CertScopeCACert},
+                  {id: "JWT", name: "JWT"},
+                  {id: "CA Certificate", name: "CA Certificate"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
         {
-          this.state.cert.scope !== Setting.CertScopeJWT ? null : (
+          this.state.cert.scope !== "JWT" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("provider:Type"), i18next.t("cert:Type - Tooltip"))} :
@@ -172,7 +172,7 @@ class CertEditPage extends React.Component {
           )
         }
         {
-          this.state.cert.scope !== Setting.CertScopeJWT ? null : (
+          this.state.cert.scope !== "JWT" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("cert:Crypto algorithm"), i18next.t("cert:Crypto algorithm - Tooltip"))} :
@@ -192,7 +192,7 @@ class CertEditPage extends React.Component {
           )
         }
         {
-          this.state.cert.scope !== Setting.CertScopeJWT ? null : (
+          this.state.cert.scope !== "JWT" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
@@ -206,7 +206,7 @@ class CertEditPage extends React.Component {
           )
         }
         {
-          this.state.cert.scope !== Setting.CertScopeJWT ? null : (
+          this.state.cert.scope !== "JWT" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("cert:Expire in years"), i18next.t("cert:Expire in years - Tooltip"))} :
@@ -220,7 +220,7 @@ class CertEditPage extends React.Component {
           )
         }
         {
-          this.state.cert.scope !== Setting.CertScopeJWT ? null : (
+          this.state.cert.scope !== "JWT" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
@@ -271,7 +271,7 @@ class CertEditPage extends React.Component {
           )
         }
         {
-          this.state.cert.scope !== Setting.CertScopeCACert ? null : (
+          this.state.cert.scope !== "CA Certificate" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("cert:CA Certificate"), i18next.t("cert:CA Certificate - Tooltip"))} :

@@ -35,6 +35,7 @@ type Ldap struct {
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
+
 	Cert string `xorm:"varchar(100)" json:"cert"`
 }
 

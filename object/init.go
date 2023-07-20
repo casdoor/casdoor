@@ -225,7 +225,7 @@ func initBuiltInCert() {
 		Name:            "cert-built-in",
 		CreatedTime:     util.GetCurrentTime(),
 		DisplayName:     "Built-in Cert",
-		Scope:           scopeCertJWT,
+		Scope:           "JWT",
 		Type:            "x509",
 		CryptoAlgorithm: "RS256",
 		BitSize:         4096,

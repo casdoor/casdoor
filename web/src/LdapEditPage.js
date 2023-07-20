@@ -64,7 +64,7 @@ class LdapEditPage extends React.Component {
   }
 
   getCerts(owner) {
-    CertBackend.getCerts(owner, -1, -1, "scope", Setting.CertScopeCACert, "", "")
+    CertBackend.getCerts(owner, -1, -1, "scope", "CA Certificate", "", "")
       .then((res) => {
         this.setState({
           certs: (res.status === "ok") ? res.data : [],
