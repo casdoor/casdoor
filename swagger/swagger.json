@@ -188,7 +188,27 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.AddLdap"
+                "description": "add ldap",
+                "operationId": "ApiController.AddLdap",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ldap",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ldap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/add-message": {
@@ -1086,7 +1106,27 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.DeleteLdap"
+                "description": "delete ldap",
+                "operationId": "ApiController.DeleteLdap",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ldap",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ldap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/delete-message": {
@@ -2098,7 +2138,25 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.GetLdap"
+                "description": "get ldap",
+                "operationId": "ApiController.GetLdap",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Ldap"
+                        }
+                    }
+                }
             }
         },
         "/api/get-ldap-users": {
@@ -2106,7 +2164,16 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.GetLdapser"
+                "description": "get ldap users",
+                "operationId": "ApiController.GetLdapser",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/LdapResp"
+                        }
+                    }
+                }
             }
         },
         "/api/get-ldaps": {
@@ -2114,7 +2181,27 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.GetLdaps"
+                "description": "get ldaps",
+                "operationId": "ApiController.GetLdaps",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "owner",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Ldap"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/get-message": {
@@ -4139,7 +4226,25 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.SyncLdapUsers"
+                "description": "sync ldap users",
+                "operationId": "ApiController.SyncLdapUsers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/LdapSyncResp"
+                        }
+                    }
+                }
             }
         },
         "/api/unlink": {
@@ -4329,7 +4434,27 @@
                 "tags": [
                     "Account API"
                 ],
-                "operationId": "ApiController.UpdateLdap"
+                "description": "update ldap",
+                "operationId": "ApiController.UpdateLdap",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the ldap",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Ldap"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/update-message": {
@@ -5152,6 +5277,14 @@
             "title": "LaravelResponse",
             "type": "object"
         },
+        "LdapResp": {
+            "title": "LdapResp",
+            "type": "object"
+        },
+        "LdapSyncResp": {
+            "title": "LdapSyncResp",
+            "type": "object"
+        },
         "Response": {
             "title": "Response",
             "type": "object"
@@ -5674,6 +5807,59 @@
                     "type": "string"
                 },
                 "token_type": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Ldap": {
+            "title": "Ldap",
+            "type": "object",
+            "properties": {
+                "autoSync": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "baseDn": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "enableSsl": {
+                    "type": "boolean"
+                },
+                "filter": {
+                    "type": "string"
+                },
+                "filterFields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "host": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastSync": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "serverName": {
                     "type": "string"
                 },
                 "username": {
