@@ -802,14 +802,8 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 func (c *ApiController) GetWebhookEventType() {
 	lock.Lock()
 	defer lock.Unlock()
-	resp := &util.Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   wechatScanType,
-	}
-	c.Data["json"] = resp
+	c.ResponseOk(wechatScanType)
 	wechatScanType = ""
-	c.ServeJSON()
 }
 
 // GetCaptchaStatus
