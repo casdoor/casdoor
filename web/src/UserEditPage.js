@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Row, Select, Space, Switch, Tag} from "antd";
 import {withRouter} from "react-router-dom";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -119,7 +119,7 @@ class UserEditPage extends React.Component {
       .then((res) => {
         this.setState({
           application: res.data,
-          isGroupsVisible: res.data.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          isGroupsVisible: res.data?.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }
@@ -1081,17 +1081,6 @@ class UserEditPage extends React.Component {
   render() {
     return (
       <div>
-        {
-          this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
-            this.state.user !== null ? this.renderUser() :
-              <Result
-                status="404"
-                title="404 NOT FOUND"
-                subTitle={i18next.t("general:Sorry, the user you visited does not exist or you are not authorized to access this user.")}
-                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
-              />
-          )
-        }
         {
           this.state.user === null ? null :
             <div style={{marginTop: "20px", marginLeft: "40px"}}>

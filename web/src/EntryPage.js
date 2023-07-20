@@ -17,6 +17,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import {Spin} from "antd";
 import i18next from "i18next";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import NotFindResult from "./common/result/NotFindResult";
 import PricingPage from "./pricing/PricingPage";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
@@ -108,6 +109,7 @@ class EntryPage extends React.Component {
           <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
           <Route exact path="/select-plan/:owner/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
+          <Route path="" render={() => <NotFindResult onUpdateApplication={onUpdateApplication} />} />
         </Switch>
       </div>
     );
