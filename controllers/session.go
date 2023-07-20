@@ -45,8 +45,7 @@ func (c *ApiController) GetSessions() {
 			return
 		}
 
-		c.Data["json"] = sessions
-		c.ServeJSON()
+		c.ResponseOk(sessions)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSessionCount(owner, field, value)
@@ -81,8 +80,7 @@ func (c *ApiController) GetSingleSession() {
 		return
 	}
 
-	c.Data["json"] = session
-	c.ServeJSON()
+	c.ResponseOk(session)
 }
 
 // UpdateSession

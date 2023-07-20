@@ -45,8 +45,7 @@ func (c *ApiController) GetPermissions() {
 			return
 		}
 
-		c.Data["json"] = permissions
-		c.ServeJSON()
+		c.ResponseOk(permissions)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPermissionCount(owner, field, value)
@@ -85,7 +84,6 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 	}
 
 	c.ResponseOk(permissions, len(permissions))
-	return
 }
 
 // GetPermissionsByRole
@@ -104,7 +102,6 @@ func (c *ApiController) GetPermissionsByRole() {
 	}
 
 	c.ResponseOk(permissions, len(permissions))
-	return
 }
 
 // GetPermission
@@ -123,8 +120,7 @@ func (c *ApiController) GetPermission() {
 		return
 	}
 
-	c.Data["json"] = permission
-	c.ServeJSON()
+	c.ResponseOk(permission)
 }
 
 // UpdatePermission

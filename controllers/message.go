@@ -57,8 +57,7 @@ func (c *ApiController) GetMessages() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedMessages(messages)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedMessages(messages))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetMessageCount(owner, organization, field, value)

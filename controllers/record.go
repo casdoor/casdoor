@@ -51,8 +51,7 @@ func (c *ApiController) GetRecords() {
 			return
 		}
 
-		c.Data["json"] = records
-		c.ServeJSON()
+		c.ResponseOk(records)
 	} else {
 		limit := util.ParseInt(limit)
 		if c.IsGlobalAdmin() && organizationName != "" {
@@ -99,8 +98,7 @@ func (c *ApiController) GetRecordsByFilter() {
 		return
 	}
 
-	c.Data["json"] = records
-	c.ServeJSON()
+	c.ResponseOk(records)
 }
 
 // AddRecord

@@ -280,13 +280,13 @@ func GetApplication(id string) (*Application, error) {
 	return getApplication(owner, name)
 }
 
-func GetMaskedApplication(application *Application, userId string) *Application {
-	if isUserIdGlobalAdmin(userId) {
-		return application
+func GetMaskedApplication(application *Application, err ...error) (*Application, error) {
+	if len(err) > 0 && err[0] != nil {
+		return nil, err[0]
 	}
 
 	if application == nil {
-		return nil
+		return nil, nil
 	}
 
 	if application.ClientSecret != "" {
@@ -304,18 +304,21 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 			application.OrganizationObj.PasswordSalt = "***"
 		}
 	}
-	return application
+	return application, nil
 }
 
-func GetMaskedApplications(applications []*Application, userId string) []*Application {
-	if isUserIdGlobalAdmin(userId) {
-		return applications
+func GetMaskedApplications(applications []*Application, err ...error) ([]*Application, error) {
+	if len(err) > 0 && err[0] != nil {
+		return nil, err[0]
 	}
-
 	for _, application := range applications {
-		application = GetMaskedApplication(application, userId)
+		var err error
+		application, err = GetMaskedApplication(application)
+		if err != nil {
+			return nil, err
+		}
 	}
-	return applications
+	return applications, nil
 }
 
 func UpdateApplication(id string, application *Application) (bool, error) {

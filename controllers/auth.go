@@ -194,7 +194,7 @@ func (c *ApiController) GetApplicationLogin() {
 		return
 	}
 
-	application = object.GetMaskedApplication(application, "")
+	application, _ = object.GetMaskedApplication(application)
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {

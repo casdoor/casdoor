@@ -46,8 +46,7 @@ func (c *ApiController) GetWebhooks() {
 			return
 		}
 
-		c.Data["json"] = webhooks
-		c.ServeJSON()
+		c.ResponseOk(webhooks)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetWebhookCount(owner, organization, field, value)
@@ -84,8 +83,7 @@ func (c *ApiController) GetWebhook() {
 		return
 	}
 
-	c.Data["json"] = webhook
-	c.ServeJSON()
+	c.ResponseOk(webhook)
 }
 
 // UpdateWebhook

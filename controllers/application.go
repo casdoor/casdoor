@@ -31,7 +31,6 @@ import (
 // @Success 200 {array} object.Application The Response object
 // @router /get-applications [get]
 func (c *ApiController) GetApplications() {
-	userId := c.GetSessionUsername()
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
@@ -40,22 +39,20 @@ func (c *ApiController) GetApplications() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 	organization := c.Input().Get("organization")
-	var err error
+
 	if limit == "" || page == "" {
+		var err error
 		var applications []*object.Application
 		if organization == "" {
 			applications, err = object.GetApplications(owner)
 		} else {
 			applications, err = object.GetOrganizationApplications(owner, organization)
 		}
-
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedApplications(applications))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetApplicationCount(owner, field, value)
@@ -71,7 +68,7 @@ func (c *ApiController) GetApplications() {
 			return
 		}
 
-		applications := object.GetMaskedApplications(app, userId)
+		applications, _ := object.GetMaskedApplications(app)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
@@ -84,16 +81,19 @@ func (c *ApiController) GetApplications() {
 // @Success 200 {object} object.Application The Response object
 // @router /get-application [get]
 func (c *ApiController) GetApplication() {
-	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+
 	app, err := object.GetApplication(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	if c.IsAdmin() {
+		c.ResponseOk(app)
+	} else {
+		c.ResponseOk(object.GetMaskedApplication(app))
+	}
 }
 
 // GetUserApplication
@@ -104,27 +104,29 @@ func (c *ApiController) GetApplication() {
 // @Success 200 {object} object.Application The Response object
 // @router /get-user-application [get]
 func (c *ApiController) GetUserApplication() {
-	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+
 	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
 		return
 	}
 
-	app, err := object.GetApplicationByUser(user)
+	application, err := object.GetApplicationByUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	if c.IsAdmin() {
+		c.ResponseOk(application)
+	} else {
+		c.ResponseOk(object.GetMaskedApplication(application))
+	}
 }
 
 // GetOrganizationApplications
@@ -135,7 +137,6 @@ func (c *ApiController) GetUserApplication() {
 // @Success 200 {array} object.Application The Response object
 // @router /get-organization-applications [get]
 func (c *ApiController) GetOrganizationApplications() {
-	userId := c.GetSessionUsername()
 	organization := c.Input().Get("organization")
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
@@ -157,8 +158,7 @@ func (c *ApiController) GetOrganizationApplications() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedApplications(applications))
 	} else {
 		limit := util.ParseInt(limit)
 
@@ -175,7 +175,7 @@ func (c *ApiController) GetOrganizationApplications() {
 			return
 		}
 
-		applications := object.GetMaskedApplications(app, userId)
+		applications, _ := object.GetMaskedApplications(app)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }

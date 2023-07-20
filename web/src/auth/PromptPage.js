@@ -80,7 +80,7 @@ class PromptPage extends React.Component {
           return;
         }
 
-        this.onUpdateApplication(res);
+        this.onUpdateApplication(res.data);
         this.setState({
           application: res,
         });
