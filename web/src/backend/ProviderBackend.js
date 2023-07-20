@@ -21,7 +21,7 @@ export function getProviders(owner, page = "", pageSize = "", field = "", value 
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getGlobalProviders(page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
@@ -31,7 +31,7 @@ export function getGlobalProviders(page = "", pageSize = "", field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getProvider(owner, name) {
@@ -41,7 +41,7 @@ export function getProvider(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateProvider(owner, name, provider) {
@@ -53,7 +53,7 @@ export function updateProvider(owner, name, provider) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addProvider(provider) {
@@ -65,7 +65,7 @@ export function addProvider(provider) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteProvider(provider) {
@@ -77,5 +77,5 @@ export function deleteProvider(provider) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

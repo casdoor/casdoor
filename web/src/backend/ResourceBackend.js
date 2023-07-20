@@ -21,7 +21,7 @@ export function getResources(owner, user, page = "", pageSize = "", field = "", 
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getResource(owner, name) {
@@ -31,7 +31,7 @@ export function getResource(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateResource(owner, name, resource) {
@@ -43,7 +43,7 @@ export function updateResource(owner, name, resource) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addResource(resource) {
@@ -55,7 +55,7 @@ export function addResource(resource) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteResource(resource, provider = "") {
@@ -67,7 +67,7 @@ export function deleteResource(resource, provider = "") {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function uploadResource(owner, user, tag, parent, fullFilePath, file, provider = "") {
@@ -81,5 +81,5 @@ export function uploadResource(owner, user, tag, parent, fullFilePath, file, pro
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

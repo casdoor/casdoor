@@ -21,7 +21,7 @@ export function getAdapters(owner, page = "", pageSize = "", field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getAdapter(owner, name) {
@@ -31,7 +31,7 @@ export function getAdapter(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateAdapter(owner, name, Adapter) {
@@ -43,7 +43,7 @@ export function updateAdapter(owner, name, Adapter) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addAdapter(Adapter) {
@@ -55,7 +55,7 @@ export function addAdapter(Adapter) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteAdapter(Adapter) {
@@ -67,7 +67,7 @@ export function deleteAdapter(Adapter) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function UpdatePolicy(owner, name, policy) {
@@ -78,7 +78,7 @@ export function UpdatePolicy(owner, name, policy) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function AddPolicy(owner, name, policy) {
@@ -89,7 +89,7 @@ export function AddPolicy(owner, name, policy) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function RemovePolicy(owner, name, policy) {
@@ -100,7 +100,7 @@ export function RemovePolicy(owner, name, policy) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function syncPolicies(owner, name) {
@@ -110,5 +110,5 @@ export function syncPolicies(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

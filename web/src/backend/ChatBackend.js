@@ -21,7 +21,7 @@ export function getChats(owner, page = "", pageSize = "", field = "", value = ""
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getChat(owner, name) {
@@ -31,7 +31,7 @@ export function getChat(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateChat(owner, name, chat) {
@@ -43,7 +43,7 @@ export function updateChat(owner, name, chat) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addChat(chat) {
@@ -55,7 +55,7 @@ export function addChat(chat) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteChat(chat) {
@@ -67,5 +67,5 @@ export function deleteChat(chat) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

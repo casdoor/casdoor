@@ -21,7 +21,7 @@ export function getGroups(owner = "", withTree = false, page = "", pageSize = ""
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getGroup(owner, name) {
@@ -31,7 +31,7 @@ export function getGroup(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateGroup(owner, name, group) {
@@ -43,7 +43,7 @@ export function updateGroup(owner, name, group) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addGroup(group) {
@@ -55,7 +55,7 @@ export function addGroup(group) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteGroup(group) {
@@ -67,5 +67,5 @@ export function deleteGroup(group) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

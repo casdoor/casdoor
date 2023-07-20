@@ -21,7 +21,7 @@ export function getOrganizations(owner, organizationName = "", page = "", pageSi
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getOrganization(owner, name) {
@@ -31,7 +31,7 @@ export function getOrganization(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateOrganization(owner, name, organization) {
@@ -43,7 +43,7 @@ export function updateOrganization(owner, name, organization) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addOrganization(organization) {
@@ -55,7 +55,7 @@ export function addOrganization(organization) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteOrganization(organization) {
@@ -67,7 +67,7 @@ export function deleteOrganization(organization) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getDefaultApplication(owner, name) {
@@ -77,7 +77,7 @@ export function getDefaultApplication(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getOrganizationNames(owner) {
@@ -87,5 +87,5 @@ export function getOrganizationNames(owner) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

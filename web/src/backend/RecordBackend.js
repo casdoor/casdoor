@@ -21,5 +21,5 @@ export function getRecords(organizationName, page, pageSize, field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

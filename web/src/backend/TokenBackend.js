@@ -21,7 +21,7 @@ export function getTokens(owner, organization = "", page = "", pageSize = "", fi
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getToken(owner, name) {
@@ -31,7 +31,7 @@ export function getToken(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateToken(owner, name, token) {
@@ -43,7 +43,7 @@ export function updateToken(owner, name, token) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addToken(token) {
@@ -55,7 +55,7 @@ export function addToken(token) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteToken(token) {
@@ -67,5 +67,5 @@ export function deleteToken(token) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

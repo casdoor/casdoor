@@ -21,7 +21,7 @@ export function getSystemInfo() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getVersionInfo() {
@@ -31,7 +31,7 @@ export function getVersionInfo() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPrometheusInfo() {
@@ -41,5 +41,5 @@ export function getPrometheusInfo() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

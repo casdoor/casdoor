@@ -21,7 +21,7 @@ export function getMessages(owner, organization, page = "", pageSize = "", field
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getChatMessages(chat) {
@@ -31,7 +31,7 @@ export function getChatMessages(chat) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getMessage(owner, name) {
@@ -41,7 +41,7 @@ export function getMessage(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getMessageAnswer(owner, name, onMessage, onError) {
@@ -70,7 +70,7 @@ export function updateMessage(owner, name, message) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addMessage(message) {
@@ -82,7 +82,7 @@ export function addMessage(message) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteMessage(message) {
@@ -94,5 +94,5 @@ export function deleteMessage(message) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

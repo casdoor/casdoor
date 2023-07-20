@@ -21,7 +21,7 @@ export function getPayments(owner, organization, page = "", pageSize = "", field
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPayment(owner, name) {
@@ -31,7 +31,7 @@ export function getPayment(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updatePayment(owner, name, payment) {
@@ -43,7 +43,7 @@ export function updatePayment(owner, name, payment) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addPayment(payment) {
@@ -55,7 +55,7 @@ export function addPayment(payment) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deletePayment(payment) {
@@ -67,7 +67,7 @@ export function deletePayment(payment) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function invoicePayment(owner, name) {
@@ -77,5 +77,5 @@ export function invoicePayment(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

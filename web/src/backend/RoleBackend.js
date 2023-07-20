@@ -21,7 +21,7 @@ export function getRoles(owner, page = "", pageSize = "", field = "", value = ""
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getRole(owner, name) {
@@ -31,7 +31,7 @@ export function getRole(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateRole(owner, name, role) {
@@ -43,7 +43,7 @@ export function updateRole(owner, name, role) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addRole(role) {
@@ -55,7 +55,7 @@ export function addRole(role) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteRole(role) {
@@ -67,5 +67,5 @@ export function deleteRole(role) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

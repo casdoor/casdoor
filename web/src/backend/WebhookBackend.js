@@ -21,7 +21,7 @@ export function getWebhooks(owner, organization, page = "", pageSize = "", field
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getWebhook(owner, name) {
@@ -31,7 +31,7 @@ export function getWebhook(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateWebhook(owner, name, webhook) {
@@ -43,7 +43,7 @@ export function updateWebhook(owner, name, webhook) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addWebhook(webhook) {
@@ -55,7 +55,7 @@ export function addWebhook(webhook) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteWebhook(webhook) {
@@ -67,5 +67,5 @@ export function deleteWebhook(webhook) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

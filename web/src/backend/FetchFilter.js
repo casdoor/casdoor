@@ -21,8 +21,8 @@ import * as Setting from "../Setting";
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
 
-const demoModeFilter = (response) => {
-  if (!Conf.IsDemoMode) {
+const demoModeFilter = (response, url, option = {}) => {
+  if (url.startsWith("/api/get-organizations")) {
     return;
   }
 
@@ -43,12 +43,16 @@ const demoModeFilter = (response) => {
   });
 };
 
-const GetResponseFilter = (response) => {
+const GetResponseFilter = (response, url, option = {}) => {
+  if (!url.startsWith("/api/get-")) {
+    return;
+  }
   response.json().then(res => {
     if (res.status === "ok") {
       if (res.data === null) {
-        window.location.href = "/404";
-        return;
+        setTimeout(() => {
+          window.location.href = "/404";
+        }, 1000);
       }
     }
     if (res.status === "error") {
@@ -60,16 +64,25 @@ const GetResponseFilter = (response) => {
   });
 };
 
+const requestFilters = [];
+const responseFilters = [GetResponseFilter];
+if (Conf.IsDemoMode) {
+  responseFilters.push(demoModeFilter);
+}
+
 window.fetch = async(url, option = {}) => {
+  requestFilters.forEach(filter => {
+    option = filter(url, option);
+  });
+
   return new Promise((resolve, reject) => {
     originalFetch(url, option).then(res => {
-      if (!url.startsWith("/api/get-organizations")) {
-        demoModeFilter(res.clone());
-      }
-      if (url.startsWith("/api/get-")) {
-        GetResponseFilter(res.clone());
-      }
-      resolve(res);
+      responseFilters.forEach(filter => {
+        filter(res.clone(), url, option);
+      });
+      resolve(res = res.json());
+    }).catch(error => {
+      reject(error);
     });
   });
 };

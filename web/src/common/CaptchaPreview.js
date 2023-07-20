@@ -15,6 +15,7 @@
 import {Button} from "antd";
 import React from "react";
 import i18next from "i18next";
+import * as Setting from "../Setting";
 import {CaptchaModal} from "./modal/CaptchaModal";
 import * as UserBackend from "../backend/UserBackend";
 
@@ -50,8 +51,17 @@ export const CaptchaPreview = (props) => {
   };
 
   const onOk = (captchaType, captchaToken, clientSecret) => {
-    UserBackend.verifyCaptcha(captchaType, captchaToken, clientSecret).then(() => {
-      setVisible(false);
+    UserBackend.verifyCaptcha(captchaType, captchaToken, clientSecret).then((res) => {
+      if (res.status === "ok") {
+        if (res.data) {
+          setVisible(false);
+          Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+        } else {
+          Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+        }
+      } else {
+        Setting.showMessage("error", i18next.t("user:" + res.msg));
+      }
     });
   };
 

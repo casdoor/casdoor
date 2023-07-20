@@ -21,7 +21,7 @@ export function getLdaps(owner) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getLdap(owner, name) {
@@ -31,7 +31,7 @@ export function getLdap(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addLdap(body) {
@@ -42,7 +42,7 @@ export function addLdap(body) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteLdap(body) {
@@ -53,7 +53,7 @@ export function deleteLdap(body) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateLdap(body) {
@@ -64,7 +64,7 @@ export function updateLdap(body) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getLdapUser(owner, name) {
@@ -74,7 +74,7 @@ export function getLdapUser(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function syncUsers(owner, ldapId, body) {
@@ -85,5 +85,5 @@ export function syncUsers(owner, ldapId, body) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

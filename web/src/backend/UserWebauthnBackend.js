@@ -51,8 +51,8 @@ export function registerWebauthnCredential() {
             clientDataJSON: webAuthnBufferEncode(clientDataJSON),
           },
         }),
-      })
-        .then(res => res.json());
+      });
+
     });
 }
 
@@ -68,7 +68,7 @@ export function deleteUserWebAuthnCredential(credentialID) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 // Base64URL to ArrayBuffer

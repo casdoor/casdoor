@@ -21,7 +21,7 @@ export function getSubscriptions(owner, page = "", pageSize = "", field = "", va
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getSubscription(owner, name) {
@@ -31,7 +31,7 @@ export function getSubscription(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateSubscription(owner, name, subscription) {
@@ -43,7 +43,7 @@ export function updateSubscription(owner, name, subscription) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addSubscription(subscription) {
@@ -55,7 +55,7 @@ export function addSubscription(subscription) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteSubscription(subscription) {
@@ -67,5 +67,5 @@ export function deleteSubscription(subscription) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

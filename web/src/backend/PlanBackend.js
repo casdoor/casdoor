@@ -21,7 +21,7 @@ export function getPlans(owner, page = "", pageSize = "", field = "", value = ""
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPlanById(id, includeOption = false) {
@@ -31,7 +31,7 @@ export function getPlanById(id, includeOption = false) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPlan(owner, name) {
@@ -41,7 +41,7 @@ export function getPlan(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updatePlan(owner, name, plan) {
@@ -53,7 +53,7 @@ export function updatePlan(owner, name, plan) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addPlan(plan) {
@@ -65,7 +65,7 @@ export function addPlan(plan) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deletePlan(plan) {
@@ -77,5 +77,5 @@ export function deletePlan(plan) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

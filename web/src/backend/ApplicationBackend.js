@@ -21,7 +21,7 @@ export function getApplications(owner, page = "", pageSize = "", field = "", val
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getApplicationsByOrganization(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
@@ -31,7 +31,7 @@ export function getApplicationsByOrganization(owner, organization, page = "", pa
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getApplication(owner, name) {
@@ -41,7 +41,7 @@ export function getApplication(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getUserApplication(owner, name) {
@@ -51,7 +51,7 @@ export function getUserApplication(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateApplication(owner, name, application) {
@@ -62,7 +62,7 @@ export function updateApplication(owner, name, application) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addApplication(application) {
@@ -74,7 +74,7 @@ export function addApplication(application) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteApplication(application) {
@@ -86,7 +86,7 @@ export function deleteApplication(application) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getSamlMetadata(owner, name) {

@@ -56,5 +56,5 @@ function testEmailProvider(provider, email = "") {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(emailForm),
-  }).then(res => res.json());
+  });
 }

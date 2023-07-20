@@ -21,7 +21,7 @@ export function getProducts(owner, page = "", pageSize = "", field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getProduct(owner, name) {
@@ -31,7 +31,7 @@ export function getProduct(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateProduct(owner, name, product) {
@@ -43,7 +43,7 @@ export function updateProduct(owner, name, product) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addProduct(product) {
@@ -55,7 +55,7 @@ export function addProduct(product) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteProduct(product) {
@@ -67,7 +67,7 @@ export function deleteProduct(product) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function buyProduct(owner, name, providerId) {
@@ -77,5 +77,5 @@ export function buyProduct(owner, name, providerId) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

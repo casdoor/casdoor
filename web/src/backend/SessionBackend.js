@@ -21,7 +21,7 @@ export function getSessions(owner, page = "", pageSize = "", field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteSession(session) {
@@ -32,5 +32,5 @@ export function deleteSession(session) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

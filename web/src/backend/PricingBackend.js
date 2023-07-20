@@ -21,7 +21,7 @@ export function getPricings(owner, page = "", pageSize = "", field = "", value =
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPricing(owner, name) {
@@ -31,7 +31,7 @@ export function getPricing(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updatePricing(owner, name, pricing) {
@@ -43,7 +43,7 @@ export function updatePricing(owner, name, pricing) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addPricing(pricing) {
@@ -55,7 +55,7 @@ export function addPricing(pricing) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deletePricing(pricing) {
@@ -67,5 +67,5 @@ export function deletePricing(pricing) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

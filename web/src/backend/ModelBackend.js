@@ -21,7 +21,7 @@ export function getModels(owner, page = "", pageSize = "", field = "", value = "
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getModel(owner, name) {
@@ -31,7 +31,7 @@ export function getModel(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateModel(owner, name, model) {
@@ -43,7 +43,7 @@ export function updateModel(owner, name, model) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addModel(model) {
@@ -55,7 +55,7 @@ export function addModel(model) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteModel(model) {
@@ -67,5 +67,5 @@ export function deleteModel(model) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

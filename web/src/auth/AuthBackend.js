@@ -22,7 +22,7 @@ export function getAccount(query = "") {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function signup(values) {
@@ -33,7 +33,7 @@ export function signup(values) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getEmailAndPhone(organization, username) {
@@ -63,7 +63,7 @@ export function getApplicationLogin(oAuthParams) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function login(values, oAuthParams) {
@@ -74,7 +74,7 @@ export function login(values, oAuthParams) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function loginCas(values, params) {
@@ -85,7 +85,7 @@ export function loginCas(values, params) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function logout() {
@@ -95,7 +95,7 @@ export function logout() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function unlink(values) {
@@ -106,7 +106,7 @@ export function unlink(values) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getSamlLogin(providerId, relayState) {
@@ -116,7 +116,7 @@ export function getSamlLogin(providerId, relayState) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function loginWithSaml(values, param) {
@@ -127,7 +127,7 @@ export function loginWithSaml(values, param) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getWechatMessageEvent() {
@@ -137,7 +137,7 @@ export function getWechatMessageEvent() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getCaptchaStatus(values) {
@@ -147,5 +147,5 @@ export function getCaptchaStatus(values) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

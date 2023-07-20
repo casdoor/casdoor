@@ -21,7 +21,7 @@ export function getSyncers(owner, organization, page = "", pageSize = "", field 
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getSyncer(owner, name) {
@@ -31,7 +31,7 @@ export function getSyncer(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateSyncer(owner, name, syncer) {
@@ -43,7 +43,7 @@ export function updateSyncer(owner, name, syncer) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addSyncer(syncer) {
@@ -55,7 +55,7 @@ export function addSyncer(syncer) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteSyncer(syncer) {
@@ -67,7 +67,7 @@ export function deleteSyncer(syncer) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function runSyncer(owner, name) {
@@ -77,5 +77,5 @@ export function runSyncer(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

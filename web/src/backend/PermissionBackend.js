@@ -21,7 +21,7 @@ export function getPermissions(owner, page = "", pageSize = "", field = "", valu
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPermissionsBySubmitter() {
@@ -31,7 +31,7 @@ export function getPermissionsBySubmitter() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getPermission(owner, name) {
@@ -41,7 +41,7 @@ export function getPermission(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updatePermission(owner, name, permission) {
@@ -53,7 +53,7 @@ export function updatePermission(owner, name, permission) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addPermission(permission) {
@@ -65,7 +65,7 @@ export function addPermission(permission) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deletePermission(permission) {
@@ -77,5 +77,5 @@ export function deletePermission(permission) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

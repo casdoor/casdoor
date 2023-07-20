@@ -21,7 +21,7 @@ export function getCerts(owner, page = "", pageSize = "", field = "", value = ""
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getGlobleCerts(page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
@@ -31,7 +31,7 @@ export function getGlobleCerts(page = "", pageSize = "", field = "", value = "",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function getCert(owner, name) {
@@ -41,7 +41,7 @@ export function getCert(owner, name) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function updateCert(owner, name, cert) {
@@ -53,7 +53,7 @@ export function updateCert(owner, name, cert) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function addCert(cert) {
@@ -65,7 +65,7 @@ export function addCert(cert) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }
 
 export function deleteCert(cert) {
@@ -77,5 +77,5 @@ export function deleteCert(cert) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  });
 }

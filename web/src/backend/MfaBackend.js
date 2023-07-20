@@ -23,7 +23,7 @@ export function MfaSetupInitiate(values) {
     method: "POST",
     credentials: "include",
     body: formData,
-  }).then(res => res.json());
+  });
 }
 
 export function MfaSetupVerify(values) {
@@ -36,7 +36,7 @@ export function MfaSetupVerify(values) {
     method: "POST",
     credentials: "include",
     body: formData,
-  }).then(res => res.json());
+  });
 }
 
 export function MfaSetupEnable(values) {
@@ -48,7 +48,7 @@ export function MfaSetupEnable(values) {
     method: "POST",
     credentials: "include",
     body: formData,
-  }).then(res => res.json());
+  });
 }
 
 export function DeleteMfa(values) {
@@ -59,7 +59,7 @@ export function DeleteMfa(values) {
     method: "POST",
     credentials: "include",
     body: formData,
-  }).then(res => res.json());
+  });
 }
 
 export function SetPreferredMfa(values) {
