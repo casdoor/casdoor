@@ -21,13 +21,13 @@ import * as Setting from "../Setting";
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
 
-const demoModeFilter = (res) => {
+const demoModeFilter = (response) => {
   if (!Conf.IsDemoMode) {
     return;
   }
 
-  res.json().then(data => {
-    if (Setting.isResponseDenied(data)) {
+  response.json().then(res => {
+    if (Setting.isResponseDenied(res)) {
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
@@ -43,19 +43,21 @@ const demoModeFilter = (res) => {
   });
 };
 
-const GetResponseFilter = (res, url) => {
-  if (url.startsWith("/api/get-") && res.status === "ok") {
-    if (res.data === null) {
-      window.location.href = "/404";
-      return;
+const GetResponseFilter = (response) => {
+  response.json().then(res => {
+    if (res.status === "ok") {
+      if (res.data === null) {
+        window.location.href = "/404";
+        return;
+      }
     }
-  }
-  if (res.status === "error") {
-    if (res.code === 403) {
-      return;
+    if (res.status === "error") {
+      if (res.code === 403) {
+        return;
+      }
+      Setting.showMessage("error", res.msg);
     }
-    Setting.showMessage("error", res.msg);
-  }
+  });
 };
 
 window.fetch = async(url, option = {}) => {
@@ -65,7 +67,7 @@ window.fetch = async(url, option = {}) => {
         demoModeFilter(res.clone());
       }
       if (url.startsWith("/api/get-")) {
-        GetResponseFilter(res.clone(), url);
+        GetResponseFilter(res.clone());
       }
       resolve(res);
     });
