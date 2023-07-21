@@ -90,8 +90,7 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 
 		user.UpdateUserPassword(organization)
 		bean[field] = user.Password
-		bean["password_type"] = user.PasswordType
-		bean["password_change_required"] = false
+		bean[strings.ToLower(field)] = user.Password
 	} else {
 		bean[strings.ToLower(field)] = value
 	}
