@@ -183,13 +183,11 @@ func (c *ApiController) DeleteOrganization() {
 func (c *ApiController) GetDefaultApplication() {
 	id := c.Input().Get("id")
 
-	application, err := object.GetDefaultApplication(id)
+	maskedApplication, err := object.GetMaskedApplication(object.GetDefaultApplication(id))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	maskedApplication, _ := object.GetMaskedApplication(application)
 	c.ResponseOk(maskedApplication)
 }
 
