@@ -428,7 +428,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			}
-		} else if provider.Category == "OAuth" {
+		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
 			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
 			idProvider := idp.GetIdProvider(idpInfo, authForm.RedirectUri)
@@ -471,7 +471,7 @@ func (c *ApiController) Login() {
 					c.ResponseError(err.Error())
 					return
 				}
-			} else if provider.Category == "OAuth" {
+			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				user, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -492,7 +492,7 @@ func (c *ApiController) Login() {
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
-			} else if provider.Category == "OAuth" {
+			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
 					if userInfo.Email != "" {

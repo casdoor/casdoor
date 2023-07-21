@@ -17,6 +17,7 @@ import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
+import {authViaMetaMask} from "./Web3Auth";
 import QqLoginButton from "./QqLoginButton";
 import FacebookLoginButton from "./FacebookLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
@@ -117,6 +118,12 @@ function goToSamlUrl(provider, location) {
   });
 }
 
+export function goToWeb3Url(application, provider, method) {
+  if (provider.type === "MetaMask") {
+    authViaMetaMask(application, provider, method);
+  }
+}
+
 export function renderProviderLogo(provider, application, width, margin, size, location) {
   if (size === "small") {
     if (provider.category === "OAuth") {
@@ -153,6 +160,12 @@ export function renderProviderLogo(provider, application, width, margin, size, l
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
         </a>
       );
+    } else if (provider.category === "Web3") {
+      return (
+        <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} style={{margin: margin}} />
+        </a>
+      );
     }
   } else if (provider.type === "Custom") {
     // style definition
@@ -186,6 +199,16 @@ export function renderProviderLogo(provider, application, width, margin, size, l
       return (
         <div key={provider.displayName} style={{marginBottom: "10px"}}>
           <a onClick={() => goToSamlUrl(provider, location)}>
+            {
+              getSigninButton(provider)
+            }
+          </a>
+        </div>
+      );
+    } else if (provider.category === "Web3") {
+      return (
+        <div key={provider.displayName} style={{marginBottom: "10px"}}>
+          <a onClick={() => goToWeb3Url(application, provider, "signup")}>
             {
               getSigninButton(provider)
             }

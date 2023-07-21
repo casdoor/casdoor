@@ -38,8 +38,11 @@ type LdapSyncResp struct {
 }
 
 // GetLdapUsers
-// @Tag Account API
 // @Title GetLdapser
+// @Tag Account API
+// @Description get ldap users
+// Param	id	string	true	"id"
+// @Success 200 {object} LdapResp The Response object
 // @router /get-ldap-users [get]
 func (c *ApiController) GetLdapUsers() {
 	id := c.Input().Get("id")
@@ -94,8 +97,11 @@ func (c *ApiController) GetLdapUsers() {
 }
 
 // GetLdaps
-// @Tag Account API
 // @Title GetLdaps
+// @Tag Account API
+// @Description get ldaps
+// @Param	owner	query	string	false	"owner"
+// @Success 200 {array} object.Ldap The Response object
 // @router /get-ldaps [get]
 func (c *ApiController) GetLdaps() {
 	owner := c.Input().Get("owner")
@@ -104,8 +110,11 @@ func (c *ApiController) GetLdaps() {
 }
 
 // GetLdap
-// @Tag Account API
 // @Title GetLdap
+// @Tag Account API
+// @Description get ldap
+// @Param	id	query	string	true	"id"
+// @Success 200 {object} object.Ldap The Response object
 // @router /get-ldap [get]
 func (c *ApiController) GetLdap() {
 	id := c.Input().Get("id")
@@ -120,8 +129,11 @@ func (c *ApiController) GetLdap() {
 }
 
 // AddLdap
-// @Tag Account API
 // @Title AddLdap
+// @Tag Account API
+// @Description add ldap
+// @Param	body	body	object.Ldap		true	"The details of the ldap"
+// @Success 200 {object} controllers.Response The Response object
 // @router /add-ldap [post]
 func (c *ApiController) AddLdap() {
 	var ldap object.Ldap
@@ -160,8 +172,11 @@ func (c *ApiController) AddLdap() {
 }
 
 // UpdateLdap
-// @Tag Account API
 // @Title UpdateLdap
+// @Tag Account API
+// @Description update ldap
+// @Param	body	body	object.Ldap		true	"The details of the ldap"
+// @Success 200 {object} controllers.Response The Response object
 // @router /update-ldap [post]
 func (c *ApiController) UpdateLdap() {
 	var ldap object.Ldap
@@ -198,8 +213,11 @@ func (c *ApiController) UpdateLdap() {
 }
 
 // DeleteLdap
-// @Tag Account API
 // @Title DeleteLdap
+// @Tag Account API
+// @Description delete ldap
+// @Param	body	body	object.Ldap		true	"The details of the ldap"
+// @Success 200 {object} controllers.Response The Response object
 // @router /delete-ldap [post]
 func (c *ApiController) DeleteLdap() {
 	var ldap object.Ldap
@@ -222,8 +240,11 @@ func (c *ApiController) DeleteLdap() {
 }
 
 // SyncLdapUsers
-// @Tag Account API
 // @Title SyncLdapUsers
+// @Tag Account API
+// @Description sync ldap users
+// @Param	id	query	string		true	"id"
+// @Success 200 {object} LdapSyncResp The Response object
 // @router /sync-ldap-users [post]
 func (c *ApiController) SyncLdapUsers() {
 	id := c.Input().Get("id")

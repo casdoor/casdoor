@@ -104,29 +104,16 @@ func getPolicies(permission *Permission) [][]string {
 	permissionId := permission.GetId()
 	domainExist := len(permission.Domains) > 0
 
-	for _, user := range permission.Users {
+	usersAndRoles := append(permission.Users, permission.Roles...)
+	for _, userOrRole := range usersAndRoles {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
 				if domainExist {
 					for _, domain := range permission.Domains {
-						policies = append(policies, []string{user, domain, resource, strings.ToLower(action), permission.Effect, permissionId})
+						policies = append(policies, []string{userOrRole, domain, resource, strings.ToLower(action), strings.ToLower(permission.Effect), permissionId})
 					}
 				} else {
-					policies = append(policies, []string{user, resource, strings.ToLower(action), permission.Effect, "", permissionId})
-				}
-			}
-		}
-	}
-
-	for _, role := range permission.Roles {
-		for _, resource := range permission.Resources {
-			for _, action := range permission.Actions {
-				if domainExist {
-					for _, domain := range permission.Domains {
-						policies = append(policies, []string{role, domain, resource, strings.ToLower(action), "", permissionId})
-					}
-				} else {
-					policies = append(policies, []string{role, resource, strings.ToLower(action), "", "", permissionId})
+					policies = append(policies, []string{userOrRole, resource, strings.ToLower(action), strings.ToLower(permission.Effect), "", permissionId})
 				}
 			}
 		}

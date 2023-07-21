@@ -122,7 +122,20 @@ paths:
     post:
       tags:
       - Account API
+      description: add ldap
       operationId: ApiController.AddLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-message:
     post:
       tags:
@@ -702,7 +715,20 @@ paths:
     post:
       tags:
       - Account API
+      description: delete ldap
       operationId: ApiController.DeleteLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-message:
     post:
       tags:
@@ -1360,17 +1386,48 @@ paths:
     get:
       tags:
       - Account API
+      description: get ldap
       operationId: ApiController.GetLdap
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Ldap'
   /api/get-ldap-users:
     get:
       tags:
       - Account API
+      description: get ldap users
       operationId: ApiController.GetLdapser
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/LdapResp'
   /api/get-ldaps:
     get:
       tags:
       - Account API
+      description: get ldaps
       operationId: ApiController.GetLdaps
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Ldap'
   /api/get-message:
     get:
       tags:
@@ -2703,7 +2760,19 @@ paths:
     post:
       tags:
       - Account API
+      description: sync ldap users
       operationId: ApiController.SyncLdapUsers
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/LdapSyncResp'
   /api/unlink:
     post:
       tags:
@@ -2827,7 +2896,20 @@ paths:
     post:
       tags:
       - Account API
+      description: update ldap
       operationId: ApiController.UpdateLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-message:
     post:
       tags:
@@ -3367,6 +3449,12 @@ definitions:
   LaravelResponse:
     title: LaravelResponse
     type: object
+  LdapResp:
+    title: LdapResp
+    type: object
+  LdapSyncResp:
+    title: LdapSyncResp
+    type: object
   Response:
     title: Response
     type: object
@@ -3722,6 +3810,42 @@ definitions:
       sub:
         type: string
       token_type:
+        type: string
+      username:
+        type: string
+  object.Ldap:
+    title: Ldap
+    type: object
+    properties:
+      autoSync:
+        type: integer
+        format: int64
+      baseDn:
+        type: string
+      createdTime:
+        type: string
+      enableSsl:
+        type: boolean
+      filter:
+        type: string
+      filterFields:
+        type: array
+        items:
+          type: string
+      host:
+        type: string
+      id:
+        type: string
+      lastSync:
+        type: string
+      owner:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+        format: int64
+      serverName:
         type: string
       username:
         type: string
