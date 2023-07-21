@@ -389,6 +389,28 @@ class LoginPage extends React.Component {
             }
           };
 
+          const changePasswordForm = () => {
+            return (
+              <React.Fragment>
+                <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+                <Row type="flex" justify="center" align="middle">
+                  <Col span={16} style={{width: 600}}>
+                    <ChangePasswordForm
+                      application={this.getApplicationObj()}
+                      userOwner={values.organization}
+                      userName={this.state.username}
+                      onSuccess={() => {
+                        return callback(values);
+                      }}
+                      onFail={(res) => {
+                        Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </React.Fragment>);
+          };
+
           if (res.status === "ok") {
             if (res.data === NextMfa) {
               this.setState({
@@ -404,7 +426,10 @@ class LoginPage extends React.Component {
                       }}
                       onSuccess={(res) => {
                         if (res.data === NextChangePasswordForm) {
-                          this.setState({values: values});
+                          this.setState({
+                            getVerifyTotp: undefined,
+                            getChangePasswordForm: changePasswordForm,
+                          });
                         } else {
                           return callback(res);
                         }
@@ -415,25 +440,7 @@ class LoginPage extends React.Component {
             } else if (res.data === NextChangePasswordForm) {
               this.setState({
                 values: values,
-                getChangePasswordForm: () => {
-                  return (
-                    <React.Fragment>
-                      <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
-                      <Row type="flex" justify="center" align="middle">
-                        <Col span={16} style={{width: 600}}>
-                          <ChangePasswordForm
-                            application={this.getApplicationObj()}
-                            userOwner={values.organization}
-                            userName={this.state.username}
-                            onSuccess={() => callback(values)}
-                            onFail={(res) => {
-                              Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-                            }}
-                          />
-                        </Col>
-                      </Row>
-                    </React.Fragment>);
-                },
+                getChangePasswordForm: changePasswordForm,
               });
             } else {
               callback(res);
