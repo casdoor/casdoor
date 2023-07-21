@@ -36,7 +36,7 @@ import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {ChangePasswordForm} from "./ChangePasswordForm";
-import {NextChangePasswordForm} from "./mfa/CheckPasswordForm";
+import {NextChangePasswordForm} from "./ChangePasswordForm";
 
 class LoginPage extends React.Component {
   constructor(props) {

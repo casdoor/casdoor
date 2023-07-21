@@ -27,6 +27,7 @@ import (
 const (
 	UserPropertiesWechatUnionId = "wechatUnionId"
 	UserPropertiesWechatOpenId  = "wechatOpenId"
+	NextChangePasswordForm = "NextChangePasswordForm"	
 )
 
 type User struct {

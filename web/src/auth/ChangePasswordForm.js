@@ -19,6 +19,8 @@ import * as Setting from "../Setting";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as UserBackend from "../backend/UserBackend";
 
+export const NextChangePasswordForm = "NextChangePasswordForm";
+
 export function ChangePasswordForm({application, userOwner, userName, onSuccess, onFail}) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
