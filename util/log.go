@@ -70,8 +70,3 @@ func LogWarning(ctx *context.Context, f string, v ...interface{}) {
 	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
 	logs.Warning(ipString+f, v...)
 }
-
-func LogError(ctx *context.Context, f string, v ...interface{}) {
-	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
-	logs.Error(ipString+f, v...)
-}
