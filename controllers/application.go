@@ -63,12 +63,11 @@ func (c *ApiController) GetApplications() {
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		app, err := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		applications, err := object.GetMaskedApplications(app, err)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		applications, _ := object.GetMaskedApplications(app)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
@@ -170,12 +169,11 @@ func (c *ApiController) GetOrganizationApplications() {
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		app, err := object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		applications, err := object.GetMaskedApplications(app, err)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		applications, _ := object.GetMaskedApplications(app)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }

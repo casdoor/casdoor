@@ -16,7 +16,7 @@ import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
-import NotFindResult from "./common/result/NotFindResult";
+import NotFoundResult from "./common/result/NotFoundResult";
 import GroupTreePage from "./GroupTreePage";
 import GroupEditPage from "./GroupEdit";
 import GroupListPage from "./GroupList";
@@ -633,7 +633,7 @@ class App extends Component {
         <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
-        <Route path="" render={() => <NotFindResult />} />
+        <Route path="" render={() => <NotFoundResult />} />
       </Switch>
     );
   }
@@ -774,7 +774,7 @@ class App extends Component {
                 <Switch>
                   <Route exact path="/callback" component={AuthCallback} />
                   <Route exact path="/callback/saml" component={SamlCallback} />
-                  <Route path="" render={() => <NotFindResult />} />
+                  <Route path="" render={() => <NotFoundResult />} />
                 </Switch>
             }
           </Content>

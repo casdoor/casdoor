@@ -14,15 +14,24 @@
 
 import {Button, Result} from "antd";
 import i18next from "i18next";
+import React, {useEffect} from "react";
 
-export const UnauthorizedResult = () => {
+export const NotFoundResult = ({onUpdateApplication}) => {
+  useEffect(() => {
+    if (onUpdateApplication !== undefined) {
+      onUpdateApplication(null);
+    }
+  }, [onUpdateApplication]);
+
   return (
-    <Result status="403"
-      title="403 Unauthorized"
-      subTitle={i18next.t("general:Sorry, you do not have permission to access this page or logged in status invalid.")}
+    <Result
+      style={{margin: "0 auto"}}
+      status="404"
+      title="404 NOT FOUND"
+      subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
       extra={<Button type="primary" href={"/"}>{i18next.t("general:Back Home")}</Button>}
     />
   );
 };
 
-export default UnauthorizedResult;
+export default NotFoundResult;
