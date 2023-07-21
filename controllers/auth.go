@@ -707,8 +707,8 @@ func (c *ApiController) Login() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
-		
-		if user.PasswordChangeRequired {	
+
+		if user.PasswordChangeRequired {
 			c.SetSessionUsername(user.GetId())
 			c.ResponseOk(object.NextChangePasswordForm)
 			return
