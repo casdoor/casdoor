@@ -425,7 +425,6 @@ func (c *ApiController) SetPassword() {
 
 	userId := util.GetId(userOwner, userName)
 	requestUserId := c.GetSessionUsername()
-	
 
 	if requestUserId == "" && code == "" {
 		c.ResponseError(c.T("general:Please login first"), "Please login first")

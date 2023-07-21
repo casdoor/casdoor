@@ -140,7 +140,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				resp.Data = st
 			}
 		}
-		
+
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
@@ -245,7 +245,7 @@ func isProxyProviderType(providerType string) bool {
 // @Param nonce     query    string  false nonce
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
-// @Param   form   body   form.AuthForm  true        "Login information"
+// @Param   form   body   controllers.AuthForm  true        "Login information"
 // @Success 200 {object} controllers.Response The Response object
 // @router /login [post]
 func (c *ApiController) Login() {
