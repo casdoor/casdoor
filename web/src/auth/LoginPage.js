@@ -359,15 +359,10 @@ class LoginPage extends React.Component {
         .then((res) => {
           const callback = (res) => {
             const responseType = values["type"];
+
             if (responseType === "login") {
-              if (res.msg === RequiredMfa) {
-                Setting.goToLink(`/prompt/${this.getApplicationObj().name}?promptType=mfa`);
-              } else {
-                Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-                this.props.onLoginSuccess();
-                const link = Setting.getFromLink();
-                Setting.goToLink(link);
-              }
+              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+              this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
