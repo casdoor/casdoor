@@ -89,6 +89,15 @@ class PricingEditPage extends React.Component {
       });
   }
 
+  getApplicationsByOrganization(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          applications: res.data || [],
+        });
+      });
+  }
+
   parsePricingField(key, value) {
     if ([""].includes(key)) {
       value = Setting.myParseInt(value);
@@ -105,15 +114,6 @@ class PricingEditPage extends React.Component {
     this.setState({
       pricing: pricing,
     });
-  }
-
-  getApplicationsByOrganization(organizationName) {
-    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
-      .then((res) => {
-        this.setState({
-          applications: res.data || [],
-        });
-      });
   }
 
   renderPricing() {

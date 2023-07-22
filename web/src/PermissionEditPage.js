@@ -63,7 +63,7 @@ class PermissionEditPage extends React.Component {
         }
 
         this.setState({
-          permission: res.data,
+          permission: permission,
         });
 
         this.getUsers(permission.owner);
@@ -86,6 +86,10 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
 
         this.setState({
           users: res.data,
@@ -96,6 +100,10 @@ class PermissionEditPage extends React.Component {
   getRoles(organizationName) {
     RoleBackend.getRoles(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
 
         this.setState({
           roles: res.data,
@@ -106,6 +114,10 @@ class PermissionEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
 
         this.setState({
           models: res.data,

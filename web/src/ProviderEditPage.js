@@ -72,7 +72,7 @@ class ProviderEditPage extends React.Component {
       OrganizationBackend.getOrganizations("admin")
         .then((res) => {
           this.setState({
-            organizations: res.data || [] || [],
+            organizations: res.data || [],
           });
         });
     }
