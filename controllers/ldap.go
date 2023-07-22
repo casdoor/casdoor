@@ -125,7 +125,12 @@ func (c *ApiController) GetLdap() {
 	}
 
 	_, name := util.GetOwnerAndNameFromId(id)
-	c.ResponseOk(object.GetMaskedLdap(object.GetLdap(name)))
+	ldap, err := object.GetLdap(name)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk(object.GetMaskedLdap(ldap))
 }
 
 // AddLdap

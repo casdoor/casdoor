@@ -45,8 +45,7 @@ func (c *ApiController) GetCerts() {
 			return
 		}
 
-		c.Data["json"] = maskedCerts
-		c.ServeJSON()
+		c.ResponseOk(maskedCerts)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCertCount(owner, field, value)
@@ -87,8 +86,7 @@ func (c *ApiController) GetGlobleCerts() {
 			return
 		}
 
-		c.Data["json"] = maskedCerts
-		c.ServeJSON()
+		c.ResponseOk(maskedCerts)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalCertsCount(field, value)
@@ -123,8 +121,7 @@ func (c *ApiController) GetCert() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedCert(cert)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedCert(cert))
 }
 
 // UpdateCert

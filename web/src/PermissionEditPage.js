@@ -50,7 +50,9 @@ class PermissionEditPage extends React.Component {
   getPermission() {
     PermissionBackend.getPermission(this.state.organizationName, this.state.permissionName)
       .then((res) => {
-        if (res === null) {
+        const permission = res.data;
+
+        if (permission === null) {
           this.props.history.push("/404");
           return;
         }
@@ -61,14 +63,14 @@ class PermissionEditPage extends React.Component {
         }
 
         this.setState({
-          permission: res,
+          permission: res.data,
         });
 
-        this.getUsers(res.owner);
-        this.getRoles(res.owner);
-        this.getModels(res.owner);
-        this.getResources(res.owner);
-        this.getModel(res.owner, res.model);
+        this.getUsers(permission.owner);
+        this.getRoles(permission.owner);
+        this.getModels(permission.owner);
+        this.getResources(permission.owner);
+        this.getModel(permission.owner, permission.model);
       });
   }
 
@@ -76,7 +78,7 @@ class PermissionEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }
@@ -84,12 +86,9 @@ class PermissionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -97,12 +96,9 @@ class PermissionEditPage extends React.Component {
   getRoles(organizationName) {
     RoleBackend.getRoles(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
-          roles: res,
+          roles: res.data,
         });
       });
   }
@@ -110,25 +106,21 @@ class PermissionEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
-          models: res,
+          models: res.data,
         });
       });
   }
 
   getModel(organizationName, modelName) {
+    if (modelName === "") {
+      return;
+    }
     ModelBackend.getModel(organizationName, modelName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
         this.setState({
-          model: res,
+          model: res.data,
         });
       });
   }
@@ -137,7 +129,7 @@ class PermissionEditPage extends React.Component {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
         this.setState({
-          resources: (res.msg === undefined) ? res : [],
+          resources: res.data || [],
         });
       });
   }

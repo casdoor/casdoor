@@ -79,7 +79,9 @@ class EntryPage extends React.Component {
             Setting.showMessage("error", res.msg);
             return;
           }
-          const themeData = res !== null ? Setting.getThemeData(res.organizationObj, res) : Conf.ThemeDefault;
+
+          const application = res.data;
+          const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
           this.props.updataThemeData(themeData);
         });
     };

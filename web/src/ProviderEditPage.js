@@ -50,7 +50,7 @@ class ProviderEditPage extends React.Component {
   getProvider() {
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
@@ -72,7 +72,7 @@ class ProviderEditPage extends React.Component {
       OrganizationBackend.getOrganizations("admin")
         .then((res) => {
           this.setState({
-            organizations: res.msg === undefined ? res : [],
+            organizations: res.data || [] || [],
           });
         });
     }

@@ -119,7 +119,7 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
@@ -138,7 +138,7 @@ class ApplicationEditPage extends React.Component {
         }
 
         this.setState({
-          application: res,
+          application: res.data,
         });
 
         this.getCerts(res.organization);
@@ -184,9 +184,9 @@ class ApplicationEditPage extends React.Component {
 
   getSamlMetadata() {
     ApplicationBackend.getSamlMetadata("admin", this.state.applicationName)
-      .then((res) => {
+      .then((data) => {
         this.setState({
-          samlMetadata: res,
+          samlMetadata: data,
         });
       });
   }

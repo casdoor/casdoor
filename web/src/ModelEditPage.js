@@ -48,7 +48,7 @@ class ModelEditPage extends React.Component {
   getModel() {
     ModelBackend.getModel(this.state.organizationName, this.state.modelName)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
@@ -59,7 +59,7 @@ class ModelEditPage extends React.Component {
         }
 
         this.setState({
-          model: res,
+          model: res.data,
         });
       });
   }
@@ -68,7 +68,7 @@ class ModelEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }
