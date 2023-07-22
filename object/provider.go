@@ -294,16 +294,16 @@ func (p *Provider) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
 }
 
-func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error) {
-	owner, name := util.GetOwnerAndNameFromId(applicationId)
-	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
+func GetCaptchaProviderByOwnerName(providerId, lang string) (*Provider, error) {
+	owner, name := util.GetOwnerAndNameFromId(providerId)
+	provider := Provider{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&provider)
 	if err != nil {
 		return nil, err
 	}
 
 	if !existed {
-		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), providerId)
 	}
 
 	return &provider, nil

@@ -79,11 +79,12 @@ class ChatPage extends BaseListPage {
 
   getMessages(chatName) {
     MessageBackend.getChatMessages(chatName)
-      .then((messages) => {
+      .then((res) => {
         this.setState({
-          messages: messages,
+          messages: res.data,
         });
 
+        const messages = res.data;
         if (messages.length > 0) {
           const lastMessage = messages[messages.length - 1];
           if (lastMessage.author === "AI" && lastMessage.replyTo !== "" && lastMessage.text === "") {
@@ -229,7 +230,7 @@ class ChatPage extends BaseListPage {
               </div>
             )
           }
-          <ChatBox messages={this.state.messages} sendMessage={(text) => {this.sendMessage(text);}} account={this.props.account} />
+          <ChatBox messages={this.state.messages || []} sendMessage={(text) => {this.sendMessage(text);}} account={this.props.account} />
         </div>
       </div>
     );
@@ -280,8 +281,6 @@ class ChatPage extends BaseListPage {
             this.setState({
               isAuthorized: false,
             });
-          } else {
-            Setting.showMessage("error", res.msg);
           }
         }
       });

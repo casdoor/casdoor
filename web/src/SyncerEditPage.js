@@ -48,18 +48,8 @@ class SyncerEditPage extends React.Component {
   getSyncer() {
     SyncerBackend.getSyncer("admin", this.state.syncerName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
         this.setState({
-          syncer: res,
+          syncer: res.data,
         });
       });
   }
@@ -68,7 +58,7 @@ class SyncerEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

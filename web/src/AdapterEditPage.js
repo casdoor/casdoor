@@ -68,7 +68,7 @@ class AdapterEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }
@@ -76,12 +76,9 @@ class AdapterEditPage extends React.Component {
   getModels(organizationName) {
     ModelBackend.getModels(organizationName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
+
         this.setState({
-          models: res,
+          models: res.data,
         });
       });
   }

@@ -201,7 +201,7 @@ export function getCaptcha(owner, name, isCurrentProvider) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json()).then(res => res.data);
+  }).then(res => res.json());
 }
 
 export function verifyCode(values) {

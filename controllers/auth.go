@@ -189,12 +189,11 @@ func (c *ApiController) GetApplicationLogin() {
 	state := c.Input().Get("state")
 
 	msg, application, err := object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, c.GetAcceptLanguage())
+	application, err = object.GetMaskedApplication(application, err)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseError(err.Error(), nil)
 		return
 	}
-
-	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
 		c.ResponseError(msg, application)
 	} else {

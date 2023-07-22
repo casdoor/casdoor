@@ -57,8 +57,7 @@ func (c *ApiController) GetMessages() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedMessages(messages)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedMessages(messages))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetMessageCount(owner, organization, field, value)
@@ -94,8 +93,7 @@ func (c *ApiController) GetMessage() {
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedMessage(message)
-	c.ServeJSON()
+	c.ResponseOk(message)
 }
 
 func (c *ApiController) ResponseErrorStream(errorText string) {

@@ -45,18 +45,8 @@ class CertEditPage extends React.Component {
   getCert() {
     CertBackend.getCert(this.state.owner, this.state.certName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
         this.setState({
-          cert: res,
+          cert: res.data,
         });
       });
   }
@@ -65,7 +55,7 @@ class CertEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }

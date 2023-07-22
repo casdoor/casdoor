@@ -45,8 +45,7 @@ func (c *ApiController) GetPlans() {
 			return
 		}
 
-		c.Data["json"] = plans
-		c.ServeJSON()
+		c.ResponseOk(plans)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPlanCount(owner, field, value)

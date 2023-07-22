@@ -47,8 +47,7 @@ func (c *ApiController) GetTokens() {
 			return
 		}
 
-		c.Data["json"] = token
-		c.ServeJSON()
+		c.ResponseOk(token)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetTokenCount(owner, organization, field, value)
@@ -83,8 +82,7 @@ func (c *ApiController) GetToken() {
 		return
 	}
 
-	c.Data["json"] = token
-	c.ServeJSON()
+	c.ResponseOk(token)
 }
 
 // UpdateToken

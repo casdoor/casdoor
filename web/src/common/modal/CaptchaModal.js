@@ -55,21 +55,22 @@ export const CaptchaModal = (props) => {
 
   const loadCaptcha = () => {
     UserBackend.getCaptcha(owner, name, isCurrentProvider).then((res) => {
-      if (res.type === "none") {
+      const captcha = res.data || {};
+      if (captcha.type === "none") {
         handleOk();
-      } else if (res.type === "Default") {
+      } else if (captcha.type === "Default") {
         setOpen(true);
-        setClientSecret(res.captchaId);
-        setCaptchaImg(res.captchaImage);
+        setClientSecret(captcha.captchaId);
+        setCaptchaImg(captcha.captchaImage);
         setCaptchaType("Default");
       } else {
         setOpen(true);
-        setCaptchaType(res.type);
-        setClientId(res.clientId);
-        setClientSecret(res.clientSecret);
-        setSubType(res.subType);
-        setClientId2(res.clientId2);
-        setClientSecret2(res.clientSecret2);
+        setCaptchaType(captcha.type);
+        setClientId(captcha.clientId);
+        setClientSecret(captcha.clientSecret);
+        setSubType(captcha.subType);
+        setClientId2(captcha.clientId2);
+        setClientSecret2(captcha.clientSecret2);
       }
     });
   };

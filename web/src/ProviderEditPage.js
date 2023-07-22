@@ -50,14 +50,8 @@ class ProviderEditPage extends React.Component {
   getProvider() {
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((res) => {
-        if (res === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
         if (res.status === "ok") {
           const provider = res.data;
-          provider.userMapping = provider.userMapping || {};
           this.setState({
             provider: provider,
           });
@@ -72,7 +66,7 @@ class ProviderEditPage extends React.Component {
       OrganizationBackend.getOrganizations("admin")
         .then((res) => {
           this.setState({
-            organizations: res.msg === undefined ? res : [],
+            organizations: res.data || [],
           });
         });
     }
@@ -103,27 +97,29 @@ class ProviderEditPage extends React.Component {
     });
   }
 
-  renderUserMappingInput() {
+  renderUserMappingInput(provider) {
+    provider.userMapping = provider?.userMapping ?? {};
+
     return (
       <React.Fragment>
         {Setting.getLabel(i18next.t("general:ID"), i18next.t("general:ID - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.id} onChange={e => {
+        <Input value={provider.userMapping.id} onChange={e => {
           this.updateUserMappingField("id", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.username} onChange={e => {
+        <Input value={provider.userMapping.username} onChange={e => {
           this.updateUserMappingField("username", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.displayName} onChange={e => {
+        <Input value={provider.userMapping.displayName} onChange={e => {
           this.updateUserMappingField("displayName", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.email} onChange={e => {
+        <Input value={provider.userMapping.email} onChange={e => {
           this.updateUserMappingField("email", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.avatarUrl} onChange={e => {
+        <Input value={provider.userMapping.avatarUrl} onChange={e => {
           this.updateUserMappingField("avatarUrl", e.target.value);
         }} />
       </React.Fragment>
@@ -490,7 +486,7 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  {this.renderUserMappingInput()}
+                  {this.renderUserMappingInput(this.state.provider)}
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >

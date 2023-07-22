@@ -39,5 +39,5 @@ function testSmsProvider(provider, phone = "") {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(SmsForm),
-  }).then(res => res.json());
+  });
 }

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Input, InputNumber, List, Row, Select, Space, Switch, Tag} from "antd";
 import {withRouter} from "react-router-dom";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -74,18 +74,11 @@ class UserEditPage extends React.Component {
 
   getUser() {
     UserBackend.getUser(this.state.organizationName, this.state.userName)
-      .then((data) => {
-        if (data === null) {
-          this.props.history.push("/404");
-          return;
-        }
-
-        if (data.status === null || data.status !== "error") {
-          this.setState({
-            user: data,
-            multiFactorAuths: data?.multiFactorAuths ?? [],
-          });
-        }
+      .then((res) => {
+        this.setState({
+          user: res.data,
+          multiFactorAuths: res.data?.multiFactorAuths ?? [],
+        });
         this.setState({
           loading: false,
         });
@@ -107,7 +100,7 @@ class UserEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data,
         });
       });
   }
@@ -116,7 +109,7 @@ class UserEditPage extends React.Component {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
         this.setState({
-          applications: (res.msg === undefined) ? res : [],
+          applications: res.data || [],
         });
       });
   }
@@ -124,16 +117,9 @@ class UserEditPage extends React.Component {
   getUserApplication() {
     ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
       .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
         this.setState({
-          application: res,
-        });
-
-        this.setState({
-          isGroupsVisible: res.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
+          application: res.data,
+          isGroupsVisible: res.data?.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }
@@ -1096,24 +1082,13 @@ class UserEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? <Spin size="large" style={{marginLeft: "50%", marginTop: "10%"}} /> : (
-            this.state.user !== null ? this.renderUser() :
-              <Result
-                status="404"
-                title="404 NOT FOUND"
-                subTitle={i18next.t("general:Sorry, the user you visited does not exist or you are not authorized to access this user.")}
-                extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>}
-              />
-          )
+          this.state.user !== null ? this.renderUser() : null
         }
-        {
-          this.state.user === null ? null :
-            <div style={{marginTop: "20px", marginLeft: "40px"}}>
-              <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
-              <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-              {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
-            </div>
-        }
+        <div style={{marginTop: "20px", marginLeft: "40px"}}>
+          <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+        </div>
       </div>
     );
   }
