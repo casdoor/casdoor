@@ -45,3 +45,7 @@ code {
 .ant-list-sm .ant-list-item {
   padding: 2px !important;
 }
+
+.css-dev-only-do-not-override-1pbunu2.ant-modal .ant-modal-content {
+  box-shadow: none !important;
+}
