@@ -426,8 +426,8 @@ func (c *ApiController) SetPassword() {
 	userId := util.GetId(userOwner, userName)
 
 	requestUserId := c.GetSessionUsername()
-	  
-	fromChangePasswordRequiredFrom := requestUserId == "" && c.getChangePasswordUserSession() != "";
+
+	fromChangePasswordRequiredFrom := requestUserId == "" && c.getChangePasswordUserSession() != ""
 
 	if fromChangePasswordRequiredFrom {
 		requestUserId = c.getChangePasswordUserSession()
