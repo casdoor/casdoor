@@ -429,7 +429,7 @@ class ForgetPage extends React.Component {
             <br />
             <Form.Item hidden={this.state.current !== 2}>
               <Button block type="primary" htmlType="submit">
-                {i18next.t("forget:Password change required")}
+                {i18next.t("forget:Change Password")}
               </Button>
             </Form.Item>
           </Form> : null}
