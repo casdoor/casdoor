@@ -204,7 +204,7 @@ type ManagedAccount struct {
 
 func (u *User) checkPasswordChangeRequestAllowed() error {
 	if !u.isPasswordChangeRequestAllowed() && u.PasswordChangeRequired {
-		return fmt.Errorf("PasswordChangeRequired not allowed for user '%s' due to be external one", u.Name)
+		return fmt.Errorf("Can't set PasswordChangeRequired for external user (from LDAP or Keycloak)")
 	}
 	return nil
 }
