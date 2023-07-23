@@ -202,7 +202,7 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
-func (u *User) checkPasswordChangeRequiestAllowed() error {
+func (u *User) checkPasswordChangeRequestAllowed() error {
 	if !u.isPasswordChangeRequestAllowed() && u.PasswordChangeRequired {
 		return fmt.Errorf("PasswordChangeRequired not allowed for user '%s' due to be external one", u.Name)
 	}
@@ -559,7 +559,7 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 		return 0, err
 	}
 
-	err = user.checkPasswordChangeRequiestAllowed()
+	err = user.checkPasswordChangeRequestAllowed()
 	if err != nil {
 		return 0, err
 	}
@@ -601,7 +601,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 			return false, err
 		}
 	}
-	err = user.checkPasswordChangeRequiestAllowed()
+	err = user.checkPasswordChangeRequestAllowed()
 	if err != nil {
 		return false, err
 	}
