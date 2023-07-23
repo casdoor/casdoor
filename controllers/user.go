@@ -427,9 +427,9 @@ func (c *ApiController) SetPassword() {
 
 	requestUserId := c.GetSessionUsername()
 
-	fromChangePasswordRequiredFrom := requestUserId == "" && c.getChangePasswordUserSession() != ""
+	fromChangePasswordRequiredForm := requestUserId == "" && c.getChangePasswordUserSession() != ""
 
-	if fromChangePasswordRequiredFrom {
+	if fromChangePasswordRequiredForm {
 		requestUserId = c.getChangePasswordUserSession()
 	}
 
@@ -477,7 +477,7 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	if fromChangePasswordRequiredFrom {
+	if fromChangePasswordRequiredForm {
 		c.setChangePasswordUserSession("")
 	}
 
