@@ -51,6 +51,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Avatar", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "User type", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Password", visible: true, viewRule: "Self", modifyRule: "Self"},
+        {name: "Password change required", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Email", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "Phone", visible: true, viewRule: "Public", modifyRule: "Self"},
         {name: "Country code", visible: true, viewRule: "Public", modifyRule: "Self"},
@@ -87,7 +88,6 @@ class OrganizationListPage extends BaseListPage {
         {Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
-        {name: "Change password", visible: true, viewRule: "Admin", modifyRule: "Admin"},
       ],
     };
   }

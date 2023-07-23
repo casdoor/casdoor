@@ -150,7 +150,7 @@ export function ChangePasswordForm({application, userOwner, userName, onSuccess,
       <Form.Item
         wrapperCol={{span: 24}}>
         <Button type="primary" htmlType="submit" loading={loading}>
-          {i18next.t("changePassword:Change password")}
+          {i18next.t("changePassword:Password change required")}
         </Button>
       </Form.Item>
     </Form>

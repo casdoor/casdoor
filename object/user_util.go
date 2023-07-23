@@ -323,7 +323,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.PasswordChangeRequired != newUser.PasswordChangeRequired {
-		item := GetAccountItemByName("Change password", organization)
+		item := GetAccountItemByName("Password change required", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
 
