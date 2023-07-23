@@ -662,16 +662,18 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
-                  this.updateProviderField("domain", e.target.value);
-                }} />
-              </Col>
-            </Row>
+            {["MinIO"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
+                    this.updateProviderField("domain", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
             {["AWS S3", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
