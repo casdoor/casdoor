@@ -477,10 +477,6 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	if fromChangePasswordRequiredForm {
-		c.setChangePasswordUserSession("")
-	}
-
 	c.ResponseOk()
 }
 
