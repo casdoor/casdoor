@@ -123,7 +123,7 @@ var stToServiceResponse sync.Map
 // pgt is short for proxy granting ticket
 var pgtToServiceResponse sync.Map
 
-func CheckCasLogin(app *Application, lang string, service string) (err error) {
+func CheckCasRestrict(app *Application, lang string, service string) (err error) {
 	if len(app.RedirectUris) > 0 && !app.IsRedirectUriValid(service) {
 		return fmt.Errorf(i18n.Translate(lang, "cas:Service: %s doesn't exist in the allowed Redirect URI list"), service)
 	}

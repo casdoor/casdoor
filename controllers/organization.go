@@ -194,7 +194,7 @@ func (c *ApiController) GetDefaultApplication() {
 	}
 
 	if typ == "cas" {
-		err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
+		err = object.CheckCasRestrict(application, c.GetAcceptLanguage(), redirectUri)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
