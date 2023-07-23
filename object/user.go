@@ -204,7 +204,7 @@ type ManagedAccount struct {
 
 func (u *User) checkPasswordChangeRequestAllowed() error {
 	if !u.isPasswordChangeRequestAllowed() && u.PasswordChangeRequired {
-		return fmt.Errorf("PasswordChangeRequired = true - Does't supported for users from LDAP or Keycloak")
+		return fmt.Errorf("PasswordChangeRequired is not supported to be enabled for users from LDAP or Keycloak")
 	}
 	return nil
 }
