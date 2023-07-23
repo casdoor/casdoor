@@ -14,7 +14,7 @@
 
 import React, {useState} from "react";
 import i18next from "i18next";
-import {Button, Form, Input} from "antd";
+import {Button, Col, Form, Input, Row} from "antd";
 import * as Setting from "../Setting";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as UserBackend from "../backend/UserBackend";
@@ -39,120 +39,127 @@ export function ChangePasswordForm({application, userOwner, userName, onSuccess,
   };
 
   return (
-    <Form
-      labelCol={{span: 8}}
-      wrapperCol={{span: 16}}
-      form={form}
-      name="changePassword"
-      onFinish={(values) => setPassword(values)}
-      initialValues={{
-        application: application.name,
-        userOwner: userOwner,
-        userName: userName,
-      }}
-      size="large"
-      layout={Setting.isMobile() ? "vertical" : "horizontal"}
-      style={{width: Setting.isMobile() ? "300px" : "400px"}}
-    >
-      <Form.Item
-        name="application"
-        hidden={true}
-        rules={[
-          {
-            required: true,
-            message: "Please input your application!",
-          },
-        ]}
-      >
-      </Form.Item>
-      <Form.Item
-        name="userOwner"
-        hidden={true}
-        rules={[
-          {
-            required: true,
-            message: "Please input user owner!",
-          },
-        ]}
-      >
-      </Form.Item>
-      <Form.Item
-        name="userName"
-        hidden={true}
-        rules={[
-          {
-            required: true,
-            message: "Please input user name!",
-          },
-        ]}
-      >
-      </Form.Item>
-      <Form.Item
-        name="oldPassword"
-        label={i18next.t("user:Old Password")}
-        rules={[
-          {
-            required: true,
-            message: i18next.t("user:Empty input!"),
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password />
-      </Form.Item>
-      <Form.Item
-        name="newPassword"
-        label={i18next.t("user:New Password")}
-        rules={[
-          {
-            required: true,
-            message: i18next.t("user:Empty input!"),
-          },
-          {
-            validator(rule, value) {
-              const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-              if (errorMsg === "") {
-                return Promise.resolve();
-              } else {
-                return Promise.reject(errorMsg);
-              }
-            },
-          },
-        ]}
-        hasFeedback
-      >
-        <Input.Password />
-      </Form.Item>
-      <Form.Item
-        name="confirm"
-        label={i18next.t("user:Re-enter New")}
-        dependencies={["newPassword"]}
-        hasFeedback
-        rules={[
-          {
-            required: true,
-            message: i18next.t("user:Empty input!"),
-          },
-          ({getFieldValue}) => ({
-            validator(rule, value) {
-              if (!value || getFieldValue("newPassword") === value) {
-                return Promise.resolve();
-              }
+    <React.Fragment>
+      <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Change password")}</h1>
+      <Row type="flex" justify="center" align="middle">
+        <Col span={16} style={{width: 600}}>
+          <Form
+            labelCol={{span: 8}}
+            wrapperCol={{span: 16}}
+            form={form}
+            name="changePassword"
+            onFinish={(values) => setPassword(values)}
+            initialValues={{
+              application: application.name,
+              userOwner: userOwner,
+              userName: userName,
+            }}
+            size="large"
+            layout={Setting.isMobile() ? "vertical" : "horizontal"}
+            style={{width: Setting.isMobile() ? "300px" : "400px"}}
+          >
+            <Form.Item
+              name="application"
+              hidden={true}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your application!",
+                },
+              ]}
+            >
+            </Form.Item>
+            <Form.Item
+              name="userOwner"
+              hidden={true}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input user owner!",
+                },
+              ]}
+            >
+            </Form.Item>
+            <Form.Item
+              name="userName"
+              hidden={true}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input user name!",
+                },
+              ]}
+            >
+            </Form.Item>
+            <Form.Item
+              name="oldPassword"
+              label={i18next.t("user:Old Password")}
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("user:Empty input!"),
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="newPassword"
+              label={i18next.t("user:New Password")}
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("user:Empty input!"),
+                },
+                {
+                  validator(rule, value) {
+                    const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                    if (errorMsg === "") {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject(errorMsg);
+                    }
+                  },
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="confirm"
+              label={i18next.t("user:Re-enter New")}
+              dependencies={["newPassword"]}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("user:Empty input!"),
+                },
+                ({getFieldValue}) => ({
+                  validator(rule, value) {
+                    if (!value || getFieldValue("newPassword") === value) {
+                      return Promise.resolve();
+                    }
 
-              return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
-            },
-          }),
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
+                    return Promise.reject(i18next.t("signup:Your confirmed password is inconsistent with the password!"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
 
-      <Form.Item
-        wrapperCol={{span: 24}}>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          {i18next.t("changePassword:Password change required")}
-        </Button>
-      </Form.Item>
-    </Form>
+            <Form.Item
+              wrapperCol={{span: 24}}>
+              <Button type="primary" htmlType="submit" loading={loading}>
+                {i18next.t("changePassword:Change password")}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
+    </React.Fragment>
   );
 }

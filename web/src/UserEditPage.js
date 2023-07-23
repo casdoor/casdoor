@@ -885,7 +885,7 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Password change required"), i18next.t("user:Password change required - Tooltip"))} :
+            {Setting.getLabel(i18next.t("forget:Password change required"), i18next.t("user:Password change required - Tooltip"))} :
           </Col>
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.passwordChangeRequired} onChange={checked => {

@@ -898,7 +898,6 @@
     "Birthday - Tooltip": "Birthday - Tooltip",
     "Captcha Verify Failed": "キャプチャ検証に失敗しました",
     "Captcha Verify Success": "キャプチャを確認しました。成功しました",
-    "Password change required": "パスワードの変更が必要です",
     "Password change required - Tooltip": "システムは、次回のサインイン後にユーザーにパスワードの変更を要求します。",
     "Country code": "国番号",
     "Country/Region": "国/地域",

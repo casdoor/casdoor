@@ -385,24 +385,18 @@ class LoginPage extends React.Component {
 
           const changePasswordForm = () => {
             return (
-              <React.Fragment>
-                <h1 style={{fontSize: "28px", fontWeight: "400", marginTop: "10px", marginBottom: "40px"}}>{i18next.t("changePassword:Password change required")}</h1>
-                <Row type="flex" justify="center" align="middle">
-                  <Col span={16} style={{width: 600}}>
-                    <ChangePasswordForm
-                      application={this.getApplicationObj()}
-                      userOwner={values.organization}
-                      userName={this.state.username}
-                      onSuccess={() => {
-                        return callback(values);
-                      }}
-                      onFail={(res) => {
-                        Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </React.Fragment>);
+              <ChangePasswordForm
+                application={this.getApplicationObj()}
+                userOwner={values.organization}
+                userName={this.state.username}
+                onSuccess={() => {
+                  return callback(values);
+                }}
+                onFail={(res) => {
+                  Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+                }}
+              />
+            );
           };
 
           if (res.status === "ok") {
