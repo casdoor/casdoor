@@ -190,6 +190,18 @@ func (c *ApiController) SetSessionData(s *SessionData) {
 	c.SetSession("SessionData", util.StructToJson(s))
 }
 
+func (c *ApiController) setChangePasswordUserSession(userId string) {
+	c.SetSession(object.ChangePasswordSessionId, userId)
+}
+
+func (c *ApiController) getChangePasswordUserSession() string {
+	userId := c.Ctx.Input.CruSession.Get(object.ChangePasswordSessionId)
+	if userId == nil {
+		return ""
+	}
+	return userId.(string)
+}
+
 func (c *ApiController) setMfaUserSession(userId string) {
 	c.SetSession(object.MfaSessionUserId, userId)
 }

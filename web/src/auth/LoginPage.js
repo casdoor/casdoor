@@ -390,7 +390,7 @@ class LoginPage extends React.Component {
                 userOwner={values.organization}
                 userName={this.state.username}
                 onSuccess={() => {
-                  return callback(values);
+                  AuthBackend.login(values, oAuthParams).then((res) => callback(res));
                 }}
                 onFail={(res) => {
                   Setting.showMessage("error", i18next.t(`signup:${res.msg}`));

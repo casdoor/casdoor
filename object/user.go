@@ -28,6 +28,7 @@ const (
 	UserPropertiesWechatUnionId = "wechatUnionId"
 	UserPropertiesWechatOpenId  = "wechatOpenId"
 	NextChangePasswordForm      = "NextChangePasswordForm"
+	ChangePasswordSessionId     = "ChangePasswordSessionId" 
 )
 
 type User struct {
