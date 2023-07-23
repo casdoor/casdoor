@@ -70,6 +70,7 @@ class AccountTable extends React.Component {
       {name: "Avatar", label: i18next.t("general:Avatar")},
       {name: "User type", label: i18next.t("general:User type")},
       {name: "Password", label: i18next.t("general:Password")},
+      {name: "Password change required", label: i18next.t("forget:Password change required")},
       {name: "Email", label: i18next.t("general:Email")},
       {name: "Phone", label: i18next.t("general:Phone")},
       {name: "Country code", label: i18next.t("user:Country code")},
