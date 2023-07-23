@@ -21,6 +21,7 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 	"math/rand"
 	"sync"
 	"time"
@@ -121,6 +122,13 @@ var stToServiceResponse sync.Map
 
 // pgt is short for proxy granting ticket
 var pgtToServiceResponse sync.Map
+
+func CheckCasLogin(app *Application, lang string, service string) (err error) {
+	if len(app.RedirectUris) > 0 && !app.IsRedirectUriValid(service) {
+		return fmt.Errorf(i18n.Translate(lang, "token:Service: %s doesn't exist in the allowed Redirect URI list"), service)
+	}
+	return
+}
 
 func StoreCasTokenForPgt(token *CasAuthenticationSuccess, service, userId string) string {
 	pgt := fmt.Sprintf("PGT-%s", util.GenerateId())
