@@ -79,7 +79,8 @@ class ChatPage extends BaseListPage {
 
   getMessages(chatName) {
     MessageBackend.getChatMessages(chatName)
-      .then((messages) => {
+      .then((res) => {
+        const messages = res.data;
         this.setState({
           messages: messages,
         });
@@ -229,7 +230,7 @@ class ChatPage extends BaseListPage {
               </div>
             )
           }
-          <ChatBox messages={this.state.messages} sendMessage={(text) => {this.sendMessage(text);}} account={this.props.account} />
+          <ChatBox messages={this.state.messages || []} sendMessage={(text) => {this.sendMessage(text);}} account={this.props.account} />
         </div>
       </div>
     );

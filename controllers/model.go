@@ -45,8 +45,7 @@ func (c *ApiController) GetModels() {
 			return
 		}
 
-		c.Data["json"] = models
-		c.ServeJSON()
+		c.ResponseOk(models)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetModelCount(owner, field, value)
@@ -82,8 +81,7 @@ func (c *ApiController) GetModel() {
 		return
 	}
 
-	c.Data["json"] = model
-	c.ServeJSON()
+	c.ResponseOk(model)
 }
 
 // UpdateModel

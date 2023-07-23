@@ -82,9 +82,9 @@ func (c *ApiController) GetGroup() {
 	group, err := object.GetGroup(id)
 	if err != nil {
 		c.ResponseError(err.Error())
-	} else {
-		c.ResponseOk(group)
+		return
 	}
+	c.ResponseOk(group)
 }
 
 // UpdateGroup

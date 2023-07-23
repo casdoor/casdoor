@@ -63,7 +63,7 @@ class PromptPage extends React.Component {
         }
 
         this.setState({
-          user: res,
+          user: res.data,
         });
       });
   }
@@ -80,9 +80,9 @@ class PromptPage extends React.Component {
           return;
         }
 
-        this.onUpdateApplication(res);
+        this.onUpdateApplication(res.data);
         this.setState({
-          application: res,
+          application: res.data,
         });
       });
   }

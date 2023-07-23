@@ -46,8 +46,7 @@ func (c *ApiController) GetSyncers() {
 			return
 		}
 
-		c.Data["json"] = organizationSyncers
-		c.ServeJSON()
+		c.ResponseOk(organizationSyncers)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSyncerCount(owner, organization, field, value)
@@ -83,8 +82,7 @@ func (c *ApiController) GetSyncer() {
 		return
 	}
 
-	c.Data["json"] = syncer
-	c.ServeJSON()
+	c.ResponseOk(syncer)
 }
 
 // UpdateSyncer
