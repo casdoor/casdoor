@@ -125,7 +125,7 @@ var pgtToServiceResponse sync.Map
 
 func CheckCasLogin(app *Application, lang string, service string) (err error) {
 	if len(app.RedirectUris) > 0 && !app.IsRedirectUriValid(service) {
-		return fmt.Errorf(i18n.Translate(lang, "token:Service: %s doesn't exist in the allowed Redirect URI list"), service)
+		return fmt.Errorf(i18n.Translate(lang, "cas:Service: %s doesn't exist in the allowed Redirect URI list"), service)
 	}
 	return
 }

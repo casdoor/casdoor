@@ -22,7 +22,8 @@
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中"
   },
   "cas": {
-    "Service %s and %s do not match": "服务%s与%s不匹配"
+    "Service %s and %s do not match": "服务%s与%s不匹配",
+    "Service: %s doesn't exist in the allowed Redirect URI list": "服务：%s在许可跳转列表中未找到"
   },
   "chat": {
     "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
