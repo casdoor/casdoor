@@ -667,7 +667,7 @@ class ProviderEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
               </Col>
               <Col span={22} >
-                <Input value={this.state.provider.domain} onChange={e => {
+                <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
                   this.updateProviderField("domain", e.target.value);
                 }} />
               </Col>
