@@ -510,8 +510,7 @@ func (c *ApiController) GetSortedUsers() {
 		return
 	}
 
-	c.Data["json"] = maskedUsers
-	c.ServeJSON()
+	c.ResponseOk(maskedUsers)
 }
 
 // GetUserCount
@@ -538,8 +537,7 @@ func (c *ApiController) GetUserCount() {
 		return
 	}
 
-	c.Data["json"] = count
-	c.ServeJSON()
+	c.ResponseOk(count)
 }
 
 // AddUserkeys
