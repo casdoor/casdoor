@@ -628,7 +628,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Local File System"].includes(this.state.provider.type) ? null : (
+            {["Local File System", "MinIO"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -662,17 +662,19 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
-                  this.updateProviderField("domain", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            {["AWS S3", "MinIO", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
+            {["MinIO"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
+                    this.updateProviderField("domain", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["AWS S3", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :
