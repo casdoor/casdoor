@@ -148,13 +148,13 @@ class ApplicationEditPage extends React.Component {
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
-        if (res?.status === "error") {
+        if (res.status === "error") {
           this.setState({
             isAuthorized: false,
           });
         } else {
           this.setState({
-            organizations: (res.msg === undefined) ? res : [],
+            organizations: res.data || [],
           });
         }
       });
