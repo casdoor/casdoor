@@ -19,12 +19,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/casdoor/casdoor/util"
-	"golang.org/x/oauth2"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/casdoor/casdoor/util"
+	"golang.org/x/oauth2"
 )
 
 const GoogleIdTokenKey = "GoogleIdToken"

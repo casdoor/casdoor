@@ -423,9 +423,9 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderOtherProviderMethod(application) {
+  renderOtherFormProvider(application) {
     for (const providerConf of application.providers) {
-      if (providerConf.provider.type === "Google") {
+      if (providerConf.provider?.type === "Google" && providerConf.rule === "OneTap" && this.props.preview !== "auto") {
         return (
           <GoogleOneTapLoginVirtualButton application={application} providerConf={providerConf} />
         );
@@ -591,7 +591,7 @@ class LoginPage extends React.Component {
               })
             }
             {
-              this.renderOtherProviderMethod(application)
+              this.renderOtherFormProvider(application)
             }
           </Form.Item>
         </Form>
@@ -615,7 +615,7 @@ class LoginPage extends React.Component {
             })
           }
           {
-            this.renderOtherProviderMethod(application)
+            this.renderOtherFormProvider(application)
           }
           <div>
             <br />
@@ -859,6 +859,7 @@ class LoginPage extends React.Component {
     if (this.isOrganizationChoiceBoxVisible(orgChoiceMode)) {
       return this.renderOrganizationChoiceBox(orgChoiceMode);
     }
+
     if (this.state.getVerifyTotp !== undefined) {
       return this.state.getVerifyTotp();
     } else {
