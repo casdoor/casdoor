@@ -36,7 +36,6 @@ import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
-import {getCasParameters} from "./Util";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -176,7 +175,7 @@ class LoginPage extends React.Component {
     } else {
       let redirectUri = "";
       if (this.state.type === "cas") {
-        const casParams = getCasParameters();
+        const casParams = Util.getCasParameters();
         redirectUri = casParams.service;
       }
       OrganizationBackend.getDefaultApplication("admin", this.state.owner, this.state.type, redirectUri)
