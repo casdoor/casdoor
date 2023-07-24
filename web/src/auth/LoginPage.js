@@ -36,7 +36,7 @@ import {CaptchaModal} from "../common/modal/CaptchaModal";
 import {CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
-
+import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
@@ -423,6 +423,16 @@ class LoginPage extends React.Component {
     }
   }
 
+  renderOtherProviderMethod(application) {
+    for (const providerConf of application.providers) {
+      if (providerConf.provider.type === "Google") {
+        return (
+          <GoogleOneTapLoginVirtualButton application={application} providerConf={providerConf} />
+        );
+      }
+    }
+  }
+
   renderForm(application) {
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg);
@@ -580,6 +590,9 @@ class LoginPage extends React.Component {
                 return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
               })
             }
+            {
+              this.renderOtherProviderMethod(application)
+            }
           </Form.Item>
         </Form>
       );
@@ -600,6 +613,9 @@ class LoginPage extends React.Component {
             application.providers?.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
               return ProviderButton.renderProviderLogo(providerItem.provider, application, 40, 10, "big", this.props.location);
             })
+          }
+          {
+            this.renderOtherProviderMethod(application)
           }
           <div>
             <br />
@@ -843,7 +859,6 @@ class LoginPage extends React.Component {
     if (this.isOrganizationChoiceBoxVisible(orgChoiceMode)) {
       return this.renderOrganizationChoiceBox(orgChoiceMode);
     }
-
     if (this.state.getVerifyTotp !== undefined) {
       return this.state.getVerifyTotp();
     } else {
