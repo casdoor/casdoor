@@ -382,6 +382,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		AuthURL:      provider.CustomAuthUrl,
 		UserInfoURL:  provider.CustomUserInfoUrl,
 		UserMapping:  provider.UserMapping,
+		Domain:       provider.Domain,
 	}
 
 	if provider.Type == "WeChat" {

@@ -45,6 +45,7 @@ type ProviderInfo struct {
 	AuthURL     string
 	UserInfoURL string
 	UserMapping map[string]string
+	Domain      string
 }
 
 type IdProvider interface {
@@ -113,7 +114,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) IdProvider {
 		return NewMetaMaskIdProvider()
 	default:
 		if isGothSupport(idpInfo.Type) {
-			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl)
+			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.Domain)
 		}
 		return nil
 	}
