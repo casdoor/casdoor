@@ -21,10 +21,11 @@ import (
 	"encoding/pem"
 	"encoding/xml"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/casdoor/casdoor/i18n"
 
 	"github.com/beevik/etree"
 	"github.com/casdoor/casdoor/util"
@@ -125,7 +126,7 @@ var pgtToServiceResponse sync.Map
 
 func CheckCasRestrict(app *Application, lang string, service string) (err error) {
 	if len(app.RedirectUris) > 0 && !app.IsRedirectUriValid(service) {
-		return fmt.Errorf(i18n.Translate(lang, "cas:Service: %s doesn't exist in the allowed Redirect URI list"), service)
+		return fmt.Errorf(i18n.Translate(lang, "token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), service)
 	}
 	return
 }

@@ -22,8 +22,7 @@
     "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
   },
   "cas": {
-    "Service %s and %s do not match": "サービス%sと%sは一致しません",
-    "Service: %s doesn't exist in the allowed Redirect URI list": "Service: %s doesn't exist in the allowed Redirect URI list"
+    "Service %s and %s do not match": "サービス%sと%sは一致しません"
   },
   "chat": {
     "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",

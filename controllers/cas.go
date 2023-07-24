@@ -43,11 +43,6 @@ func (c *RootController) CasValidate() {
 		c.Ctx.Output.Body([]byte("no\n"))
 		return
 	}
-	if err := c.CheckCasService(service); err != nil {
-		//fmt.Printf("error valided,%v", err)
-		c.Ctx.Output.Body([]byte("no\n"))
-		return
-	}
 	if ok, response, issuedService, _ := object.GetCasTokenByTicket(ticket); ok {
 		// check whether service is the one for which we previously issued token
 		if issuedService == service {
@@ -91,13 +86,10 @@ func (c *RootController) CasP3ServiceAndProxyValidate() {
 	serviceResponse := object.CasServiceResponse{
 		Xmlns: "http://www.yale.edu/tp/cas",
 	}
+
 	// check whether all required parameters are met
 	if service == "" || ticket == "" {
 		c.sendCasAuthenticationResponseErr(InvalidRequest, "service and ticket must exist", format)
-		return
-	}
-	if err := c.CheckCasService(service); err != nil {
-		c.sendCasAuthenticationResponseErr(InvalidRequest, err.Error(), format)
 		return
 	}
 	ok, response, issuedService, userId := object.GetCasTokenByTicket(ticket)
@@ -168,10 +160,7 @@ func (c *RootController) CasProxy() {
 		c.sendCasProxyResponseErr(InvalidRequest, "pgt and targetService must exist", format)
 		return
 	}
-	if err := c.CheckCasService(targetService); err != nil {
-		c.sendCasProxyResponseErr(InvalidRequest, err.Error(), format)
-		return
-	}
+
 	ok, authenticationSuccess, issuedService, userId := object.GetCasTokenByPgt(pgt)
 	if !ok {
 		c.sendCasProxyResponseErr(UnauthorizedService, "service not authorized", format)
@@ -282,18 +271,4 @@ func (c *RootController) sendCasAuthenticationResponseErr(code, msg, format stri
 		c.Data["xml"] = serviceResponse
 		c.ServeXML()
 	}
-}
-
-func (c *RootController) CheckCasService(service string) (err error) {
-	appName := c.Ctx.Input.Param(":application")
-	//fmt.Printf("appName=%v", appName)
-	app, err := object.GetApplication(fmt.Sprintf("admin/%s", appName))
-	if err != nil {
-		return
-	}
-	err = object.CheckCasRestrict(app, c.GetAcceptLanguage(), service)
-	if err != nil {
-		return
-	}
-	return
 }
