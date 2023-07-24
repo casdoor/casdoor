@@ -94,11 +94,10 @@ func (c *ApiController) GetPlan() {
 			plan.Options = append(plan.Options, option.DisplayName)
 		}
 
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	} else {
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	}
-	c.ServeJSON()
 }
 
 // UpdatePlan

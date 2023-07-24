@@ -58,7 +58,7 @@ class MessageEditPage extends React.Component {
         this.setState({
           message: res.data,
         });
-        this.getUsers(res.organization);
+        this.getUsers(res.data.organization);
       });
   }
 

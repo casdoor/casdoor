@@ -56,8 +56,8 @@ class RoleEditPage extends React.Component {
           role: res.data,
         });
 
-        this.getUsers(res.owner);
-        this.getRoles(res.owner);
+        this.getUsers(this.state.organizationName);
+        this.getRoles(this.state.organizationName);
       });
   }
 

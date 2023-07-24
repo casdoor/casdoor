@@ -46,14 +46,14 @@ class ProductEditPage extends React.Component {
 
   getProduct() {
     ProductBackend.getProduct(this.state.organizationName, this.state.productName)
-      .then((product) => {
-        if (product === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
         this.setState({
-          product: product,
+          product: res.data,
         });
       });
   }

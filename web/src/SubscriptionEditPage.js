@@ -61,8 +61,8 @@ class SubscriptionEditPage extends React.Component {
           subscription: res.data,
         });
 
-        this.getUsers(res.owner);
-        this.getPlanes(res.owner);
+        this.getUsers(this.state.organizationName);
+        this.getPlanes(this.state.organizationName);
       });
   }
 
