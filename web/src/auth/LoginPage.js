@@ -173,7 +173,12 @@ class LoginPage extends React.Component {
           this.onUpdateApplication(res.data);
         });
     } else {
-      OrganizationBackend.getDefaultApplication("admin", this.state.owner)
+      let redirectUri = "";
+      if (this.state.type === "cas") {
+        const casParams = Util.getCasParameters();
+        redirectUri = casParams.service;
+      }
+      OrganizationBackend.getDefaultApplication("admin", this.state.owner, this.state.type, redirectUri)
         .then((res) => {
           if (res.status === "ok") {
             const application = res.data;
@@ -183,9 +188,9 @@ class LoginPage extends React.Component {
             });
           } else {
             this.onUpdateApplication(null);
-            Setting.showMessage("error", res.msg);
-
-            this.props.history.push("/404");
+            this.setState({
+              msg: res.msg,
+            });
           }
         });
     }
