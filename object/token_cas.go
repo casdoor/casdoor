@@ -25,9 +25,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/casdoor/casdoor/i18n"
-
 	"github.com/beevik/etree"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	dsig "github.com/russellhaering/goxmldsig"
 )
@@ -124,8 +123,8 @@ var stToServiceResponse sync.Map
 // pgt is short for proxy granting ticket
 var pgtToServiceResponse sync.Map
 
-func CheckCasRestrict(app *Application, lang string, service string) (err error) {
-	if len(app.RedirectUris) > 0 && !app.IsRedirectUriValid(service) {
+func CheckCasRestrict(application *Application, lang string, service string) (err error) {
+	if len(application.RedirectUris) > 0 && !application.IsRedirectUriValid(service) {
 		return fmt.Errorf(i18n.Translate(lang, "token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), service)
 	}
 	return
