@@ -54,7 +54,7 @@ class ChatEditPage extends React.Component {
           chat: res.data,
         });
 
-        this.getUsers(res.organization);
+        this.getUsers(res.data.organization);
       });
   }
 

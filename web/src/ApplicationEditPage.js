@@ -129,19 +129,20 @@ class ApplicationEditPage extends React.Component {
           return;
         }
 
-        if (res.grantTypes === null || res.grantTypes === undefined || res.grantTypes.length === 0) {
-          res.grantTypes = ["authorization_code"];
+        const application = res.data;
+        if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
+          application.grantTypes = ["authorization_code"];
         }
 
-        if (res.tags === null || res.tags === undefined) {
-          res.tags = [];
+        if (application.tags === null || application.tags === undefined) {
+          application.tags = [];
         }
 
         this.setState({
-          application: res.data,
+          application: application,
         });
 
-        this.getCerts(res.organization);
+        this.getCerts(application.organization);
       });
   }
 

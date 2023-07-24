@@ -62,7 +62,7 @@ class PricingEditPage extends React.Component {
         this.setState({
           pricing: res.data,
         });
-        this.getPlans(res.owner);
+        this.getPlans(this.state.organizationName);
       });
   }
 

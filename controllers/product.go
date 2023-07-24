@@ -88,8 +88,7 @@ func (c *ApiController) GetProduct() {
 		return
 	}
 
-	c.Data["json"] = product
-	c.ServeJSON()
+	c.ResponseOk(product)
 }
 
 // UpdateProduct
