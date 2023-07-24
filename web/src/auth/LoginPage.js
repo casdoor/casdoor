@@ -389,8 +389,15 @@ class LoginPage extends React.Component {
                 application={this.getApplicationObj()}
                 userOwner={values.organization}
                 userName={this.state.username}
-                onSuccess={() => {
-                  AuthBackend.login(values, oAuthParams).then((res) => callback(res));
+                onSuccess={(newValues) => {
+                  values.password = newValues.newPassword;
+                  AuthBackend.login(values, oAuthParams).then((res) => {
+                    if (res.status === "ok") {
+                      return callback(res);
+                    } else {
+                      Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                    }
+                  });
                 }}
                 onFail={(res) => {
                   Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
