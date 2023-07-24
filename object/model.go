@@ -161,5 +161,8 @@ func modelChangeTrigger(oldName string, newName string) error {
 }
 
 func HasRoleDefinition(m model.Model) bool {
+	if m == nil {
+		return false
+	}
 	return m["g"] != nil
 }
