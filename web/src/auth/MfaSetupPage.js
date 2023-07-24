@@ -69,7 +69,7 @@ class MfaSetupPage extends React.Component {
             return;
           }
           this.setState({
-            application: res,
+            application: res.data,
           });
         } else {
           Setting.showMessage("error", i18next.t("mfa:Failed to get application"));

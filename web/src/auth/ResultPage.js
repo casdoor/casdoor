@@ -48,9 +48,10 @@ class ResultPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
-        this.onUpdateApplication(res);
+
+        this.onUpdateApplication(res.data);
         this.setState({
-          application: res,
+          application: res.data,
         });
       });
   }

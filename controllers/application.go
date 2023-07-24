@@ -48,14 +48,11 @@ func (c *ApiController) GetApplications() {
 		} else {
 			applications, err = object.GetOrganizationApplications(owner, organization)
 		}
-
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedApplications(applications, userId))
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetApplicationCount(owner, field, value)
@@ -86,14 +83,14 @@ func (c *ApiController) GetApplications() {
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+
 	app, err := object.GetApplication(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedApplication(app, userId))
 }
 
 // GetUserApplication
@@ -106,25 +103,24 @@ func (c *ApiController) GetApplication() {
 func (c *ApiController) GetUserApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+
 	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
 		return
 	}
 
-	app, err := object.GetApplicationByUser(user)
+	application, err := object.GetApplicationByUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = object.GetMaskedApplication(app, userId)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
 
 // GetOrganizationApplications
@@ -157,8 +153,7 @@ func (c *ApiController) GetOrganizationApplications() {
 			return
 		}
 
-		c.Data["json"] = object.GetMaskedApplications(applications, userId)
-		c.ServeJSON()
+		c.ResponseOk(object.GetMaskedApplications(applications, userId))
 	} else {
 		limit := util.ParseInt(limit)
 

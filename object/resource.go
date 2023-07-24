@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -76,6 +77,10 @@ func GetPaginationResources(owner, user string, offset, limit int, field, value,
 }
 
 func getResource(owner string, name string) (*Resource, error) {
+	if !strings.HasPrefix(name, "/") {
+		name = "/" + name
+	}
+
 	resource := Resource{Owner: owner, Name: name}
 	existed, err := adapter.Engine.Get(&resource)
 	if err != nil {

@@ -45,8 +45,7 @@ func (c *ApiController) GetRoles() {
 			return
 		}
 
-		c.Data["json"] = roles
-		c.ServeJSON()
+		c.ResponseOk(roles)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetRoleCount(owner, field, value)
@@ -82,8 +81,7 @@ func (c *ApiController) GetRole() {
 		return
 	}
 
-	c.Data["json"] = role
-	c.ServeJSON()
+	c.ResponseOk(role)
 }
 
 // UpdateRole

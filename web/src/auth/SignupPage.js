@@ -114,7 +114,7 @@ class SignupPage extends React.Component {
           return;
         }
 
-        this.onUpdateApplication(res);
+        this.onUpdateApplication(res.data);
       });
   }
 

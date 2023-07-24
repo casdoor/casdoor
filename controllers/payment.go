@@ -46,8 +46,7 @@ func (c *ApiController) GetPayments() {
 			return
 		}
 
-		c.Data["json"] = payments
-		c.ServeJSON()
+		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPaymentCount(owner, organization, field, value)
@@ -106,8 +105,7 @@ func (c *ApiController) GetPayment() {
 		return
 	}
 
-	c.Data["json"] = payment
-	c.ServeJSON()
+	c.ResponseOk(payment)
 }
 
 // UpdatePayment

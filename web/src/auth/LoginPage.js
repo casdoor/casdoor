@@ -171,7 +171,7 @@ class LoginPage extends React.Component {
             Setting.showMessage("error", res.msg);
             return;
           }
-          this.onUpdateApplication(res);
+          this.onUpdateApplication(res.data);
         });
     } else {
       let redirectUri = "";

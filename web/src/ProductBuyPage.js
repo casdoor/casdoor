@@ -48,7 +48,7 @@ class ProductBuyPage extends React.Component {
         }
 
         this.setState({
-          product: res,
+          product: res.data,
         });
       });
   }

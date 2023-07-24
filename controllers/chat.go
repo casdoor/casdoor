@@ -45,8 +45,7 @@ func (c *ApiController) GetChats() {
 			return
 		}
 
-		c.Data["json"] = maskedChats
-		c.ServeJSON()
+		c.ResponseOk(maskedChats)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetChatCount(owner, field, value)
@@ -82,8 +81,7 @@ func (c *ApiController) GetChat() {
 		return
 	}
 
-	c.Data["json"] = maskedChat
-	c.ServeJSON()
+	c.ResponseOk(maskedChat)
 }
 
 // UpdateChat

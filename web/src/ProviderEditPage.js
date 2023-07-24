@@ -50,7 +50,7 @@ class ProviderEditPage extends React.Component {
   getProvider() {
     ProviderBackend.getProvider(this.state.owner, this.state.providerName)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
@@ -72,7 +72,7 @@ class ProviderEditPage extends React.Component {
       OrganizationBackend.getOrganizations("admin")
         .then((res) => {
           this.setState({
-            organizations: res.msg === undefined ? res : [],
+            organizations: res.data || [],
           });
         });
     }
@@ -527,7 +527,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") || this.state.provider.category === "Web3" ? null : (
+          (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") || (this.state.provider.category === "Web3") || (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ? null : (
             <React.Fragment>
               {
                 this.state.provider.category === "AI" ? null : (
@@ -616,36 +616,42 @@ class ProviderEditPage extends React.Component {
         }
         {this.state.provider.category === "Storage" ? (
           <div>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.endpoint} onChange={e => {
-                  this.updateProviderField("endpoint", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.intranetEndpoint} onChange={e => {
-                  this.updateProviderField("intranetEndpoint", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.bucket} onChange={e => {
-                  this.updateProviderField("bucket", e.target.value);
-                }} />
-              </Col>
-            </Row>
+            {["Local File System"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Region endpoint for Internet"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.endpoint} onChange={e => {
+                    this.updateProviderField("endpoint", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["Local File System", "MinIO", "Tencent Cloud COS"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.intranetEndpoint} onChange={e => {
+                    this.updateProviderField("intranetEndpoint", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["Local File System"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.bucket} onChange={e => {
+                    this.updateProviderField("bucket", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
@@ -656,17 +662,19 @@ class ProviderEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.domain} onChange={e => {
-                  this.updateProviderField("domain", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            {["AWS S3", "MinIO", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
+            {["MinIO"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.domain} disabled={this.state.provider.type === "Local File System"} onChange={e => {
+                    this.updateProviderField("domain", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["AWS S3", "Tencent Cloud COS"].includes(this.state.provider.type) ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Region ID"), i18next.t("provider:Region ID - Tooltip"))} :

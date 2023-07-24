@@ -45,8 +45,7 @@ func (c *ApiController) GetPricings() {
 			return
 		}
 
-		c.Data["json"] = pricings
-		c.ServeJSON()
+		c.ResponseOk(pricings)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPricingCount(owner, field, value)
@@ -82,8 +81,7 @@ func (c *ApiController) GetPricing() {
 		return
 	}
 
-	c.Data["json"] = pricing
-	c.ServeJSON()
+	c.ResponseOk(pricing)
 }
 
 // UpdatePricing

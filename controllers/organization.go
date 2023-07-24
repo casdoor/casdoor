@@ -55,8 +55,7 @@ func (c *ApiController) GetOrganizations() {
 			return
 		}
 
-		c.Data["json"] = maskedOrganizations
-		c.ServeJSON()
+		c.ResponseOk(maskedOrganizations)
 	} else {
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
