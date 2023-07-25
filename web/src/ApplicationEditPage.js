@@ -165,7 +165,7 @@ class ApplicationEditPage extends React.Component {
     CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
-          certs: (res.msg === undefined) ? res : [],
+          certs: res.data || [],
         });
       });
   }

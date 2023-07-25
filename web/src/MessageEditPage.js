@@ -75,7 +75,7 @@ class MessageEditPage extends React.Component {
     ChatBackend.getChats("admin")
       .then((res) => {
         this.setState({
-          chats: (res.msg === undefined) ? res : [],
+          chats: res.data || [],
         });
       });
   }
