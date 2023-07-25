@@ -100,6 +100,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: add enforcer
+      operationId: ApiController.AddEnforcer
+      parameters:
+      - in: body
+        name: enforcer
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
   /api/add-group:
     post:
       tags:
@@ -693,6 +711,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: delete enforcer
+      operationId: ApiController.DeleteEnforcer
+      parameters:
+      - in: body
+        name: body
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object.Enforce'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
   /api/delete-group:
     post:
       tags:
@@ -1307,6 +1343,42 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/get-enforcer:
+    get:
+      tags:
+      - Enforcer API
+      description: get enforcer
+      operationId: ApiController.GetEnforcer
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
+  /api/get-enforcers:
+    get:
+      tags:
+      - Enforcer API
+      description: get enforcers
+      operationId: ApiController.GetEnforcers
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of enforcers
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Enforcer'
   /api/get-global-providers:
     get:
       tags:
@@ -2869,6 +2941,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: update enforcer
+      operationId: ApiController.UpdateEnforcer
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: enforcer
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
   /api/update-group:
     post:
       tags:
@@ -3446,6 +3541,12 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
+  1225.0xc000333110.false:
+    title: "false"
+    type: object
+  1260.0xc000333140.false:
+    title: "false"
+    type: object
   LaravelResponse:
     title: LaravelResponse
     type: object
@@ -3457,6 +3558,9 @@ definitions:
     type: object
   Response:
     title: Response
+    type: object
+  casbin.Enforcer:
+    title: Enforcer
     type: object
   controllers.AuthForm:
     title: AuthForm
@@ -3482,13 +3586,9 @@ definitions:
     type: object
     properties:
       data:
-        additionalProperties:
-          description: support string, struct or []struct
-          type: string
+        $ref: '#/definitions/1225.0xc000333110.false'
       data2:
-        additionalProperties:
-          description: support string, struct or []struct
-          type: string
+        $ref: '#/definitions/1260.0xc000333140.false'
       msg:
         type: string
       name:
@@ -3514,6 +3614,9 @@ definitions:
     type: object
   object:
     title: object
+    type: object
+  object.&{197582 0xc000ace360 false}:
+    title: '&{197582 0xc000ace360 false}'
     type: object
   object.AccountItem:
     title: AccountItem
@@ -3646,7 +3749,7 @@ definitions:
     title: CasbinRequest
     type: array
     items:
-      $ref: '#/definitions/object.CasbinRequest'
+      $ref: '#/definitions/object.&{197582 0xc000ace360 false}'
   object.Cert:
     title: Cert
     type: object
@@ -3710,6 +3813,31 @@ definitions:
         type: array
         items:
           type: string
+  object.Enforce:
+    title: Enforce
+    type: object
+  object.Enforcer:
+    title: Enforcer
+    type: object
+    properties:
+      adapter:
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      isEnabled:
+        type: boolean
+      model:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      updatedTime:
+        type: string
   object.GaugeVecInfo:
     title: GaugeVecInfo
     type: object
@@ -4827,6 +4955,8 @@ definitions:
         items:
           $ref: '#/definitions/object.ManagedAccount'
       meetup:
+        type: string
+      metamask:
         type: string
       mfaEmailEnabled:
         type: boolean
