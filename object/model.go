@@ -154,6 +154,15 @@ func modelChangeTrigger(oldName string, newName string) error {
 	permission.Model = newName
 	_, err = session.Where("model=?", oldName).Update(permission)
 	if err != nil {
+		session.Rollback()
+		return err
+	}
+
+	enforcer := new(Enforcer)
+	enforcer.Model = newName
+	_, err = session.Where("model=?", oldName).Update(enforcer)
+	if err != nil {
+		session.Rollback()
 		return err
 	}
 

@@ -123,6 +123,12 @@ func initAPI() {
 	beego.Router("/api/add-policy", &controllers.ApiController{}, "POST:AddPolicy")
 	beego.Router("/api/remove-policy", &controllers.ApiController{}, "POST:RemovePolicy")
 
+	beego.Router("/api/get-enforcers", &controllers.ApiController{}, "GET:GetEnforcers")
+	beego.Router("/api/get-enforcer", &controllers.ApiController{}, "GET:GetEnforcer")
+	beego.Router("/api/update-enforcer", &controllers.ApiController{}, "POST:UpdateEnforcer")
+	beego.Router("/api/add-enforcer", &controllers.ApiController{}, "POST:AddEnforcer")
+	beego.Router("/api/delete-enforcer", &controllers.ApiController{}, "POST:DeleteEnforcer")
+
 	beego.Router("/api/set-password", &controllers.ApiController{}, "POST:SetPassword")
 	beego.Router("/api/check-user-password", &controllers.ApiController{}, "POST:CheckUserPassword")
 	beego.Router("/api/get-email-and-phone", &controllers.ApiController{}, "GET:GetEmailAndPhone")

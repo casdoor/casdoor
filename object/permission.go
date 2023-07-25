@@ -118,7 +118,7 @@ func GetPermission(id string) (*Permission, error) {
 
 // checkPermissionValid verifies if the permission is valid
 func checkPermissionValid(permission *Permission) error {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	enforcer.EnableAutoSave(false)
 
 	policies := getPolicies(permission)

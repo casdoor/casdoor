@@ -100,6 +100,13 @@ func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) (bool, error) 
 		return false, err
 	}
 
+	if name != casbinAdapter.Name {
+		err := casbinAdapterChangeTrigger(name, casbinAdapter.Name)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
 	if casbinAdapter.Password == "***" {
 		session.Omit("password")
@@ -178,6 +185,26 @@ func initEnforcer(modelObj *Model, casbinAdapter *CasbinAdapter) (*casbin.Enforc
 	}
 
 	return enforcer, nil
+}
+
+func casbinAdapterChangeTrigger(oldName string, newName string) error {
+	session := adapter.Engine.NewSession()
+	defer session.Close()
+
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
+
+	enforcer := new(Enforcer)
+	enforcer.Adapter = newName
+	_, err = session.Where("adapter=?", oldName).Update(enforcer)
+	if err != nil {
+		session.Rollback()
+		return err
+	}
+
+	return session.Commit()
 }
 
 func safeReturn(policy []string, i int) string {

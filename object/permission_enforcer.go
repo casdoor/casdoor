@@ -26,7 +26,7 @@ import (
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
-func getEnforcer(p *Permission, permissionIDs ...string) *casbin.Enforcer {
+func getPermissionEnforcer(p *Permission, permissionIDs ...string) *casbin.Enforcer {
 	// Init an enforcer instance without specifying a model or adapter.
 	// If you specify an adapter, it will load all policies, which is a
 	// heavy process that can slow down the application.
@@ -204,7 +204,7 @@ func getGroupingPolicies(permission *Permission) [][]string {
 }
 
 func addPolicies(permission *Permission) {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	policies := getPolicies(permission)
 
 	_, err := enforcer.AddPolicies(policies)
@@ -214,7 +214,7 @@ func addPolicies(permission *Permission) {
 }
 
 func addGroupingPolicies(permission *Permission) {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
@@ -226,7 +226,7 @@ func addGroupingPolicies(permission *Permission) {
 }
 
 func removeGroupingPolicies(permission *Permission) {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
@@ -238,7 +238,7 @@ func removeGroupingPolicies(permission *Permission) {
 }
 
 func removePolicies(permission *Permission) {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	policies := getPolicies(permission)
 
 	_, err := enforcer.RemovePolicies(policies)
@@ -250,12 +250,12 @@ func removePolicies(permission *Permission) {
 type CasbinRequest = []interface{}
 
 func Enforce(permission *Permission, request *CasbinRequest, permissionIds ...string) (bool, error) {
-	enforcer := getEnforcer(permission, permissionIds...)
+	enforcer := getPermissionEnforcer(permission, permissionIds...)
 	return enforcer.Enforce(*request...)
 }
 
 func BatchEnforce(permission *Permission, requests *[]CasbinRequest, permissionIds ...string) ([]bool, error) {
-	enforcer := getEnforcer(permission, permissionIds...)
+	enforcer := getPermissionEnforcer(permission, permissionIds...)
 	return enforcer.BatchEnforce(*requests)
 }
 
@@ -276,7 +276,7 @@ func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []
 
 	var values []string
 	for _, permission := range permissions {
-		enforcer := getEnforcer(permission)
+		enforcer := getPermissionEnforcer(permission)
 		values = append(values, fn(enforcer)...)
 	}
 	return values

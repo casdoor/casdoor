@@ -15,10 +15,6 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
-import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
-import GroupTreePage from "./GroupTreePage";
-import GroupEditPage from "./GroupEdit";
-import GroupListPage from "./GroupList";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
@@ -33,6 +29,11 @@ import RoleListPage from "./RoleListPage";
 import RoleEditPage from "./RoleEditPage";
 import PermissionListPage from "./PermissionListPage";
 import PermissionEditPage from "./PermissionEditPage";
+import EnforcerEditPage from "./EnforcerEditPage";
+import EnforcerListPage from "./EnforcerListPage";
+import GroupTreePage from "./GroupTreePage";
+import GroupEditPage from "./GroupEdit";
+import GroupListPage from "./GroupList";
 import ProviderListPage from "./ProviderListPage";
 import ProviderEditPage from "./ProviderEditPage";
 import ApplicationListPage from "./ApplicationListPage";
@@ -86,6 +87,7 @@ import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
 import i18next from "i18next";
 import {withTranslation} from "react-i18next";
+import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
 import LanguageSelect from "./common/select/LanguageSelect";
 import ThemeSelect from "./common/select/ThemeSelect";
 import OrganizationSelect from "./common/select/OrganizationSelect";
@@ -164,6 +166,8 @@ class App extends Component {
       this.setState({selectedMenuKey: "/models"});
     } else if (uri.includes("/adapters")) {
       this.setState({selectedMenuKey: "/adapters"});
+    } else if (uri.includes("/enforcers")) {
+      this.setState({selectedMenuKey: "/enforcers"});
     } else if (uri.includes("/providers")) {
       this.setState({selectedMenuKey: "/providers"});
     } else if (uri.includes("/applications")) {
@@ -481,6 +485,10 @@ class App extends Component {
       res.push(Setting.getItem(<Link to="/adapters">{i18next.t("general:Adapters")}</Link>,
         "/adapters"
       ));
+
+      res.push(Setting.getItem(<Link to="/enforcers">{i18next.t("general:Enforcers")}</Link>,
+        "/enforcers"
+      ));
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
@@ -599,6 +607,8 @@ class App extends Component {
         <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/models" render={(props) => this.renderLoginIfNotLoggedIn(<ModelListPage account={this.state.account} {...props} />)} />
         <Route exact path="/models/:organizationName/:modelName" render={(props) => this.renderLoginIfNotLoggedIn(<ModelEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/enforcers" render={(props) => this.renderLoginIfNotLoggedIn(<EnforcerListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/enforcers/:organizationName/:enforcerName" render={(props) => this.renderLoginIfNotLoggedIn(<EnforcerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/adapters" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterListPage account={this.state.account} {...props} />)} />
         <Route exact path="/adapters/:organizationName/:adapterName" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)} />

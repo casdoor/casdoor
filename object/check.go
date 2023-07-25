@@ -365,7 +365,7 @@ func CheckAccessPermission(userId string, application *Application) (bool, error
 			if containsAsterisk {
 				return true, err
 			}
-			enforcer := getEnforcer(permission)
+			enforcer := getPermissionEnforcer(permission)
 			if allowed, err = enforcer.Enforce(userId, application.Name, "read"); allowed {
 				return allowed, err
 			}
