@@ -42,15 +42,17 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter()
+	InitAdapter(true)
 	CreateTables(true)
 	DoMigration()
 }
 
-func InitAdapter() {
-	err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
-	if err != nil {
-		panic(err)
+func InitAdapter(createDatabase bool) {
+	if createDatabase {
+		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
