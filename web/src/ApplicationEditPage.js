@@ -119,7 +119,7 @@ class ApplicationEditPage extends React.Component {
   getApplication() {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
-        if (res === null) {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
@@ -129,32 +129,33 @@ class ApplicationEditPage extends React.Component {
           return;
         }
 
-        if (res.grantTypes === null || res.grantTypes === undefined || res.grantTypes.length === 0) {
-          res.grantTypes = ["authorization_code"];
+        const application = res.data;
+        if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
+          application.grantTypes = ["authorization_code"];
         }
 
-        if (res.tags === null || res.tags === undefined) {
-          res.tags = [];
+        if (application.tags === null || application.tags === undefined) {
+          application.tags = [];
         }
 
         this.setState({
-          application: res,
+          application: application,
         });
 
-        this.getCerts(res.organization);
+        this.getCerts(application.organization);
       });
   }
 
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
-        if (res?.status === "error") {
+        if (res.status === "error") {
           this.setState({
             isAuthorized: false,
           });
         } else {
           this.setState({
-            organizations: (res.msg === undefined) ? res : [],
+            organizations: res.data || [],
           });
         }
       });
@@ -164,7 +165,7 @@ class ApplicationEditPage extends React.Component {
     CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
-          certs: (res.msg === undefined) ? res : [],
+          certs: res.data || [],
         });
       });
   }
@@ -184,9 +185,9 @@ class ApplicationEditPage extends React.Component {
 
   getSamlMetadata() {
     ApplicationBackend.getSamlMetadata("admin", this.state.applicationName)
-      .then((res) => {
+      .then((data) => {
         this.setState({
-          samlMetadata: res,
+          samlMetadata: data,
         });
       });
   }

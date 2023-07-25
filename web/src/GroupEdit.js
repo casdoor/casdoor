@@ -67,7 +67,7 @@ class GroupEditPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
-            organizations: res.data,
+            organizations: res.data || [],
           });
         }
       });

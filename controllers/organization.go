@@ -55,8 +55,7 @@ func (c *ApiController) GetOrganizations() {
 			return
 		}
 
-		c.Data["json"] = maskedOrganizations
-		c.ServeJSON()
+		c.ResponseOk(maskedOrganizations)
 	} else {
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
@@ -184,11 +183,21 @@ func (c *ApiController) DeleteOrganization() {
 func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+	redirectUri := c.Input().Get("redirectUri")
+	typ := c.Input().Get("type")
 
 	application, err := object.GetDefaultApplication(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if typ == "cas" {
+		err = object.CheckCasRestrict(application, c.GetAcceptLanguage(), redirectUri)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	maskedApplication := object.GetMaskedApplication(application, userId)

@@ -41,12 +41,12 @@ class PaymentResultPage extends React.Component {
 
   getPayment() {
     PaymentBackend.getPayment("admin", this.state.paymentName)
-      .then((payment) => {
+      .then((res) => {
         this.setState({
-          payment: payment,
+          payment: res.data,
         });
 
-        if (payment.state === "Created") {
+        if (res.data.state === "Created") {
           this.setState({timeout: setTimeout(() => this.getPayment(), 1000)});
         }
       });

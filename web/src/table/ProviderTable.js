@@ -178,21 +178,37 @@ class ProviderTable extends React.Component {
         key: "rule",
         width: "100px",
         render: (text, record, index) => {
-          if (record.provider?.category !== "Captcha") {
+          if (record.provider?.type === "Google") {
+            if (text === "None") {
+              text = "Default";
+            }
+            return (
+              <Select virtual={false} style={{width: "100%"}}
+                value={text}
+                defaultValue="Default"
+                onChange={value => {
+                  this.updateField(table, index, "rule", value);
+                }} >
+                <Option key="Default" value="Default">{i18next.t("general:Default")}</Option>
+                <Option key="OneTap" value="OneTap">{"One Tap"}</Option>
+              </Select>
+            );
+          } else if (record.provider?.category === "Captcha") {
+            return (
+              <Select virtual={false} style={{width: "100%"}}
+                value={text}
+                defaultValue="None"
+                onChange={value => {
+                  this.updateField(table, index, "rule", value);
+                }} >
+                <Option key="None" value="None">{i18next.t("general:None")}</Option>
+                <Option key="Dynamic" value="Dynamic">{i18next.t("application:Dynamic")}</Option>
+                <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
+              </Select>
+            );
+          } else {
             return null;
           }
-          return (
-            <Select virtual={false} style={{width: "100%"}}
-              value={text}
-              defaultValue="None"
-              onChange={value => {
-                this.updateField(table, index, "rule", value);
-              }} >
-              <Option key="None" value="None">{i18next.t("general:None")}</Option>
-              <Option key="Dynamic" value="Dynamic">{i18next.t("application:Dynamic")}</Option>
-              <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
-            </Select>
-          );
         },
       },
       {

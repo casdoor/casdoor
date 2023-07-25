@@ -46,8 +46,7 @@ func (c *ApiController) GetProducts() {
 			return
 		}
 
-		c.Data["json"] = products
-		c.ServeJSON()
+		c.ResponseOk(products)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProductCount(owner, field, value)
@@ -89,8 +88,7 @@ func (c *ApiController) GetProduct() {
 		return
 	}
 
-	c.Data["json"] = product
-	c.ServeJSON()
+	c.ResponseOk(product)
 }
 
 // UpdateProduct

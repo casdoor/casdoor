@@ -10199,6 +10199,11 @@ react-github-corner@^2.5.0:
   resolved "https://registry.yarnpkg.com/react-github-corner/-/react-github-corner-2.5.0.tgz#e350d0c69f69c075bc0f1d2a6f1df6ee91da31f2"
   integrity sha512-ofds9l6n61LJc6ML+jSE6W9ZSQvATcMR9evnHPXua1oDYj289HKODnVqFUB/g2a4ieBjDHw416iHP3MjqnU76Q==
 
+react-google-one-tap-login@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-google-one-tap-login/-/react-google-one-tap-login-0.1.1.tgz#12a61e63e19251622cf1575b601d79fd4d07847a"
+  integrity sha512-RCbOfR3Z7VcRae4AzrLoBfY/aqqdN24pkQeNz9CJ0W65C9SY3vAwF0Yp8mwpeFwsugaZ5b1HZsfhUYWtb3IMrw==
+
 react-helmet@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/react-helmet/-/react-helmet-6.1.0.tgz#a750d5165cb13cf213e44747502652e794468726"

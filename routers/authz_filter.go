@@ -156,7 +156,7 @@ func AuthzFilter(ctx *context.Context) {
 	urlPath := getUrlPath(ctx.Request.URL.Path)
 
 	objOwner, objName := "", ""
-	if urlPath != "/api/get-app-login" {
+	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
 		objOwner, objName = getObject(ctx)
 	}
 

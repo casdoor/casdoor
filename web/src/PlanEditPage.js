@@ -46,18 +46,18 @@ class PlanEditPage extends React.Component {
 
   getPlan() {
     PlanBackend.getPlan(this.state.organizationName, this.state.planName)
-      .then((plan) => {
-        if (plan === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
         this.setState({
-          plan: plan,
+          plan: res.data,
         });
 
-        this.getUsers(plan.owner);
-        this.getRoles(plan.owner);
+        this.getUsers(this.state.organizationName);
+        this.getRoles(this.state.organizationName);
       });
   }
 
@@ -68,8 +68,9 @@ class PlanEditPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
+
         this.setState({
-          roles: res,
+          roles: res.data,
         });
       });
   }
@@ -81,8 +82,9 @@ class PlanEditPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
+
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -91,7 +93,7 @@ class PlanEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }

@@ -55,7 +55,7 @@ class LdapEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }

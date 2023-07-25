@@ -45,8 +45,7 @@ func (c *ApiController) GetPlans() {
 			return
 		}
 
-		c.Data["json"] = plans
-		c.ServeJSON()
+		c.ResponseOk(plans)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPlanCount(owner, field, value)
@@ -95,11 +94,10 @@ func (c *ApiController) GetPlan() {
 			plan.Options = append(plan.Options, option.DisplayName)
 		}
 
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	} else {
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	}
-	c.ServeJSON()
 }
 
 // UpdatePlan
