@@ -320,7 +320,7 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("permission:Actions"), i18next.t("permission:Actions - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
+            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
               this.updatePermissionField("actions", value);
             })}
             options={[
