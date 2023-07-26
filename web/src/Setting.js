@@ -1162,6 +1162,14 @@ export function getApplicationName(application) {
   return `${application?.owner}/${application?.name}`;
 }
 
+export function getCachedApplication(applicationName) {
+  const application = JSON.parse(localStorage.getItem(applicationName));
+  if (application === null) {
+    return undefined;
+  }
+  return application;
+}
+
 export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }

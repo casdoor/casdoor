@@ -39,9 +39,9 @@ class PromptPage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getUser();
-    if (this.getApplicationObj() === null) {
+    if (this.getApplicationObj() === undefined) {
       this.getApplication();
     }
   }
@@ -88,7 +88,7 @@ class PromptPage extends React.Component {
   }
 
   getApplicationObj() {
-    return this.props.application ?? this.state.application;
+    return this.props.application;
   }
 
   onUpdateApplication(application) {

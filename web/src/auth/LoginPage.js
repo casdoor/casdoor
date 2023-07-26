@@ -71,6 +71,11 @@ class LoginPage extends React.Component {
 
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
+      const cachedApplication = Setting.getCachedApplication();
+      if (cachedApplication !== undefined) {
+        this.onUpdateApplication(cachedApplication);
+      }
+
       if (this.state.type === "login" || this.state.type === "cas" || this.state.type === "saml") {
         this.getApplication();
       } else if (this.state.type === "code") {

@@ -61,6 +61,9 @@ class ForgetPage extends React.Component {
     if (this.state.applicationName === undefined) {
       return;
     }
+    if (localStorage.getItem(this.state.applicationName) !== null) {
+      localStorage.removeItem("applicationName");
+    }
 
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
@@ -71,6 +74,7 @@ class ForgetPage extends React.Component {
         this.onUpdateApplication(res.data);
       });
   }
+
   getApplicationObj() {
     return this.props.application;
   }

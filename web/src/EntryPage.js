@@ -19,7 +19,6 @@ import i18next from "i18next";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PricingPage from "./pricing/PricingPage";
 import * as Setting from "./Setting";
-import * as Conf from "./Conf";
 import SignupPage from "./auth/SignupPage";
 import SelfLoginPage from "./auth/SelfLoginPage";
 import LoginPage from "./auth/LoginPage";
@@ -37,6 +36,15 @@ class EntryPage extends React.Component {
       application: undefined,
       pricing: undefined,
     };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.application !== prevState.application) {
+      if (this.state.application !== null) {
+        const themeData = Setting.getThemeData(this.state.application.organizationObj, this.state.application);
+        this.props.updataThemeData(themeData);
+      }
+    }
   }
 
   renderHomeIfLoggedIn(component) {
@@ -64,8 +72,9 @@ class EntryPage extends React.Component {
         application: application,
       });
 
-      const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
-      this.props.updataThemeData(themeData);
+      if (application !== null) {
+        localStorage.setItem(application.name, JSON.stringify(application));
+      }
     };
 
     const onUpdatePricing = (pricing) => {
@@ -79,10 +88,9 @@ class EntryPage extends React.Component {
             Setting.showMessage("error", res.msg);
             return;
           }
-
-          const application = res.data;
-          const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
-          this.props.updataThemeData(themeData);
+          this.setState({
+            application: res.data,
+          });
         });
     };
 

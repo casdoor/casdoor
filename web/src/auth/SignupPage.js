@@ -91,6 +91,11 @@ class SignupPage extends React.Component {
     }
 
     if (this.getApplicationObj() === undefined) {
+      const cachedApplication = Setting.getCachedApplication();
+      if (cachedApplication !== undefined) {
+        this.onUpdateApplication(cachedApplication);
+      }
+
       if (this.state.applicationName !== null) {
         this.getApplication(this.state.applicationName);
       } else if (oAuthParams !== null) {
