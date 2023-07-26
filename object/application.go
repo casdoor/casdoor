@@ -281,12 +281,15 @@ func GetApplication(id string) (*Application, error) {
 }
 
 func GetMaskedApplication(application *Application, userId string) *Application {
-	if isUserIdGlobalAdmin(userId) {
-		return application
-	}
-
 	if application == nil {
 		return nil
+	}
+
+	if userId != "" {
+		user, _ := GetUser(userId)
+		if user.IsApplicationAdmin(application) || isUserIdGlobalAdmin(userId) {
+			return application
+		}
 	}
 
 	if application.ClientSecret != "" {
@@ -315,6 +318,7 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	for _, application := range applications {
 		application = GetMaskedApplication(application, userId)
 	}
+
 	return applications
 }
 
