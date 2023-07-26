@@ -82,12 +82,12 @@ func getRole(owner string, name string) (*Role, error) {
 }
 
 func GetRole(id string) (*Role, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	return getRole(owner, name)
 }
 
 func UpdateRole(id string, role *Role) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldRole, err := getRole(owner, name)
 	if err != nil {
 		return false, err
