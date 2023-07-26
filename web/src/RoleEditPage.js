@@ -26,7 +26,7 @@ class RoleEditPage extends React.Component {
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
-      roleName: props.match.params.roleName,
+      roleName: decodeURIComponent(props.match.params.roleName),
       role: null,
       organizations: [],
       users: [],
@@ -225,7 +225,7 @@ class RoleEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/roles");
           } else {
-            this.props.history.push(`/roles/${this.state.role.owner}/${this.state.role.name}`);
+            this.props.history.push(`/roles/${this.state.role.owner}/${encodeURIComponent(this.state.role.name)}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

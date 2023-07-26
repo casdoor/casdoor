@@ -30,7 +30,7 @@ class PermissionEditPage extends React.Component {
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
-      permissionName: props.match.params.permissionName,
+      permissionName: decodeURIComponent(props.match.params.permissionName),
       permission: null,
       organizations: [],
       model: null,
@@ -449,7 +449,7 @@ class PermissionEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/permissions");
           } else {
-            this.props.history.push(`/permissions/${this.state.permission.owner}/${this.state.permission.name}`);
+            this.props.history.push(`/permissions/${this.state.permission.owner}/${encodeURIComponent(this.state.permission.name)}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
