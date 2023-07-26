@@ -1162,12 +1162,32 @@ export function getApplicationName(application) {
   return `${application?.owner}/${application?.name}`;
 }
 
-export function getCachedApplication(applicationName) {
+export function getCachedApplication(params) {
+  const applicationName = getApplication(params);
   const application = JSON.parse(localStorage.getItem(applicationName));
   if (application === null) {
     return undefined;
   }
   return application;
+}
+
+export function setCachedApplication(params, application) {
+  const applicationName = getApplication(params);
+  localStorage.setItem(applicationName, JSON.stringify(application));
+}
+
+export function getApplication(params) {
+  if (params === undefined) {
+    return;
+  }
+
+  if (params.applicationName) {
+    return params.applicationName;
+  } else if (params.owner) {
+    return params.owner;
+  } else if (params.casApplicationName) {
+    return params.casApplicationName;
+  }
 }
 
 export function getRandomName() {

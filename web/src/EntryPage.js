@@ -68,12 +68,19 @@ class EntryPage extends React.Component {
 
   render() {
     const onUpdateApplication = (application) => {
-      this.setState({
-        application: application,
-      });
+      if (application === null) {
+        this.setState({
+          application: null,
+        });
+        return;
+      }
 
-      if (application !== null) {
-        localStorage.setItem(application.name, JSON.stringify(application));
+      const cachedApplication = Setting.getCachedApplication(this.props.match.params);
+      if (this.state.application === undefined || JSON.stringify(application) !== JSON.stringify(cachedApplication)) {
+        this.setState({
+          application: application,
+        });
+        Setting.setCachedApplication(this.props.match.params, application);
       }
     };
 

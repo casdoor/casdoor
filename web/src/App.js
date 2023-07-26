@@ -787,6 +787,7 @@ class App extends Component {
                   }}
                   onUpdateAccount={(account) => this.onUpdateAccount(account)}
                   updataThemeData={this.setTheme}
+                  {...this.props}
                 /> :
                 <Switch>
                   <Route exact path="/callback" component={AuthCallback} />

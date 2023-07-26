@@ -71,7 +71,7 @@ class LoginPage extends React.Component {
 
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
-      const cachedApplication = Setting.getCachedApplication();
+      const cachedApplication = Setting.getCachedApplication(this.props.match?.params);
       if (cachedApplication !== undefined) {
         this.onUpdateApplication(cachedApplication);
       }
@@ -199,6 +199,14 @@ class LoginPage extends React.Component {
           }
         });
     }
+  }
+
+  getCachedApplication(applicationName) {
+    const application = JSON.parse(localStorage.getItem(applicationName));
+    if (application === null) {
+      return undefined;
+    }
+    return application;
   }
 
   getApplicationObj() {
