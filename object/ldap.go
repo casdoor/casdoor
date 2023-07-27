@@ -135,23 +135,20 @@ func GetMaskedLdaps(ldaps []*Ldap, errs ...error) ([]*Ldap, error) {
 }
 
 func UpdateLdap(ldap *Ldap) (bool, error) {
-	if l, err := GetLdap(ldap.Id); err != nil {
+	var l *Ldap
+	var err error
+	if l, err = GetLdap(ldap.Id); err != nil {
 		return false, nil
 	} else if l == nil {
 		return false, nil
 	}
 
-	cols := []string{
-		"owner", "server_name", "host",
-		"port", "enable_ssl", "username", "base_dn", "filter", "filter_fields", "auto_sync",
+	if ldap.Password == "***" {
+		ldap.Password = l.Password
 	}
 
-	isPasswordChanged := ldap.Password != "***"
-	if isPasswordChanged {
-		cols = append(cols, "password")
-	}
-
-	affected, err := adapter.Engine.ID(ldap.Id).Cols(cols...).Update(ldap)
+	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
+		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
 	if err != nil {
 		return false, nil
 	}
