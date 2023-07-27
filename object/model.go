@@ -137,8 +137,8 @@ func DeleteModel(model *Model) (bool, error) {
 	return affected != 0, nil
 }
 
-func (model *Model) GetId() string {
-	return fmt.Sprintf("%s/%s", model.Owner, model.Name)
+func (m *Model) GetId() string {
+	return fmt.Sprintf("%s/%s", m.Owner, m.Name)
 }
 
 func modelChangeTrigger(oldName string, newName string) error {
@@ -174,4 +174,12 @@ func HasRoleDefinition(m model.Model) bool {
 		return false
 	}
 	return m["g"] != nil
+}
+
+func (m *Model) initModel() (model.Model, error) {
+	casbinModel, err := model.NewModelFromString(m.ModelText)
+	if err != nil {
+		return nil, err
+	}
+	return casbinModel, nil
 }

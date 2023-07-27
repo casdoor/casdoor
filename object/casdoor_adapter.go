@@ -35,13 +35,14 @@ type CasdoorAdapter struct {
 
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
-	Port            int    `json:"port"`
+	Port            string `xorm:"varchar(20)" json:"port"`
 	User            string `xorm:"varchar(100)" json:"user"`
 	Password        string `xorm:"varchar(100)" json:"password"`
 	Database        string `xorm:"varchar(100)" json:"database"`
 	Table           string `xorm:"varchar(100)" json:"table"`
 	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
 	File            string `xorm:"varchar(100)" json:"file"`
+	DataSourceName  string `xorm:"varchar(200)" json:"dataSourceName"`
 	IsEnabled       bool   `json:"isEnabled"`
 
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
@@ -156,11 +157,11 @@ func initEnforcer(modelObj *Model, casdoorAdapter *CasdoorAdapter) (*casbin.Enfo
 	if casdoorAdapter.Adapter == nil {
 		var dataSourceName string
 		if casdoorAdapter.DatabaseType == "mssql" {
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
 		} else if casdoorAdapter.DatabaseType == "postgres" {
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
 		} else {
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
 		}
 
 		if !isCloudIntranet {
@@ -193,23 +194,27 @@ func (casdoorAdapter *CasdoorAdapter) initAdapter() (*xormadapter.Adapter, error
 	// init Adapter
 	if casdoorAdapter.Adapter == nil {
 		var dataSourceName string
-		switch casdoorAdapter.DatabaseType {
-		case "mssql":
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", casdoorAdapter.User,
-				casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
-		case "mysql":
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", casdoorAdapter.User,
-				casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
-		case "postgres":
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", casdoorAdapter.User,
-				casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
-		case "CockroachDB":
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
-				casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
-		case "sqlite3":
-			dataSourceName = fmt.Sprintf("file:%s", casdoorAdapter.File)
-		default:
-			return nil, fmt.Errorf("unsupported database type: %s", casdoorAdapter.DatabaseType)
+		if casdoorAdapter.DataSourceName != "" {
+			dataSourceName = casdoorAdapter.DataSourceName
+		} else {
+			switch casdoorAdapter.DatabaseType {
+			case "mssql":
+				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casdoorAdapter.User,
+					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+			case "mysql":
+				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casdoorAdapter.User,
+					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
+			case "postgres":
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casdoorAdapter.User,
+					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+			case "CockroachDB":
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s serial_normalization=virtual_sequence",
+					casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+			case "sqlite3":
+				dataSourceName = fmt.Sprintf("file:%s", casdoorAdapter.File)
+			default:
+				return nil, fmt.Errorf("unsupported database type: %s", casdoorAdapter.DatabaseType)
+			}
 		}
 
 		if !isCloudIntranet {
@@ -217,7 +222,7 @@ func (casdoorAdapter *CasdoorAdapter) initAdapter() (*xormadapter.Adapter, error
 		}
 
 		var err error
-		casdoorAdapter.Adapter, err = xormadapter.NewAdapterWithTableName(casdoorAdapter.DatabaseType, dataSourceName, casdoorAdapter.getTable(), casdoorAdapter.TableNamePrefix, true)
+		casdoorAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casdoorAdapter.DatabaseType, dataSourceName, casdoorAdapter.Database).Engine, casdoorAdapter.getTable(), casdoorAdapter.TableNamePrefix)
 		if err != nil {
 			return nil, err
 		}
