@@ -429,11 +429,13 @@ func initBuildInPermissionAdapter() {
 		Owner:           "built-in",
 		Name:            "permission-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
+		Type:            "Database",
 		DatabaseType:    conf.GetConfigString("driverName"),
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
 		Table:           "casbin_user_rule",
 		DataSourceName:  conf.GetConfigString("dataSourceName"),
+		IsEnabled:       true,
 	}
 	_, err = AddCasdoorAdapter(permissionAdapter)
 	if err != nil {
@@ -455,11 +457,13 @@ func initBuildInAuthzAdapter() {
 		Owner:           "built-in",
 		Name:            "authz-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
+		Type:            "Database",
 		DatabaseType:    conf.GetConfigString("driverName"),
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
-		Table:           "casbin_rule",
+		Table:           "casbin_authz-rule",
 		DataSourceName:  conf.GetConfigString("dataSourceName"),
+		IsEnabled:       true,
 	}
 	_, err = AddCasdoorAdapter(authzAdapter)
 	if err != nil {
@@ -484,6 +488,7 @@ func initBuiltInPermissionEnforcer() {
 		DisplayName: "Permission Enforcer",
 		Model:       "built-in/permission-model-built-in",
 		Adapter:     "built-in/permission-adapter-built-in",
+		IsEnabled:   true,
 	}
 
 	_, err = AddEnforcer(permissionEnforcer)
@@ -509,6 +514,7 @@ func initBuiltInAuthzEnforcer() {
 		DisplayName: "Authz Enforcer",
 		Model:       "built-in/authz-model-built-in",
 		Adapter:     "built-in/authz-adapter-built-in",
+		IsEnabled:   true,
 	}
 
 	_, err = AddEnforcer(authzEnforcer)
