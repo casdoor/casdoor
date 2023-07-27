@@ -35,14 +35,12 @@ func InitDb() {
 		initBuiltInLdap()
 	}
 
-	existed = initBuiltInAuthzModel()
-	if !existed {
-		initBuiltInPermissionModel()
-		initBuildInPermissionAdapter()
-		initBuildInAuthzAdapter()
-		initBuiltInPermissionEnforcer()
-		initBuiltInAuthzEnforcer()
-	}
+	initBuiltInAuthzModel()
+	initBuiltInPermissionModel()
+	initBuildInPermissionAdapter()
+	initBuildInAuthzAdapter()
+	initBuiltInPermissionEnforcer()
+	initBuiltInAuthzEnforcer()
 
 	initWebAuthn()
 }
@@ -461,7 +459,7 @@ func initBuildInAuthzAdapter() {
 		DatabaseType:    conf.GetConfigString("driverName"),
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
-		Table:           "casbin_authz-rule",
+		Table:           "casbin_authz_rule",
 		DataSourceName:  conf.GetConfigString("dataSourceName"),
 		IsEnabled:       true,
 	}
