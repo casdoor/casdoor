@@ -113,11 +113,11 @@ func initAPI() {
 	beego.Router("/api/add-model", &controllers.ApiController{}, "POST:AddModel")
 	beego.Router("/api/delete-model", &controllers.ApiController{}, "POST:DeleteModel")
 
-	beego.Router("/api/get-adapters", &controllers.ApiController{}, "GET:GetCasbinAdapters")
-	beego.Router("/api/get-adapter", &controllers.ApiController{}, "GET:GetCasbinAdapter")
-	beego.Router("/api/update-adapter", &controllers.ApiController{}, "POST:UpdateCasbinAdapter")
-	beego.Router("/api/add-adapter", &controllers.ApiController{}, "POST:AddCasbinAdapter")
-	beego.Router("/api/delete-adapter", &controllers.ApiController{}, "POST:DeleteCasbinAdapter")
+	beego.Router("/api/get-adapters", &controllers.ApiController{}, "GET:GetCasdoorAdapters")
+	beego.Router("/api/get-adapter", &controllers.ApiController{}, "GET:GetCasdoorAdapter")
+	beego.Router("/api/update-adapter", &controllers.ApiController{}, "POST:UpdateCasdoorAdapter")
+	beego.Router("/api/add-adapter", &controllers.ApiController{}, "POST:AddCasdoorAdapter")
+	beego.Router("/api/delete-adapter", &controllers.ApiController{}, "POST:DeleteCasdoorAdapter")
 	beego.Router("/api/sync-policies", &controllers.ApiController{}, "GET:SyncPolicies")
 	beego.Router("/api/update-policy", &controllers.ApiController{}, "POST:UpdatePolicy")
 	beego.Router("/api/add-policy", &controllers.ApiController{}, "POST:AddPolicy")
@@ -257,18 +257,6 @@ func initAPI() {
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 
-	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
-	beego.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
-
-	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
-	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
-	beego.Router("/cas/:organization/:application/proxy", &controllers.RootController{}, "GET:CasProxy")
-	beego.Router("/cas/:organization/:application/validate", &controllers.RootController{}, "GET:CasValidate")
-
-	beego.Router("/cas/:organization/:application/p3/serviceValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
-	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
-	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
-
 	beego.Router("/api/webauthn/signup/begin", &controllers.ApiController{}, "Get:WebAuthnSignupBegin")
 	beego.Router("/api/webauthn/signup/finish", &controllers.ApiController{}, "Post:WebAuthnSignupFinish")
 	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
@@ -286,4 +274,16 @@ func initAPI() {
 	beego.Router("/api/get-prometheus-info", &controllers.ApiController{}, "GET:GetPrometheusInfo")
 
 	beego.Handler("/api/metrics", promhttp.Handler())
+
+	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
+	beego.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
+
+	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
+	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
+	beego.Router("/cas/:organization/:application/proxy", &controllers.RootController{}, "GET:CasProxy")
+	beego.Router("/cas/:organization/:application/validate", &controllers.RootController{}, "GET:CasValidate")
+
+	beego.Router("/cas/:organization/:application/p3/serviceValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
+	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ServiceAndProxyValidate")
+	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
 }
