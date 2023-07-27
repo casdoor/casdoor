@@ -141,8 +141,15 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
+	cols := []string{"owner", "server_name", "host",
+	"port", "enable_ssl", "username", "base_dn", "filter", "filter_fields", "auto_sync"}
+	
+	isPasswordChanged := ldap.Password != "***"
+	if isPasswordChanged {
+		cols = append(cols, "password")
+	}
+
+	affected, err := adapter.Engine.ID(ldap.Id).Cols(cols...).Update(ldap)
 	if err != nil {
 		return false, nil
 	}
