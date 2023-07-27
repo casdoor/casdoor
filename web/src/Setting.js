@@ -1218,3 +1218,22 @@ export function isDefaultOrganizationSelected(account) {
   }
   return false;
 }
+
+const BuiltInResources = [
+  "authz-enforcer-built-in",
+  "permission-enforcer-built-in",
+  "authz-model-built-in",
+  "permission-model-built-in",
+  "authz-adapter-built-in",
+  "permission-adapter-built-in",
+];
+
+export function buildInResource(owner, name) {
+  if (owner !== "built-in") {
+    return false;
+  }
+
+  if (BuiltInResources.includes(name)) {
+    return true;
+  }
+}

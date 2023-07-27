@@ -122,7 +122,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.enforcer.owner} onChange={(owner => {
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || Setting.buildInResource(this.state.enforcer.owner, this.state.enforcer.name)} value={this.state.enforcer.owner} onChange={(owner => {
               this.updateEnforcerField("owner", owner);
               this.getModels(owner);
               this.getAdapters(owner);
@@ -136,7 +136,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.enforcer.name} onChange={e => {
+            <Input disabled={Setting.buildInResource(this.state.enforcer.owner, this.state.enforcer.name)} value={this.state.enforcer.name} onChange={e => {
               this.updateEnforcerField("name", e.target.value);
             }} />
           </Col>
