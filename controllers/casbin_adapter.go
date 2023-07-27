@@ -23,14 +23,14 @@ import (
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
-// GetCasbinAdapters
-// @Title GetCasbinAdapters
+// GetCasdoorAdapters
+// @Title GetCasdoorAdapters
 // @Tag Adapter API
 // @Description get adapters
 // @Param   owner     query    string  true        "The owner of adapters"
-// @Success 200 {array} object.Adapter The Response object
+// @Success 200 {array} object.CasdoorAdapter The Response object
 // @router /get-adapters [get]
-func (c *ApiController) GetCasbinAdapters() {
+func (c *ApiController) GetCasdoorAdapters() {
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
@@ -40,7 +40,7 @@ func (c *ApiController) GetCasbinAdapters() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		adapters, err := object.GetCasbinAdapters(owner)
+		adapters, err := object.GetCasdoorAdapters(owner)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -49,14 +49,14 @@ func (c *ApiController) GetCasbinAdapters() {
 		c.ResponseOk(adapters)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetCasbinAdapterCount(owner, field, value)
+		count, err := object.GetCasdoorAdapterCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		adapters, err := object.GetPaginationCasbinAdapters(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		adapters, err := object.GetPaginationCasdoorAdapters(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -66,17 +66,17 @@ func (c *ApiController) GetCasbinAdapters() {
 	}
 }
 
-// GetCasbinAdapter
-// @Title GetCasbinAdapter
+// GetCasdoorAdapter
+// @Title GetCasdoorAdapter
 // @Tag Adapter API
 // @Description get adapter
 // @Param   id     query    string  true        "The id ( owner/name ) of the adapter"
-// @Success 200 {object} object.Adapter The Response object
+// @Success 200 {object} object.CasdoorAdapter The Response object
 // @router /get-adapter [get]
-func (c *ApiController) GetCasbinAdapter() {
+func (c *ApiController) GetCasdoorAdapter() {
 	id := c.Input().Get("id")
 
-	adapter, err := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasdoorAdapter(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -85,69 +85,69 @@ func (c *ApiController) GetCasbinAdapter() {
 	c.ResponseOk(adapter)
 }
 
-// UpdateCasbinAdapter
-// @Title UpdateCasbinAdapter
+// UpdateCasdoorAdapter
+// @Title UpdateCasdoorAdapter
 // @Tag Adapter API
 // @Description update adapter
 // @Param   id     query    string  true        "The id ( owner/name ) of the adapter"
-// @Param   body    body   object.Adapter  true        "The details of the adapter"
+// @Param   body    body   object.CasdoorAdapter  true        "The details of the adapter"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-adapter [post]
-func (c *ApiController) UpdateCasbinAdapter() {
+func (c *ApiController) UpdateCasdoorAdapter() {
 	id := c.Input().Get("id")
 
-	var casbinAdapter object.CasbinAdapter
+	var casbinAdapter object.CasdoorAdapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &casbinAdapter)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateCasbinAdapter(id, &casbinAdapter))
+	c.Data["json"] = wrapActionResponse(object.UpdateCasdoorAdapter(id, &casbinAdapter))
 	c.ServeJSON()
 }
 
-// AddCasbinAdapter
-// @Title AddCasbinAdapter
+// AddCasdoorAdapter
+// @Title AddCasdoorAdapter
 // @Tag Adapter API
 // @Description add adapter
-// @Param   body    body   object.Adapter  true        "The details of the adapter"
+// @Param   body    body   object.CasdoorAdapter  true        "The details of the adapter"
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-adapter [post]
-func (c *ApiController) AddCasbinAdapter() {
-	var casbinAdapter object.CasbinAdapter
+func (c *ApiController) AddCasdoorAdapter() {
+	var casbinAdapter object.CasdoorAdapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &casbinAdapter)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddCasbinAdapter(&casbinAdapter))
+	c.Data["json"] = wrapActionResponse(object.AddCasdoorAdapter(&casbinAdapter))
 	c.ServeJSON()
 }
 
-// DeleteCasbinAdapter
-// @Title DeleteCasbinAdapter
+// DeleteCasdoorAdapter
+// @Title DeleteCasdoorAdapter
 // @Tag Adapter API
 // @Description delete adapter
-// @Param   body    body   object.Adapter  true        "The details of the adapter"
+// @Param   body    body   object.CasdoorAdapter  true        "The details of the adapter"
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-adapter [post]
-func (c *ApiController) DeleteCasbinAdapter() {
-	var casbinAdapter object.CasbinAdapter
+func (c *ApiController) DeleteCasdoorAdapter() {
+	var casbinAdapter object.CasdoorAdapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &casbinAdapter)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteCasbinAdapter(&casbinAdapter))
+	c.Data["json"] = wrapActionResponse(object.DeleteCasdoorAdapter(&casbinAdapter))
 	c.ServeJSON()
 }
 
 func (c *ApiController) SyncPolicies() {
 	id := c.Input().Get("id")
-	adapter, err := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasdoorAdapter(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -164,7 +164,7 @@ func (c *ApiController) SyncPolicies() {
 
 func (c *ApiController) UpdatePolicy() {
 	id := c.Input().Get("id")
-	adapter, err := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasdoorAdapter(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -188,7 +188,7 @@ func (c *ApiController) UpdatePolicy() {
 
 func (c *ApiController) AddPolicy() {
 	id := c.Input().Get("id")
-	adapter, err := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasdoorAdapter(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -212,7 +212,7 @@ func (c *ApiController) AddPolicy() {
 
 func (c *ApiController) RemovePolicy() {
 	id := c.Input().Get("id")
-	adapter, err := object.GetCasbinAdapter(id)
+	adapter, err := object.GetCasdoorAdapter(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

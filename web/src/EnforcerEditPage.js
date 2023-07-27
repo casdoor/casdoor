@@ -169,7 +169,7 @@ class EnforcerEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.enforcer.model} onChange={(model => {
               this.updateEnforcerField("model", model);
             })}
-            options={this.state.models.map((model) => Setting.getOption(model.displayName, model.name))
+            options={this.state.models.map((model) => Setting.getOption(model.displayName, `${model.owner}/${model.name}`))
             } />
           </Col>
         </Row>
@@ -181,7 +181,7 @@ class EnforcerEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.enforcer.adapter} onChange={(adapter => {
               this.updateEnforcerField("adapter", adapter);
             })}
-            options={this.state.adapters.map((adapter) => Setting.getOption(adapter.name, adapter.name))
+            options={this.state.adapters.map((adapter) => Setting.getOption(adapter.name, `${adapter.owner}/${adapter.name}`))
             } />
           </Col>
         </Row>

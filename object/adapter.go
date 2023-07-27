@@ -194,7 +194,7 @@ func (a *Adapter) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(CasbinAdapter))
+	err = a.Engine.Sync2(new(CasdoorAdapter))
 	if err != nil {
 		panic(err)
 	}
