@@ -9,6 +9,10 @@
         }
     },
     "basePath": "/",
+    "schemes": [
+        "http",
+        "https"
+    ],
     "paths": {
         "/.well-known/jwks": {
             "get": {
@@ -3571,7 +3575,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3597,7 +3602,8 @@
                         "name": "owner",
                         "description": "The owner of webhooks",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3610,7 +3616,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "test_apiKey": []
+                    }
+                ]
             }
         },
         "/api/health": {
@@ -5024,7 +5035,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     },
                     {
                         "in": "body",
@@ -5323,13 +5335,13 @@
             "properties": {
                 "data": {
                     "additionalProperties": {
-                        "description": "support string, struct or []struct",
+                        "description": "support string | class | List\u003cclass\u003e and os on",
                         "type": "string"
                     }
                 },
                 "data2": {
                     "additionalProperties": {
-                        "description": "support string, struct or []struct",
+                        "description": "support string | class | List\u003cclass\u003e and os on",
                         "type": "string"
                     }
                 },
@@ -7323,6 +7335,9 @@
                 "meetup": {
                     "type": "string"
                 },
+                "metamask": {
+                    "type": "string"
+                },
                 "mfaEmailEnabled": {
                     "type": "boolean"
                 },
@@ -7569,43 +7584,64 @@
             "type": "object",
             "properties": {
                 "contentType": {
-                    "type": "string"
+                    "default": "application/json",
+                    "type": "string",
+                    "example": "application/json"
                 },
                 "createdTime": {
-                    "type": "string"
+                    "default": "2023-07-27T17:09:12+08:00",
+                    "type": "string",
+                    "example": "2023-07-27T17:09:12+08:00"
                 },
                 "events": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "default": "ddd",
+                        "example": "ddd"
                     }
                 },
                 "headers": {
+                    "default": "[]",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/object.Header"
                     }
                 },
                 "isEnabled": {
-                    "type": "boolean"
+                    "default": true,
+                    "type": "boolean",
+                    "example": true
                 },
                 "isUserExtended": {
-                    "type": "boolean"
+                    "default": true,
+                    "type": "boolean",
+                    "example": true
                 },
                 "method": {
-                    "type": "string"
+                    "default": "POST",
+                    "type": "string",
+                    "example": "POST"
                 },
                 "name": {
-                    "type": "string"
+                    "default": "test",
+                    "type": "string",
+                    "example": "test"
                 },
                 "organization": {
-                    "type": "string"
+                    "default": "built-in",
+                    "type": "string",
+                    "example": "built-in"
                 },
                 "owner": {
-                    "type": "string"
+                    "default": "built-in",
+                    "type": "string",
+                    "example": "built-in"
                 },
                 "url": {
-                    "type": "string"
+                    "default": "https://example.com/callback",
+                    "type": "string",
+                    "example": "https://example.com/callback"
                 }
             }
         },
@@ -7670,5 +7706,16 @@
             "title": "Engine",
             "type": "object"
         }
+    },
+    "securityDefinitions": {
+        "test_apiKey": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about casdoor",
+        "url": "https://casdoor.org/"
     }
 }

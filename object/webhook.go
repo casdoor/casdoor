@@ -27,19 +27,19 @@ type Header struct {
 }
 
 type Webhook struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner" example:"built-in" doc:"default(built-in)"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name" example:"test" doc:"default(test)"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime" example:"2023-07-27T17:09:12+08:00" doc:"default(2023-07-27T17:09:12+08:00)"`
 
-	Organization string `xorm:"varchar(100) index" json:"organization"`
+	Organization string `xorm:"varchar(100) index" json:"organization" example:"built-in" doc:"default(built-in)"`
 
-	Url            string    `xorm:"varchar(100)" json:"url"`
-	Method         string    `xorm:"varchar(100)" json:"method"`
-	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
-	Headers        []*Header `xorm:"mediumtext" json:"headers"`
-	Events         []string  `xorm:"varchar(1000)" json:"events"`
-	IsUserExtended bool      `json:"isUserExtended"`
-	IsEnabled      bool      `json:"isEnabled"`
+	Url            string    `xorm:"varchar(100)" json:"url" example:"https://example.com/callback" doc:"default(https://example.com/callback)"`
+	Method         string    `xorm:"varchar(100)" json:"method" example:"POST" doc:"default(POST)"`
+	ContentType    string    `xorm:"varchar(100)" json:"contentType" example:"application/json" doc:"default(application/json)"`
+	Headers        []*Header `xorm:"mediumtext" json:"headers" example:"[]" doc:"default([])"`
+	Events         []string  `xorm:"varchar(1000)" json:"events" example:"[ddd]" doc:"default([ddd])"`
+	IsUserExtended bool      `json:"isUserExtended" example:"true" doc:"default(true)"`
+	IsEnabled      bool      `json:"isEnabled" example:"true" doc:"default(true)"`
 }
 
 func GetWebhookCount(owner, organization, field, value string) (int64, error) {

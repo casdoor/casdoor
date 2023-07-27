@@ -6,6 +6,9 @@ info:
   contact:
     email: admin@casbin.org
 basePath: /
+schemes:
+- http
+- https
 paths:
   /.well-known/jwks:
     get:
@@ -2329,6 +2332,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2346,6 +2350,7 @@ paths:
         description: The owner of webhooks
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2353,6 +2358,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Webhook'
+      security:
+      - test_apiKey: []
   /api/health:
     get:
       tags:
@@ -3286,6 +3293,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       - in: body
         name: body
         description: The details of the webhook
@@ -3483,11 +3491,11 @@ definitions:
     properties:
       data:
         additionalProperties:
-          description: support string, struct or []struct
+          description: support string | class | List<class> and os on
           type: string
       data2:
         additionalProperties:
-          description: support string, struct or []struct
+          description: support string | class | List<class> and os on
           type: string
       msg:
         type: string
@@ -4828,6 +4836,8 @@ definitions:
           $ref: '#/definitions/object.ManagedAccount'
       meetup:
         type: string
+      metamask:
+        type: string
       mfaEmailEnabled:
         type: boolean
       mfaPhoneEnabled:
@@ -4993,31 +5003,51 @@ definitions:
     type: object
     properties:
       contentType:
+        default: application/json
         type: string
+        example: application/json
       createdTime:
+        default: "2023-07-27T17:09:12+08:00"
         type: string
+        example: "2023-07-27T17:09:12+08:00"
       events:
+        default: '[ddd]'
         type: array
         items:
           type: string
       headers:
+        default: '[]'
         type: array
         items:
           $ref: '#/definitions/object.Header'
       isEnabled:
+        default: true
         type: boolean
+        example: true
       isUserExtended:
+        default: true
         type: boolean
+        example: true
       method:
+        default: POST
         type: string
+        example: POST
       name:
+        default: test
         type: string
+        example: test
       organization:
+        default: built-in
         type: string
+        example: built-in
       owner:
+        default: built-in
         type: string
+        example: built-in
       url:
+        default: https://example.com/callback
         type: string
+        example: https://example.com/callback
   protocol.CredentialAssertion:
     title: CredentialAssertion
     type: object
@@ -5062,3 +5092,11 @@ definitions:
   xorm.Engine:
     title: Engine
     type: object
+securityDefinitions:
+  test_apiKey:
+    type: apiKey
+    name: Authorization
+    in: header
+externalDocs:
+  description: Find out more about casdoor
+  url: https://casdoor.org/

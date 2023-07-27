@@ -17,6 +17,10 @@
 // @Title Casdoor API
 // @Description Documentation of Casdoor API
 // @Contact admin@casbin.org
+// @SecurityDefinition test_apiKey apiKey Authorization header
+// @Schemes http,https
+// @ExternalDocs Find out more about casdoor
+// @ExternalDocsUrl https://casdoor.org/
 package routers
 
 import (
