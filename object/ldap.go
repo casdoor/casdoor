@@ -141,9 +141,11 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 		return false, nil
 	}
 
-	cols := []string{"owner", "server_name", "host",
-	"port", "enable_ssl", "username", "base_dn", "filter", "filter_fields", "auto_sync"}
-	
+	cols := []string{
+		"owner", "server_name", "host",
+		"port", "enable_ssl", "username", "base_dn", "filter", "filter_fields", "auto_sync",
+	}
+
 	isPasswordChanged := ldap.Password != "***"
 	if isPasswordChanged {
 		cols = append(cols, "password")
