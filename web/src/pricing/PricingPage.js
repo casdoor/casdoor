@@ -85,17 +85,17 @@ class PricingPage extends React.Component {
     }
 
     PricingBackend.getPricing(this.state.owner, pricingName)
-      .then((result) => {
-        if (result.status === "error") {
-          Setting.showMessage("error", result.msg);
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
           return;
         }
 
         this.setState({
           loading: false,
-          pricing: result,
+          pricing: res.data,
         });
-        this.onUpdatePricing(result);
+        this.onUpdatePricing(res.data);
       });
   }
 
