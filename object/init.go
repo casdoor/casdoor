@@ -35,12 +35,14 @@ func InitDb() {
 		initBuiltInLdap()
 	}
 
-	initBuiltInAuthzModel()
-	initBuiltInPermissionModel()
-	initBuildInPermissionAdapter()
-	initBuildInAuthzAdapter()
-	initBuiltInPermissionEnforcer()
-	initBuiltInAuthzEnforcer()
+	existed = initBuiltInAuthzModel()
+	if !existed {
+		initBuildInAuthzAdapter()
+		initBuiltInAuthzEnforcer()
+		initBuiltInPermissionModel()
+		initBuildInPermissionAdapter()
+		initBuiltInPermissionEnforcer()
+	}
 
 	initWebAuthn()
 }
