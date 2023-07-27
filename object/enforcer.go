@@ -15,7 +15,10 @@
 package object
 
 import (
+	"errors"
+
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -116,4 +119,43 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	}
 
 	return affected != 0, nil
+}
+
+func (enforcer *Enforcer) initEnforcer() (*casbin.Enforcer, error) {
+	if enforcer.Model == "" || enforcer.Adapter == "" {
+		return nil, errors.New("missing model or adapter")
+	}
+
+	var err error
+	var m *Model
+	var a *CasdoorAdapter
+
+	if m, err = GetModel(enforcer.Model); err != nil {
+		return nil, err
+	} else if m == nil {
+		return nil, errors.New("model not found")
+	}
+
+	if a, err = GetCasdoorAdapter(enforcer.Adapter); err != nil {
+		return nil, err
+	} else if a == nil {
+		return nil, errors.New("adapter not found")
+	}
+
+	casbinModel, err := model.NewModelFromString(m.ModelText)
+	if err != nil {
+		return nil, err
+	}
+
+	casbinAdapter, err := a.initAdapter()
+	if err != nil {
+		return nil, err
+	}
+
+	e, err := casbin.NewEnforcer(casbinModel, casbinAdapter)
+	if err != nil {
+		return nil, err
+	}
+
+	return e, nil
 }
