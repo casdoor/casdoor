@@ -9,6 +9,10 @@
         }
     },
     "basePath": "/",
+    "schemes": [
+        "http",
+        "https"
+    ],
     "paths": {
         "/.well-known/jwks": {
             "get": {
@@ -3682,7 +3686,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3708,7 +3713,8 @@
                         "name": "owner",
                         "description": "The owner of webhooks",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3721,7 +3727,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "test_apiKey": []
+                    }
+                ]
             }
         },
         "/api/health": {
@@ -5170,7 +5181,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     },
                     {
                         "in": "body",
@@ -5419,14 +5431,6 @@
         }
     },
     "definitions": {
-        "1225.0xc000333110.false": {
-            "title": "false",
-            "type": "object"
-        },
-        "1260.0xc000333140.false": {
-            "title": "false",
-            "type": "object"
-        },
         "LaravelResponse": {
             "title": "LaravelResponse",
             "type": "object"
@@ -5480,10 +5484,16 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1225.0xc000333110.false"
+                    "additionalProperties": {
+                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "type": "string"
+                    }
                 },
                 "data2": {
-                    "$ref": "#/definitions/1260.0xc000333140.false"
+                    "additionalProperties": {
+                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "type": "string"
+                    }
                 },
                 "msg": {
                     "type": "string"
@@ -5523,10 +5533,6 @@
         },
         "object": {
             "title": "object",
-            "type": "object"
-        },
-        "object.\u0026{197582 0xc000ace360 false}": {
-            "title": "\u0026{197582 0xc000ace360 false}",
             "type": "object"
         },
         "object.AccountItem": {
@@ -5722,7 +5728,7 @@
             "title": "CasbinRequest",
             "type": "array",
             "items": {
-                "$ref": "#/definitions/object.\u0026{197582 0xc000ace360 false}"
+                "$ref": "#/definitions/object.CasbinRequest"
             }
         },
         "object.Cert": {
@@ -7765,15 +7771,21 @@
             "type": "object",
             "properties": {
                 "contentType": {
-                    "type": "string"
+                    "default": "application/json",
+                    "type": "string",
+                    "example": "application/json"
                 },
                 "createdTime": {
-                    "type": "string"
+                    "default": "2023-07-27T17:09:12+08:00",
+                    "type": "string",
+                    "example": "2023-07-27T17:09:12+08:00"
                 },
                 "events": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "string",
+                        "default": "test",
+                        "example": "test"
                     }
                 },
                 "headers": {
@@ -7783,25 +7795,39 @@
                     }
                 },
                 "isEnabled": {
-                    "type": "boolean"
+                    "default": true,
+                    "type": "boolean",
+                    "example": true
                 },
                 "isUserExtended": {
-                    "type": "boolean"
+                    "default": true,
+                    "type": "boolean",
+                    "example": true
                 },
                 "method": {
-                    "type": "string"
+                    "default": "POST",
+                    "type": "string",
+                    "example": "POST"
                 },
                 "name": {
-                    "type": "string"
+                    "default": "test",
+                    "type": "string",
+                    "example": "test"
                 },
                 "organization": {
-                    "type": "string"
+                    "default": "built-in",
+                    "type": "string",
+                    "example": "built-in"
                 },
                 "owner": {
-                    "type": "string"
+                    "default": "built-in",
+                    "type": "string",
+                    "example": "built-in"
                 },
                 "url": {
-                    "type": "string"
+                    "default": "https://example.com/callback",
+                    "type": "string",
+                    "example": "https://example.com/callback"
                 }
             }
         },
@@ -7866,5 +7892,16 @@
             "title": "Engine",
             "type": "object"
         }
+    },
+    "securityDefinitions": {
+        "test_apiKey": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about casdoor",
+        "url": "https://casdoor.org/"
     }
 }
