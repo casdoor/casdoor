@@ -120,7 +120,7 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return affected != 0, nil
 }
 
-func InitEnforcer(enforcer *Enforcer) (*casbin.Enforcer, error) {
+func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
 	if enforcer == nil {
 		return nil, errors.New("enforcer is nil")
 	}

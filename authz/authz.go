@@ -33,7 +33,7 @@ func InitAuthz() {
 	if err != nil {
 		panic(err)
 	}
-	Enforcer, err = object.InitEnforcer(e)
+	Enforcer, err = e.InitEnforcer()
 	if err != nil {
 		panic(err)
 	}
