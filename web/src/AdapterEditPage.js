@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -88,9 +88,9 @@ class AdapterEditPage extends React.Component {
   }
 
   parseAdapterField(key, value) {
-    if (["port"].includes(key)) {
-      value = Setting.myParseInt(value);
-    }
+    // if ([].includes(key)) {
+    //   value = Setting.myParseInt(value);
+    // }
     return value;
   }
 
@@ -174,8 +174,8 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.adapter.port} onChange={value => {
-              this.updateAdapterField("port", value);
+            <Input value={this.state.adapter.port} onChange={e => {
+              this.updateAdapterField("port", e.target.value);
             }} />
           </Col>
         </Row>
@@ -236,6 +236,20 @@ class AdapterEditPage extends React.Component {
               disabled={this.state.adapter.type === "Keycloak"} onChange={e => {
                 this.updateAdapterField("table", e.target.value);
               }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:URL"), i18next.t("syncer:URL - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.dataSourceName}
+              onChange={e => {
+                this.updateAdapterField("dataSourceName", e.target.value);
+              }} />
+          </Col>
+          <Col offset={2} span={22}>
+            <p style={{color: "orange"}}>{i18next.t("syncer:Overrides settings above")}</p>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
