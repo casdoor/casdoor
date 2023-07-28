@@ -192,7 +192,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	}
 
 	payment := Payment{
-		Owner:              product.Owner,
+		Owner:              "admin",
 		Name:               paymentName,
 		CreatedTime:        util.GetCurrentTime(),
 		DisplayName:        paymentName,
