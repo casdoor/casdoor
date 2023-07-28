@@ -117,8 +117,6 @@ func (c *ApiController) GetPayment() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-payment [post]
 func (c *ApiController) UpdatePayment() {
-	id := c.Input().Get("id")
-
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
@@ -126,7 +124,7 @@ func (c *ApiController) UpdatePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
+	c.Data["json"] = wrapActionResponse(object.UpdatePayment(&payment))
 	c.ServeJSON()
 }
 
@@ -177,14 +175,12 @@ func (c *ApiController) DeletePayment() {
 // @router /notify-payment [post]
 func (c *ApiController) NotifyPayment() {
 	owner := c.Ctx.Input.Param(":owner")
-	providerName := c.Ctx.Input.Param(":provider")
-	productName := c.Ctx.Input.Param(":product")
 	paymentName := c.Ctx.Input.Param(":payment")
 	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
+	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, paymentName, orderId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

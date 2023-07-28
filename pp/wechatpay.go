@@ -113,12 +113,10 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-
-		OrderId:     orderId,
-		Price:       price,
-		OrderStatus: "",
-
-		PaymentName: paymentName,
+		OrderId:            orderId,
+		Price:              price,
+		PaymentStatus:      PaymentStatePaid,
+		PaymentName:        paymentName,
 	}
 	return notifyResult, nil
 }

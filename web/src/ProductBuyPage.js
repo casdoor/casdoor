@@ -21,13 +21,12 @@ import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
-    window.console.log("props", props);
     super(props);
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props?.match?.params?.organizationName,
       productName: props.productName !== undefined ? props.productName : props?.match?.params?.productName,
-      product: props.product !== undefined ? props.product : undefined,
+      product: null,
       isPlacingOrder: false,
       qrCodeModalProvider: null,
     };
@@ -38,9 +37,6 @@ class ProductBuyPage extends React.Component {
   }
 
   getProduct() {
-    if (this.state.product !== undefined) {
-      return ;
-    }
     if (this.state.productName === undefined || this.state.organizationName === undefined) {
       return ;
     }
@@ -57,7 +53,11 @@ class ProductBuyPage extends React.Component {
   }
 
   getProductObj() {
-    return this.state.product;
+    if (this.props.product !== undefined) {
+      return this.props.product;
+    } else {
+      return this.state.product;
+    }
   }
 
   getCurrencySymbol(product) {
@@ -95,7 +95,7 @@ class ProductBuyPage extends React.Component {
     this.setState({
       isPlacingOrder: true,
     });
-    window.console.log(product);
+
     ProductBackend.buyProduct(product.owner, product.name, provider.name)
       .then((res) => {
         if (res.status === "ok") {
@@ -206,11 +206,9 @@ class ProductBuyPage extends React.Component {
   }
 
   render() {
-    window.console.log("start render");
     const product = this.getProductObj();
-    window.console.log("render", product);
+
     if (product === null) {
-      window.console.log("null");
       return null;
     }
 

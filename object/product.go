@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -183,37 +184,41 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
-	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
-	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
+	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
+	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 	// Create an Order and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
 	}
-	// Create a Payment linked with Order
+	// Create a Payment linked with Product and Order
 	payment := Payment{
-		Owner:              product.Owner,
-		Name:               paymentName,
-		CreatedTime:        util.GetCurrentTime(),
-		DisplayName:        paymentName,
-		Provider:           provider.Name,
-		Type:               provider.Type,
-		Organization:       user.Owner,
-		User:               user.Name,
+		Owner:       product.Owner,
+		Name:        paymentName,
+		CreatedTime: util.GetCurrentTime(),
+		DisplayName: paymentName,
+
+		Provider: provider.Name,
+		Type:     provider.Type,
+
+		Organization: user.Owner,
+		User:         user.Name,
+
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		Detail:             product.Detail,
 		Tag:                product.Tag,
 		Currency:           product.Currency,
 		Price:              product.Price,
-		PayUrl:             payUrl,
 		ReturnUrl:          product.ReturnUrl,
-		State:              PaymentStateCreated,
-		OrderId:            orderId,
+
+		PayUrl:     payUrl,
+		State:      pp.PaymentStateCreated,
+		OutOrderId: orderId,
 	}
 
 	if provider.Type == "Dummy" {
-		payment.State = PaymentStatePaid
+		payment.State = pp.PaymentStatePaid
 	}
 
 	affected, err := AddPayment(&payment)

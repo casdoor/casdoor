@@ -16,18 +16,11 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/pp"
 	"net/http"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
-)
-
-type PaymentState string
-
-const (
-	PaymentStatePaid    PaymentState = "Paid"
-	PaymentStateCreated PaymentState = "Created"
-	PaymentStateError   PaymentState = "Error"
 )
 
 type Payment struct {
@@ -48,10 +41,10 @@ type Payment struct {
 	Currency string  `xorm:"varchar(100)" json:"currency"`
 	Price    float64 `json:"price"`
 
-	PayUrl    string       `xorm:"varchar(2000)" json:"payUrl"`
-	ReturnUrl string       `xorm:"varchar(1000)" json:"returnUrl"`
-	State     PaymentState `xorm:"varchar(100)" json:"state"`
-	Message   string       `xorm:"varchar(2000)" json:"message"`
+	PayUrl    string          `xorm:"varchar(2000)" json:"payUrl"`
+	ReturnUrl string          `xorm:"varchar(1000)" json:"returnUrl"`
+	State     pp.PaymentState `xorm:"varchar(100)" json:"state"`
+	Message   string          `xorm:"varchar(2000)" json:"message"`
 
 	PersonName    string `xorm:"varchar(100)" json:"personName"`
 	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
@@ -63,7 +56,7 @@ type Payment struct {
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
 
-	OrderId string `xorm:"varchar(100)" json:"orderId"`
+	OutOrderId string `xorm:"varchar(100)" json:"outOrderId"`
 }
 
 func GetPaymentCount(owner, organization, field, value string) (int64, error) {
@@ -125,15 +118,14 @@ func GetPayment(id string) (*Payment, error) {
 	return getPayment(owner, name)
 }
 
-func UpdatePayment(id string, payment *Payment) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
-	if p, err := getPayment(owner, name); err != nil {
+func UpdatePayment(payment *Payment) (bool, error) {
+	if p, err := getPayment(payment.Owner, payment.Name); err != nil {
 		return false, err
 	} else if p == nil {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
+	affected, err := adapter.Engine.ID(core.PK{payment.Owner, payment.Name}).AllCols().Update(payment)
 	if err != nil {
 		panic(err)
 	}
@@ -159,72 +151,68 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error) {
-	provider, err := getProvider(owner, providerName)
-	if err != nil {
-		return nil, err
-	}
-	pProvider, cert, err := provider.getPaymentProvider()
-	if err != nil {
-		return nil, err
-	}
-
+func notifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, *pp.NotifyResult, error) {
 	payment, err := getPayment(owner, paymentName)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if payment == nil {
 		err = fmt.Errorf("the payment: %s does not exist", paymentName)
-		return nil, err
+		return nil, nil, err
 	}
 
-	product, err := getProduct(owner, productName)
+	provider, err := getProvider(owner, payment.Provider)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+	pProvider, cert, err := provider.getPaymentProvider()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	product, err := getProduct(owner, payment.ProductName)
+	if err != nil {
+		return nil, nil, err
 	}
 	if product == nil {
-		err = fmt.Errorf("the product: %s does not exist", productName)
-		return payment, err
+		err = fmt.Errorf("the product: %s does not exist", payment.ProductName)
+		return nil, nil, err
 	}
 
 	if orderId == "" {
-		orderId = payment.OrderId
-	}
-	if orderId == "" {
-		err = fmt.Errorf("invalid orderId: %v", orderId)
+		orderId = payment.OutOrderId
 	}
 
 	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
-		return payment, err
+		return payment, notifyResult, err
 	}
-	// TODO why can't change the product display name ?
+
 	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
 		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
-		return payment, err
+		return payment, notifyResult, err
 	}
-	// TODO why can't change the product price ?
+
 	if notifyResult.Price != product.Price {
 		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, product.Price)
-		return payment, err
+		return payment, notifyResult, err
 	}
 
-	return payment, err
+	return payment, notifyResult, err
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error) {
-	payment, err := notifyPayment(request, body, owner, providerName, productName, paymentName, orderId)
+func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, error) {
+	payment, notifyResult, err := notifyPayment(request, body, owner, paymentName, orderId)
 	if payment != nil {
 		if err != nil {
-			payment.State = PaymentStateError
+			payment.State = pp.PaymentStateError
 			payment.Message = err.Error()
 		} else {
-			payment.State = PaymentStatePaid
+			payment.State = notifyResult.PaymentStatus
 		}
-
-		_, err = UpdatePayment(payment.GetId(), payment)
+		_, err = UpdatePayment(payment)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
@@ -255,7 +243,7 @@ func invoicePayment(payment *Payment) (string, error) {
 }
 
 func InvoicePayment(payment *Payment) (string, error) {
-	if payment.State != PaymentStatePaid {
+	if payment.State != pp.PaymentStatePaid {
 		return "", fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
 	}
 
@@ -265,7 +253,7 @@ func InvoicePayment(payment *Payment) (string, error) {
 	}
 
 	payment.InvoiceUrl = invoiceUrl
-	affected, err := UpdatePayment(payment.GetId(), payment)
+	affected, err := UpdatePayment(payment)
 	if err != nil {
 		return "", err
 	}

@@ -189,6 +189,7 @@ class ProductListPage extends BaseListPage {
         width: "500px",
         ...this.getColumnSearchProps("providers"),
         render: (text, record, index) => {
+          const providerOwner = record.owner;
           const providers = text;
           if (providers.length === 0) {
             return `(${i18next.t("general:empty")})`;
@@ -207,9 +208,9 @@ class ProductListPage extends BaseListPage {
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title="Edit">
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerName}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerOwner}/${providerName}`)} />
                         </Tooltip>
-                        <Link to={`/providers/${providerName}`}>
+                        <Link to={`/providers/${providerOwner}/${providerName}`}>
                           {providerName}
                         </Link>
                       </div>
@@ -247,7 +248,7 @@ class ProductListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/products/${record.name}/buy`)}>{i18next.t("product:Buy")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/products/${record.owner}/${record.name}/buy`)}>{i18next.t("product:Buy")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/products/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}

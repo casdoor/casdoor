@@ -17,6 +17,7 @@ package pp
 import (
 	"context"
 	"errors"
+	"github.com/casdoor/casdoor/conf"
 	"net/http"
 	"strconv"
 
@@ -31,8 +32,14 @@ type PaypalPaymentProvider struct {
 
 func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentProvider, error) {
 	pp := &PaypalPaymentProvider{}
-
-	client, err := paypal.NewClient(clientID, secret, false)
+	isProd := false
+	if conf.GetConfigString("runmode") == "prod" {
+		isProd = true
+	}
+	client, err := paypal.NewClient(clientID, secret, isProd)
+	if !isProd {
+		client.DebugSwitch = gopay.DebugOn
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +49,6 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 }
 
 func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
-	pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
-
 	// https://github.com/go-pay/gopay/blob/main/doc/paypal.md
 	priceStr := strconv.FormatFloat(price, 'f', 2, 64)
 	units := make([]*paypal.PurchaseUnit, 0, 1)
@@ -64,7 +69,7 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 		b.Set("brand_name", "Casdoor")
 		b.Set("locale", "en-PT")
 		b.Set("return_url", returnUrl)
-		b.Set("cancel_url", returnUrl) // TODO
+		b.Set("cancel_url", returnUrl)
 	})
 
 	ppRsp, err := pp.Client.CreateOrder(context.Background(), bm)
@@ -83,35 +88,45 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 }
 
 func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
-	pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
-	ppRsp, err := pp.Client.OrderDetail(context.Background(), orderId, nil)
+	captureRsp, err := pp.Client.OrderCapture(context.Background(), orderId, nil)
 	if err != nil {
 		return nil, err
 	}
-	if ppRsp.Code != paypal.Success {
-		return nil, errors.New(ppRsp.Error)
+	if captureRsp.Code != paypal.Success {
+		// If order is already captured, just skip this type of error and check the order detail
+		if len(captureRsp.ErrorResponse.Details) != 1 || captureRsp.ErrorResponse.Details[0].Issue == "ORDER_ALREADY_CAPTURED" {
+			return nil, errors.New(captureRsp.Error)
+		}
+	}
+	// Check the order detail
+	detailRsp, err := pp.Client.OrderDetail(context.Background(), orderId, nil)
+	paymentName := detailRsp.Response.Id
+	price, err := strconv.ParseFloat(detailRsp.Response.PurchaseUnits[0].Amount.Value, 64)
+	if err != nil {
+		return nil, err
 	}
 
-	paymentName := ppRsp.Response.Id
-	price, err := strconv.ParseFloat(ppRsp.Response.PurchaseUnits[0].Amount.Value, 64)
+	productDisplayName, productName, providerName, err := parseAttachString(detailRsp.Response.PurchaseUnits[0].Description)
 	if err != nil {
 		return nil, err
 	}
 
-	productDisplayName, productName, providerName, err := parseAttachString(ppRsp.Response.PurchaseUnits[0].Description)
-	if err != nil {
-		return nil, err
+	// TODO: status better handler, e.g.`hanging`
+	var paymentStatus PaymentState
+	switch detailRsp.Response.Status { // CREATED、SAVED、APPROVED、VOIDED、COMPLETED、PAYER_ACTION_REQUIRED
+	case "COMPLETED":
+		paymentStatus = PaymentStatePaid
+	default:
+		paymentStatus = PaymentStateError
 	}
 	notifyResult := &NotifyResult{
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-
-		OrderId:     orderId,
-		Price:       price,
-		OrderStatus: ppRsp.Response.Status, // CREATED、SAVED、APPROVED、VOIDED、COMPLETED、PAYER_ACTION_REQUIRED
-
-		PaymentName: paymentName,
+		OrderId:            orderId,
+		Price:              price,
+		PaymentStatus:      paymentStatus,
+		PaymentName:        paymentName,
 	}
 	return notifyResult, nil
 }
