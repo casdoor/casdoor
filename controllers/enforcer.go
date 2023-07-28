@@ -61,7 +61,7 @@ func (c *ApiController) GetEnforcers() {
 			return
 		}
 
-		c.ResponseOk(enforcers)
+		c.ResponseOk(enforcers, paginator.Nums())
 	}
 }
 
