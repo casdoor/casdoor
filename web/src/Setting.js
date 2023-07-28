@@ -1228,12 +1228,9 @@ const BuiltInResources = [
   "permission-adapter-built-in",
 ];
 
-export function buildInResource(owner, name) {
-  if (owner !== "built-in") {
+export function buildInResource(obj) {
+  if (obj === undefined || obj === null) {
     return false;
   }
-
-  if (BuiltInResources.includes(name)) {
-    return true;
-  }
+  return obj.owner === "built-in" && BuiltInResources.includes(obj.name);
 }

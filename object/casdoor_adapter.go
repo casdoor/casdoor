@@ -20,6 +20,7 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
@@ -42,8 +43,8 @@ type CasdoorAdapter struct {
 	Table           string `xorm:"varchar(100)" json:"table"`
 	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
 	File            string `xorm:"varchar(100)" json:"file"`
-	DataSourceName  string `xorm:"varchar(200)" json:"dataSourceName"`
-	IsEnabled       bool   `json:"isEnabled"`
+
+	IsEnabled bool `json:"isEnabled"`
 
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
@@ -194,8 +195,9 @@ func (casdoorAdapter *CasdoorAdapter) initAdapter() (*xormadapter.Adapter, error
 	// init Adapter
 	if casdoorAdapter.Adapter == nil {
 		var dataSourceName string
-		if casdoorAdapter.DataSourceName != "" {
-			dataSourceName = casdoorAdapter.DataSourceName
+
+		if casdoorAdapter.buildInAdapter() {
+			dataSourceName = conf.GetConfigString("dataSourceName")
 		} else {
 			switch casdoorAdapter.DatabaseType {
 			case "mssql":
@@ -353,4 +355,12 @@ func RemovePolicy(policy []string, casdoorAdapter *CasdoorAdapter) (bool, error)
 	}
 
 	return affected, nil
+}
+
+func (casdoorAdapter *CasdoorAdapter) buildInAdapter() bool {
+	if casdoorAdapter.Owner != "built-in" {
+		return false
+	}
+
+	return casdoorAdapter.Name == "permission-adapter-built-in" || casdoorAdapter.Name == "authz-adapter-built-in"
 }

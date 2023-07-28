@@ -91,6 +91,7 @@ class ModelEditPage extends React.Component {
   }
 
   renderModel() {
+    const buildInResource = Setting.buildInResource(this.state.model);
     return (
       <Card size="small" title={
         <div>
@@ -105,7 +106,7 @@ class ModelEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || Setting.buildInResource(this.state.model.owner, this.state.model.name)} value={this.state.model.owner} onChange={(value => {this.updateModelField("owner", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || buildInResource} value={this.state.model.owner} onChange={(value => {this.updateModelField("owner", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -117,7 +118,7 @@ class ModelEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={Setting.buildInResource(this.state.model.owner, this.state.model.name)} value={this.state.model.name} onChange={e => {
+            <Input disabled={buildInResource} value={this.state.model.name} onChange={e => {
               this.updateModelField("name", e.target.value);
             }} />
           </Col>
@@ -152,6 +153,9 @@ class ModelEditPage extends React.Component {
                 value={this.state.model.modelText}
                 options={{mode: "properties", theme: "default"}}
                 onBeforeChange={(editor, data, value) => {
+                  if (buildInResource) {
+                    return;
+                  }
                   this.updateModelField("modelText", value);
                 }}
               />

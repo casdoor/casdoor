@@ -434,7 +434,6 @@ func initBuildInPermissionAdapter() {
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
 		Table:           "casbin_user_rule",
-		DataSourceName:  conf.GetConfigString("dataSourceName"),
 		IsEnabled:       true,
 	}
 	_, err = AddCasdoorAdapter(permissionAdapter)
@@ -462,7 +461,6 @@ func initBuildInAuthzAdapter() {
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
 		Table:           "casbin_authz_rule",
-		DataSourceName:  conf.GetConfigString("dataSourceName"),
 		IsEnabled:       true,
 	}
 	_, err = AddCasdoorAdapter(authzAdapter)

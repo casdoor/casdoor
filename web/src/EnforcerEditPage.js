@@ -108,6 +108,7 @@ class EnforcerEditPage extends React.Component {
   }
 
   renderEnforcer() {
+    const buildInResource = Setting.buildInResource(this.state.enforcer);
     return (
       <Card size="small" title={
         <div>
@@ -122,7 +123,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || Setting.buildInResource(this.state.enforcer.owner, this.state.enforcer.name)} value={this.state.enforcer.owner} onChange={(owner => {
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || buildInResource} value={this.state.enforcer.owner} onChange={(owner => {
               this.updateEnforcerField("owner", owner);
               this.getModels(owner);
               this.getAdapters(owner);
@@ -136,7 +137,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={Setting.buildInResource(this.state.enforcer.owner, this.state.enforcer.name)} value={this.state.enforcer.name} onChange={e => {
+            <Input disabled={buildInResource} value={this.state.enforcer.name} onChange={e => {
               this.updateEnforcerField("name", e.target.value);
             }} />
           </Col>
@@ -166,7 +167,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Model"), i18next.t("general:Model - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.enforcer.model} onChange={(model => {
+            <Select virtual={false} disabled={buildInResource} style={{width: "100%"}} value={this.state.enforcer.model} onChange={(model => {
               this.updateEnforcerField("model", model);
             })}
             options={this.state.models.map((model) => Setting.getOption(model.displayName, `${model.owner}/${model.name}`))
@@ -178,7 +179,7 @@ class EnforcerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Adapter"), i18next.t("general:Adapter - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.enforcer.adapter} onChange={(adapter => {
+            <Select virtual={false} disabled={buildInResource} style={{width: "100%"}} value={this.state.enforcer.adapter} onChange={(adapter => {
               this.updateEnforcerField("adapter", adapter);
             })}
             options={this.state.adapters.map((adapter) => Setting.getOption(adapter.name, `${adapter.owner}/${adapter.name}`))
