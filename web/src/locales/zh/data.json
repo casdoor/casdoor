@@ -152,6 +152,10 @@
     "Sending": "发送中",
     "Submit and complete": "完成提交"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "账号",
     "Change Password": "修改密码",
@@ -215,6 +219,7 @@
     "Enable": "启用",
     "Enabled": "已开启",
     "Enabled successfully": "启用成功",
+    "Enforcers": "Enforcers",
     "Failed to add": "添加失败",
     "Failed to connect to server": "连接服务器失败",
     "Failed to delete": "删除失败",

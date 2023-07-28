@@ -184,17 +184,13 @@ func (c *ApiController) NotifyPayment() {
 
 	body := c.Ctx.Input.RequestBody
 
-	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
-
-	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
-	if err2 != nil {
-		panic(err2)
-	}
-
+	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	c.ResponseOk(payment)
 }
 
 // InvoicePayment

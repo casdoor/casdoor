@@ -42,27 +42,29 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 }
 
 func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
-	// pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
+	pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
 
+	// https://github.com/go-pay/gopay/blob/main/doc/paypal.md
 	priceStr := strconv.FormatFloat(price, 'f', 2, 64)
-	var pus []*paypal.PurchaseUnit
-	item := &paypal.PurchaseUnit{
+	units := make([]*paypal.PurchaseUnit, 0, 1)
+	unit := &paypal.PurchaseUnit{
 		ReferenceId: util.GetRandomString(16),
 		Amount: &paypal.Amount{
-			CurrencyCode: currency,
-			Value:        priceStr,
+			CurrencyCode: currency, // e.g."USD"
+			Value:        priceStr, // e.g."100.00"
 		},
 		Description: joinAttachString([]string{productDisplayName, productName, providerName}),
 	}
-	pus = append(pus, item)
+	units = append(units, unit)
 
 	bm := make(gopay.BodyMap)
 	bm.Set("intent", "CAPTURE")
-	bm.Set("purchase_units", pus)
+	bm.Set("purchase_units", units)
 	bm.SetBodyMap("application_context", func(b gopay.BodyMap) {
 		b.Set("brand_name", "Casdoor")
 		b.Set("locale", "en-PT")
 		b.Set("return_url", returnUrl)
+		b.Set("cancel_url", returnUrl) // TODO
 	})
 
 	ppRsp, err := pp.Client.CreateOrder(context.Background(), bm)
@@ -72,31 +74,46 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 	if ppRsp.Code != paypal.Success {
 		return "", "", errors.New(ppRsp.Error)
 	}
-
+	// {"id":"9BR68863NE220374S","status":"CREATED",
+	// "links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S","rel":"self","method":"GET"},
+	// 			{"href":"https://www.sandbox.paypal.com/checkoutnow?token=9BR68863NE220374S","rel":"approve","method":"GET"},
+	// 			{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S","rel":"update","method":"PATCH"},
+	// 			{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S/capture","rel":"capture","method":"POST"}]}
 	return ppRsp.Response.Links[1].Href, ppRsp.Response.Id, nil
 }
 
-func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
-	ppRsp, err := pp.Client.OrderCapture(context.Background(), orderId, nil)
+func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+	pp.Client.DebugSwitch = gopay.DebugOn // Set log to terminal stdout
+	ppRsp, err := pp.Client.OrderDetail(context.Background(), orderId, nil)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 	if ppRsp.Code != paypal.Success {
-		return "", "", 0, "", "", errors.New(ppRsp.Error)
+		return nil, errors.New(ppRsp.Error)
 	}
 
 	paymentName := ppRsp.Response.Id
 	price, err := strconv.ParseFloat(ppRsp.Response.PurchaseUnits[0].Amount.Value, 64)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	productDisplayName, productName, providerName, err := parseAttachString(ppRsp.Response.PurchaseUnits[0].Description)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
+	notifyResult := &NotifyResult{
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
 
-	return productDisplayName, paymentName, price, productName, providerName, nil
+		OrderId:     orderId,
+		Price:       price,
+		OrderStatus: ppRsp.Response.Status, // CREATED、SAVED、APPROVED、VOIDED、COMPLETED、PAYER_ACTION_REQUIRED
+
+		PaymentName: paymentName,
+	}
+	return notifyResult, nil
 }
 
 func (pp *PaypalPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {

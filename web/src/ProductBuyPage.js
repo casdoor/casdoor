@@ -21,11 +21,13 @@ import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
+    window.console.log("props", props);
     super(props);
     this.state = {
       classes: props,
-      productName: props.match?.params.productName,
-      product: null,
+      organizationName: props.organizationName !== undefined ? props.organizationName : props?.match?.params?.organizationName,
+      productName: props.productName !== undefined ? props.productName : props?.match?.params?.productName,
+      product: props.product !== undefined ? props.product : undefined,
       isPlacingOrder: false,
       qrCodeModalProvider: null,
     };
@@ -36,17 +38,18 @@ class ProductBuyPage extends React.Component {
   }
 
   getProduct() {
-    if (this.state.productName === undefined) {
-      return;
+    if (this.state.product !== undefined) {
+      return ;
     }
-
-    ProductBackend.getProduct(this.props.account.owner, this.state.productName)
+    if (this.state.productName === undefined || this.state.organizationName === undefined) {
+      return ;
+    }
+    ProductBackend.getProduct(this.state.organizationName, this.state.productName)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
           return;
         }
-
         this.setState({
           product: res.data,
         });
@@ -54,11 +57,7 @@ class ProductBuyPage extends React.Component {
   }
 
   getProductObj() {
-    if (this.props.product !== undefined) {
-      return this.props.product;
-    } else {
-      return this.state.product;
-    }
+    return this.state.product;
   }
 
   getCurrencySymbol(product) {
@@ -96,8 +95,8 @@ class ProductBuyPage extends React.Component {
     this.setState({
       isPlacingOrder: true,
     });
-
-    ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
+    window.console.log(product);
+    ProductBackend.buyProduct(product.owner, product.name, provider.name)
       .then((res) => {
         if (res.status === "ok") {
           const payUrl = res.data;
@@ -207,9 +206,11 @@ class ProductBuyPage extends React.Component {
   }
 
   render() {
+    window.console.log("start render");
     const product = this.getProductObj();
-
+    window.console.log("render", product);
     if (product === null) {
+      window.console.log("null");
       return null;
     }
 

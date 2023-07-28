@@ -152,6 +152,10 @@
     "Sending": "Envío",
     "Submit and complete": "Enviar y completar"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "Cuenta",
     "Change Password": "Cambiar contraseña",
@@ -215,6 +219,7 @@
     "Enable": "Enable",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
+    "Enforcers": "Enforcers",
     "Failed to add": "No se pudo agregar",
     "Failed to connect to server": "No se pudo conectar al servidor",
     "Failed to delete": "No se pudo eliminar",

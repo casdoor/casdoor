@@ -152,6 +152,10 @@
     "Sending": "전송하기",
     "Submit and complete": "제출하고 완료하십시오"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "계정",
     "Change Password": "비밀번호 변경",
@@ -215,6 +219,7 @@
     "Enable": "Enable",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
+    "Enforcers": "Enforcers",
     "Failed to add": "추가하지 못했습니다",
     "Failed to connect to server": "서버에 연결하지 못했습니다",
     "Failed to delete": "삭제에 실패했습니다",

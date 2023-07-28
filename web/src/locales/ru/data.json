@@ -152,6 +152,10 @@
     "Sending": "Отправка",
     "Submit and complete": "Отправить и завершить"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "Счет",
     "Change Password": "Изменить пароль",
@@ -215,6 +219,7 @@
     "Enable": "Enable",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
+    "Enforcers": "Enforcers",
     "Failed to add": "Не удалось добавить",
     "Failed to connect to server": "Не удалось подключиться к серверу",
     "Failed to delete": "Не удалось удалить",

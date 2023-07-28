@@ -67,10 +67,10 @@ func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, pa
 	return payUrl, "", nil
 }
 
-func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
+func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
 	bm, err := alipay.ParseNotifyToBodyMap(request)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	providerName := bm.Get("providerName")
@@ -82,13 +82,23 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 	ok, err := alipay.VerifySignWithCert(authorityPublicKey, bm)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 	if !ok {
-		return "", "", 0, "", "", fmt.Errorf("VerifySignWithCert() failed: %v", ok)
+		return nil, fmt.Errorf("VerifySignWithCert() failed: %v", ok)
 	}
+	notifyResult := &NotifyResult{
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
 
-	return productDisplayName, paymentName, price, productName, providerName, nil
+		OrderId:     orderId,
+		OrderStatus: "",
+		Price:       price,
+
+		PaymentName: paymentName,
+	}
+	return notifyResult, nil
 }
 
 func (pp *AlipayPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {

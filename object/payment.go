@@ -22,6 +22,14 @@ import (
 	"github.com/xorm-io/core"
 )
 
+type PaymentState string
+
+const (
+	PaymentStatePaid    PaymentState = "Paid"
+	PaymentStateCreated PaymentState = "Created"
+	PaymentStateError   PaymentState = "Error"
+)
+
 type Payment struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -40,10 +48,10 @@ type Payment struct {
 	Currency string  `xorm:"varchar(100)" json:"currency"`
 	Price    float64 `json:"price"`
 
-	PayUrl    string `xorm:"varchar(2000)" json:"payUrl"`
-	ReturnUrl string `xorm:"varchar(1000)" json:"returnUrl"`
-	State     string `xorm:"varchar(100)" json:"state"`
-	Message   string `xorm:"varchar(2000)" json:"message"`
+	PayUrl    string       `xorm:"varchar(2000)" json:"payUrl"`
+	ReturnUrl string       `xorm:"varchar(1000)" json:"returnUrl"`
+	State     PaymentState `xorm:"varchar(100)" json:"state"`
+	Message   string       `xorm:"varchar(2000)" json:"message"`
 
 	PersonName    string `xorm:"varchar(100)" json:"personName"`
 	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
@@ -54,6 +62,8 @@ type Payment struct {
 	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
+
+	OrderId string `xorm:"varchar(100)" json:"orderId"`
 }
 
 func GetPaymentCount(owner, organization, field, value string) (int64, error) {
@@ -149,64 +159,67 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error, string) {
+func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error) {
 	provider, err := getProvider(owner, providerName)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	pProvider, cert, err := provider.getPaymentProvider()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	payment, err := getPayment(owner, paymentName)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	if payment == nil {
 		err = fmt.Errorf("the payment: %s does not exist", paymentName)
-		return nil, err, pProvider.GetResponseError(err)
+		return nil, err
 	}
 
 	product, err := getProduct(owner, productName)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	if product == nil {
 		err = fmt.Errorf("the product: %s does not exist", productName)
-		return payment, err, pProvider.GetResponseError(err)
+		return payment, err
 	}
 
-	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
+	if orderId == "" {
+		orderId = payment.OrderId
+	}
+	if orderId == "" {
+		err = fmt.Errorf("invalid orderId: %v", orderId)
+	}
+
+	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
-		return payment, err, pProvider.GetResponseError(err)
+		return payment, err
+	}
+	// TODO why can't change the product display name ?
+	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
+		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
+		return payment, err
+	}
+	// TODO why can't change the product price ?
+	if notifyResult.Price != product.Price {
+		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, product.Price)
+		return payment, err
 	}
 
-	if productDisplayName != "" && productDisplayName != product.DisplayName {
-		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
-		return payment, err, pProvider.GetResponseError(err)
-	}
-
-	if price != product.Price {
-		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
-		return payment, err, pProvider.GetResponseError(err)
-	}
-
-	err = nil
-	return payment, err, pProvider.GetResponseError(err)
+	return payment, err
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (error, string) {
-	payment, err, errorResponse := notifyPayment(request, body, owner, providerName, productName, paymentName, orderId)
+func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error) {
+	payment, err := notifyPayment(request, body, owner, providerName, productName, paymentName, orderId)
 	if payment != nil {
 		if err != nil {
-			payment.State = "Error"
+			payment.State = PaymentStateError
 			payment.Message = err.Error()
 		} else {
-			payment.State = "Paid"
+			payment.State = PaymentStatePaid
 		}
 
 		_, err = UpdatePayment(payment.GetId(), payment)
@@ -215,7 +228,7 @@ func NotifyPayment(request *http.Request, body []byte, owner string, providerNam
 		}
 	}
 
-	return err, errorResponse
+	return payment, nil
 }
 
 func invoicePayment(payment *Payment) (string, error) {
@@ -242,7 +255,7 @@ func invoicePayment(payment *Payment) (string, error) {
 }
 
 func InvoicePayment(payment *Payment) (string, error) {
-	if payment.State != "Paid" {
+	if payment.State != PaymentStatePaid {
 		return "", fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
 	}
 

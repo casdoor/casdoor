@@ -185,12 +185,12 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
-
+	// Create an Order and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
 	}
-
+	// Create a Payment linked with Order
 	payment := Payment{
 		Owner:              product.Owner,
 		Name:               paymentName,
@@ -208,11 +208,12 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		Price:              product.Price,
 		PayUrl:             payUrl,
 		ReturnUrl:          product.ReturnUrl,
-		State:              "Created",
+		State:              PaymentStateCreated,
+		OrderId:            orderId,
 	}
 
 	if provider.Type == "Dummy" {
-		payment.State = "Paid"
+		payment.State = PaymentStatePaid
 	}
 
 	affected, err := AddPayment(&payment)

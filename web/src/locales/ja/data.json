@@ -152,6 +152,10 @@
     "Sending": "送信",
     "Submit and complete": "提出して完了してください"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "アカウント",
     "Change Password": "パスワードを変更",
@@ -215,6 +219,7 @@
     "Enable": "Enable",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
+    "Enforcers": "Enforcers",
     "Failed to add": "追加できませんでした",
     "Failed to connect to server": "サーバーに接続できませんでした",
     "Failed to delete": "削除に失敗しました",

@@ -152,6 +152,10 @@
     "Sending": "Gửi",
     "Submit and complete": "Nộp và hoàn thành"
   },
+  "enforcer": {
+    "Edit Enforcer": "Edit Enforcer",
+    "New Enforcer": "New Enforcer"
+  },
   "forget": {
     "Account": "Tài khoản",
     "Change Password": "Đổi mật khẩu",
@@ -215,6 +219,7 @@
     "Enable": "Enable",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
+    "Enforcers": "Enforcers",
     "Failed to add": "Không thể thêm được",
     "Failed to connect to server": "Không thể kết nối đến máy chủ",
     "Failed to delete": "Không thể xoá",
