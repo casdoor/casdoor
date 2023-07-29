@@ -31,7 +31,6 @@ import (
 // @router /get-payments [get]
 func (c *ApiController) GetPayments() {
 	owner := c.Input().Get("owner")
-	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -49,14 +48,14 @@ func (c *ApiController) GetPayments() {
 		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetPaymentCount(owner, organization, field, value)
+		count, err := object.GetPaymentCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		payments, err := object.GetPaginationPayments(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		payments, err := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -77,10 +76,9 @@ func (c *ApiController) GetPayments() {
 // @router /get-user-payments [get]
 func (c *ApiController) GetUserPayments() {
 	owner := c.Input().Get("owner")
-	organization := c.Input().Get("organization")
 	user := c.Input().Get("user")
 
-	payments, err := object.GetUserPayments(owner, organization, user)
+	payments, err := object.GetUserPayments(owner, user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -99,7 +97,7 @@ func (c *ApiController) GetUserPayments() {
 func (c *ApiController) GetPayment() {
 	id := c.Input().Get("id")
 
-	payment, err := object.GetPayment(id)
+	payment, err := object.GetPaymentById(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -199,7 +197,7 @@ func (c *ApiController) NotifyPayment() {
 func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
-	payment, err := object.GetPayment(id)
+	payment, err := object.GetPaymentById(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

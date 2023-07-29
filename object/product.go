@@ -201,8 +201,6 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		Organization:       user.Owner,
-		User:               user.Name,
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		Detail:             product.Detail,
@@ -211,6 +209,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		Price:              product.Price,
 		ReturnUrl:          product.ReturnUrl,
 
+		User:       user.Name,
 		PayUrl:     payUrl,
 		State:      pp.PaymentStateCreated,
 		OutOrderId: orderId,

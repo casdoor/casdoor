@@ -28,40 +28,39 @@ type Payment struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-
-	Provider           string `xorm:"varchar(100)" json:"provider"`
-	Type               string `xorm:"varchar(100)" json:"type"`
-	Organization       string `xorm:"varchar(100)" json:"organization"`
-	User               string `xorm:"varchar(100)" json:"user"`
-	ProductName        string `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string `xorm:"varchar(100)" json:"productDisplayName"`
-
-	Detail   string  `xorm:"varchar(255)" json:"detail"`
-	Tag      string  `xorm:"varchar(100)" json:"tag"`
-	Currency string  `xorm:"varchar(100)" json:"currency"`
-	Price    float64 `json:"price"`
-
-	PayUrl    string          `xorm:"varchar(2000)" json:"payUrl"`
-	ReturnUrl string          `xorm:"varchar(1000)" json:"returnUrl"`
-	State     pp.PaymentState `xorm:"varchar(100)" json:"state"`
-	Message   string          `xorm:"varchar(2000)" json:"message"`
-
-	PersonName    string `xorm:"varchar(100)" json:"personName"`
-	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
-	PersonEmail   string `xorm:"varchar(100)" json:"personEmail"`
-	PersonPhone   string `xorm:"varchar(100)" json:"personPhone"`
+	// Payment Provider Info
+	Provider string `xorm:"varchar(100)" json:"provider"`
+	Type     string `xorm:"varchar(100)" json:"type"`
+	// Product Info
+	ProductName        string  `xorm:"varchar(100)" json:"productName"`
+	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
+	Detail             string  `xorm:"varchar(255)" json:"detail"`
+	Tag                string  `xorm:"varchar(100)" json:"tag"`
+	Currency           string  `xorm:"varchar(100)" json:"currency"`
+	Price              float64 `json:"price"`
+	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
+	// Payer Info
+	User         string `xorm:"varchar(100)" json:"user"`
+	PersonName   string `xorm:"varchar(100)" json:"personName"`
+	PersonIdCard string `xorm:"varchar(100)" json:"personIdCard"`
+	PersonEmail  string `xorm:"varchar(100)" json:"personEmail"`
+	PersonPhone  string `xorm:"varchar(100)" json:"personPhone"`
+	// Invoice Info
 	InvoiceType   string `xorm:"varchar(100)" json:"invoiceType"`
 	InvoiceTitle  string `xorm:"varchar(100)" json:"invoiceTitle"`
 	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
-
-	OutOrderId string `xorm:"varchar(100)" json:"outOrderId"`
+	// Order Info
+	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"`
+	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
+	State      pp.PaymentState `xorm:"varchar(100)" json:"state"`
+	Message    string          `xorm:"varchar(2000)" json:"message"`
 }
 
-func GetPaymentCount(owner, organization, field, value string) (int64, error) {
+func GetPaymentCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Payment{Organization: organization})
+	return session.Count(&Payment{Owner: owner})
 }
 
 func GetPayments(owner string) ([]*Payment, error) {
@@ -74,9 +73,9 @@ func GetPayments(owner string) ([]*Payment, error) {
 	return payments, nil
 }
 
-func GetUserPayments(owner string, organization string, user string) ([]*Payment, error) {
+func GetUserPayments(owner, user string) ([]*Payment, error) {
 	payments := []*Payment{}
-	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
+	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, User: user})
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +83,10 @@ func GetUserPayments(owner string, organization string, user string) ([]*Payment
 	return payments, nil
 }
 
-func GetPaginationPayments(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
+func GetPaginationPayments(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
 	payments := []*Payment{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&payments, &Payment{Organization: organization})
+	err := session.Find(&payments, &Payment{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +112,7 @@ func getPayment(owner string, name string) (*Payment, error) {
 	}
 }
 
-func GetPayment(id string) (*Payment, error) {
+func GetPaymentById(id string) (*Payment, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPayment(owner, name)
 }

@@ -99,9 +99,16 @@ class ProductListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
         key: "owner",
-        width: "150px",
+        width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("general:Created time"),
