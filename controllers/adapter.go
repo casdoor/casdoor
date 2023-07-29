@@ -145,7 +145,7 @@ func (c *ApiController) DeleteAdapter() {
 	c.ServeJSON()
 }
 
-func (c *ApiController) SyncPolicies() {
+func (c *ApiController) GetPolicies() {
 	id := c.Input().Get("id")
 	adapter, err := object.GetAdapter(id)
 	if err != nil {
@@ -153,7 +153,7 @@ func (c *ApiController) SyncPolicies() {
 		return
 	}
 
-	policies, err := object.SyncPolicies(adapter)
+	policies, err := object.GetPolicies(adapter)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

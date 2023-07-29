@@ -144,17 +144,17 @@ func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
 		return nil, errors.New("adapter not found")
 	}
 
-	casbinModel, err := m.initModel()
+	err = m.initModel()
 	if err != nil {
 		return nil, err
 	}
 
-	adapter, err := a.initAdapter()
+	err = a.initAdapter()
 	if err != nil {
 		return nil, err
 	}
 
-	e, err := casbin.NewEnforcer(casbinModel, adapter)
+	e, err := casbin.NewEnforcer(m.Model, a.Adapter)
 	if err != nil {
 		return nil, err
 	}

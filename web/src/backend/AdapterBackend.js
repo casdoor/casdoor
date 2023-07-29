@@ -103,8 +103,8 @@ export function RemovePolicy(owner, name, policy) {
   }).then(res => res.json());
 }
 
-export function syncPolicies(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/sync-policies?id=${owner}/${encodeURIComponent(name)}`, {
+export function getPolicies(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-policies?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
     headers: {

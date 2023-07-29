@@ -31,6 +31,8 @@ type Model struct {
 
 	ModelText string `xorm:"mediumtext" json:"modelText"`
 	IsEnabled bool   `json:"isEnabled"`
+
+	model.Model `xorm:"-" json:"-"`
 }
 
 func GetModelCount(owner, field, value string) (int64, error) {
@@ -176,10 +178,14 @@ func HasRoleDefinition(m model.Model) bool {
 	return m["g"] != nil
 }
 
-func (m *Model) initModel() (model.Model, error) {
-	casbinModel, err := model.NewModelFromString(m.ModelText)
-	if err != nil {
-		return nil, err
+func (m *Model) initModel() error {
+	if m.Model == nil {
+		casbinModel, err := model.NewModelFromString(m.ModelText)
+		if err != nil {
+			return err
+		}
+		m.Model = casbinModel
 	}
-	return casbinModel, nil
+
+	return nil
 }
