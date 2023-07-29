@@ -16,7 +16,6 @@ package pp
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/casdoor/casdoor/util"
@@ -85,7 +84,7 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 		return nil, err
 	}
 	if !ok {
-		return nil, fmt.Errorf("VerifySignWithCert() failed: %v", ok)
+		return nil, err
 	}
 	notifyResult := &NotifyResult{
 		ProductName:        productName,

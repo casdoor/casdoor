@@ -94,7 +94,6 @@ class PaymentListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
-          window.console.log(text, record, index);
           return (
             <Link to={`/payments/${record.owner}/${text}`}>
               {text}

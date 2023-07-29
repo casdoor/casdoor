@@ -95,8 +95,8 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 	}
 	if captureRsp.Code != paypal.Success {
 		// If order is already captured, just skip this type of error and check the order detail
-		if len(captureRsp.ErrorResponse.Details) != 1 || captureRsp.ErrorResponse.Details[0].Issue == "ORDER_ALREADY_CAPTURED" {
-			return nil, errors.New(captureRsp.Error)
+		if !(len(captureRsp.ErrorResponse.Details) == 1 && captureRsp.ErrorResponse.Details[0].Issue == "ORDER_ALREADY_CAPTURED") {
+			return nil, errors.New(captureRsp.ErrorResponse.Message)
 		}
 	}
 	// Check the order detail
@@ -105,7 +105,7 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 		return nil, err
 	}
 	if captureRsp.Code != paypal.Success {
-		return nil, errors.New(captureRsp.Error)
+		return nil, errors.New(captureRsp.ErrorResponse.Message)
 	}
 
 	paymentName := detailRsp.Response.Id
