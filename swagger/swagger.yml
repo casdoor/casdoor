@@ -1,14 +1,14 @@
 swagger: "2.0"
 info:
-  title: Casdoor API
-  description: Documentation of Casdoor API
-  version: 1.0.0
+  title: Casdoor RESTful API
+  description: Swagger Docs of Casdoor Backend API
+  version: 1.376.1
   contact:
-    email: admin@casbin.org
+    email: casbin@googlegroups.com
 basePath: /
 schemes:
-- http
 - https
+- http
 paths:
   /.well-known/jwks:
     get:
@@ -3589,11 +3589,11 @@ definitions:
     properties:
       data:
         additionalProperties:
-          description: support string | class | List<class> and os on
+          description: support string, struct or []struct
           type: string
       data2:
         additionalProperties:
-          description: support string | class | List<class> and os on
+          description: support string, struct or []struct
           type: string
       msg:
         type: string
@@ -5126,51 +5126,31 @@ definitions:
     type: object
     properties:
       contentType:
-        default: application/json
         type: string
-        example: application/json
       createdTime:
-        default: "2023-07-27T17:09:12+08:00"
         type: string
-        example: "2023-07-27T17:09:12+08:00"
       events:
-        default: '[ddd]'
         type: array
         items:
           type: string
       headers:
-        default: '[]'
         type: array
         items:
           $ref: '#/definitions/object.Header'
       isEnabled:
-        default: true
         type: boolean
-        example: true
       isUserExtended:
-        default: true
         type: boolean
-        example: true
       method:
-        default: POST
         type: string
-        example: POST
       name:
-        default: test
         type: string
-        example: test
       organization:
-        default: built-in
         type: string
-        example: built-in
       owner:
-        default: built-in
         type: string
-        example: built-in
       url:
-        default: https://example.com/callback
         type: string
-        example: https://example.com/callback
   protocol.CredentialAssertion:
     title: CredentialAssertion
     type: object
@@ -5216,10 +5196,10 @@ definitions:
     title: Engine
     type: object
 securityDefinitions:
-  test_apiKey:
+  AccessToken:
     type: apiKey
     name: Authorization
     in: header
 externalDocs:
-  description: Find out more about casdoor
+  description: Find out more about Casdoor
   url: https://casdoor.org/

@@ -13,13 +13,13 @@
 // limitations under the License.
 
 // Package routers
-// @APIVersion 1.0.0
-// @Title Casdoor API
-// @Description Documentation of Casdoor API
-// @Contact admin@casbin.org
-// @SecurityDefinition test_apiKey apiKey Authorization header
-// @Schemes http,https
-// @ExternalDocs Find out more about casdoor
+// @APIVersion 1.376.1
+// @Title Casdoor RESTful API
+// @Description Swagger Docs of Casdoor Backend API
+// @Contact casbin@googlegroups.com
+// @SecurityDefinition AccessToken apiKey Authorization header
+// @Schemes https,http
+// @ExternalDocs Find out more about Casdoor
 // @ExternalDocsUrl https://casdoor.org/
 package routers
 

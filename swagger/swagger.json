@@ -1,17 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Casdoor API",
-        "description": "Documentation of Casdoor API",
-        "version": "1.0.0",
+        "title": "Casdoor RESTful API",
+        "description": "Swagger Docs of Casdoor Backend API",
+        "version": "1.376.1",
         "contact": {
-            "email": "admin@casbin.org"
+            "email": "casbin@googlegroups.com"
         }
     },
     "basePath": "/",
     "schemes": [
-        "http",
-        "https"
+        "https",
+        "http"
     ],
     "paths": {
         "/.well-known/jwks": {
@@ -5485,13 +5485,13 @@
             "properties": {
                 "data": {
                     "additionalProperties": {
-                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "description": "support string, struct or []struct",
                         "type": "string"
                     }
                 },
                 "data2": {
                     "additionalProperties": {
-                        "description": "support string | class | List\u003cclass\u003e and os on",
+                        "description": "support string, struct or []struct",
                         "type": "string"
                     }
                 },
@@ -7771,21 +7771,15 @@
             "type": "object",
             "properties": {
                 "contentType": {
-                    "default": "application/json",
-                    "type": "string",
-                    "example": "application/json"
+                    "type": "string"
                 },
                 "createdTime": {
-                    "default": "2023-07-27T17:09:12+08:00",
-                    "type": "string",
-                    "example": "2023-07-27T17:09:12+08:00"
+                    "type": "string"
                 },
                 "events": {
                     "type": "array",
                     "items": {
-                        "type": "string",
-                        "default": "test",
-                        "example": "test"
+                        "type": "string"
                     }
                 },
                 "headers": {
@@ -7795,39 +7789,25 @@
                     }
                 },
                 "isEnabled": {
-                    "default": true,
-                    "type": "boolean",
-                    "example": true
+                    "type": "boolean"
                 },
                 "isUserExtended": {
-                    "default": true,
-                    "type": "boolean",
-                    "example": true
+                    "type": "boolean"
                 },
                 "method": {
-                    "default": "POST",
-                    "type": "string",
-                    "example": "POST"
+                    "type": "string"
                 },
                 "name": {
-                    "default": "test",
-                    "type": "string",
-                    "example": "test"
+                    "type": "string"
                 },
                 "organization": {
-                    "default": "built-in",
-                    "type": "string",
-                    "example": "built-in"
+                    "type": "string"
                 },
                 "owner": {
-                    "default": "built-in",
-                    "type": "string",
-                    "example": "built-in"
+                    "type": "string"
                 },
                 "url": {
-                    "default": "https://example.com/callback",
-                    "type": "string",
-                    "example": "https://example.com/callback"
+                    "type": "string"
                 }
             }
         },
@@ -7894,14 +7874,14 @@
         }
     },
     "securityDefinitions": {
-        "test_apiKey": {
+        "AccessToken": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
         }
     },
     "externalDocs": {
-        "description": "Find out more about casdoor",
+        "description": "Find out more about Casdoor",
         "url": "https://casdoor.org/"
     }
 }
