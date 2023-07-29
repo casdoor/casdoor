@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -31,9 +30,7 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Type  string `xorm:"varchar(100)" json:"type"`
-	Model string `xorm:"varchar(100)" json:"model"`
-
+	Type            string `xorm:"varchar(100)" json:"type"`
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
 	Port            string `xorm:"varchar(20)" json:"port"`
@@ -46,7 +43,7 @@ type Adapter struct {
 
 	IsEnabled bool `json:"isEnabled"`
 
-	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
+	*xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
 func GetAdapterCount(owner, field, value string) (int64, error) {
@@ -153,46 +150,7 @@ func (adapter *Adapter) getTable() string {
 	}
 }
 
-func initEnforcer(modelObj *Model, adapter *Adapter) (*casbin.Enforcer, error) {
-	// init Adapter
-	if adapter.Adapter == nil {
-		var dataSourceName string
-		if adapter.DatabaseType == "mssql" {
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-		} else if adapter.DatabaseType == "postgres" {
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-		} else {
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", adapter.User, adapter.Password, adapter.Host, adapter.Port)
-		}
-
-		if !isCloudIntranet {
-			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
-		}
-
-		var err error
-		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), "")
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// init Model
-	m, err := model.NewModelFromString(modelObj.ModelText)
-	if err != nil {
-		return nil, err
-	}
-
-	// init Enforcer
-	enforcer, err := casbin.NewEnforcer(m, adapter.Adapter)
-	if err != nil {
-		return nil, err
-	}
-
-	return enforcer, nil
-}
-
-func (adapter *Adapter) initAdapter() (*xormadapter.Adapter, error) {
-	// init Adapter
+func (adapter *Adapter) initAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 
@@ -215,7 +173,7 @@ func (adapter *Adapter) initAdapter() (*xormadapter.Adapter, error) {
 			case "sqlite3":
 				dataSourceName = fmt.Sprintf("file:%s", adapter.File)
 			default:
-				return nil, fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
+				return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
 			}
 		}
 
@@ -226,10 +184,10 @@ func (adapter *Adapter) initAdapter() (*xormadapter.Adapter, error) {
 		var err error
 		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), adapter.TableNamePrefix)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
-	return adapter.Adapter, nil
+	return nil
 }
 
 func adapterChangeTrigger(oldName string, newName string) error {
@@ -279,41 +237,36 @@ func matrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.Casbi
 	return res
 }
 
-func SyncPolicies(adapter *Adapter) ([]*xormadapter.CasbinRule, error) {
-	modelObj, err := getModel(adapter.Owner, adapter.Model)
+func GetPolicies(adapter *Adapter) ([]*xormadapter.CasbinRule, error) {
+	err := adapter.initAdapter()
 	if err != nil {
 		return nil, err
 	}
 
-	if modelObj == nil {
-		return nil, fmt.Errorf("The model: %s does not exist", util.GetId(adapter.Owner, adapter.Model))
-	}
-
-	enforcer, err := initEnforcer(modelObj, adapter)
+	casbinModel := getModelDef()
+	err = adapter.LoadPolicy(casbinModel)
 	if err != nil {
 		return nil, err
 	}
 
-	policies := matrixToCasbinRules("p", enforcer.GetPolicy())
-	if strings.Contains(modelObj.ModelText, "[role_definition]") {
-		policies = append(policies, matrixToCasbinRules("g", enforcer.GetGroupingPolicy())...)
-	}
-
+	policies := matrixToCasbinRules("p", casbinModel.GetPolicy("p", "p"))
+	policies = append(policies, matrixToCasbinRules("g", casbinModel.GetPolicy("g", "g"))...)
 	return policies, nil
 }
 
 func UpdatePolicy(oldPolicy, newPolicy []string, adapter *Adapter) (bool, error) {
-	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	err := adapter.initAdapter()
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, adapter)
+	casbinModel := getModelDef()
+	err = adapter.LoadPolicy(casbinModel)
 	if err != nil {
 		return false, err
 	}
 
-	affected, err := enforcer.UpdatePolicy(oldPolicy, newPolicy)
+	affected := casbinModel.UpdatePolicy("p", "p", oldPolicy, newPolicy)
 	if err != nil {
 		return affected, err
 	}
@@ -321,39 +274,38 @@ func UpdatePolicy(oldPolicy, newPolicy []string, adapter *Adapter) (bool, error)
 }
 
 func AddPolicy(policy []string, adapter *Adapter) (bool, error) {
-	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	err := adapter.initAdapter()
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, adapter)
+	casbinModel := getModelDef()
+	err = adapter.LoadPolicy(casbinModel)
 	if err != nil {
 		return false, err
 	}
 
-	affected, err := enforcer.AddPolicy(policy)
-	if err != nil {
-		return affected, err
-	}
-	return affected, nil
+	casbinModel.AddPolicy("p", "p", policy)
+
+	return true, nil
 }
 
 func RemovePolicy(policy []string, adapter *Adapter) (bool, error) {
-	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	err := adapter.initAdapter()
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, adapter)
+	casbinModel := getModelDef()
+	err = adapter.LoadPolicy(casbinModel)
 	if err != nil {
 		return false, err
 	}
 
-	affected, err := enforcer.RemovePolicy(policy)
+	affected := casbinModel.RemovePolicy("p", "p", policy)
 	if err != nil {
 		return affected, err
 	}
-
 	return affected, nil
 }
 
@@ -363,4 +315,11 @@ func (adapter *Adapter) buildInAdapter() bool {
 	}
 
 	return adapter.Name == "permission-adapter-built-in" || adapter.Name == "api-adapter-built-in"
+}
+
+func getModelDef() model.Model {
+	casbinModel := model.NewModel()
+	casbinModel.AddDef("p", "p", "_, _, _, _, _, _")
+	casbinModel.AddDef("g", "g", "_, _, _, _, _, _")
+	return casbinModel
 }

@@ -20,7 +20,6 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 
 import "codemirror/lib/codemirror.css";
-import * as ModelBackend from "./backend/ModelBackend";
 import PolicyTable from "./table/PoliciyTable";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
@@ -36,7 +35,6 @@ class AdapterEditPage extends React.Component {
       adapterName: props.match.params.adapterName,
       adapter: null,
       organizations: [],
-      models: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -58,8 +56,6 @@ class AdapterEditPage extends React.Component {
           this.setState({
             adapter: res.data,
           });
-
-          this.getModels(this.state.organizationName);
         }
       });
   }
@@ -69,20 +65,6 @@ class AdapterEditPage extends React.Component {
       .then((res) => {
         this.setState({
           organizations: res.data || [],
-        });
-      });
-  }
-
-  getModels(organizationName) {
-    ModelBackend.getModels(organizationName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        this.setState({
-          models: res.data,
         });
       });
   }
@@ -187,7 +169,6 @@ class AdapterEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || Setting.builtInObject(this.state.adapter)} value={this.state.adapter.owner} onChange={(value => {
-              this.getModels(value);
               this.updateAdapterField("owner", value);
             })}>
               {
@@ -264,20 +245,6 @@ class AdapterEditPage extends React.Component {
               disabled={Setting.builtInObject(this.state.adapter)} onChange={e => {
                 this.updateAdapterField("table", e.target.value);
               }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Model"), i18next.t("general:Model - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.adapter.model} onChange={(model => {
-              this.updateAdapterField("model", model);
-            })}>
-              {
-                this.state.models.map((model, index) => <Option key={index} value={model.name}>{model.name}</Option>)
-              }
-            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
