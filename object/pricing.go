@@ -48,7 +48,7 @@ func GetPricingCount(owner, field, value string) (int64, error) {
 
 func GetPricings(owner string) ([]*Pricing, error) {
 	pricings := []*Pricing{}
-	err := adapter.Engine.Desc("created_time").Find(&pricings, &Pricing{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&pricings, &Pricing{Owner: owner})
 	if err != nil {
 		return pricings, err
 	}
@@ -72,7 +72,7 @@ func getPricing(owner, name string) (*Pricing, error) {
 	}
 
 	pricing := Pricing{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&pricing)
+	existed, err := ormer.Engine.Get(&pricing)
 	if err != nil {
 		return &pricing, err
 	}
@@ -96,7 +96,7 @@ func UpdatePricing(id string, pricing *Pricing) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(pricing)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(pricing)
 	if err != nil {
 		return false, err
 	}
@@ -105,7 +105,7 @@ func UpdatePricing(id string, pricing *Pricing) (bool, error) {
 }
 
 func AddPricing(pricing *Pricing) (bool, error) {
-	affected, err := adapter.Engine.Insert(pricing)
+	affected, err := ormer.Engine.Insert(pricing)
 	if err != nil {
 		return false, err
 	}
@@ -113,7 +113,7 @@ func AddPricing(pricing *Pricing) (bool, error) {
 }
 
 func DeletePricing(pricing *Pricing) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{pricing.Owner, pricing.Name}).Delete(pricing)
+	affected, err := ormer.Engine.ID(core.PK{pricing.Owner, pricing.Name}).Delete(pricing)
 	if err != nil {
 		return false, err
 	}

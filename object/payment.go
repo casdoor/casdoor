@@ -63,7 +63,7 @@ func GetPaymentCount(owner, organization, field, value string) (int64, error) {
 
 func GetPayments(owner string) ([]*Payment, error) {
 	payments := []*Payment{}
-	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func GetPayments(owner string) ([]*Payment, error) {
 
 func GetUserPayments(owner string, organization string, user string) ([]*Payment, error) {
 	payments := []*Payment{}
-	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
+	err := ormer.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func getPayment(owner string, name string) (*Payment, error) {
 	}
 
 	payment := Payment{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&payment)
+	existed, err := ormer.Engine.Get(&payment)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func UpdatePayment(id string, payment *Payment) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +132,7 @@ func UpdatePayment(id string, payment *Payment) (bool, error) {
 }
 
 func AddPayment(payment *Payment) (bool, error) {
-	affected, err := adapter.Engine.Insert(payment)
+	affected, err := ormer.Engine.Insert(payment)
 	if err != nil {
 		return false, err
 	}
@@ -141,7 +141,7 @@ func AddPayment(payment *Payment) (bool, error) {
 }
 
 func DeletePayment(payment *Payment) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{payment.Owner, payment.Name}).Delete(&Payment{})
+	affected, err := ormer.Engine.ID(core.PK{payment.Owner, payment.Name}).Delete(&Payment{})
 	if err != nil {
 		return false, err
 	}

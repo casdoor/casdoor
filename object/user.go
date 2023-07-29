@@ -207,7 +207,7 @@ func GetGlobalUserCount(field, value string) (int64, error) {
 
 func GetGlobalUsers() ([]*User, error) {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Find(&users)
+	err := ormer.Engine.Desc("created_time").Find(&users)
 	if err != nil {
 		return nil, err
 	}
@@ -237,12 +237,12 @@ func GetUserCount(owner, field, value string, groupName string) (int64, error) {
 }
 
 func GetOnlineUserCount(owner string, isOnline int) (int64, error) {
-	return adapter.Engine.Where("is_online = ?", isOnline).Count(&User{Owner: owner})
+	return ormer.Engine.Where("is_online = ?", isOnline).Count(&User{Owner: owner})
 }
 
 func GetUsers(owner string) ([]*User, error) {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&users, &User{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +252,7 @@ func GetUsers(owner string) ([]*User, error) {
 
 func GetUsersByTag(owner string, tag string) ([]*User, error) {
 	users := []*User{}
-	err := adapter.Engine.Desc("created_time").Find(&users, &User{Owner: owner, Tag: tag})
+	err := ormer.Engine.Desc("created_time").Find(&users, &User{Owner: owner, Tag: tag})
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +262,7 @@ func GetUsersByTag(owner string, tag string) ([]*User, error) {
 
 func GetSortedUsers(owner string, sorter string, limit int) ([]*User, error) {
 	users := []*User{}
-	err := adapter.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
+	err := ormer.Engine.Desc(sorter).Limit(limit, 0).Find(&users, &User{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +291,7 @@ func getUser(owner string, name string) (*User, error) {
 	}
 
 	user := User{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -309,7 +309,7 @@ func getUserById(owner string, id string) (*User, error) {
 	}
 
 	user := User{Owner: owner, Id: id}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +326,7 @@ func getUserByWechatId(owner string, wechatOpenId string, wechatUnionId string) 
 		wechatUnionId = wechatOpenId
 	}
 	user := &User{}
-	existed, err := adapter.Engine.Where("owner = ?", owner).Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
+	existed, err := ormer.Engine.Where("owner = ?", owner).Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +344,7 @@ func GetUserByEmail(owner string, email string) (*User, error) {
 	}
 
 	user := User{Owner: owner, Email: email}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +362,7 @@ func GetUserByPhone(owner string, phone string) (*User, error) {
 	}
 
 	user := User{Owner: owner, Phone: phone}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +380,7 @@ func GetUserByUserId(owner string, userId string) (*User, error) {
 	}
 
 	user := User{Owner: owner, Id: userId}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +397,7 @@ func GetUserByAccessKey(accessKey string) (*User, error) {
 		return nil, nil
 	}
 	user := User{AccessKey: accessKey}
-	existed, err := adapter.Engine.Get(&user)
+	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -471,7 +471,7 @@ func GetMaskedUsers(users []*User, errs ...error) ([]*User, error) {
 
 func GetLastUser(owner string) (*User, error) {
 	user := User{Owner: owner}
-	existed, err := adapter.Engine.Desc("created_time", "id").Get(&user)
+	existed, err := ormer.Engine.Desc("created_time", "id").Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -546,7 +546,7 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 		return 0, err
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		return 0, err
 	}
@@ -584,7 +584,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		return false, err
 	}
@@ -638,7 +638,7 @@ func AddUser(user *User) (bool, error) {
 	}
 	user.Ranking = int(count + 1)
 
-	affected, err := adapter.Engine.Insert(user)
+	affected, err := ormer.Engine.Insert(user)
 	if err != nil {
 		return false, err
 	}
@@ -670,7 +670,7 @@ func AddUsers(users []*User) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.Insert(users)
+	affected, err := ormer.Engine.Insert(users)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
 			return false, err
@@ -715,7 +715,7 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
+	affected, err := ormer.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
 	if err != nil {
 		return false, err
 	}
@@ -779,7 +779,7 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 }
 
 func userChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -788,7 +788,7 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 
 	var roles []*Role
-	err = adapter.Engine.Find(&roles)
+	err = ormer.Engine.Find(&roles)
 	if err != nil {
 		return err
 	}
@@ -808,7 +808,7 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 
 	var permissions []*Permission
-	err = adapter.Engine.Find(&permissions)
+	err = ormer.Engine.Find(&permissions)
 	if err != nil {
 		return err
 	}

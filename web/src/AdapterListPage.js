@@ -32,7 +32,7 @@ class AdapterListPage extends BaseListPage {
       createdTime: moment().format(),
       type: "Database",
       host: "localhost",
-      port: 3306,
+      port: "3306",
       user: "root",
       password: "123456",
       databaseType: "mysql",
@@ -206,6 +206,7 @@ class AdapterListPage extends BaseListPage {
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/adapters/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
+                disabled={Setting.builtInObject(record)}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteAdapter(index)}
               >

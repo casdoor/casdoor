@@ -32,7 +32,7 @@ type Credential struct {
 
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	sql := fmt.Sprintf("select * from %s", syncer.getTable())
-	results, err := syncer.Adapter.Engine.QueryString(sql)
+	results, err := syncer.Ormer.Engine.QueryString(sql)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
 	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
 
 	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
-	res, err := syncer.Adapter.Engine.Exec(sql)
+	res, err := syncer.Ormer.Engine.Exec(sql)
 	if err != nil {
 		return false, err
 	}
@@ -108,7 +108,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	setString := syncer.getSqlSetStringFromMap(m)
 
 	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
-	res, err := syncer.Adapter.Engine.Exec(sql)
+	res, err := syncer.Ormer.Engine.Exec(sql)
 	if err != nil {
 		return false, err
 	}
@@ -138,7 +138,7 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
 
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
-	affected, err := adapter.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+	affected, err := ormer.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
 	if err != nil {
 		return false, err
 	}
@@ -160,7 +160,7 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 }
 
 func (syncer *Syncer) initAdapter() {
-	if syncer.Adapter == nil {
+	if syncer.Ormer == nil {
 		var dataSourceName string
 		if syncer.DatabaseType == "mssql" {
 			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
@@ -174,7 +174,7 @@ func (syncer *Syncer) initAdapter() {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
 		}
 
-		syncer.Adapter = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
+		syncer.Ormer = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
 	}
 }
 

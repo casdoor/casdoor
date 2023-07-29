@@ -46,7 +46,7 @@ func AddLdap(ldap *Ldap) (bool, error) {
 		ldap.CreatedTime = util.GetCurrentTime()
 	}
 
-	affected, err := adapter.Engine.Insert(ldap)
+	affected, err := ormer.Engine.Insert(ldap)
 	if err != nil {
 		return false, err
 	}
@@ -56,7 +56,7 @@ func AddLdap(ldap *Ldap) (bool, error) {
 
 func CheckLdapExist(ldap *Ldap) (bool, error) {
 	var result []*Ldap
-	err := adapter.Engine.Find(&result, &Ldap{
+	err := ormer.Engine.Find(&result, &Ldap{
 		Owner:    ldap.Owner,
 		Host:     ldap.Host,
 		Port:     ldap.Port,
@@ -77,7 +77,7 @@ func CheckLdapExist(ldap *Ldap) (bool, error) {
 
 func GetLdaps(owner string) ([]*Ldap, error) {
 	var ldaps []*Ldap
-	err := adapter.Engine.Desc("created_time").Find(&ldaps, &Ldap{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&ldaps, &Ldap{Owner: owner})
 	if err != nil {
 		return ldaps, err
 	}
@@ -91,7 +91,7 @@ func GetLdap(id string) (*Ldap, error) {
 	}
 
 	ldap := Ldap{Id: id}
-	existed, err := adapter.Engine.Get(&ldap)
+	existed, err := ormer.Engine.Get(&ldap)
 	if err != nil {
 		return &ldap, nil
 	}
@@ -147,7 +147,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 		ldap.Password = l.Password
 	}
 
-	affected, err := adapter.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
+	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
 		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync").Update(ldap)
 	if err != nil {
 		return false, nil
@@ -157,7 +157,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 }
 
 func DeleteLdap(ldap *Ldap) (bool, error) {
-	affected, err := adapter.Engine.ID(ldap.Id).Delete(&Ldap{})
+	affected, err := ormer.Engine.ID(ldap.Id).Delete(&Ldap{})
 	if err != nil {
 		return false, err
 	}

@@ -66,7 +66,7 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 	if user != nil {
 		record.User = user.GetId()
 	}
-	has, err := adapter.Engine.Desc("created_time").Get(&record)
+	has, err := ormer.Engine.Desc("created_time").Get(&record)
 	if err != nil {
 		return err
 	}
@@ -143,7 +143,7 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 	record.Time = time.Now().Unix()
 	record.IsUsed = false
 
-	_, err := adapter.Engine.Insert(record)
+	_, err := ormer.Engine.Insert(record)
 	if err != nil {
 		return err
 	}
@@ -154,7 +154,7 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	var record VerificationRecord
 	record.Receiver = dest
-	has, err := adapter.Engine.Desc("time").Where("is_used = false").Get(&record)
+	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(&record)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func DisableVerificationCode(dest string) (err error) {
 	}
 
 	record.IsUsed = true
-	_, err = adapter.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
+	_, err = ormer.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
 	return
 }
 
