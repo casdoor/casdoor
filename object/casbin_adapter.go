@@ -26,7 +26,7 @@ import (
 	"github.com/xorm-io/core"
 )
 
-type CasdoorAdapter struct {
+type CasbinAdapter struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
@@ -49,14 +49,14 @@ type CasdoorAdapter struct {
 	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-func GetCasdoorAdapterCount(owner, field, value string) (int64, error) {
+func GetCasbinAdapterCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&CasdoorAdapter{})
+	return session.Count(&CasbinAdapter{})
 }
 
-func GetCasdoorAdapters(owner string) ([]*CasdoorAdapter, error) {
-	adapters := []*CasdoorAdapter{}
-	err := adapter.Engine.Desc("created_time").Find(&adapters, &CasdoorAdapter{Owner: owner})
+func GetCasbinAdapters(owner string) ([]*CasbinAdapter, error) {
+	adapters := []*CasbinAdapter{}
+	err := adapter.Engine.Desc("created_time").Find(&adapters, &CasbinAdapter{Owner: owner})
 	if err != nil {
 		return adapters, err
 	}
@@ -64,8 +64,8 @@ func GetCasdoorAdapters(owner string) ([]*CasdoorAdapter, error) {
 	return adapters, nil
 }
 
-func GetPaginationCasdoorAdapters(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*CasdoorAdapter, error) {
-	adapters := []*CasdoorAdapter{}
+func GetPaginationCasbinAdapters(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*CasbinAdapter, error) {
+	adapters := []*CasbinAdapter{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&adapters)
 	if err != nil {
@@ -75,47 +75,47 @@ func GetPaginationCasdoorAdapters(owner string, offset, limit int, field, value,
 	return adapters, nil
 }
 
-func getCasdoorAdapter(owner, name string) (*CasdoorAdapter, error) {
+func getCasbinAdapter(owner, name string) (*CasbinAdapter, error) {
 	if owner == "" || name == "" {
 		return nil, nil
 	}
 
-	casdoorAdapter := CasdoorAdapter{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&casdoorAdapter)
+	casbinAdapter := CasbinAdapter{Owner: owner, Name: name}
+	existed, err := adapter.Engine.Get(&casbinAdapter)
 	if err != nil {
 		return nil, err
 	}
 
 	if existed {
-		return &casdoorAdapter, nil
+		return &casbinAdapter, nil
 	} else {
 		return nil, nil
 	}
 }
 
-func GetCasdoorAdapter(id string) (*CasdoorAdapter, error) {
+func GetCasbinAdapter(id string) (*CasbinAdapter, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	return getCasdoorAdapter(owner, name)
+	return getCasbinAdapter(owner, name)
 }
 
-func UpdateCasdoorAdapter(id string, casdoorAdapter *CasdoorAdapter) (bool, error) {
+func UpdateCasbinAdapter(id string, casbinAdapter *CasbinAdapter) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if casdoorAdapter, err := getCasdoorAdapter(owner, name); casdoorAdapter == nil {
+	if casbinAdapter, err := getCasbinAdapter(owner, name); casbinAdapter == nil {
 		return false, err
 	}
 
-	if name != casdoorAdapter.Name {
-		err := casbinAdapterChangeTrigger(name, casdoorAdapter.Name)
+	if name != casbinAdapter.Name {
+		err := casbinAdapterChangeTrigger(name, casbinAdapter.Name)
 		if err != nil {
 			return false, err
 		}
 	}
 
 	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
-	if casdoorAdapter.Password == "***" {
+	if casbinAdapter.Password == "***" {
 		session.Omit("password")
 	}
-	affected, err := session.Update(casdoorAdapter)
+	affected, err := session.Update(casbinAdapter)
 	if err != nil {
 		return false, err
 	}
@@ -123,8 +123,8 @@ func UpdateCasdoorAdapter(id string, casdoorAdapter *CasdoorAdapter) (bool, erro
 	return affected != 0, nil
 }
 
-func AddCasdoorAdapter(casdoorAdapter *CasdoorAdapter) (bool, error) {
-	affected, err := adapter.Engine.Insert(casdoorAdapter)
+func AddCasbinAdapter(casbinAdapter *CasbinAdapter) (bool, error) {
+	affected, err := adapter.Engine.Insert(casbinAdapter)
 	if err != nil {
 		return false, err
 	}
@@ -132,8 +132,8 @@ func AddCasdoorAdapter(casdoorAdapter *CasdoorAdapter) (bool, error) {
 	return affected != 0, nil
 }
 
-func DeleteCasdoorAdapter(casdoorAdapter *CasdoorAdapter) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{casdoorAdapter.Owner, casdoorAdapter.Name}).Delete(&CasdoorAdapter{})
+func DeleteCasbinAdapter(casbinAdapter *CasbinAdapter) (bool, error) {
+	affected, err := adapter.Engine.ID(core.PK{casbinAdapter.Owner, casbinAdapter.Name}).Delete(&CasbinAdapter{})
 	if err != nil {
 		return false, err
 	}
@@ -141,28 +141,28 @@ func DeleteCasdoorAdapter(casdoorAdapter *CasdoorAdapter) (bool, error) {
 	return affected != 0, nil
 }
 
-func (casdoorAdapter *CasdoorAdapter) GetId() string {
-	return fmt.Sprintf("%s/%s", casdoorAdapter.Owner, casdoorAdapter.Name)
+func (casbinAdapter *CasbinAdapter) GetId() string {
+	return fmt.Sprintf("%s/%s", casbinAdapter.Owner, casbinAdapter.Name)
 }
 
-func (casdoorAdapter *CasdoorAdapter) getTable() string {
-	if casdoorAdapter.DatabaseType == "mssql" {
-		return fmt.Sprintf("[%s]", casdoorAdapter.Table)
+func (casbinAdapter *CasbinAdapter) getTable() string {
+	if casbinAdapter.DatabaseType == "mssql" {
+		return fmt.Sprintf("[%s]", casbinAdapter.Table)
 	} else {
-		return casdoorAdapter.Table
+		return casbinAdapter.Table
 	}
 }
 
-func initEnforcer(modelObj *Model, casdoorAdapter *CasdoorAdapter) (*casbin.Enforcer, error) {
+func initEnforcer(modelObj *Model, casbinAdapter *CasbinAdapter) (*casbin.Enforcer, error) {
 	// init Adapter
-	if casdoorAdapter.Adapter == nil {
+	if casbinAdapter.Adapter == nil {
 		var dataSourceName string
-		if casdoorAdapter.DatabaseType == "mssql" {
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
-		} else if casdoorAdapter.DatabaseType == "postgres" {
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+		if casbinAdapter.DatabaseType == "mssql" {
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casbinAdapter.User, casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port, casbinAdapter.Database)
+		} else if casbinAdapter.DatabaseType == "postgres" {
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casbinAdapter.User, casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port, casbinAdapter.Database)
 		} else {
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casbinAdapter.User, casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port)
 		}
 
 		if !isCloudIntranet {
@@ -170,7 +170,7 @@ func initEnforcer(modelObj *Model, casdoorAdapter *CasdoorAdapter) (*casbin.Enfo
 		}
 
 		var err error
-		casdoorAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casdoorAdapter.DatabaseType, dataSourceName, casdoorAdapter.Database).Engine, casdoorAdapter.getTable(), "")
+		casbinAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casbinAdapter.DatabaseType, dataSourceName, casbinAdapter.Database).Engine, casbinAdapter.getTable(), "")
 		if err != nil {
 			return nil, err
 		}
@@ -183,7 +183,7 @@ func initEnforcer(modelObj *Model, casdoorAdapter *CasdoorAdapter) (*casbin.Enfo
 	}
 
 	// init Enforcer
-	enforcer, err := casbin.NewEnforcer(m, casdoorAdapter.Adapter)
+	enforcer, err := casbin.NewEnforcer(m, casbinAdapter.Adapter)
 	if err != nil {
 		return nil, err
 	}
@@ -191,31 +191,31 @@ func initEnforcer(modelObj *Model, casdoorAdapter *CasdoorAdapter) (*casbin.Enfo
 	return enforcer, nil
 }
 
-func (casdoorAdapter *CasdoorAdapter) initAdapter() (*xormadapter.Adapter, error) {
+func (casbinAdapter *CasbinAdapter) initAdapter() (*xormadapter.Adapter, error) {
 	// init Adapter
-	if casdoorAdapter.Adapter == nil {
+	if casbinAdapter.Adapter == nil {
 		var dataSourceName string
 
-		if casdoorAdapter.buildInAdapter() {
+		if casbinAdapter.buildInAdapter() {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 		} else {
-			switch casdoorAdapter.DatabaseType {
+			switch casbinAdapter.DatabaseType {
 			case "mssql":
-				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casdoorAdapter.User,
-					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", casbinAdapter.User,
+					casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port, casbinAdapter.Database)
 			case "mysql":
-				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casdoorAdapter.User,
-					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port)
+				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", casbinAdapter.User,
+					casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port)
 			case "postgres":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casdoorAdapter.User,
-					casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", casbinAdapter.User,
+					casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port, casbinAdapter.Database)
 			case "CockroachDB":
 				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s serial_normalization=virtual_sequence",
-					casdoorAdapter.User, casdoorAdapter.Password, casdoorAdapter.Host, casdoorAdapter.Port, casdoorAdapter.Database)
+					casbinAdapter.User, casbinAdapter.Password, casbinAdapter.Host, casbinAdapter.Port, casbinAdapter.Database)
 			case "sqlite3":
-				dataSourceName = fmt.Sprintf("file:%s", casdoorAdapter.File)
+				dataSourceName = fmt.Sprintf("file:%s", casbinAdapter.File)
 			default:
-				return nil, fmt.Errorf("unsupported database type: %s", casdoorAdapter.DatabaseType)
+				return nil, fmt.Errorf("unsupported database type: %s", casbinAdapter.DatabaseType)
 			}
 		}
 
@@ -224,12 +224,12 @@ func (casdoorAdapter *CasdoorAdapter) initAdapter() (*xormadapter.Adapter, error
 		}
 
 		var err error
-		casdoorAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casdoorAdapter.DatabaseType, dataSourceName, casdoorAdapter.Database).Engine, casdoorAdapter.getTable(), casdoorAdapter.TableNamePrefix)
+		casbinAdapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(casbinAdapter.DatabaseType, dataSourceName, casbinAdapter.Database).Engine, casbinAdapter.getTable(), casbinAdapter.TableNamePrefix)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return casdoorAdapter.Adapter, nil
+	return casbinAdapter.Adapter, nil
 }
 
 func casbinAdapterChangeTrigger(oldName string, newName string) error {
@@ -279,17 +279,17 @@ func matrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.Casbi
 	return res
 }
 
-func SyncPolicies(casdoorAdapter *CasdoorAdapter) ([]*xormadapter.CasbinRule, error) {
-	modelObj, err := getModel(casdoorAdapter.Owner, casdoorAdapter.Model)
+func SyncPolicies(casbinAdapter *CasbinAdapter) ([]*xormadapter.CasbinRule, error) {
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	if err != nil {
 		return nil, err
 	}
 
 	if modelObj == nil {
-		return nil, fmt.Errorf("The model: %s does not exist", util.GetId(casdoorAdapter.Owner, casdoorAdapter.Model))
+		return nil, fmt.Errorf("The model: %s does not exist", util.GetId(casbinAdapter.Owner, casbinAdapter.Model))
 	}
 
-	enforcer, err := initEnforcer(modelObj, casdoorAdapter)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return nil, err
 	}
@@ -302,13 +302,13 @@ func SyncPolicies(casdoorAdapter *CasdoorAdapter) ([]*xormadapter.CasbinRule, er
 	return policies, nil
 }
 
-func UpdatePolicy(oldPolicy, newPolicy []string, casdoorAdapter *CasdoorAdapter) (bool, error) {
-	modelObj, err := getModel(casdoorAdapter.Owner, casdoorAdapter.Model)
+func UpdatePolicy(oldPolicy, newPolicy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, casdoorAdapter)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err
 	}
@@ -320,13 +320,13 @@ func UpdatePolicy(oldPolicy, newPolicy []string, casdoorAdapter *CasdoorAdapter)
 	return affected, nil
 }
 
-func AddPolicy(policy []string, casdoorAdapter *CasdoorAdapter) (bool, error) {
-	modelObj, err := getModel(casdoorAdapter.Owner, casdoorAdapter.Model)
+func AddPolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, casdoorAdapter)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err
 	}
@@ -338,13 +338,13 @@ func AddPolicy(policy []string, casdoorAdapter *CasdoorAdapter) (bool, error) {
 	return affected, nil
 }
 
-func RemovePolicy(policy []string, casdoorAdapter *CasdoorAdapter) (bool, error) {
-	modelObj, err := getModel(casdoorAdapter.Owner, casdoorAdapter.Model)
+func RemovePolicy(policy []string, casbinAdapter *CasbinAdapter) (bool, error) {
+	modelObj, err := getModel(casbinAdapter.Owner, casbinAdapter.Model)
 	if err != nil {
 		return false, err
 	}
 
-	enforcer, err := initEnforcer(modelObj, casdoorAdapter)
+	enforcer, err := initEnforcer(modelObj, casbinAdapter)
 	if err != nil {
 		return false, err
 	}
@@ -357,10 +357,10 @@ func RemovePolicy(policy []string, casdoorAdapter *CasdoorAdapter) (bool, error)
 	return affected, nil
 }
 
-func (casdoorAdapter *CasdoorAdapter) buildInAdapter() bool {
-	if casdoorAdapter.Owner != "built-in" {
+func (casbinAdapter *CasbinAdapter) buildInAdapter() bool {
+	if casbinAdapter.Owner != "built-in" {
 		return false
 	}
 
-	return casdoorAdapter.Name == "permission-adapter-built-in" || casdoorAdapter.Name == "authz-adapter-built-in"
+	return casbinAdapter.Name == "permission-adapter-built-in" || casbinAdapter.Name == "authz-adapter-built-in"
 }

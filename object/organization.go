@@ -409,7 +409,7 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
-	casbinAdapter := new(CasdoorAdapter)
+	casbinAdapter := new(CasbinAdapter)
 	casbinAdapter.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(casbinAdapter)
 	if err != nil {

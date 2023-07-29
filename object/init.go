@@ -416,7 +416,7 @@ func initBuiltInPermission() {
 }
 
 func initBuildInPermissionAdapter() {
-	permissionAdapter, err := GetCasdoorAdapter("built-in/permission-adapter-built-in")
+	permissionAdapter, err := GetCasbinAdapter("built-in/permission-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
@@ -425,7 +425,7 @@ func initBuildInPermissionAdapter() {
 		return
 	}
 
-	permissionAdapter = &CasdoorAdapter{
+	permissionAdapter = &CasbinAdapter{
 		Owner:           "built-in",
 		Name:            "permission-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
@@ -436,14 +436,14 @@ func initBuildInPermissionAdapter() {
 		Table:           "casbin_user_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddCasdoorAdapter(permissionAdapter)
+	_, err = AddCasbinAdapter(permissionAdapter)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initBuildInAuthzAdapter() {
-	authzAdapter, err := GetCasdoorAdapter("built-in/authz-adapter-built-in")
+	authzAdapter, err := GetCasbinAdapter("built-in/authz-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
@@ -452,7 +452,7 @@ func initBuildInAuthzAdapter() {
 		return
 	}
 
-	authzAdapter = &CasdoorAdapter{
+	authzAdapter = &CasbinAdapter{
 		Owner:           "built-in",
 		Name:            "authz-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
@@ -463,7 +463,7 @@ func initBuildInAuthzAdapter() {
 		Table:           "casbin_authz_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddCasdoorAdapter(authzAdapter)
+	_, err = AddCasbinAdapter(authzAdapter)
 	if err != nil {
 		panic(err)
 	}

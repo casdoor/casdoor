@@ -130,7 +130,7 @@ func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
 
 	var err error
 	var m *Model
-	var a *CasdoorAdapter
+	var a *CasbinAdapter
 
 	if m, err = GetModel(enforcer.Model); err != nil {
 		return nil, err
@@ -138,7 +138,7 @@ func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
 		return nil, errors.New("model not found")
 	}
 
-	if a, err = GetCasdoorAdapter(enforcer.Adapter); err != nil {
+	if a, err = GetCasbinAdapter(enforcer.Adapter); err != nil {
 		return nil, err
 	} else if a == nil {
 		return nil, errors.New("adapter not found")
