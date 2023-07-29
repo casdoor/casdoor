@@ -17,9 +17,10 @@ package pp
 import (
 	"context"
 	"errors"
-	"github.com/casdoor/casdoor/conf"
 	"net/http"
 	"strconv"
+
+	"github.com/casdoor/casdoor/conf"
 
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/paypal"
