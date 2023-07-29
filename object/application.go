@@ -281,12 +281,19 @@ func GetApplication(id string) (*Application, error) {
 }
 
 func GetMaskedApplication(application *Application, userId string) *Application {
-	if isUserIdGlobalAdmin(userId) {
-		return application
-	}
-
 	if application == nil {
 		return nil
+	}
+
+	if userId != "" {
+		if isUserIdGlobalAdmin(userId) {
+			return application
+		}
+
+		user, _ := GetUser(userId)
+		if user != nil && user.IsApplicationAdmin(application) {
+			return application
+		}
 	}
 
 	if application.ClientSecret != "" {

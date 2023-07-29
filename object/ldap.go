@@ -135,10 +135,16 @@ func GetMaskedLdaps(ldaps []*Ldap, errs ...error) ([]*Ldap, error) {
 }
 
 func UpdateLdap(ldap *Ldap) (bool, error) {
-	if l, err := GetLdap(ldap.Id); err != nil {
+	var l *Ldap
+	var err error
+	if l, err = GetLdap(ldap.Id); err != nil {
 		return false, nil
 	} else if l == nil {
 		return false, nil
+	}
+
+	if ldap.Password == "***" {
+		ldap.Password = l.Password
 	}
 
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",

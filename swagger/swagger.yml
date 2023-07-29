@@ -1,11 +1,14 @@
 swagger: "2.0"
 info:
-  title: Casdoor API
-  description: Documentation of Casdoor API
-  version: 1.0.0
+  title: Casdoor RESTful API
+  description: Swagger Docs of Casdoor Backend API
+  version: 1.376.1
   contact:
-    email: admin@casbin.org
+    email: casbin@googlegroups.com
 basePath: /
+schemes:
+- https
+- http
 paths:
   /.well-known/jwks:
     get:
@@ -2401,6 +2404,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2418,6 +2422,7 @@ paths:
         description: The owner of webhooks
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2425,6 +2430,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Webhook'
+      security:
+      - test_apiKey: []
   /api/health:
     get:
       tags:
@@ -3381,6 +3388,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       - in: body
         name: body
         description: The details of the webhook
@@ -3541,12 +3549,6 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  1225.0xc000333110.false:
-    title: "false"
-    type: object
-  1260.0xc000333140.false:
-    title: "false"
-    type: object
   LaravelResponse:
     title: LaravelResponse
     type: object
@@ -3586,9 +3588,13 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1225.0xc000333110.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       data2:
-        $ref: '#/definitions/1260.0xc000333140.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       msg:
         type: string
       name:
@@ -3614,9 +3620,6 @@ definitions:
     type: object
   object:
     title: object
-    type: object
-  object.&{197582 0xc000ace360 false}:
-    title: '&{197582 0xc000ace360 false}'
     type: object
   object.AccountItem:
     title: AccountItem
@@ -3749,7 +3752,7 @@ definitions:
     title: CasbinRequest
     type: array
     items:
-      $ref: '#/definitions/object.&{197582 0xc000ace360 false}'
+      $ref: '#/definitions/object.CasbinRequest'
   object.Cert:
     title: Cert
     type: object
@@ -5192,3 +5195,11 @@ definitions:
   xorm.Engine:
     title: Engine
     type: object
+securityDefinitions:
+  AccessToken:
+    type: apiKey
+    name: Authorization
+    in: header
+externalDocs:
+  description: Find out more about Casdoor
+  url: https://casdoor.org/
