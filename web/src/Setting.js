@@ -1219,7 +1219,7 @@ export function isDefaultOrganizationSelected(account) {
   return false;
 }
 
-const BuiltInResources = [
+const BuiltInObjects = [
   "api-enforcer-built-in",
   "permission-enforcer-built-in",
   "api-model-built-in",
@@ -1232,5 +1232,5 @@ export function builtInObject(obj) {
   if (obj === undefined || obj === null) {
     return false;
   }
-  return obj.owner === "built-in" && BuiltInResources.includes(obj.name);
+  return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
 }
