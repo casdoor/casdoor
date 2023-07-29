@@ -52,14 +52,6 @@ func (c *ApiController) GetResources() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
-	userObj, ok := c.RequireSignedInUser()
-	if !ok {
-		return
-	}
-	if userObj.IsAdmin {
-		user = ""
-	}
-
 	if limit == "" || page == "" {
 		resources, err := object.GetResources(owner, user)
 		if err != nil {

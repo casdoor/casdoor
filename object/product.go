@@ -201,9 +201,8 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		Organization: user.Owner,
-		User:         user.Name,
-
+		Organization:       user.Owner,
+		User:               user.Name,
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		Detail:             product.Detail,

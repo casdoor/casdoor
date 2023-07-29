@@ -1,14 +1,18 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Casdoor API",
-        "description": "Documentation of Casdoor API",
-        "version": "1.0.0",
+        "title": "Casdoor RESTful API",
+        "description": "Swagger Docs of Casdoor Backend API",
+        "version": "1.376.1",
         "contact": {
-            "email": "admin@casbin.org"
+            "email": "casbin@googlegroups.com"
         }
     },
     "basePath": "/",
+    "schemes": [
+        "https",
+        "http"
+    ],
     "paths": {
         "/.well-known/jwks": {
             "get": {
@@ -3682,7 +3686,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3708,7 +3713,8 @@
                         "name": "owner",
                         "description": "The owner of webhooks",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     }
                 ],
                 "responses": {
@@ -3721,7 +3727,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "test_apiKey": []
+                    }
+                ]
             }
         },
         "/api/health": {
@@ -5170,7 +5181,8 @@
                         "name": "id",
                         "description": "The id ( owner/name ) of the webhook",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "default": "built-in/admin"
                     },
                     {
                         "in": "body",
@@ -5419,14 +5431,6 @@
         }
     },
     "definitions": {
-        "1225.0xc000333110.false": {
-            "title": "false",
-            "type": "object"
-        },
-        "1260.0xc000333140.false": {
-            "title": "false",
-            "type": "object"
-        },
         "LaravelResponse": {
             "title": "LaravelResponse",
             "type": "object"
@@ -5480,10 +5484,16 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/1225.0xc000333110.false"
+                    "additionalProperties": {
+                        "description": "support string, struct or []struct",
+                        "type": "string"
+                    }
                 },
                 "data2": {
-                    "$ref": "#/definitions/1260.0xc000333140.false"
+                    "additionalProperties": {
+                        "description": "support string, struct or []struct",
+                        "type": "string"
+                    }
                 },
                 "msg": {
                     "type": "string"
@@ -5523,10 +5533,6 @@
         },
         "object": {
             "title": "object",
-            "type": "object"
-        },
-        "object.\u0026{197582 0xc000ace360 false}": {
-            "title": "\u0026{197582 0xc000ace360 false}",
             "type": "object"
         },
         "object.AccountItem": {
@@ -5722,7 +5728,7 @@
             "title": "CasbinRequest",
             "type": "array",
             "items": {
-                "$ref": "#/definitions/object.\u0026{197582 0xc000ace360 false}"
+                "$ref": "#/definitions/object.CasbinRequest"
             }
         },
         "object.Cert": {
@@ -7866,5 +7872,16 @@
             "title": "Engine",
             "type": "object"
         }
+    },
+    "securityDefinitions": {
+        "AccessToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "externalDocs": {
+        "description": "Find out more about Casdoor",
+        "url": "https://casdoor.org/"
     }
 }

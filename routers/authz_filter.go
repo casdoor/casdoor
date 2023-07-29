@@ -69,7 +69,7 @@ func getObject(ctx *context.Context) (string, string) {
 		// query == "?id=built-in/admin"
 		id := ctx.Input.Query("id")
 		if id != "" {
-			return util.GetOwnerAndNameFromId(id)
+			return util.GetOwnerAndNameFromIdNoCheck(id)
 		}
 
 		owner := ctx.Input.Query("owner")
