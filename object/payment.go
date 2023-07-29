@@ -186,7 +186,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 
 	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
-		return payment, notifyResult, err
+		return nil, nil, err
 	}
 
 	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {

@@ -38,9 +38,9 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 		isProd = true
 	}
 	client, err := paypal.NewClient(clientID, secret, isProd)
-	if !isProd {
-		client.DebugSwitch = gopay.DebugOn
-	}
+	//if !isProd {
+	//	client.DebugSwitch = gopay.DebugOn
+	//}
 	if err != nil {
 		return nil, err
 	}
