@@ -1218,3 +1218,19 @@ export function isDefaultOrganizationSelected(account) {
   }
   return false;
 }
+
+const BuiltInObjects = [
+  "api-enforcer-built-in",
+  "permission-enforcer-built-in",
+  "api-model-built-in",
+  "permission-model-built-in",
+  "api-adapter-built-in",
+  "permission-adapter-built-in",
+];
+
+export function builtInObject(obj) {
+  if (obj === undefined || obj === null) {
+    return false;
+  }
+  return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
+}

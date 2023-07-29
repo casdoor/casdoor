@@ -40,9 +40,9 @@ func GetSessions(owner string) ([]*Session, error) {
 	sessions := []*Session{}
 	var err error
 	if owner != "" {
-		err = adapter.Engine.Desc("created_time").Where("owner = ?", owner).Find(&sessions)
+		err = ormer.Engine.Desc("created_time").Where("owner = ?", owner).Find(&sessions)
 	} else {
-		err = adapter.Engine.Desc("created_time").Find(&sessions)
+		err = ormer.Engine.Desc("created_time").Find(&sessions)
 	}
 	if err != nil {
 		return sessions, err
@@ -70,7 +70,7 @@ func GetSessionCount(owner, field, value string) (int64, error) {
 func GetSingleSession(id string) (*Session, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
 	session := Session{Owner: owner, Name: name, Application: application}
-	get, err := adapter.Engine.Get(&session)
+	get, err := ormer.Engine.Get(&session)
 	if err != nil {
 		return &session, err
 	}
@@ -91,7 +91,7 @@ func UpdateSession(id string, session *Session) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Update(session)
+	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Update(session)
 	if err != nil {
 		return false, err
 	}
@@ -114,7 +114,7 @@ func AddSession(session *Session) (bool, error) {
 	if dbSession == nil {
 		session.CreatedTime = util.GetCurrentTime()
 
-		affected, err := adapter.Engine.Insert(session)
+		affected, err := ormer.Engine.Insert(session)
 		if err != nil {
 			return false, err
 		}
@@ -150,7 +150,7 @@ func DeleteSession(id string) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
+	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
 	if err != nil {
 		return false, err
 	}

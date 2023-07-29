@@ -23,7 +23,7 @@ import (
 type Migrator_1_235_0_PR_1530 struct{}
 
 func (*Migrator_1_235_0_PR_1530) IsMigrationNeeded() bool {
-	exist, _ := adapter.Engine.IsTableExist("casbin_rule")
+	exist, _ := ormer.Engine.IsTableExist("casbin_rule")
 
 	return exist
 }

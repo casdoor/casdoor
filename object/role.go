@@ -44,7 +44,7 @@ func GetRoleCount(owner, field, value string) (int64, error) {
 
 func GetRoles(owner string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Desc("created_time").Find(&roles, &Role{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&roles, &Role{Owner: owner})
 	if err != nil {
 		return roles, err
 	}
@@ -69,7 +69,7 @@ func getRole(owner string, name string) (*Role, error) {
 	}
 
 	role := Role{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&role)
+	existed, err := ormer.Engine.Get(&role)
 	if err != nil {
 		return &role, err
 	}
@@ -137,7 +137,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		return false, err
 	}
@@ -178,7 +178,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 }
 
 func AddRole(role *Role) (bool, error) {
-	affected, err := adapter.Engine.Insert(role)
+	affected, err := ormer.Engine.Insert(role)
 	if err != nil {
 		return false, err
 	}
@@ -190,7 +190,7 @@ func AddRoles(roles []*Role) bool {
 	if len(roles) == 0 {
 		return false
 	}
-	affected, err := adapter.Engine.Insert(roles)
+	affected, err := ormer.Engine.Insert(roles)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
 			panic(err)
@@ -240,7 +240,7 @@ func DeleteRole(role *Role) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
+	affected, err := ormer.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		return false, err
 	}
@@ -254,7 +254,7 @@ func (role *Role) GetId() string {
 
 func GetRolesByUser(userId string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
+	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
 	if err != nil {
 		return roles, err
 	}
@@ -278,7 +278,7 @@ func GetRolesByUser(userId string) ([]*Role, error) {
 }
 
 func roleChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -287,7 +287,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	var roles []*Role
-	err = adapter.Engine.Find(&roles)
+	err = ormer.Engine.Find(&roles)
 	if err != nil {
 		return err
 	}
@@ -306,7 +306,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	var permissions []*Permission
-	err = adapter.Engine.Find(&permissions)
+	err = ormer.Engine.Find(&permissions)
 	if err != nil {
 		return err
 	}
@@ -338,7 +338,7 @@ func GetMaskedRoles(roles []*Role) []*Role {
 
 func GetRolesByNamePrefix(owner string, prefix string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Where("owner=? and name like ?", owner, prefix+"%").Find(&roles)
+	err := ormer.Engine.Where("owner=? and name like ?", owner, prefix+"%").Find(&roles)
 	if err != nil {
 		return roles, err
 	}

@@ -55,13 +55,13 @@ func GetMessageCount(owner, organization, field, value string) (int64, error) {
 
 func GetMessages(owner string) ([]*Message, error) {
 	messages := []*Message{}
-	err := adapter.Engine.Desc("created_time").Find(&messages, &Message{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&messages, &Message{Owner: owner})
 	return messages, err
 }
 
 func GetChatMessages(chat string) ([]*Message, error) {
 	messages := []*Message{}
-	err := adapter.Engine.Asc("created_time").Find(&messages, &Message{Chat: chat})
+	err := ormer.Engine.Asc("created_time").Find(&messages, &Message{Chat: chat})
 	return messages, err
 }
 
@@ -78,7 +78,7 @@ func getMessage(owner string, name string) (*Message, error) {
 	}
 
 	message := Message{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&message)
+	existed, err := ormer.Engine.Get(&message)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func UpdateMessage(id string, message *Message) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(message)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(message)
 	if err != nil {
 		return false, err
 	}
@@ -112,7 +112,7 @@ func UpdateMessage(id string, message *Message) (bool, error) {
 }
 
 func AddMessage(message *Message) (bool, error) {
-	affected, err := adapter.Engine.Insert(message)
+	affected, err := ormer.Engine.Insert(message)
 	if err != nil {
 		return false, err
 	}
@@ -121,7 +121,7 @@ func AddMessage(message *Message) (bool, error) {
 }
 
 func DeleteMessage(message *Message) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{message.Owner, message.Name}).Delete(&Message{})
+	affected, err := ormer.Engine.ID(core.PK{message.Owner, message.Name}).Delete(&Message{})
 	if err != nil {
 		return false, err
 	}
@@ -130,7 +130,7 @@ func DeleteMessage(message *Message) (bool, error) {
 }
 
 func DeleteChatMessages(chat string) (bool, error) {
-	affected, err := adapter.Engine.Delete(&Message{Chat: chat})
+	affected, err := ormer.Engine.Delete(&Message{Chat: chat})
 	if err != nil {
 		return false, err
 	}

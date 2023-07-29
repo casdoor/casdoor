@@ -118,7 +118,7 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) e
 // start all autosync goroutine for existing ldap servers in each organizations
 func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() error {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Find(&organizations)
+	err := ormer.Engine.Desc("created_time").Find(&organizations)
 	if err != nil {
 		logs.Info("failed to Star up LdapAutoSynchronizer; ")
 	}
@@ -141,7 +141,7 @@ func (l *LdapAutoSynchronizer) LdapAutoSynchronizerStartUpAll() error {
 }
 
 func UpdateLdapSyncTime(ldapId string) error {
-	_, err := adapter.Engine.ID(ldapId).Update(&Ldap{LastSync: util.GetCurrentTime()})
+	_, err := ormer.Engine.ID(ldapId).Update(&Ldap{LastSync: util.GetCurrentTime()})
 	if err != nil {
 		return err
 	}

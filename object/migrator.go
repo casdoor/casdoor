@@ -43,7 +43,7 @@ func DoMigration() {
 		IDColumnName: "id",
 	}
 
-	m := migrate.New(adapter.Engine, options, migrations)
+	m := migrate.New(ormer.Engine, options, migrations)
 	err := m.Migrate()
 	if err != nil {
 		panic(err)

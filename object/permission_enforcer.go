@@ -69,7 +69,7 @@ func getPermissionEnforcer(p *Permission, permissionIDs ...string) *casbin.Enfor
 func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 	tableName := "permission_rule"
 	if len(p.Adapter) != 0 {
-		adapterObj, err := getCasbinAdapter(p.Owner, p.Adapter)
+		adapterObj, err := getAdapter(p.Owner, p.Adapter)
 		if err != nil {
 			return err
 		}
@@ -81,12 +81,12 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	driverName := conf.GetConfigString("driverName")
 	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
-	casbinAdapter, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, tableName, tableNamePrefix, true)
+	adapter, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, tableName, tableNamePrefix, true)
 	if err != nil {
 		return err
 	}
 
-	enforcer.SetAdapter(casbinAdapter)
+	enforcer.SetAdapter(adapter)
 	return nil
 }
 

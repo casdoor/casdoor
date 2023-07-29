@@ -80,12 +80,12 @@ func GetOrganizationCount(owner, field, value string) (int64, error) {
 func GetOrganizations(owner string, name ...string) ([]*Organization, error) {
 	organizations := []*Organization{}
 	if name != nil && len(name) > 0 {
-		err := adapter.Engine.Desc("created_time").Where(builder.In("name", name)).Find(&organizations)
+		err := ormer.Engine.Desc("created_time").Where(builder.In("name", name)).Find(&organizations)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err := adapter.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
+		err := ormer.Engine.Desc("created_time").Find(&organizations, &Organization{Owner: owner})
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func GetOrganizations(owner string, name ...string) ([]*Organization, error) {
 
 func GetOrganizationsByFields(owner string, fields ...string) ([]*Organization, error) {
 	organizations := []*Organization{}
-	err := adapter.Engine.Desc("created_time").Cols(fields...).Find(&organizations, &Organization{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Cols(fields...).Find(&organizations, &Organization{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func getOrganization(owner string, name string) (*Organization, error) {
 	}
 
 	organization := Organization{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&organization)
+	existed, err := ormer.Engine.Get(&organization)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func UpdateOrganization(id string, organization *Organization) (bool, error) {
 		}
 	}
 
-	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if organization.MasterPassword == "***" {
 		session.Omit("master_password")
 	}
@@ -214,7 +214,7 @@ func UpdateOrganization(id string, organization *Organization) (bool, error) {
 }
 
 func AddOrganization(organization *Organization) (bool, error) {
-	affected, err := adapter.Engine.Insert(organization)
+	affected, err := ormer.Engine.Insert(organization)
 	if err != nil {
 		return false, err
 	}
@@ -227,7 +227,7 @@ func DeleteOrganization(organization *Organization) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
+	affected, err := ormer.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
 		return false, err
 	}
@@ -299,7 +299,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 	}
 
 	applications := []*Application{}
-	err = adapter.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
+	err = ormer.Engine.Asc("created_time").Find(&applications, &Application{Organization: organization.Name})
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +330,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 }
 
 func organizationChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -360,7 +360,7 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	role := new(Role)
-	_, err = adapter.Engine.Where("owner=?", oldName).Get(role)
+	_, err = ormer.Engine.Where("owner=?", oldName).Get(role)
 	if err != nil {
 		return err
 	}
@@ -385,7 +385,7 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	permission := new(Permission)
-	_, err = adapter.Engine.Where("owner=?", oldName).Get(permission)
+	_, err = ormer.Engine.Where("owner=?", oldName).Get(permission)
 	if err != nil {
 		return err
 	}
@@ -409,9 +409,9 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
-	casbinAdapter := new(CasbinAdapter)
-	casbinAdapter.Owner = newName
-	_, err = session.Where("owner=?", oldName).Update(casbinAdapter)
+	adapter := new(Adapter)
+	adapter.Owner = newName
+	_, err = session.Where("owner=?", oldName).Update(adapter)
 	if err != nil {
 		return err
 	}

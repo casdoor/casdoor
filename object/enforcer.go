@@ -15,6 +15,8 @@
 package object
 
 import (
+	"errors"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -42,7 +44,7 @@ func GetEnforcerCount(owner, field, value string) (int64, error) {
 
 func GetEnforcers(owner string) ([]*Enforcer, error) {
 	enforcers := []*Enforcer{}
-	err := adapter.Engine.Desc("created_time").Find(&enforcers, &Enforcer{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&enforcers, &Enforcer{Owner: owner})
 	if err != nil {
 		return enforcers, err
 	}
@@ -67,7 +69,7 @@ func getEnforcer(owner string, name string) (*Enforcer, error) {
 	}
 
 	enforcer := Enforcer{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&enforcer)
+	existed, err := ormer.Engine.Get(&enforcer)
 	if err != nil {
 		return &enforcer, err
 	}
@@ -92,7 +94,7 @@ func UpdateEnforcer(id string, enforcer *Enforcer) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(enforcer)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(enforcer)
 	if err != nil {
 		return false, err
 	}
@@ -101,7 +103,7 @@ func UpdateEnforcer(id string, enforcer *Enforcer) (bool, error) {
 }
 
 func AddEnforcer(enforcer *Enforcer) (bool, error) {
-	affected, err := adapter.Engine.Insert(enforcer)
+	affected, err := ormer.Engine.Insert(enforcer)
 	if err != nil {
 		return false, err
 	}
@@ -110,10 +112,52 @@ func AddEnforcer(enforcer *Enforcer) (bool, error) {
 }
 
 func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{enforcer.Owner, enforcer.Name}).Delete(&Enforcer{})
+	affected, err := ormer.Engine.ID(core.PK{enforcer.Owner, enforcer.Name}).Delete(&Enforcer{})
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
+}
+
+func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
+	if enforcer == nil {
+		return nil, errors.New("enforcer is nil")
+	}
+	if enforcer.Model == "" || enforcer.Adapter == "" {
+		return nil, errors.New("missing model or adapter")
+	}
+
+	var err error
+	var m *Model
+	var a *Adapter
+
+	if m, err = GetModel(enforcer.Model); err != nil {
+		return nil, err
+	} else if m == nil {
+		return nil, errors.New("model not found")
+	}
+
+	if a, err = GetAdapter(enforcer.Adapter); err != nil {
+		return nil, err
+	} else if a == nil {
+		return nil, errors.New("adapter not found")
+	}
+
+	casbinModel, err := m.initModel()
+	if err != nil {
+		return nil, err
+	}
+
+	adapter, err := a.initAdapter()
+	if err != nil {
+		return nil, err
+	}
+
+	e, err := casbin.NewEnforcer(casbinModel, adapter)
+	if err != nil {
+		return nil, err
+	}
+
+	return e, nil
 }
