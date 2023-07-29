@@ -1220,15 +1220,15 @@ export function isDefaultOrganizationSelected(account) {
 }
 
 const BuiltInResources = [
-  "authz-enforcer-built-in",
+  "api-enforcer-built-in",
   "permission-enforcer-built-in",
-  "authz-model-built-in",
+  "api-model-built-in",
   "permission-model-built-in",
-  "authz-adapter-built-in",
+  "api-adapter-built-in",
   "permission-adapter-built-in",
 ];
 
-export function buildInResource(obj) {
+export function builtInObject(obj) {
   if (obj === undefined || obj === null) {
     return false;
   }

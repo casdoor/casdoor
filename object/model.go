@@ -40,7 +40,7 @@ func GetModelCount(owner, field, value string) (int64, error) {
 
 func GetModels(owner string) ([]*Model, error) {
 	models := []*Model{}
-	err := adapter.Engine.Desc("created_time").Find(&models, &Model{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&models, &Model{Owner: owner})
 	if err != nil {
 		return models, err
 	}
@@ -65,7 +65,7 @@ func getModel(owner string, name string) (*Model, error) {
 	}
 
 	m := Model{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&m)
+	existed, err := ormer.Engine.Get(&m)
 	if err != nil {
 		return &m, err
 	}
@@ -111,7 +111,7 @@ func UpdateModel(id string, modelObj *Model) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(modelObj)
 	if err != nil {
 		return false, err
 	}
@@ -120,7 +120,7 @@ func UpdateModel(id string, modelObj *Model) (bool, error) {
 }
 
 func AddModel(model *Model) (bool, error) {
-	affected, err := adapter.Engine.Insert(model)
+	affected, err := ormer.Engine.Insert(model)
 	if err != nil {
 		return false, err
 	}
@@ -129,7 +129,7 @@ func AddModel(model *Model) (bool, error) {
 }
 
 func DeleteModel(model *Model) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{model.Owner, model.Name}).Delete(&Model{})
+	affected, err := ormer.Engine.ID(core.PK{model.Owner, model.Name}).Delete(&Model{})
 	if err != nil {
 		return false, err
 	}
@@ -142,7 +142,7 @@ func (m *Model) GetId() string {
 }
 
 func modelChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()

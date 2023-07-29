@@ -58,7 +58,7 @@ func GetGroupCount(owner, field, value string) (int64, error) {
 
 func GetGroups(owner string) ([]*Group, error) {
 	groups := []*Group{}
-	err := adapter.Engine.Desc("created_time").Find(&groups, &Group{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&groups, &Group{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func getGroup(owner string, name string) (*Group, error) {
 	}
 
 	group := Group{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&group)
+	existed, err := ormer.Engine.Get(&group)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
 		return false, err
 	}
@@ -133,7 +133,7 @@ func AddGroup(group *Group) (bool, error) {
 		return false, err
 	}
 
-	affected, err := adapter.Engine.Insert(group)
+	affected, err := ormer.Engine.Insert(group)
 	if err != nil {
 		return false, err
 	}
@@ -145,7 +145,7 @@ func AddGroups(groups []*Group) (bool, error) {
 	if len(groups) == 0 {
 		return false, nil
 	}
-	affected, err := adapter.Engine.Insert(groups)
+	affected, err := ormer.Engine.Insert(groups)
 	if err != nil {
 		return false, err
 	}
@@ -153,12 +153,12 @@ func AddGroups(groups []*Group) (bool, error) {
 }
 
 func DeleteGroup(group *Group) (bool, error) {
-	_, err := adapter.Engine.Get(group)
+	_, err := ormer.Engine.Get(group)
 	if err != nil {
 		return false, err
 	}
 
-	if count, err := adapter.Engine.Where("parent_id = ?", group.Name).Count(&Group{}); err != nil {
+	if count, err := ormer.Engine.Where("parent_id = ?", group.Name).Count(&Group{}); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has children group")
@@ -170,7 +170,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, errors.New("group has users")
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	affected, err := ormer.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
 	if err != nil {
 		return false, err
 	}
@@ -179,7 +179,7 @@ func DeleteGroup(group *Group) (bool, error) {
 }
 
 func checkGroupName(name string) error {
-	exist, err := adapter.Engine.Exist(&Organization{Owner: "admin", Name: name})
+	exist, err := ormer.Engine.Exist(&Organization{Owner: "admin", Name: name})
 	if err != nil {
 		return err
 	}
@@ -233,10 +233,10 @@ func RemoveUserFromGroup(owner, name, groupName string) (bool, error) {
 
 func GetGroupUserCount(groupName string, field, value string) (int64, error) {
 	if field == "" && value == "" {
-		return adapter.Engine.Where(builder.Like{"`groups`", groupName}).
+		return ormer.Engine.Where(builder.Like{"`groups`", groupName}).
 			Count(&User{})
 	} else {
-		return adapter.Engine.Table("user").
+		return ormer.Engine.Table("user").
 			Where(builder.Like{"`groups`", groupName}).
 			And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%").
 			Count()
@@ -245,7 +245,7 @@ func GetGroupUserCount(groupName string, field, value string) (int64, error) {
 
 func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	session := adapter.Engine.Table("user").
+	session := ormer.Engine.Table("user").
 		Where(builder.Like{"`groups`", groupName + "\""})
 
 	if offset != -1 && limit != -1 {
@@ -275,7 +275,7 @@ func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, 
 
 func GetGroupUsers(groupName string) ([]*User, error) {
 	users := []*User{}
-	err := adapter.Engine.Table("user").
+	err := ormer.Engine.Table("user").
 		Where(builder.Like{"`groups`", groupName + "\""}).
 		Find(&users)
 	if err != nil {
@@ -286,7 +286,7 @@ func GetGroupUsers(groupName string) ([]*User, error) {
 }
 
 func GroupChangeTrigger(oldName, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 	err := session.Begin()
 	if err != nil {

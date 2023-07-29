@@ -70,7 +70,7 @@ func GetChatCount(owner, field, value string) (int64, error) {
 
 func GetChats(owner string) ([]*Chat, error) {
 	chats := []*Chat{}
-	err := adapter.Engine.Desc("created_time").Find(&chats, &Chat{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&chats, &Chat{Owner: owner})
 	if err != nil {
 		return chats, err
 	}
@@ -95,7 +95,7 @@ func getChat(owner string, name string) (*Chat, error) {
 	}
 
 	chat := Chat{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&chat)
+	existed, err := ormer.Engine.Get(&chat)
 	if err != nil {
 		return &chat, err
 	}
@@ -120,7 +120,7 @@ func UpdateChat(id string, chat *Chat) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(chat)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(chat)
 	if err != nil {
 		return false, nil
 	}
@@ -140,7 +140,7 @@ func AddChat(chat *Chat) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.Insert(chat)
+	affected, err := ormer.Engine.Insert(chat)
 	if err != nil {
 		return false, nil
 	}
@@ -149,7 +149,7 @@ func AddChat(chat *Chat) (bool, error) {
 }
 
 func DeleteChat(chat *Chat) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{chat.Owner, chat.Name}).Delete(&Chat{})
+	affected, err := ormer.Engine.ID(core.PK{chat.Owner, chat.Name}).Delete(&Chat{})
 	if err != nil {
 		return false, err
 	}

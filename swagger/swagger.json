@@ -49,7 +49,7 @@
                     "Adapter API"
                 ],
                 "description": "add adapter",
-                "operationId": "ApiController.AddCasbinAdapter",
+                "operationId": "ApiController.AddAdapter",
                 "parameters": [
                     {
                         "in": "body",
@@ -995,7 +995,7 @@
                     "Adapter API"
                 ],
                 "description": "delete adapter",
-                "operationId": "ApiController.DeleteCasbinAdapter",
+                "operationId": "ApiController.DeleteAdapter",
                 "parameters": [
                     {
                         "in": "body",
@@ -1747,7 +1747,7 @@
                     "Adapter API"
                 ],
                 "description": "get adapter",
-                "operationId": "ApiController.GetCasbinAdapter",
+                "operationId": "ApiController.GetAdapter",
                 "parameters": [
                     {
                         "in": "query",
@@ -1773,7 +1773,7 @@
                     "Adapter API"
                 ],
                 "description": "get adapters",
-                "operationId": "ApiController.GetCasbinAdapters",
+                "operationId": "ApiController.GetAdapters",
                 "parameters": [
                     {
                         "in": "query",
@@ -4371,7 +4371,7 @@
                     "Adapter API"
                 ],
                 "description": "update adapter",
-                "operationId": "ApiController.UpdateCasbinAdapter",
+                "operationId": "ApiController.UpdateAdapter",
                 "parameters": [
                     {
                         "in": "query",

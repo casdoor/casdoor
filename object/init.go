@@ -35,10 +35,10 @@ func InitDb() {
 		initBuiltInLdap()
 	}
 
-	existed = initBuiltInAuthzModel()
+	existed = initBuiltInApiModel()
 	if !existed {
-		initBuildInAuthzAdapter()
-		initBuiltInAuthzEnforcer()
+		initBuildInApiAdapter()
+		initBuiltInApiEnforcer()
 		initBuiltInPermissionModel()
 		initBuildInPermissionAdapter()
 		initBuiltInPermissionEnforcer()
@@ -337,8 +337,8 @@ m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`,
 	}
 }
 
-func initBuiltInAuthzModel() bool {
-	model, err := GetModel("built-in/authz-model-built-in")
+func initBuiltInApiModel() bool {
+	model, err := GetModel("built-in/api-model-built-in")
 	if err != nil {
 		panic(err)
 	}
@@ -372,9 +372,9 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
 
 	model = &Model{
 		Owner:       "built-in",
-		Name:        "authz-model-built-in",
+		Name:        "api-model-built-in",
 		CreatedTime: util.GetCurrentTime(),
-		DisplayName: "Authz Model",
+		DisplayName: "API Model",
 		IsEnabled:   true,
 		ModelText:   modelText,
 	}
@@ -416,7 +416,7 @@ func initBuiltInPermission() {
 }
 
 func initBuildInPermissionAdapter() {
-	permissionAdapter, err := GetCasbinAdapter("built-in/permission-adapter-built-in")
+	permissionAdapter, err := GetAdapter("built-in/permission-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
@@ -425,7 +425,7 @@ func initBuildInPermissionAdapter() {
 		return
 	}
 
-	permissionAdapter = &CasbinAdapter{
+	permissionAdapter = &Adapter{
 		Owner:           "built-in",
 		Name:            "permission-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
@@ -436,34 +436,34 @@ func initBuildInPermissionAdapter() {
 		Table:           "casbin_user_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddCasbinAdapter(permissionAdapter)
+	_, err = AddAdapter(permissionAdapter)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func initBuildInAuthzAdapter() {
-	authzAdapter, err := GetCasbinAdapter("built-in/authz-adapter-built-in")
+func initBuildInApiAdapter() {
+	apiAdapter, err := GetAdapter("built-in/api-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if authzAdapter != nil {
+	if apiAdapter != nil {
 		return
 	}
 
-	authzAdapter = &CasbinAdapter{
+	apiAdapter = &Adapter{
 		Owner:           "built-in",
-		Name:            "authz-adapter-built-in",
+		Name:            "api-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
 		Type:            "Database",
 		DatabaseType:    conf.GetConfigString("driverName"),
 		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		Database:        conf.GetConfigString("dbName"),
-		Table:           "casbin_authz_rule",
+		Table:           "casbin_api_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddCasbinAdapter(authzAdapter)
+	_, err = AddAdapter(apiAdapter)
 	if err != nil {
 		panic(err)
 	}
@@ -495,27 +495,27 @@ func initBuiltInPermissionEnforcer() {
 	}
 }
 
-func initBuiltInAuthzEnforcer() {
-	authzEnforcer, err := GetEnforcer("built-in/authz-enforcer-built-in")
+func initBuiltInApiEnforcer() {
+	apiEnforcer, err := GetEnforcer("built-in/api-enforcer-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if authzEnforcer != nil {
+	if apiEnforcer != nil {
 		return
 	}
 
-	authzEnforcer = &Enforcer{
+	apiEnforcer = &Enforcer{
 		Owner:       "built-in",
-		Name:        "authz-enforcer-built-in",
+		Name:        "api-enforcer-built-in",
 		CreatedTime: util.GetCurrentTime(),
-		DisplayName: "Authz Enforcer",
-		Model:       "built-in/authz-model-built-in",
-		Adapter:     "built-in/authz-adapter-built-in",
+		DisplayName: "API Enforcer",
+		Model:       "built-in/api-model-built-in",
+		Adapter:     "built-in/api-adapter-built-in",
 		IsEnabled:   true,
 	}
 
-	_, err = AddEnforcer(authzEnforcer)
+	_, err = AddEnforcer(apiEnforcer)
 	if err != nil {
 		panic(err)
 	}

@@ -105,7 +105,7 @@ class AdapterEditPage extends React.Component {
   }
 
   renderDataSourceNameConfig() {
-    if (Setting.buildInResource(this.state.adapter)) {
+    if (Setting.builtInObject(this.state.adapter)) {
       return null;
     }
     return (
@@ -172,7 +172,6 @@ class AdapterEditPage extends React.Component {
   }
 
   renderAdapter() {
-    const buildInResource = Setting.buildInResource(this.state.adapter);
     return (
       <Card size="small" title={
         <div>
@@ -187,7 +186,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || buildInResource} value={this.state.adapter.owner} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || Setting.builtInObject(this.state.adapter)} value={this.state.adapter.owner} onChange={(value => {
               this.getModels(value);
               this.updateAdapterField("owner", value);
             })}>
@@ -202,7 +201,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={buildInResource} value={this.state.adapter.name} onChange={e => {
+            <Input disabled={Setting.builtInObject(this.state.adapter)} value={this.state.adapter.name} onChange={e => {
               this.updateAdapterField("name", e.target.value);
             }} />
           </Col>
@@ -212,7 +211,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} disabled={buildInResource} style={{width: "100%"}} value={this.state.adapter.type} onChange={(value => {
+            <Select virtual={false} disabled={Setting.builtInObject(this.state.adapter)} style={{width: "100%"}} value={this.state.adapter.type} onChange={(value => {
               this.updateAdapterField("type", value);
               const adapter = this.state.adapter;
               // adapter["tableColumns"] = Setting.getAdapterTableColumns(this.state.adapter);
@@ -232,7 +231,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} disabled={buildInResource} style={{width: "100%"}} value={this.state.adapter.databaseType} onChange={(value => {this.updateAdapterField("databaseType", value);})}>
+            <Select virtual={false} disabled={Setting.builtInObject(this.state.adapter)} style={{width: "100%"}} value={this.state.adapter.databaseType} onChange={(value => {this.updateAdapterField("databaseType", value);})}>
               {
                 [
                   {id: "mysql", name: "MySQL"},
@@ -251,7 +250,7 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={buildInResource} value={this.state.adapter.database} onChange={e => {
+            <Input disabled={Setting.builtInObject(this.state.adapter)} value={this.state.adapter.database} onChange={e => {
               this.updateAdapterField("database", e.target.value);
             }} />
           </Col>
@@ -262,7 +261,7 @@ class AdapterEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.adapter.table}
-              disabled={buildInResource} onChange={e => {
+              disabled={Setting.builtInObject(this.state.adapter)} onChange={e => {
                 this.updateAdapterField("table", e.target.value);
               }} />
           </Col>

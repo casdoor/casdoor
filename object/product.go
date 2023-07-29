@@ -50,7 +50,7 @@ func GetProductCount(owner, field, value string) (int64, error) {
 
 func GetProducts(owner string) ([]*Product, error) {
 	products := []*Product{}
-	err := adapter.Engine.Desc("created_time").Find(&products, &Product{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&products, &Product{Owner: owner})
 	if err != nil {
 		return products, err
 	}
@@ -75,7 +75,7 @@ func getProduct(owner string, name string) (*Product, error) {
 	}
 
 	product := Product{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&product)
+	existed, err := ormer.Engine.Get(&product)
 	if err != nil {
 		return &product, nil
 	}
@@ -100,7 +100,7 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
 	if err != nil {
 		return false, err
 	}
@@ -109,7 +109,7 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 }
 
 func AddProduct(product *Product) (bool, error) {
-	affected, err := adapter.Engine.Insert(product)
+	affected, err := ormer.Engine.Insert(product)
 	if err != nil {
 		return false, err
 	}
@@ -118,7 +118,7 @@ func AddProduct(product *Product) (bool, error) {
 }
 
 func DeleteProduct(product *Product) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{product.Owner, product.Name}).Delete(&Product{})
+	affected, err := ormer.Engine.ID(core.PK{product.Owner, product.Name}).Delete(&Product{})
 	if err != nil {
 		return false, err
 	}

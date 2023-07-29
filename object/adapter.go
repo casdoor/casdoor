@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2022 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,365 +15,352 @@
 package object
 
 import (
-	"database/sql"
 	"fmt"
-	"runtime"
 	"strings"
 
-	"github.com/beego/beego"
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
-	_ "github.com/denisenkom/go-mssqldb" // db = mssql
-	_ "github.com/go-sql-driver/mysql"   // db = mysql
-	_ "github.com/lib/pq"                // db = postgres
 	"github.com/xorm-io/core"
-	"github.com/xorm-io/xorm"
-	_ "modernc.org/sqlite" // db = sqlite
 )
 
-var adapter *Adapter
-
-func InitConfig() {
-	err := beego.LoadAppConfig("ini", "../conf/app.conf")
-	if err != nil {
-		panic(err)
-	}
-
-	beego.BConfig.WebConfig.Session.SessionOn = true
-
-	InitAdapter(true)
-	CreateTables(true)
-	DoMigration()
-}
-
-func InitAdapter(createDatabase bool) {
-	if createDatabase {
-		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	adapter = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
-
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
-	adapter.Engine.SetTableMapper(tbMapper)
-}
-
-func CreateTables(createDatabase bool) {
-	if createDatabase {
-		err := adapter.CreateDatabase()
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	adapter.createTable()
-}
-
-// Adapter represents the MySQL adapter for policy storage.
 type Adapter struct {
-	driverName     string
-	dataSourceName string
-	dbName         string
-	Engine         *xorm.Engine
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
+
+	Type  string `xorm:"varchar(100)" json:"type"`
+	Model string `xorm:"varchar(100)" json:"model"`
+
+	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
+	Host            string `xorm:"varchar(100)" json:"host"`
+	Port            string `xorm:"varchar(20)" json:"port"`
+	User            string `xorm:"varchar(100)" json:"user"`
+	Password        string `xorm:"varchar(100)" json:"password"`
+	Database        string `xorm:"varchar(100)" json:"database"`
+	Table           string `xorm:"varchar(100)" json:"table"`
+	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
+	File            string `xorm:"varchar(100)" json:"file"`
+
+	IsEnabled bool `json:"isEnabled"`
+
+	Adapter *xormadapter.Adapter `xorm:"-" json:"-"`
 }
 
-// finalizer is the destructor for Adapter.
-func finalizer(a *Adapter) {
-	err := a.Engine.Close()
+func GetAdapterCount(owner, field, value string) (int64, error) {
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	return session.Count(&Adapter{})
+}
+
+func GetAdapters(owner string) ([]*Adapter, error) {
+	adapters := []*Adapter{}
+	err := ormer.Engine.Desc("created_time").Find(&adapters, &Adapter{Owner: owner})
 	if err != nil {
-		panic(err)
+		return adapters, err
+	}
+
+	return adapters, nil
+}
+
+func GetPaginationAdapters(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Adapter, error) {
+	adapters := []*Adapter{}
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&adapters)
+	if err != nil {
+		return adapters, err
+	}
+
+	return adapters, nil
+}
+
+func getAdapter(owner, name string) (*Adapter, error) {
+	if owner == "" || name == "" {
+		return nil, nil
+	}
+
+	adapter := Adapter{Owner: owner, Name: name}
+	existed, err := ormer.Engine.Get(&adapter)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &adapter, nil
+	} else {
+		return nil, nil
 	}
 }
 
-// NewAdapter is the constructor for Adapter.
-func NewAdapter(driverName string, dataSourceName string, dbName string) *Adapter {
-	a := &Adapter{}
-	a.driverName = driverName
-	a.dataSourceName = dataSourceName
-	a.dbName = dbName
-
-	// Open the DB, create it if not existed.
-	a.open()
-
-	// Call the destructor when the object is released.
-	runtime.SetFinalizer(a, finalizer)
-
-	return a
+func GetAdapter(id string) (*Adapter, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	return getAdapter(owner, name)
 }
 
-func createDatabaseForPostgres(driverName string, dataSourceName string, dbName string) error {
-	if driverName == "postgres" {
-		db, err := sql.Open(driverName, dataSourceName)
-		if err != nil {
-			return err
-		}
-		defer db.Close()
+func UpdateAdapter(id string, adapter *Adapter) (bool, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	if adapter, err := getAdapter(owner, name); adapter == nil {
+		return false, err
+	}
 
-		_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", dbName))
+	if name != adapter.Name {
+		err := adapterChangeTrigger(name, adapter.Name)
 		if err != nil {
-			if !strings.Contains(err.Error(), "already exists") {
-				return err
+			return false, err
+		}
+	}
+
+	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
+	if adapter.Password == "***" {
+		session.Omit("password")
+	}
+	affected, err := session.Update(adapter)
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func AddAdapter(adapter *Adapter) (bool, error) {
+	affected, err := ormer.Engine.Insert(adapter)
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func DeleteAdapter(adapter *Adapter) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{adapter.Owner, adapter.Name}).Delete(&Adapter{})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func (adapter *Adapter) GetId() string {
+	return fmt.Sprintf("%s/%s", adapter.Owner, adapter.Name)
+}
+
+func (adapter *Adapter) getTable() string {
+	if adapter.DatabaseType == "mssql" {
+		return fmt.Sprintf("[%s]", adapter.Table)
+	} else {
+		return adapter.Table
+	}
+}
+
+func initEnforcer(modelObj *Model, adapter *Adapter) (*casbin.Enforcer, error) {
+	// init Adapter
+	if adapter.Adapter == nil {
+		var dataSourceName string
+		if adapter.DatabaseType == "mssql" {
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		} else if adapter.DatabaseType == "postgres" {
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		} else {
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", adapter.User, adapter.Password, adapter.Host, adapter.Port)
+		}
+
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
+
+		var err error
+		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), "")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// init Model
+	m, err := model.NewModelFromString(modelObj.ModelText)
+	if err != nil {
+		return nil, err
+	}
+
+	// init Enforcer
+	enforcer, err := casbin.NewEnforcer(m, adapter.Adapter)
+	if err != nil {
+		return nil, err
+	}
+
+	return enforcer, nil
+}
+
+func (adapter *Adapter) initAdapter() (*xormadapter.Adapter, error) {
+	// init Adapter
+	if adapter.Adapter == nil {
+		var dataSourceName string
+
+		if adapter.buildInAdapter() {
+			dataSourceName = conf.GetConfigString("dataSourceName")
+		} else {
+			switch adapter.DatabaseType {
+			case "mssql":
+				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", adapter.User,
+					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+			case "mysql":
+				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", adapter.User,
+					adapter.Password, adapter.Host, adapter.Port)
+			case "postgres":
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", adapter.User,
+					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+			case "CockroachDB":
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s serial_normalization=virtual_sequence",
+					adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+			case "sqlite3":
+				dataSourceName = fmt.Sprintf("file:%s", adapter.File)
+			default:
+				return nil, fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
 			}
 		}
 
-		return nil
-	} else {
-		return nil
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
+
+		var err error
+		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), adapter.TableNamePrefix)
+		if err != nil {
+			return nil, err
+		}
 	}
+	return adapter.Adapter, nil
 }
 
-func (a *Adapter) CreateDatabase() error {
-	if a.driverName == "postgres" {
-		return nil
-	}
+func adapterChangeTrigger(oldName string, newName string) error {
+	session := ormer.Engine.NewSession()
+	defer session.Close()
 
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
+	err := session.Begin()
 	if err != nil {
 		return err
 	}
-	defer engine.Close()
 
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8mb4 COLLATE utf8mb4_general_ci", a.dbName))
-	return err
+	enforcer := new(Enforcer)
+	enforcer.Adapter = newName
+	_, err = session.Where("adapter=?", oldName).Update(enforcer)
+	if err != nil {
+		session.Rollback()
+		return err
+	}
+
+	return session.Commit()
 }
 
-func (a *Adapter) open() {
-	dataSourceName := a.dataSourceName + a.dbName
-	if a.driverName != "mysql" {
-		dataSourceName = a.dataSourceName
-	}
-
-	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
-	if err != nil {
-		panic(err)
-	}
-
-	a.Engine = engine
-}
-
-func (a *Adapter) close() {
-	_ = a.Engine.Close()
-	a.Engine = nil
-}
-
-func (a *Adapter) createTable() {
-	showSql := conf.GetConfigBool("showSql")
-	a.Engine.ShowSQL(showSql)
-
-	err := a.Engine.Sync2(new(Organization))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(User))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Group))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Role))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Permission))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Model))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(CasbinAdapter))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Enforcer))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Provider))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Application))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Resource))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Token))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(VerificationRecord))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Record))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Webhook))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Syncer))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Cert))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Chat))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Message))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Product))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Payment))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Ldap))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(PermissionRule))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(xormadapter.CasbinRule))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Session))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Subscription))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Plan))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Pricing))
-	if err != nil {
-		panic(err)
-	}
-}
-
-func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := adapter.Engine.Prepare()
-	if offset != -1 && limit != -1 {
-		session.Limit(limit, offset)
-	}
-	if owner != "" {
-		session = session.And("owner=?", owner)
-	}
-	if field != "" && value != "" {
-		if util.FilterField(field) {
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-		}
-	}
-	if sortField == "" || sortOrder == "" {
-		sortField = "created_time"
-	}
-	if sortOrder == "ascend" {
-		session = session.Asc(util.SnakeString(sortField))
+func safeReturn(policy []string, i int) string {
+	if len(policy) > i {
+		return policy[i]
 	} else {
-		session = session.Desc(util.SnakeString(sortField))
+		return ""
 	}
-	return session
 }
 
-func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := adapter.Engine.Prepare()
-	if offset != -1 && limit != -1 {
-		session.Limit(limit, offset)
-	}
-	if owner != "" {
-		if offset == -1 {
-			session = session.And("owner=?", owner)
-		} else {
-			session = session.And("a.owner=?", owner)
+func matrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.CasbinRule {
+	res := []*xormadapter.CasbinRule{}
+
+	for _, policy := range policies {
+		line := xormadapter.CasbinRule{
+			Ptype: Ptype,
+			V0:    safeReturn(policy, 0),
+			V1:    safeReturn(policy, 1),
+			V2:    safeReturn(policy, 2),
+			V3:    safeReturn(policy, 3),
+			V4:    safeReturn(policy, 4),
+			V5:    safeReturn(policy, 5),
 		}
-	}
-	if field != "" && value != "" {
-		if util.FilterField(field) {
-			if offset != -1 {
-				field = fmt.Sprintf("a.%s", field)
-			}
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-		}
-	}
-	if sortField == "" || sortOrder == "" {
-		sortField = "created_time"
+		res = append(res, &line)
 	}
 
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tableName := tableNamePrefix + "user"
-	if offset == -1 {
-		if sortOrder == "ascend" {
-			session = session.Asc(util.SnakeString(sortField))
-		} else {
-			session = session.Desc(util.SnakeString(sortField))
-		}
-	} else {
-		if sortOrder == "ascend" {
-			session = session.Alias("a").
-				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
-				Select("b.*").
-				Asc("a." + util.SnakeString(sortField))
-		} else {
-			session = session.Alias("a").
-				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
-				Select("b.*").
-				Desc("a." + util.SnakeString(sortField))
-		}
+	return res
+}
+
+func SyncPolicies(adapter *Adapter) ([]*xormadapter.CasbinRule, error) {
+	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	if err != nil {
+		return nil, err
 	}
 
-	return session
+	if modelObj == nil {
+		return nil, fmt.Errorf("The model: %s does not exist", util.GetId(adapter.Owner, adapter.Model))
+	}
+
+	enforcer, err := initEnforcer(modelObj, adapter)
+	if err != nil {
+		return nil, err
+	}
+
+	policies := matrixToCasbinRules("p", enforcer.GetPolicy())
+	if strings.Contains(modelObj.ModelText, "[role_definition]") {
+		policies = append(policies, matrixToCasbinRules("g", enforcer.GetGroupingPolicy())...)
+	}
+
+	return policies, nil
+}
+
+func UpdatePolicy(oldPolicy, newPolicy []string, adapter *Adapter) (bool, error) {
+	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	if err != nil {
+		return false, err
+	}
+
+	enforcer, err := initEnforcer(modelObj, adapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.UpdatePolicy(oldPolicy, newPolicy)
+	if err != nil {
+		return affected, err
+	}
+	return affected, nil
+}
+
+func AddPolicy(policy []string, adapter *Adapter) (bool, error) {
+	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	if err != nil {
+		return false, err
+	}
+
+	enforcer, err := initEnforcer(modelObj, adapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.AddPolicy(policy)
+	if err != nil {
+		return affected, err
+	}
+	return affected, nil
+}
+
+func RemovePolicy(policy []string, adapter *Adapter) (bool, error) {
+	modelObj, err := getModel(adapter.Owner, adapter.Model)
+	if err != nil {
+		return false, err
+	}
+
+	enforcer, err := initEnforcer(modelObj, adapter)
+	if err != nil {
+		return false, err
+	}
+
+	affected, err := enforcer.RemovePolicy(policy)
+	if err != nil {
+		return affected, err
+	}
+
+	return affected, nil
+}
+
+func (adapter *Adapter) buildInAdapter() bool {
+	if adapter.Owner != "built-in" {
+		return false
+	}
+
+	return adapter.Name == "permission-adapter-built-in" || adapter.Name == "api-adapter-built-in"
 }

@@ -338,7 +338,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	var existUuids []string
 
-	err := adapter.Engine.Table("user").Where("owner = ?", owner).Cols("ldap").
+	err := ormer.Engine.Table("user").Where("owner = ?", owner).Cols("ldap").
 		In("ldap", uuids).Select("DISTINCT ldap").Find(&existUuids)
 	if err != nil {
 		return existUuids, err
@@ -350,7 +350,7 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 func (ldapUser *LdapUser) buildLdapUserName() (string, error) {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
-	has, err := adapter.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
+	has, err := ormer.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
 	if err != nil {
 		return "", err
 	}

@@ -24,8 +24,8 @@ import (
 type Migrator_1_240_0_PR_1539 struct{}
 
 func (*Migrator_1_240_0_PR_1539) IsMigrationNeeded() bool {
-	exist, _ := adapter.Engine.IsTableExist("session")
-	err := adapter.Engine.Table("session").Find(&[]*Session{})
+	exist, _ := ormer.Engine.IsTableExist("session")
+	err := ormer.Engine.Table("session").Find(&[]*Session{})
 
 	if exist && err != nil {
 		return true

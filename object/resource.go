@@ -52,7 +52,7 @@ func GetResources(owner string, user string) ([]*Resource, error) {
 	}
 
 	resources := []*Resource{}
-	err := adapter.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner, User: user})
+	err := ormer.Engine.Desc("created_time").Find(&resources, &Resource{Owner: owner, User: user})
 	if err != nil {
 		return resources, err
 	}
@@ -82,7 +82,7 @@ func getResource(owner string, name string) (*Resource, error) {
 	}
 
 	resource := Resource{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&resource)
+	existed, err := ormer.Engine.Get(&resource)
 	if err != nil {
 		return &resource, err
 	}
@@ -107,7 +107,7 @@ func UpdateResource(id string, resource *Resource) (bool, error) {
 		return false, nil
 	}
 
-	_, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(resource)
+	_, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(resource)
 	if err != nil {
 		return false, err
 	}
@@ -117,7 +117,7 @@ func UpdateResource(id string, resource *Resource) (bool, error) {
 }
 
 func AddResource(resource *Resource) (bool, error) {
-	affected, err := adapter.Engine.Insert(resource)
+	affected, err := ormer.Engine.Insert(resource)
 	if err != nil {
 		return false, err
 	}
@@ -126,7 +126,7 @@ func AddResource(resource *Resource) (bool, error) {
 }
 
 func DeleteResource(resource *Resource) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{resource.Owner, resource.Name}).Delete(&Resource{})
+	affected, err := ormer.Engine.ID(core.PK{resource.Owner, resource.Name}).Delete(&Resource{})
 	if err != nil {
 		return false, err
 	}

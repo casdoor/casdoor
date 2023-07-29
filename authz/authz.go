@@ -26,10 +26,10 @@ import (
 
 var Enforcer *casbin.Enforcer
 
-func InitAuthz() {
+func InitApi() {
 	var err error
 
-	e, err := object.GetEnforcer(util.GetId("built-in", "authz-enforcer-built-in"))
+	e, err := object.GetEnforcer(util.GetId("built-in", "api-enforcer-built-in"))
 	if err != nil {
 		panic(err)
 	}

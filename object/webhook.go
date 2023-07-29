@@ -49,7 +49,7 @@ func GetWebhookCount(owner, organization, field, value string) (int64, error) {
 
 func GetWebhooks(owner string, organization string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
-	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Owner: owner, Organization: organization})
+	err := ormer.Engine.Desc("created_time").Find(&webhooks, &Webhook{Owner: owner, Organization: organization})
 	if err != nil {
 		return webhooks, err
 	}
@@ -70,7 +70,7 @@ func GetPaginationWebhooks(owner, organization string, offset, limit int, field,
 
 func getWebhooksByOrganization(organization string) ([]*Webhook, error) {
 	webhooks := []*Webhook{}
-	err := adapter.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
+	err := ormer.Engine.Desc("created_time").Find(&webhooks, &Webhook{Organization: organization})
 	if err != nil {
 		return webhooks, err
 	}
@@ -84,7 +84,7 @@ func getWebhook(owner string, name string) (*Webhook, error) {
 	}
 
 	webhook := Webhook{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&webhook)
+	existed, err := ormer.Engine.Get(&webhook)
 	if err != nil {
 		return &webhook, err
 	}
@@ -109,7 +109,7 @@ func UpdateWebhook(id string, webhook *Webhook) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)
 	if err != nil {
 		return false, err
 	}
@@ -118,7 +118,7 @@ func UpdateWebhook(id string, webhook *Webhook) (bool, error) {
 }
 
 func AddWebhook(webhook *Webhook) (bool, error) {
-	affected, err := adapter.Engine.Insert(webhook)
+	affected, err := ormer.Engine.Insert(webhook)
 	if err != nil {
 		return false, err
 	}
@@ -127,7 +127,7 @@ func AddWebhook(webhook *Webhook) (bool, error) {
 }
 
 func DeleteWebhook(webhook *Webhook) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Delete(&Webhook{})
+	affected, err := ormer.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Delete(&Webhook{})
 	if err != nil {
 		return false, err
 	}
