@@ -27,20 +27,21 @@ const (
 )
 
 type NotifyResult struct {
+	PaymentName   string
+	PaymentStatus PaymentState
+	ProviderName  string
+
 	ProductName        string
 	ProductDisplayName string
-	ProviderName       string
+	Price              float64
+	Currency           string
 
-	OrderId string
-	Price   float64
-
-	PaymentStatus PaymentState
-	PaymentName   string
+	OutOrderId string
 }
 
 type PaymentProvider interface {
 	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
-	Notify(request *http.Request, requestBody []byte, authorityPublicKey string, orderId string) (*NotifyResult, error)
+	Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
 }

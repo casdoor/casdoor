@@ -112,21 +112,22 @@ func getPayment(owner string, name string) (*Payment, error) {
 	}
 }
 
-func GetPaymentById(id string) (*Payment, error) {
+func GetPayment(id string) (*Payment, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPayment(owner, name)
 }
 
-func UpdatePayment(payment *Payment) (bool, error) {
-	if p, err := getPayment(payment.Owner, payment.Name); err != nil {
+func UpdatePayment(id string, payment *Payment) (bool, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	if p, err := getPayment(owner, name); err != nil {
 		return false, err
 	} else if p == nil {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{payment.Owner, payment.Name}).AllCols().Update(payment)
+	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	return affected != 0, nil
@@ -209,7 +210,7 @@ func NotifyPayment(request *http.Request, body []byte, owner string, paymentName
 		} else {
 			payment.State = notifyResult.PaymentStatus
 		}
-		_, err = UpdatePayment(payment)
+		_, err = UpdatePayment(payment.GetId(), payment)
 		if err != nil {
 			return nil, err
 		}
@@ -252,7 +253,7 @@ func InvoicePayment(payment *Payment) (string, error) {
 	}
 
 	payment.InvoiceUrl = invoiceUrl
-	affected, err := UpdatePayment(payment)
+	affected, err := UpdatePayment(payment.GetId(), payment)
 	if err != nil {
 		return "", err
 	}

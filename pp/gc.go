@@ -255,7 +255,7 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-		OrderId:            orderId,
+		OutOrderId:         orderId,
 		Price:              price,
 		PaymentStatus:      PaymentStatePaid,
 		PaymentName:        paymentName,

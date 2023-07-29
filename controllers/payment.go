@@ -97,7 +97,7 @@ func (c *ApiController) GetUserPayments() {
 func (c *ApiController) GetPayment() {
 	id := c.Input().Get("id")
 
-	payment, err := object.GetPaymentById(id)
+	payment, err := object.GetPayment(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -115,6 +115,8 @@ func (c *ApiController) GetPayment() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-payment [post]
 func (c *ApiController) UpdatePayment() {
+	id := c.Input().Get("id")
+
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
@@ -122,7 +124,7 @@ func (c *ApiController) UpdatePayment() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdatePayment(&payment))
+	c.Data["json"] = wrapActionResponse(object.UpdatePayment(id, &payment))
 	c.ServeJSON()
 }
 
@@ -197,7 +199,7 @@ func (c *ApiController) NotifyPayment() {
 func (c *ApiController) InvoicePayment() {
 	id := c.Input().Get("id")
 
-	payment, err := object.GetPaymentById(id)
+	payment, err := object.GetPayment(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -318,7 +318,7 @@ func initDefinedPermission(permission *Permission) {
 }
 
 func initDefinedPayment(payment *Payment) {
-	existed, err := GetPaymentById(payment.GetId())
+	existed, err := GetPayment(payment.GetId())
 	if err != nil {
 		panic(err)
 	}

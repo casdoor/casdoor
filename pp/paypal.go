@@ -100,17 +100,23 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 	}
 	// Check the order detail
 	detailRsp, err := pp.Client.OrderDetail(context.Background(), orderId, nil)
+	if err != nil {
+		return nil, err
+	}
+	if captureRsp.Code != paypal.Success {
+		return nil, errors.New(captureRsp.Error)
+	}
+
 	paymentName := detailRsp.Response.Id
 	price, err := strconv.ParseFloat(detailRsp.Response.PurchaseUnits[0].Amount.Value, 64)
 	if err != nil {
 		return nil, err
 	}
-
+	currency := detailRsp.Response.PurchaseUnits[0].Amount.CurrencyCode
 	productDisplayName, productName, providerName, err := parseAttachString(detailRsp.Response.PurchaseUnits[0].Description)
 	if err != nil {
 		return nil, err
 	}
-
 	// TODO: status better handler, e.g.`hanging`
 	var paymentStatus PaymentState
 	switch detailRsp.Response.Status { // CREATED、SAVED、APPROVED、VOIDED、COMPLETED、PAYER_ACTION_REQUIRED
@@ -120,13 +126,16 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 		paymentStatus = PaymentStateError
 	}
 	notifyResult := &NotifyResult{
+		PaymentStatus: paymentStatus,
+		PaymentName:   paymentName,
+
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-		OrderId:            orderId,
 		Price:              price,
-		PaymentStatus:      paymentStatus,
-		PaymentName:        paymentName,
+		Currency:           currency,
+
+		OutOrderId: orderId,
 	}
 	return notifyResult, nil
 }
