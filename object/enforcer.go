@@ -120,44 +120,45 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return affected != 0, nil
 }
 
-func (enforcer *Enforcer) InitEnforcer() (*casbin.Enforcer, error) {
-	if enforcer == nil {
-		return nil, errors.New("enforcer is nil")
-	}
-	if enforcer.Model == "" || enforcer.Adapter == "" {
-		return nil, errors.New("missing model or adapter")
+func (enforcer *Enforcer) InitEnforcer() error {
+	if enforcer.Enforcer == nil {
+		if enforcer == nil {
+			return errors.New("enforcer is nil")
+		}
+		if enforcer.Model == "" || enforcer.Adapter == "" {
+			return errors.New("missing model or adapter")
+		}
+
+		var err error
+		var m *Model
+		var a *Adapter
+
+		if m, err = GetModel(enforcer.Model); err != nil {
+			return err
+		} else if m == nil {
+			return errors.New("model not found")
+		}
+		if a, err = GetAdapter(enforcer.Adapter); err != nil {
+			return err
+		} else if a == nil {
+			return errors.New("adapter not found")
+		}
+
+		err = m.initModel()
+		if err != nil {
+			return err
+		}
+		err = a.initAdapter()
+		if err != nil {
+			return err
+		}
+
+		casbinEnforcer, err := casbin.NewEnforcer(m.Model, a.Adapter)
+		if err != nil {
+			return err
+		}
+		enforcer.Enforcer = casbinEnforcer
 	}
 
-	var err error
-	var m *Model
-	var a *Adapter
-
-	if m, err = GetModel(enforcer.Model); err != nil {
-		return nil, err
-	} else if m == nil {
-		return nil, errors.New("model not found")
-	}
-
-	if a, err = GetAdapter(enforcer.Adapter); err != nil {
-		return nil, err
-	} else if a == nil {
-		return nil, errors.New("adapter not found")
-	}
-
-	err = m.initModel()
-	if err != nil {
-		return nil, err
-	}
-
-	err = a.initAdapter()
-	if err != nil {
-		return nil, err
-	}
-
-	e, err := casbin.NewEnforcer(m.Model, a.Adapter)
-	if err != nil {
-		return nil, err
-	}
-
-	return e, nil
+	return nil
 }
