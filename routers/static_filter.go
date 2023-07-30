@@ -64,6 +64,9 @@ func StaticFilter(ctx *context.Context) {
 	if !util.FileExist(path) {
 		path = "web/build/index.html"
 	}
+	if !util.FileExist(path) {
+		return
+	}
 
 	if oldStaticBaseUrl == newStaticBaseUrl {
 		makeGzipResponse(ctx.ResponseWriter, ctx.Request, path)
