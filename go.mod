@@ -14,11 +14,10 @@ require (
 	github.com/casbin/casbin/v2 v2.30.1
 	github.com/casdoor/go-sms-sender v0.6.1
 	github.com/casdoor/gomail/v2 v2.0.1
-	github.com/casdoor/oss v1.2.0
+	github.com/casdoor/oss v1.2.1
 	github.com/casdoor/xorm-adapter/v3 v3.0.4
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
-	github.com/dlclark/regexp2 v1.9.0 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
@@ -42,7 +41,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/nyaruka/phonenumbers v1.1.5
-	github.com/pkoukk/tiktoken-go v0.1.1
 	github.com/pquerna/otp v1.4.0
 	github.com/prometheus/client_golang v1.11.1
 	github.com/prometheus/client_model v0.2.0
@@ -50,7 +48,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
 	github.com/russellhaering/goxmldsig v1.2.0
-	github.com/sashabaranov/go-openai v1.12.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible

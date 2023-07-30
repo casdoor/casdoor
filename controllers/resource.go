@@ -52,7 +52,22 @@ func (c *ApiController) GetResources() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
-	if limit == "" || page == "" {
+	if sortField == "Direct" {
+		provider, err := c.GetProviderFromContext("Storage")
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		prefix := sortOrder
+		resources, err := object.GetDirectResources(owner, user, provider, prefix, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(resources)
+	} else if limit == "" || page == "" {
 		resources, err := object.GetResources(owner, user)
 		if err != nil {
 			c.ResponseError(err.Error())

@@ -145,6 +145,14 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, error) {
 	providerName := c.Input().Get("provider")
+	if providerName == "" {
+		field := c.Input().Get("field")
+		value := c.Input().Get("value")
+		if field == "provider" && value != "" {
+			providerName = value
+		}
+	}
+
 	if providerName != "" {
 		provider, err := object.GetProvider(util.GetId("admin", providerName))
 		if err != nil {
