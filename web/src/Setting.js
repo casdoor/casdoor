@@ -30,7 +30,6 @@ const {Option} = Select;
 
 export const ServerUrl = "";
 
-// export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
@@ -893,10 +892,6 @@ export function getProviderTypeOptions(category) {
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
     ]);
-  } else if (category === "AI") {
-    return ([
-      {id: "OpenAI API - GPT", name: "OpenAI API - GPT"},
-    ]);
   } else if (category === "Web3") {
     return ([
       {id: "MetaMask", name: "MetaMask"},
@@ -1061,42 +1056,6 @@ export function getOption(label, value) {
   };
 }
 
-function repeat(str, len) {
-  while (str.length < len) {
-    str += str.substr(0, len - str.length);
-  }
-  return str;
-}
-
-function maskString(s) {
-  if (s.length <= 2) {
-    return s;
-  } else {
-    return `${s[0]}${repeat("*", s.length - 2)}${s[s.length - 1]}`;
-  }
-}
-
-export function getMaskedPhone(s) {
-  return s.replace(/(\d{3})\d*(\d{4})/, "$1****$2");
-}
-
-export function getMaskedEmail(email) {
-  if (email === "") {return;}
-  const tokens = email.split("@");
-  let username = tokens[0];
-  username = maskString(username);
-
-  const domain = tokens[1];
-  const domainTokens = domain.split(".");
-  domainTokens[domainTokens.length - 2] = maskString(domainTokens[domainTokens.length - 2]);
-
-  return `${username}@${domainTokens.join(".")}`;
-}
-
-export function IsEmail(s) {
-  return s.includes("@");
-}
-
 export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;
@@ -1152,10 +1111,6 @@ export function getTag(color, text) {
       {text}
     </Tag>
   );
-}
-
-export function getApplicationOrgName(application) {
-  return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
 }
 
 export function getApplicationName(application) {

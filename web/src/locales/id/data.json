@@ -1,6 +1,5 @@
 {
   "account": {
-    "Chats & Messages": "Chats & Messages",
     "Logout": "Keluar",
     "My Account": "Akun Saya",
     "Sign Up": "Mendaftar"
@@ -127,19 +126,6 @@
     "Scope - Tooltip": "Skema penggunaan sertifikat:",
     "Type - Tooltip": "Jenis sertifikat"
   },
-  "chat": {
-    "AI": "AI",
-    "Edit Chat": "Edit Chat",
-    "Group": "Group",
-    "Message count": "Message count",
-    "New Chat": "New Chat",
-    "Single": "Single",
-    "User1": "User1",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2": "User2",
-    "User2 - Tooltip": "User2 - Tooltip",
-    "Users - Tooltip": "Users - Tooltip"
-  },
   "code": {
     "Code you received": "Kode yang kamu terima",
     "Email code": "Kode email",
@@ -194,7 +180,6 @@
     "Cert": "Sertifikat",
     "Cert - Tooltip": "Sertifikat kunci publik yang perlu diverifikasi oleh SDK klien yang sesuai dengan aplikasi ini",
     "Certs": "Sertifikat",
-    "Chats": "Chats",
     "Click to Upload": "Klik untuk Mengunggah",
     "Client IP": "IP klien",
     "Close": "Tutup",
@@ -224,7 +209,6 @@
     "Failed to connect to server": "Gagal terhubung ke server",
     "Failed to delete": "Gagal menghapus",
     "Failed to enable": "Failed to enable",
-    "Failed to get answer": "Failed to get answer",
     "Failed to remove": "Failed to remove",
     "Failed to save": "Gagal menyimpan",
     "Failed to verify": "Failed to verify",
@@ -257,7 +241,6 @@
     "Master password": "Kata sandi utama",
     "Master password - Tooltip": "Dapat digunakan untuk masuk ke semua pengguna di bawah organisasi ini, sehingga memudahkan administrator untuk masuk sebagai pengguna ini untuk menyelesaikan masalah teknis",
     "Menu": "Daftar makanan",
-    "Messages": "Messages",
     "Method": "Metode",
     "Model": "Model",
     "Model - Tooltip": "Model kontrol akses Casbin",
@@ -424,16 +407,6 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Daftar sekarang",
     "username, Email or phone": "nama pengguna, Email atau nomor telepon"
-  },
-  "message": {
-    "Author": "Author",
-    "Author - Tooltip": "Author - Tooltip",
-    "Chat": "Chat",
-    "Chat - Tooltip": "Chat - Tooltip",
-    "Edit Message": "Edit Message",
-    "New Message": "New Message",
-    "Text": "Text",
-    "Text - Tooltip": "Text - Tooltip"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",

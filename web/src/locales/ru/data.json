@@ -1,6 +1,5 @@
 {
   "account": {
-    "Chats & Messages": "Chats & Messages",
     "Logout": "Выход",
     "My Account": "Мой аккаунт",
     "Sign Up": "Зарегистрироваться"
@@ -127,19 +126,6 @@
     "Scope - Tooltip": "Сценарии использования сертификата",
     "Type - Tooltip": "Тип сертификата"
   },
-  "chat": {
-    "AI": "AI",
-    "Edit Chat": "Edit Chat",
-    "Group": "Group",
-    "Message count": "Message count",
-    "New Chat": "New Chat",
-    "Single": "Single",
-    "User1": "User1",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2": "User2",
-    "User2 - Tooltip": "User2 - Tooltip",
-    "Users - Tooltip": "Users - Tooltip"
-  },
   "code": {
     "Code you received": "Код, который вы получили",
     "Email code": "Электронный код письма",
@@ -194,7 +180,6 @@
     "Cert": "Сертификат",
     "Cert - Tooltip": "Сертификат открытого ключа, который требуется проверить клиентским SDK, соответствующим этому приложению",
     "Certs": "сертификаты",
-    "Chats": "Chats",
     "Click to Upload": "Нажмите, чтобы загрузить",
     "Client IP": "Клиентский IP",
     "Close": "Близко",
@@ -224,7 +209,6 @@
     "Failed to connect to server": "Не удалось подключиться к серверу",
     "Failed to delete": "Не удалось удалить",
     "Failed to enable": "Failed to enable",
-    "Failed to get answer": "Failed to get answer",
     "Failed to remove": "Failed to remove",
     "Failed to save": "Не удалось сохранить",
     "Failed to verify": "Failed to verify",
@@ -257,7 +241,6 @@
     "Master password": "Главный пароль",
     "Master password - Tooltip": "Можно использовать для входа в учетные записи всех пользователей этой организации, что удобно для администраторов, чтобы войти в качестве этого пользователя и решить технические проблемы",
     "Menu": "Меню",
-    "Messages": "Messages",
     "Method": "Метод",
     "Model": "Модель",
     "Model - Tooltip": "Модель контроля доступа Casbin",
@@ -424,16 +407,6 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Зарегистрируйтесь сейчас",
     "username, Email or phone": "имя пользователя, электронная почта или телефон"
-  },
-  "message": {
-    "Author": "Author",
-    "Author - Tooltip": "Author - Tooltip",
-    "Chat": "Chat",
-    "Chat - Tooltip": "Chat - Tooltip",
-    "Edit Message": "Edit Message",
-    "New Message": "New Message",
-    "Text": "Text",
-    "Text - Tooltip": "Text - Tooltip"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",

@@ -249,16 +249,6 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Chat))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Message))
-	if err != nil {
-		panic(err)
-	}
-
 	err = a.Engine.Sync2(new(Product))
 	if err != nil {
 		panic(err)

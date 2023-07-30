@@ -18,7 +18,7 @@ import {Helmet} from "react-helmet";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
@@ -56,11 +56,6 @@ import PricingListPage from "./PricingListPage";
 import PricingEditPage from "./PricingEditPage";
 import PlanListPage from "./PlanListPage";
 import PlanEditPage from "./PlanEditPage";
-import ChatListPage from "./ChatListPage";
-import ChatEditPage from "./ChatEditPage";
-import ChatPage from "./ChatPage";
-import MessageEditPage from "./MessageEditPage";
-import MessageListPage from "./MessageListPage";
 import ProductListPage from "./ProductListPage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
@@ -186,10 +181,6 @@ class App extends Component {
       this.setState({selectedMenuKey: "/syncers"});
     } else if (uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/certs"});
-    } else if (uri.includes("/chats")) {
-      this.setState({selectedMenuKey: "/chats"});
-    } else if (uri.includes("/messages")) {
-      this.setState({selectedMenuKey: "/messages"});
     } else if (uri.includes("/products")) {
       this.setState({selectedMenuKey: "/products"});
     } else if (uri.includes("/payments")) {
@@ -368,11 +359,6 @@ class App extends Component {
       items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
         "/account"
       ));
-      if (Conf.EnableChatPages) {
-        items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
-          "/chat"
-        ));
-      }
     }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
@@ -382,8 +368,6 @@ class App extends Component {
         this.props.history.push("/account");
       } else if (e.key === "/subscription") {
         this.props.history.push("/subscription");
-      } else if (e.key === "/chat") {
-        this.props.history.push("/chat");
       } else if (e.key === "/logout") {
         this.logout();
       }
@@ -499,16 +483,6 @@ class App extends Component {
       res.push(Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>,
         "/providers"
       ));
-
-      if (Conf.EnableChatPages) {
-        res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
-          "/chats"
-        ));
-
-        res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
-          "/messages"
-        ));
-      }
 
       res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
         "/resources"
@@ -628,11 +602,6 @@ class App extends Component {
         <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs/:organizationName/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/chats" render={(props) => this.renderLoginIfNotLoggedIn(<ChatListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/chats/:chatName" render={(props) => this.renderLoginIfNotLoggedIn(<ChatEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/chat" render={(props) => this.renderLoginIfNotLoggedIn(<ChatPage account={this.state.account} {...props} />)} />
-        <Route exact path="/messages" render={(props) => this.renderLoginIfNotLoggedIn(<MessageListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/messages/:messageName" render={(props) => this.renderLoginIfNotLoggedIn(<MessageEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/plans" render={(props) => this.renderLoginIfNotLoggedIn(<PlanListPage account={this.state.account} {...props} />)} />
         <Route exact path="/plans/:organizationName/:planName" render={(props) => this.renderLoginIfNotLoggedIn(<PlanEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/pricings" render={(props) => this.renderLoginIfNotLoggedIn(<PricingListPage account={this.state.account} {...props} />)} />
@@ -668,8 +637,7 @@ class App extends Component {
   };
 
   isWithoutCard() {
-    return Setting.isMobile() || window.location.pathname === "/chat" ||
-      window.location.pathname.startsWith("/trees");
+    return Setting.isMobile() || window.location.pathname.startsWith("/trees");
   }
 
   renderContent() {

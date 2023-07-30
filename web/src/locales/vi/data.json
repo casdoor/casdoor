@@ -1,6 +1,5 @@
 {
   "account": {
-    "Chats & Messages": "Chats & Messages",
     "Logout": "Đăng xuất",
     "My Account": "Tài khoản của tôi",
     "Sign Up": "Đăng ký"
@@ -127,19 +126,6 @@
     "Scope - Tooltip": "Các kịch bản sử dụng của giấy chứng nhận",
     "Type - Tooltip": "Loại chứng chỉ"
   },
-  "chat": {
-    "AI": "AI",
-    "Edit Chat": "Edit Chat",
-    "Group": "Group",
-    "Message count": "Message count",
-    "New Chat": "New Chat",
-    "Single": "Single",
-    "User1": "User1",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2": "User2",
-    "User2 - Tooltip": "User2 - Tooltip",
-    "Users - Tooltip": "Users - Tooltip"
-  },
   "code": {
     "Code you received": "Mã bạn nhận được",
     "Email code": "Mã email",
@@ -194,7 +180,6 @@
     "Cert": "Chứng chỉ",
     "Cert - Tooltip": "Chứng chỉ khóa công khai cần được xác minh bởi SDK khách hàng tương ứng với ứng dụng này",
     "Certs": "Chứng chỉ",
-    "Chats": "Chats",
     "Click to Upload": "Nhấp để tải lên",
     "Client IP": "Địa chỉ IP của khách hàng",
     "Close": "Đóng lại",
@@ -224,7 +209,6 @@
     "Failed to connect to server": "Không thể kết nối đến máy chủ",
     "Failed to delete": "Không thể xoá",
     "Failed to enable": "Failed to enable",
-    "Failed to get answer": "Failed to get answer",
     "Failed to remove": "Failed to remove",
     "Failed to save": "Không thể lưu được",
     "Failed to verify": "Failed to verify",
@@ -257,7 +241,6 @@
     "Master password": "Mật khẩu chính",
     "Master password - Tooltip": "Có thể được sử dụng để đăng nhập vào tất cả các người dùng trong tổ chức này, giúp cho quản trị viên dễ dàng đăng nhập với tư cách người dùng này để giải quyết các vấn đề kỹ thuật",
     "Menu": "Thực đơn",
-    "Messages": "Messages",
     "Method": "Phương pháp",
     "Model": "Mô hình",
     "Model - Tooltip": "Mô hình kiểm soát truy cập Casbin",
@@ -424,16 +407,6 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Đăng ký ngay bây giờ",
     "username, Email or phone": "Tên đăng nhập, Email hoặc điện thoại"
-  },
-  "message": {
-    "Author": "Author",
-    "Author - Tooltip": "Author - Tooltip",
-    "Chat": "Chat",
-    "Chat - Tooltip": "Chat - Tooltip",
-    "Edit Message": "Edit Message",
-    "New Message": "New Message",
-    "Text": "Text",
-    "Text - Tooltip": "Text - Tooltip"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",

@@ -182,20 +182,6 @@ func GetProvider(id string) (*Provider, error) {
 	return getProvider(owner, name)
 }
 
-func getDefaultAiProvider() (*Provider, error) {
-	provider := Provider{Owner: "admin", Category: "AI"}
-	existed, err := ormer.Engine.Get(&provider)
-	if err != nil {
-		return &provider, err
-	}
-
-	if !existed {
-		return nil, nil
-	}
-
-	return &provider, nil
-}
-
 func GetWechatMiniProgramProvider(application *Application) *Provider {
 	providers := application.Providers
 	for _, provider := range providers {

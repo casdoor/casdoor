@@ -1,6 +1,5 @@
 {
   "account": {
-    "Chats & Messages": "Chats & Messages",
     "Logout": "Cierre de sesión",
     "My Account": "Mi cuenta",
     "Sign Up": "Registrarse"
@@ -127,19 +126,6 @@
     "Scope - Tooltip": "Escenarios de uso del certificado",
     "Type - Tooltip": "Tipo de certificado"
   },
-  "chat": {
-    "AI": "AI",
-    "Edit Chat": "Edit Chat",
-    "Group": "Group",
-    "Message count": "Message count",
-    "New Chat": "New Chat",
-    "Single": "Single",
-    "User1": "User1",
-    "User1 - Tooltip": "User1 - Tooltip",
-    "User2": "User2",
-    "User2 - Tooltip": "User2 - Tooltip",
-    "Users - Tooltip": "Users - Tooltip"
-  },
   "code": {
     "Code you received": "Código que recibió",
     "Email code": "Código de correo electrónico",
@@ -194,7 +180,6 @@
     "Cert": "ificado",
     "Cert - Tooltip": "El certificado de clave pública que necesita ser verificado por el SDK del cliente correspondiente a esta aplicación",
     "Certs": "Certificaciones",
-    "Chats": "Chats",
     "Click to Upload": "Haz clic para cargar",
     "Client IP": "Dirección IP del cliente",
     "Close": "Cerca",
@@ -224,7 +209,6 @@
     "Failed to connect to server": "No se pudo conectar al servidor",
     "Failed to delete": "No se pudo eliminar",
     "Failed to enable": "Failed to enable",
-    "Failed to get answer": "Failed to get answer",
     "Failed to remove": "Failed to remove",
     "Failed to save": "No se pudo guardar",
     "Failed to verify": "Failed to verify",
@@ -257,7 +241,6 @@
     "Master password": "Contraseña maestra",
     "Master password - Tooltip": "Se puede usar para iniciar sesión en todos los usuarios de esta organización, lo que hace conveniente que los administradores inicien sesión como este usuario para resolver problemas técnicos",
     "Menu": "Menú",
-    "Messages": "Messages",
     "Method": "Método",
     "Model": "Modelo",
     "Model - Tooltip": "Modelo de control de acceso Casbin",
@@ -424,16 +407,6 @@
     "WebAuthn": "WebAuthn",
     "sign up now": "Regístrate ahora",
     "username, Email or phone": "Nombre de usuario, correo electrónico o teléfono"
-  },
-  "message": {
-    "Author": "Author",
-    "Author - Tooltip": "Author - Tooltip",
-    "Chat": "Chat",
-    "Chat - Tooltip": "Chat - Tooltip",
-    "Edit Message": "Edit Message",
-    "New Message": "New Message",
-    "Text": "Text",
-    "Text - Tooltip": "Text - Tooltip"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",
