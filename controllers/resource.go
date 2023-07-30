@@ -167,11 +167,16 @@ func (c *ApiController) DeleteResource() {
 		return
 	}
 
+	if resource.Provider != "" {
+		c.Input().Set("provider", resource.Provider)
+	}
+	c.Input().Set("fullFilePath", resource.Name)
 	provider, err := c.GetProviderFromContext("Storage")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+	_, resource.Name = refineFullFilePath(resource.Name)
 
 	err = object.DeleteFile(provider, resource.Name, c.GetAcceptLanguage())
 	if err != nil {
@@ -231,6 +236,7 @@ func (c *ApiController) UploadResource() {
 		c.ResponseError(err.Error())
 		return
 	}
+	_, fullFilePath = refineFullFilePath(fullFilePath)
 
 	fileType := "unknown"
 	contentType := header.Header.Get("Content-Type")
