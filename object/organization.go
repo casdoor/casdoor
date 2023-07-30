@@ -431,7 +431,7 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 
 	payment := new(Payment)
-	payment.Organization = newName
+	payment.Owner = newName
 	_, err = session.Where("organization=?", oldName).Update(payment)
 	if err != nil {
 		return err

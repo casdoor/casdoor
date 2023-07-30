@@ -31,8 +31,10 @@ func (pp *DummyPaymentProvider) Pay(providerName string, productName string, pay
 	return payUrl, "", nil
 }
 
-func (pp *DummyPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
-	return "", "", 0, "", "", nil
+func (pp *DummyPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+	return &NotifyResult{
+		PaymentStatus: PaymentStatePaid,
+	}, nil
 }
 
 func (pp *DummyPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {

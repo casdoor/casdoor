@@ -24,7 +24,8 @@ class ProductBuyPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      productName: props.match?.params.productName,
+      organizationName: props.organizationName !== undefined ? props.organizationName : props?.match?.params?.organizationName,
+      productName: props.productName !== undefined ? props.productName : props?.match?.params?.productName,
       product: null,
       isPlacingOrder: false,
       qrCodeModalProvider: null,
@@ -36,17 +37,15 @@ class ProductBuyPage extends React.Component {
   }
 
   getProduct() {
-    if (this.state.productName === undefined) {
-      return;
+    if (this.state.productName === undefined || this.state.organizationName === undefined) {
+      return ;
     }
-
-    ProductBackend.getProduct(this.props.account.owner, this.state.productName)
+    ProductBackend.getProduct(this.state.organizationName, this.state.productName)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
           return;
         }
-
         this.setState({
           product: res.data,
         });
@@ -97,7 +96,7 @@ class ProductBuyPage extends React.Component {
       isPlacingOrder: true,
     });
 
-    ProductBackend.buyProduct(this.state.product.owner, this.state.productName, provider.name)
+    ProductBackend.buyProduct(product.owner, product.name, provider.name)
       .then((res) => {
         if (res.status === "ok") {
           const payUrl = res.data;

@@ -102,6 +102,13 @@ class ProductListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/organizations/${text}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("general:Created time"),
@@ -189,6 +196,7 @@ class ProductListPage extends BaseListPage {
         width: "500px",
         ...this.getColumnSearchProps("providers"),
         render: (text, record, index) => {
+          const providerOwner = record.owner;
           const providers = text;
           if (providers.length === 0) {
             return `(${i18next.t("general:empty")})`;
@@ -207,9 +215,9 @@ class ProductListPage extends BaseListPage {
                     <List.Item>
                       <div style={{display: "inline"}}>
                         <Tooltip placement="topLeft" title="Edit">
-                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerName}`)} />
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/providers/${providerOwner}/${providerName}`)} />
                         </Tooltip>
-                        <Link to={`/providers/${providerName}`}>
+                        <Link to={`/providers/${providerOwner}/${providerName}`}>
                           {providerName}
                         </Link>
                       </div>
