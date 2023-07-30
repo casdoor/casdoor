@@ -35,11 +35,35 @@ func (c *ApiController) Enforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 	resourceId := c.Input().Get("resourceId")
+	enforcerId := c.Input().Get("enforcerId")
 
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if enforcerId != "" {
+		enforcer, err := object.GetEnforcer(enforcerId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		err = enforcer.InitEnforcer()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res, err := enforcer.Enforce(request...)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(res)
 		return
 	}
 
@@ -121,11 +145,35 @@ func (c *ApiController) Enforce() {
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
+	enforcerId := c.Input().Get("enforcerId")
 
 	var requests []object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if enforcerId != "" {
+		enforcer, err := object.GetEnforcer(enforcerId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		err = enforcer.InitEnforcer()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res, err := enforcer.BatchEnforce(requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(res)
 		return
 	}
 

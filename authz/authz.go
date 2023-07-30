@@ -33,11 +33,12 @@ func InitApi() {
 	if err != nil {
 		panic(err)
 	}
-	Enforcer, err = e.InitEnforcer()
+	err = e.InitEnforcer()
 	if err != nil {
 		panic(err)
 	}
 
+	Enforcer = e.Enforcer
 	Enforcer.ClearPolicy()
 
 	// if len(Enforcer.GetPolicy()) == 0 {
