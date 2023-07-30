@@ -380,7 +380,7 @@ class ProviderEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Type"), i18next.t("provider:Type - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.provider.type} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} showSearch value={this.state.provider.type} onChange={(value => {
               this.updateProviderField("type", value);
               if (value === "Local File System") {
                 this.updateProviderField("domain", Setting.getFullServerUrl());
@@ -395,7 +395,10 @@ class ProviderEditPage extends React.Component {
               {
                 Setting.getProviderTypeOptions(this.state.provider.category)
                   .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((providerType, index) => <Option key={index} value={providerType.id}>{providerType.name}</Option>)
+                  .map((providerType, index) => <Option key={index} value={providerType.id}>
+                    <img width={20} height={20} style={{marginBottom: "3px", marginRight: "10px"}} src={Setting.getProviderLogoURL({category: this.state.provider.category, type: providerType.id})} alt={providerType.id} />
+                    {providerType.name}
+                  </Option>)
               }
             </Select>
           </Col>
@@ -592,7 +595,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Adfs" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
+          this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :

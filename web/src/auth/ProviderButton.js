@@ -71,7 +71,7 @@ function getSigninButton(provider) {
     return <LarkLoginButton text={text} align={"center"} />;
   } else if (provider.type === "GitLab") {
     return <GitLabLoginButton text={text} align={"center"} />;
-  } else if (provider.type === "Adfs") {
+  } else if (provider.type === "ADFS") {
     return <AdfsLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Casdoor") {
     return <CasdoorLoginButton text={text} align={"center"} />;

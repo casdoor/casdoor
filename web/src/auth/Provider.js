@@ -73,7 +73,7 @@ const authInfo = {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",
   },
-  Adfs: {
+  ADFS: {
     scope: "openid",
     endpoint: "http://example.com",
   },
@@ -433,7 +433,7 @@ export function getAuthUrl(application, provider, method) {
     }
   } else if (provider.type === "Lark") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
-  } else if (provider.type === "Adfs") {
+  } else if (provider.type === "ADFS") {
     return `${provider.domain}/adfs/oauth2/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&nonce=casdoor&scope=openid`;
   } else if (provider.type === "Baidu") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&display=popup`;

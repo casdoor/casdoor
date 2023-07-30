@@ -736,7 +736,7 @@ export function getClickable(text) {
 
 export function getProviderLogoURL(provider) {
   if (provider.category === "OAuth") {
-    if (provider.type === "Custom") {
+    if (provider.type === "Custom" && provider.customLogo) {
       return provider.customLogo;
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
@@ -775,7 +775,7 @@ export function getProviderTypeOptions(category) {
         {id: "WeCom", name: "WeCom"},
         {id: "Lark", name: "Lark"},
         {id: "GitLab", name: "GitLab"},
-        {id: "Adfs", name: "Adfs"},
+        {id: "ADFS", name: "ADFS"},
         {id: "Baidu", name: "Baidu"},
         {id: "Alipay", name: "Alipay"},
         {id: "Casdoor", name: "Casdoor"},
