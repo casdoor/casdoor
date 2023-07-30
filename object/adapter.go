@@ -39,7 +39,6 @@ type Adapter struct {
 	Database        string `xorm:"varchar(100)" json:"database"`
 	Table           string `xorm:"varchar(100)" json:"table"`
 	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
-	File            string `xorm:"varchar(100)" json:"file"`
 
 	IsEnabled bool `json:"isEnabled"`
 
@@ -171,7 +170,7 @@ func (adapter *Adapter) initAdapter() error {
 				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s serial_normalization=virtual_sequence",
 					adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "sqlite3":
-				dataSourceName = fmt.Sprintf("file:%s", adapter.File)
+				dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
 			default:
 				return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
 			}

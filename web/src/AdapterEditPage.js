@@ -91,64 +91,47 @@ class AdapterEditPage extends React.Component {
       return null;
     }
     return (
-      <React.Fragment>{
-        this.state.adapter.databaseType === "sqlite3" ?
-          (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("syncer:File"), i18next.t("provider:File - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.adapter.host} onChange={e => {
-                  this.updateAdapterField("file", e.target.value);
-                }} />
-              </Col>
-            </Row>
-          ) : (
-            <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.adapter.host} onChange={e => {
-                    this.updateAdapterField("host", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.adapter.port} onChange={e => {
-                    this.updateAdapterField("port", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.adapter.user} onChange={e => {
-                    this.updateAdapterField("user", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.adapter.password} onChange={e => {
-                    this.updateAdapterField("password", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-            </React.Fragment>
-          )
-      }
+      <React.Fragment>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.host} onChange={e => {
+              this.updateAdapterField("host", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.port} onChange={e => {
+              this.updateAdapterField("port", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.user} onChange={e => {
+              this.updateAdapterField("user", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.password} onChange={e => {
+              this.updateAdapterField("password", e.target.value);
+            }} />
+          </Col>
+        </Row>
       </React.Fragment>
     );
   }
