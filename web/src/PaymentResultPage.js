@@ -115,6 +115,26 @@ class PaymentResultPage extends React.Component {
           />
         </div>
       );
+    } else if (payment.state === "Canceled") {
+      return (
+        <div>
+          {
+            Setting.renderHelmet(payment)
+          }
+          <Result
+            status="warning"
+            title={`${i18next.t("payment:The payment has been canceled")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
+            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            extra={[
+              <Button type="primary" key="returnUrl" onClick={() => {
+                this.goToPaymentUrl(payment);
+              }}>
+                {i18next.t("payment:Return to Website")}
+              </Button>,
+            ]}
+          />
+        </div>
+      );
     } else {
       return (
         <div>
@@ -124,7 +144,7 @@ class PaymentResultPage extends React.Component {
           <Result
             status="error"
             title={`${i18next.t("payment:The payment has failed")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
-            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            subTitle={`${i18next.t("payment:Failed reason")}: ${payment.message}`}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {
                 this.goToPaymentUrl(payment);
