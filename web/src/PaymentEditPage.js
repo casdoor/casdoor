@@ -163,7 +163,7 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.payment.organization} onChange={e => {
+            <Input disabled={true} value={this.state.payment.owner} onChange={e => {
               // this.updatePaymentField('organization', e.target.value);
             }} />
           </Col>
