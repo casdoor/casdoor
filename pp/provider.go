@@ -21,16 +21,18 @@ import (
 type PaymentState string
 
 const (
-	PaymentStatePaid    PaymentState = "Paid"
-	PaymentStateCreated PaymentState = "Created"
-	PaymentStateError   PaymentState = "Error"
+	PaymentStatePaid     PaymentState = "Paid"
+	PaymentStateCreated  PaymentState = "Created"
+	PaymentStateCanceled PaymentState = "Canceled"
+	PaymentStateError    PaymentState = "Error"
 )
 
 type NotifyResult struct {
 	PaymentName   string
 	PaymentStatus PaymentState
-	ProviderName  string
+	NotifyMessage string
 
+	ProviderName       string
 	ProductName        string
 	ProductDisplayName string
 	Price              float64

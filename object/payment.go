@@ -186,20 +186,23 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 
 	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
-		return payment, notifyResult, err
+		return payment, nil, err
 	}
-
+	if notifyResult.PaymentStatus != pp.PaymentStatePaid {
+		return payment, notifyResult, nil
+	}
+	// Only check paid payment
 	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
 		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
-		return payment, notifyResult, err
+		return payment, nil, err
 	}
 
 	if notifyResult.Price != product.Price {
 		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, product.Price)
-		return payment, notifyResult, err
+		return payment, nil, err
 	}
 
-	return payment, notifyResult, err
+	return payment, notifyResult, nil
 }
 
 func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, error) {
@@ -210,6 +213,7 @@ func NotifyPayment(request *http.Request, body []byte, owner string, paymentName
 			payment.Message = err.Error()
 		} else {
 			payment.State = notifyResult.PaymentStatus
+			payment.Message = notifyResult.NotifyMessage
 		}
 		_, err = UpdatePayment(payment.GetId(), payment)
 		if err != nil {

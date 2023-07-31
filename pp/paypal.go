@@ -17,6 +17,7 @@ package pp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -89,14 +90,24 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 }
 
 func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+	notifyResult := &NotifyResult{}
 	captureRsp, err := pp.Client.OrderCapture(context.Background(), orderId, nil)
 	if err != nil {
 		return nil, err
 	}
 	if captureRsp.Code != paypal.Success {
+		errDetail := captureRsp.ErrorResponse.Details[0]
+		switch errDetail.Issue {
 		// If order is already captured, just skip this type of error and check the order detail
-		if !(len(captureRsp.ErrorResponse.Details) == 1 && captureRsp.ErrorResponse.Details[0].Issue == "ORDER_ALREADY_CAPTURED") {
-			return nil, errors.New(captureRsp.ErrorResponse.Message)
+		case "ORDER_ALREADY_CAPTURED":
+			// skip
+		case "ORDER_NOT_APPROVED":
+			notifyResult.PaymentStatus = PaymentStateCanceled
+			notifyResult.NotifyMessage = errDetail.Description
+			return notifyResult, nil
+		default:
+			err = fmt.Errorf(errDetail.Description)
+			return nil, err
 		}
 	}
 	// Check the order detail
@@ -105,7 +116,16 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 		return nil, err
 	}
 	if captureRsp.Code != paypal.Success {
-		return nil, errors.New(captureRsp.ErrorResponse.Message)
+		errDetail := captureRsp.ErrorResponse.Details[0]
+		switch errDetail.Issue {
+		case "ORDER_NOT_APPROVED":
+			notifyResult.PaymentStatus = PaymentStateCanceled
+			notifyResult.NotifyMessage = errDetail.Description
+			return notifyResult, nil
+		default:
+			err = fmt.Errorf(errDetail.Description)
+			return nil, err
+		}
 	}
 
 	paymentName := detailRsp.Response.Id
@@ -126,7 +146,7 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 	default:
 		paymentStatus = PaymentStateError
 	}
-	notifyResult := &NotifyResult{
+	notifyResult = &NotifyResult{
 		PaymentStatus: paymentStatus,
 		PaymentName:   paymentName,
 
