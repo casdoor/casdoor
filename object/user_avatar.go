@@ -69,6 +69,8 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 			fileExtension = ".ico"
 		case "image/x-icon":
 			fileExtension = ".ico"
+		case "image/svg+xml":
+			fileExtension = ".svg"
 		default:
 			return nil, "", fmt.Errorf("unsupported content type: %s", contentType)
 		}
