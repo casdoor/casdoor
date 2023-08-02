@@ -290,7 +290,7 @@ func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 
 	for _, role := range roles {
 		perms := []*Permission{}
-		err := ormer.Engine.Where("roles like ?", "%"+role.Name+"\"%").Find(&perms)
+		err := ormer.Engine.Where("roles like ?", "%"+role.GetId()+"\"%").Find(&perms)
 		if err != nil {
 			return nil, nil, err
 		}
