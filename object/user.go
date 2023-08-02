@@ -157,6 +157,7 @@ type User struct {
 	Yandex          string `xorm:"yandex varchar(100)" json:"yandex"`
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
 	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
+	Web3Onboard     string `xorm:"web3onboard varchar(100)" json:"web3onboard"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`

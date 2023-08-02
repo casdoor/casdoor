@@ -24,18 +24,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const Web3AuthTokenKey = "web3AuthToken"
-
 type MetaMaskIdProvider struct {
 	Client *http.Client
-}
-
-type Web3AuthToken struct {
-	Address   string `json:"address"`
-	Nonce     string `json:"nonce"`
-	CreateAt  uint64 `json:"createAt"`
-	TypedData string `json:"typedData"`
-	Signature string `json:"signature"` // signature for typed data
 }
 
 func NewMetaMaskIdProvider() *MetaMaskIdProvider {

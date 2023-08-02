@@ -95,7 +95,7 @@ class AuthCallback extends React.Component {
     if (code === null) {
       code = params.get("authCode");
     }
-    // The code for Metamask is the JSON-serialized string of Web3AuthToken
+    // The code for Web3 is the JSON-serialized string of Web3AuthToken
     // Due to the limited length of URLs, we only pass the web3AuthTokenKey
     if (code === null) {
       code = params.get("web3AuthTokenKey");

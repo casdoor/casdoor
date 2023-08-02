@@ -321,6 +321,10 @@ const authInfo = {
     scope: "",
     endpoint: "",
   },
+  Web3Onboard: {
+    scope: "",
+    endpoint: "",
+  },
 };
 
 export function getProviderUrl(provider) {
@@ -464,6 +468,8 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "Twitter" || provider.type === "Fitbit") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   } else if (provider.type === "MetaMask") {
+    return `${redirectUri}?state=${state}`;
+  } else if (provider.type === "Web3Onboard") {
     return `${redirectUri}?state=${state}`;
   }
 }

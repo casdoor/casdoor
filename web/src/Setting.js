@@ -223,6 +223,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_metamask.svg`,
       url: "https://metamask.io/",
     },
+    "Web3Onboard": {
+      logo: `${StaticBaseUrl}/img/social_openai.svg`,
+      url: "https://onboard.blocknative.com/",
+    },
   },
 };
 
@@ -642,7 +646,6 @@ export function getNameAtLeast(s) {
   if (s.length >= 6) {
     return s;
   }
-
   return (
     <React.Fragment>
       &nbsp;
@@ -898,6 +901,7 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Web3") {
     return ([
       {id: "MetaMask", name: "MetaMask"},
+      {id: "Web3Onboard", name: "Web3-Onboard"},
     ]);
   } else {
     return [];
