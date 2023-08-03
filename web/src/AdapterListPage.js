@@ -32,7 +32,7 @@ class AdapterListPage extends BaseListPage {
       createdTime: moment().format(),
       type: "Database",
       host: "localhost",
-      port: "3306",
+      port: 3306,
       user: "root",
       password: "123456",
       databaseType: "mysql",
