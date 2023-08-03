@@ -33,7 +33,7 @@ type Adapter struct {
 	Type            string `xorm:"varchar(100)" json:"type"`
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
-	Port            string `xorm:"varchar(20)" json:"port"`
+	Port            int    `json:"port"`
 	User            string `xorm:"varchar(100)" json:"user"`
 	Password        string `xorm:"varchar(100)" json:"password"`
 	Database        string `xorm:"varchar(100)" json:"database"`
@@ -158,16 +158,16 @@ func (adapter *Adapter) initAdapter() error {
 		} else {
 			switch adapter.DatabaseType {
 			case "mssql":
-				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", adapter.User,
+				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
 					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "mysql":
-				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%s)/", adapter.User,
+				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", adapter.User,
 					adapter.Password, adapter.Host, adapter.Port)
 			case "postgres":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s", adapter.User,
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
 					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "CockroachDB":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%s sslmode=disable dbname=%s serial_normalization=virtual_sequence",
+				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
 					adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "sqlite3":
 				dataSourceName = fmt.Sprintf("file:%s", adapter.Host)

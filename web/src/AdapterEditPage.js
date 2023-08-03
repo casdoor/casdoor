@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -107,8 +107,8 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.adapter.port} onChange={e => {
-              this.updateAdapterField("port", e.target.value);
+            <InputNumber value={this.state.adapter.port} min={0} max={65535} onChange={value => {
+              this.updateAdapterField("port", value);
             }} />
           </Col>
         </Row>
