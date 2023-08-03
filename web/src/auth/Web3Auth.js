@@ -280,9 +280,7 @@ export function initWeb3Onboard(application, provider) {
 export async function authViaWeb3Onboard(application, provider, method) {
   try {
     const onboard = initWeb3Onboard(application, provider);
-    window.console.log("authViaWeb3Onboard");
     const connectedWallets = await onboard.connectWallet();
-    window.console.log(connectedWallets);
     if (connectedWallets.length > 0) {
       const wallet = connectedWallets[0];
       const account = wallet.accounts[0];
