@@ -646,6 +646,7 @@ export function getNameAtLeast(s) {
   if (s.length >= 6) {
     return s;
   }
+
   return (
     <React.Fragment>
       &nbsp;

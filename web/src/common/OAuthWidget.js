@@ -161,7 +161,6 @@ class OAuthWidget extends React.Component {
           <span style={{
             width: this.props.labelSpan === 3 ? "300px" : "200px",
             display: (Setting.isMobile()) ? "inline" : "inline-block",
-            // whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
           }} title={name}>

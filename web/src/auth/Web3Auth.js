@@ -207,15 +207,15 @@ export function initWeb3Onboard(application, provider) {
     trust,
     frontier,
     taho,
-    // ledger,
     coinbase,
     dcent,
+    gnosis,
+    keystone,
+    // ledger,
     // trezor,
     // walletConnect,
-    gnosis,
     // magic,
     // fortmatic,
-    keystone,
     // portis,
   ];
 

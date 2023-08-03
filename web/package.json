@@ -60,8 +60,7 @@
     "react-metamask-avatar": "^1.2.1",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",
-    "react-social-login-buttons": "^3.4.0",
-    "source-map-loader": "^4.0.1"
+    "react-social-login-buttons": "^3.4.0"
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
