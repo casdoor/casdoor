@@ -209,11 +209,11 @@ jobs:
         if: github.repository == 'truongthanhquan/casdoor' && ( github.event_name == 'workflow_dispatch' || github.event_name == 'push' )
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         if: github.repository == 'truongthanhquan/casdoor' && ( github.event_name == 'workflow_dispatch' || github.event_name == 'push' )
         with:
           context: .
@@ -223,7 +223,7 @@ jobs:
           tags: ghcr.io/truongthanhquan/casdoor:${{ steps.get-current-tag.outputs.tag || 'latest' }}
 
       - name: Push All In One Version to Docker Hub
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         if: github.repository == 'truongthanhquan/casdoor' && ( github.event_name == 'workflow_dispatch' || github.event_name == 'push' )
         with:
           context: .
