@@ -18,25 +18,25 @@ import {v4 as uuidv4} from "uuid";
 import {SignTypedDataVersion, recoverTypedSignature} from "@metamask/eth-sig-util";
 import {getAuthUrl} from "./Provider";
 import {Buffer} from "buffer";
-// import {init, useConnectWallet} from "@web3-onboard/react";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
-// import {infinityWalletModule} from "@web3-onboard/infinity-wallet";
-// import {fortmaticModule} from "@web3-onboard/fortmatic";
-// import {gnosisModule} from "@web3-onboard/gnosis";
-// import {keepkeyModule} from "@web3-onboard/keepkey";
-// import {keystoneModule} from "@web3-onboard/keystone";
-// import {ledgerModule} from "@web3-onboard/ledger";
-// import {portisModule} from "@web3-onboard/portis";
-// import {trezorModule} from "@web3-onboard/trezor";
-// import {walletConnectModule} from "@web3-onboard/walletconnect";
-// import {coinbaseModule} from "@web3-onboard/coinbase";
-// import {magicModule} from "@web3-onboard/magic";
-// import {dcentModule} from "@web3-onboard/dcent";
-// import {sequenceModule} from "@web3-onboard/sequence";
-// import {tahoModule} from "@web3-onboard/taho";
-// import {trustModule} from "@web3-onboard/trust";
-// import {frontierModule} from "@web3-onboard/frontier";
+import infinityWalletModule from "@web3-onboard/infinity-wallet";
+import keepkeyModule from "@web3-onboard/keepkey";
+import sequenceModule from "@web3-onboard/sequence";
+import trustModule from "@web3-onboard/trust";
+import frontierModule from "@web3-onboard/frontier";
+import tahoModule from "@web3-onboard/taho";
+import coinbaseModule from "@web3-onboard/coinbase";
+import dcentModule from "@web3-onboard/dcent";
+import gnosisModule from "@web3-onboard/gnosis";
+import keystoneModule from "@web3-onboard/keystone";
+// import ledgerModule from "@web3-onboard/ledger";
+// import trezorModule from "@web3-onboard/trezor";
+// import walletConnectModule from "@web3-onboard/walletconnect";
+// import fortmaticModule from "@web3-onboard/fortmatic";
+// import portisModule from "@web3-onboard/portis";
+// import magicModule from "@web3-onboard/magic";
+
 global.Buffer = Buffer;
 
 export function generateNonce() {
@@ -166,68 +166,74 @@ export async function authViaMetaMask(application, provider, method) {
   }
 }
 
-function initWeb3Onboard() {
+export function initWeb3Onboard(application, provider) {
   // init wallet
   const injected = injectedModule();
-  // const infinityWallet = infinityWalletModule();
-  // const keepkey = keepkeyModule();
-  // const sequence = sequenceModule();
-  // const trust = trustModule();
-  // const frontier = frontierModule();
-  // const taho = tahoModule(); // Previously named Tally Ho wallet
-  // const ledger = ledgerModule();
-  // const coinbase = coinbaseModule();
-  // const dcent = dcentModule();
-  // const trezor = trezorModule({
-  //   email: "test@test.com",
-  //   appUrl: "https://www.blocknative.com",
-  // });
-  // const walletConnect = walletConnectModule();
-  // const gnosis = gnosisModule();
+  const infinityWallet = infinityWalletModule();
+  const keepkey = keepkeyModule();
+  const sequence = sequenceModule();
+  const trust = trustModule();
+  const frontier = frontierModule();
+  const taho = tahoModule();
+  const coinbase = coinbaseModule();
+  const dcent = dcentModule();
+  const gnosis = gnosisModule();
+  const keystone = keystoneModule();
+  // some wallet need custome `apiKey` or `projectId` configure item
   // const magic = magicModule({
   //   apiKey: "magicApiKey",
   // });
   // const fortmatic = fortmaticModule({
   //   apiKey: "fortmaticApiKey",
   // });
-  // const keystone = keystoneModule();
   // const portis = portisModule({
   //   apiKey: "portisApiKey",
   // });
+  // const ledger = ledgerModule({
+  //   projectId: "ledgerProjectId"
+  // });
+  // const trezor = trezorModule({
+  //   email: "test@test.com",
+  //   appUrl: "https://www.blocknative.com",
+  // });
+  // const walletConnect = walletConnectModule({
+  //   projectId: "walletConnectProjectId",
+  // });
   const wallets = [
     injected,
-    // infinityWallet,
-    // keepkey,
-    // sequence,
-    // trust,
-    // frontier,
-    // taho,
+    infinityWallet,
+    keepkey,
+    sequence,
+    trust,
+    frontier,
+    taho,
     // ledger,
-    // coinbase,
-    // dcent,
+    coinbase,
+    dcent,
     // trezor,
     // walletConnect,
-    // gnosis,
+    gnosis,
     // magic,
     // fortmatic,
-    // keystone,
+    keystone,
     // portis,
   ];
+
   // init chain
-  const InfuraKey = "2fa45cbe531e4e65be4fcbf408e651a8";
+  // const InfuraKey = "2fa45cbe531e4e65be4fcbf408e651a8";
   const chains = [
-    {
-      id: "0x1",
-      token: "ETH",
-      label: "Ethereum Mainnet",
-      rpcUrl: `https://mainnet.infura.io/v3/${InfuraKey}`,
-    },
-    {
-      id: "0x5",
-      token: "ETH",
-      label: "Goerli",
-      rpcUrl: `https://goerli.infura.io/v3/${InfuraKey}`,
-    },
+    // {
+    //   id: "0x1",
+    //   token: "ETH",
+    //   label: "Ethereum Mainnet",
+    //   rpcUrl: `https://mainnet.infura.io/v3/${InfuraKey}`,
+    // },
+    // {
+    //   id: "0x5",
+    //   token: "ETH",
+    //   label: "Goerli",
+    //   rpcUrl: `https://goerli.infura.io/v3/${InfuraKey}`,
+    // },
     {
       id: "0x13881",
       token: "MATIC",
@@ -255,9 +261,8 @@ function initWeb3Onboard() {
   ];
 
   const appMetadata = {
-    name: "Connect Wallet Example",
-    // icon: "<svg>My App Icon</svg>",
-    description: "Example showcasing how to connect a wallet.",
+    name: "Casdoor",
+    description: "Connect a wallet using Casdoor",
     recommendedInjectedWallets: [
       {name: "MetaMask", url: "https://metamask.io"},
       {name: "Coinbase", url: "https://wallet.coinbase.com/"},
@@ -274,7 +279,7 @@ function initWeb3Onboard() {
 
 export async function authViaWeb3Onboard(application, provider, method) {
   try {
-    const onboard = initWeb3Onboard();
+    const onboard = initWeb3Onboard(application, provider);
     window.console.log("authViaWeb3Onboard");
     const connectedWallets = await onboard.connectWallet();
     window.console.log(connectedWallets);

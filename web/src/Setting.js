@@ -224,7 +224,7 @@ export const OtherProviderInfo = {
       url: "https://metamask.io/",
     },
     "Web3Onboard": {
-      logo: `${StaticBaseUrl}/img/social_openai.svg`,
+      logo: `${StaticBaseUrl}/img/social_web3onboard.svg`,
       url: "https://onboard.blocknative.com/",
     },
   },

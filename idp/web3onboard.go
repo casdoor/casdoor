@@ -71,7 +71,11 @@ func (idp *Web3OnboardIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, e
 	if !ok {
 		return nil, errors.New("invalid web3AuthToken")
 	}
-	fmtAddress := fmt.Sprintf("%v_%v", web3AuthToken.WalletType, web3AuthToken.Address)
+
+	fmtAddress := fmt.Sprintf("%v_%v",
+		strings.ReplaceAll(strings.TrimSpace(web3AuthToken.WalletType), " ", "_"),
+		web3AuthToken.Address,
+	)
 	userInfo := &UserInfo{
 		Id:          fmtAddress,
 		Username:    fmtAddress,
