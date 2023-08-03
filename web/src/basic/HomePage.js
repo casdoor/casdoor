@@ -36,7 +36,7 @@ class HomePage extends React.Component {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
       .then((res) => {
         this.setState({
-          applications: (res.msg === undefined) ? res : [],
+          applications: res.data || [],
         });
       });
   }

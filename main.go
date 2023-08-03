@@ -39,7 +39,7 @@ func getCreateDatabaseFlag() bool {
 func main() {
 	createDatabase := getCreateDatabaseFlag()
 
-	object.InitAdapter()
+	object.InitAdapter(createDatabase)
 	object.CreateTables(createDatabase)
 	object.DoMigration()
 
@@ -48,7 +48,7 @@ func main() {
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
-	authz.InitAuthz()
+	authz.InitApi()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 
@@ -62,7 +62,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.AuthzFilter)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.ApiFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
 

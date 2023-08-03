@@ -69,7 +69,7 @@ func GetSubscriptionCount(owner, field, value string) (int64, error) {
 
 func GetSubscriptions(owner string) ([]*Subscription, error) {
 	subscriptions := []*Subscription{}
-	err := adapter.Engine.Desc("created_time").Find(&subscriptions, &Subscription{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&subscriptions, &Subscription{Owner: owner})
 	if err != nil {
 		return subscriptions, err
 	}
@@ -94,7 +94,7 @@ func getSubscription(owner string, name string) (*Subscription, error) {
 	}
 
 	subscription := Subscription{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&subscription)
+	existed, err := ormer.Engine.Get(&subscription)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(subscription)
 	if err != nil {
 		return false, err
 	}
@@ -128,7 +128,7 @@ func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
 }
 
 func AddSubscription(subscription *Subscription) (bool, error) {
-	affected, err := adapter.Engine.Insert(subscription)
+	affected, err := ormer.Engine.Insert(subscription)
 	if err != nil {
 		return false, err
 	}
@@ -137,7 +137,7 @@ func AddSubscription(subscription *Subscription) (bool, error) {
 }
 
 func DeleteSubscription(subscription *Subscription) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{subscription.Owner, subscription.Name}).Delete(&Subscription{})
+	affected, err := ormer.Engine.ID(core.PK{subscription.Owner, subscription.Name}).Delete(&Subscription{})
 	if err != nil {
 		return false, err
 	}

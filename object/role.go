@@ -44,7 +44,7 @@ func GetRoleCount(owner, field, value string) (int64, error) {
 
 func GetRoles(owner string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Desc("created_time").Find(&roles, &Role{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&roles, &Role{Owner: owner})
 	if err != nil {
 		return roles, err
 	}
@@ -69,7 +69,7 @@ func getRole(owner string, name string) (*Role, error) {
 	}
 
 	role := Role{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&role)
+	existed, err := ormer.Engine.Get(&role)
 	if err != nil {
 		return &role, err
 	}
@@ -82,12 +82,12 @@ func getRole(owner string, name string) (*Role, error) {
 }
 
 func GetRole(id string) (*Role, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	return getRole(owner, name)
 }
 
 func UpdateRole(id string, role *Role) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldRole, err := getRole(owner, name)
 	if err != nil {
 		return false, err
@@ -137,7 +137,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(role)
 	if err != nil {
 		return false, err
 	}
@@ -178,7 +178,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 }
 
 func AddRole(role *Role) (bool, error) {
-	affected, err := adapter.Engine.Insert(role)
+	affected, err := ormer.Engine.Insert(role)
 	if err != nil {
 		return false, err
 	}
@@ -190,7 +190,7 @@ func AddRoles(roles []*Role) bool {
 	if len(roles) == 0 {
 		return false
 	}
-	affected, err := adapter.Engine.Insert(roles)
+	affected, err := ormer.Engine.Insert(roles)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
 			panic(err)
@@ -240,7 +240,7 @@ func DeleteRole(role *Role) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
+	affected, err := ormer.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
 	if err != nil {
 		return false, err
 	}
@@ -254,20 +254,31 @@ func (role *Role) GetId() string {
 
 func GetRolesByUser(userId string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
+	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
 	if err != nil {
 		return roles, err
 	}
 
-	for i := range roles {
-		roles[i].Users = nil
+	allRolesIds := make([]string, 0, len(roles))
+
+	for _, role := range roles {
+		allRolesIds = append(allRolesIds, role.GetId())
 	}
 
-	return roles, nil
+	allRoles, err := GetAncestorRoles(allRolesIds...)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range allRoles {
+		allRoles[i].Users = nil
+	}
+
+	return allRoles, nil
 }
 
 func roleChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -276,7 +287,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	var roles []*Role
-	err = adapter.Engine.Find(&roles)
+	err = ormer.Engine.Find(&roles)
 	if err != nil {
 		return err
 	}
@@ -295,7 +306,7 @@ func roleChangeTrigger(oldName string, newName string) error {
 	}
 
 	var permissions []*Permission
-	err = adapter.Engine.Find(&permissions)
+	err = ormer.Engine.Find(&permissions)
 	if err != nil {
 		return err
 	}
@@ -327,7 +338,7 @@ func GetMaskedRoles(roles []*Role) []*Role {
 
 func GetRolesByNamePrefix(owner string, prefix string) ([]*Role, error) {
 	roles := []*Role{}
-	err := adapter.Engine.Where("owner=? and name like ?", owner, prefix+"%").Find(&roles)
+	err := ormer.Engine.Where("owner=? and name like ?", owner, prefix+"%").Find(&roles)
 	if err != nil {
 		return roles, err
 	}
@@ -335,14 +346,22 @@ func GetRolesByNamePrefix(owner string, prefix string) ([]*Role, error) {
 	return roles, nil
 }
 
-func GetAncestorRoles(roleId string) ([]*Role, error) {
+// GetAncestorRoles returns a list of roles that contain the given roleIds
+func GetAncestorRoles(roleIds ...string) ([]*Role, error) {
 	var (
-		result  []*Role
+		result  = []*Role{}
 		roleMap = make(map[string]*Role)
 		visited = make(map[string]bool)
 	)
+	if len(roleIds) == 0 {
+		return result, nil
+	}
 
-	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleId)
+	for _, roleId := range roleIds {
+		visited[roleId] = true
+	}
+
+	owner, _ := util.GetOwnerAndNameFromIdNoCheck(roleIds[0])
 
 	allRoles, err := GetRoles(owner)
 	if err != nil {
@@ -360,7 +379,7 @@ func GetAncestorRoles(roleId string) ([]*Role, error) {
 			result = append(result, r)
 		} else if !ok {
 			rId := r.GetId()
-			visited[rId] = containsRole(r, roleId, roleMap, visited)
+			visited[rId] = containsRole(r, roleMap, visited, roleIds...)
 			if visited[rId] {
 				result = append(result, r)
 			}
@@ -370,19 +389,22 @@ func GetAncestorRoles(roleId string) ([]*Role, error) {
 	return result, nil
 }
 
-// containsRole is a helper function to check if a slice of roles contains a specific roleId
-func containsRole(role *Role, roleId string, roleMap map[string]*Role, visited map[string]bool) bool {
-	if isContain, ok := visited[role.GetId()]; ok {
+// containsRole is a helper function to check if a roles is related to any role in the given list roles
+func containsRole(role *Role, roleMap map[string]*Role, visited map[string]bool, roleIds ...string) bool {
+	roleId := role.GetId()
+	if isContain, ok := visited[roleId]; ok {
 		return isContain
 	}
 
+	visited[role.GetId()] = false
+
 	for _, subRole := range role.Roles {
-		if subRole == roleId {
+		if util.HasString(roleIds, subRole) {
 			return true
 		}
 
 		r, ok := roleMap[subRole]
-		if ok && containsRole(r, roleId, roleMap, visited) {
+		if ok && containsRole(r, roleMap, visited, roleIds...) {
 			return true
 		}
 	}

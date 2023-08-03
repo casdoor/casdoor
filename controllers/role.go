@@ -41,11 +41,11 @@ func (c *ApiController) GetRoles() {
 	if limit == "" || page == "" {
 		roles, err := object.GetRoles(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = roles
-		c.ServeJSON()
+		c.ResponseOk(roles)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetRoleCount(owner, field, value)
@@ -77,11 +77,11 @@ func (c *ApiController) GetRole() {
 
 	role, err := object.GetRole(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = role
-	c.ServeJSON()
+	c.ResponseOk(role)
 }
 
 // UpdateRole

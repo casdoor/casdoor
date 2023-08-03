@@ -18,18 +18,11 @@
     "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "Unauthorized operation": "不正操作",
-    "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s"
+    "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s",
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
   },
   "cas": {
     "Service %s and %s do not match": "サービス%sと%sは一致しません"
-  },
-  "chat": {
-    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
-    "The chat: %s is not found": "The chat: %s is not found",
-    "The message is invalid": "The message is invalid",
-    "The message: %s is not found": "The message: %s is not found",
-    "The provider: %s is invalid": "The provider: %s is invalid",
-    "The provider: %s is not found": "The provider: %s is not found"
   },
   "check": {
     "Affiliation cannot be blank": "所属は空白にできません",
@@ -68,7 +61,8 @@
     "Missing parameter": "不足しているパラメーター",
     "Please login first": "最初にログインしてください",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
-    "don't support captchaProvider: ": "captchaProviderをサポートしないでください"
+    "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
   },
   "ldap": {
     "Ldap server exist": "LDAPサーバーは存在します"
@@ -119,8 +113,7 @@
   },
   "user": {
     "Display name cannot be empty": "表示名は空にできません",
-    "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
-    "New password must have at least 6 characters": "新しいパスワードは少なくとも6文字必要です"
+    "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。"
   },
   "user_upload": {
     "Failed to import users": "ユーザーのインポートに失敗しました"

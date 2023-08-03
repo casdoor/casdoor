@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
@@ -55,6 +56,9 @@ func (c *ApiController) T(error string) string {
 // GetAcceptLanguage ...
 func (c *ApiController) GetAcceptLanguage() string {
 	language := c.Ctx.Request.Header.Get("Accept-Language")
+	if len(language) > 2 {
+		language = language[0:2]
+	}
 	return conf.GetLanguage(language)
 }
 
@@ -94,7 +98,8 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return nil, false
 	}
 
 	if user == nil {
@@ -139,8 +144,30 @@ func (c *ApiController) IsMaskedEnabled() (bool, bool) {
 	return true, isMaskEnabled
 }
 
+func refineFullFilePath(fullFilePath string) (string, string) {
+	tokens := strings.Split(fullFilePath, "/")
+	if len(tokens) >= 2 && tokens[0] == "Direct" && tokens[1] != "" {
+		providerName := tokens[1]
+		res := strings.Join(tokens[2:], "/")
+		return providerName, "/" + res
+	} else {
+		return "", fullFilePath
+	}
+}
+
 func (c *ApiController) GetProviderFromContext(category string) (*object.Provider, error) {
 	providerName := c.Input().Get("provider")
+	if providerName == "" {
+		field := c.Input().Get("field")
+		value := c.Input().Get("value")
+		if field == "provider" && value != "" {
+			providerName = value
+		} else {
+			fullFilePath := c.Input().Get("fullFilePath")
+			providerName, _ = refineFullFilePath(fullFilePath)
+		}
+	}
+
 	if providerName != "" {
 		provider, err := object.GetProvider(util.GetId("admin", providerName))
 		if err != nil {

@@ -30,7 +30,7 @@ func GetUserByField(organizationName string, field string, value string) (*User,
 	}
 
 	user := User{Owner: organizationName}
-	existed, err := adapter.Engine.Where(fmt.Sprintf("%s=?", strings.ToLower(field)), value).Get(&user)
+	existed, err := ormer.Engine.Where(fmt.Sprintf("%s=?", strings.ToLower(field)), value).Get(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 		bean[strings.ToLower(field)] = value
 	}
 
-	affected, err := adapter.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)
+	affected, err := ormer.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)
 	if err != nil {
 		return false, err
 	}
@@ -110,7 +110,7 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 		return false, err
 	}
 
-	_, err = adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
+	_, err = ormer.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
 	if err != nil {
 		return false, err
 	}
@@ -191,7 +191,7 @@ func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 		}
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
+	affected, err := ormer.Engine.ID(core.PK{user.Owner, user.Name}).Cols("properties").Update(user)
 	if err != nil {
 		return false, err
 	}
@@ -288,14 +288,18 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
-	oldUserTwoFactorAuthJson, _ := json.Marshal(oldUser.MultiFactorAuths)
-	newUserTwoFactorAuthJson, _ := json.Marshal(newUser.MultiFactorAuths)
-	if string(oldUserTwoFactorAuthJson) != string(newUserTwoFactorAuthJson) {
+	if oldUser.PreferredMfaType != newUser.PreferredMfaType {
 		item := GetAccountItemByName("Multi-factor authentication", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if oldUser.Groups == nil {
+		oldUser.Groups = []string{}
+	}
 	oldUserGroupsJson, _ := json.Marshal(oldUser.Groups)
+	if newUser.Groups == nil {
+		newUser.Groups = []string{}
+	}
 	newUserGroupsJson, _ := json.Marshal(newUser.Groups)
 	if string(oldUserGroupsJson) != string(newUserGroupsJson) {
 		item := GetAccountItemByName("Groups", organization)

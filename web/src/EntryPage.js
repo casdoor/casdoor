@@ -41,7 +41,7 @@ class EntryPage extends React.Component {
 
   renderHomeIfLoggedIn(component) {
     if (this.props.account !== null && this.props.account !== undefined) {
-      return <Redirect to="/" />;
+      return <Redirect to={{pathname: "/", state: {from: "/login"}}} />;
     } else {
       return component;
     }
@@ -74,7 +74,13 @@ class EntryPage extends React.Component {
       });
 
       ApplicationBackend.getApplication("admin", pricing.application)
-        .then((application) => {
+        .then((res) => {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+
+          const application = res.data;
           const themeData = application !== null ? Setting.getThemeData(application.organizationObj, application) : Conf.ThemeDefault;
           this.props.updataThemeData(themeData);
         });

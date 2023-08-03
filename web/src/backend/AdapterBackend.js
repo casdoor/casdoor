@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getAdapters(owner, organization, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-adapters?owner=${owner}&organization=${organization}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getAdapters(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-adapters?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -103,8 +103,8 @@ export function RemovePolicy(owner, name, policy) {
   }).then(res => res.json());
 }
 
-export function syncPolicies(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/sync-policies?id=${owner}/${encodeURIComponent(name)}`, {
+export function getPolicies(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-policies?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
     headers: {

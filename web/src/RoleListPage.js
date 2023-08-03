@@ -26,8 +26,9 @@ import {UploadOutlined} from "@ant-design/icons";
 class RoleListPage extends BaseListPage {
   newRole() {
     const randomName = Setting.getRandomName();
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
-      owner: this.props.account.owner,
+      owner: owner,
       name: `role_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Role - ${randomName}`,
@@ -120,7 +121,7 @@ class RoleListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${record.owner}/${record.name}`}>
+            <Link to={`/roles/${record.owner}/${encodeURIComponent(record.name)}`}>
               {text}
             </Link>
           );
@@ -212,7 +213,7 @@ class RoleListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/roles/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/roles/${record.owner}/${encodeURIComponent(record.name)}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteRole(index)}
@@ -258,7 +259,7 @@ class RoleListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    RoleBackend.getRoles(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    RoleBackend.getRoles(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

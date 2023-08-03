@@ -15,6 +15,7 @@
 import {Checkbox, Form, Modal} from "antd";
 import i18next from "i18next";
 import React, {useEffect, useState} from "react";
+import * as Setting from "../../Setting";
 
 export const AgreementModal = (props) => {
   const {open, onOk, onCancel, application} = props;
@@ -31,14 +32,16 @@ export const AgreementModal = (props) => {
     <Modal
       title={i18next.t("signup:Terms of Use")}
       open={open}
-      width={"55vw"}
+      width={Setting.isMobile() ? "100vw" : "55vw"}
       closable={false}
       okText={i18next.t("signup:Accept")}
       cancelText={i18next.t("signup:Decline")}
       onOk={onOk}
       onCancel={onCancel}
+      style={{top: Setting.isMobile() ? "5px" : ""}}
+      maskStyle={{backgroundColor: Setting.isMobile() ? "white" : ""}}
     >
-      <iframe title={"terms"} style={{border: 0, width: "100%", height: "60vh"}} srcDoc={doc} />
+      <iframe title={"terms"} style={{border: 0, width: "100%", height: Setting.isMobile() ? "80vh" : "60vh"}} srcDoc={doc} />
     </Modal>
   );
 };

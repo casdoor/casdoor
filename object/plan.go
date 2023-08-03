@@ -44,7 +44,7 @@ func GetPlanCount(owner, field, value string) (int64, error) {
 
 func GetPlans(owner string) ([]*Plan, error) {
 	plans := []*Plan{}
-	err := adapter.Engine.Desc("created_time").Find(&plans, &Plan{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&plans, &Plan{Owner: owner})
 	if err != nil {
 		return plans, err
 	}
@@ -67,7 +67,7 @@ func getPlan(owner, name string) (*Plan, error) {
 	}
 
 	plan := Plan{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&plan)
+	existed, err := ormer.Engine.Get(&plan)
 	if err != nil {
 		return &plan, err
 	}
@@ -91,7 +91,7 @@ func UpdatePlan(id string, plan *Plan) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(plan)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(plan)
 	if err != nil {
 		return false, err
 	}
@@ -100,7 +100,7 @@ func UpdatePlan(id string, plan *Plan) (bool, error) {
 }
 
 func AddPlan(plan *Plan) (bool, error) {
-	affected, err := adapter.Engine.Insert(plan)
+	affected, err := ormer.Engine.Insert(plan)
 	if err != nil {
 		return false, err
 	}
@@ -108,7 +108,7 @@ func AddPlan(plan *Plan) (bool, error) {
 }
 
 func DeletePlan(plan *Plan) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{plan.Owner, plan.Name}).Delete(plan)
+	affected, err := ormer.Engine.ID(core.PK{plan.Owner, plan.Name}).Delete(plan)
 	if err != nil {
 		return false, err
 	}

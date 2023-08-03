@@ -20,6 +20,7 @@ import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import ProductBuyPage from "./ProductBuyPage";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
 
 const {Option} = Select;
 
@@ -39,19 +40,29 @@ class ProductEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getProduct();
+    this.getOrganizations();
     this.getPaymentProviders();
   }
 
   getProduct() {
-    ProductBackend.getProduct(this.props.account.owner, this.state.productName)
-      .then((product) => {
-        if (product === null) {
+    ProductBackend.getProduct(this.state.organizationName, this.state.productName)
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
         this.setState({
-          product: product,
+          product: res.data,
+        });
+      });
+  }
+
+  getOrganizations() {
+    OrganizationBackend.getOrganizations("admin")
+      .then((res) => {
+        this.setState({
+          organizations: res.data || [],
         });
       });
   }
@@ -284,7 +295,7 @@ class ProductEditPage extends React.Component {
   }
 
   renderPreview() {
-    const buyUrl = `/products/${this.state.product.name}/buy`;
+    const buyUrl = `/products/${this.state.product.owner}/${this.state.product.name}/buy`;
     return (
       <Col span={22} style={{display: "flex", flexDirection: "column"}}>
         <a style={{marginBottom: "10px", display: "flex"}} target="_blank" rel="noreferrer" href={buyUrl}>
@@ -312,7 +323,7 @@ class ProductEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/products");
           } else {
-            this.props.history.push(`/products/${this.state.product.name}`);
+            this.props.history.push(`/products/${this.state.product.owner}/${this.state.product.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

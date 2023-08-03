@@ -14,8 +14,8 @@
 
 import * as Setting from "../Setting";
 
-export function getOrganizations(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-organizations?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getOrganizations(owner, organizationName = "", page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-organizations?owner=${owner}&organizationName=${organizationName}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -70,8 +70,8 @@ export function deleteOrganization(organization) {
   }).then(res => res.json());
 }
 
-export function getDefaultApplication(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}`, {
+export function getDefaultApplication(owner, name, type = "", redirectUri = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}&type=${type}&redirectUri=${redirectUri}`, {
     method: "GET",
     credentials: "include",
     headers: {

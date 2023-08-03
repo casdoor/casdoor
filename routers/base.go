@@ -85,12 +85,13 @@ func getUsernameByClientIdSecret(ctx *context.Context) string {
 }
 
 func getUsernameByKeys(ctx *context.Context) string {
-	accessKey, secretKey := getKeys(ctx)
+	accessKey, accessSecret := getKeys(ctx)
 	user, err := object.GetUserByAccessKey(accessKey)
 	if err != nil {
 		panic(err)
 	}
-	if user != nil && secretKey == user.SecretKey {
+
+	if user != nil && accessSecret == user.AccessSecret {
 		return user.GetId()
 	}
 	return ""

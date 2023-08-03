@@ -16,8 +16,11 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -28,21 +31,22 @@ type Provider struct {
 	Name        string `xorm:"varchar(100) notnull pk unique" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName       string `xorm:"varchar(100)" json:"displayName"`
-	Category          string `xorm:"varchar(100)" json:"category"`
-	Type              string `xorm:"varchar(100)" json:"type"`
-	SubType           string `xorm:"varchar(100)" json:"subType"`
-	Method            string `xorm:"varchar(100)" json:"method"`
-	ClientId          string `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret      string `xorm:"varchar(2000)" json:"clientSecret"`
-	ClientId2         string `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2     string `xorm:"varchar(100)" json:"clientSecret2"`
-	Cert              string `xorm:"varchar(100)" json:"cert"`
-	CustomAuthUrl     string `xorm:"varchar(200)" json:"customAuthUrl"`
-	CustomScope       string `xorm:"varchar(200)" json:"customScope"`
-	CustomTokenUrl    string `xorm:"varchar(200)" json:"customTokenUrl"`
-	CustomUserInfoUrl string `xorm:"varchar(200)" json:"customUserInfoUrl"`
-	CustomLogo        string `xorm:"varchar(200)" json:"customLogo"`
+	DisplayName       string            `xorm:"varchar(100)" json:"displayName"`
+	Category          string            `xorm:"varchar(100)" json:"category"`
+	Type              string            `xorm:"varchar(100)" json:"type"`
+	SubType           string            `xorm:"varchar(100)" json:"subType"`
+	Method            string            `xorm:"varchar(100)" json:"method"`
+	ClientId          string            `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret      string            `xorm:"varchar(2000)" json:"clientSecret"`
+	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
+	ClientSecret2     string            `xorm:"varchar(100)" json:"clientSecret2"`
+	Cert              string            `xorm:"varchar(100)" json:"cert"`
+	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
+	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
+	CustomUserInfoUrl string            `xorm:"varchar(200)" json:"customUserInfoUrl"`
+	CustomLogo        string            `xorm:"varchar(200)" json:"customLogo"`
+	Scopes            string            `xorm:"varchar(100)" json:"scopes"`
+	UserMapping       map[string]string `xorm:"varchar(500)" json:"userMapping"`
 
 	Host       string `xorm:"varchar(100)" json:"host"`
 	Port       int    `json:"port"`
@@ -115,7 +119,7 @@ func GetGlobalProviderCount(field, value string) (int64, error) {
 
 func GetProviders(owner string) ([]*Provider, error) {
 	providers := []*Provider{}
-	err := adapter.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
+	err := ormer.Engine.Where("owner = ? or owner = ? ", "admin", owner).Desc("created_time").Find(&providers, &Provider{})
 	if err != nil {
 		return providers, err
 	}
@@ -125,7 +129,7 @@ func GetProviders(owner string) ([]*Provider, error) {
 
 func GetGlobalProviders() ([]*Provider, error) {
 	providers := []*Provider{}
-	err := adapter.Engine.Desc("created_time").Find(&providers)
+	err := ormer.Engine.Desc("created_time").Find(&providers)
 	if err != nil {
 		return providers, err
 	}
@@ -161,7 +165,7 @@ func getProvider(owner string, name string) (*Provider, error) {
 	}
 
 	provider := Provider{Name: name}
-	existed, err := adapter.Engine.Get(&provider)
+	existed, err := ormer.Engine.Get(&provider)
 	if err != nil {
 		return &provider, err
 	}
@@ -176,20 +180,6 @@ func getProvider(owner string, name string) (*Provider, error) {
 func GetProvider(id string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getProvider(owner, name)
-}
-
-func getDefaultAiProvider() (*Provider, error) {
-	provider := Provider{Owner: "admin", Category: "AI"}
-	existed, err := adapter.Engine.Get(&provider)
-	if err != nil {
-		return &provider, err
-	}
-
-	if !existed {
-		return nil, nil
-	}
-
-	return &provider, nil
 }
 
 func GetWechatMiniProgramProvider(application *Application) *Provider {
@@ -217,7 +207,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		}
 	}
 
-	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if provider.ClientSecret == "***" {
 		session = session.Omit("client_secret")
 	}
@@ -225,7 +215,7 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		session = session.Omit("client_secret2")
 	}
 
-	if provider.Type != "Keycloak" {
+	if provider.Type == "Tencent Cloud COS" {
 		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
 		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 	}
@@ -239,12 +229,12 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 }
 
 func AddProvider(provider *Provider) (bool, error) {
-	if provider.Type != "Keycloak" {
+	if provider.Type == "Tencent Cloud COS" {
 		provider.Endpoint = util.GetEndPoint(provider.Endpoint)
 		provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
 	}
 
-	affected, err := adapter.Engine.Insert(provider)
+	affected, err := ormer.Engine.Insert(provider)
 	if err != nil {
 		return false, err
 	}
@@ -253,7 +243,7 @@ func AddProvider(provider *Provider) (bool, error) {
 }
 
 func DeleteProvider(provider *Provider) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
+	affected, err := ormer.Engine.ID(core.PK{provider.Owner, provider.Name}).Delete(&Provider{})
 	if err != nil {
 		return false, err
 	}
@@ -293,7 +283,7 @@ func (p *Provider) GetId() string {
 func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(applicationId)
 	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
-	existed, err := adapter.Engine.Get(&provider)
+	existed, err := ormer.Engine.Get(&provider)
 	if err != nil {
 		return nil, err
 	}
@@ -329,7 +319,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 }
 
 func providerChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -338,7 +328,7 @@ func providerChangeTrigger(oldName string, newName string) error {
 	}
 
 	var applications []*Application
-	err = adapter.Engine.Find(&applications)
+	err = ormer.Engine.Find(&applications)
 	if err != nil {
 		return err
 	}
@@ -364,4 +354,28 @@ func providerChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.ProviderInfo {
+	providerInfo := &idp.ProviderInfo{
+		Type:         provider.Type,
+		SubType:      provider.SubType,
+		ClientId:     provider.ClientId,
+		ClientSecret: provider.ClientSecret,
+		AppId:        provider.AppId,
+		HostUrl:      provider.Host,
+		TokenURL:     provider.CustomTokenUrl,
+		AuthURL:      provider.CustomAuthUrl,
+		UserInfoURL:  provider.CustomUserInfoUrl,
+		UserMapping:  provider.UserMapping,
+	}
+
+	if provider.Type == "WeChat" {
+		if ctx != nil && strings.Contains(ctx.Request.UserAgent(), "MicroMessenger") {
+			providerInfo.ClientId = provider.ClientId2
+			providerInfo.ClientSecret = provider.ClientSecret2
+		}
+	}
+
+	return providerInfo
 }

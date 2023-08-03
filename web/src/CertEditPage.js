@@ -44,14 +44,19 @@ class CertEditPage extends React.Component {
 
   getCert() {
     CertBackend.getCert(this.state.owner, this.state.certName)
-      .then((cert) => {
-        if (cert === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          cert: cert,
+          cert: res.data,
         });
       });
   }
@@ -60,7 +65,7 @@ class CertEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }
@@ -153,6 +158,7 @@ class CertEditPage extends React.Component {
               {
                 [
                   {id: "x509", name: "x509"},
+                  {id: "Payment", name: "Payment"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

@@ -26,7 +26,7 @@ class RoleEditPage extends React.Component {
     this.state = {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
-      roleName: props.match.params.roleName,
+      roleName: decodeURIComponent(props.match.params.roleName),
       role: null,
       organizations: [],
       users: [],
@@ -42,18 +42,22 @@ class RoleEditPage extends React.Component {
 
   getRole() {
     RoleBackend.getRole(this.state.organizationName, this.state.roleName)
-      .then((role) => {
-        if (role === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
+          return;
+        }
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
           return;
         }
 
         this.setState({
-          role: role,
+          role: res.data,
         });
 
-        this.getUsers(role.owner);
-        this.getRoles(role.owner);
+        this.getUsers(this.state.organizationName);
+        this.getRoles(this.state.organizationName);
       });
   }
 
@@ -61,7 +65,7 @@ class RoleEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }
@@ -69,8 +73,13 @@ class RoleEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -78,8 +87,13 @@ class RoleEditPage extends React.Component {
   getRoles(organizationName) {
     RoleBackend.getRoles(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          roles: res,
+          roles: res.data,
         });
       });
   }
@@ -211,7 +225,7 @@ class RoleEditPage extends React.Component {
           if (willExist) {
             this.props.history.push("/roles");
           } else {
-            this.props.history.push(`/roles/${this.state.role.owner}/${this.state.role.name}`);
+            this.props.history.push(`/roles/${this.state.role.owner}/${encodeURIComponent(this.state.role.name)}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

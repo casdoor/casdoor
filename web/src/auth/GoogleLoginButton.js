@@ -14,6 +14,9 @@
 
 import {createButton} from "react-social-login-buttons";
 import {StaticBaseUrl} from "../Setting";
+import {useGoogleOneTapLogin} from "react-google-one-tap-login";
+import * as Setting from "../Setting";
+import * as Provider from "./Provider";
 
 function Icon({width = 24, height = 24, color}) {
   return <img src={`${StaticBaseUrl}/buttons/google.svg`} alt="Sign in with Google" />;
@@ -28,5 +31,30 @@ const config = {
 };
 
 const GoogleLoginButton = createButton(config);
+
+export function GoogleOneTapLoginVirtualButton(prop) {
+  const application = prop.application;
+  const providerConf = prop.providerConf;
+  // https://stackoverflow.com/questions/62281579/google-one-tap-sign-in-ui-not-displayed-after-clicking-the-close-button
+  // document.cookie = "g_state=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  useGoogleOneTapLogin({
+    googleAccountConfigs: {
+      client_id: providerConf.provider.clientId,
+    },
+    onError: (error) => {
+      Setting.showMessage("error", error);
+    },
+    onSuccess: (response) => {
+      const code = "GoogleIdToken-" + JSON.stringify(response);
+      const authUrlParams = new URLSearchParams(Provider.getAuthUrl(application, providerConf.provider, "signup"));
+      const state = authUrlParams.get("state");
+      let redirectUri = authUrlParams.get("redirect_uri");
+      redirectUri = `${redirectUri}?state=${state}&code=${encodeURIComponent(code)}`;
+      Setting.goToLink(redirectUri);
+    },
+    disableCancelOnUnmount: true,
+  });
+
+}
 
 export default GoogleLoginButton;

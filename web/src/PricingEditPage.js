@@ -44,29 +44,38 @@ class PricingEditPage extends React.Component {
     this.getPricing();
     this.getOrganizations();
     this.getApplicationsByOrganization(this.state.organizationName);
-    this.getUserApplication();
   }
 
   getPricing() {
     PricingBackend.getPricing(this.state.organizationName, this.state.pricingName)
-      .then((pricing) => {
-        if (pricing === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          pricing: pricing,
+          pricing: res.data,
         });
-        this.getPlans(pricing.owner);
+        this.getPlans(this.state.organizationName);
       });
   }
 
   getPlans(organizationName) {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          plans: res,
+          plans: res.data,
         });
       });
   }
@@ -75,7 +84,16 @@ class PricingEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
+        });
+      });
+  }
+
+  getApplicationsByOrganization(organizationName) {
+    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
+      .then((res) => {
+        this.setState({
+          applications: res.data || [],
         });
       });
   }
@@ -96,24 +114,6 @@ class PricingEditPage extends React.Component {
     this.setState({
       pricing: pricing,
     });
-  }
-
-  getApplicationsByOrganization(organizationName) {
-    ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
-      .then((res) => {
-        this.setState({
-          applications: (res.msg === undefined) ? res : [],
-        });
-      });
-  }
-
-  getUserApplication() {
-    ApplicationBackend.getUserApplication(this.state.organizationName, this.state.userName)
-      .then((application) => {
-        this.setState({
-          application: application,
-        });
-      });
   }
 
   renderPricing() {

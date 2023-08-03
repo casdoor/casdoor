@@ -216,6 +216,9 @@ func refineUser(user *User) *User {
 	if user.Permissions == nil {
 		user.Permissions = []*Permission{}
 	}
+	if user.Groups == nil {
+		user.Groups = []string{}
+	}
 
 	return user
 }
@@ -276,6 +279,14 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return "", "", "", err
+	}
+
+	if cert == nil {
+		if application.Cert == "" {
+			return "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
+		} else {
+			return "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
+		}
 	}
 
 	// RSA private key

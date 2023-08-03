@@ -19,6 +19,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -54,7 +55,7 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	path2 := strings.TrimLeft(path, "web/build/images/")
+	path2 := strings.TrimPrefix(path, "web/build/images/")
 	if util.FileExist(path2) {
 		makeGzipResponse(ctx.ResponseWriter, ctx.Request, path2)
 		return
@@ -63,16 +64,19 @@ func StaticFilter(ctx *context.Context) {
 	if !util.FileExist(path) {
 		path = "web/build/index.html"
 	}
+	if !util.FileExist(path) {
+		return
+	}
 
 	if oldStaticBaseUrl == newStaticBaseUrl {
 		makeGzipResponse(ctx.ResponseWriter, ctx.Request, path)
 	} else {
-		serveFileWithReplace(ctx.ResponseWriter, ctx.Request, path, oldStaticBaseUrl, newStaticBaseUrl)
+		serveFileWithReplace(ctx.ResponseWriter, ctx.Request, path)
 	}
 }
 
-func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, old string, new string) {
-	f, err := os.Open(name)
+func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string) {
+	f, err := os.Open(filepath.Clean(name))
 	if err != nil {
 		panic(err)
 	}
@@ -84,13 +88,9 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string, o
 	}
 
 	oldContent := util.ReadStringFromPath(name)
-	newContent := strings.ReplaceAll(oldContent, old, new)
+	newContent := strings.ReplaceAll(oldContent, oldStaticBaseUrl, newStaticBaseUrl)
 
 	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(newContent))
-	_, err = w.Write([]byte(newContent))
-	if err != nil {
-		panic(err)
-	}
 }
 
 type gzipResponseWriter struct {
@@ -104,12 +104,12 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 
 func makeGzipResponse(w http.ResponseWriter, r *http.Request, path string) {
 	if !enableGzip || !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-		http.ServeFile(w, r, path)
+		serveFileWithReplace(w, r, path)
 		return
 	}
 	w.Header().Set("Content-Encoding", "gzip")
 	gz := gzip.NewWriter(w)
 	defer gz.Close()
 	gzw := gzipResponseWriter{Writer: gz, ResponseWriter: w}
-	http.ServeFile(gzw, r, path)
+	serveFileWithReplace(gzw, r, path)
 }

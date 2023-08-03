@@ -46,18 +46,23 @@ class SubscriptionEditPage extends React.Component {
 
   getSubscription() {
     SubscriptionBackend.getSubscription(this.state.organizationName, this.state.subscriptionName)
-      .then((subscription) => {
-        if (subscription === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          subscription: subscription,
+          subscription: res.data,
         });
 
-        this.getUsers(subscription.owner);
-        this.getPlanes(subscription.owner);
+        this.getUsers(this.state.organizationName);
+        this.getPlanes(this.state.organizationName);
       });
   }
 
@@ -65,7 +70,7 @@ class SubscriptionEditPage extends React.Component {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
         this.setState({
-          planes: res,
+          planes: res.data,
         });
       });
   }
@@ -73,8 +78,13 @@ class SubscriptionEditPage extends React.Component {
   getUsers(organizationName) {
     UserBackend.getUsers(organizationName)
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          users: res,
+          users: res.data,
         });
       });
   }
@@ -83,7 +93,7 @@ class SubscriptionEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }

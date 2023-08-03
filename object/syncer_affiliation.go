@@ -21,7 +21,7 @@ type Affiliation struct {
 
 func (syncer *Syncer) getAffiliations() ([]*Affiliation, error) {
 	affiliations := []*Affiliation{}
-	err := syncer.Adapter.Engine.Table(syncer.AffiliationTable).Asc("id").Find(&affiliations)
+	err := syncer.Ormer.Engine.Table(syncer.AffiliationTable).Asc("id").Find(&affiliations)
 	if err != nil {
 		return nil, err
 	}

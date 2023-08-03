@@ -21,13 +21,37 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
+	"github.com/casdoor/casdoor/util"
 	"golang.org/x/oauth2"
 )
+
+const GoogleIdTokenKey = "GoogleIdToken"
 
 type GoogleIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
+}
+
+// https://developers.google.com/identity/sign-in/web/backend-auth#calling-the-tokeninfo-endpoint
+type GoogleIdToken struct {
+	// These six fields are included in all Google ID Tokens.
+	Iss string `json:"iss"` // The issuer, or signer, of the token. For Google-signed ID tokens, this value is https://accounts.google.com.
+	Sub string `json:"sub"` // The subject: the ID that represents the principal making the request.
+	Azp string `json:"azp"` // Optional. Who the token was issued to. Here is the ClientID
+	Aud string `json:"aud"` // The audience of the token. Here is the ClientID
+	Iat string `json:"iat"` // 	Unix epoch time when the token was issued.
+	Exp string `json:"exp"` // 	Unix epoch time when the token expires.
+	// These seven fields are only included when the user has granted the "profile" and "email" OAuth scopes to the application.
+	Email         string `json:"email"`
+	EmailVerified string `json:"email_verified"`
+	Name          string `json:"name"`
+	Picture       string `json:"picture"`
+	GivenName     string `json:"given_name"`
+	FamilyName    string `json:"family_name"`
+	Locale        string `json:"locale"`
 }
 
 func NewGoogleIdProvider(clientId string, clientSecret string, redirectUrl string) *GoogleIdProvider {
@@ -61,6 +85,25 @@ func (idp *GoogleIdProvider) getConfig() *oauth2.Config {
 }
 
 func (idp *GoogleIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	// Obtained the GoogleIdToken through Google OneTap authorization.
+	if strings.HasPrefix(code, GoogleIdTokenKey) {
+		code = strings.TrimPrefix(code, GoogleIdTokenKey+"-")
+		var googleIdToken GoogleIdToken
+		if err := json.Unmarshal([]byte(code), &googleIdToken); err != nil {
+			return nil, err
+		}
+		expiry := int64(util.ParseInt(googleIdToken.Exp))
+		token := &oauth2.Token{
+			AccessToken: fmt.Sprintf("%v-%v", GoogleIdTokenKey, googleIdToken.Sub),
+			TokenType:   "Bearer",
+			Expiry:      time.Unix(expiry, 0),
+		}
+		token = token.WithExtra(map[string]interface{}{
+			GoogleIdTokenKey: googleIdToken,
+		})
+		return token, nil
+	}
+
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
 }
@@ -88,6 +131,20 @@ type GoogleUserInfo struct {
 }
 
 func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
+	if strings.HasPrefix(token.AccessToken, GoogleIdTokenKey) {
+		googleIdToken, ok := token.Extra(GoogleIdTokenKey).(GoogleIdToken)
+		if !ok {
+			return nil, errors.New("invalid googleIdToken")
+		}
+		userInfo := UserInfo{
+			Id:          googleIdToken.Sub,
+			Username:    googleIdToken.Email,
+			DisplayName: googleIdToken.Name,
+			Email:       googleIdToken.Email,
+			AvatarUrl:   googleIdToken.Picture,
+		}
+		return &userInfo, nil
+	}
 	url := fmt.Sprintf("https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=%s", token.AccessToken)
 	resp, err := idp.Client.Get(url)
 	if err != nil {

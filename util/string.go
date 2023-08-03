@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -201,7 +202,7 @@ func GetMinLenStr(strs ...string) string {
 }
 
 func ReadStringFromPath(path string) string {
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		panic(err)
 	}
@@ -277,4 +278,29 @@ func GetEndPoint(endpoint string) string {
 		endpoint = strings.TrimPrefix(endpoint, prefix)
 	}
 	return endpoint
+}
+
+// HasString reports if slice has input string.
+func HasString(strs []string, str string) bool {
+	for _, i := range strs {
+		if i == str {
+			return true
+		}
+	}
+	return false
+}
+
+func ParseIdToString(input interface{}) (string, error) {
+	switch v := input.(type) {
+	case string:
+		return v, nil
+	case int:
+		return strconv.Itoa(v), nil
+	case int64:
+		return strconv.FormatInt(v, 10), nil
+	case float64:
+		return strconv.FormatFloat(v, 'f', -1, 64), nil
+	default:
+		return "", fmt.Errorf("unsupported id type: %T", input)
+	}
 }

@@ -65,10 +65,13 @@ func getOriginFromHost(host string) (string, string) {
 		return origin, origin
 	}
 
+	// "door.casdoor.com"
 	protocol := "https://"
-	if strings.HasPrefix(host, "localhost") {
+	if !strings.Contains(host, ".") {
+		// "localhost:8000" or "computer-name:80"
 		protocol = "http://"
 	} else if isIpAddress(host) {
+		// "192.168.0.10"
 		protocol = "http://"
 	}
 
@@ -120,6 +123,10 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	// link here: https://self-issued.info/docs/draft-ietf-jose-json-web-key.html
 	// or https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key
 	for _, cert := range certs {
+		if cert.Type != "x509" {
+			continue
+		}
+
 		certPemBlock := []byte(cert.Certificate)
 		certDerBlock, _ := pem.Decode(certPemBlock)
 		x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)

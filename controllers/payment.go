@@ -31,7 +31,6 @@ import (
 // @router /get-payments [get]
 func (c *ApiController) GetPayments() {
 	owner := c.Input().Get("owner")
-	organization := c.Input().Get("organization")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
 	field := c.Input().Get("field")
@@ -42,22 +41,24 @@ func (c *ApiController) GetPayments() {
 	if limit == "" || page == "" {
 		payments, err := object.GetPayments(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = payments
-		c.ServeJSON()
+		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetPaymentCount(owner, organization, field, value)
+		count, err := object.GetPaymentCount(owner, field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		payments, err := object.GetPaginationPayments(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		payments, err := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(payments, paginator.Nums())
@@ -75,10 +76,9 @@ func (c *ApiController) GetPayments() {
 // @router /get-user-payments [get]
 func (c *ApiController) GetUserPayments() {
 	owner := c.Input().Get("owner")
-	organization := c.Input().Get("organization")
 	user := c.Input().Get("user")
 
-	payments, err := object.GetUserPayments(owner, organization, user)
+	payments, err := object.GetUserPayments(owner, user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -99,11 +99,11 @@ func (c *ApiController) GetPayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = payment
-	c.ServeJSON()
+	c.ResponseOk(payment)
 }
 
 // UpdatePayment
@@ -175,23 +175,18 @@ func (c *ApiController) DeletePayment() {
 // @router /notify-payment [post]
 func (c *ApiController) NotifyPayment() {
 	owner := c.Ctx.Input.Param(":owner")
-	providerName := c.Ctx.Input.Param(":provider")
-	productName := c.Ctx.Input.Param(":product")
 	paymentName := c.Ctx.Input.Param(":payment")
 	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	err, errorResponse := object.NotifyPayment(c.Ctx.Request, body, owner, providerName, productName, paymentName, orderId)
-
-	_, err2 := c.Ctx.ResponseWriter.Write([]byte(errorResponse))
-	if err2 != nil {
-		panic(err2)
-	}
-
+	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, paymentName, orderId)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
+
+	c.ResponseOk(payment)
 }
 
 // InvoicePayment

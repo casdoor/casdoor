@@ -26,10 +26,10 @@ import (
 )
 
 type Object struct {
-	Owner     string `json:"owner"`
-	Name      string `json:"name"`
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
+	Owner        string `json:"owner"`
+	Name         string `json:"name"`
+	AccessKey    string `json:"accessKey"`
+	AccessSecret string `json:"accessSecret"`
 }
 
 func getUsername(ctx *context.Context) (username string) {
@@ -69,7 +69,7 @@ func getObject(ctx *context.Context) (string, string) {
 		// query == "?id=built-in/admin"
 		id := ctx.Input.Query("id")
 		if id != "" {
-			return util.GetOwnerAndNameFromId(id)
+			return util.GetOwnerAndNameFromIdNoCheck(id)
 		}
 
 		owner := ctx.Input.Query("owner")
@@ -107,14 +107,14 @@ func getKeys(ctx *context.Context) (string, string) {
 	method := ctx.Request.Method
 
 	if method == http.MethodGet {
-		accessKey := ctx.Input.Query("accesskey")
-		secretKey := ctx.Input.Query("secretkey")
-		return accessKey, secretKey
+		accessKey := ctx.Input.Query("accessKey")
+		accessSecret := ctx.Input.Query("accessSecret")
+		return accessKey, accessSecret
 	} else {
 		body := ctx.Input.RequestBody
 
 		if len(body) == 0 {
-			return ctx.Request.Form.Get("accesskey"), ctx.Request.Form.Get("secretkey")
+			return ctx.Request.Form.Get("accessKey"), ctx.Request.Form.Get("accessSecret")
 		}
 
 		var obj Object
@@ -123,7 +123,7 @@ func getKeys(ctx *context.Context) (string, string) {
 			return "", ""
 		}
 
-		return obj.AccessKey, obj.SecretKey
+		return obj.AccessKey, obj.AccessSecret
 	}
 }
 
@@ -150,13 +150,13 @@ func getUrlPath(urlPath string) string {
 	return urlPath
 }
 
-func AuthzFilter(ctx *context.Context) {
+func ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx.Request.URL.Path)
 
 	objOwner, objName := "", ""
-	if urlPath != "/api/get-app-login" {
+	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
 		objOwner, objName = getObject(ctx)
 	}
 

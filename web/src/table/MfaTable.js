@@ -15,14 +15,23 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Row, Select, Table, Tooltip} from "antd";
+import {EmailMfaType, SmsMfaType, TotpMfaType} from "../auth/MfaSetupPage";
+import {MfaRuleOptional, MfaRulePrompted, MfaRuleRequired} from "../Setting";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
 const {Option} = Select;
 
 const MfaItems = [
-  {name: "Phone"},
-  {name: "Email"},
+  {name: "Phone", value: SmsMfaType},
+  {name: "Email", value: EmailMfaType},
+  {name: "App", value: TotpMfaType},
+];
+
+const RuleItems = [
+  {value: MfaRuleOptional, label: i18next.t("organization:Optional")},
+  {value: MfaRulePrompted, label: i18next.t("organization:Prompt")},
+  {value: MfaRuleRequired, label: i18next.t("organization:Required")},
 ];
 
 class MfaTable extends React.Component {
@@ -80,7 +89,7 @@ class MfaTable extends React.Component {
                 this.updateField(table, index, "name", value);
               }} >
               {
-                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)
+                Setting.getDeduplicatedArray(MfaItems, table, "name").map((item, index) => <Option key={index} value={item.value}>{item.name}</Option>)
               }
             </Select>
           );
@@ -96,12 +105,21 @@ class MfaTable extends React.Component {
             <Select virtual={false} style={{width: "100%"}}
               value={text}
               defaultValue="Optional"
-              options={[
-                {value: "Optional", label: i18next.t("organization:Optional")},
-                {value: "Required", label: i18next.t("organization:Required")}].map((item) =>
+              options={RuleItems.map((item) =>
                 Setting.getOption(item.label, item.value))
               }
               onChange={value => {
+                let requiredCount = 0;
+                table.forEach((item) => {
+                  if (item.rule === MfaRuleRequired) {
+                    requiredCount++;
+                  }
+                });
+
+                if (value === MfaRuleRequired && requiredCount >= 1) {
+                  Setting.showMessage("error", "Only 1 MFA methods can be required");
+                  return;
+                }
                 this.updateField(table, index, "rule", value);
               }} >
             </Select>
@@ -135,7 +153,7 @@ class MfaTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={table.length >= MfaItems.length} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />

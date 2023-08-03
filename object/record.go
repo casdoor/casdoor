@@ -96,7 +96,7 @@ func AddRecord(record *Record) bool {
 		fmt.Println(errWebhook)
 	}
 
-	affected, err := adapter.Engine.Insert(record)
+	affected, err := ormer.Engine.Insert(record)
 	if err != nil {
 		panic(err)
 	}
@@ -111,7 +111,7 @@ func GetRecordCount(field, value string, filterRecord *Record) (int64, error) {
 
 func GetRecords() ([]*Record, error) {
 	records := []*Record{}
-	err := adapter.Engine.Desc("id").Find(&records)
+	err := ormer.Engine.Desc("id").Find(&records)
 	if err != nil {
 		return records, err
 	}
@@ -132,7 +132,7 @@ func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder 
 
 func GetRecordsByField(record *Record) ([]*Record, error) {
 	records := []*Record{}
-	err := adapter.Engine.Find(&records, record)
+	err := ormer.Engine.Find(&records, record)
 	if err != nil {
 		return records, err
 	}
@@ -161,7 +161,8 @@ func SendWebhooks(record *Record) error {
 
 		if matched {
 			if webhook.IsUserExtended {
-				user, err := GetMaskedUser(getUser(record.Organization, record.User))
+				user, err := getUser(record.Organization, record.User)
+				user, err = GetMaskedUser(user, false, err)
 				if err != nil {
 					return err
 				}

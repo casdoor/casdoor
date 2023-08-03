@@ -41,11 +41,11 @@ func (c *ApiController) GetModels() {
 	if limit == "" || page == "" {
 		models, err := object.GetModels(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = models
-		c.ServeJSON()
+		c.ResponseOk(models)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetModelCount(owner, field, value)
@@ -77,11 +77,11 @@ func (c *ApiController) GetModel() {
 
 	model, err := object.GetModel(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = model
-	c.ServeJSON()
+	c.ResponseOk(model)
 }
 
 // UpdateModel

@@ -25,12 +25,13 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class TokenListPage extends BaseListPage {
   newToken() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin", // this.props.account.tokenname,
       name: `token_${randomName}`,
       createdTime: moment().format(),
       application: "app-built-in",
-      organization: this.props.account.owner,
+      organization: organizationName,
       user: "admin",
       accessToken: "",
       expiresIn: 7200,
@@ -240,7 +241,7 @@ class TokenListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    TokenBackend.getTokens("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    TokenBackend.getTokens("admin", Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

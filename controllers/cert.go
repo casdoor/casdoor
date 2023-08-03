@@ -41,22 +41,24 @@ func (c *ApiController) GetCerts() {
 	if limit == "" || page == "" {
 		maskedCerts, err := object.GetMaskedCerts(object.GetCerts(owner))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = maskedCerts
-		c.ServeJSON()
+		c.ResponseOk(maskedCerts)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCertCount(owner, field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		certs, err := object.GetMaskedCerts(object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(certs, paginator.Nums())
@@ -80,22 +82,24 @@ func (c *ApiController) GetGlobleCerts() {
 	if limit == "" || page == "" {
 		maskedCerts, err := object.GetMaskedCerts(object.GetGlobleCerts())
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = maskedCerts
-		c.ServeJSON()
+		c.ResponseOk(maskedCerts)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalCertsCount(field, value)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		certs, err := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		c.ResponseOk(certs, paginator.Nums())
@@ -113,11 +117,11 @@ func (c *ApiController) GetCert() {
 	id := c.Input().Get("id")
 	cert, err := object.GetCert(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = object.GetMaskedCert(cert)
-	c.ServeJSON()
+	c.ResponseOk(object.GetMaskedCert(cert))
 }
 
 // UpdateCert

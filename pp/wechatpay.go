@@ -83,22 +83,22 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 	return wxRsp.Response.CodeUrl, "", nil
 }
 
-func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
+func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
 	notifyReq, err := wechat.V3ParseNotify(request)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	cert := pp.Client.WxPublicKey()
 	err = notifyReq.VerifySignByPK(cert)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	apiKey := string(pp.Client.ApiV3Key)
 	result, err := notifyReq.DecryptCipherText(apiKey)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	paymentName := result.OutTradeNo
@@ -106,10 +106,19 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 
 	productDisplayName, productName, providerName, err := parseAttachString(result.Attach)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
-	return productDisplayName, paymentName, price, productName, providerName, nil
+	notifyResult := &NotifyResult{
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
+		OutOrderId:         orderId,
+		Price:              price,
+		PaymentStatus:      PaymentStatePaid,
+		PaymentName:        paymentName,
+	}
+	return notifyResult, nil
 }
 
 func (pp *WechatPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {

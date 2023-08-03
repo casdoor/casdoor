@@ -26,14 +26,14 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class PaymentListPage extends BaseListPage {
   newPayment() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
-      owner: "admin",
+      owner: organizationName,
       name: `payment_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Payment - ${randomName}`,
       provider: "provider_pay_paypal",
       type: "PayPal",
-      organization: this.props.account.owner,
       user: "admin",
       productName: "computer-1",
       productDisplayName: "A notebook computer",
@@ -53,7 +53,7 @@ class PaymentListPage extends BaseListPage {
     PaymentBackend.addPayment(newPayment)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/payments/${newPayment.name}`, mode: "add"});
+          this.props.history.push({pathname: `/payments/${newPayment.owner}/${newPayment.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -95,7 +95,7 @@ class PaymentListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/payments/${text}`}>
+            <Link to={`/payments/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -111,7 +111,7 @@ class PaymentListPage extends BaseListPage {
         ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
           return (
-            <Link to={`/providers/${text}`}>
+            <Link to={`/providers/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -119,11 +119,11 @@ class PaymentListPage extends BaseListPage {
       },
       {
         title: i18next.t("general:Organization"),
-        dataIndex: "organization",
-        key: "organization",
+        dataIndex: "owner",
+        key: "owner",
         width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps("organization"),
+        ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
           return (
             <Link to={`/organizations/${text}`}>
@@ -141,7 +141,7 @@ class PaymentListPage extends BaseListPage {
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${record.organization}/${text}`}>
+            <Link to={`/users/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -221,8 +221,8 @@ class PaymentListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/payments/${record.name}/result`)}>{i18next.t("payment:Result")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/payments/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/payments/${record.owner}/${record.name}/result`)}>{i18next.t("payment:Result")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/payments/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePayment(index)}
@@ -265,7 +265,7 @@ class PaymentListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PaymentBackend.getPayments("admin", Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PaymentBackend.getPayments(Setting.getRequestOrganization(this.props.account), Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

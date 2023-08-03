@@ -18,60 +18,27 @@ import (
 	"strings"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	stringadapter "github.com/qiangmzsx/string-adapter/v2"
 )
 
 var Enforcer *casbin.Enforcer
 
-func InitAuthz() {
+func InitApi() {
 	var err error
 
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	driverName := conf.GetConfigString("driverName")
-	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
-	a, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, "casbin_rule", tableNamePrefix, true)
+	e, err := object.GetEnforcer(util.GetId("built-in", "api-enforcer-built-in"))
+	if err != nil {
+		panic(err)
+	}
+	err = e.InitEnforcer()
 	if err != nil {
 		panic(err)
 	}
 
-	modelText := `
-[request_definition]
-r = subOwner, subName, method, urlPath, objOwner, objName
-
-[policy_definition]
-p = subOwner, subName, method, urlPath, objOwner, objName
-
-[role_definition]
-g = _, _
-
-[policy_effect]
-e = some(where (p.eft == allow))
-
-[matchers]
-m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
-    (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
-    (r.method == p.method || p.method == "*") && \
-    (r.urlPath == p.urlPath || p.urlPath == "*") && \
-    (r.objOwner == p.objOwner || p.objOwner == "*") && \
-    (r.objName == p.objName || p.objName == "*") || \
-    (r.subOwner == r.objOwner && r.subName == r.objName)
-`
-
-	m, err := model.NewModelFromString(modelText)
-	if err != nil {
-		panic(err)
-	}
-
-	Enforcer, err = casbin.NewEnforcer(m, a)
-	if err != nil {
-		panic(err)
-	}
-
+	Enforcer = e.Enforcer
 	Enforcer.ClearPolicy()
 
 	// if len(Enforcer.GetPolicy()) == 0 {

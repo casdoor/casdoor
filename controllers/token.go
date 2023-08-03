@@ -43,11 +43,11 @@ func (c *ApiController) GetTokens() {
 	if limit == "" || page == "" {
 		token, err := object.GetTokens(owner, organization)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = token
-		c.ServeJSON()
+		c.ResponseOk(token)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetTokenCount(owner, organization, field, value)
@@ -78,11 +78,11 @@ func (c *ApiController) GetToken() {
 	id := c.Input().Get("id")
 	token, err := object.GetToken(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = token
-	c.ServeJSON()
+	c.ResponseOk(token)
 }
 
 // UpdateToken
@@ -193,7 +193,8 @@ func (c *ApiController) GetOAuthToken() {
 	host := c.Ctx.Request.Host
 	oAuthtoken, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = oAuthtoken
@@ -236,7 +237,8 @@ func (c *ApiController) RefreshToken() {
 
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.Data["json"] = refreshToken2
@@ -276,7 +278,8 @@ func (c *ApiController) IntrospectToken() {
 	}
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if application == nil || application.ClientSecret != clientSecret {
@@ -289,7 +292,8 @@ func (c *ApiController) IntrospectToken() {
 	}
 	token, err := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if token == nil {
@@ -319,7 +323,7 @@ func (c *ApiController) IntrospectToken() {
 		Sub:       jwtToken.Subject,
 		Aud:       jwtToken.Audience,
 		Iss:       jwtToken.Issuer,
-		Jti:       jwtToken.Id,
+		Jti:       jwtToken.ID,
 	}
 	c.ServeJSON()
 }

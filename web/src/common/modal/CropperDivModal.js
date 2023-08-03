@@ -28,6 +28,9 @@ export const CropperDivModal = (props) => {
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const {title} = props;
+  const {setTitle} = props;
+  const {tag} = props;
+  const {disabled} = props;
   const {user} = props;
   const {buttonText} = props;
   const {organization} = props;
@@ -59,8 +62,8 @@ export const CropperDivModal = (props) => {
       }
       // Setting.showMessage("success", "uploading...");
       const extension = image.substring(image.indexOf("/") + 1, image.indexOf(";base64"));
-      const fullFilePath = `avatar/${user.owner}/${user.name}.${extension}`;
-      ResourceBackend.uploadResource(user.owner, user.name, "avatar", "CropperDivModal", fullFilePath, blob)
+      const fullFilePath = `${tag}/${user.owner}/${user.name}.${extension}`;
+      ResourceBackend.uploadResource(user.owner, user.name, tag, "CropperDivModal", fullFilePath, blob)
         .then((res) => {
           if (res.status === "ok") {
             window.location.href = window.location.pathname;
@@ -127,6 +130,11 @@ export const CropperDivModal = (props) => {
     setLoading(true);
     ResourceBackend.getResources(user.owner, user.name, "", "", "", "", "", "")
       .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          setLoading(false);
+          return;
+        }
         setLoading(false);
         setOptions(getOptions(res));
       });
@@ -134,19 +142,19 @@ export const CropperDivModal = (props) => {
 
   return (
     <div>
-      <Button type="default" onClick={showModal}>
+      <Button type="default" onClick={showModal} disabled={disabled}>
         {buttonText}
       </Button>
       <Modal
         maskClosable={false}
         title={title}
         open={visible}
-        okText={i18next.t("user:Upload a photo")}
+        okText={title}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         width={600}
         footer={
-          [<Button block key="submit" type="primary" onClick={handleOk}>{i18next.t("user:Set new profile picture")}</Button>]
+          [<Button block key="submit" type="primary" onClick={handleOk}>{setTitle}</Button>]
         }
       >
         <Col style={{margin: "0px auto 60px auto", width: 1000, height: 350}}>

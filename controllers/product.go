@@ -42,11 +42,11 @@ func (c *ApiController) GetProducts() {
 	if limit == "" || page == "" {
 		products, err := object.GetProducts(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = products
-		c.ServeJSON()
+		c.ResponseOk(products)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProductCount(owner, field, value)
@@ -78,16 +78,17 @@ func (c *ApiController) GetProduct() {
 
 	product, err := object.GetProduct(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	err = object.ExtendProductWithProviders(product)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = product
-	c.ServeJSON()
+	c.ResponseOk(product)
 }
 
 // UpdateProduct

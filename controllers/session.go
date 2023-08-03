@@ -41,11 +41,11 @@ func (c *ApiController) GetSessions() {
 	if limit == "" || page == "" {
 		sessions, err := object.GetSessions(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = sessions
-		c.ServeJSON()
+		c.ResponseOk(sessions)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSessionCount(owner, field, value)
@@ -76,11 +76,11 @@ func (c *ApiController) GetSingleSession() {
 
 	session, err := object.GetSingleSession(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = session
-	c.ServeJSON()
+	c.ResponseOk(session)
 }
 
 // UpdateSession
@@ -155,10 +155,9 @@ func (c *ApiController) IsSessionDuplicated() {
 
 	isUserSessionDuplicated, err := object.IsSessionDuplicated(id, sessionId)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
-	c.Data["json"] = &Response{Status: "ok", Msg: "", Data: isUserSessionDuplicated}
-
-	c.ServeJSON()
+	c.ResponseOk(isUserSessionDuplicated)
 }

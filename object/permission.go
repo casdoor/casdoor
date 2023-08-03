@@ -74,7 +74,7 @@ func GetPermissionCount(owner, field, value string) (int64, error) {
 
 func GetPermissions(owner string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner})
 	if err != nil {
 		return permissions, err
 	}
@@ -99,7 +99,7 @@ func getPermission(owner string, name string) (*Permission, error) {
 	}
 
 	permission := Permission{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&permission)
+	existed, err := ormer.Engine.Get(&permission)
 	if err != nil {
 		return &permission, err
 	}
@@ -112,13 +112,13 @@ func getPermission(owner string, name string) (*Permission, error) {
 }
 
 func GetPermission(id string) (*Permission, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	return getPermission(owner, name)
 }
 
 // checkPermissionValid verifies if the permission is valid
 func checkPermissionValid(permission *Permission) error {
-	enforcer := getEnforcer(permission)
+	enforcer := getPermissionEnforcer(permission)
 	enforcer.EnableAutoSave(false)
 
 	policies := getPolicies(permission)
@@ -149,13 +149,13 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		return false, err
 	}
 
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
 	oldPermission, err := getPermission(owner, name)
 	if oldPermission == nil {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
 	if err != nil {
 		return false, err
 	}
@@ -164,9 +164,9 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		removeGroupingPolicies(oldPermission)
 		removePolicies(oldPermission)
 		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
-			isEmpty, _ := adapter.Engine.IsTableEmpty(oldPermission.Adapter)
+			isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
 			if isEmpty {
-				err = adapter.Engine.DropTables(oldPermission.Adapter)
+				err = ormer.Engine.DropTables(oldPermission.Adapter)
 				if err != nil {
 					return false, err
 				}
@@ -180,7 +180,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 }
 
 func AddPermission(permission *Permission) (bool, error) {
-	affected, err := adapter.Engine.Insert(permission)
+	affected, err := ormer.Engine.Insert(permission)
 	if err != nil {
 		return false, err
 	}
@@ -198,7 +198,7 @@ func AddPermissions(permissions []*Permission) bool {
 		return false
 	}
 
-	affected, err := adapter.Engine.Insert(permissions)
+	affected, err := ormer.Engine.Insert(permissions)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
 			panic(err)
@@ -242,7 +242,7 @@ func AddPermissionsInBatch(permissions []*Permission) bool {
 }
 
 func DeletePermission(permission *Permission) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{permission.Owner, permission.Name}).Delete(&Permission{})
+	affected, err := ormer.Engine.ID(core.PK{permission.Owner, permission.Name}).Delete(&Permission{})
 	if err != nil {
 		return false, err
 	}
@@ -251,9 +251,9 @@ func DeletePermission(permission *Permission) (bool, error) {
 		removeGroupingPolicies(permission)
 		removePolicies(permission)
 		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
-			isEmpty, _ := adapter.Engine.IsTableEmpty(permission.Adapter)
+			isEmpty, _ := ormer.Engine.IsTableEmpty(permission.Adapter)
 			if isEmpty {
-				err = adapter.Engine.DropTables(permission.Adapter)
+				err = ormer.Engine.DropTables(permission.Adapter)
 				if err != nil {
 					return false, err
 				}
@@ -264,23 +264,53 @@ func DeletePermission(permission *Permission) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetPermissionsByUser(userId string) ([]*Permission, error) {
+func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
+	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
 	if err != nil {
-		return permissions, err
+		return nil, nil, err
 	}
 
-	for i := range permissions {
-		permissions[i].Users = nil
+	existedPerms := map[string]struct{}{}
+
+	for _, perm := range permissions {
+		perm.Users = nil
+
+		if _, ok := existedPerms[perm.Name]; !ok {
+			existedPerms[perm.Name] = struct{}{}
+		}
 	}
 
-	return permissions, nil
+	permFromRoles := []*Permission{}
+
+	roles, err := GetRolesByUser(userId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, role := range roles {
+		perms := []*Permission{}
+		err := ormer.Engine.Where("roles like ?", "%"+role.GetId()+"\"%").Find(&perms)
+		if err != nil {
+			return nil, nil, err
+		}
+		permFromRoles = append(permFromRoles, perms...)
+	}
+
+	for _, perm := range permFromRoles {
+		perm.Users = nil
+		if _, ok := existedPerms[perm.Name]; !ok {
+			existedPerms[perm.Name] = struct{}{}
+			permissions = append(permissions, perm)
+		}
+	}
+
+	return permissions, roles, nil
 }
 
 func GetPermissionsByRole(roleId string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
+	err := ormer.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
 	if err != nil {
 		return permissions, err
 	}
@@ -290,7 +320,7 @@ func GetPermissionsByRole(roleId string) ([]*Permission, error) {
 
 func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
+	err := ormer.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
 	if err != nil {
 		return permissions, err
 	}
@@ -300,7 +330,7 @@ func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
 
 func GetPermissionsBySubmitter(owner string, submitter string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Submitter: submitter})
+	err := ormer.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Submitter: submitter})
 	if err != nil {
 		return permissions, err
 	}
@@ -310,7 +340,7 @@ func GetPermissionsBySubmitter(owner string, submitter string) ([]*Permission, e
 
 func GetPermissionsByModel(owner string, model string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := adapter.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Model: model})
+	err := ormer.Engine.Desc("created_time").Find(&permissions, &Permission{Owner: owner, Model: model})
 	if err != nil {
 		return permissions, err
 	}
@@ -339,4 +369,25 @@ func GetMaskedPermissions(permissions []*Permission) []*Permission {
 	}
 
 	return permissions
+}
+
+// GroupPermissionsByModelAdapter group permissions by model and adapter.
+// Every model and adapter will be a key, and the value is a list of permission ids.
+// With each list of permission ids have the same key, we just need to init the
+// enforcer and do the enforce/batch-enforce once (with list of permission ids
+// as the policyFilter when the enforcer load policy).
+func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]string {
+	m := make(map[string][]string)
+
+	for _, permission := range permissions {
+		key := permission.Model + permission.Adapter
+		permissionIds, ok := m[key]
+		if !ok {
+			m[key] = []string{permission.GetId()}
+		} else {
+			m[key] = append(permissionIds, permission.GetId())
+		}
+	}
+
+	return m
 }

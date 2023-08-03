@@ -63,9 +63,11 @@ func (syncer *Syncer) syncUsers() {
 				}
 			} else {
 				if user.PreHash == oHash {
-					updatedOUser := syncer.createOriginalUserFromUser(user)
-					syncer.updateUser(updatedOUser)
-					fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+					if !syncer.IsReadOnly {
+						updatedOUser := syncer.createOriginalUserFromUser(user)
+						syncer.updateUser(updatedOUser)
+						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
+					}
 
 					// update preHash
 					user.PreHash = user.Hash
@@ -91,15 +93,17 @@ func (syncer *Syncer) syncUsers() {
 		panic(err)
 	}
 
-	for _, user := range users {
-		id := user.Id
-		if _, ok := oUserMap[id]; !ok {
-			newOUser := syncer.createOriginalUserFromUser(user)
-			_, err = syncer.addUser(newOUser)
-			if err != nil {
-				panic(err)
+	if !syncer.IsReadOnly {
+		for _, user := range users {
+			id := user.Id
+			if _, ok := oUserMap[id]; !ok {
+				newOUser := syncer.createOriginalUserFromUser(user)
+				_, err = syncer.addUser(newOUser)
+				if err != nil {
+					panic(err)
+				}
+				fmt.Printf("New oUser: %v\n", newOUser)
 			}
-			fmt.Printf("New oUser: %v\n", newOUser)
 		}
 	}
 }

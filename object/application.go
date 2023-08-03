@@ -57,6 +57,7 @@ type Application struct {
 	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
+	Tags                []string        `xorm:"mediumtext" json:"tags"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
@@ -91,7 +92,7 @@ func GetOrganizationApplicationCount(owner, Organization, field, value string) (
 
 func GetApplications(owner string) ([]*Application, error) {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&applications, &Application{Owner: owner})
 	if err != nil {
 		return applications, err
 	}
@@ -101,7 +102,7 @@ func GetApplications(owner string) ([]*Application, error) {
 
 func GetOrganizationApplications(owner string, organization string) ([]*Application, error) {
 	applications := []*Application{}
-	err := adapter.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
+	err := ormer.Engine.Desc("created_time").Find(&applications, &Application{Organization: organization})
 	if err != nil {
 		return applications, err
 	}
@@ -181,7 +182,7 @@ func getApplication(owner string, name string) (*Application, error) {
 	}
 
 	application := Application{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&application)
+	existed, err := ormer.Engine.Get(&application)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +206,7 @@ func getApplication(owner string, name string) (*Application, error) {
 
 func GetApplicationByOrganizationName(organization string) (*Application, error) {
 	application := Application{}
-	existed, err := adapter.Engine.Where("organization=?", organization).Get(&application)
+	existed, err := ormer.Engine.Where("organization=?", organization).Get(&application)
 	if err != nil {
 		return nil, nil
 	}
@@ -252,7 +253,7 @@ func GetApplicationByUserId(userId string) (application *Application, err error)
 
 func GetApplicationByClientId(clientId string) (*Application, error) {
 	application := Application{}
-	existed, err := adapter.Engine.Where("client_id=?", clientId).Get(&application)
+	existed, err := ormer.Engine.Where("client_id=?", clientId).Get(&application)
 	if err != nil {
 		return nil, err
 	}
@@ -280,12 +281,19 @@ func GetApplication(id string) (*Application, error) {
 }
 
 func GetMaskedApplication(application *Application, userId string) *Application {
-	if isUserIdGlobalAdmin(userId) {
-		return application
-	}
-
 	if application == nil {
 		return nil
+	}
+
+	if userId != "" {
+		if isUserIdGlobalAdmin(userId) {
+			return application
+		}
+
+		user, _ := GetUser(userId)
+		if user != nil && user.IsApplicationAdmin(application) {
+			return application
+		}
 	}
 
 	if application.ClientSecret != "" {
@@ -348,7 +356,7 @@ func UpdateApplication(id string, application *Application) (bool, error) {
 		providerItem.Provider = nil
 	}
 
-	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if application.ClientSecret == "***" {
 		session.Omit("client_secret")
 	}
@@ -387,7 +395,7 @@ func AddApplication(application *Application) (bool, error) {
 		providerItem.Provider = nil
 	}
 
-	affected, err := adapter.Engine.Insert(application)
+	affected, err := ormer.Engine.Insert(application)
 	if err != nil {
 		return false, nil
 	}
@@ -400,7 +408,7 @@ func DeleteApplication(application *Application) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
+	affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		return false, err
 	}
@@ -476,7 +484,7 @@ func ExtendManagedAccountsWithUser(user *User) (*User, error) {
 }
 
 func applicationChangeTrigger(oldName string, newName string) error {
-	session := adapter.Engine.NewSession()
+	session := ormer.Engine.NewSession()
 	defer session.Close()
 
 	err := session.Begin()
@@ -506,7 +514,7 @@ func applicationChangeTrigger(oldName string, newName string) error {
 	}
 
 	var permissions []*Permission
-	err = adapter.Engine.Find(&permissions)
+	err = ormer.Engine.Find(&permissions)
 	if err != nil {
 		return err
 	}

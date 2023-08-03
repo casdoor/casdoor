@@ -17,6 +17,7 @@ package deployment
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/casdoor/casdoor/object"
@@ -45,7 +46,7 @@ func uploadFolder(storageProvider oss.StorageInterface, folder string) {
 			continue
 		}
 
-		file, err := os.Open(path + filename)
+		file, err := os.Open(filepath.Clean(path + filename))
 		if err != nil {
 			panic(err)
 		}

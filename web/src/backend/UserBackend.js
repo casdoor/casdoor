@@ -25,8 +25,8 @@ export function getGlobalUsers(page, pageSize, field = "", value = "", sortField
   }).then(res => res.json());
 }
 
-export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "", groupId = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupId=${groupId}`, {
+export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "", groupName = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -223,11 +223,11 @@ export function checkUserPassword(values) {
   }).then(res => res.json());
 }
 
-export function removeUserFromGroup({owner, name, groupId}) {
+export function removeUserFromGroup({owner, name, groupName}) {
   const formData = new FormData();
   formData.append("owner", owner);
   formData.append("name", name);
-  formData.append("groupId", groupId);
+  formData.append("groupName", groupName);
   return fetch(`${Setting.ServerUrl}/api/remove-user-from-group`, {
     method: "POST",
     credentials: "include",

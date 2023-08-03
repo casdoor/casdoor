@@ -1,11 +1,14 @@
 swagger: "2.0"
 info:
-  title: Casdoor API
-  description: Documentation of Casdoor API
-  version: 1.0.0
+  title: Casdoor RESTful API
+  description: Swagger Docs of Casdoor Backend API
+  version: 1.376.1
   contact:
-    email: admin@casbin.org
+    email: casbin@googlegroups.com
 basePath: /
+schemes:
+- https
+- http
 paths:
   /.well-known/jwks:
     get:
@@ -28,6 +31,24 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.OidcDiscovery'
+  /api/add-adapter:
+    post:
+      tags:
+      - Adapter API
+      description: add adapter
+      operationId: ApiController.AddAdapter
+      parameters:
+      - in: body
+        name: body
+        description: The details of the adapter
+        required: true
+        schema:
+          $ref: '#/definitions/object.Adapter'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-application:
     post:
       tags:
@@ -82,11 +103,60 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: add enforcer
+      operationId: ApiController.AddEnforcer
+      parameters:
+      - in: body
+        name: enforcer
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
+  /api/add-group:
+    post:
+      tags:
+      - Group API
+      description: add group
+      operationId: ApiController.AddGroup
+      parameters:
+      - in: body
+        name: body
+        description: The details of the group
+        required: true
+        schema:
+          $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-ldap:
     post:
       tags:
       - Account API
+      description: add ldap
       operationId: ApiController.AddLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-message:
     post:
       tags:
@@ -272,6 +342,18 @@ paths:
       tags:
       - Resource API
       operationId: ApiController.AddResource
+      parameters:
+      - in: body
+        name: resource
+        description: Resource object
+        required: true
+        schema:
+          $ref: '#/definitions/object.Resource'
+      responses:
+        "200":
+          description: Success or error
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-role:
     post:
       tags:
@@ -386,6 +468,11 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-user-keys:
+    post:
+      tags:
+      - User API
+      operationId: ApiController.AddUserkeys
   /api/add-webhook:
     post:
       tags:
@@ -506,12 +593,12 @@ paths:
     post:
       tags:
       - Enforce API
-      description: perform enforce
+      description: Call Casbin BatchEnforce API
       operationId: ApiController.BatchEnforce
       parameters:
       - in: body
         name: body
-        description: casbin request array
+        description: array of casbin requests
         required: true
         schema:
           $ref: '#/definitions/object.CasbinRequest'
@@ -555,6 +642,24 @@ paths:
       tags:
       - User API
       operationId: ApiController.CheckUserPassword
+  /api/delete-adapter:
+    post:
+      tags:
+      - Adapter API
+      description: delete adapter
+      operationId: ApiController.DeleteAdapter
+      parameters:
+      - in: body
+        name: body
+        description: The details of the adapter
+        required: true
+        schema:
+          $ref: '#/definitions/object.Adapter'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-application:
     post:
       tags:
@@ -609,11 +714,60 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: delete enforcer
+      operationId: ApiController.DeleteEnforcer
+      parameters:
+      - in: body
+        name: body
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object.Enforce'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
+  /api/delete-group:
+    post:
+      tags:
+      - Group API
+      description: delete group
+      operationId: ApiController.DeleteGroup
+      parameters:
+      - in: body
+        name: body
+        description: The details of the group
+        required: true
+        schema:
+          $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-ldap:
     post:
       tags:
       - Account API
+      description: delete ldap
       operationId: ApiController.DeleteLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-message:
     post:
       tags:
@@ -792,6 +946,18 @@ paths:
       tags:
       - Resource API
       operationId: ApiController.DeleteResource
+      parameters:
+      - in: body
+        name: resource
+        description: Resource object
+        required: true
+        schema:
+          $ref: '#/definitions/object.Resource'
+      responses:
+        "200":
+          description: Success or error
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-role:
     post:
       tags:
@@ -923,12 +1089,12 @@ paths:
     post:
       tags:
       - Enforce API
-      description: perform enforce
+      description: Call Casbin Enforce API
       operationId: ApiController.Enforce
       parameters:
       - in: body
         name: body
-        description: casbin request
+        description: Casbin request
         required: true
         schema:
           $ref: '#/definitions/object.CasbinRequest'
@@ -960,6 +1126,42 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/get-adapter:
+    get:
+      tags:
+      - Adapter API
+      description: get adapter
+      operationId: ApiController.GetAdapter
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the adapter
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Adapter'
+  /api/get-adapters:
+    get:
+      tags:
+      - Adapter API
+      description: get adapters
+      operationId: ApiController.GetAdapters
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of adapters
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Adapter'
   /api/get-app-login:
     get:
       tags:
@@ -1144,6 +1346,42 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/get-enforcer:
+    get:
+      tags:
+      - Enforcer API
+      description: get enforcer
+      operationId: ApiController.GetEnforcer
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
+  /api/get-enforcers:
+    get:
+      tags:
+      - Enforcer API
+      description: get enforcers
+      operationId: ApiController.GetEnforcers
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of enforcers
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Enforcer'
   /api/get-global-providers:
     get:
       tags:
@@ -1183,21 +1421,88 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Cert'
+  /api/get-group:
+    get:
+      tags:
+      - Group API
+      description: get group
+      operationId: ApiController.GetGroup
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the group
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Group'
+  /api/get-groups:
+    get:
+      tags:
+      - Group API
+      description: get groups
+      operationId: ApiController.GetGroups
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of groups
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Group'
   /api/get-ldap:
     get:
       tags:
       - Account API
+      description: get ldap
       operationId: ApiController.GetLdap
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Ldap'
   /api/get-ldap-users:
     get:
       tags:
       - Account API
+      description: get ldap users
       operationId: ApiController.GetLdapser
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/LdapResp'
   /api/get-ldaps:
     get:
       tags:
       - Account API
+      description: get ldaps
       operationId: ApiController.GetLdaps
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Ldap'
   /api/get-message:
     get:
       tags:
@@ -1327,7 +1632,7 @@ paths:
     get:
       tags:
       - Organization API
-      description: get all organization names
+      description: get all organization name and displayName
       operationId: ApiController.GetOrganizationNames
       parameters:
       - in: query
@@ -1521,7 +1826,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.pricing'
+            $ref: '#/definitions/object.Pricing'
   /api/get-pricings:
     get:
       tags:
@@ -1669,12 +1974,67 @@ paths:
     get:
       tags:
       - Resource API
+      description: get resource
       operationId: ApiController.GetResource
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of resource
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Resource'
   /api/get-resources:
     get:
       tags:
       - Resource API
+      description: get resources
       operationId: ApiController.GetResources
+      parameters:
+      - in: query
+        name: owner
+        description: Owner
+        required: true
+        type: string
+      - in: query
+        name: user
+        description: User
+        required: true
+        type: string
+      - in: query
+        name: pageSize
+        description: Page Size
+        type: integer
+      - in: query
+        name: p
+        description: Page Number
+        type: integer
+      - in: query
+        name: field
+        description: Field
+        type: string
+      - in: query
+        name: value
+        description: Value
+        type: string
+      - in: query
+        name: sortField
+        description: Sort Field
+        type: string
+      - in: query
+        name: sortOrder
+        description: Sort Order
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Resource'
   /api/get-role:
     get:
       tags:
@@ -1793,7 +2153,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.subscription'
+            $ref: '#/definitions/object.Subscription'
   /api/get-subscriptions:
     get:
       tags:
@@ -2044,6 +2404,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2061,6 +2422,7 @@ paths:
         description: The owner of webhooks
         required: true
         type: string
+        default: built-in/admin
       responses:
         "200":
           description: The Response object
@@ -2068,6 +2430,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Webhook'
+      security:
+      - test_apiKey: []
   /api/health:
     get:
       tags:
@@ -2172,7 +2536,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/login/oauth/access_token:
     post:
       tags:
@@ -2351,9 +2715,9 @@ paths:
       operationId: ApiController.MfaSetupInitiate
       responses:
         "200":
-          description: Response object
+          description: The Response object
           schema:
-            $ref: '#/definitions/The'
+            $ref: '#/definitions/controllers.Response'
   /api/mfa/setup/verify:
     post:
       tags:
@@ -2475,11 +2839,46 @@ paths:
     post:
       tags:
       - Account API
+      description: sync ldap users
       operationId: ApiController.SyncLdapUsers
+      parameters:
+      - in: query
+        name: id
+        description: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/LdapSyncResp'
   /api/unlink:
     post:
       tags:
       - Login API
+  /api/update-adapter:
+    post:
+      tags:
+      - Adapter API
+      description: update adapter
+      operationId: ApiController.UpdateAdapter
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the adapter
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the adapter
+        required: true
+        schema:
+          $ref: '#/definitions/object.Adapter'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-application:
     post:
       tags:
@@ -2549,11 +2948,70 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-enforcer:
+    post:
+      tags:
+      - Enforcer API
+      description: update enforcer
+      operationId: ApiController.UpdateEnforcer
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: enforcer
+        description: The enforcer object
+        required: true
+        schema:
+          $ref: '#/definitions/object'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object'
+  /api/update-group:
+    post:
+      tags:
+      - Group API
+      description: update group
+      operationId: ApiController.UpdateGroup
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the group
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the group
+        required: true
+        schema:
+          $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-ldap:
     post:
       tags:
       - Account API
+      description: update ldap
       operationId: ApiController.UpdateLdap
+      parameters:
+      - in: body
+        name: body
+        description: The details of the ldap
+        required: true
+        schema:
+          $ref: '#/definitions/object.Ldap'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-message:
     post:
       tags:
@@ -2765,7 +3223,25 @@ paths:
     post:
       tags:
       - Resource API
+      description: get resource
       operationId: ApiController.UpdateResource
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of resource
+        required: true
+        type: string
+      - in: body
+        name: resource
+        description: The resource object
+        required: true
+        schema:
+          $ref: '#/definitions/object.Resource'
+      responses:
+        "200":
+          description: Success or error
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-role:
     post:
       tags:
@@ -2912,6 +3388,7 @@ paths:
         description: The id ( owner/name ) of the webhook
         required: true
         type: string
+        default: built-in/admin
       - in: body
         name: body
         description: The details of the webhook
@@ -2928,6 +3405,53 @@ paths:
       tags:
       - Resource API
       operationId: ApiController.UploadResource
+      parameters:
+      - in: query
+        name: owner
+        description: Owner
+        required: true
+        type: string
+      - in: query
+        name: user
+        description: User
+        required: true
+        type: string
+      - in: query
+        name: application
+        description: Application
+        required: true
+        type: string
+      - in: query
+        name: tag
+        description: Tag
+        type: string
+      - in: query
+        name: parent
+        description: Parent
+        type: string
+      - in: query
+        name: fullFilePath
+        description: Full File Path
+        required: true
+        type: string
+      - in: query
+        name: createdTime
+        description: Created Time
+        type: string
+      - in: query
+        name: description
+        description: Description
+        type: string
+      - in: formData
+        name: file
+        description: Resource file
+        required: true
+        type: file
+      responses:
+        "200":
+          description: FileUrl, objectKey
+          schema:
+            $ref: '#/definitions/object.Resource'
   /api/user:
     get:
       tags:
@@ -2994,7 +3518,7 @@ paths:
         "200":
           description: '"The Response object"'
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/webauthn/signup/begin:
     get:
       tags:
@@ -3023,22 +3547,22 @@ paths:
         "200":
           description: '"The Response object"'
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
 definitions:
-  1225.0xc0002e2ae0.false:
-    title: "false"
-    type: object
-  1260.0xc0002e2b10.false:
-    title: "false"
-    type: object
   LaravelResponse:
     title: LaravelResponse
+    type: object
+  LdapResp:
+    title: LdapResp
+    type: object
+  LdapSyncResp:
+    title: LdapSyncResp
     type: object
   Response:
     title: Response
     type: object
-  The:
-    title: The
+  casbin.Enforcer:
+    title: Enforcer
     type: object
   controllers.AuthForm:
     title: AuthForm
@@ -3064,9 +3588,13 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/1225.0xc0002e2ae0.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       data2:
-        $ref: '#/definitions/1260.0xc0002e2b10.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       msg:
         type: string
       name:
@@ -3090,8 +3618,8 @@ definitions:
   jose.JSONWebKey:
     title: JSONWebKey
     type: object
-  object.&{179844 0xc000a02f90 false}:
-    title: '&{179844 0xc000a02f90 false}'
+  object:
+    title: object
     type: object
   object.AccountItem:
     title: AccountItem
@@ -3210,6 +3738,10 @@ definitions:
           $ref: '#/definitions/object.SignupItem'
       signupUrl:
         type: string
+      tags:
+        type: array
+        items:
+          type: string
       termsOfUse:
         type: string
       themeData:
@@ -3220,7 +3752,7 @@ definitions:
     title: CasbinRequest
     type: array
     items:
-      $ref: '#/definitions/object.&{179844 0xc000a02f90 false}'
+      $ref: '#/definitions/object.CasbinRequest'
   object.Cert:
     title: Cert
     type: object
@@ -3284,6 +3816,31 @@ definitions:
         type: array
         items:
           type: string
+  object.Enforce:
+    title: Enforce
+    type: object
+  object.Enforcer:
+    title: Enforcer
+    type: object
+    properties:
+      adapter:
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      displayName:
+        type: string
+      isEnabled:
+        type: boolean
+      model:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      updatedTime:
+        type: string
   object.GaugeVecInfo:
     title: GaugeVecInfo
     type: object
@@ -3295,6 +3852,44 @@ definitions:
       throughput:
         type: number
         format: double
+  object.Group:
+    title: Group
+    type: object
+    properties:
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/object.Group'
+      contactEmail:
+        type: string
+      createdTime:
+        type: string
+      displayName:
+        type: string
+      isEnabled:
+        type: boolean
+      isTopGroup:
+        type: boolean
+      key:
+        type: string
+      manager:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      parentId:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updatedTime:
+        type: string
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/object.User'
   object.Header:
     title: Header
     type: object
@@ -3349,6 +3944,42 @@ definitions:
         type: string
       username:
         type: string
+  object.Ldap:
+    title: Ldap
+    type: object
+    properties:
+      autoSync:
+        type: integer
+        format: int64
+      baseDn:
+        type: string
+      createdTime:
+        type: string
+      enableSsl:
+        type: boolean
+      filter:
+        type: string
+      filterFields:
+        type: array
+        items:
+          type: string
+      host:
+        type: string
+      id:
+        type: string
+      lastSync:
+        type: string
+      owner:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+        format: int64
+      serverName:
+        type: string
+      username:
+        type: string
   object.ManagedAccount:
     title: ManagedAccount
     type: object
@@ -3395,17 +4026,17 @@ definitions:
     properties:
       countryCode:
         type: string
-      id:
-        type: string
+      enabled:
+        type: boolean
       isPreferred:
         type: boolean
+      mfaType:
+        type: string
       recoveryCodes:
         type: array
         items:
           type: string
       secret:
-        type: string
-      type:
         type: string
       url:
         type: string
@@ -3414,6 +4045,8 @@ definitions:
     type: object
     properties:
       createdTime:
+        type: string
+      description:
         type: string
       displayName:
         type: string
@@ -3520,6 +4153,10 @@ definitions:
         type: string
       owner:
         type: string
+      passwordOptions:
+        type: array
+        items:
+          type: string
       passwordSalt:
         type: string
       passwordType:
@@ -3607,6 +4244,8 @@ definitions:
         type: string
       createdTime:
         type: string
+      description:
+        type: string
       displayName:
         type: string
       domains:
@@ -3687,8 +4326,6 @@ definitions:
         type: string
       displayName:
         type: string
-      hasTrial:
-        type: boolean
       isEnabled:
         type: boolean
       name:
@@ -3792,8 +4429,6 @@ definitions:
         type: string
       customLogo:
         type: string
-      customScope:
-        type: string
       customTokenUrl:
         type: string
       customUserInfoUrl:
@@ -3835,6 +4470,8 @@ definitions:
         type: string
       regionId:
         type: string
+      scopes:
+        type: string
       signName:
         type: string
       subType:
@@ -3845,6 +4482,9 @@ definitions:
         type: string
       type:
         type: string
+      userMapping:
+        additionalProperties:
+          type: string
   object.ProviderItem:
     title: ProviderItem
     type: object
@@ -3898,11 +4538,46 @@ definitions:
         type: string
       user:
         type: string
+  object.Resource:
+    title: Resource
+    type: object
+    properties:
+      application:
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      fileFormat:
+        type: string
+      fileName:
+        type: string
+      fileSize:
+        type: integer
+        format: int64
+      fileType:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      parent:
+        type: string
+      provider:
+        type: string
+      tag:
+        type: string
+      url:
+        type: string
+      user:
+        type: string
   object.Role:
     title: Role
     type: object
     properties:
       createdTime:
+        type: string
+      description:
         type: string
       displayName:
         type: string
@@ -3994,6 +4669,8 @@ definitions:
       host:
         type: string
       isEnabled:
+        type: boolean
+      isReadOnly:
         type: boolean
       name:
         type: string
@@ -4117,6 +4794,10 @@ definitions:
     title: User
     type: object
     properties:
+      accessKey:
+        type: string
+      accessSecret:
+        type: string
       address:
         type: array
         items:
@@ -4134,6 +4815,8 @@ definitions:
       auth0:
         type: string
       avatar:
+        type: string
+      avatarType:
         type: string
       azuread:
         type: string
@@ -4205,6 +4888,10 @@ definitions:
         type: string
       google:
         type: string
+      groups:
+        type: array
+        items:
+          type: string
       hash:
         type: string
       heroku:
@@ -4272,6 +4959,12 @@ definitions:
           $ref: '#/definitions/object.ManagedAccount'
       meetup:
         type: string
+      metamask:
+        type: string
+      mfaEmailEnabled:
+        type: boolean
+      mfaPhoneEnabled:
+        type: boolean
       microsoftonline:
         type: string
       multiFactorAuths:
@@ -4312,6 +5005,8 @@ definitions:
         type: string
       preHash:
         type: string
+      preferredMfaType:
+        type: string
       properties:
         additionalProperties:
           type: string
@@ -4320,6 +5015,10 @@ definitions:
       ranking:
         type: integer
         format: int64
+      recoveryCodes:
+        type: array
+        items:
+          type: string
       region:
         type: string
       roles:
@@ -4355,6 +5054,8 @@ definitions:
       tiktok:
         type: string
       title:
+        type: string
+      totpSecret:
         type: string
       tumblr:
         type: string
@@ -4404,11 +5105,13 @@ definitions:
         type: string
       email:
         type: string
+      groups:
+        type: array
+        items:
+          type: string
       iss:
         type: string
       name:
-        type: string
-      organization:
         type: string
       phone:
         type: string
@@ -4448,12 +5151,6 @@ definitions:
         type: string
       url:
         type: string
-  object.pricing:
-    title: pricing
-    type: object
-  object.subscription:
-    title: subscription
-    type: object
   protocol.CredentialAssertion:
     title: CredentialAssertion
     type: object
@@ -4498,3 +5195,11 @@ definitions:
   xorm.Engine:
     title: Engine
     type: object
+securityDefinitions:
+  AccessToken:
+    type: apiKey
+    name: Authorization
+    in: header
+externalDocs:
+  description: Find out more about Casdoor
+  url: https://casdoor.org/

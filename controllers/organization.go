@@ -37,17 +37,26 @@ func (c *ApiController) GetOrganizations() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	organizationName := c.Input().Get("organizationName")
 
+	isGlobalAdmin := c.IsGlobalAdmin()
 	if limit == "" || page == "" {
-		maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner))
-		if err != nil {
-			panic(err)
+		var maskedOrganizations []*object.Organization
+		var err error
+
+		if isGlobalAdmin {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
+		} else {
+			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 		}
 
-		c.Data["json"] = maskedOrganizations
-		c.ServeJSON()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(maskedOrganizations)
 	} else {
-		isGlobalAdmin := c.IsGlobalAdmin()
 		if !isGlobalAdmin {
 			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 			if err != nil {
@@ -64,7 +73,7 @@ func (c *ApiController) GetOrganizations() {
 			}
 
 			paginator := pagination.SetPaginator(c.Ctx, limit, count)
-			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
+			organizations, err := object.GetMaskedOrganizations(object.GetPaginationOrganizations(owner, organizationName, paginator.Offset(), limit, field, value, sortField, sortOrder))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -174,11 +183,21 @@ func (c *ApiController) DeleteOrganization() {
 func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+	redirectUri := c.Input().Get("redirectUri")
+	typ := c.Input().Get("type")
 
 	application, err := object.GetDefaultApplication(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if typ == "cas" {
+		err = object.CheckCasRestrict(application, c.GetAcceptLanguage(), redirectUri)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	maskedApplication := object.GetMaskedApplication(application, userId)

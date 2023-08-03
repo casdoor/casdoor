@@ -170,6 +170,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 		originalUser := &OriginalUser{
 			Address:    []string{},
 			Properties: map[string]string{},
+			Groups:     []string{},
 		}
 
 		for _, tableColumn := range syncer.TableColumns {
@@ -195,7 +196,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 		if syncer.Type == "Keycloak" {
 			// query and set password and password salt from credential table
 			sql := fmt.Sprintf("select * from credential where type = 'password' and user_id = '%s'", originalUser.Id)
-			credentialResult, _ := syncer.Adapter.Engine.QueryString(sql)
+			credentialResult, _ := syncer.Ormer.Engine.QueryString(sql)
 			if len(credentialResult) > 0 {
 				credential := Credential{}
 				_ = json.Unmarshal([]byte(credentialResult[0]["SECRET_DATA"]), &credential)
@@ -205,7 +206,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 			// query and set signup application from user group table
 			sql = fmt.Sprintf("select name from keycloak_group where id = "+
 				"(select group_id as gid from user_group_membership where user_id = '%s')", originalUser.Id)
-			groupResult, _ := syncer.Adapter.Engine.QueryString(sql)
+			groupResult, _ := syncer.Ormer.Engine.QueryString(sql)
 			if len(groupResult) > 0 {
 				originalUser.SignupApplication = groupResult[0]["name"]
 			}

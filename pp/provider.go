@@ -14,11 +14,36 @@
 
 package pp
 
-import "net/http"
+import (
+	"net/http"
+)
+
+type PaymentState string
+
+const (
+	PaymentStatePaid     PaymentState = "Paid"
+	PaymentStateCreated  PaymentState = "Created"
+	PaymentStateCanceled PaymentState = "Canceled"
+	PaymentStateError    PaymentState = "Error"
+)
+
+type NotifyResult struct {
+	PaymentName   string
+	PaymentStatus PaymentState
+	NotifyMessage string
+
+	ProviderName       string
+	ProductName        string
+	ProductDisplayName string
+	Price              float64
+	Currency           string
+
+	OutOrderId string
+}
 
 type PaymentProvider interface {
 	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
-	Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error)
+	Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
 }

@@ -30,20 +30,22 @@ const {Option} = Select;
 
 export const ServerUrl = "";
 
-// export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
-  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
+  {label: "中文", key: "zh", country: "CN", alt: "中文"},
   {label: "Indonesia", key: "id", country: "ID", alt: "Indonesia"},
   {label: "日本語", key: "ja", country: "JP", alt: "日本語"},
   {label: "한국어", key: "ko", country: "KR", alt: "한국어"},
   {label: "Русский", key: "ru", country: "RU", alt: "Русский"},
   {label: "TiếngViệt", key: "vi", country: "VN", alt: "TiếngViệt"},
   {label: "Português", key: "pt", country: "BR", alt: "Português"},
+  {label: "Itariano", key: "it", country: "IT", alt: "Itariano"},
+  {label: "Marley", key: "ms", country: "MY", alt: "Marley"},
+  {label: "Tkiš", key: "tr", country: "TR", alt: "Tkiš"},
 ];
 
 export function getThemeData(organization, application) {
@@ -216,6 +218,12 @@ export const OtherProviderInfo = {
       url: "https://platform.openai.com",
     },
   },
+  Web3: {
+    "MetaMask": {
+      logo: `${StaticBaseUrl}/img/social_metamask.svg`,
+      url: "https://metamask.io/",
+    },
+  },
 };
 
 export function initCountries() {
@@ -288,7 +296,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.category !== "OAuth" && providerItem.provider.category !== "SAML") {
+  if (!["OAuth", "SAML", "Web3"].includes(providerItem.provider.category)) {
     return false;
   }
 
@@ -480,6 +488,26 @@ export function isPromptAnswered(user, application) {
     }
   }
   return true;
+}
+
+export const MfaRuleRequired = "Required";
+export const MfaRulePrompted = "Prompted";
+export const MfaRuleOptional = "Optional";
+
+export function isRequiredEnableMfa(user, organization) {
+  if (!user || !organization || !organization.mfaItems) {
+    return false;
+  }
+  return getMfaItemsByRules(user, organization, [MfaRuleRequired]).length > 0;
+}
+
+export function getMfaItemsByRules(user, organization, mfaRules = []) {
+  if (!user || !organization || !organization.mfaItems) {
+    return [];
+  }
+
+  return organization.mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
+    .filter((mfaItem) => user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled));
 }
 
 export function parseObject(s) {
@@ -711,7 +739,7 @@ export function getClickable(text) {
 
 export function getProviderLogoURL(provider) {
   if (provider.category === "OAuth") {
-    if (provider.type === "Custom") {
+    if (provider.type === "Custom" && provider.customLogo) {
       return provider.customLogo;
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
@@ -750,7 +778,7 @@ export function getProviderTypeOptions(category) {
         {id: "WeCom", name: "WeCom"},
         {id: "Lark", name: "Lark"},
         {id: "GitLab", name: "GitLab"},
-        {id: "Adfs", name: "Adfs"},
+        {id: "ADFS", name: "ADFS"},
         {id: "Baidu", name: "Baidu"},
         {id: "Alipay", name: "Alipay"},
         {id: "Casdoor", name: "Casdoor"},
@@ -867,9 +895,9 @@ export function getProviderTypeOptions(category) {
       {id: "GEETEST", name: "GEETEST"},
       {id: "Cloudflare Turnstile", name: "Cloudflare Turnstile"},
     ]);
-  } else if (category === "AI") {
+  } else if (category === "Web3") {
     return ([
-      {id: "OpenAI API - GPT", name: "OpenAI API - GPT"},
+      {id: "MetaMask", name: "MetaMask"},
     ]);
   } else {
     return [];
@@ -1031,42 +1059,6 @@ export function getOption(label, value) {
   };
 }
 
-function repeat(str, len) {
-  while (str.length < len) {
-    str += str.substr(0, len - str.length);
-  }
-  return str;
-}
-
-function maskString(s) {
-  if (s.length <= 2) {
-    return s;
-  } else {
-    return `${s[0]}${repeat("*", s.length - 2)}${s[s.length - 1]}`;
-  }
-}
-
-export function getMaskedPhone(s) {
-  return s.replace(/(\d{3})\d*(\d{4})/, "$1****$2");
-}
-
-export function getMaskedEmail(email) {
-  if (email === "") {return;}
-  const tokens = email.split("@");
-  let username = tokens[0];
-  username = maskString(username);
-
-  const domain = tokens[1];
-  const domainTokens = domain.split(".");
-  domainTokens[domainTokens.length - 2] = maskString(domainTokens[domainTokens.length - 2]);
-
-  return `${username}@${domainTokens.join(".")}`;
-}
-
-export function IsEmail(s) {
-  return s.includes("@");
-}
-
 export function getArrayItem(array, key, value) {
   const res = array.filter(item => item[key] === value)[0];
   return res;
@@ -1124,10 +1116,6 @@ export function getTag(color, text) {
   );
 }
 
-export function getApplicationOrgName(application) {
-  return `${application?.organizationObj.owner}/${application?.organizationObj.name}`;
-}
-
 export function getApplicationName(application) {
   return `${application?.owner}/${application?.name}`;
 }
@@ -1163,4 +1151,44 @@ export function inIframe() {
   } catch (e) {
     return true;
   }
+}
+
+export function getOrganization() {
+  const organization = localStorage.getItem("organization");
+  return organization !== null ? organization : "All";
+}
+
+export function setOrganization(organization) {
+  localStorage.setItem("organization", organization);
+  window.dispatchEvent(new Event("storageOrganizationChanged"));
+}
+
+export function getRequestOrganization(account) {
+  if (isAdminUser(account)) {
+    return getOrganization() === "All" ? account.owner : getOrganization();
+  }
+  return account.owner;
+}
+
+export function isDefaultOrganizationSelected(account) {
+  if (isAdminUser(account)) {
+    return getOrganization() === "All";
+  }
+  return false;
+}
+
+const BuiltInObjects = [
+  "api-enforcer-built-in",
+  "permission-enforcer-built-in",
+  "api-model-built-in",
+  "permission-model-built-in",
+  "api-adapter-built-in",
+  "permission-adapter-built-in",
+];
+
+export function builtInObject(obj) {
+  if (obj === undefined || obj === null) {
+    return false;
+  }
+  return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
 }

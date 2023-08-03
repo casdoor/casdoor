@@ -47,14 +47,19 @@ class SyncerEditPage extends React.Component {
 
   getSyncer() {
     SyncerBackend.getSyncer("admin", this.state.syncerName)
-      .then((syncer) => {
-        if (syncer === null) {
+      .then((res) => {
+        if (res.data === null) {
           this.props.history.push("/404");
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          syncer: syncer,
+          syncer: res.data,
         });
       });
   }
@@ -63,7 +68,7 @@ class SyncerEditPage extends React.Component {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
-          organizations: (res.msg === undefined) ? res : [],
+          organizations: res.data || [],
         });
       });
   }
@@ -374,6 +379,16 @@ class SyncerEditPage extends React.Component {
                 }}
               />
             </div>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Is read-only"), i18next.t("syncer:Is read-only - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.syncer.isReadOnly} onChange={checked => {
+              this.updateSyncerField("isReadOnly", checked);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

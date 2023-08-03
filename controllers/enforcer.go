@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,162 +17,129 @@ package controllers
 import (
 	"encoding/json"
 
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
 
-// Enforce
-// @Title Enforce
-// @Tag Enforce API
-// @Description Call Casbin Enforce API
-// @Param   body    body   object.CasbinRequest  true   "Casbin request"
-// @Param   permissionId    query   string  false   "permission id"
-// @Param   modelId    query   string  false   "model id"
-// @Param   resourceId    query   string  false   "resource id"
-// @Success 200 {object} controllers.Response The Response object
-// @router /enforce [post]
-func (c *ApiController) Enforce() {
-	permissionId := c.Input().Get("permissionId")
-	modelId := c.Input().Get("modelId")
-	resourceId := c.Input().Get("resourceId")
+// GetEnforcers
+// @Title GetEnforcers
+// @Tag Enforcer API
+// @Description get enforcers
+// @Param   owner     query    string  true        "The owner of enforcers"
+// @Success 200 {array} object.Enforcer
+// @router /get-enforcers [get]
+func (c *ApiController) GetEnforcers() {
+	owner := c.Input().Get("owner")
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
 
-	var request object.CasbinRequest
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
+	if limit == "" || page == "" {
+		enforcers, err := object.GetEnforcers(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(enforcers)
+	} else {
+		limit := util.ParseInt(limit)
+		count, err := object.GetEnforcerCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		enforcers, err := object.GetPaginationEnforcers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(enforcers, paginator.Nums())
+	}
+}
+
+// GetEnforcer
+// @Title GetEnforcer
+// @Tag Enforcer API
+// @Description get enforcer
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Success 200 {object} object
+// @router /get-enforcer [get]
+func (c *ApiController) GetEnforcer() {
+	id := c.Input().Get("id")
+
+	enforcer, err := object.GetEnforcer(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	if permissionId != "" {
-		enforceResult, err := object.Enforce(permissionId, &request)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		res := []bool{}
-		res = append(res, enforceResult)
-		c.ResponseOk(res)
-		return
-	}
-
-	permissions := []*object.Permission{}
-	if modelId != "" {
-		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions, err = object.GetPermissionsByModel(owner, modelName)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	} else if resourceId != "" {
-		permissions, err = object.GetPermissionsByResource(resourceId)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	} else {
-		c.ResponseError(c.T("general:Missing parameter"))
-		return
-	}
-
-	res := []bool{}
-	for _, permission := range permissions {
-		enforceResult, err := object.Enforce(permission.GetId(), &request)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		res = append(res, enforceResult)
-	}
-	c.ResponseOk(res)
+	c.ResponseOk(enforcer)
 }
 
-// BatchEnforce
-// @Title BatchEnforce
-// @Tag Enforce API
-// @Description Call Casbin BatchEnforce API
-// @Param   body    body   object.CasbinRequest  true   "array of casbin requests"
-// @Param   permissionId    query   string  false   "permission id"
-// @Param   modelId    query   string  false   "model id"
-// @Success 200 {object} controllers.Response The Response object
-// @router /batch-enforce [post]
-func (c *ApiController) BatchEnforce() {
-	permissionId := c.Input().Get("permissionId")
-	modelId := c.Input().Get("modelId")
+// UpdateEnforcer
+// @Title UpdateEnforcer
+// @Tag Enforcer API
+// @Description update enforcer
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   enforcer     body    object  true        "The enforcer object"
+// @Success 200 {object} object
+// @router /update-enforcer [post]
+func (c *ApiController) UpdateEnforcer() {
+	id := c.Input().Get("id")
 
-	var requests []object.CasbinRequest
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
+	enforcer := object.Enforcer{}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	if permissionId != "" {
-		enforceResult, err := object.BatchEnforce(permissionId, &requests)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		res := [][]bool{}
-		res = append(res, enforceResult)
-		c.ResponseOk(res)
-		return
-	}
-
-	permissions := []*object.Permission{}
-	if modelId != "" {
-		owner, modelName := util.GetOwnerAndNameFromId(modelId)
-		permissions, err = object.GetPermissionsByModel(owner, modelName)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	} else {
-		c.ResponseError(c.T("general:Missing parameter"))
-		return
-	}
-
-	res := [][]bool{}
-	for _, permission := range permissions {
-		enforceResult, err := object.BatchEnforce(permission.GetId(), &requests)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		res = append(res, enforceResult)
-	}
-	c.ResponseOk(res)
+	c.Data["json"] = wrapActionResponse(object.UpdateEnforcer(id, &enforcer))
+	c.ServeJSON()
 }
 
-func (c *ApiController) GetAllObjects() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
+// AddEnforcer
+// @Title AddEnforcer
+// @Tag Enforcer API
+// @Description add enforcer
+// @Param   enforcer     body    object  true        "The enforcer object"
+// @Success 200 {object} object
+// @router /add-enforcer [post]
+func (c *ApiController) AddEnforcer() {
+	enforcer := object.Enforcer{}
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(object.GetAllObjects(userId))
+	c.Data["json"] = wrapActionResponse(object.AddEnforcer(&enforcer))
+	c.ServeJSON()
 }
 
-func (c *ApiController) GetAllActions() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
+// DeleteEnforcer
+// @Title DeleteEnforcer
+// @Tag Enforcer API
+// @Description delete enforcer
+// @Param   body    body    object.Enforce  true      "The enforcer object"
+// @Success 200 {object} object
+// @router /delete-enforcer [post]
+func (c *ApiController) DeleteEnforcer() {
+	var enforcer object.Enforcer
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(object.GetAllActions(userId))
-}
-
-func (c *ApiController) GetAllRoles() {
-	userId := c.GetSessionUsername()
-	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
-		return
-	}
-
-	c.ResponseOk(object.GetAllRoles(userId))
+	c.Data["json"] = wrapActionResponse(object.DeleteEnforcer(&enforcer))
+	c.ServeJSON()
 }

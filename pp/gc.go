@@ -216,11 +216,11 @@ func (pp *GcPaymentProvider) Pay(providerName string, productName string, payerN
 	return payRespInfo.PayUrl, "", nil
 }
 
-func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (string, string, float64, string, string, error) {
+func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
 	reqBody := GcRequestBody{}
 	m, err := url.ParseQuery(string(body))
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	reqBody.Op = m["op"][0]
@@ -232,13 +232,13 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 
 	notifyReqInfoBytes, err := base64.StdEncoding.DecodeString(reqBody.Data)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	var notifyRespInfo GcNotifyRespInfo
 	err = json.Unmarshal(notifyReqInfoBytes, &notifyRespInfo)
 	if err != nil {
-		return "", "", 0, "", "", err
+		return nil, err
 	}
 
 	providerName := ""
@@ -249,10 +249,18 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 	price := notifyRespInfo.Amount
 
 	if notifyRespInfo.OrderState != "1" {
-		return "", "", 0, "", "", fmt.Errorf("error order state: %s", notifyRespInfo.OrderDate)
+		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderDate)
 	}
-
-	return productDisplayName, paymentName, price, productName, providerName, nil
+	notifyResult := &NotifyResult{
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
+		OutOrderId:         orderId,
+		Price:              price,
+		PaymentStatus:      PaymentStatePaid,
+		PaymentName:        paymentName,
+	}
+	return notifyResult, nil
 }
 
 func (pp *GcPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {

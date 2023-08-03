@@ -29,7 +29,7 @@ func NewMinIOS3StorageProvider(clientId string, clientSecret string, region stri
 		Endpoint:         endpoint,
 		S3Endpoint:       endpoint,
 		ACL:              awss3.BucketCannedACLPublicRead,
-		S3ForcePathStyle: false,
+		S3ForcePathStyle: true,
 	})
 
 	return sp

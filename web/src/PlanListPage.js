@@ -25,8 +25,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class PlanListPage extends BaseListPage {
   newPlan() {
     const randomName = Setting.getRandomName();
-    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
-
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `plan_${randomName}`,
@@ -149,7 +148,7 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("role"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${text}`}>
+            <Link to={`/roles/${encodeURIComponent(text)}`}>
               {text}
             </Link>
           );
@@ -197,7 +196,7 @@ class PlanListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={plans} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={plans} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Plans")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -219,7 +218,7 @@ class PlanListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PlanBackend.getPlans(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PlanBackend.getPlans(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

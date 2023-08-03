@@ -68,9 +68,14 @@ class OrganizationEditPage extends React.Component {
 
   getApplications() {
     ApplicationBackend.getApplicationsByOrganization("admin", this.state.organizationName)
-      .then((applications) => {
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
-          applications: applications,
+          applications: res.data || [],
         });
       });
   }
@@ -191,6 +196,29 @@ class OrganizationEditPage extends React.Component {
             <Input value={this.state.organization.passwordSalt} onChange={e => {
               this.updateOrganizationField("passwordSalt", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Password complexity options"), i18next.t("general:Password complexity options - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select
+              virtual={false}
+              style={{width: "100%"}}
+              mode="multiple"
+              value={this.state.organization.passwordOptions}
+              onChange={(value => {
+                this.updateOrganizationField("passwordOptions", value);
+              })}
+              options={[
+                {value: "AtLeast6", name: i18next.t("user:The password must have at least 6 characters")},
+                {value: "AtLeast8", name: i18next.t("user:The password must have at least 8 characters")},
+                {value: "Aa123", name: i18next.t("user:The password must contain at least one uppercase letter, one lowercase letter and one digit")},
+                {value: "SpecialChar", name: i18next.t("user:The password must contain at least one special character")},
+                {value: "NoRepeat", name: i18next.t("user:The password must not contain any repeated characters")},
+              ].map((item) => Setting.getOption(item.name, item.value))}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -399,6 +427,7 @@ class OrganizationEditPage extends React.Component {
           this.setState({
             organizationName: this.state.organization.name,
           });
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
 
           if (willExist) {
             this.props.history.push("/organizations");
@@ -420,6 +449,7 @@ class OrganizationEditPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           this.props.history.push("/organizations");
+          window.dispatchEvent(new Event("storageOrganizationsChanged"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
         }

@@ -93,9 +93,9 @@ func (c *ApiController) SendVerificationCode() {
 		}
 	}
 
-	// mfaSessionData != nil, means method is MfaSetupVerification
-	if mfaSessionData := c.getMfaSessionData(); mfaSessionData != nil {
-		user, err = object.GetUser(mfaSessionData.UserId)
+	// mfaUserSession != "", means method is MfaAuthVerification
+	if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
+		user, err = object.GetUser(mfaUserSession)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -129,10 +129,12 @@ func (c *ApiController) SendVerificationCode() {
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferMfa(false)
+			mfaProps := user.GetPreferredMfaProps(false)
 			if user != nil && util.GetMaskedEmail(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
+		} else if vform.Method == MfaSetupVerification {
+			c.SetSession(object.MfaDestSession, vform.Dest)
 		}
 
 		provider, err := application.GetEmailProvider()
@@ -157,12 +159,19 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
-		} else if vform.Method == ResetVerification {
-			if user = c.getCurrentUser(); user != nil {
-				vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
+			if vform.CountryCode == "" {
+				if user = c.getCurrentUser(); user != nil {
+					vform.CountryCode = user.GetCountryCode(vform.CountryCode)
+				}
+			}
+
+			if vform.Method == MfaSetupVerification {
+				c.SetSession(object.MfaCountryCodeSession, vform.CountryCode)
+				c.SetSession(object.MfaDestSession, vform.Dest)
 			}
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferMfa(false)
+			mfaProps := user.GetPreferredMfaProps(false)
 			if user != nil && util.GetMaskedPhone(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
@@ -182,11 +191,6 @@ func (c *ApiController) SendVerificationCode() {
 		} else {
 			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, phone)
 		}
-	}
-
-	if vform.Method == MfaSetupVerification {
-		c.SetSession(object.MfaSmsCountryCodeSession, vform.CountryCode)
-		c.SetSession(object.MfaSmsDestSession, vform.Dest)
 	}
 
 	if sendResp != nil {

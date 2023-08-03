@@ -66,7 +66,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 // @Tag User API
 // @Description WebAuthn Registration Flow 2nd stage
 // @Param   body    body   protocol.CredentialCreationResponse  true        "authenticator attestation Response"
-// @Success 200 {object} Response "The Response object"
+// @Success 200 {object} controllers.Response "The Response object"
 // @router /webauthn/signup/finish [post]
 func (c *ApiController) WebAuthnSignupFinish() {
 	webauthnObj, err := object.GetWebAuthnObject(c.Ctx.Request.Host)
@@ -150,7 +150,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 // @Tag Login API
 // @Description WebAuthn Login Flow 2nd stage
 // @Param   body    body   protocol.CredentialAssertionResponse  true        "authenticator assertion Response"
-// @Success 200 {object} Response "The Response object"
+// @Success 200 {object} controllers.Response "The Response object"
 // @router /webauthn/signin/finish [post]
 func (c *ApiController) WebAuthnSigninFinish() {
 	responseType := c.Input().Get("responseType")

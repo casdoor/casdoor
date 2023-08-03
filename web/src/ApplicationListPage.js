@@ -28,18 +28,13 @@ class ApplicationListPage extends BaseListPage {
     super(props);
   }
 
-  componentDidMount() {
-    this.setState({
-      organizationName: this.props.account.owner,
-    });
-  }
-
   newApplication() {
     const randomName = Setting.getRandomName();
+    const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: "admin", // this.props.account.applicationName,
       name: `application_${randomName}`,
-      organization: this.state.organizationName,
+      organization: organizationName,
       createdTime: moment().format(),
       displayName: `New Application - ${randomName}`,
       logo: `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`,
@@ -273,8 +268,8 @@ class ApplicationListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    (Setting.isAdminUser(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
-      ApplicationBackend.getApplicationsByOrganization("admin", this.props.account.organization.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? ApplicationBackend.getApplications("admin", params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder) :
+      ApplicationBackend.getApplicationsByOrganization("admin", Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({
           loading: false,

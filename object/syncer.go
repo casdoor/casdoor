@@ -50,9 +50,10 @@ type Syncer struct {
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
 	ErrorText        string         `xorm:"mediumtext" json:"errorText"`
 	SyncInterval     int            `json:"syncInterval"`
+	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
-	Adapter *Adapter `xorm:"-" json:"-"`
+	Ormer *Ormer `xorm:"-" json:"-"`
 }
 
 func GetSyncerCount(owner, organization, field, value string) (int64, error) {
@@ -62,7 +63,7 @@ func GetSyncerCount(owner, organization, field, value string) (int64, error) {
 
 func GetSyncers(owner string) ([]*Syncer, error) {
 	syncers := []*Syncer{}
-	err := adapter.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner})
 	if err != nil {
 		return syncers, err
 	}
@@ -72,7 +73,7 @@ func GetSyncers(owner string) ([]*Syncer, error) {
 
 func GetOrganizationSyncers(owner, organization string) ([]*Syncer, error) {
 	syncers := []*Syncer{}
-	err := adapter.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner, Organization: organization})
+	err := ormer.Engine.Desc("created_time").Find(&syncers, &Syncer{Owner: owner, Organization: organization})
 	if err != nil {
 		return syncers, err
 	}
@@ -97,7 +98,7 @@ func getSyncer(owner string, name string) (*Syncer, error) {
 	}
 
 	syncer := Syncer{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&syncer)
+	existed, err := ormer.Engine.Get(&syncer)
 	if err != nil {
 		return &syncer, err
 	}
@@ -140,7 +141,7 @@ func UpdateSyncer(id string, syncer *Syncer) (bool, error) {
 		return false, nil
 	}
 
-	session := adapter.Engine.ID(core.PK{owner, name}).AllCols()
+	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if syncer.Password == "***" {
 		session.Omit("password")
 	}
@@ -171,7 +172,7 @@ func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
 
 	s.ErrorText = s.ErrorText + line
 
-	affected, err := adapter.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
+	affected, err := ormer.Engine.ID(core.PK{s.Owner, s.Name}).Cols("error_text").Update(s)
 	if err != nil {
 		return false, err
 	}
@@ -180,7 +181,7 @@ func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
 }
 
 func AddSyncer(syncer *Syncer) (bool, error) {
-	affected, err := adapter.Engine.Insert(syncer)
+	affected, err := ormer.Engine.Insert(syncer)
 	if err != nil {
 		return false, err
 	}
@@ -196,7 +197,7 @@ func AddSyncer(syncer *Syncer) (bool, error) {
 }
 
 func DeleteSyncer(syncer *Syncer) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Delete(&Syncer{})
+	affected, err := ormer.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Delete(&Syncer{})
 	if err != nil {
 		return false, err
 	}

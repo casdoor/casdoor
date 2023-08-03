@@ -25,8 +25,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class PricingListPage extends BaseListPage {
   newPricing() {
     const randomName = Setting.getRandomName();
-    const owner = (this.state.organizationName !== undefined) ? this.state.organizationName : this.props.account.owner;
-
+    const owner = Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `pricing_${randomName}`,
@@ -166,7 +165,7 @@ class PricingListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={pricings} rowKey="name" size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={pricings} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Pricings")}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -188,7 +187,7 @@ class PricingListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    PricingBackend.getPricings(Setting.isAdminUser(this.props.account) ? "" : this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    PricingBackend.getPricings(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,

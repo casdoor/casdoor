@@ -18,6 +18,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/casdoor/casdoor/pp"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -27,43 +29,44 @@ type Payment struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-
-	Provider           string `xorm:"varchar(100)" json:"provider"`
-	Type               string `xorm:"varchar(100)" json:"type"`
-	Organization       string `xorm:"varchar(100)" json:"organization"`
-	User               string `xorm:"varchar(100)" json:"user"`
-	ProductName        string `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string `xorm:"varchar(100)" json:"productDisplayName"`
-
-	Detail   string  `xorm:"varchar(255)" json:"detail"`
-	Tag      string  `xorm:"varchar(100)" json:"tag"`
-	Currency string  `xorm:"varchar(100)" json:"currency"`
-	Price    float64 `json:"price"`
-
-	PayUrl    string `xorm:"varchar(2000)" json:"payUrl"`
-	ReturnUrl string `xorm:"varchar(1000)" json:"returnUrl"`
-	State     string `xorm:"varchar(100)" json:"state"`
-	Message   string `xorm:"varchar(2000)" json:"message"`
-
-	PersonName    string `xorm:"varchar(100)" json:"personName"`
-	PersonIdCard  string `xorm:"varchar(100)" json:"personIdCard"`
-	PersonEmail   string `xorm:"varchar(100)" json:"personEmail"`
-	PersonPhone   string `xorm:"varchar(100)" json:"personPhone"`
+	// Payment Provider Info
+	Provider string `xorm:"varchar(100)" json:"provider"`
+	Type     string `xorm:"varchar(100)" json:"type"`
+	// Product Info
+	ProductName        string  `xorm:"varchar(100)" json:"productName"`
+	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
+	Detail             string  `xorm:"varchar(255)" json:"detail"`
+	Tag                string  `xorm:"varchar(100)" json:"tag"`
+	Currency           string  `xorm:"varchar(100)" json:"currency"`
+	Price              float64 `json:"price"`
+	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
+	// Payer Info
+	User         string `xorm:"varchar(100)" json:"user"`
+	PersonName   string `xorm:"varchar(100)" json:"personName"`
+	PersonIdCard string `xorm:"varchar(100)" json:"personIdCard"`
+	PersonEmail  string `xorm:"varchar(100)" json:"personEmail"`
+	PersonPhone  string `xorm:"varchar(100)" json:"personPhone"`
+	// Invoice Info
 	InvoiceType   string `xorm:"varchar(100)" json:"invoiceType"`
 	InvoiceTitle  string `xorm:"varchar(100)" json:"invoiceTitle"`
 	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
+	// Order Info
+	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"`
+	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
+	State      pp.PaymentState `xorm:"varchar(100)" json:"state"`
+	Message    string          `xorm:"varchar(2000)" json:"message"`
 }
 
-func GetPaymentCount(owner, organization, field, value string) (int64, error) {
+func GetPaymentCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Payment{Organization: organization})
+	return session.Count(&Payment{Owner: owner})
 }
 
 func GetPayments(owner string) ([]*Payment, error) {
 	payments := []*Payment{}
-	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -71,9 +74,9 @@ func GetPayments(owner string) ([]*Payment, error) {
 	return payments, nil
 }
 
-func GetUserPayments(owner string, organization string, user string) ([]*Payment, error) {
+func GetUserPayments(owner, user string) ([]*Payment, error) {
 	payments := []*Payment{}
-	err := adapter.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, Organization: organization, User: user})
+	err := ormer.Engine.Desc("created_time").Find(&payments, &Payment{Owner: owner, User: user})
 	if err != nil {
 		return nil, err
 	}
@@ -81,10 +84,10 @@ func GetUserPayments(owner string, organization string, user string) ([]*Payment
 	return payments, nil
 }
 
-func GetPaginationPayments(owner, organization string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
+func GetPaginationPayments(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Payment, error) {
 	payments := []*Payment{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&payments, &Payment{Organization: organization})
+	err := session.Find(&payments, &Payment{Owner: owner})
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +101,7 @@ func getPayment(owner string, name string) (*Payment, error) {
 	}
 
 	payment := Payment{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&payment)
+	existed, err := ormer.Engine.Get(&payment)
 	if err != nil {
 		return nil, err
 	}
@@ -123,16 +126,16 @@ func UpdatePayment(id string, payment *Payment) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(payment)
 	if err != nil {
-		panic(err)
+		return false, err
 	}
 
 	return affected != 0, nil
 }
 
 func AddPayment(payment *Payment) (bool, error) {
-	affected, err := adapter.Engine.Insert(payment)
+	affected, err := ormer.Engine.Insert(payment)
 	if err != nil {
 		return false, err
 	}
@@ -141,7 +144,7 @@ func AddPayment(payment *Payment) (bool, error) {
 }
 
 func DeletePayment(payment *Payment) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{payment.Owner, payment.Name}).Delete(&Payment{})
+	affected, err := ormer.Engine.ID(core.PK{payment.Owner, payment.Name}).Delete(&Payment{})
 	if err != nil {
 		return false, err
 	}
@@ -149,73 +152,76 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (*Payment, error, string) {
-	provider, err := getProvider(owner, providerName)
-	if err != nil {
-		panic(err)
-	}
-
-	pProvider, cert, err := provider.getPaymentProvider()
-	if err != nil {
-		panic(err)
-	}
-
+func notifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, *pp.NotifyResult, error) {
 	payment, err := getPayment(owner, paymentName)
 	if err != nil {
-		panic(err)
+		return nil, nil, err
 	}
-
 	if payment == nil {
 		err = fmt.Errorf("the payment: %s does not exist", paymentName)
-		return nil, err, pProvider.GetResponseError(err)
+		return nil, nil, err
 	}
 
-	product, err := getProduct(owner, productName)
+	provider, err := getProvider(owner, payment.Provider)
 	if err != nil {
-		panic(err)
+		return nil, nil, err
+	}
+	pProvider, cert, err := provider.getPaymentProvider()
+	if err != nil {
+		return nil, nil, err
 	}
 
+	product, err := getProduct(owner, payment.ProductName)
+	if err != nil {
+		return nil, nil, err
+	}
 	if product == nil {
-		err = fmt.Errorf("the product: %s does not exist", productName)
-		return payment, err, pProvider.GetResponseError(err)
+		err = fmt.Errorf("the product: %s does not exist", payment.ProductName)
+		return nil, nil, err
 	}
 
-	productDisplayName, paymentName, price, productName, providerName, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
+	if orderId == "" {
+		orderId = payment.OutOrderId
+	}
+
+	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
-		return payment, err, pProvider.GetResponseError(err)
+		return payment, nil, err
+	}
+	if notifyResult.PaymentStatus != pp.PaymentStatePaid {
+		return payment, notifyResult, nil
+	}
+	// Only check paid payment
+	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
+		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
+		return payment, nil, err
 	}
 
-	if productDisplayName != "" && productDisplayName != product.DisplayName {
-		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", productDisplayName, product.DisplayName)
-		return payment, err, pProvider.GetResponseError(err)
+	if notifyResult.Price != product.Price {
+		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", notifyResult.Price, product.Price)
+		return payment, nil, err
 	}
 
-	if price != product.Price {
-		err = fmt.Errorf("the payment's price: %f doesn't equal to the expected price: %f", price, product.Price)
-		return payment, err, pProvider.GetResponseError(err)
-	}
-
-	err = nil
-	return payment, err, pProvider.GetResponseError(err)
+	return payment, notifyResult, nil
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, providerName string, productName string, paymentName string, orderId string) (error, string) {
-	payment, err, errorResponse := notifyPayment(request, body, owner, providerName, productName, paymentName, orderId)
+func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, error) {
+	payment, notifyResult, err := notifyPayment(request, body, owner, paymentName, orderId)
 	if payment != nil {
 		if err != nil {
-			payment.State = "Error"
+			payment.State = pp.PaymentStateError
 			payment.Message = err.Error()
 		} else {
-			payment.State = "Paid"
+			payment.State = notifyResult.PaymentStatus
+			payment.Message = notifyResult.NotifyMessage
 		}
-
 		_, err = UpdatePayment(payment.GetId(), payment)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
-	return err, errorResponse
+	return payment, nil
 }
 
 func invoicePayment(payment *Payment) (string, error) {
@@ -242,7 +248,7 @@ func invoicePayment(payment *Payment) (string, error) {
 }
 
 func InvoicePayment(payment *Payment) (string, error) {
-	if payment.State != "Paid" {
+	if payment.State != pp.PaymentStatePaid {
 		return "", fmt.Errorf("the payment state is supposed to be: \"%s\", got: \"%s\"", "Paid", payment.State)
 	}
 

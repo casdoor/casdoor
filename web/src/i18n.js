@@ -24,6 +24,9 @@ import ko from "./locales/ko/data.json";
 import ru from "./locales/ru/data.json";
 import vi from "./locales/vi/data.json";
 import pt from "./locales/pt/data.json";
+import it from "./locales/it/data.json";
+import ms from "./locales/ms/data.json";
+import tr from "./locales/tr/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
 
@@ -39,6 +42,9 @@ const resources = {
   ru: ru,
   vi: vi,
   pt: pt,
+  it: it,
+  ms: ms,
+  tr: tr,
 };
 
 function initLanguage() {
@@ -87,6 +93,15 @@ function initLanguage() {
         break;
       case "pt":
         language = "pt";
+        break;
+      case "it":
+        language = "it";
+        break;
+      case "ms":
+        language = "ms";
+        break;
+      case "tr":
+        language = "tr";
         break;
       default:
         language = Conf.DefaultLanguage;

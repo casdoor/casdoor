@@ -17,6 +17,8 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/pp"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -50,7 +52,7 @@ func GetProductCount(owner, field, value string) (int64, error) {
 
 func GetProducts(owner string) ([]*Product, error) {
 	products := []*Product{}
-	err := adapter.Engine.Desc("created_time").Find(&products, &Product{Owner: owner})
+	err := ormer.Engine.Desc("created_time").Find(&products, &Product{Owner: owner})
 	if err != nil {
 		return products, err
 	}
@@ -75,7 +77,7 @@ func getProduct(owner string, name string) (*Product, error) {
 	}
 
 	product := Product{Owner: owner, Name: name}
-	existed, err := adapter.Engine.Get(&product)
+	existed, err := ormer.Engine.Get(&product)
 	if err != nil {
 		return &product, nil
 	}
@@ -100,7 +102,7 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 		return false, nil
 	}
 
-	affected, err := adapter.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
+	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(product)
 	if err != nil {
 		return false, err
 	}
@@ -109,7 +111,7 @@ func UpdateProduct(id string, product *Product) (bool, error) {
 }
 
 func AddProduct(product *Product) (bool, error) {
-	affected, err := adapter.Engine.Insert(product)
+	affected, err := ormer.Engine.Insert(product)
 	if err != nil {
 		return false, err
 	}
@@ -118,7 +120,7 @@ func AddProduct(product *Product) (bool, error) {
 }
 
 func DeleteProduct(product *Product) (bool, error) {
-	affected, err := adapter.Engine.ID(core.PK{product.Owner, product.Name}).Delete(&Product{})
+	affected, err := ormer.Engine.ID(core.PK{product.Owner, product.Name}).Delete(&Product{})
 	if err != nil {
 		return false, err
 	}
@@ -183,36 +185,39 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
-	returnUrl := fmt.Sprintf("%s/payments/%s/result", originFrontend, paymentName)
-	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s/%s/%s", originBackend, owner, providerName, productName, paymentName)
-
+	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
+	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
+	// Create an Order and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
 	}
-
+	// Create a Payment linked with Product and Order
 	payment := Payment{
-		Owner:              product.Owner,
-		Name:               paymentName,
-		CreatedTime:        util.GetCurrentTime(),
-		DisplayName:        paymentName,
-		Provider:           provider.Name,
-		Type:               provider.Type,
-		Organization:       user.Owner,
-		User:               user.Name,
+		Owner:       product.Owner,
+		Name:        paymentName,
+		CreatedTime: util.GetCurrentTime(),
+		DisplayName: paymentName,
+
+		Provider: provider.Name,
+		Type:     provider.Type,
+
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		Detail:             product.Detail,
 		Tag:                product.Tag,
 		Currency:           product.Currency,
 		Price:              product.Price,
-		PayUrl:             payUrl,
 		ReturnUrl:          product.ReturnUrl,
-		State:              "Created",
+
+		User:       user.Name,
+		PayUrl:     payUrl,
+		State:      pp.PaymentStateCreated,
+		OutOrderId: orderId,
 	}
 
 	if provider.Type == "Dummy" {
-		payment.State = "Paid"
+		payment.State = pp.PaymentStatePaid
 	}
 
 	affected, err := AddPayment(&payment)

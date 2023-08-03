@@ -79,3 +79,13 @@ export function invoicePayment(owner, name) {
     },
   }).then(res => res.json());
 }
+
+export function notifyPayment(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/notify-payment/${owner}/${name}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

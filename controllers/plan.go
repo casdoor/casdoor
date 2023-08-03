@@ -41,11 +41,11 @@ func (c *ApiController) GetPlans() {
 	if limit == "" || page == "" {
 		plans, err := object.GetPlans(owner)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
-		c.Data["json"] = plans
-		c.ServeJSON()
+		c.ResponseOk(plans)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPlanCount(owner, field, value)
@@ -79,24 +79,25 @@ func (c *ApiController) GetPlan() {
 
 	plan, err := object.GetPlan(id)
 	if err != nil {
-		panic(err)
+		c.ResponseError(err.Error())
+		return
 	}
 
 	if includeOption {
 		options, err := object.GetPermissionsByRole(plan.Role)
 		if err != nil {
-			panic(err)
+			c.ResponseError(err.Error())
+			return
 		}
 
 		for _, option := range options {
 			plan.Options = append(plan.Options, option.DisplayName)
 		}
 
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	} else {
-		c.Data["json"] = plan
+		c.ResponseOk(plan)
 	}
-	c.ServeJSON()
 }
 
 // UpdatePlan
