@@ -568,7 +568,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	if name != user.Name {
 		err := userChangeTrigger(name, user.Name)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 	}
 
