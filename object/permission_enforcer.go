@@ -335,7 +335,7 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 		policyDefinition := strings.Split(cfg.String("policy_definition::p"), ",")
 		fieldsNum := len(policyDefinition)
 		if fieldsNum > builtInAvailableField {
-			panic(fmt.Errorf("the maximum policy_definition field number cannot exceed %d", builtInAvailableField))
+			panic(fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInAvailableField, fieldsNum))
 		}
 		// filled empty field with "" and V5 with "permissionId"
 		for i := builtInAvailableField - fieldsNum; i > 0; i-- {

@@ -133,7 +133,7 @@ func UpdateRole(id string, role *Role) (bool, error) {
 	if name != role.Name {
 		err := roleChangeTrigger(name, role.Name)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 	}
 

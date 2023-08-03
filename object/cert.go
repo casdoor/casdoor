@@ -162,7 +162,7 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 	if name != cert.Name {
 		err := certChangeTrigger(name, cert.Name)
 		if err != nil {
-			return false, nil
+			return false, err
 		}
 	}
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
