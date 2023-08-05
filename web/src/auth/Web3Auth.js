@@ -166,19 +166,54 @@ export async function authViaMetaMask(application, provider, method) {
   }
 }
 
-export function initWeb3Onboard(application, provider) {
-  // init wallet
-  const injected = injectedModule();
-  const infinityWallet = infinityWalletModule();
-  const keepkey = keepkeyModule();
-  const sequence = sequenceModule();
-  const trust = trustModule();
-  const frontier = frontierModule();
-  const taho = tahoModule();
-  const coinbase = coinbaseModule();
-  const dcent = dcentModule();
-  const gnosis = gnosisModule();
-  const keystone = keystoneModule();
+const web3Wallets = {
+  // injected wallets
+  injected: {
+    label: "Injected",
+    wallet: injectedModule(),
+  },
+  // sdk wallets
+  coinbase: {
+    label: "Coinbase",
+    wallet: coinbaseModule(),
+  },
+  trust: {
+    label: "Trust",
+    wallet: trustModule(),
+  },
+  gnosis: {
+    label: "Gnosis",
+    wallet: gnosisModule(),
+  },
+  sequence: {
+    label: "Sequence",
+    wallet: sequenceModule(),
+  },
+  taho: {
+    label: "Taho",
+    wallet: tahoModule(),
+  },
+  frontier: {
+    label: "Frontier",
+    wallet: frontierModule(),
+  },
+  infinityWallet: {
+    label: "Infinity Wallet",
+    wallet: infinityWalletModule(),
+  },
+  // hardware wallets
+  keystone: {
+    label: "Keystone",
+    wallet: keystoneModule(),
+  },
+  keepkey: {
+    label: "KeepKey",
+    wallet: keepkeyModule(),
+  },
+  dcent: {
+    label: "D'CENT",
+    wallet: dcentModule(),
+  },
   // some wallet need custome `apiKey` or `projectId` configure item
   // const magic = magicModule({
   //   apiKey: "magicApiKey",
@@ -192,32 +227,34 @@ export function initWeb3Onboard(application, provider) {
   // const ledger = ledgerModule({
   //   projectId: "ledgerProjectId"
   // });
-  // const trezor = trezorModule({
-  //   email: "test@test.com",
-  //   appUrl: "https://www.blocknative.com",
-  // });
   // const walletConnect = walletConnectModule({
   //   projectId: "walletConnectProjectId",
   // });
-  const wallets = [
-    injected,
-    infinityWallet,
-    keepkey,
-    sequence,
-    trust,
-    frontier,
-    taho,
-    coinbase,
-    dcent,
-    gnosis,
-    keystone,
-    // ledger,
-    // trezor,
-    // walletConnect,
-    // magic,
-    // fortmatic,
-    // portis,
-  ];
+};
+
+export function getWeb3OnboardWalletsOptions() {
+  return Object.entries(web3Wallets).map(([key, value]) => ({
+    label: value.label,
+    value: key,
+  }));
+}
+
+function getWeb3OnboardWallets(options) {
+  if (options === null || options === undefined || !Array.isArray(options)) {
+    return [];
+  }
+  return options.map(walletType => {
+    if (walletType && web3Wallets[walletType]?.wallet) {
+      return web3Wallets[walletType]?.wallet;
+    }
+  });
+}
+
+export function initWeb3Onboard(application, provider) {
+  // init wallet
+  // options = ["injected","coinbase",...]
+  const options = JSON.parse(provider.metadata);
+  const wallets = getWeb3OnboardWallets(options);
 
   // init chain
   // const InfuraKey = "2fa45cbe531e4e65be4fcbf408e651a8";
