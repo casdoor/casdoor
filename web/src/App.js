@@ -18,7 +18,7 @@ import {Helmet} from "react-helmet";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {BarsOutlined, DollarOutlined, DownOutlined, InfoCircleFilled, LockOutlined, LogoutOutlined, SafetyCertificateOutlined, SettingOutlined, SolutionOutlined, TeamOutlined} from "@ant-design/icons";
+import {AppstoreTwoTone, BarsOutlined, DollarTwoTone, DownOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, WalletTwoTone} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
@@ -90,6 +90,10 @@ import {clearWeb3AuthToken} from "./auth/Web3Auth";
 import AccountAvatar from "./account/AccountAvatar";
 
 const {Header, Footer, Content} = Layout;
+
+import {setTwoToneColor} from "@ant-design/icons";
+
+setTwoToneColor("rgb(87,52,211)");
 
 class App extends Component {
   constructor(props) {
@@ -397,7 +401,7 @@ class App extends Component {
       return [];
     }
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
+    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/", <HomeTwoTone />));
 
     if (Setting.isLocalAdminUser(this.state.account)) {
       if (Conf.ShowGithubCorner) {
@@ -408,13 +412,13 @@ class App extends Component {
         </a>, "#"));
       }
 
-      res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <TeamOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone />, [
         Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
         Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
         Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
       ]));
 
-      res.push(Setting.getItem(<Link to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
         Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
         Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
         Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>, "/models"),
@@ -430,20 +434,20 @@ class App extends Component {
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
         Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
         Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
         Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
         Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
       ]));
 
-      res.push(Setting.getItem(<Link to="/records">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <SolutionOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/records">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
         Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
         Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
         Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
       ]));
 
-      res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
         Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
         Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
         Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
@@ -451,7 +455,7 @@ class App extends Component {
         Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>, "/subscriptions"),
       ]));
 
-      res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingOutlined />, [
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
         Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>, "/sysinfo"),
         Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
         Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),

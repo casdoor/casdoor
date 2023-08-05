@@ -853,7 +853,7 @@ export function getProviderTypeOptions(category) {
   } else if (category === "SMS") {
     return (
       [
-        {id: "Aliyun SMS", name: "Aliyun SMS"},
+        {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
