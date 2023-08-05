@@ -20,8 +20,6 @@ export const IsDemoMode = false;
 export const ForceLanguage = "";
 export const DefaultLanguage = "en";
 
-export const EnableExtraPages = true;
-
 export const InitThemeAlgorithm = true;
 export const ThemeDefault = {
   themeType: "default",

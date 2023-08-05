@@ -1043,13 +1043,7 @@ export function getLabel(text, tooltip) {
 }
 
 export function getItem(label, key, icon, children, type) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  };
+  return {label: label, key: key, icon: icon, children: children, type: type};
 }
 
 export function getOption(label, value) {
