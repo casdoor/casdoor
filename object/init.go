@@ -37,10 +37,10 @@ func InitDb() {
 
 	existed = initBuiltInApiModel()
 	if !existed {
-		initBuildInApiAdapter()
+		initBuiltInApiAdapter()
 		initBuiltInApiEnforcer()
 		initBuiltInUserModel()
-		initBuildInUserAdapter()
+		initBuiltInUserAdapter()
 		initBuiltInUserEnforcer()
 	}
 
@@ -319,18 +319,20 @@ func initBuiltInUserModel() {
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: "Built-in Model",
 		IsEnabled:   true,
-		ModelText: `
-[request_definition]
+		ModelText: `[request_definition]
 r = sub, obj, act
+
 [policy_definition]
 p = sub, obj, act
+
 [role_definition]
 g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
+
 [matchers]
-m = r.obj == p.obj  && g(r.sub, p.sub) && r.act == p.act
-`,
+m = r.obj == p.obj  && g(r.sub, p.sub) && r.act == p.act`,
 	}
 	_, err = AddModel(model)
 	if err != nil {
@@ -348,15 +350,18 @@ func initBuiltInApiModel() bool {
 		return true
 	}
 
-	modelText := `
-[request_definition]
+	modelText := `[request_definition]
 r = subOwner, subName, method, urlPath, objOwner, objName
+
 [policy_definition]
 p = subOwner, subName, method, urlPath, objOwner, objName
+
 [role_definition]
 g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
+
 [matchers]
 m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.subName == p.subName || p.subName == "*" || r.subName != "anonymous" && p.subName == "!anonymous") && \
@@ -364,8 +369,7 @@ m = (r.subOwner == p.subOwner || p.subOwner == "*") && \
     (r.urlPath == p.urlPath || p.urlPath == "*") && \
     (r.objOwner == p.objOwner || p.objOwner == "*") && \
     (r.objName == p.objName || p.objName == "*") || \
-    (r.subOwner == r.objOwner && r.subName == r.objName)
-`
+    (r.subOwner == r.objOwner && r.subName == r.objName)`
 
 	model = &Model{
 		Owner:       "built-in",
@@ -412,7 +416,7 @@ func initBuiltInPermission() {
 	}
 }
 
-func initBuildInUserAdapter() {
+func initBuiltInUserAdapter() {
 	adapter, err := GetAdapter("built-in/user-adapter-built-in")
 	if err != nil {
 		panic(err)
@@ -439,7 +443,7 @@ func initBuildInUserAdapter() {
 	}
 }
 
-func initBuildInApiAdapter() {
+func initBuiltInApiAdapter() {
 	adapter, err := GetAdapter("built-in/api-adapter-built-in")
 	if err != nil {
 		panic(err)

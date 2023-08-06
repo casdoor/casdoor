@@ -153,7 +153,7 @@ func (adapter *Adapter) initAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 
-		if adapter.buildInAdapter() {
+		if adapter.builtInAdapter() {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 		} else {
 			switch adapter.DatabaseType {
@@ -308,7 +308,7 @@ func RemovePolicy(policy []string, adapter *Adapter) (bool, error) {
 	return affected, nil
 }
 
-func (adapter *Adapter) buildInAdapter() bool {
+func (adapter *Adapter) builtInAdapter() bool {
 	if adapter.Owner != "built-in" {
 		return false
 	}
