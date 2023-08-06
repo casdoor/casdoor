@@ -39,9 +39,9 @@ func InitDb() {
 	if !existed {
 		initBuildInApiAdapter()
 		initBuiltInApiEnforcer()
-		initBuiltInPermissionModel()
-		initBuildInPermissionAdapter()
-		initBuiltInPermissionEnforcer()
+		initBuiltInUserModel()
+		initBuildInUserAdapter()
+		initBuiltInUserEnforcer()
 	}
 
 	initWebAuthn()
@@ -303,8 +303,8 @@ func initWebAuthn() {
 	gob.Register(webauthn.SessionData{})
 }
 
-func initBuiltInPermissionModel() {
-	model, err := GetModel("built-in/permission-model-built-in")
+func initBuiltInUserModel() {
+	model, err := GetModel("built-in/user-model-built-in")
 	if err != nil {
 		panic(err)
 	}
@@ -315,21 +315,26 @@ func initBuiltInPermissionModel() {
 
 	model = &Model{
 		Owner:       "built-in",
-		Name:        "permission-model-built-in",
+		Name:        "user-model-built-in",
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: "Built-in Model",
 		IsEnabled:   true,
-		ModelText: `[request_definition]
+		ModelText: `
+[request_definition]
 r = sub, obj, act
 
 [policy_definition]
 p = sub, obj, act
 
+[role_definition]
+g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.sub == p.sub && r.obj == p.obj && r.act == p.act`,
+m = r.obj == p.obj  && g(r.sub, p.sub) && r.act == p.act
+`,
 	}
 	_, err = AddModel(model)
 	if err != nil {
@@ -415,19 +420,19 @@ func initBuiltInPermission() {
 	}
 }
 
-func initBuildInPermissionAdapter() {
-	permissionAdapter, err := GetAdapter("built-in/permission-adapter-built-in")
+func initBuildInUserAdapter() {
+	adapter, err := GetAdapter("built-in/user-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if permissionAdapter != nil {
+	if adapter != nil {
 		return
 	}
 
-	permissionAdapter = &Adapter{
+	adapter = &Adapter{
 		Owner:           "built-in",
-		Name:            "permission-adapter-built-in",
+		Name:            "user-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
 		Type:            "Database",
 		DatabaseType:    conf.GetConfigString("driverName"),
@@ -436,23 +441,23 @@ func initBuildInPermissionAdapter() {
 		Table:           "casbin_user_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddAdapter(permissionAdapter)
+	_, err = AddAdapter(adapter)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initBuildInApiAdapter() {
-	apiAdapter, err := GetAdapter("built-in/api-adapter-built-in")
+	adapter, err := GetAdapter("built-in/api-adapter-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if apiAdapter != nil {
+	if adapter != nil {
 		return
 	}
 
-	apiAdapter = &Adapter{
+	adapter = &Adapter{
 		Owner:           "built-in",
 		Name:            "api-adapter-built-in",
 		CreatedTime:     util.GetCurrentTime(),
@@ -463,49 +468,49 @@ func initBuildInApiAdapter() {
 		Table:           "casbin_api_rule",
 		IsEnabled:       true,
 	}
-	_, err = AddAdapter(apiAdapter)
+	_, err = AddAdapter(adapter)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func initBuiltInPermissionEnforcer() {
-	permissionEnforcer, err := GetEnforcer("built-in/permission-enforcer-built-in")
+func initBuiltInUserEnforcer() {
+	enforcer, err := GetEnforcer("built-in/user-enforcer-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if permissionEnforcer != nil {
+	if enforcer != nil {
 		return
 	}
 
-	permissionEnforcer = &Enforcer{
+	enforcer = &Enforcer{
 		Owner:       "built-in",
-		Name:        "permission-enforcer-built-in",
+		Name:        "user-enforcer-built-in",
 		CreatedTime: util.GetCurrentTime(),
 		DisplayName: "Permission Enforcer",
-		Model:       "built-in/permission-model-built-in",
-		Adapter:     "built-in/permission-adapter-built-in",
+		Model:       "built-in/user-model-built-in",
+		Adapter:     "built-in/user-adapter-built-in",
 		IsEnabled:   true,
 	}
 
-	_, err = AddEnforcer(permissionEnforcer)
+	_, err = AddEnforcer(enforcer)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func initBuiltInApiEnforcer() {
-	apiEnforcer, err := GetEnforcer("built-in/api-enforcer-built-in")
+	enforcer, err := GetEnforcer("built-in/api-enforcer-built-in")
 	if err != nil {
 		panic(err)
 	}
 
-	if apiEnforcer != nil {
+	if enforcer != nil {
 		return
 	}
 
-	apiEnforcer = &Enforcer{
+	enforcer = &Enforcer{
 		Owner:       "built-in",
 		Name:        "api-enforcer-built-in",
 		CreatedTime: util.GetCurrentTime(),
@@ -515,7 +520,7 @@ func initBuiltInApiEnforcer() {
 		IsEnabled:   true,
 	}
 
-	_, err = AddEnforcer(apiEnforcer)
+	_, err = AddEnforcer(enforcer)
 	if err != nil {
 		panic(err)
 	}

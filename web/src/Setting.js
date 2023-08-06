@@ -1179,11 +1179,11 @@ export function isDefaultOrganizationSelected(account) {
 
 const BuiltInObjects = [
   "api-enforcer-built-in",
-  "permission-enforcer-built-in",
+  "user-enforcer-built-in",
   "api-model-built-in",
-  "permission-model-built-in",
+  "user-model-built-in",
   "api-adapter-built-in",
-  "permission-adapter-built-in",
+  "user-adapter-built-in",
 ];
 
 export function builtInObject(obj) {
