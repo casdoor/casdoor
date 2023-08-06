@@ -85,9 +85,25 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://aliyun.com/product/sms",
     },
+    "Amazon SNS": {
+      logo: `${StaticBaseUrl}/img/social_aws.png`,
+      url: "https://aws.amazon.com/cn/sns/",
+    },
+    "Azure ACS": {
+      logo: `${StaticBaseUrl}/img/social_azure.png`,
+      url: "https://azure.microsoft.com/en-us/products/communication-services",
+    },
+    "Infobip SMS": {
+      logo: `${StaticBaseUrl}/img/social_infobip.png`,
+      url: "https://portal.infobip.com/homepage/",
+    },
     "Tencent Cloud SMS": {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/sms",
+    },
+    "Baidu Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_baidu_cloud.png`,
+      url: "https://cloud.baidu.com/product/sms.html",
     },
     "Volc Engine SMS": {
       logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
@@ -96,6 +112,10 @@ export const OtherProviderInfo = {
     "Huawei Cloud SMS": {
       logo: `${StaticBaseUrl}/img/social_huawei.png`,
       url: "https://www.huaweicloud.com/product/msgsms.html",
+    },
+    "UCloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_ucloud.png`,
+      url: "https://www.ucloud.cn/site/product/usms.html",
     },
     "Twilio SMS": {
       logo: `${StaticBaseUrl}/img/social_twilio.svg`,
@@ -108,6 +128,10 @@ export const OtherProviderInfo = {
     "SUBMAIL SMS": {
       logo: `${StaticBaseUrl}/img/social_submail.svg`,
       url: "https://www.mysubmail.com",
+    },
+    "Msg91 SMS": {
+      logo: `${StaticBaseUrl}/img/social_msg91.ico`,
+      url: "https://control.msg91.com/app/",
     },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
@@ -854,12 +878,18 @@ export function getProviderTypeOptions(category) {
     return (
       [
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
+        {id: "Amazon SNS", name: "Amazon SNS"},
+        {id: "Azure ACS", name: "Azure ACS"},
+        {id: "Infobip SMS", name: "Infobip SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
+        {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
+        {id: "UCloud SMS", name: "UCloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
         {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
+        {id: "Msg91 SMS", name: "Msg91 SMS"},
       ]
     );
   } else if (category === "Storage") {
