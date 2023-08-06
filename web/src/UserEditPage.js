@@ -319,7 +319,7 @@ class UserEditPage extends React.Component {
             })}
             >
               {
-                this.state.groups?.map((group) => <Option key={group.name} value={group.name}>
+                this.state.groups?.map((group) => <Option key={group.name} value={`${group.owner}/${group.name}`}>
                   <Space>
                     {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
                     {group.displayName}
