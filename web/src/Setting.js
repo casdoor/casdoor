@@ -93,6 +93,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://azure.microsoft.com/en-us/products/communication-services",
     },
+    "Infobip SMS": {
+      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      url: "https://portal.infobip.com/homepage/",
+    },
     "Tencent Cloud SMS": {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/sms",
@@ -868,6 +872,7 @@ export function getProviderTypeOptions(category) {
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
         {id: "Amazon SNS", name: "Amazon SNS"},
         {id: "Azure ACS", name: "Azure ACS"},
+        {id: "Infobip SMS", name: "Infobip SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
