@@ -86,15 +86,15 @@ export const OtherProviderInfo = {
       url: "https://aliyun.com/product/sms",
     },
     "Amazon SNS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${StaticBaseUrl}/img/social_aws.png`,
       url: "https://aws.amazon.com/cn/sns/",
     },
     "Azure ACS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://azure.microsoft.com/en-us/products/communication-services",
     },
     "Infobip SMS": {
-      logo: `${StaticBaseUrl}/img/social_aliyun.png`,
+      logo: `${StaticBaseUrl}/img/social_infobip.png`,
       url: "https://portal.infobip.com/homepage/",
     },
     "Tencent Cloud SMS": {
@@ -102,7 +102,7 @@ export const OtherProviderInfo = {
       url: "https://cloud.tencent.com/product/sms",
     },
     "Baidu Cloud SMS": {
-      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      logo: `${StaticBaseUrl}/img/social_baidu_cloud.png`,
       url: "https://cloud.baidu.com/product/sms.html",
     },
     "Volc Engine SMS": {
@@ -114,7 +114,7 @@ export const OtherProviderInfo = {
       url: "https://www.huaweicloud.com/product/msgsms.html",
     },
     "UCloud SMS": {
-      logo: `${StaticBaseUrl}/img/social_huawei.png`,
+      logo: `${StaticBaseUrl}/img/social_ucloud.png`,
       url: "https://www.ucloud.cn/site/product/usms.html",
     },
     "Twilio SMS": {
@@ -130,7 +130,7 @@ export const OtherProviderInfo = {
       url: "https://www.mysubmail.com",
     },
     "Msg91 SMS": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
+      logo: `${StaticBaseUrl}/img/social_msg91.ico`,
       url: "https://control.msg91.com/app/",
     },
     "Mock SMS": {

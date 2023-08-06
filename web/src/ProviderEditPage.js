@@ -244,7 +244,7 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:Agent ID - Tooltip");
       }
     } else if (provider.category === "SMS") {
-      if (provider.type === "Twilio SMS") {
+      if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
         text = i18next.t("provider:Sender number");
         tooltip = i18next.t("provider:Sender number - Tooltip");
       } else if (provider.type === "Tencent Cloud SMS") {
@@ -259,7 +259,7 @@ class ProviderEditPage extends React.Component {
       } else if (provider.type === "Amazon SNS") {
         text = i18next.t("provider:Region");
         tooltip = i18next.t("provider:Region - Tooltip");
-      } else if (provider.type === "Azure ACS" || provider.type === "Baidu Cloud SMS") {
+      } else if (provider.type === "Baidu Cloud SMS") {
         text = i18next.t("provider:Endpoint");
         tooltip = i18next.t("provider:Endpoint - Tooltip");
       } else if (provider.type === "Infobip SMS") {
