@@ -101,6 +101,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
       url: "https://cloud.tencent.com/product/sms",
     },
+    "Baidu Cloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,
+      url: "https://cloud.baidu.com/product/sms.html",
+    },
     "Volc Engine SMS": {
       logo: `${StaticBaseUrl}/img/social_volc_engine.jpg`,
       url: "https://www.volcengine.com/products/cloud-sms",
@@ -878,6 +882,7 @@ export function getProviderTypeOptions(category) {
         {id: "Azure ACS", name: "Azure ACS"},
         {id: "Infobip SMS", name: "Infobip SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
+        {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
         {id: "UCloud SMS", name: "UCloud SMS"},
