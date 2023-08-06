@@ -332,7 +332,7 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.obj == p.obj  && g(r.sub, p.sub) && r.act == p.act`,
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`,
 	}
 	_, err = AddModel(model)
 	if err != nil {
