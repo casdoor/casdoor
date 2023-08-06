@@ -109,6 +109,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_huawei.png`,
       url: "https://www.huaweicloud.com/product/msgsms.html",
     },
+    "UCloud SMS": {
+      logo: `${StaticBaseUrl}/img/social_huawei.png`,
+      url: "https://www.ucloud.cn/site/product/usms.html",
+    },
     "Twilio SMS": {
       logo: `${StaticBaseUrl}/img/social_twilio.svg`,
       url: "https://www.twilio.com/messaging",
@@ -876,6 +880,7 @@ export function getProviderTypeOptions(category) {
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Volc Engine SMS", name: "Volc Engine SMS"},
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
+        {id: "UCloud SMS", name: "UCloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
         {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},

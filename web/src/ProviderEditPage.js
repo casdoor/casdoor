@@ -138,6 +138,8 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+      } else if (provider.type === "UCloud SMS") {
+        return Setting.getLabel(i18next.t("provider:Public key"), i18next.t("provider:Public key - Tooltip"));
       } else if (provider.type === "Msg91 SMS" || provider.type === "Infobip SMS") {
         return Setting.getLabel(i18next.t("provider:Sender Id"), i18next.t("provider:Sender Id - Tooltip"));
       } else {
@@ -163,6 +165,8 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
+      } else if (provider.type === "UCloud SMS") {
+        return Setting.getLabel(i18next.t("provider:Private Key"), i18next.t("provider:Private Key - Tooltip"));
       } else if (provider.type === "Msg91 SMS") {
         return Setting.getLabel(i18next.t("provider:Auth Key"), i18next.t("provider:Auth Key - Tooltip"));
       } else if (provider.type === "Infobip SMS") {
@@ -261,6 +265,9 @@ class ProviderEditPage extends React.Component {
       } else if (provider.type === "Infobip SMS") {
         text = i18next.t("provider:Base URL");
         tooltip = i18next.t("provider:Base URL - Tooltip");
+      } else if (provider.type === "UCloud SMS") {
+        text = i18next.t("provider:Project Id");
+        tooltip = i18next.t("provider:Project Id - Tooltip");
       }
     } else if (provider.category === "Email") {
       if (provider.type === "SUBMAIL") {
