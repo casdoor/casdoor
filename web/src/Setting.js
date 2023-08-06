@@ -117,6 +117,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_submail.svg`,
       url: "https://www.mysubmail.com",
     },
+    "Msg91 SMS": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://control.msg91.com/app/",
+    },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
@@ -870,6 +874,7 @@ export function getProviderTypeOptions(category) {
         {id: "Twilio SMS", name: "Twilio SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
         {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
+        {id: "Msg91 SMS", name: "Msg91 SMS"},
       ]
     );
   } else if (category === "Storage") {
