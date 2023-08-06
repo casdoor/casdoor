@@ -230,7 +230,7 @@ func GetUserCount(owner, field, value string, groupName string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 
 	if groupName != "" {
-		return GetGroupUserCount(groupName, field, value)
+		return GetGroupUserCount(util.GetId(owner, groupName), field, value)
 	}
 
 	return session.Count(&User{})
@@ -274,7 +274,7 @@ func GetPaginationUsers(owner string, offset, limit int, field, value, sortField
 	users := []*User{}
 
 	if groupName != "" {
-		return GetPaginationGroupUsers(groupName, offset, limit, field, value, sortField, sortOrder)
+		return GetPaginationGroupUsers(util.GetId(owner, groupName), offset, limit, field, value, sortField, sortOrder)
 	}
 
 	session := GetSessionForUser(owner, offset, limit, field, value, sortField, sortOrder)
