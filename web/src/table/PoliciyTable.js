@@ -287,10 +287,10 @@ class PolicyTable extends React.Component {
           ) : (
             <div>
               <Tooltip placement="topLeft" title="Edit">
-                <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
+                <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title="Delete">
-                <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deletePolicy(table, index)} />
+                <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deletePolicy(table, index)} />
               </Tooltip>
             </div>
           );
@@ -304,14 +304,14 @@ class PolicyTable extends React.Component {
           onChange: (page) => this.setState({
             page: page,
           }),
-          disabled: this.state.editingIndex !== "",
+          disabled: this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name}),
           current: this.state.page,
         }}
         columns={columns} dataSource={table} rowKey="key" size="middle" bordered
         loading={this.state.loading}
         title={() => (
           <div>
-            <Button disabled={this.state.editingIndex !== ""} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
