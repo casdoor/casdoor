@@ -177,6 +177,14 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://azure.microsoft.com/en-us/services/storage/blobs/",
     },
+    "Qiniu Cloud Kodo": {
+      logo: `${StaticBaseUrl}/img/social_qiniu_cloud.png`,
+      url: "https://www.qiniu.com/solutions/storage",
+    },
+    "Google Cloud Storage": {
+      logo: `${StaticBaseUrl}/img/social_google_cloud.png`,
+      url: "https://cloud.google.com/storage",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -901,6 +909,8 @@ export function getProviderTypeOptions(category) {
         {id: "Aliyun OSS", name: "Aliyun OSS"},
         {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
         {id: "Azure Blob", name: "Azure Blob"},
+        {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
+        {id: "Google Cloud Storage", name: "Google Cloud Storage"},
       ]
     );
   } else if (category === "SAML") {
