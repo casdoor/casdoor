@@ -133,13 +133,25 @@ class UserEditPage extends React.Component {
 
         this.setState({
           application: res.data,
-          isGroupsVisible: res.data?.organizationObj.accountItems?.some((item) => item.name === "Groups" && item.visible),
         });
       });
   }
 
+  getUserOrganization() {
+    return this.state.organizations.filter(organization => organization.name === this.state.user.owner)[0];
+  }
+
+  isGroupsVisible() {
+    const organization = this.getUserOrganization();
+    if (!organization) {
+      return false;
+    } else {
+      return organization.accountItems?.some((item) => item.name === "Groups" && item.visible);
+    }
+  }
+
   getGroups(organizationName) {
-    if (this.state.isGroupsVisible) {
+    if (this.isGroupsVisible()) {
       GroupBackend.getGroups(organizationName)
         .then((res) => {
           if (res.status === "ok") {
@@ -401,7 +413,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} organization={this.state.application?.organizationObj} account={this.props.account} disabled={disabled} />
+            <PasswordModal user={this.state.user} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} />
           </Col>
         </Row>
       );
@@ -442,7 +454,7 @@ class UserEditPage extends React.Component {
                 onChange={(value) => {
                   this.updateUserField("countryCode", value);
                 }}
-                countryCodes={this.state.application?.organizationObj.countryCodes}
+                countryCodes={this.getUserOrganization()?.countryCodes}
               />
               <Input value={this.state.user.phone}
                 style={{width: "70%"}}
@@ -599,10 +611,10 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             {
-              this.state.application?.organizationObj.tags?.length > 0 ? (
+              this.getUserOrganization()?.tags?.length > 0 ? (
                 <Select virtual={false} style={{width: "100%"}} value={this.state.user.tag}
                   onChange={(value => {this.updateUserField("tag", value);})}
-                  options={this.state.application.organizationObj.tags?.map((tag) => {
+                  options={this.getUserOrganization()?.tags?.map((tag) => {
                     const tokens = tag.split("|");
                     const value = tokens[0];
                     const displayValue = Setting.getLanguage() !== "zh" ? tokens[0] : tokens[1];
@@ -888,7 +900,7 @@ class UserEditPage extends React.Component {
               {Setting.getLabel(i18next.t("mfa:Multi-factor authentication"), i18next.t("mfa:Multi-factor authentication - Tooltip "))} :
             </Col>
             <Col span={22} >
-              <Card title={i18next.t("mfa:Multi-factor methods")}
+              <Card size="small" title={i18next.t("mfa:Multi-factor methods")}
                 extra={this.state.multiFactorAuths?.some(mfaProps => mfaProps.enabled) ?
                   <PopconfirmModal
                     text={i18next.t("general:Disable")}
@@ -1008,7 +1020,7 @@ class UserEditPage extends React.Component {
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         {
-          this.state.application?.organizationObj.accountItems?.map(accountItem => {
+          this.getUserOrganization()?.accountItems?.map(accountItem => {
             return (
               <React.Fragment key={accountItem.name}>
                 {
