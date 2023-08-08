@@ -254,7 +254,8 @@ func DeleteProvider(provider *Provider) (bool, error) {
 func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 	cert := &Cert{}
 	if p.Cert != "" {
-		cert, err := getCert(p.Owner, p.Cert)
+		var err error
+		cert, err = getCert(p.Owner, p.Cert)
 		if err != nil {
 			return nil, nil, err
 		}
