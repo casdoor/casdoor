@@ -41,6 +41,7 @@ type LdapUser struct {
 	GidNumber string `json:"gidNumber"`
 	// Gcn                   string
 	Uuid                  string `json:"uuid"`
+	UserPrincipalName     string `json:"userPrincipalName"`
 	DisplayName           string `json:"displayName"`
 	Mail                  string
 	Email                 string `json:"email"`
@@ -51,9 +52,10 @@ type LdapUser struct {
 	RegisteredAddress     string
 	PostalAddress         string
 
-	GroupId string `json:"groupId"`
-	Phone   string `json:"phone"`
-	Address string `json:"address"`
+	GroupId  string `json:"groupId"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
+	MemberOf string `json:"memberOf"`
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -168,6 +170,8 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.Uuid = attribute.Values[0]
 			case "objectGUID":
 				user.Uuid = attribute.Values[0]
+			case "userPrincipalName":
+				user.UserPrincipalName = attribute.Values[0]
 			case "displayName":
 				user.DisplayName = attribute.Values[0]
 			case "mail":
@@ -186,6 +190,8 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.RegisteredAddress = attribute.Values[0]
 			case "postalAddress":
 				user.PostalAddress = attribute.Values[0]
+			case "memberOf":
+				user.MemberOf = attribute.Values[0]
 			}
 		}
 		ldapUsers = append(ldapUsers, user)

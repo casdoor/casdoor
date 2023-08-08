@@ -18,7 +18,7 @@ import {Helmet} from "react-helmet";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {AppstoreTwoTone, BarsOutlined, DollarTwoTone, DownOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, WalletTwoTone} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
@@ -91,6 +91,10 @@ import AccountAvatar from "./account/AccountAvatar";
 
 const {Header, Footer, Content} = Layout;
 
+import {setTwoToneColor} from "@ant-design/icons";
+
+setTwoToneColor("rgb(87,52,211)");
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -147,58 +151,24 @@ class App extends Component {
     });
     if (uri === "/") {
       this.setState({selectedMenuKey: "/"});
-    } else if (uri.includes("/organizations") || uri.includes("/trees")) {
-      this.setState({selectedMenuKey: "/organizations"});
-    } else if (uri.includes("/users")) {
-      this.setState({selectedMenuKey: "/users"});
-    } else if (uri.includes("/groups")) {
-      this.setState({selectedMenuKey: "/groups"});
-    } else if (uri.includes("/roles")) {
-      this.setState({selectedMenuKey: "/roles"});
-    } else if (uri.includes("/permissions")) {
-      this.setState({selectedMenuKey: "/permissions"});
-    } else if (uri.includes("/models")) {
-      this.setState({selectedMenuKey: "/models"});
-    } else if (uri.includes("/adapters")) {
-      this.setState({selectedMenuKey: "/adapters"});
-    } else if (uri.includes("/enforcers")) {
-      this.setState({selectedMenuKey: "/enforcers"});
-    } else if (uri.includes("/providers")) {
-      this.setState({selectedMenuKey: "/providers"});
-    } else if (uri.includes("/applications")) {
-      this.setState({selectedMenuKey: "/applications"});
-    } else if (uri.includes("/resources")) {
-      this.setState({selectedMenuKey: "/resources"});
-    } else if (uri.includes("/records")) {
-      this.setState({selectedMenuKey: "/records"});
-    } else if (uri.includes("/tokens")) {
-      this.setState({selectedMenuKey: "/tokens"});
-    } else if (uri.includes("/sessions")) {
-      this.setState({selectedMenuKey: "/sessions"});
-    } else if (uri.includes("/webhooks")) {
-      this.setState({selectedMenuKey: "/webhooks"});
-    } else if (uri.includes("/syncers")) {
-      this.setState({selectedMenuKey: "/syncers"});
-    } else if (uri.includes("/certs")) {
-      this.setState({selectedMenuKey: "/certs"});
-    } else if (uri.includes("/products")) {
-      this.setState({selectedMenuKey: "/products"});
-    } else if (uri.includes("/payments")) {
-      this.setState({selectedMenuKey: "/payments"});
+    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
+      this.setState({selectedMenuKey: "/orgs"});
+    } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
+      this.setState({selectedMenuKey: "/auth"});
+    } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
+      this.setState({selectedMenuKey: "/identity"});
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
+      this.setState({selectedMenuKey: "/logs"});
+    } else if (uri.includes("/products") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions")) {
+      this.setState({selectedMenuKey: "/business"});
+    } else if (uri.includes("/sysinfo") || uri.includes("/syncers") || uri.includes("/webhooks")) {
+      this.setState({selectedMenuKey: "/admin"});
     } else if (uri.includes("/signup")) {
       this.setState({selectedMenuKey: "/signup"});
     } else if (uri.includes("/login")) {
       this.setState({selectedMenuKey: "/login"});
     } else if (uri.includes("/result")) {
       this.setState({selectedMenuKey: "/result"});
-    } else if (uri.includes("/sysinfo")) {
-      this.setState({selectedMenuKey: "/sysinfo"});
-    } else if (uri.includes("/subscriptions")) {
-      this.setState({selectedMenuKey: "/subscriptions"});
-    } else if (uri.includes("/plans")) {
-      this.setState({selectedMenuKey: "/plans"});
-    } else if (uri.includes("/pricings")) {
-      this.setState({selectedMenuKey: "/pricings"});
     } else {
       this.setState({selectedMenuKey: -1});
     }
@@ -431,7 +401,7 @@ class App extends Component {
       return [];
     }
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/"));
+    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/", <HomeTwoTone />));
 
     if (Setting.isLocalAdminUser(this.state.account)) {
       if (Conf.ShowGithubCorner) {
@@ -442,109 +412,54 @@ class App extends Component {
         </a>, "#"));
       }
 
-      res.push(Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>,
-        "/organizations"));
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone />, [
+        Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
+        Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
+        Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
+      ]));
 
-      res.push(Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>,
-        "/groups"));
-
-      res.push(Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>,
-        "/users"
-      ));
-
-      res.push(Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>,
-        "/roles"
-      ));
-
-      res.push(Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>,
-        "/permissions"
-      ));
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
+        Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
+        Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
+        Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>, "/models"),
+        Setting.getItem(<Link to="/adapters">{i18next.t("general:Adapters")}</Link>, "/adapters"),
+        Setting.getItem(<Link to="/enforcers">{i18next.t("general:Enforcers")}</Link>, "/enforcers"),
+      ].filter(item => {
+        if (!Setting.isLocalAdminUser(this.state.account) && ["/models", "/adapters", "/enforcers"].includes(item.key)) {
+          return false;
+        } else {
+          return true;
+        }
+      })));
     }
 
     if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>,
-        "/models"
-      ));
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
+        Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
+        Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
+        Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
+        Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
+      ]));
 
-      res.push(Setting.getItem(<Link to="/adapters">{i18next.t("general:Adapters")}</Link>,
-        "/adapters"
-      ));
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/records">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
+        Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
+        Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
+        Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
+      ]));
 
-      res.push(Setting.getItem(<Link to="/enforcers">{i18next.t("general:Enforcers")}</Link>,
-        "/enforcers"
-      ));
-    }
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
+        Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
+        Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
+        Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
+        Setting.getItem(<Link to="/pricings">{i18next.t("general:Pricings")}</Link>, "/pricings"),
+        Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>, "/subscriptions"),
+      ]));
 
-    if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>,
-        "/applications"
-      ));
-
-      res.push(Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>,
-        "/providers"
-      ));
-
-      res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
-        "/resources"
-      ));
-
-      res.push(Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>,
-        "/records"
-      ));
-
-      res.push(Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>,
-        "/plans"
-      ));
-
-      res.push(Setting.getItem(<Link to="/pricings">{i18next.t("general:Pricings")}</Link>,
-        "/pricings"
-      ));
-
-      res.push(Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>,
-        "/subscriptions"
-      ));
-    }
-
-    if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>,
-        "/tokens"
-      ));
-
-      res.push(Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>,
-        "/sessions"
-      ));
-
-      res.push(Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>,
-        "/webhooks"
-      ));
-
-      res.push(Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>,
-        "/syncers"
-      ));
-
-      res.push(Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>,
-        "/certs"
-      ));
-
-      if (Conf.EnableExtraPages) {
-        res.push(Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>,
-          "/products"
-        ));
-
-        res.push(Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>,
-          "/payments"
-        ));
-      }
-    }
-
-    if (Setting.isAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>,
-        "/sysinfo"
-      ));
-      res.push(Setting.getItem(<a target="_blank" rel="noreferrer"
-        href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>,
-      "/swagger"
-      ));
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
+        Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>, "/sysinfo"),
+        Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
+        Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
+        Setting.getItem(<a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>, "/swagger")]));
     }
 
     return res;

@@ -132,7 +132,7 @@ func (idp *GiteeIdProvider) GetToken(code string) (*oauth2.Token, error) {
     "type": "User",
     "blog": null,
     "weibo": null,
-    "bio": "个人博客：https://gitee.com/xxx/xxx/pages",
+    "bio": "bio",
     "public_repos": 2,
     "public_gists": 0,
     "followers": 0,

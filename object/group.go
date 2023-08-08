@@ -164,7 +164,7 @@ func DeleteGroup(group *Group) (bool, error) {
 		return false, errors.New("group has children group")
 	}
 
-	if count, err := GetGroupUserCount(group.Name, "", ""); err != nil {
+	if count, err := GetGroupUserCount(group.GetId(), "", ""); err != nil {
 		return false, err
 	} else if count > 0 {
 		return false, errors.New("group has users")
@@ -214,7 +214,7 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 	return treeData
 }
 
-func RemoveUserFromGroup(owner, name, groupName string) (bool, error) {
+func RemoveUserFromGroup(owner, name, groupId string) (bool, error) {
 	user, err := getUser(owner, name)
 	if err != nil {
 		return false, err
@@ -223,7 +223,7 @@ func RemoveUserFromGroup(owner, name, groupName string) (bool, error) {
 		return false, errors.New("user not exist")
 	}
 
-	user.Groups = util.DeleteVal(user.Groups, groupName)
+	user.Groups = util.DeleteVal(user.Groups, groupId)
 	affected, err := updateUser(user.GetId(), user, []string{"groups"})
 	if err != nil {
 		return false, err
@@ -231,22 +231,22 @@ func RemoveUserFromGroup(owner, name, groupName string) (bool, error) {
 	return affected != 0, err
 }
 
-func GetGroupUserCount(groupName string, field, value string) (int64, error) {
+func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 	if field == "" && value == "" {
-		return ormer.Engine.Where(builder.Like{"`groups`", groupName}).
+		return ormer.Engine.Where(builder.Like{"`groups`", groupId}).
 			Count(&User{})
 	} else {
 		return ormer.Engine.Table("user").
-			Where(builder.Like{"`groups`", groupName}).
+			Where(builder.Like{"`groups`", groupId}).
 			And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%").
 			Count()
 	}
 }
 
-func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
+func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
 	session := ormer.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName + "\""})
+		Where(builder.Like{"`groups`", groupId + "\""})
 
 	if offset != -1 && limit != -1 {
 		session.Limit(limit, offset)
@@ -273,10 +273,10 @@ func GetPaginationGroupUsers(groupName string, offset, limit int, field, value, 
 	return users, nil
 }
 
-func GetGroupUsers(groupName string) ([]*User, error) {
+func GetGroupUsers(groupId string) ([]*User, error) {
 	users := []*User{}
 	err := ormer.Engine.Table("user").
-		Where(builder.Like{"`groups`", groupName + "\""}).
+		Where(builder.Like{"`groups`", groupId + "\""}).
 		Find(&users)
 	if err != nil {
 		return nil, err

@@ -134,10 +134,14 @@ class ProviderEditPage extends React.Component {
     case "Email":
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
-      if (provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS" || provider.type === "Amazon SNS" || provider.type === "Baidu Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App key"), i18next.t("provider:App key - Tooltip"));
+      } else if (provider.type === "UCloud SMS") {
+        return Setting.getLabel(i18next.t("provider:Public key"), i18next.t("provider:Public key - Tooltip"));
+      } else if (provider.type === "Msg91 SMS" || provider.type === "Infobip SMS") {
+        return Setting.getLabel(i18next.t("provider:Sender Id"), i18next.t("provider:Sender Id - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
@@ -157,10 +161,16 @@ class ProviderEditPage extends React.Component {
     case "Email":
       return Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
     case "SMS":
-      if (provider.type === "Volc Engine SMS") {
+      if (provider.type === "Volc Engine SMS" || provider.type === "Amazon SNS" || provider.type === "Baidu Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
       } else if (provider.type === "Huawei Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:App secret"), i18next.t("provider:AppSecret - Tooltip"));
+      } else if (provider.type === "UCloud SMS") {
+        return Setting.getLabel(i18next.t("provider:Private Key"), i18next.t("provider:Private Key - Tooltip"));
+      } else if (provider.type === "Msg91 SMS") {
+        return Setting.getLabel(i18next.t("provider:Auth Key"), i18next.t("provider:Auth Key - Tooltip"));
+      } else if (provider.type === "Infobip SMS") {
+        return Setting.getLabel(i18next.t("provider:Api Key"), i18next.t("provider:Api Key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
@@ -234,7 +244,7 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:Agent ID - Tooltip");
       }
     } else if (provider.category === "SMS") {
-      if (provider.type === "Twilio SMS") {
+      if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
         text = i18next.t("provider:Sender number");
         tooltip = i18next.t("provider:Sender number - Tooltip");
       } else if (provider.type === "Tencent Cloud SMS") {
@@ -246,6 +256,18 @@ class ProviderEditPage extends React.Component {
       } else if (provider.type === "Huawei Cloud SMS") {
         text = i18next.t("provider:Channel No.");
         tooltip = i18next.t("provider:Channel No. - Tooltip");
+      } else if (provider.type === "Amazon SNS") {
+        text = i18next.t("provider:Region");
+        tooltip = i18next.t("provider:Region - Tooltip");
+      } else if (provider.type === "Baidu Cloud SMS") {
+        text = i18next.t("provider:Endpoint");
+        tooltip = i18next.t("provider:Endpoint - Tooltip");
+      } else if (provider.type === "Infobip SMS") {
+        text = i18next.t("provider:Base URL");
+        tooltip = i18next.t("provider:Base URL - Tooltip");
+      } else if (provider.type === "UCloud SMS") {
+        text = i18next.t("provider:Project Id");
+        tooltip = i18next.t("provider:Project Id - Tooltip");
       }
     } else if (provider.category === "Email") {
       if (provider.type === "SUBMAIL") {
@@ -757,7 +779,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
-              {this.state.provider.type === "Twilio SMS" ?
+              {["Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -771,16 +793,20 @@ class ProviderEditPage extends React.Component {
                 </Row>
                 )
               }
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Template code"), i18next.t("provider:Template code - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.templateCode} onChange={e => {
-                    this.updateProviderField("templateCode", e.target.value);
-                  }} />
-                </Col>
-              </Row>
+              {["Infobip SMS"].includes(this.state.provider.type) ?
+                null :
+                (<Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Template code"), i18next.t("provider:Template code - Tooltip"))} :
+                  </Col>
+                  <Col span={22} >
+                    <Input value={this.state.provider.templateCode} onChange={e => {
+                      this.updateProviderField("templateCode", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+                )
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :
