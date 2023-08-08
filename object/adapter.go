@@ -269,6 +269,11 @@ func UpdatePolicy(oldPolicy, newPolicy []string, adapter *Adapter) (bool, error)
 	if err != nil {
 		return affected, err
 	}
+	err = adapter.SavePolicy(casbinModel)
+	if err != nil {
+		return false, err
+	}
+
 	return affected, nil
 }
 
@@ -285,6 +290,10 @@ func AddPolicy(policy []string, adapter *Adapter) (bool, error) {
 	}
 
 	casbinModel.AddPolicy("p", "p", policy)
+	err = adapter.SavePolicy(casbinModel)
+	if err != nil {
+		return false, err
+	}
 
 	return true, nil
 }
@@ -305,6 +314,11 @@ func RemovePolicy(policy []string, adapter *Adapter) (bool, error) {
 	if err != nil {
 		return affected, err
 	}
+	err = adapter.SavePolicy(casbinModel)
+	if err != nil {
+		return false, err
+	}
+
 	return affected, nil
 }
 

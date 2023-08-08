@@ -25,5 +25,12 @@ func CasbinToSlice(casbinRule xormadapter.CasbinRule) []string {
 		casbinRule.V4,
 		casbinRule.V5,
 	}
+	// remove empty strings from end, for update model policy map
+	for i := len(s) - 1; i >= 0; i-- {
+		if s[i] != "" {
+			s = s[:i+1]
+			break
+		}
+	}
 	return s
 }
