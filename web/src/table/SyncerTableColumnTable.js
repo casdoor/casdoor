@@ -38,7 +38,7 @@ class SyncerTableColumnTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: `column${table.length}`, type: "string", values: []};
+    const row = {name: `column${table.length}`, type: "string", values: [], isKey: table.filter(row => row.isKey).length === 0};
     if (table === undefined) {
       table = [];
     }
@@ -108,6 +108,26 @@ class SyncerTableColumnTable extends React.Component {
         },
       },
       {
+        title: i18next.t("syncer:Is key"),
+        dataIndex: "isKey",
+        key: "isKey",
+        render: (text, record, index) => {
+          return (
+            <Switch checked={text} onChange={checked => {
+              if (!record.isKey && checked) {
+                table.forEach((row, i) => {
+                  this.updateField(table, i, "isKey", false);
+                });
+              } else if (record.isKey && !checked) {
+                return;
+              }
+
+              this.updateField(table, index, "isKey", checked);
+            }} />
+          );
+        },
+      },
+      {
         title: i18next.t("syncer:Is hashed"),
         dataIndex: "isHashed",
         key: "isHashed",
@@ -133,7 +153,7 @@ class SyncerTableColumnTable extends React.Component {
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+                <Button icon={<DeleteOutlined />} disabled={record.isKey && table.length > 1} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
           );
