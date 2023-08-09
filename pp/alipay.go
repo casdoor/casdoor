@@ -87,13 +87,15 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 		return nil, err
 	}
 	notifyResult := &NotifyResult{
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
-		OutOrderId:         orderId,
-		PaymentStatus:      PaymentStatePaid,
-		Price:              price,
-		PaymentName:        paymentName,
+		PaymentDescription: &PaymentDescription{
+			ProductName:        productName,
+			ProductDisplayName: productDisplayName,
+			ProviderName:       providerName,
+		},
+		OutOrderId:    orderId,
+		PaymentStatus: PaymentStatePaid,
+		Price:         price,
+		PaymentName:   paymentName,
 	}
 	return notifyResult, nil
 }

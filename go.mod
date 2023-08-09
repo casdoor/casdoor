@@ -51,6 +51,7 @@ require (
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/stretchr/testify v1.8.3
+	github.com/stripe/stripe-go/v74 v74.29.0 // indirect
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
 	github.com/tklauser/go-sysconf v0.3.10 // indirect

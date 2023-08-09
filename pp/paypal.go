@@ -52,13 +52,12 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 
 func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
 	// https://github.com/go-pay/gopay/blob/main/doc/paypal.md
-	priceStr := strconv.FormatFloat(price, 'f', 2, 64)
 	units := make([]*paypal.PurchaseUnit, 0, 1)
 	unit := &paypal.PurchaseUnit{
 		ReferenceId: util.GetRandomString(16),
 		Amount: &paypal.Amount{
-			CurrencyCode: currency, // e.g."USD"
-			Value:        priceStr, // e.g."100.00"
+			CurrencyCode: currency,                               // e.g."USD"
+			Value:        strconv.FormatFloat(price, 'f', 2, 64), // e.g."100.00"
 		},
 		Description: joinAttachString([]string{productDisplayName, productName, providerName}),
 	}
@@ -149,12 +148,13 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 	notifyResult = &NotifyResult{
 		PaymentStatus: paymentStatus,
 		PaymentName:   paymentName,
-
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
-		Price:              price,
-		Currency:           currency,
+		PaymentDescription: &PaymentDescription{
+			ProductName:        productName,
+			ProductDisplayName: productDisplayName,
+			ProviderName:       providerName,
+		},
+		Price:    price,
+		Currency: currency,
 
 		OutOrderId: orderId,
 	}

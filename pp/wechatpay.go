@@ -110,13 +110,15 @@ func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, auth
 	}
 
 	notifyResult := &NotifyResult{
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
-		OutOrderId:         orderId,
-		Price:              price,
-		PaymentStatus:      PaymentStatePaid,
-		PaymentName:        paymentName,
+		PaymentDescription: &PaymentDescription{
+			ProductName:        productName,
+			ProductDisplayName: productDisplayName,
+			ProviderName:       providerName,
+		},
+		OutOrderId:    orderId,
+		Price:         price,
+		PaymentStatus: PaymentStatePaid,
+		PaymentName:   paymentName,
 	}
 	return notifyResult, nil
 }

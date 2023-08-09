@@ -252,13 +252,15 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderDate)
 	}
 	notifyResult := &NotifyResult{
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
-		ProviderName:       providerName,
-		OutOrderId:         orderId,
-		Price:              price,
-		PaymentStatus:      PaymentStatePaid,
-		PaymentName:        paymentName,
+		PaymentDescription: &PaymentDescription{
+			ProductName:        productName,
+			ProductDisplayName: productDisplayName,
+			ProviderName:       providerName,
+		},
+		OutOrderId:    orderId,
+		Price:         price,
+		PaymentStatus: PaymentStatePaid,
+		PaymentName:   paymentName,
 	}
 	return notifyResult, nil
 }

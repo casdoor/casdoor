@@ -15,6 +15,7 @@
 package pp
 
 import (
+	"encoding/json"
 	"net/http"
 )
 
@@ -27,14 +28,27 @@ const (
 	PaymentStateError    PaymentState = "Error"
 )
 
+type PaymentDescription struct {
+	ProductName        string `json:"productName"`
+	ProductDisplayName string `json:"productDisplayName"`
+	ProviderName       string `json:"providerName"`
+}
+
+func (p *PaymentDescription) String() string {
+	bytes, _ := json.Marshal(p)
+	return string(bytes)
+}
+
+func (p *PaymentDescription) FromString(str string) error {
+	return json.Unmarshal([]byte(str), p)
+}
+
 type NotifyResult struct {
 	PaymentName   string
 	PaymentStatus PaymentState
 	NotifyMessage string
 
-	ProviderName       string
-	ProductName        string
-	ProductDisplayName string
+	PaymentDescription *PaymentDescription
 	Price              float64
 	Currency           string
 
@@ -71,6 +85,12 @@ func GetPaymentProvider(typ string, clientId string, clientSecret string, host s
 		return pp, nil
 	} else if typ == "PayPal" {
 		pp, err := NewPaypalPaymentProvider(clientId, clientSecret)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
+	} else if typ == "Stripe" {
+		pp, err := NewStripePaymentProvider(clientId, clientSecret)
 		if err != nil {
 			return nil, err
 		}
