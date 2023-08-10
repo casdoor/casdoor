@@ -107,12 +107,7 @@ func NewOrmer(config *DatabaseConfig, isCasdoorSelf ...bool) *Ormer {
 			tableNamePrefix: conf.GetConfigString("tableNamePrefix"),
 		}
 
-		dataSourceName := conf.GetConfigDataSourceName()
-		if o.driverName == "mysql" {
-			dataSourceName = dataSourceName + o.database
-		}
-
-		o.dataSourceName = dataSourceName
+		o.dataSourceName = conf.GetConfigDataSourceName()
 	} else {
 		var dataSourceName string
 		switch o.driverName {
@@ -120,8 +115,8 @@ func NewOrmer(config *DatabaseConfig, isCasdoorSelf ...bool) *Ormer {
 			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", o.user,
 				o.password, o.host, o.port, o.database)
 		case "mysql":
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", o.user,
-				o.password, o.host, o.port, o.database)
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", o.user,
+				o.password, o.host, o.port)
 		case "postgres":
 			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", o.user,
 				o.password, o.host, o.port, o.database)
@@ -183,7 +178,14 @@ func (a *Ormer) CreateDatabase() error {
 }
 
 func (a *Ormer) open() {
-	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
+	// We create database of mysql for docker scenario, it needs to connect to the server without database name.
+	// So split the database name and dataSourceName of mysql. We need to concat the dataSourceName and database name when we really connect to the database.
+	dataSourceName := a.dataSourceName
+	if a.driverName == "mysql" {
+		dataSourceName = dataSourceName + a.database
+	}
+
+	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
 		panic(err)
 	}
