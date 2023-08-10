@@ -282,7 +282,7 @@
       "affiliationTable": "",
       "avatarBaseUrl": "",
       "database": "",
-      "databaseType": "",
+      "driverName": "",
       "errorText": "",
       "host": "",
       "isEnabled": true,

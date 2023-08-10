@@ -17,7 +17,6 @@ package object
 import (
 	"database/sql"
 	"fmt"
-	"runtime"
 	"strings"
 
 	"github.com/beego/beego"
@@ -34,6 +33,25 @@ import (
 
 var ormer *Ormer
 
+type DatabaseConfig struct {
+	driverName      string
+	host            string
+	port            int
+	user            string
+	password        string
+	database        string
+	table           string
+	tableNamePrefix string
+}
+
+// Ormer represents the MySQL adapter for policy storage.
+type Ormer struct {
+	*DatabaseConfig
+	dataSourceName string
+
+	Engine *xorm.Engine `xorm:"-" json:"-"`
+}
+
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
 	if err != nil {
@@ -42,12 +60,12 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
+	InitOrmer(true)
 	CreateTables(true)
 	DoMigration()
 }
 
-func InitAdapter(createDatabase bool) {
+func InitOrmer(createDatabase bool) {
 	if createDatabase {
 		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 		if err != nil {
@@ -55,10 +73,9 @@ func InitAdapter(createDatabase bool) {
 		}
 	}
 
-	ormer = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	ormer = NewOrmer(nil, true)
 
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
+	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, ormer.tableNamePrefix)
 	ormer.Engine.SetTableMapper(tbMapper)
 }
 
@@ -73,36 +90,60 @@ func CreateTables(createDatabase bool) {
 	ormer.createTable()
 }
 
-// Ormer represents the MySQL adapter for policy storage.
-type Ormer struct {
-	driverName     string
-	dataSourceName string
-	dbName         string
-	Engine         *xorm.Engine
-}
-
-// finalizer is the destructor for Ormer.
-func finalizer(a *Ormer) {
-	err := a.Engine.Close()
-	if err != nil {
-		panic(err)
+// NewOrmer is the constructor for Ormer.
+func NewOrmer(config *DatabaseConfig, isCasdoorSelf ...bool) *Ormer {
+	if config == nil && len(isCasdoorSelf) == 0 {
+		panic(fmt.Errorf("driver config is nil, please check your driver config"))
 	}
-}
 
-// NewAdapter is the constructor for Ormer.
-func NewAdapter(driverName string, dataSourceName string, dbName string) *Ormer {
-	a := &Ormer{}
-	a.driverName = driverName
-	a.dataSourceName = dataSourceName
-	a.dbName = dbName
+	o := &Ormer{
+		DatabaseConfig: config,
+	}
+
+	if len(isCasdoorSelf) != 0 && isCasdoorSelf[0] == true {
+		o.DatabaseConfig = &DatabaseConfig{
+			driverName:      conf.GetConfigString("driverName"),
+			database:        conf.GetConfigString("dbName"),
+			tableNamePrefix: conf.GetConfigString("tableNamePrefix"),
+		}
+
+		dataSourceName := conf.GetConfigDataSourceName()
+		if o.driverName == "mysql" {
+			dataSourceName = dataSourceName + o.database
+		}
+
+		o.dataSourceName = dataSourceName
+	} else {
+		var dataSourceName string
+		switch o.driverName {
+		case "mssql":
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", o.user,
+				o.password, o.host, o.port, o.database)
+		case "mysql":
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", o.user,
+				o.password, o.host, o.port, o.database)
+		case "postgres":
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", o.user,
+				o.password, o.host, o.port, o.database)
+		case "CockroachDB":
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
+				o.user, o.password, o.host, o.port, o.database)
+		case "sqlite3":
+			dataSourceName = fmt.Sprintf("file:%s", o.host)
+		default:
+			panic(fmt.Errorf("unsupport driver name: %s", o.driverName))
+		}
+
+		if !isCloudIntranet {
+			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+		}
+		o.dataSourceName = dataSourceName
+	}
 
 	// Open the DB, create it if not existed.
-	a.open()
+	o.open()
 
-	// Call the destructor when the object is released.
-	runtime.SetFinalizer(a, finalizer)
-
-	return a
+	return o
 }
 
 func createDatabaseForPostgres(driverName string, dataSourceName string, dbName string) error {
@@ -137,27 +178,17 @@ func (a *Ormer) CreateDatabase() error {
 	}
 	defer engine.Close()
 
-	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8mb4 COLLATE utf8mb4_general_ci", a.dbName))
+	_, err = engine.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s default charset utf8mb4 COLLATE utf8mb4_general_ci", a.database))
 	return err
 }
 
 func (a *Ormer) open() {
-	dataSourceName := a.dataSourceName + a.dbName
-	if a.driverName != "mysql" {
-		dataSourceName = a.dataSourceName
-	}
-
-	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
+	engine, err := xorm.NewEngine(a.driverName, a.dataSourceName)
 	if err != nil {
 		panic(err)
 	}
 
 	a.Engine = engine
-}
-
-func (a *Ormer) close() {
-	_ = a.Engine.Close()
-	a.Engine = nil
 }
 
 func (a *Ormer) createTable() {

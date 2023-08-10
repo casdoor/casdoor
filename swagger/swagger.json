@@ -7080,7 +7080,7 @@
                 "database": {
                     "type": "string"
                 },
-                "databaseType": {
+                "driverName": {
                     "type": "string"
                 },
                 "errorText": {

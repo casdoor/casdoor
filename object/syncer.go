@@ -41,7 +41,7 @@ type Syncer struct {
 	Port             int            `json:"port"`
 	User             string         `xorm:"varchar(100)" json:"user"`
 	Password         string         `xorm:"varchar(100)" json:"password"`
-	DatabaseType     string         `xorm:"varchar(100)" json:"databaseType"`
+	DriverName       string         `xorm:"varchar(100)" json:"driverName"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
 	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
@@ -222,7 +222,7 @@ func (syncer *Syncer) getTableColumnsTypeMap() map[string]string {
 }
 
 func (syncer *Syncer) getTable() string {
-	if syncer.DatabaseType == "mssql" {
+	if syncer.DriverName == "mssql" {
 		return fmt.Sprintf("[%s]", syncer.Table)
 	} else {
 		return syncer.Table

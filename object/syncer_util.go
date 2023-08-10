@@ -175,7 +175,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 
 		for _, tableColumn := range syncer.TableColumns {
 			tableColumnName := tableColumn.Name
-			if syncer.Type == "Keycloak" && syncer.DatabaseType == "postgres" {
+			if syncer.Type == "Keycloak" && syncer.DriverName == "postgres" {
 				tableColumnName = strings.ToLower(tableColumnName)
 			}
 

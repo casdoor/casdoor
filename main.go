@@ -39,7 +39,7 @@ func getCreateDatabaseFlag() bool {
 func main() {
 	createDatabase := getCreateDatabaseFlag()
 
-	object.InitAdapter(createDatabase)
+	object.InitOrmer(createDatabase)
 	object.CreateTables(createDatabase)
 	object.DoMigration()
 

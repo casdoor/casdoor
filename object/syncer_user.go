@@ -161,20 +161,16 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 
 func (syncer *Syncer) initAdapter() {
 	if syncer.Ormer == nil {
-		var dataSourceName string
-		if syncer.DatabaseType == "mssql" {
-			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
-		} else if syncer.DatabaseType == "postgres" {
-			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
-		} else {
-			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
+		dataBaseConfig := &DatabaseConfig{
+			host:     syncer.Host,
+			port:     syncer.Port,
+			user:     syncer.User,
+			password: syncer.Password,
+			database: syncer.Database,
+			table:    syncer.Table,
 		}
 
-		if !isCloudIntranet {
-			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
-		}
-
-		syncer.Ormer = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
+		syncer.Ormer = NewOrmer(dataBaseConfig)
 	}
 }
 

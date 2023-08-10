@@ -276,10 +276,10 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
+            {Setting.getLabel(i18next.t("syncer:Driver name"), i18next.t("syncer:Driver name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.databaseType} onChange={(value => {this.updateSyncerField("databaseType", value);})}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.driverName} onChange={(value => {this.updateSyncerField("driverName", value);})}>
               {
                 [
                   {id: "mysql", name: "MySQL"},
@@ -287,7 +287,7 @@ class SyncerEditPage extends React.Component {
                   {id: "mssql", name: "SQL Server"},
                   {id: "oracle", name: "Oracle"},
                   {id: "sqlite3", name: "Sqlite 3"},
-                ].map((databaseType, index) => <Option key={index} value={databaseType.id}>{databaseType.name}</Option>)
+                ].map((driverName, index) => <Option key={index} value={driverName.id}>{driverName.name}</Option>)
               }
             </Select>
           </Col>
