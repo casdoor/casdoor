@@ -28,7 +28,8 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Type string `xorm:"varchar(100)" json:"type"`
+	Type          string `xorm:"varchar(100)" json:"type"`
+	SameAsCasdoor bool   `xorm:"bool" json:"sameAsCasdoor"`
 
 	DriverName      string `xorm:"varchar(100)" json:"driverName"`
 	Host            string `xorm:"varchar(100)" json:"host"`
@@ -164,7 +165,7 @@ func (adapter *Adapter) initAdapter() error {
 	}
 	var orm *Ormer
 	var err error
-	if adapter.builtInAdapter() {
+	if adapter.builtInAdapter() || adapter.SameAsCasdoor {
 		orm = NewOrmer(nil, true)
 	} else {
 		orm = NewOrmer(adapter.databaseConfig())
