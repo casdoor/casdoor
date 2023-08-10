@@ -15,7 +15,7 @@
 package object
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
@@ -120,45 +120,50 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return affected != 0, nil
 }
 
+func (p *Enforcer) GetId() string {
+	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+}
+
 func (enforcer *Enforcer) InitEnforcer() error {
-	if enforcer.Enforcer == nil {
-		if enforcer == nil {
-			return errors.New("enforcer is nil")
-		}
-		if enforcer.Model == "" || enforcer.Adapter == "" {
-			return errors.New("missing model or adapter")
-		}
-
-		var err error
-		var m *Model
-		var a *Adapter
-
-		if m, err = GetModel(enforcer.Model); err != nil {
-			return err
-		} else if m == nil {
-			return errors.New("model not found")
-		}
-		if a, err = GetAdapter(enforcer.Adapter); err != nil {
-			return err
-		} else if a == nil {
-			return errors.New("adapter not found")
-		}
-
-		err = m.initModel()
-		if err != nil {
-			return err
-		}
-		err = a.initAdapter()
-		if err != nil {
-			return err
-		}
-
-		casbinEnforcer, err := casbin.NewEnforcer(m.Model, a.Adapter)
-		if err != nil {
-			return err
-		}
-		enforcer.Enforcer = casbinEnforcer
+	if enforcer.Enforcer != nil {
+		return nil
 	}
 
+	if enforcer.Model == "" {
+		return fmt.Errorf("the model for enforcer: %s should not be empty", enforcer.GetId())
+	}
+	if enforcer.Adapter == "" {
+		return fmt.Errorf("the adapter for enforcer: %s should not be empty", enforcer.GetId())
+	}
+
+	m, err := GetModel(enforcer.Model)
+	if err != nil {
+		return err
+	} else if m == nil {
+		return fmt.Errorf("the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
+	}
+
+	a, err := GetAdapter(enforcer.Adapter)
+	if err != nil {
+		return err
+	} else if a == nil {
+		return fmt.Errorf("the adapter: %s for enforcer: %s is not found", enforcer.Adapter, enforcer.GetId())
+	}
+
+	err = m.initModel()
+	if err != nil {
+		return err
+	}
+	err = a.initAdapter()
+	if err != nil {
+		return err
+	}
+
+	casbinEnforcer, err := casbin.NewEnforcer(m.Model, a.Adapter)
+	if err != nil {
+		return err
+	}
+
+	enforcer.Enforcer = casbinEnforcer
 	return nil
 }
