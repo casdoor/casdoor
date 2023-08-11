@@ -46,7 +46,7 @@ import {getEvent} from "./Util";
 import {Modal} from "antd";
 
 function getSigninButton(provider) {
-  const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.type);
+  const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName);
   if (provider.type === "GitHub") {
     return <GithubLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Google") {
