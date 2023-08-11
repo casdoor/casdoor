@@ -27,8 +27,6 @@ import (
 var Enforcer *casbin.Enforcer
 
 func InitApi() {
-	var err error
-
 	e, err := object.GetInitializedEnforcer(util.GetId("built-in", "api-enforcer-built-in"))
 	if err != nil {
 		panic(err)
