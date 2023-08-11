@@ -48,7 +48,7 @@ class PaymentResultPage extends React.Component {
         });
         // window.console.log("payment=", res.data);
         if (res.data.state === "Created") {
-          if (res.data.type === "PayPal") {
+          if (["PayPal", "Stripe"].includes(res.data.type)) {
             this.setState({
               timeout: setTimeout(() => {
                 PaymentBackend.notifyPayment(this.state.organizationName, this.state.paymentName)
@@ -124,6 +124,26 @@ class PaymentResultPage extends React.Component {
           <Result
             status="warning"
             title={`${i18next.t("payment:The payment has been canceled")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
+            subTitle={i18next.t("payment:Please click the below button to return to the original website")}
+            extra={[
+              <Button type="primary" key="returnUrl" onClick={() => {
+                this.goToPaymentUrl(payment);
+              }}>
+                {i18next.t("payment:Return to Website")}
+              </Button>,
+            ]}
+          />
+        </div>
+      );
+    } else if (payment.state === "Timeout") {
+      return (
+        <div>
+          {
+            Setting.renderHelmet(payment)
+          }
+          <Result
+            status="warning"
+            title={`${i18next.t("payment:The payment has time out")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
             subTitle={i18next.t("payment:Please click the below button to return to the original website")}
             extra={[
               <Button type="primary" key="returnUrl" onClick={() => {

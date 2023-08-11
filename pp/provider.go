@@ -15,7 +15,6 @@
 package pp
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -25,23 +24,9 @@ const (
 	PaymentStatePaid     PaymentState = "Paid"
 	PaymentStateCreated  PaymentState = "Created"
 	PaymentStateCanceled PaymentState = "Canceled"
+	PaymentStateTimeout  PaymentState = "Timeout"
 	PaymentStateError    PaymentState = "Error"
 )
-
-type PaymentDescription struct {
-	ProductName        string `json:"productName"`
-	ProductDisplayName string `json:"productDisplayName"`
-	ProviderName       string `json:"providerName"`
-}
-
-func (p *PaymentDescription) String() string {
-	bytes, _ := json.Marshal(p)
-	return string(bytes)
-}
-
-func (p *PaymentDescription) FromString(str string) error {
-	return json.Unmarshal([]byte(str), p)
-}
 
 type NotifyResult struct {
 	PaymentName   string

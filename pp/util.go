@@ -15,9 +15,44 @@
 package pp
 
 import (
+	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
+	"text/template"
 )
+
+type PaymentDescription struct {
+	ProductName        string `json:"productName"`
+	ProductDisplayName string `json:"productDisplayName"`
+	ProviderName       string `json:"providerName"`
+}
+
+func (p *PaymentDescription) JsonString() string {
+	bytes, _ := json.Marshal(p)
+	return string(bytes)
+}
+
+func (p *PaymentDescription) FromJsonString(str string) error {
+	return json.Unmarshal([]byte(str), p)
+}
+
+const DefaultDescriptionTemplate = `
+Product Name : {{.ProductName}} / Product Display Name : {{.ProductDisplayName}} / Provider Name : {{.ProviderName}}.
+`
+
+func (p *PaymentDescription) TemplateString() string {
+	tmpl, err := template.New("paymentDescriptionTemplate").Parse(DefaultDescriptionTemplate)
+	if err != nil {
+		panic(err)
+	}
+	var output strings.Builder
+	err = tmpl.Execute(&output, p)
+	if err != nil {
+		panic(err)
+	}
+	return output.String()
+}
 
 func getPriceString(price float64) string {
 	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
@@ -34,4 +69,12 @@ func parseAttachString(s string) (string, string, string, error) {
 		return "", "", "", fmt.Errorf("parseAttachString() error: len(tokens) expected 3, got: %d", len(tokens))
 	}
 	return tokens[0], tokens[1], tokens[2], nil
+}
+
+func int64ToFloat64Price(price int64) float64 {
+	return float64(price) / 100
+}
+
+func float64ToInt64Price(price float64) int64 {
+	return int64(math.Round(price * 100))
 }

@@ -16,12 +16,15 @@ package pp
 
 import (
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/stripe/stripe-go/v74"
 	stripeCheckout "github.com/stripe/stripe-go/v74/checkout/session"
+	stripeIntent "github.com/stripe/stripe-go/v74/paymentintent"
 	stripePrice "github.com/stripe/stripe-go/v74/price"
 	stripeProduct "github.com/stripe/stripe-go/v74/product"
-	"net/http"
 )
 
 type StripePaymentProvider struct {
@@ -40,12 +43,12 @@ func NewStripePaymentProvider(PublishableKey, SecretKey string) (*StripePaymentP
 		SecretKey:      SecretKey,
 		isProd:         isProd,
 	}
+	stripe.Key = pp.SecretKey
 	return pp, nil
 }
 
 func (pp *StripePaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (payUrl string, orderId string, err error) {
-	stripe.Key = pp.SecretKey
-	// Create a product
+	// Create a temp product
 	description := &PaymentDescription{
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
@@ -53,10 +56,10 @@ func (pp *StripePaymentProvider) Pay(providerName string, productName string, pa
 	}
 	productParams := &stripe.ProductParams{
 		Name:        stripe.String(productDisplayName),
-		Description: stripe.String(description.String()),
+		Description: stripe.String(description.TemplateString()),
 		DefaultPriceData: &stripe.ProductDefaultPriceDataParams{
-			UnitAmountDecimal: stripe.Float64(price),
-			Currency:          stripe.String(currency),
+			UnitAmount: stripe.Int64(float64ToInt64Price(price)),
+			Currency:   stripe.String(currency),
 		},
 	}
 	sProduct, err := stripeProduct.New(productParams)
@@ -65,9 +68,9 @@ func (pp *StripePaymentProvider) Pay(providerName string, productName string, pa
 	}
 	// Create a price for an existing product
 	priceParams := &stripe.PriceParams{
-		Currency:          stripe.String(currency),
-		UnitAmountDecimal: stripe.Float64(price),
-		Product:           stripe.String(sProduct.ID),
+		Currency:   stripe.String(currency),
+		UnitAmount: stripe.Int64(float64ToInt64Price(price)),
+		Product:    stripe.String(sProduct.ID),
 	}
 	sPrice, err := stripePrice.New(priceParams)
 	if err != nil {
@@ -85,7 +88,9 @@ func (pp *StripePaymentProvider) Pay(providerName string, productName string, pa
 		SuccessURL:        stripe.String(returnUrl),
 		CancelURL:         stripe.String(returnUrl),
 		ClientReferenceID: stripe.String(paymentName),
+		ExpiresAt:         stripe.Int64(time.Now().Add(30 * time.Minute).Unix()),
 	}
+	checkoutParams.AddMetadata("product_description", description.JsonString())
 	sCheckout, err := stripeCheckout.New(checkoutParams)
 	if err != nil {
 		return "", "", err
@@ -99,27 +104,45 @@ func (pp *StripePaymentProvider) Notify(request *http.Request, body []byte, auth
 	if err != nil {
 		return nil, err
 	}
+	switch sCheckout.Status {
+	case "open":
+		// The checkout session is still in progress. Payment processing has not started
+		notifyResult.PaymentStatus = PaymentStateCreated
+		return notifyResult, nil
+	case "complete":
+		// The checkout session is complete. Payment processing may still be in progress
+	case "expired":
+		// The checkout session has expired. No further processing will occur
+		notifyResult.PaymentStatus = PaymentStateTimeout
+		return notifyResult, nil
+	default:
+		notifyResult.PaymentStatus = PaymentStateError
+		notifyResult.NotifyMessage = fmt.Sprintf("unexpected stripe checkout status: %v", sCheckout.Status)
+		return notifyResult, nil
+	}
 	switch sCheckout.PaymentStatus {
 	case "paid":
-		// skip
+		// Skip
 	case "unpaid":
 		notifyResult.PaymentStatus = PaymentStateCreated
 		return notifyResult, nil
 	default:
 		notifyResult.PaymentStatus = PaymentStateError
-		notifyResult.NotifyMessage = fmt.Sprintf("unexpected payment status: %v", sCheckout.PaymentStatus)
+		notifyResult.NotifyMessage = fmt.Sprintf("unexpected stripe checkout payment status: %v", sCheckout.PaymentStatus)
 		return notifyResult, nil
 	}
 	// Once payment is successful, the Checkout Session will contain a reference to the successful `PaymentIntent`
-	intent := sCheckout.PaymentIntent
+	sIntent, err := stripeIntent.Get(sCheckout.PaymentIntent.ID, nil)
 	description := &PaymentDescription{}
-	description.FromString(intent.Description)
+	if jsonString, ok := sCheckout.Metadata["product_description"]; ok {
+		description.FromJsonString(jsonString)
+	}
 	notifyResult = &NotifyResult{
-		PaymentStatus:      PaymentStatePaid,
 		PaymentName:        sCheckout.ClientReferenceID,
+		PaymentStatus:      PaymentStatePaid,
 		PaymentDescription: description,
-		Price:              float64(intent.Amount) / 100,
-		Currency:           string(intent.Currency),
+		Price:              int64ToFloat64Price(sIntent.Amount),
+		Currency:           string(sIntent.Currency),
 		OutOrderId:         outOrderId,
 	}
 	return notifyResult, nil
