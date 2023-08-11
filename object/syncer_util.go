@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -161,6 +162,33 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.IsDeleted = util.ParseBool(value)
 	case "CreatedIp":
 		user.CreatedIp = value
+	}
+}
+
+func (syncer *Syncer) getUserValue(user *User, key string) string {
+	jsonData, _ := json.Marshal(user)
+	var mapData map[string]interface{}
+	if err := json.Unmarshal(jsonData, &mapData); err != nil {
+		fmt.Println("conversion failed:", err)
+		return user.Id
+	}
+	value := mapData[util.SnakeToCamel(key)]
+
+	if str, ok := value.(string); ok {
+		return str
+	} else {
+		if value != nil {
+			valType := reflect.TypeOf(value)
+
+			typeName := valType.Name()
+			switch typeName {
+			case "bool":
+				return strconv.FormatBool(value.(bool))
+			case "int":
+				return strconv.Itoa(value.(int))
+			}
+		}
+		return user.Id
 	}
 }
 
