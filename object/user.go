@@ -37,7 +37,6 @@ func InitUserManager() {
 	enforcer, err := GetInitializedEnforcer(UserEnforcerId)
 	if err != nil {
 		panic(err)
-		return
 	}
 
 	userEnforcer = NewUserGroupEnforcer(enforcer.Enforcer)
