@@ -22,7 +22,6 @@ import (
 	"github.com/casbin/casbin/v2/config"
 	"github.com/casbin/casbin/v2/log"
 	"github.com/casbin/casbin/v2/model"
-	"github.com/casdoor/casdoor/conf"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
@@ -78,10 +77,9 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 			tableName = adapterObj.Table
 		}
 	}
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	driverName := conf.GetConfigString("driverName")
-	dataSourceName := conf.GetConfigRealDataSourceName(driverName)
-	adapter, err := xormadapter.NewAdapterWithTableName(driverName, dataSourceName, tableName, tableNamePrefix, true)
+
+	orm := NewOrmer(nil, true)
+	adapter, err := xormadapter.NewAdapterByEngineWithTableName(orm.Engine, tableName, orm.tableNamePrefix)
 	if err != nil {
 		return err
 	}

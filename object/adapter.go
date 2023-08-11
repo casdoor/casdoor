@@ -16,10 +16,8 @@ package object
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/casbin/casbin/v2/model"
-	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
@@ -149,42 +147,32 @@ func (adapter *Adapter) getTable() string {
 	}
 }
 
+func (adapter *Adapter) databaseConfig() *DatabaseConfig {
+	return &DatabaseConfig{
+		driverName: adapter.DatabaseType,
+		host:       adapter.Host,
+		port:       adapter.Port,
+		user:       adapter.User,
+		password:   adapter.Password,
+		database:   adapter.Database,
+	}
+}
+
 func (adapter *Adapter) initAdapter() error {
-	if adapter.Adapter == nil {
-		var dataSourceName string
+	if adapter.Adapter != nil {
+		return nil
+	}
+	var orm *Ormer
+	var err error
+	if adapter.builtInAdapter() {
+		orm = NewOrmer(nil, true)
+	} else {
+		orm = NewOrmer(adapter.databaseConfig())
+	}
 
-		if adapter.builtInAdapter() {
-			dataSourceName = conf.GetConfigString("dataSourceName")
-		} else {
-			switch adapter.DatabaseType {
-			case "mssql":
-				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "mysql":
-				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port)
-			case "postgres":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "CockroachDB":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
-					adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "sqlite3":
-				dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
-			default:
-				return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
-			}
-		}
-
-		if !isCloudIntranet {
-			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
-		}
-
-		var err error
-		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), adapter.TableNamePrefix)
-		if err != nil {
-			return err
-		}
+	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(orm.Engine, adapter.getTable(), adapter.TableNamePrefix)
+	if err != nil {
+		return err
 	}
 	return nil
 }
