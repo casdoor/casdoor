@@ -214,7 +214,7 @@ export const OtherProviderInfo = {
       url: "https://www.paypal.com/",
     },
     "Stripe": {
-      logo: `${StaticBaseUrl}/img/social_stripe.png`, // todo
+      logo: `${StaticBaseUrl}/img/social_stripe.png`,
       url: "https://stripe.com/",
     },
     "GC": {
