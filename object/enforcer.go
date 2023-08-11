@@ -168,7 +168,7 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	return nil
 }
 
-func GetInitedEnforcer(enforcerId string) (*Enforcer, error) {
+func GetInitializedEnforcer(enforcerId string) (*Enforcer, error) {
 	enforcer, err := GetEnforcer(enforcerId)
 	if err != nil {
 		return nil, err

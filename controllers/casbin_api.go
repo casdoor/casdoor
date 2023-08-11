@@ -45,7 +45,7 @@ func (c *ApiController) Enforce() {
 	}
 
 	if enforcerId != "" {
-		enforcer, err := object.GetInitedEnforcer(enforcerId)
+		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -149,7 +149,7 @@ func (c *ApiController) BatchEnforce() {
 	}
 
 	if enforcerId != "" {
-		enforcer, err := object.GetInitedEnforcer(enforcerId)
+		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

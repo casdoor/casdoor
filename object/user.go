@@ -34,7 +34,7 @@ const UserEnforcerId = "built-in/user-enforcer-built-in"
 var userEnforcer *UserGroupEnforcer
 
 func InitUserManager() {
-	enforcer, err := GetInitedEnforcer(UserEnforcerId)
+	enforcer, err := GetInitializedEnforcer(UserEnforcerId)
 	if err != nil {
 		panic(err)
 		return
