@@ -6,15 +6,6 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
-type IUserGroupEnforcer interface {
-	AddGroupForUser(user string, group string) (bool, error)
-	AddGroupsForUser(user string, groups []string) (bool, error)
-	DeleteGroupForUser(user string, group string) (bool, error)
-	DeleteGroupsForUser(user string) (bool, error)
-	GetGroupsForUser(user string) ([]string, error)
-	GetAllUsersByGroup(group string) ([]string, error)
-}
-
 type UserGroupEnforcer struct {
 	// use rbac model implement use group, the enforcer can also implement user role
 	enforcer *casbin.Enforcer
