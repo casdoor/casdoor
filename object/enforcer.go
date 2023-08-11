@@ -167,3 +167,18 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	enforcer.Enforcer = casbinEnforcer
 	return nil
 }
+
+func GetInitedEnforcer(enforcerId string) (*Enforcer, error) {
+	enforcer, err := GetEnforcer(enforcerId)
+	if err != nil {
+		return nil, err
+	} else if enforcer == nil {
+		return nil, fmt.Errorf("the enforcer: %s is not found", enforcerId)
+	}
+
+	err = enforcer.InitEnforcer()
+	if err != nil {
+		return nil, err
+	}
+	return enforcer, nil
+}
