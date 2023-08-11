@@ -49,6 +49,7 @@ func main() {
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
 	authz.InitApi()
+	object.InitUserManager()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 
