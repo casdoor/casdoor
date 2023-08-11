@@ -90,7 +90,7 @@ func (c *ApiController) GetUsers() {
 
 	if limit == "" || page == "" {
 		if groupName != "" {
-			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(groupName))
+			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -567,6 +567,22 @@ func (c *ApiController) RemoveUserFromGroup() {
 	name := c.Ctx.Request.Form.Get("name")
 	groupName := c.Ctx.Request.Form.Get("groupName")
 
-	c.Data["json"] = wrapActionResponse(object.RemoveUserFromGroup(owner, name, util.GetId(owner, groupName)))
-	c.ServeJSON()
+	organization, err := object.GetOrganization(util.GetId("admin", owner))
+	if err != nil {
+		return
+	}
+	item := object.GetAccountItemByName("Groups", organization)
+	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin(), c.GetAcceptLanguage())
+	if !res {
+		c.ResponseError(msg)
+		return
+	}
+
+	affected, err := object.DeleteGroupForUser(util.GetId(owner, name), groupName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(affected)
 }

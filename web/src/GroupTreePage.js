@@ -221,6 +221,7 @@ class GroupTreePage extends React.Component {
           onChange={(value) => {
             this.setState({
               organizationName: value,
+              groupName: "",
             });
             this.props.history.push(`/trees/${value}`);
           }}
