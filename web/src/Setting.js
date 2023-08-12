@@ -93,6 +93,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://azure.microsoft.com/en-us/products/communication-services",
     },
+    "Custom HTTP SMS": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://casdoor.org/docs/provider/sms/overview",
+    },
     "Infobip SMS": {
       logo: `${StaticBaseUrl}/img/social_infobip.png`,
       url: "https://portal.infobip.com/homepage/",
@@ -888,6 +892,7 @@ export function getProviderTypeOptions(category) {
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
         {id: "Amazon SNS", name: "Amazon SNS"},
         {id: "Azure ACS", name: "Azure ACS"},
+        {id: "Custom HTTP SMS", name: "Custom HTTP SMS"},
         {id: "Infobip SMS", name: "Infobip SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},
