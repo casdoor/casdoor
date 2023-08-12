@@ -191,8 +191,8 @@ class LdapSyncPage extends React.Component {
       },
       {
         title: i18next.t("general:Phone"),
-        dataIndex: "phone",
-        key: "phone",
+        dataIndex: "mobile",
+        key: "mobile",
         sorter: (a, b) => a.phone.localeCompare(b.phone),
       },
       {
