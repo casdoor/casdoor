@@ -351,7 +351,7 @@ class App extends Component {
           }
           &nbsp;
           &nbsp;
-          {Setting.isMobile() ? null : Setting.getNameAtLeast(this.state.account.displayName)} &nbsp; <DownOutlined />
+          {Setting.isMobile() ? null : Setting.getShortText(Setting.getNameAtLeast(this.state.account.displayName), 30)} &nbsp; <DownOutlined />
           &nbsp;
           &nbsp;
           &nbsp;

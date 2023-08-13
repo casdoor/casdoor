@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Checkbox, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
@@ -25,6 +25,7 @@ import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
+import * as Web3Auth from "./auth/Web3Auth";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -1007,6 +1008,30 @@ class ProviderEditPage extends React.Component {
                 <Input value={this.state.provider.cert} onChange={e => {
                   this.updateProviderField("cert", e.target.value);
                 }} />
+              </Col>
+            </Row>
+          ) : null
+        }
+        {
+          this.state.provider.type === "Web3Onboard" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Wallets"), i18next.t("provider:Wallets - Tooltip"))} :
+              </Col>
+              <Col span={22}>
+                <Checkbox.Group
+                  options={Web3Auth.getWeb3OnboardWalletsOptions()}
+                  value={() => {
+                    try {
+                      return JSON.parse(this.state.provider.metadata);
+                    } catch {
+                      return ["injected"];
+                    }
+                  }}
+                  onChange={options => {
+                    this.updateProviderField("metadata", JSON.stringify(options));
+                  }}
+                />
               </Col>
             </Row>
           ) : null

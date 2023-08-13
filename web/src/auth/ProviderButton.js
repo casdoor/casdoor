@@ -17,7 +17,7 @@ import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
-import {authViaMetaMask} from "./Web3Auth";
+import {authViaMetaMask, authViaWeb3Onboard} from "./Web3Auth";
 import QqLoginButton from "./QqLoginButton";
 import FacebookLoginButton from "./FacebookLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
@@ -121,6 +121,8 @@ function goToSamlUrl(provider, location) {
 export function goToWeb3Url(application, provider, method) {
   if (provider.type === "MetaMask") {
     authViaMetaMask(application, provider, method);
+  } else if (provider.type === "Web3Onboard") {
+    authViaWeb3Onboard(application, provider, method);
   }
 }
 
