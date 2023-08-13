@@ -21,15 +21,15 @@ import {Buffer} from "buffer";
 import Onboard from "@web3-onboard/core";
 import injectedModule from "@web3-onboard/injected-wallets";
 import infinityWalletModule from "@web3-onboard/infinity-wallet";
-import keepkeyModule from "@web3-onboard/keepkey";
 import sequenceModule from "@web3-onboard/sequence";
 import trustModule from "@web3-onboard/trust";
 import frontierModule from "@web3-onboard/frontier";
 import tahoModule from "@web3-onboard/taho";
 import coinbaseModule from "@web3-onboard/coinbase";
-import dcentModule from "@web3-onboard/dcent";
 import gnosisModule from "@web3-onboard/gnosis";
-import keystoneModule from "@web3-onboard/keystone";
+// import keystoneModule from "@web3-onboard/keystone";
+// import keepkeyModule from "@web3-onboard/keepkey";
+// import dcentModule from "@web3-onboard/dcent";
 // import ledgerModule from "@web3-onboard/ledger";
 // import trezorModule from "@web3-onboard/trezor";
 // import walletConnectModule from "@web3-onboard/walletconnect";
@@ -202,18 +202,19 @@ const web3Wallets = {
     wallet: infinityWalletModule(),
   },
   // hardware wallets
-  keystone: {
-    label: "Keystone",
-    wallet: keystoneModule(),
-  },
-  keepkey: {
-    label: "KeepKey",
-    wallet: keepkeyModule(),
-  },
-  dcent: {
-    label: "D'CENT",
-    wallet: dcentModule(),
-  },
+  // keystone: {
+  //   label: "Keystone",
+  //   wallet: keystoneModule(),
+  // },
+  // keepkey: {
+  //   label: "KeepKey",
+  //   wallet: keepkeyModule(),
+  // },
+  // dcent: {
+  //   label: "D'CENT",
+  //   wallet: dcentModule(),
+  // },
+
   // some wallet need custome `apiKey` or `projectId` configure item
   // const magic = magicModule({
   //   apiKey: "magicApiKey",
