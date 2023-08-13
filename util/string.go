@@ -88,6 +88,17 @@ func CamelToSnakeCase(camel string) string {
 	return strings.ReplaceAll(buf.String(), " ", "")
 }
 
+func SnakeToCamel(snake string) string {
+	words := strings.Split(snake, "_")
+	for i := range words {
+		words[i] = strings.ToLower(words[i])
+		if i > 0 {
+			words[i] = strings.Title(words[i])
+		}
+	}
+	return strings.Join(words, "")
+}
+
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {

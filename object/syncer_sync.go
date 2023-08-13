@@ -20,16 +20,24 @@ import (
 )
 
 func (syncer *Syncer) syncUsers() {
+	if len(syncer.TableColumns) == 0 {
+		return
+	}
+
 	fmt.Printf("Running syncUsers()..\n")
 
-	users, userMap, userNameMap := syncer.getUserMap()
+	users, _, _ := syncer.getUserMap()
 	oUsers, oUserMap, err := syncer.getOriginalUserMap()
 	if err != nil {
 		fmt.Printf(err.Error())
 
 		timestamp := time.Now().Format("2006-01-02 15:04:05")
 		line := fmt.Sprintf("[%s] %s\n", timestamp, err.Error())
-		updateSyncerErrorText(syncer, line)
+		_, err = updateSyncerErrorText(syncer, line)
+		if err != nil {
+			panic(err)
+		}
+
 		return
 	}
 
@@ -40,48 +48,68 @@ func (syncer *Syncer) syncUsers() {
 		_, affiliationMap, err = syncer.getAffiliationMap()
 	}
 
+	key := syncer.getKey()
+
+	myUsers := map[string]*User{}
+	for _, m := range users {
+		myUsers[syncer.getUserValue(m, key)] = m
+	}
+
 	newUsers := []*User{}
 	for _, oUser := range oUsers {
-		id := oUser.Id
-		if _, ok := userMap[id]; !ok {
-			if _, ok := userNameMap[oUser.Name]; !ok {
-				newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
-				fmt.Printf("New user: %v\n", newUser)
-				newUsers = append(newUsers, newUser)
-			}
-		} else {
-			user := userMap[id]
-			oHash := syncer.calculateHash(oUser)
+		primary := syncer.getUserValue(oUser, key)
 
+		if _, ok := myUsers[primary]; !ok {
+			newUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
+			fmt.Printf("New user: %v\n", newUser)
+			newUsers = append(newUsers, newUser)
+		} else {
+			user := myUsers[primary]
+			oHash := syncer.calculateHash(oUser)
 			if user.Hash == user.PreHash {
 				if user.Hash != oHash {
 					updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
-					syncer.updateUserForOriginalFields(updatedUser)
+					_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
+					if err != nil {
+						panic(err)
+					}
 					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
 				}
 			} else {
 				if user.PreHash == oHash {
 					if !syncer.IsReadOnly {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
-						syncer.updateUser(updatedOUser)
+						_, err = syncer.updateUser(updatedOUser)
+						if err != nil {
+							panic(err)
+						}
 						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 					}
 
 					// update preHash
 					user.PreHash = user.Hash
-					SetUserField(user, "pre_hash", user.PreHash)
+					_, err = SetUserField(user, "pre_hash", user.PreHash)
+					if err != nil {
+						panic(err)
+					}
 				} else {
 					if user.Hash == oHash {
 						// update preHash
 						user.PreHash = user.Hash
-						SetUserField(user, "pre_hash", user.PreHash)
+						_, err = SetUserField(user, "pre_hash", user.PreHash)
+						if err != nil {
+							panic(err)
+						}
 					} else {
 						updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
-						syncer.updateUserForOriginalFields(updatedUser)
+						_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
+						if err != nil {
+							panic(err)
+						}
 						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
 					}
 				}

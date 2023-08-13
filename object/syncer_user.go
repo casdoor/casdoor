@@ -80,16 +80,6 @@ func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
 	return affected != 0, nil
 }
 
-/*func (syncer *Syncer) getOriginalColumns() []string {
-	res := []string{}
-	for _, tableColumn := range syncer.TableColumns {
-		if tableColumn.CasdoorName != "Id" {
-			res = append(res, tableColumn.Name)
-		}
-	}
-	return res
-}*/
-
 func (syncer *Syncer) getCasdoorColumns() []string {
 	res := []string{}
 	for _, tableColumn := range syncer.TableColumns {
@@ -102,12 +92,14 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 }
 
 func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
+	key := syncer.getKey()
+
 	m := syncer.getMapFromOriginalUser(user)
-	pkValue := m[syncer.TablePrimaryKey]
-	delete(m, syncer.TablePrimaryKey)
+	pkValue := m[key]
+	delete(m, key)
 	setString := syncer.getSqlSetStringFromMap(m)
 
-	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, syncer.TablePrimaryKey, pkValue)
+	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, key, pkValue)
 	res, err := syncer.Ormer.Engine.Exec(sql)
 	if err != nil {
 		return false, err
@@ -139,6 +131,34 @@ func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
 	columns := syncer.getCasdoorColumns()
 	columns = append(columns, "affiliation", "hash", "pre_hash")
 	affected, err := ormer.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
+	if err != nil {
+		return false, err
+	}
+	return affected != 0, nil
+}
+
+func (syncer *Syncer) updateUserForOriginalByFields(user *User, key string) (bool, error) {
+	var err error
+	oldUser := User{}
+
+	existed, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(user, key), user.Owner).Get(&oldUser)
+	if err != nil {
+		return false, err
+	}
+	if !existed {
+		return false, nil
+	}
+
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	columns := syncer.getCasdoorColumns()
+	columns = append(columns, "affiliation", "hash", "pre_hash")
+	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(&oldUser, key), oldUser.Owner).Cols(columns...).Update(user)
 	if err != nil {
 		return false, err
 	}
