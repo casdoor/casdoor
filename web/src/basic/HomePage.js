@@ -150,7 +150,7 @@ class HomePage extends React.Component {
         <Row gutter={80}>
           <Col span={50}>
             <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
-              <Statistic title="Total users" fontSize="100px" value={this.state.dashboardData.TotalUsersCount} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
+              <Statistic title="Total users" fontSize="100px" value={this.state.dashboardData.TotalUsersCount} valueStyle={{fontSize: "30px"}} style={{width: "200px", paddingLeft: "10px"}} />
             </Card>
           </Col>
           <Col span={50}>
