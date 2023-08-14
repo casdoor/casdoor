@@ -14,7 +14,10 @@
 
 package object
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type Dashboard struct {
 	OrganizationCounts []int `json:"organizationCounts"`
@@ -33,29 +36,56 @@ func GetDashboard() (*Dashboard, error) {
 		SubscriptionCounts: make([]int, 31),
 	}
 
+	var wg sync.WaitGroup
+
+	organizations := []Organization{}
+	users := []User{}
+	providers := []Provider{}
+	applications := []Application{}
+	subscriptions := []Subscription{}
+
+	wg.Add(5)
+	go func() {
+		defer wg.Done()
+		if err := ormer.Engine.Find(&organizations); err != nil {
+			panic(err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		if err := ormer.Engine.Find(&users); err != nil {
+			panic(err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		if err := ormer.Engine.Find(&providers); err != nil {
+			panic(err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		if err := ormer.Engine.Find(&applications); err != nil {
+			panic(err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		if err := ormer.Engine.Find(&subscriptions); err != nil {
+			panic(err)
+		}
+	}()
+	wg.Wait()
+
 	nowTime := time.Now()
-
-	organizations := make([]Organization, 0)
-	if err := ormer.Engine.Find(&organizations); err != nil {
-		return dashboard, err
-	}
-	users := make([]User, 0)
-	if err := ormer.Engine.Find(&users); err != nil {
-		return dashboard, err
-	}
-	providers := make([]Provider, 0)
-	if err := ormer.Engine.Find(&providers); err != nil {
-		return dashboard, err
-	}
-	applications := make([]Application, 0)
-	if err := ormer.Engine.Find(&applications); err != nil {
-		return dashboard, err
-	}
-	subscriptions := make([]Subscription, 0)
-	if err := ormer.Engine.Find(&subscriptions); err != nil {
-		return dashboard, err
-	}
-
 	for i := 30; i >= 0; i-- {
 		cutTime := nowTime.AddDate(0, 0, -i)
 		dashboard.OrganizationCounts[30-i] = countCreatedBefore(organizations, cutTime)
@@ -64,7 +94,6 @@ func GetDashboard() (*Dashboard, error) {
 		dashboard.ApplicationCounts[30-i] = countCreatedBefore(applications, cutTime)
 		dashboard.SubscriptionCounts[30-i] = countCreatedBefore(subscriptions, cutTime)
 	}
-
 	return dashboard, nil
 }
 
