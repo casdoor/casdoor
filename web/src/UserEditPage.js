@@ -570,7 +570,7 @@ class UserEditPage extends React.Component {
                   {name: "ID card back", value: "idCardBack"},
                   {name: "ID card with person", value: "idCardWithPerson"},
                 ].map((entry) => {
-                  return this.renderImage(this.state.user.properties[entry.value] || "", this.getIdCardType(entry.name), this.getIdCardText(entry.name), entry.value, disabled);
+                  return this.renderImage(this.state.user.properties === null ? "" : (this.state.user.properties[entry.value] || ""), this.getIdCardType(entry.name), this.getIdCardText(entry.name), entry.value, disabled);
                 })
               }
             </Row>
@@ -995,11 +995,13 @@ class UserEditPage extends React.Component {
       <Col span={4} style={{textAlign: "center", margin: "auto"}} key={tag}>
         {
           imgUrl ?
-            <a target="_blank" rel="noreferrer" href={imgUrl} style={{marginBottom: "10px"}}>
-              <AccountAvatar src={imgUrl} alt={imgUrl} size={90} style={{marginBottom: "20px"}} />
-            </a>
+            <div style={{marginBottom: "10px"}}>
+              <a target="_blank" rel="noreferrer" href={imgUrl} style={{marginBottom: "10px"}}>
+                <AccountAvatar src={imgUrl} alt={imgUrl} height={150} />
+              </a>
+            </div>
             :
-            <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: 5}}>
+            <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: "10px"}}>
               <div style={{fontSize: 30, margin: 10}}>+</div>
               <div style={{verticalAlign: "middle", marginBottom: 10}}>{`Upload ${title}...`}</div>
             </Col>

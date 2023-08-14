@@ -140,10 +140,12 @@ func (c *ApiController) SendSms() {
 		return
 	}
 
-	invalidReceivers := getInvalidSmsReceivers(smsForm)
-	if len(invalidReceivers) != 0 {
-		c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), strings.Join(invalidReceivers, ", ")))
-		return
+	if provider.Type != "Custom HTTP SMS" {
+		invalidReceivers := getInvalidSmsReceivers(smsForm)
+		if len(invalidReceivers) != 0 {
+			c.ResponseError(fmt.Sprintf(c.T("service:Invalid phone receivers: %s"), strings.Join(invalidReceivers, ", ")))
+			return
+		}
 	}
 
 	err = object.SendSms(provider, smsForm.Content, smsForm.Receivers...)

@@ -23,6 +23,7 @@ import (
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
+	"github.com/xorm-io/xorm"
 )
 
 type Adapter struct {
@@ -155,14 +156,17 @@ func (adapter *Adapter) initAdapter() error {
 
 		if adapter.builtInAdapter() {
 			dataSourceName = conf.GetConfigString("dataSourceName")
+			if adapter.DatabaseType == "mysql" {
+				dataSourceName = dataSourceName + adapter.Database
+			}
 		} else {
 			switch adapter.DatabaseType {
 			case "mssql":
 				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
 					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "mysql":
-				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port)
+				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", adapter.User,
+					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
 			case "postgres":
 				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
 					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
@@ -181,7 +185,8 @@ func (adapter *Adapter) initAdapter() error {
 		}
 
 		var err error
-		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(NewAdapter(adapter.DatabaseType, dataSourceName, adapter.Database).Engine, adapter.getTable(), adapter.TableNamePrefix)
+		engine, err := xorm.NewEngine(adapter.DatabaseType, dataSourceName)
+		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, adapter.getTable(), adapter.TableNamePrefix)
 		if err != nil {
 			return err
 		}
@@ -327,7 +332,7 @@ func (adapter *Adapter) builtInAdapter() bool {
 		return false
 	}
 
-	return adapter.Name == "permission-adapter-built-in" || adapter.Name == "api-adapter-built-in"
+	return adapter.Name == "user-adapter-built-in" || adapter.Name == "api-adapter-built-in"
 }
 
 func getModelDef() model.Model {

@@ -97,7 +97,7 @@ class OAuthWidget extends React.Component {
       // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
-    if (providerType === "MetaMask") {
+    if (providerType === "MetaMask" || providerType === "Web3Onboard") {
       delWeb3AuthToken(linkedValue);
     }
     AuthBackend.unlink(body)
@@ -158,7 +158,12 @@ class OAuthWidget extends React.Component {
         </Col>
         <Col span={24 - this.props.labelSpan} >
           <AccountAvatar style={{marginRight: "10px"}} size={30} src={avatarUrl} alt={name} referrerPolicy="no-referrer" />
-          <span style={{width: this.props.labelSpan === 3 ? "300px" : "200px", display: (Setting.isMobile()) ? "inline" : "inline-block"}}>
+          <span style={{
+            width: this.props.labelSpan === 3 ? "300px" : "200px",
+            display: (Setting.isMobile()) ? "inline" : "inline-block",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }} title={name}>
             {
               linkedValue === "" ? (
                 `(${i18next.t("general:empty")})`

@@ -45,7 +45,6 @@ type Syncer struct {
 	DatabaseType     string         `xorm:"varchar(100)" json:"databaseType"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
-	TablePrimaryKey  string         `xorm:"varchar(100)" json:"tablePrimaryKey"`
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
 	AffiliationTable string         `xorm:"varchar(100)" json:"affiliationTable"`
 	AvatarBaseUrl    string         `xorm:"varchar(100)" json:"avatarBaseUrl"`
@@ -228,6 +227,27 @@ func (syncer *Syncer) getTable() string {
 	} else {
 		return syncer.Table
 	}
+}
+
+func (syncer *Syncer) getKey() string {
+	key := "id"
+	hasKey := false
+	hasId := false
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.IsKey {
+			hasKey = true
+			key = tableColumn.Name
+		}
+		if tableColumn.Name == "id" {
+			hasId = true
+		}
+	}
+
+	if !hasKey && !hasId {
+		key = syncer.TableColumns[0].Name
+	}
+
+	return key
 }
 
 func RunSyncer(syncer *Syncer) {

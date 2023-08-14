@@ -17,7 +17,7 @@ import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
-import {authViaMetaMask} from "./Web3Auth";
+import {authViaMetaMask, authViaWeb3Onboard} from "./Web3Auth";
 import QqLoginButton from "./QqLoginButton";
 import FacebookLoginButton from "./FacebookLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
@@ -46,7 +46,7 @@ import {getEvent} from "./Util";
 import {Modal} from "antd";
 
 function getSigninButton(provider) {
-  const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.type);
+  const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName !== "" ? provider.displayName : provider.type);
   if (provider.type === "GitHub") {
     return <GithubLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Google") {
@@ -121,6 +121,8 @@ function goToSamlUrl(provider, location) {
 export function goToWeb3Url(application, provider, method) {
   if (provider.type === "MetaMask") {
     authViaMetaMask(application, provider, method);
+  } else if (provider.type === "Web3Onboard") {
+    authViaWeb3Onboard(application, provider, method);
   }
 }
 

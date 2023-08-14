@@ -153,10 +153,10 @@ class App extends Component {
       this.setState({selectedMenuKey: "/"});
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
       this.setState({selectedMenuKey: "/orgs"});
-    } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
-      this.setState({selectedMenuKey: "/auth"});
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/identity"});
+    } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
+      this.setState({selectedMenuKey: "/auth"});
     } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
       this.setState({selectedMenuKey: "/logs"});
     } else if (uri.includes("/products") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions")) {
@@ -351,7 +351,7 @@ class App extends Component {
           }
           &nbsp;
           &nbsp;
-          {Setting.isMobile() ? null : Setting.getNameAtLeast(this.state.account.displayName)} &nbsp; <DownOutlined />
+          {Setting.isMobile() ? null : Setting.getShortText(Setting.getNameAtLeast(this.state.account.displayName), 30)} &nbsp; <DownOutlined />
           &nbsp;
           &nbsp;
           &nbsp;
@@ -418,6 +418,13 @@ class App extends Component {
         Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
       ]));
 
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
+        Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
+        Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
+        Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
+        Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
+      ]));
+
       res.push(Setting.getItem(<Link style={{color: "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
         Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
         Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
@@ -431,15 +438,6 @@ class App extends Component {
           return true;
         }
       })));
-    }
-
-    if (Setting.isLocalAdminUser(this.state.account)) {
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
-        Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
-        Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
-        Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
-        Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
-      ]));
 
       res.push(Setting.getItem(<Link style={{color: "black"}} to="/records">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
         Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),

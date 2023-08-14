@@ -309,8 +309,7 @@ func GetAllRoles(userId string) []string {
 
 func GetBuiltInModel(modelText string) (model.Model, error) {
 	if modelText == "" {
-		modelText = `
-[request_definition]
+		modelText = `[request_definition]
 r = sub, obj, act
 
 [policy_definition]

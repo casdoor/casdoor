@@ -103,7 +103,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
-        width: "120px",
+        width: "150px",
         fixed: "left",
         sorter: true,
         ...this.getColumnSearchProps("name"),
@@ -119,7 +119,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
         key: "owner",
-        width: "120px",
+        width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
@@ -134,7 +134,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "150px",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -144,7 +144,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Updated time"),
         dataIndex: "updatedTime",
         key: "updatedTime",
-        width: "150px",
+        width: "180px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -154,7 +154,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        width: "100px",
+        // width: "200px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
@@ -162,7 +162,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Type"),
         dataIndex: "type",
         key: "type",
-        width: "110px",
+        width: "140px",
         sorter: true,
         filterMultiple: false,
         filters: [
@@ -177,7 +177,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("group:Parent group"),
         dataIndex: "parentId",
         key: "parentId",
-        width: "110px",
+        width: "220px",
         sorter: true,
         ...this.getColumnSearchProps("parentId"),
         render: (text, record, index) => {
@@ -199,7 +199,7 @@ class GroupListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "170px",
+        width: "180px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           const haveChildren = this.state.groups.find((group) => group.parentId === record.id) !== undefined;

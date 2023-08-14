@@ -29,6 +29,19 @@ const (
 	UserPropertiesWechatOpenId  = "wechatOpenId"
 )
 
+const UserEnforcerId = "built-in/user-enforcer-built-in"
+
+var userEnforcer *UserGroupEnforcer
+
+func InitUserManager() {
+	enforcer, err := GetInitializedEnforcer(UserEnforcerId)
+	if err != nil {
+		panic(err)
+	}
+
+	userEnforcer = NewUserGroupEnforcer(enforcer.Enforcer)
+}
+
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -157,6 +170,7 @@ type User struct {
 	Yandex          string `xorm:"yandex varchar(100)" json:"yandex"`
 	Zoom            string `xorm:"zoom varchar(100)" json:"zoom"`
 	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
+	Web3Onboard     string `xorm:"web3onboard varchar(100)" json:"web3onboard"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
@@ -531,6 +545,13 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "email", "phone", "country_code")
 	}
 
+	if util.ContainsString(columns, "groups") {
+		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	affected, err := updateUser(id, user, columns)
 	if err != nil {
 		return false, err
@@ -776,6 +797,10 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 	}
 
 	return
+}
+
+func DeleteGroupForUser(user string, group string) (bool, error) {
+	return userEnforcer.DeleteGroupForUser(user, group)
 }
 
 func userChangeTrigger(oldName string, newName string) error {

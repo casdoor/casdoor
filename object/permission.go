@@ -58,7 +58,7 @@ type PermissionRule struct {
 	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
 }
 
-const builtInAvailableField = 10
+const builtInAvailableField = 5 // Casdoor built-in adapter, use V5 to filter permission, so has 5 available field
 
 func (p *Permission) GetId() string {
 	return util.GetId(p.Owner, p.Name)

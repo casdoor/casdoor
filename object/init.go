@@ -484,7 +484,7 @@ func initBuiltInUserEnforcer() {
 		Owner:       "built-in",
 		Name:        "user-enforcer-built-in",
 		CreatedTime: util.GetCurrentTime(),
-		DisplayName: "Permission Enforcer",
+		DisplayName: "User Enforcer",
 		Model:       "built-in/user-model-built-in",
 		Adapter:     "built-in/user-adapter-built-in",
 		IsEnabled:   true,

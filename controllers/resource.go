@@ -361,6 +361,9 @@ func (c *ApiController) UploadResource() {
 			return
 		}
 
+		if user.Properties == nil {
+			user.Properties = map[string]string{}
+		}
 		user.Properties[tag] = fileUrl
 		user.Properties["isIdCardVerified"] = "false"
 		_, err = object.UpdateUser(user.GetId(), user, []string{"properties"}, false)
