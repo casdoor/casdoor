@@ -165,7 +165,7 @@ func (adapter *Adapter) initAdapter() error {
 		if adapter.builtInAdapter() || adapter.SameAsCasdoor {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 			if adapter.DatabaseType == "mysql" {
-				dataSourceName = dataSourceName + adapter.Database
+				dataSourceName = dataSourceName + conf.GetConfigString("dbName")
 			}
 		} else {
 			switch adapter.DatabaseType {
