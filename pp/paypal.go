@@ -56,8 +56,8 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 	unit := &paypal.PurchaseUnit{
 		ReferenceId: util.GetRandomString(16),
 		Amount: &paypal.Amount{
-			CurrencyCode: currency,                               // e.g."USD"
-			Value:        strconv.FormatFloat(price, 'f', 2, 64), // e.g."100.00"
+			CurrencyCode: currency,                    // e.g."USD"
+			Value:        priceFloat64ToString(price), // e.g."100.00"
 		},
 		Description: joinAttachString([]string{productDisplayName, productName, providerName}),
 	}
@@ -154,7 +154,7 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 		Price:              price,
 		Currency:           currency,
 
-		OutOrderId: orderId,
+		OrderId: orderId,
 	}
 	return notifyResult, nil
 }

@@ -148,7 +148,7 @@ func (pp *StripePaymentProvider) Notify(request *http.Request, body []byte, auth
 		Price:    priceInt64ToFloat64(sIntent.Amount),
 		Currency: string(sIntent.Currency),
 
-		OutOrderId: orderId,
+		OrderId: orderId,
 	}
 	return notifyResult, nil
 }

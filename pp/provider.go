@@ -39,7 +39,7 @@ type NotifyResult struct {
 	Price              float64
 	Currency           string
 
-	OutOrderId string
+	OrderId string
 }
 
 type PaymentProvider interface {

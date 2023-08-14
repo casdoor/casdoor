@@ -17,8 +17,14 @@ package pp
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 )
+
+func getPriceString(price float64) string {
+	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
+	return priceString
+}
 
 func joinAttachString(tokens []string) string {
 	return strings.Join(tokens, "|")
@@ -32,15 +38,14 @@ func parseAttachString(s string) (string, string, string, error) {
 	return tokens[0], tokens[1], tokens[2], nil
 }
 
-func priceFloat64ToString(price float64) string {
-	priceString := strings.TrimRight(strings.TrimRight(fmt.Sprintf("%.2f", price), "0"), ".")
-	return priceString
-}
-
 func priceInt64ToFloat64(price int64) float64 {
 	return float64(price) / 100
 }
 
 func priceFloat64ToInt64(price float64) int64 {
 	return int64(math.Round(price * 100))
+}
+
+func priceFloat64ToString(price float64) string {
+	return strconv.FormatFloat(price, 'f', 2, 64)
 }

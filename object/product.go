@@ -188,7 +188,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 	// Create an Order and get the payUrl
-	payUrl, outOrderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
+	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
 	}
@@ -213,7 +213,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		User:       user.Name,
 		PayUrl:     payUrl,
 		State:      pp.PaymentStateCreated,
-		OutOrderId: outOrderId,
+		OutOrderId: orderId,
 	}
 
 	if provider.Type == "Dummy" {
@@ -229,7 +229,7 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		return "", "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
-	return payUrl, outOrderId, err
+	return payUrl, orderId, err
 }
 
 func ExtendProductWithProviders(product *Product) error {

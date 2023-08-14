@@ -57,7 +57,7 @@ func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, pa
 
 	bm.Set("subject", productDisplayName)
 	bm.Set("out_trade_no", paymentName)
-	bm.Set("total_amount", priceFloat64ToString(price))
+	bm.Set("total_amount", getPriceString(price))
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {
@@ -90,7 +90,7 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-		OutOrderId:         orderId,
+		OrderId:            orderId,
 		PaymentStatus:      PaymentStatePaid,
 		Price:              price,
 		PaymentName:        paymentName,
