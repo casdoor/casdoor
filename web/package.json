@@ -30,6 +30,7 @@
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.25.0",
     "craco-less": "^2.0.0",
+    "echarts": "^5.4.3",
     "eslint-plugin-unused-imports": "^2.0.0",
     "ethers": "5.6.9",
     "file-saver": "^2.0.5",
