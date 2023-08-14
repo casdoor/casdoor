@@ -152,7 +152,7 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, paymentName string, outOutId string) (*Payment, *pp.NotifyResult, error) {
+func notifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, *pp.NotifyResult, error) {
 	payment, err := getPayment(owner, paymentName)
 	if err != nil {
 		return nil, nil, err
@@ -180,11 +180,11 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 		return nil, nil, err
 	}
 
-	if outOutId == "" {
-		outOutId = payment.OutOrderId
+	if orderId == "" {
+		orderId = payment.OutOrderId
 	}
 
-	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, outOutId)
+	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)
 	if err != nil {
 		return payment, nil, err
 	}
@@ -192,8 +192,8 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 		return payment, notifyResult, nil
 	}
 	// Only check paid payment
-	if notifyResult.PaymentDescription.ProductDisplayName != "" && notifyResult.PaymentDescription.ProductDisplayName != product.DisplayName {
-		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.PaymentDescription.ProductDisplayName, product.DisplayName)
+	if notifyResult.ProductDisplayName != "" && notifyResult.ProductDisplayName != product.DisplayName {
+		err = fmt.Errorf("the payment's product name: %s doesn't equal to the expected product name: %s", notifyResult.ProductDisplayName, product.DisplayName)
 		return payment, nil, err
 	}
 
@@ -205,8 +205,8 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 	return payment, notifyResult, nil
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string, outOrderId string) (*Payment, error) {
-	payment, notifyResult, err := notifyPayment(request, body, owner, paymentName, outOrderId)
+func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string, orderId string) (*Payment, error) {
+	payment, notifyResult, err := notifyPayment(request, body, owner, paymentName, orderId)
 	if payment != nil {
 		if err != nil {
 			payment.State = pp.PaymentStateError

@@ -146,15 +146,13 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 		paymentStatus = PaymentStateError
 	}
 	notifyResult = &NotifyResult{
-		PaymentStatus: paymentStatus,
-		PaymentName:   paymentName,
-		PaymentDescription: &PaymentDescription{
-			ProductName:        productName,
-			ProductDisplayName: productDisplayName,
-			ProviderName:       providerName,
-		},
-		Price:    price,
-		Currency: currency,
+		PaymentStatus:      paymentStatus,
+		PaymentName:        paymentName,
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
+		Price:              price,
+		Currency:           currency,
 
 		OutOrderId: orderId,
 	}

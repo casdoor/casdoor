@@ -157,7 +157,7 @@ func (pp *GcPaymentProvider) Pay(providerName string, productName string, payerN
 	payReqInfo := GcPayReqInfo{
 		OrderDate: util.GenerateSimpleTimeId(),
 		OrderNo:   paymentName,
-		Amount:    getPriceString(price),
+		Amount:    priceFloat64ToString(price),
 		Xmpch:     pp.Xmpch,
 		Body:      productDisplayName,
 		ReturnUrl: returnUrl,
@@ -252,15 +252,13 @@ func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorit
 		return nil, fmt.Errorf("error order state: %s", notifyRespInfo.OrderDate)
 	}
 	notifyResult := &NotifyResult{
-		PaymentDescription: &PaymentDescription{
-			ProductName:        productName,
-			ProductDisplayName: productDisplayName,
-			ProviderName:       providerName,
-		},
-		OutOrderId:    orderId,
-		Price:         price,
-		PaymentStatus: PaymentStatePaid,
-		PaymentName:   paymentName,
+		ProductName:        productName,
+		ProductDisplayName: productDisplayName,
+		ProviderName:       providerName,
+		OutOrderId:         orderId,
+		Price:              price,
+		PaymentStatus:      PaymentStatePaid,
+		PaymentName:        paymentName,
 	}
 	return notifyResult, nil
 }

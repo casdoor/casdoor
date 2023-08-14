@@ -33,7 +33,9 @@ type NotifyResult struct {
 	PaymentStatus PaymentState
 	NotifyMessage string
 
-	PaymentDescription *PaymentDescription
+	ProductName        string
+	ProductDisplayName string
+	ProviderName       string
 	Price              float64
 	Currency           string
 
