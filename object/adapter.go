@@ -32,6 +32,7 @@ type Adapter struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	Type            string `xorm:"varchar(100)" json:"type"`
+	SameAsCasdoor   bool   `json:"sameAsCasdoor"`
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
 	Port            int    `json:"port"`
@@ -112,6 +113,13 @@ func UpdateAdapter(id string, adapter *Adapter) (bool, error) {
 	if adapter.Password == "***" {
 		session.Omit("password")
 	}
+	if adapter.SameAsCasdoor {
+		adapter.Host = ""
+		adapter.Port = 0
+		adapter.User = ""
+		adapter.Password = ""
+		adapter.Database = ""
+	}
 	affected, err := session.Update(adapter)
 	if err != nil {
 		return false, err
@@ -154,7 +162,7 @@ func (adapter *Adapter) initAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 
-		if adapter.builtInAdapter() {
+		if adapter.builtInAdapter() || adapter.SameAsCasdoor {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 			if adapter.DatabaseType == "mysql" {
 				dataSourceName = dataSourceName + adapter.Database
