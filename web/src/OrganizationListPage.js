@@ -182,7 +182,7 @@ class OrganizationListPage extends BaseListPage {
         title: i18next.t("organization:Website URL"),
         dataIndex: "websiteUrl",
         key: "websiteUrl",
-        width: "300px",
+        width: "200px",
         sorter: true,
         ...this.getColumnSearchProps("websiteUrl"),
         render: (text, record, index) => {
@@ -243,7 +243,7 @@ class OrganizationListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "320px",
+        width: "350px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
