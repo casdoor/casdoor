@@ -33,11 +33,11 @@ class PolicyTable extends React.Component {
   }
 
   count = 0;
-  pageSize = 10;
+  pageSize = 100;
 
   getIndex(index) {
     // Need to be used in all place when modify table. Parameter is the row index in table, need to calculate the index in dataSource.
-    return index + (this.state.page - 1) * 10;
+    return index + (this.state.page - 1) * this.pageSize;
   }
 
   UNSAFE_componentWillMount() {
@@ -165,7 +165,7 @@ class PolicyTable extends React.Component {
   renderTable(table) {
     const columns = [
       {
-        title: "Rule Type",
+        title: i18next.t("adapter:Rule type"),
         dataIndex: "Ptype",
         width: "100px",
         // render: (text, record, index) => {
@@ -270,8 +270,9 @@ class PolicyTable extends React.Component {
         },
       },
       {
-        title: "Option",
-        key: "option",
+        title: i18next.t("general:Action"),
+        dataIndex: "",
+        key: "op",
         width: "100px",
         render: (text, record, index) => {
           const editable = this.isEditing(index);
@@ -304,7 +305,6 @@ class PolicyTable extends React.Component {
           onChange: (page) => this.setState({
             page: page,
           }),
-          disabled: this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name}),
           current: this.state.page,
         }}
         columns={columns} dataSource={table} rowKey="key" size="middle" bordered
