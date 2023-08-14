@@ -217,6 +217,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_paypal.png`,
       url: "https://www.paypal.com/",
     },
+    "Stripe": {
+      logo: `${StaticBaseUrl}/img/social_stripe.png`,
+      url: "https://stripe.com/",
+    },
     "GC": {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
       url: "https://gc.org",
@@ -933,6 +937,7 @@ export function getProviderTypeOptions(category) {
       {id: "Alipay", name: "Alipay"},
       {id: "WeChat Pay", name: "WeChat Pay"},
       {id: "PayPal", name: "PayPal"},
+      {id: "Stripe", name: "Stripe"},
       {id: "GC", name: "GC"},
     ]);
   } else if (category === "Captcha") {

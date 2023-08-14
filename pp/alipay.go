@@ -90,7 +90,7 @@ func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, auth
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
-		OutOrderId:         orderId,
+		OrderId:            orderId,
 		PaymentStatus:      PaymentStatePaid,
 		Price:              price,
 		PaymentName:        paymentName,

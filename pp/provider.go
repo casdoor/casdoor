@@ -24,6 +24,7 @@ const (
 	PaymentStatePaid     PaymentState = "Paid"
 	PaymentStateCreated  PaymentState = "Created"
 	PaymentStateCanceled PaymentState = "Canceled"
+	PaymentStateTimeout  PaymentState = "Timeout"
 	PaymentStateError    PaymentState = "Error"
 )
 
@@ -32,13 +33,13 @@ type NotifyResult struct {
 	PaymentStatus PaymentState
 	NotifyMessage string
 
-	ProviderName       string
 	ProductName        string
 	ProductDisplayName string
+	ProviderName       string
 	Price              float64
 	Currency           string
 
-	OutOrderId string
+	OrderId string
 }
 
 type PaymentProvider interface {
@@ -71,6 +72,12 @@ func GetPaymentProvider(typ string, clientId string, clientSecret string, host s
 		return pp, nil
 	} else if typ == "PayPal" {
 		pp, err := NewPaypalPaymentProvider(clientId, clientSecret)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
+	} else if typ == "Stripe" {
+		pp, err := NewStripePaymentProvider(clientId, clientSecret)
 		if err != nil {
 			return nil, err
 		}

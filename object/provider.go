@@ -36,7 +36,7 @@ type Provider struct {
 	Type              string            `xorm:"varchar(100)" json:"type"`
 	SubType           string            `xorm:"varchar(100)" json:"subType"`
 	Method            string            `xorm:"varchar(100)" json:"method"`
-	ClientId          string            `xorm:"varchar(100)" json:"clientId"`
+	ClientId          string            `xorm:"varchar(200)" json:"clientId"`
 	ClientSecret      string            `xorm:"varchar(2000)" json:"clientSecret"`
 	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
 	ClientSecret2     string            `xorm:"varchar(100)" json:"clientSecret2"`
