@@ -27,6 +27,9 @@ import pt from "./locales/pt/data.json";
 import it from "./locales/it/data.json";
 import ms from "./locales/ms/data.json";
 import tr from "./locales/tr/data.json";
+import ar from "./locales/ar/data.json";
+import he from "./locales/he/data.json";
+import fi from "./locales/fi/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
 
@@ -45,6 +48,9 @@ const resources = {
   it: it,
   ms: ms,
   tr: tr,
+  ar: ar,
+  he: he,
+  fi: fi,
 };
 
 function initLanguage() {
@@ -102,6 +108,15 @@ function initLanguage() {
         break;
       case "tr":
         language = "tr";
+        break;
+      case "ar":
+        language = "ar";
+        break;
+      case "he":
+        language = "he";
+        break;
+      case "fi":
+        language = "fi";
         break;
       default:
         language = Conf.DefaultLanguage;
