@@ -155,6 +155,10 @@ func ApiFilter(ctx *context.Context) {
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx.Request.URL.Path)
 
+	if urlPath == "/image.png" || urlPath == "/redirect" {
+		return
+	}
+
 	objOwner, objName := "", ""
 	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
 		objOwner, objName = getObject(ctx)

@@ -37,6 +37,10 @@ var (
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
+	if urlPath == "/image.png" || urlPath == "/redirect" {
+		return
+	}
+
 	if urlPath == "/.well-known/acme-challenge/filename" {
 		http.ServeContent(ctx.ResponseWriter, ctx.Request, "acme-challenge", time.Now(), strings.NewReader("content"))
 	}
