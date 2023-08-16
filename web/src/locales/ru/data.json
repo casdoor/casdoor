@@ -11,6 +11,7 @@
     "New Adapter": "Новый адаптер",
     "Policies": "Политика",
     "Policies - Tooltip": "Правила политики Casbin",
+    "Rule type": "Rule type",
     "Sync policies successfully": "Успешно синхронизированы политики"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "CN или ID администратора сервера LDAP",
@@ -388,6 +396,7 @@
     "Continue with": "Продолжайте с",
     "Email or phone": "Электронная почта или телефон",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "Забыли пароль?",
     "Loading": "Загрузка",
     "Logging out...": "Выход...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "Вернуться на веб-сайт",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "Оплата не удалась",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "Оплата все еще обрабатывается",
     "Type - Tooltip": "Способ оплаты, используемый при покупке товара",
     "You have successfully completed the payment": "Вы успешно произвели платеж",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "Продано",
     "Sold - Tooltip": "Количество проданных",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "Метка продукта",
     "Test buy page..": "Страница для тестовой покупки.",
     "There is no payment channel for this product.": "Для этого продукта нет канала оплаты.",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "Клиентский секрет",
     "Client secret 2": "Секрет клиента 2",
     "Client secret 2 - Tooltip": "Второй секретный ключ клиента",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "Копировать",
     "Disable SSL": "Отключить SSL",
     "Disable SSL - Tooltip": "Нужно ли отключать протокол SSL при общении с SMTP сервером?",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "Метод входа, QR-код или беззвучный вход",
     "New Provider": "Новый провайдер",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "Спарсить",
     "Parse metadata successfully": "Успешно обработана метаданные",
     "Path prefix": "Префикс пути",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "URL информации о пользователе",
     "UserInfo URL - Tooltip": "URL пользовательской информации (URL информации о пользователе)",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "администратор (общий)"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "Стол",
     "Table - Tooltip": "Название таблицы базы данных",
     "Table columns": "Столбцы таблицы",
-    "Table columns - Tooltip": "Столбцы в таблице, участвующие в синхронизации данных. Столбцы, не участвующие в синхронизации, не нужно добавлять",
-    "Table primary key": "Первичный ключ таблицы",
-    "Table primary key - Tooltip": "Идентификатор (id) - основной ключ таблицы"
+    "Table columns - Tooltip": "Столбцы в таблице, участвующие в синхронизации данных. Столбцы, не участвующие в синхронизации, не нужно добавлять"
   },
   "system": {
     "API Latency": "Задержка API",

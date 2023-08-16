@@ -11,6 +11,7 @@
     "New Adapter": "새로운 어댑터",
     "Policies": "정책",
     "Policies - Tooltip": "Casbin 정책 규칙",
+    "Rule type": "Rule type",
     "Sync policies successfully": "정책을 성공적으로 동기화했습니다"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "LDAP 서버 관리자의 CN 또는 ID",
@@ -388,6 +396,7 @@
     "Continue with": "계속하다",
     "Email or phone": "이메일 또는 전화",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "비밀번호를 잊으셨나요?",
     "Loading": "로딩 중입니다",
     "Logging out...": "로그아웃 중...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "웹 사이트로 돌아가기",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "결제가 실패했습니다",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "지불은 아직 처리 중입니다",
     "Type - Tooltip": "제품을 구매할 때 사용되는 결제 방법",
     "You have successfully completed the payment": "당신은 결제를 성공적으로 완료하셨습니다",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "팔렸습니다",
     "Sold - Tooltip": "판매량",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "제품 태그",
     "Test buy page..": "시험 구매 페이지.",
     "There is no payment channel for this product.": "이 제품에 대한 결제 채널이 없습니다.",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "클라이언트 비밀키",
     "Client secret 2": "클라이언트 비밀번호 2",
     "Client secret 2 - Tooltip": "두 번째 클라이언트 비밀 키",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "복사하다",
     "Disable SSL": "SSL을 사용하지 않도록 설정하십시오",
     "Disable SSL - Tooltip": "STMP 서버와 통신할 때 SSL 프로토콜을 비활성화할지 여부",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "로그인 방법, QR 코드 또는 음성 로그인",
     "New Provider": "새로운 공급 업체",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "파싱",
     "Parse metadata successfully": "메타데이터를 성공적으로 분석했습니다",
     "Path prefix": "경로 접두어",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "사용자 정보 URL",
     "UserInfo URL - Tooltip": "UserInfo URL: 사용자 정보 URL",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "관리자 (공유)"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "테이블",
     "Table - Tooltip": "데이터베이스 테이블 이름",
     "Table columns": "테이블 열",
-    "Table columns - Tooltip": "데이터 동기화에 관련된 테이블의 열들입니다. 동기화에 관련되지 않은 열은 추가할 필요가 없습니다",
-    "Table primary key": "테이블 기본키",
-    "Table primary key - Tooltip": "테이블의 기본 키, 예를 들어 id"
+    "Table columns - Tooltip": "데이터 동기화에 관련된 테이블의 열들입니다. 동기화에 관련되지 않은 열은 추가할 필요가 없습니다"
   },
   "system": {
     "API Latency": "API 지연",
