@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/context"
@@ -25,7 +26,10 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
-const MfaTotpSecretSession = "mfa_totp_secret"
+const (
+	MfaTotpSecretSession   = "mfa_totp_secret"
+	MfaTotpPeriodInSeconds = 30
+)
 
 type TotpMfa struct {
 	Config     *MfaProps
@@ -76,7 +80,13 @@ func (mfa *TotpMfa) SetupVerify(ctx *context.Context, passcode string) error {
 	if secret == nil {
 		return errors.New("totp secret is missing")
 	}
-	result := totp.Validate(passcode, secret.(string))
+
+	result, _ := totp.ValidateCustom(passcode, secret.(string), time.Now().UTC(), totp.ValidateOpts{
+		Period:    MfaTotpPeriodInSeconds,
+		Skew:      1,
+		Digits:    otp.DigitsSix,
+		Algorithm: otp.AlgorithmSHA1,
+	})
 
 	if result {
 		return nil
@@ -133,7 +143,7 @@ func NewTotpMfaUtil(config *MfaProps) *TotpMfa {
 
 	return &TotpMfa{
 		Config:     config,
-		period:     30,
+		period:     MfaTotpPeriodInSeconds,
 		secretSize: 20,
 		digits:     otp.DigitsSix,
 	}
