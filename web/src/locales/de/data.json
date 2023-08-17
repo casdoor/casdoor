@@ -11,6 +11,7 @@
     "New Adapter": "Neuer Adapter",
     "Policies": "Richtlinien",
     "Policies - Tooltip": "Casbin Richtlinienregeln",
+    "Rule type": "Rule type",
     "Sync policies successfully": "Richtlinien synchronisiert"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "CN oder ID des LDAP-Serveradministrators",
@@ -388,6 +396,7 @@
     "Continue with": "Weitermachen mit",
     "Email or phone": "E-Mail oder Telefon",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "Passwort vergessen?",
     "Loading": "Laden",
     "Logging out...": "Ausloggen...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "Zurück zur Website",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "Die Zahlung ist fehlgeschlagen",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "Die Zahlung wird immer noch bearbeitet",
     "Type - Tooltip": "Zahlungsmethode, die beim Kauf des Produkts verwendet wurde",
     "You have successfully completed the payment": "Sie haben die Zahlung erfolgreich abgeschlossen",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "Verkauft",
     "Sold - Tooltip": "Menge verkauft",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "Tag des Produkts",
     "Test buy page..": "Testkaufseite.",
     "There is no payment channel for this product.": "Es gibt keinen Zahlungskanal für dieses Produkt.",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "Client-Geheimnis",
     "Client secret 2": "Client-Secret 2",
     "Client secret 2 - Tooltip": "Der zweite Client-Secret-Key",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "Kopieren",
     "Disable SSL": "SSL deaktivieren",
     "Disable SSL - Tooltip": "Ob die Deaktivierung des SSL-Protokolls bei der Kommunikation mit dem STMP-Server erfolgen soll",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "Anmeldeverfahren, QR-Code oder Silent-Login",
     "New Provider": "Neuer Provider",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "parsen",
     "Parse metadata successfully": "Metadaten erfolgreich analysiert",
     "Path prefix": "Pfadpräfix",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo-URL",
     "UserInfo URL - Tooltip": "UserInfo-URL",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "admin (Shared)"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "Tabelle",
     "Table - Tooltip": "Name der Datenbanktabelle",
     "Table columns": "Tabellenspalten",
-    "Table columns - Tooltip": "Spalten in der Tabelle, die an der Datensynchronisierung beteiligt sind. Spalten, die nicht an der Synchronisierung beteiligt sind, müssen nicht hinzugefügt werden",
-    "Table primary key": "Primärschlüssel der Tabelle",
-    "Table primary key - Tooltip": "Primärschlüssel in einer Tabelle, wie beispielsweise eine ID"
+    "Table columns - Tooltip": "Spalten in der Tabelle, die an der Datensynchronisierung beteiligt sind. Spalten, die nicht an der Synchronisierung beteiligt sind, müssen nicht hinzugefügt werden"
   },
   "system": {
     "API Latency": "API Latenz",

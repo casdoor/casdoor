@@ -11,6 +11,7 @@
     "New Adapter": "新しいアダプター",
     "Policies": "政策",
     "Policies - Tooltip": "Casbinのポリシールール",
+    "Rule type": "Rule type",
     "Sync policies successfully": "ポリシーを同期できました"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "LDAPサーバー管理者のCNまたはID",
@@ -388,6 +396,7 @@
     "Continue with": "続ける",
     "Email or phone": "メールまたは電話",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "パスワードを忘れましたか？",
     "Loading": "ローディング",
     "Logging out...": "ログアウト中...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "ウェブサイトに戻る",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "支払いに失敗しました",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "支払いはまだ処理中です",
     "Type - Tooltip": "製品を購入する際に使用される支払方法",
     "You have successfully completed the payment": "あなたは支払いを正常に完了しました",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "売れました",
     "Sold - Tooltip": "販売数量",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "製品のタグ",
     "Test buy page..": "テスト購入ページ。",
     "There is no payment channel for this product.": "この製品には支払いチャネルがありません。",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "クライアント秘密鍵",
     "Client secret 2": "クライアントシークレット2",
     "Client secret 2 - Tooltip": "第二クライアント秘密鍵",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "コピー",
     "Disable SSL": "SSLを無効にする",
     "Disable SSL - Tooltip": "SMTPサーバーと通信する場合にSSLプロトコルを無効にするかどうか",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "ログイン方法、QRコードまたはサイレントログイン",
     "New Provider": "新しい提供者",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "パースする",
     "Parse metadata successfully": "メタデータを正常に解析しました",
     "Path prefix": "パスプレフィックス",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "UserInfo URLを日本語に翻訳すると、「ユーザー情報のURL」となります",
     "UserInfo URL - Tooltip": "ユーザー情報URL",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "管理者（共有）"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "テーブル",
     "Table - Tooltip": "データベーステーブル名",
     "Table columns": "テーブルの列",
-    "Table columns - Tooltip": "テーブルで同期データに関与する列。同期に関係のない列は追加する必要はありません",
-    "Table primary key": "テーブルの主キー",
-    "Table primary key - Tooltip": "テーブルのプライマリキー、例えばid"
+    "Table columns - Tooltip": "テーブルで同期データに関与する列。同期に関係のない列は追加する必要はありません"
   },
   "system": {
     "API Latency": "API遅延",

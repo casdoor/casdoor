@@ -11,6 +11,7 @@
     "New Adapter": "Bộ chuyển đổi mới",
     "Policies": "Chính sách",
     "Policies - Tooltip": "Quy tắc chính sách Casbin",
+    "Rule type": "Rule type",
     "Sync policies successfully": "Đồng bộ chính sách thành công"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "CN hoặc ID của quản trị viên máy chủ LDAP",
@@ -388,6 +396,7 @@
     "Continue with": "Tiếp tục với",
     "Email or phone": "Email hoặc điện thoại",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "Quên mật khẩu?",
     "Loading": "Đang tải",
     "Logging out...": "Đăng xuất ...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "Trở lại trang web",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "Thanh toán đã thất bại",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "Thanh toán vẫn đang được xử lý",
     "Type - Tooltip": "Phương thức thanh toán được sử dụng khi mua sản phẩm",
     "You have successfully completed the payment": "Bạn đã hoàn thành thanh toán thành công",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "Đã bán",
     "Sold - Tooltip": "Số lượng bán ra",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "Nhãn sản phẩm",
     "Test buy page..": "Trang mua thử.",
     "There is no payment channel for this product.": "Không có kênh thanh toán cho sản phẩm này.",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "Mã bí mật khách hàng",
     "Client secret 2": "Khóa bí mật của khách hàng 2",
     "Client secret 2 - Tooltip": "Khóa bí mật thứ hai của khách hàng",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "Sao chép",
     "Disable SSL": "Vô hiệu hóa SSL",
     "Disable SSL - Tooltip": "Có nên vô hiệu hóa giao thức SSL khi giao tiếp với máy chủ STMP hay không?",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "Phương thức đăng nhập, mã QR hoặc đăng nhập im lặng",
     "New Provider": "Nhà cung cấp mới",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "Phân tích cú pháp",
     "Parse metadata successfully": "Phân tích siêu dữ liệu thành công",
     "Path prefix": "Tiền tố đường dẫn",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "Đường dẫn UserInfo",
     "UserInfo URL - Tooltip": "Địa chỉ URL của Thông tin người dùng",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "quản trị viên (Chung)"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "Bàn",
     "Table - Tooltip": "Tên của bảng cơ sở dữ liệu",
     "Table columns": "Các cột bảng",
-    "Table columns - Tooltip": "Cột trong bảng liên quan đến đồng bộ dữ liệu. Các cột không liên quan đến đồng bộ hóa không cần được thêm vào",
-    "Table primary key": "Khóa chính của bảng",
-    "Table primary key - Tooltip": "Khóa chính của bảng, ví dụ như id"
+    "Table columns - Tooltip": "Cột trong bảng liên quan đến đồng bộ dữ liệu. Các cột không liên quan đến đồng bộ hóa không cần được thêm vào"
   },
   "system": {
     "API Latency": "Độ trễ API",

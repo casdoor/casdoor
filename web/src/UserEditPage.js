@@ -15,9 +15,11 @@
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
 import {withRouter} from "react-router-dom";
+import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import EnableMfaModal from "./common/modal/EnableMfaModal";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import CropperDivModal from "./common/modal/CropperDivModal.js";
@@ -209,23 +211,6 @@ class UserEditPage extends React.Component {
   getCountryCode() {
     return this.props.account.countryCode;
   }
-
-  loadMore = (table, type) => {
-    return <div
-      style={{
-        textAlign: "center",
-        marginTop: 12,
-        height: 32,
-        lineHeight: "32px",
-      }}
-    >
-      <Button onClick={() => {
-        this.setState({
-          multiFactorAuths: Setting.addRow(table, {"type": type}),
-        });
-      }}>{i18next.t("general:Add")}</Button>
-    </div>;
-  };
 
   deleteMfa = () => {
     this.setState({
@@ -951,11 +936,18 @@ class UserEditPage extends React.Component {
                             </Button>
                           }
                         </Space>
-                      ) : <Button type={"default"} onClick={() => {
-                        this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
-                      }}>
-                        {i18next.t("mfa:Setup")}
-                      </Button>}
+                      ) :
+                        <Space>
+                          {item.mfaType !== TotpMfaType && Setting.isAdminUser(this.props.account) && window.location.href.indexOf("/users") !== -1 ?
+                            <EnableMfaModal user={this.state.user} mfaType={item.mfaType} onSuccess={() => {
+                              this.getUser();
+                            }} /> : null}
+                          <Button type={"default"} onClick={() => {
+                            this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
+                          }}>
+                            {i18next.t("mfa:Setup")}
+                          </Button>
+                        </Space>}
                     </List.Item>
                   )}
                 />

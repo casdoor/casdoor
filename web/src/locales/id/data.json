@@ -11,6 +11,7 @@
     "New Adapter": "Adapter Baru",
     "Policies": "Kebijakan",
     "Policies - Tooltip": "Kebijakan aturan Casbin",
+    "Rule type": "Rule type",
     "Sync policies successfully": "Sinkronisasi kebijakan berhasil dilakukan"
   },
   "application": {
@@ -353,6 +354,13 @@
     "Show all": "Show all",
     "Virtual": "Virtual"
   },
+  "home": {
+    "New users past 30 days": "New users past 30 days",
+    "New users past 7 days": "New users past 7 days",
+    "New users today": "New users today",
+    "Past 30 Days": "Past 30 Days",
+    "Total users": "Total users"
+  },
   "ldap": {
     "Admin": "Admin",
     "Admin - Tooltip": "CN atau ID dari administrator server LDAP",
@@ -388,6 +396,7 @@
     "Continue with": "Lanjutkan dengan",
     "Email or phone": "Email atau telepon",
     "Failed to obtain MetaMask authorization": "Failed to obtain MetaMask authorization",
+    "Failed to obtain Web3-Onboard authorization": "Failed to obtain Web3-Onboard authorization",
     "Forgot password?": "Lupa kata sandi?",
     "Loading": "Memuat",
     "Logging out...": "Keluar...",
@@ -431,6 +440,7 @@
     "Passcode": "Passcode",
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Please bind your email first, the system will automatically uses the mail for multi-factor authentication",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Please bind your phone first, the system automatically uses the phone for multi-factor authentication",
+    "Please confirm the information below": "Please confirm the information below",
     "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code",
     "Protect your account with Multi-factor authentication": "Protect your account with Multi-factor authentication",
     "Recovery code": "Recovery code",
@@ -523,6 +533,7 @@
     "Return to Website": "Kembali ke Situs Web",
     "The payment has been canceled": "The payment has been canceled",
     "The payment has failed": "Pembayaran gagal",
+    "The payment has time out": "The payment has time out",
     "The payment is still under processing": "Pembayaran masih dalam proses",
     "Type - Tooltip": "Metode pembayaran yang digunakan saat membeli produk",
     "You have successfully completed the payment": "Anda telah berhasil menyelesaikan pembayaran",
@@ -604,6 +615,7 @@
     "SKU": "SKU",
     "Sold": "Terjual",
     "Sold - Tooltip": "Jumlah terjual",
+    "Stripe": "Stripe",
     "Tag - Tooltip": "Tag produk",
     "Test buy page..": "Halaman pembelian uji coba.",
     "There is no payment channel for this product.": "Tidak ada saluran pembayaran untuk produk ini.",
@@ -648,6 +660,8 @@
     "Client secret - Tooltip": "Rahasia klien",
     "Client secret 2": "Rahasia klien 2",
     "Client secret 2 - Tooltip": "Kunci rahasia klien kedua",
+    "Content": "Content",
+    "Content - Tooltip": "Content - Tooltip",
     "Copy": "Salin",
     "Disable SSL": "Menonaktifkan SSL",
     "Disable SSL - Tooltip": "Apakah perlu menonaktifkan protokol SSL saat berkomunikasi dengan server STMP?",
@@ -682,6 +696,8 @@
     "Method - Tooltip": "Metode login, kode QR atau login tanpa suara",
     "New Provider": "Penyedia Baru",
     "Normal": "Normal",
+    "Parameter name": "Parameter name",
+    "Parameter name - Tooltip": "Parameter name - Tooltip",
     "Parse": "Parse: Memecah atau mengurai data atau teks menjadi bagian-bagian yang lebih kecil dan lebih mudah dipahami atau dimanipulasi",
     "Parse metadata successfully": "Berhasil mem-parse metadata",
     "Path prefix": "Awalan jalur",
@@ -758,6 +774,8 @@
     "User mapping - Tooltip": "User mapping - Tooltip",
     "UserInfo URL": "URL UserInfo",
     "UserInfo URL - Tooltip": "URL Informasi Pengguna",
+    "Wallets": "Wallets",
+    "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "Admin (Berbagi)"
   },
   "record": {
@@ -849,9 +867,7 @@
     "Table": "Tabel",
     "Table - Tooltip": "Nama tabel database",
     "Table columns": "Kolom tabel",
-    "Table columns - Tooltip": "Kolom pada tabel yang terlibat dalam sinkronisasi data. Kolom yang tidak terlibat dalam sinkronisasi tidak perlu ditambahkan",
-    "Table primary key": "Kunci utama tabel",
-    "Table primary key - Tooltip": "Kunci primer tabel, seperti id"
+    "Table columns - Tooltip": "Kolom pada tabel yang terlibat dalam sinkronisasi data. Kolom yang tidak terlibat dalam sinkronisasi tidak perlu ditambahkan"
   },
   "system": {
     "API Latency": "API Latency",
