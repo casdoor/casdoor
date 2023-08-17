@@ -104,9 +104,11 @@ jobs:
           node-version: 16
           cache: 'yarn'
           cache-dependency-path: ./web/yarn.lock
+      - run: yarn install
+        working-directory: ./web
       - uses: cypress-io/github-action@v5
         with:
-          start: yarn install && yarn start
+          start: yarn start
           wait-on: 'http://localhost:7001'
           wait-on-timeout: 210
           working-directory: ./web
