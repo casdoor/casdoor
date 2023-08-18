@@ -1244,3 +1244,13 @@ export function builtInObject(obj) {
   }
   return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
 }
+
+export function getCurrencySymbol(currency) {
+  if (currency === "USD" || currency === "usd") {
+    return "$";
+  } else if (currency === "CNY" || currency === "cny") {
+    return "¥";
+  } else {
+    return currency;
+  }
+}

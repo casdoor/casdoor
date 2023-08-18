@@ -117,7 +117,19 @@ func (c *ApiController) UpdatePlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	if plan.Product != "" {
+		product, err := object.GetProduct(plan.Product)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		object.UpdateProductForPlan(&plan, product)
+		_, err = object.UpdateProduct(plan.Product, product)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
 	c.Data["json"] = wrapActionResponse(object.UpdatePlan(id, &plan))
 	c.ServeJSON()
 }
@@ -136,7 +148,14 @@ func (c *ApiController) AddPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	// Create a related product for plan
+	product := object.CreateProductForPlan(&plan)
+	_, err = object.AddProduct(product)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	plan.Product = product.GetId()
 	c.Data["json"] = wrapActionResponse(object.AddPlan(&plan))
 	c.ServeJSON()
 }
@@ -155,7 +174,14 @@ func (c *ApiController) DeletePlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	if plan.Product != "" {
+		owner, productName := util.GetOwnerAndNameFromId(plan.Product)
+		_, err = object.DeleteProduct(&object.Product{Owner: owner, Name: productName})
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
 	c.Data["json"] = wrapActionResponse(object.DeletePlan(&plan))
 	c.ServeJSON()
 }

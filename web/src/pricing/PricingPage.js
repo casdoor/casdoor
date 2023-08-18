@@ -69,8 +69,9 @@ class PricingPage extends React.Component {
           Setting.showMessage("error", i18next.t("pricing:Failed to get plans"));
           return;
         }
+        window.console.log("results=", results);
         this.setState({
-          plans: results,
+          plans: results.map(result => result.data),
           loading: false,
         });
       })
@@ -108,6 +109,7 @@ class PricingPage extends React.Component {
     const getUrlByPlan = (plan) => {
       const pricing = this.state.pricing;
       const signUpUrl = `/signup/${pricing.application}?plan=${plan}&pricing=${pricing.name}`;
+      window.console.log("signUpUrl=", signUpUrl);
       return `${window.location.origin}${signUpUrl}`;
     };
 

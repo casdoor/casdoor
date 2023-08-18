@@ -252,3 +252,33 @@ func ExtendProductWithProviders(product *Product) error {
 
 	return nil
 }
+
+func CreateProductForPlan(plan *Plan) *Product {
+	product := &Product{
+		Owner:       plan.Owner,
+		Name:        fmt.Sprintf("product_%v", util.GetRandomName()),
+		DisplayName: fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		CreatedTime: plan.CreatedTime,
+
+		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png", // TODO
+		Detail:      fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		Description: plan.Description,
+		Tag:         "auto_created_product_for_plan",
+		Price:       plan.PricePerMonth, // TODO
+		Currency:    plan.Currency,
+
+		Quantity: 999,
+		Sold:     0,
+
+		Providers: make([]string, 0),
+		State:     "Published",
+	}
+	return product
+}
+
+func UpdateProductForPlan(plan *Plan, product *Product) {
+	product.DisplayName = fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName)
+	product.Detail = fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName)
+	product.Price = plan.PricePerMonth
+	product.Currency = plan.Currency
+}
