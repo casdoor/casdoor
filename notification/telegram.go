@@ -16,14 +16,14 @@ package notification
 
 import (
 	"github.com/casdoor/casdoor/proxy"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	api "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"strconv"
 )
 
 func NewTelegramProvider(apiToken string, chatIdStr string) (notify.Notifier, error) {
-	client, err := tgbotapi.NewBotAPIWithClient(apiToken, proxy.ProxyHttpClient)
+	client, err := api.NewBotAPIWithClient(apiToken, proxy.ProxyHttpClient)
 	if err != nil {
 		return nil, err
 	}
