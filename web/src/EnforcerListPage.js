@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table} from "antd";
+import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as EnforcerBackend from "./backend/EnforcerBackend";
@@ -31,7 +31,6 @@ class EnforcerListPage extends BaseListPage {
       name: `enforcer_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Enforcer - ${randomName}`,
-      isEnabled: true,
     };
   }
 
@@ -149,18 +148,6 @@ class EnforcerListPage extends BaseListPage {
             <Link to={`/adapters/${text}`}>
               {text}
             </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Is enabled"),
-        dataIndex: "isEnabled",
-        key: "isEnabled",
-        width: "120px",
-        sorter: true,
-        render: (text, record, index) => {
-          return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
           );
         },
       },

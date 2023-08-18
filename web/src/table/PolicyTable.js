@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {Button, Input, Popconfirm, Select, Table, Tooltip} from "antd";
+import {Button, Input, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import * as AdapterBackend from "../backend/AdapterBackend";
 import i18next from "i18next";
@@ -176,7 +176,7 @@ class PolicyTable extends React.Component {
           const editing = this.isEditing(index);
           return (
             editing ?
-              <Select options={Object.keys(this.props.modelCfg).map(item => Setting.getOption(item, item))} value={text} onChange={value => {
+              <Select size={"small"} style={{width: "60px"}} options={Object.keys(this.props.modelCfg).reverse().map(item => Setting.getOption(item, item))} value={text} onChange={value => {
                 this.updateField(table, index, "Ptype", value);
               }} />
               : text
@@ -196,7 +196,7 @@ class PolicyTable extends React.Component {
           const editing = this.isEditing(index);
           return (
             editing ?
-              <Input value={text} onChange={e => {
+              <Input size={"small"} value={text} onChange={e => {
                 this.updateField(table, index, columnKeys[i], e.target.value);
               }} />
               : text
@@ -209,17 +209,17 @@ class PolicyTable extends React.Component {
       title: i18next.t("general:Action"),
       dataIndex: "",
       key: "op",
-      width: "100px",
+      width: "130px",
       render: (text, record, index) => {
         const editable = this.isEditing(index);
         return editable ? (
           <span>
-            <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
-              Save
+            <Button style={{marginRight: "10px"}} size={"small"} type={"primary"} onClick={() => this.save(table, index)}>
+              {i18next.t("general:Save")}
             </Button>
-            <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(table, index)}>
-              <a>Cancel</a>
-            </Popconfirm>
+            <Button size={"small"} onClick={() => this.cancel(table, index)}>
+              {i18next.t("general:Cancel")}
+            </Button>
           </span>
         ) : (
           <div>
@@ -257,7 +257,7 @@ class PolicyTable extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.getPolicies();}}>
+        <Button style={{marginBottom: "10px", width: "150px"}} type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.getPolicies();}}>
           {i18next.t("general:Sync")}
         </Button>
         {

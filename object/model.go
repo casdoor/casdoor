@@ -30,7 +30,6 @@ type Model struct {
 	Description string `xorm:"varchar(100)" json:"description"`
 
 	ModelText string `xorm:"mediumtext" json:"modelText"`
-	IsEnabled bool   `json:"isEnabled"`
 
 	model.Model `xorm:"-" json:"-"`
 }

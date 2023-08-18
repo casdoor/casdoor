@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, Row, Select} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as EnforcerBackend from "./backend/EnforcerBackend";
 import * as ModelBackend from "./backend/ModelBackend";
@@ -192,16 +192,6 @@ class EnforcerEditPage extends React.Component {
           </Col>
           <Col span={22}>
             <PolicyTable enforcer={this.state.enforcer} modelCfg={this.state.enforcer?.modelCfg} mode={this.state.mode} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.enforcer.isEnabled} onChange={checked => {
-              this.updateEnforcerField("isEnabled", checked);
-            }} />
           </Col>
         </Row>
       </Card>

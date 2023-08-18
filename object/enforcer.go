@@ -32,9 +32,8 @@ type Enforcer struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Model     string `xorm:"varchar(100)" json:"model"`
-	Adapter   string `xorm:"varchar(100)" json:"adapter"`
-	IsEnabled bool   `json:"isEnabled"`
+	Model   string `xorm:"varchar(100)" json:"model"`
+	Adapter string `xorm:"varchar(100)" json:"adapter"`
 
 	ModelCfg map[string]string `xorm:"-" json:"modelCfg"`
 	*casbin.Enforcer

@@ -40,8 +40,6 @@ type Adapter struct {
 	Table           string `xorm:"varchar(100)" json:"table"`
 	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
 
-	IsEnabled bool `json:"isEnabled"`
-
 	*xormadapter.Adapter `xorm:"-" json:"-"`
 }
 

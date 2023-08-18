@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
 import * as AdapterBackend from "./backend/AdapterBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
@@ -244,16 +244,6 @@ class AdapterEditPage extends React.Component {
                 });
             }
             }>{i18next.t("syncer:Test DB Connection")}</Button>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.adapter.isEnabled} onChange={checked => {
-              this.updateAdapterField("isEnabled", checked);
-            }} />
           </Col>
         </Row>
       </Card>

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table} from "antd";
+import {Button, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as AdapterBackend from "./backend/AdapterBackend";
@@ -38,7 +38,6 @@ class AdapterListPage extends BaseListPage {
       databaseType: "mysql",
       database: "dbName",
       table: "tableName",
-      isEnabled: false,
     };
   }
 
@@ -182,18 +181,6 @@ class AdapterListPage extends BaseListPage {
         key: "table",
         width: "120px",
         sorter: true,
-      },
-      {
-        title: i18next.t("general:Is enabled"),
-        dataIndex: "isEnabled",
-        key: "isEnabled",
-        width: "120px",
-        sorter: true,
-        render: (text, record, index) => {
-          return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
-          );
-        },
       },
       {
         title: i18next.t("general:Action"),
