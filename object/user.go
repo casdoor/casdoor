@@ -83,7 +83,6 @@ type User struct {
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
-	IsGlobalAdmin     bool     `json:"isGlobalAdmin"`
 	IsForbidden       bool     `json:"isForbidden"`
 	IsDeleted         bool     `json:"isDeleted"`
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
@@ -530,7 +529,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = []string{
 			"owner", "display_name", "avatar",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
-			"is_admin", "is_global_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
+			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
@@ -891,5 +890,13 @@ func (user *User) IsApplicationAdmin(application *Application) bool {
 		return false
 	}
 
-	return (user.Owner == application.Organization && user.IsAdmin) || user.IsGlobalAdmin
+	return (user.Owner == application.Organization && user.IsAdmin) || user.IsGlobalAdmin()
+}
+
+func (user *User) IsGlobalAdmin() bool {
+	if user == nil {
+		return false
+	}
+
+	return user.Owner == "built-in"
 }

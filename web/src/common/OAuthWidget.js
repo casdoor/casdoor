@@ -188,7 +188,7 @@ class OAuthWidget extends React.Component {
                 </a>
               )
             ) : (
-              <Button disabled={!providerItem.canUnlink && !account.isGlobalAdmin} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>

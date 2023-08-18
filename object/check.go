@@ -141,7 +141,7 @@ func checkSigninErrorTimes(user *User, lang string) string {
 		// reset the error times
 		user.SigninWrongTimes = 0
 
-		UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, user.IsGlobalAdmin)
+		UpdateUser(user.GetId(), user, []string{"signin_wrong_times"}, false)
 	}
 
 	return ""
@@ -319,7 +319,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		if requestUser == nil {
 			return false, fmt.Errorf(i18n.Translate(lang, "check:Session outdated, please login again"))
 		}
-		if requestUser.IsGlobalAdmin {
+		if requestUser.IsGlobalAdmin() {
 			hasPermission = true
 		} else if requestUserId == userId {
 			hasPermission = true

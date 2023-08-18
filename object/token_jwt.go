@@ -73,7 +73,6 @@ type UserWithoutThirdIdp struct {
 	IsDefaultAvatar     bool              `json:"isDefaultAvatar"`
 	IsOnline            bool              `json:"isOnline"`
 	IsAdmin             bool              `json:"isAdmin"`
-	IsGlobalAdmin       bool              `json:"isGlobalAdmin"`
 	IsForbidden         bool              `json:"isForbidden"`
 	IsDeleted           bool              `json:"isDeleted"`
 	SignupApplication   string            `xorm:"varchar(100)" json:"signupApplication"`
@@ -154,7 +153,6 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		IsDefaultAvatar:   user.IsDefaultAvatar,
 		IsOnline:          user.IsOnline,
 		IsAdmin:           user.IsAdmin,
-		IsGlobalAdmin:     user.IsGlobalAdmin,
 		IsForbidden:       user.IsForbidden,
 		IsDeleted:         user.IsDeleted,
 		SignupApplication: user.SignupApplication,

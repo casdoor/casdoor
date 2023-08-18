@@ -79,7 +79,7 @@ func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 		return false, nil
 	}
 
-	return user.Owner == "built-in" || user.IsGlobalAdmin, user
+	return user.IsGlobalAdmin(), user
 }
 
 func (c *ApiController) getCurrentUser() *object.User {

@@ -42,7 +42,7 @@ func resetUserSigninErrorTimes(user *User) {
 		return
 	}
 	user.SigninWrongTimes = 0
-	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
+	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, false)
 }
 
 func recordSigninErrorInfo(user *User, lang string, options ...bool) string {
@@ -61,7 +61,7 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) string {
 	}
 
 	// update user
-	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, user.IsGlobalAdmin)
+	UpdateUser(user.GetId(), user, []string{"signin_wrong_times", "last_signin_wrong_time"}, false)
 	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
 	if leftChances == 0 && enableCaptcha {
 		return fmt.Sprint(i18n.Translate(lang, "check:password or code is incorrect"))

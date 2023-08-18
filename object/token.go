@@ -824,7 +824,6 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 			Type:              "normal-user",
 			CreatedTime:       util.GetCurrentTime(),
 			IsAdmin:           false,
-			IsGlobalAdmin:     false,
 			IsForbidden:       false,
 			IsDeleted:         false,
 			Properties: map[string]string{

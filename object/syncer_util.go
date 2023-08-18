@@ -154,8 +154,6 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.IsOnline = util.ParseBool(value)
 	case "IsAdmin":
 		user.IsAdmin = util.ParseBool(value)
-	case "IsGlobalAdmin":
-		user.IsGlobalAdmin = util.ParseBool(value)
 	case "IsForbidden":
 		user.IsForbidden = util.ParseBool(value)
 	case "IsDeleted":
@@ -289,7 +287,6 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["IsDefaultAvatar"] = util.BoolToString(user.IsDefaultAvatar)
 	m["IsOnline"] = util.BoolToString(user.IsOnline)
 	m["IsAdmin"] = util.BoolToString(user.IsAdmin)
-	m["IsGlobalAdmin"] = util.BoolToString(user.IsGlobalAdmin)
 	m["IsForbidden"] = util.BoolToString(user.IsForbidden)
 	m["IsDeleted"] = util.BoolToString(user.IsDeleted)
 	m["CreatedIp"] = user.CreatedIp

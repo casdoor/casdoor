@@ -145,7 +145,6 @@ func initBuiltInUser() {
 		Score:             2000,
 		Ranking:           1,
 		IsAdmin:           true,
-		IsGlobalAdmin:     true,
 		IsForbidden:       false,
 		IsDeleted:         false,
 		SignupApplication: "app-built-in",

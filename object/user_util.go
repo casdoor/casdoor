@@ -310,10 +310,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		item := GetAccountItemByName("Is admin", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
-	if oldUser.IsGlobalAdmin != newUser.IsGlobalAdmin {
-		item := GetAccountItemByName("Is global admin", organization)
-		itemsChanged = append(itemsChanged, item)
-	}
+
 	if oldUser.IsForbidden != newUser.IsForbidden {
 		item := GetAccountItemByName("Is forbidden", organization)
 		itemsChanged = append(itemsChanged, item)
@@ -351,5 +348,5 @@ func (user *User) IsAdminUser() bool {
 		return false
 	}
 
-	return user.IsAdmin || user.IsGlobalAdmin
+	return user.IsAdmin || user.IsGlobalAdmin()
 }

@@ -124,7 +124,6 @@ func UploadUsers(owner string, fileId string) (bool, error) {
 			IsDefaultAvatar:   false,
 			IsOnline:          parseLineItemBool(&line, 31),
 			IsAdmin:           parseLineItemBool(&line, 32),
-			IsGlobalAdmin:     parseLineItemBool(&line, 33),
 			IsForbidden:       parseLineItemBool(&line, 34),
 			IsDeleted:         parseLineItemBool(&line, 35),
 			SignupApplication: parseLineItem(&line, 36),
