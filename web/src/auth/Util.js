@@ -96,14 +96,19 @@ function getRawGetParameter(key) {
   return res;
 }
 
-export function getOAuthGetParameters(params) {
-  const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
+export function getOAuthGetParameters(params = null, owner = "", appName = "", type = "code") {
+  const queries = (params !== null) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));
   const responseType = getRefinedValue(queries.get("response_type"));
 
   let redirectUri = getRawGetParameter("redirect_uri");
   if (redirectUri === "") {
     redirectUri = getRefinedValue(queries.get("redirect_uri"));
+  }
+  // cas service
+  let service = getRawGetParameter("service");
+  if (service === "") {
+    service = getRefinedValue(queries.get("service"));
   }
 
   let scope = getRefinedValue(queries.get("scope"));
@@ -127,7 +132,7 @@ export function getOAuthGetParameters(params) {
   const relayState = getRefinedValue(queries.get("RelayState"));
   const noRedirect = getRefinedValue(queries.get("noRedirect"));
 
-  if (clientId === "" && samlRequest === "") {
+  if (clientId === "" && samlRequest === "" && service === "") {
     // login
     return null;
   } else {
@@ -135,7 +140,7 @@ export function getOAuthGetParameters(params) {
     return {
       clientId: clientId,
       responseType: responseType,
-      redirectUri: redirectUri,
+      redirectUri: redirectUri === "" ? service : redirectUri,
       scope: scope,
       state: state,
       nonce: nonce,
@@ -144,6 +149,8 @@ export function getOAuthGetParameters(params) {
       samlRequest: samlRequest,
       relayState: relayState,
       noRedirect: noRedirect,
+      type: type,
+      id: `${owner}/${appName}`, // application id
     };
   }
 }
