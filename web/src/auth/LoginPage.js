@@ -167,18 +167,34 @@ class LoginPage extends React.Component {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
         .then((res) => {
           if (res.status === "error") {
-            Setting.showMessage("error", res.msg);
-            return;
+            this.onUpdateApplication(null);
+            this.setState({
+              msg: res.msg,
+            });
+            return ;
+          }
+          this.onUpdateApplication(res.data);
+        });
+    } else if (this.state.type === "cas") {
+      const casParams = Util.getCasParameters();
+      const redirectUri = casParams.service;
+      ApplicationBackend.getApplication(
+        "admin",
+        this.state.applicationName,
+        this.state.type,
+        redirectUri
+      )
+        .then((res) => {
+          if (res.status === "error") {
+            this.onUpdateApplication(null);
+            this.setState({
+              msg: res.msg,
+            });
           }
           this.onUpdateApplication(res.data);
         });
     } else {
-      let redirectUri = "";
-      if (this.state.type === "cas") {
-        const casParams = Util.getCasParameters();
-        redirectUri = casParams.service;
-      }
-      OrganizationBackend.getDefaultApplication("admin", this.state.owner, this.state.type, redirectUri)
+      OrganizationBackend.getDefaultApplication("admin", this.state.owner)
         .then((res) => {
           if (res.status === "ok") {
             const application = res.data;

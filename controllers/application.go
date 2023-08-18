@@ -83,6 +83,8 @@ func (c *ApiController) GetApplications() {
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
+	typ := c.Input().Get("type")
+	redirectUri := c.Input().Get("redirectUri")
 
 	app, err := object.GetApplication(id)
 	if err != nil {
@@ -90,6 +92,13 @@ func (c *ApiController) GetApplication() {
 		return
 	}
 
+	if typ == "cas" && app != nil {
+		err = object.CheckCasRestrict(app, c.GetAcceptLanguage(), redirectUri)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
 	c.ResponseOk(object.GetMaskedApplication(app, userId))
 }
 

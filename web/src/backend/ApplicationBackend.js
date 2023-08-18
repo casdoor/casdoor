@@ -34,8 +34,8 @@ export function getApplicationsByOrganization(owner, organization, page = "", pa
   }).then(res => res.json());
 }
 
-export function getApplication(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}`, {
+export function getApplication(owner, name, type = "", redirectUri = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-application?id=${owner}/${encodeURIComponent(name)}&type=${type}&redirectUri=${redirectUri}`, {
     method: "GET",
     credentials: "include",
     headers: {
