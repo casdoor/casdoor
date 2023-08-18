@@ -273,7 +273,7 @@ export const OtherProviderInfo = {
   },
   Notification: {
     "Telegram": {
-      logo: `${StaticBaseUrl}/img/social_metamask.svg`,
+      logo: `${StaticBaseUrl}/img/social_telegram.png`,
       url: "https://telegram.org/",
     },
   },
