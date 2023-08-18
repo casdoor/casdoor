@@ -132,7 +132,7 @@ export function getOAuthGetParameters(params = null, owner = "", appName = "", t
   const relayState = getRefinedValue(queries.get("RelayState"));
   const noRedirect = getRefinedValue(queries.get("noRedirect"));
 
-  if (clientId === "" && samlRequest === "" && service === "") {
+  if (clientId === "" && samlRequest === "" && type !== "cas") {
     // login
     return null;
   } else {
