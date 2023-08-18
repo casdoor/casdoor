@@ -34,3 +34,30 @@ func CasbinToSlice(casbinRule xormadapter.CasbinRule) []string {
 	}
 	return s
 }
+
+func safeReturn(policy []string, i int) string {
+	if len(policy) > i {
+		return policy[i]
+	} else {
+		return ""
+	}
+}
+
+func MatrixToCasbinRules(Ptype string, policies [][]string) []*xormadapter.CasbinRule {
+	res := []*xormadapter.CasbinRule{}
+
+	for _, policy := range policies {
+		line := xormadapter.CasbinRule{
+			Ptype: Ptype,
+			V0:    safeReturn(policy, 0),
+			V1:    safeReturn(policy, 1),
+			V2:    safeReturn(policy, 2),
+			V3:    safeReturn(policy, 3),
+			V4:    safeReturn(policy, 4),
+			V5:    safeReturn(policy, 5),
+		}
+		res = append(res, &line)
+	}
+
+	return res
+}

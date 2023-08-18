@@ -20,7 +20,6 @@ import (
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
 // GetAdapters
@@ -142,94 +141,5 @@ func (c *ApiController) DeleteAdapter() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteAdapter(&adapter))
-	c.ServeJSON()
-}
-
-func (c *ApiController) GetPolicies() {
-	id := c.Input().Get("id")
-	adapter, err := object.GetAdapter(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	policies, err := object.GetPolicies(adapter)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk(policies)
-}
-
-func (c *ApiController) UpdatePolicy() {
-	id := c.Input().Get("id")
-	adapter, err := object.GetAdapter(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	var policies []xormadapter.CasbinRule
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	affected, err := object.UpdatePolicy(util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]), adapter)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
-}
-
-func (c *ApiController) AddPolicy() {
-	id := c.Input().Get("id")
-	adapter, err := object.GetAdapter(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	var policy xormadapter.CasbinRule
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	affected, err := object.AddPolicy(util.CasbinToSlice(policy), adapter)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	c.Data["json"] = wrapActionResponse(affected)
-	c.ServeJSON()
-}
-
-func (c *ApiController) RemovePolicy() {
-	id := c.Input().Get("id")
-	adapter, err := object.GetAdapter(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	var policy xormadapter.CasbinRule
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	affected, err := object.RemovePolicy(util.CasbinToSlice(policy), adapter)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	c.Data["json"] = wrapActionResponse(affected)
 	c.ServeJSON()
 }
