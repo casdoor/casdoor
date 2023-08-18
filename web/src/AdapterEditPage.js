@@ -19,11 +19,6 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
-import "codemirror/lib/codemirror.css";
-import PolicyTable from "./table/PoliciyTable";
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/javascript/javascript");
-
 const {Option} = Select;
 
 class AdapterEditPage extends React.Component {
@@ -232,10 +227,23 @@ class AdapterEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:DB Test"), i18next.t("provider:DB Test - Tooltip"))} :
           </Col>
-          <Col span={22}>
-            <PolicyTable owner={this.state.organizationName} name={this.state.adapterName} mode={this.state.mode} />
+          <Col span={2} >
+            <Button type={"primary"} onClick={() => {
+              AdapterBackend.getPolicies("", "", `${this.state.organizationName}/${this.state.adapterName}`)
+                .then((res) => {
+                  if (res.status === "ok") {
+                    Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
+                  } else {
+                    Setting.showMessage("error", i18next.t("syncer:Failed to connect") + ": " + res.msg);
+                  }
+                })
+                .catch(error => {
+                  Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+                });
+            }
+            }>{i18next.t("syncer:Test DB Connection")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

@@ -24,8 +24,8 @@ export function getEnforcers(owner, page = "", pageSize = "", field = "", value 
   }).then(res => res.json());
 }
 
-export function getEnforcer(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-enforcer?id=${owner}/${encodeURIComponent(name)}`, {
+export function getEnforcer(owner, name, loadModelCfg = false) {
+  return fetch(`${Setting.ServerUrl}/api/get-enforcer?id=${owner}/${encodeURIComponent(name)}&loadModelCfg=${loadModelCfg}`, {
     method: "GET",
     credentials: "include",
     headers: {

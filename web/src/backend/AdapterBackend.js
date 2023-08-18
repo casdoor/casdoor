@@ -103,8 +103,8 @@ export function RemovePolicy(owner, name, policy) {
   }).then(res => res.json());
 }
 
-export function getPolicies(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-policies?id=${owner}/${encodeURIComponent(name)}`, {
+export function getPolicies(owner, name, adapterId = "") {
+  return fetch(`${Setting.ServerUrl}/api/get-policies?id=${owner}/${encodeURIComponent(name)}&adapterId=${adapterId}`, {
     method: "GET",
     credentials: "include",
     headers: {

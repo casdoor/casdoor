@@ -18,6 +18,7 @@ import * as AdapterBackend from "./backend/AdapterBackend";
 import * as EnforcerBackend from "./backend/EnforcerBackend";
 import * as ModelBackend from "./backend/ModelBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import PolicyTable from "./table/PolicyTable";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -42,7 +43,7 @@ class EnforcerEditPage extends React.Component {
   }
 
   getEnforcer() {
-    EnforcerBackend.getEnforcer(this.state.organizationName, this.state.enforcerName)
+    EnforcerBackend.getEnforcer(this.state.organizationName, this.state.enforcerName, true)
       .then((res) => {
         if (res.data === null) {
           this.props.history.push("/404");
@@ -183,6 +184,14 @@ class EnforcerEditPage extends React.Component {
             })}
             options={this.state.adapters.map((adapter) => Setting.getOption(`${adapter.owner}/${adapter.name}`, `${adapter.owner}/${adapter.name}`))
             } />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("adapter:Policies"), i18next.t("adapter:Policies - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <PolicyTable enforcer={this.state.enforcer} modelCfg={this.state.enforcer?.modelCfg} mode={this.state.mode} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

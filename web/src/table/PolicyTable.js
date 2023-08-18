@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-import {Button, Input, Popconfirm, Table, Tooltip} from "antd";
+import {Button, Input, Popconfirm, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import * as AdapterBackend from "../backend/AdapterBackend";
 import i18next from "i18next";
@@ -42,7 +42,7 @@ class PolicyTable extends React.Component {
 
   UNSAFE_componentWillMount() {
     if (this.props.mode === "edit") {
-      this.synPolicies();
+      this.getPolicies();
     }
   }
 
@@ -100,9 +100,9 @@ class PolicyTable extends React.Component {
     this.state.add ? this.addPolicy(table, i) : this.updatePolicy(table, i);
   }
 
-  synPolicies() {
+  getPolicies() {
     this.setState({loading: true});
-    AdapterBackend.getPolicies(this.props.owner, this.props.name)
+    AdapterBackend.getPolicies(this.props.enforcer.owner, this.props.enforcer.name)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("adapter:Sync policies successfully"));
@@ -124,7 +124,7 @@ class PolicyTable extends React.Component {
   }
 
   updatePolicy(table, i) {
-    AdapterBackend.UpdatePolicy(this.props.owner, this.props.name, [this.state.oldPolicy, table[i]]).then(res => {
+    AdapterBackend.UpdatePolicy(this.props.enforcer.owner, this.props.enforcer.name, [this.state.oldPolicy, table[i]]).then(res => {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPolicy: ""});
         Setting.showMessage("success", i18next.t("general:Successfully saved"));
@@ -135,7 +135,7 @@ class PolicyTable extends React.Component {
   }
 
   addPolicy(table, i) {
-    AdapterBackend.AddPolicy(this.props.owner, this.props.name, table[i]).then(res => {
+    AdapterBackend.AddPolicy(this.props.enforcer.owner, this.props.enforcer.name, table[i]).then(res => {
       if (res.status === "ok") {
         this.setState({editingIndex: "", oldPolicy: "", add: false});
         if (res.data !== "Affected") {
@@ -151,7 +151,7 @@ class PolicyTable extends React.Component {
   }
 
   deletePolicy(table, index) {
-    AdapterBackend.RemovePolicy(this.props.owner, this.props.name, table[this.getIndex(index)]).then(res => {
+    AdapterBackend.RemovePolicy(this.props.enforcer.owner, this.props.enforcer.name, table[this.getIndex(index)]).then(res => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("general:Successfully deleted"));
 
@@ -163,140 +163,76 @@ class PolicyTable extends React.Component {
   }
 
   renderTable(table) {
+    if (this.props.modelCfg === undefined) {
+      return null;
+    }
+
     const columns = [
       {
         title: i18next.t("adapter:Rule type"),
         dataIndex: "Ptype",
         width: "100px",
-        // render: (text, record, index) => {
-        //   const editing = this.isEditing(index);
-        //   return (
-        //     editing ?
-        //       <Input value={text} onChange={e => {
-        //         this.updateField(table, index, "Ptype", e.target.value);
-        //       }} />
-        //       : text
-        //   );
-        // },
-      },
-      {
-        title: "V0",
-        dataIndex: "V0",
-        width: "100px",
         render: (text, record, index) => {
           const editing = this.isEditing(index);
           return (
             editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "V0", e.target.value);
+              <Select options={Object.keys(this.props.modelCfg).map(item => Setting.getOption(item, item))} value={text} onChange={value => {
+                this.updateField(table, index, "Ptype", value);
               }} />
               : text
           );
         },
       },
-      {
-        title: "V1",
-        dataIndex: "V1",
-        width: "100px",
+    ];
+
+    const columnKeys = ["V0", "V1", "V2", "V3", "V4", "V5"];
+    const columnTitles = this.props.modelCfg["p"].split(",");
+    columnTitles.forEach((title, i) => {
+      columns.push({
+        title: title,
+        dataIndex: columnKeys[i],
+        width: "200px",
         render: (text, record, index) => {
           const editing = this.isEditing(index);
           return (
             editing ?
               <Input value={text} onChange={e => {
-                this.updateField(table, index, "V1", e.target.value);
+                this.updateField(table, index, columnKeys[i], e.target.value);
               }} />
               : text
           );
         },
-      },
-      {
-        title: "V2",
-        dataIndex: "V2",
-        width: "100px",
-        render: (text, record, index) => {
-          const editing = this.isEditing(index);
-          return (
-            editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "V2", e.target.value);
-              }} />
-              : text
-          );
-        },
-      },
-      {
-        title: "V3",
-        dataIndex: "V3",
-        width: "100px",
-        render: (text, record, index) => {
-          const editing = this.isEditing(index);
-          return (
-            editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "V3", e.target.value);
-              }} />
-              : text
-          );
-        },
-      },
-      {
-        title: "V4",
-        dataIndex: "V4",
-        width: "100px",
-        render: (text, record, index) => {
-          const editing = this.isEditing(index);
-          return (
-            editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "V4", e.target.value);
-              }} />
-              : text
-          );
-        },
-      },
-      {
-        title: "V5",
-        dataIndex: "V5",
-        width: "100px",
-        render: (text, record, index) => {
-          const editing = this.isEditing(index);
-          return (
-            editing ?
-              <Input value={text} onChange={e => {
-                this.updateField(table, index, "V5", e.target.value);
-              }} />
-              : text
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Action"),
-        dataIndex: "",
-        key: "op",
-        width: "100px",
-        render: (text, record, index) => {
-          const editable = this.isEditing(index);
-          return editable ? (
-            <span>
-              <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
+      });
+    });
+
+    columns.push({
+      title: i18next.t("general:Action"),
+      dataIndex: "",
+      key: "op",
+      width: "100px",
+      render: (text, record, index) => {
+        const editable = this.isEditing(index);
+        return editable ? (
+          <span>
+            <Button style={{marginRight: 8}} onClick={() => this.save(table, index)}>
               Save
-              </Button>
-              <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(table, index)}>
-                <a>Cancel</a>
-              </Popconfirm>
-            </span>
-          ) : (
-            <div>
-              <Tooltip placement="topLeft" title="Edit">
-                <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
-              </Tooltip>
-              <Tooltip placement="topLeft" title="Delete">
-                <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deletePolicy(table, index)} />
-              </Tooltip>
-            </div>
-          );
-        },
-      }];
+            </Button>
+            <Popconfirm title="Sure to cancel?" onConfirm={() => this.cancel(table, index)}>
+              <a>Cancel</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <div>
+            <Tooltip placement="topLeft" title="Edit">
+              <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => this.edit(record, index)} />
+            </Tooltip>
+            <Tooltip placement="topLeft" title="Delete">
+              <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} icon={<DeleteOutlined />} size="small" onClick={() => this.deletePolicy(table, index)} />
+            </Tooltip>
+          </div>
+        );
+      },
+    });
 
     return (
       <Table
@@ -311,7 +247,7 @@ class PolicyTable extends React.Component {
         loading={this.state.loading}
         title={() => (
           <div>
-            <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject({owner: this.props.owner, name: this.props.name})} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
@@ -321,7 +257,7 @@ class PolicyTable extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.synPolicies();}}>
+        <Button type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.getPolicies();}}>
           {i18next.t("general:Sync")}
         </Button>
         {

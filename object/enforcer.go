@@ -18,7 +18,9 @@ import (
 	"fmt"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/config"
 	"github.com/casdoor/casdoor/util"
+	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
 )
 
@@ -34,6 +36,7 @@ type Enforcer struct {
 	Adapter   string `xorm:"varchar(100)" json:"adapter"`
 	IsEnabled bool   `json:"isEnabled"`
 
+	ModelCfg map[string]string `xorm:"-" json:"modelCfg"`
 	*casbin.Enforcer
 }
 
@@ -120,8 +123,8 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return affected != 0, nil
 }
 
-func (p *Enforcer) GetId() string {
-	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+func (enforcer *Enforcer) GetId() string {
+	return fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name)
 }
 
 func (enforcer *Enforcer) InitEnforcer() error {
@@ -154,7 +157,7 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	if err != nil {
 		return err
 	}
-	err = a.initAdapter()
+	err = a.InitAdapter()
 	if err != nil {
 		return err
 	}
@@ -181,4 +184,71 @@ func GetInitializedEnforcer(enforcerId string) (*Enforcer, error) {
 		return nil, err
 	}
 	return enforcer, nil
+}
+
+func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return nil, err
+	}
+
+	policies := util.MatrixToCasbinRules("p", enforcer.GetPolicy())
+	if enforcer.GetModel()["g"] != nil {
+		policies = append(policies, util.MatrixToCasbinRules("g", enforcer.GetGroupingPolicy())...)
+	}
+
+	return policies, nil
+}
+
+func UpdatePolicy(id string, oldPolicy, newPolicy []string) (bool, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return false, err
+	}
+
+	return enforcer.UpdatePolicy(oldPolicy, newPolicy)
+}
+
+func AddPolicy(id string, policy []string) (bool, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return false, err
+	}
+
+	return enforcer.AddPolicy(policy)
+}
+
+func RemovePolicy(id string, policy []string) (bool, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return false, err
+	}
+
+	return enforcer.RemovePolicy(policy)
+}
+
+func (enforcer *Enforcer) LoadModelCfg() error {
+	if enforcer.ModelCfg != nil {
+		return nil
+	}
+
+	model, err := GetModel(enforcer.Model)
+	if err != nil {
+		return err
+	} else if model == nil {
+		return fmt.Errorf("the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
+	}
+
+	cfg, err := config.NewConfigFromText(model.ModelText)
+	if err != nil {
+		return err
+	}
+
+	enforcer.ModelCfg = make(map[string]string)
+	enforcer.ModelCfg["p"] = cfg.String("policy_definition::p")
+	if cfg.String("role_definition::g") != "" {
+		enforcer.ModelCfg["g"] = cfg.String("role_definition::g")
+	}
+
+	return nil
 }
