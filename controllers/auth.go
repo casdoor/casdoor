@@ -190,9 +190,11 @@ func (c *ApiController) GetApplicationLogin() {
 	id := c.Input().Get("id")
 	loginType := c.Input().Get("type")
 
-	var application *object.Application
-	var msg string
-	var err error
+	var (
+		application *object.Application
+		msg         string
+		err         error
+	)
 	if loginType == "code" {
 		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, c.GetAcceptLanguage())
 		if err != nil {

@@ -89,6 +89,7 @@ func (c *ApiController) GetApplication() {
 		c.ResponseError(err.Error())
 		return
 	}
+
 	c.ResponseOk(object.GetMaskedApplication(app, userId))
 }
 
