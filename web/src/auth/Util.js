@@ -96,6 +96,20 @@ function getRawGetParameter(key) {
   return res;
 }
 
+export function getCasLoginParameters(owner, name) {
+  const queries = new URLSearchParams(window.location.search);
+  // CAS service
+  let service = getRawGetParameter("service");
+  if (service === "") {
+    service = getRefinedValue(queries.get("service"));
+  }
+  return {
+    id: `${owner}/${encodeURIComponent(name)}`, // application ID,
+    service: service,
+    type: "cas",
+  };
+}
+
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
   const clientId = getRefinedValue(queries.get("client_id"));
@@ -144,6 +158,7 @@ export function getOAuthGetParameters(params) {
       samlRequest: samlRequest,
       relayState: relayState,
       noRedirect: noRedirect,
+      type: "code",
     };
   }
 }

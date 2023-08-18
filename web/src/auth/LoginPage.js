@@ -71,9 +71,9 @@ class LoginPage extends React.Component {
 
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
-      if (this.state.type === "login" || this.state.type === "cas" || this.state.type === "saml") {
+      if (this.state.type === "login" || this.state.type === "saml") {
         this.getApplication();
-      } else if (this.state.type === "code") {
+      } else if (this.state.type === "code" || this.state.type === "cas") {
         this.getApplicationLogin();
       } else {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
@@ -143,8 +143,8 @@ class LoginPage extends React.Component {
   }
 
   getApplicationLogin() {
-    const oAuthParams = Util.getOAuthGetParameters();
-    AuthBackend.getApplicationLogin(oAuthParams)
+    const loginParams = (this.state.type === "cas") ? Util.getCasLoginParameters("admin", this.state.applicationName) : Util.getOAuthGetParameters();
+    AuthBackend.getApplicationLogin(loginParams)
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;
@@ -167,8 +167,11 @@ class LoginPage extends React.Component {
       ApplicationBackend.getApplication("admin", this.state.applicationName)
         .then((res) => {
           if (res.status === "error") {
-            Setting.showMessage("error", res.msg);
-            return;
+            this.onUpdateApplication(null);
+            this.setState({
+              msg: res.msg,
+            });
+            return ;
           }
           this.onUpdateApplication(res.data);
         });
