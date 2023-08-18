@@ -150,7 +150,7 @@ export function getOAuthGetParameters(params = null, owner = "", appName = "", t
       relayState: relayState,
       noRedirect: noRedirect,
       type: type,
-      id: `${owner}/${appName}`, // application id
+      id: `${owner}/${encodeURIComponent(appName)}`, // application id
     };
   }
 }
