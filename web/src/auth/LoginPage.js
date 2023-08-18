@@ -186,9 +186,9 @@ class LoginPage extends React.Component {
             });
           } else {
             this.onUpdateApplication(null);
-            this.setState({
-              msg: res.msg,
-            });
+            Setting.showMessage("error", res.msg);
+
+            this.props.history.push("/404");
           }
         });
     }

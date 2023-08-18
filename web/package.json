@@ -10,9 +10,6 @@
     "@ctrl/tinycolor": "^3.5.0",
     "@emotion/react": "^11.10.5",
     "@metamask/eth-sig-util": "^6.0.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
     "@web3-onboard/coinbase": "^2.2.5",
     "@web3-onboard/core": "^2.20.5",
     "@web3-onboard/frontier": "^2.0.4",
@@ -31,7 +28,6 @@
     "core-js": "^3.25.0",
     "craco-less": "^2.0.0",
     "echarts": "^5.4.3",
-    "eslint-plugin-unused-imports": "^2.0.0",
     "ethers": "5.6.9",
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.0.0",
@@ -84,16 +80,21 @@
   "devDependencies": {
     "@babel/core": "^7.18.13",
     "@babel/eslint-parser": "^7.18.9",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/preset-react": "^7.18.6",
     "cross-env": "^7.0.3",
     "cypress": "^12.5.1",
     "eslint": "8.22.0",
     "eslint-plugin-react": "^7.31.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^4.3.8",
     "lint-staged": "^13.0.3",
     "stylelint": "^14.11.0",
     "stylelint-config-recommended-less": "^1.0.4",
-    "stylelint-config-standard": "^28.0.0"
+    "stylelint-config-standard": "^28.0.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2"
   },
   "lint-staged": {
     "src/**/*.{css,less}": [
