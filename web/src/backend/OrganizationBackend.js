@@ -70,8 +70,8 @@ export function deleteOrganization(organization) {
   }).then(res => res.json());
 }
 
-export function getDefaultApplication(owner, name, type = "", redirectUri = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}&type=${type}&redirectUri=${redirectUri}`, {
+export function getDefaultApplication(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/get-default-application?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
     credentials: "include",
     headers: {
