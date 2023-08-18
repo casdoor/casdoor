@@ -143,8 +143,13 @@ class LoginPage extends React.Component {
   }
 
   getApplicationLogin() {
-    const oAuthParams = Util.getOAuthGetParameters(null, "admin", this.state.applicationName, this.state.type);
-    AuthBackend.getApplicationLogin(oAuthParams)
+    let loginParams;
+    if (this.state.type === "cas") {
+      loginParams = Util.getCasLoginParameters("admin", this.state.applicationName);
+    } else {
+      loginParams = Util.getOAuthGetParameters();
+    }
+    AuthBackend.getApplicationLogin(loginParams)
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;

@@ -211,7 +211,7 @@ func (c *ApiController) GetApplicationLogin() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), id))
 			return
 		}
-		err = object.CheckCasRestrict(application, c.GetAcceptLanguage(), redirectUri)
+		err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

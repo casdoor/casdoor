@@ -46,6 +46,10 @@ export function getEmailAndPhone(organization, username) {
   }).then((res) => res.json());
 }
 
+export function casLoginParamsToQuery(casParams) {
+  return `?type=${casParams?.type}&id=${casParams?.id}&redirectUri=${casParams?.service}`;
+}
+
 export function oAuthParamsToQuery(oAuthParams) {
   // login
   if (oAuthParams === null || oAuthParams === undefined) {
@@ -53,12 +57,18 @@ export function oAuthParamsToQuery(oAuthParams) {
   }
 
   // code
-  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${oAuthParams.type}&id=${oAuthParams.id}`
-  + `&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}`;
+  return `?clientId=${oAuthParams.clientId}&responseType=${oAuthParams.responseType}&redirectUri=${encodeURIComponent(oAuthParams.redirectUri)}&type=${oAuthParams.type}` +
+  `&scope=${oAuthParams.scope}&state=${oAuthParams.state}&nonce=${oAuthParams.nonce}&code_challenge_method=${oAuthParams.challengeMethod}&code_challenge=${oAuthParams.codeChallenge}`;
 }
 
-export function getApplicationLogin(oAuthParams) {
-  return fetch(`${authConfig.serverUrl}/api/get-app-login${oAuthParamsToQuery(oAuthParams)}`, {
+export function getApplicationLogin(params) {
+  let queryParams;
+  if (params && params?.type === "cas") {
+    queryParams = casLoginParamsToQuery(params);
+  } else {
+    queryParams = oAuthParamsToQuery(params);
+  }
+  return fetch(`${authConfig.serverUrl}/api/get-app-login${queryParams}`, {
     method: "GET",
     credentials: "include",
     headers: {
