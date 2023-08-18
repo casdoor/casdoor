@@ -149,7 +149,7 @@ func (adapter *Adapter) getTable() string {
 	}
 }
 
-func (adapter *Adapter) initAdapter() error {
+func (adapter *Adapter) InitAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 

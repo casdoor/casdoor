@@ -155,6 +155,22 @@ func (c *ApiController) DeleteEnforcer() {
 
 func (c *ApiController) GetPolicies() {
 	id := c.Input().Get("id")
+	adapterId := c.Input().Get("adapterId")
+
+	if adapterId != "" {
+		adapter, err := object.GetAdapter(adapterId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		err = adapter.InitAdapter()
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk()
+		return
+	}
 
 	policies, err := object.GetPolicies(id)
 	if err != nil {

@@ -123,8 +123,8 @@ func DeleteEnforcer(enforcer *Enforcer) (bool, error) {
 	return affected != 0, nil
 }
 
-func (p *Enforcer) GetId() string {
-	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+func (enforcer *Enforcer) GetId() string {
+	return fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name)
 }
 
 func (enforcer *Enforcer) InitEnforcer() error {
@@ -157,7 +157,7 @@ func (enforcer *Enforcer) InitEnforcer() error {
 	if err != nil {
 		return err
 	}
-	err = a.initAdapter()
+	err = a.InitAdapter()
 	if err != nil {
 		return err
 	}
