@@ -190,6 +190,7 @@ class LoginPage extends React.Component {
             this.setState({
               msg: res.msg,
             });
+            return ;
           }
           this.onUpdateApplication(res.data);
         });
