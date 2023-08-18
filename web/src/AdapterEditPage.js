@@ -227,7 +227,7 @@ class AdapterEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col span={22} >
-            <Button onClick={() => {
+            <Button type={"primary"} onClick={() => {
               AdapterBackend.getPolicies("", "", `${this.state.organizationName}/${this.state.adapterName}`)
                 .then((res) => {
                   if (res.status === "ok") {
@@ -240,7 +240,7 @@ class AdapterEditPage extends React.Component {
                   Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
                 });
             }
-            }>{i18next.t("syncer:Test connection")}</Button>
+            }>{i18next.t("syncer:Test DB Connection")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
