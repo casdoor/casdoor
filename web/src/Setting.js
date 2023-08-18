@@ -271,6 +271,12 @@ export const OtherProviderInfo = {
       url: "https://onboard.blocknative.com/",
     },
   },
+  Notification: {
+    "Telegram": {
+      logo: `${StaticBaseUrl}/img/social_metamask.svg`,
+      url: "https://telegram.org/",
+    },
+  },
 };
 
 export function initCountries() {
@@ -956,6 +962,10 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "MetaMask", name: "MetaMask"},
       {id: "Web3Onboard", name: "Web3-Onboard"},
+    ]);
+  } else if (category === "Notification") {
+    return ([
+      {id: "Telegram", name: "Telegram"},
     ]);
   } else {
     return [];
