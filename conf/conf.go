@@ -15,7 +15,7 @@
 package conf
 
 import (
-	"encoding/json"
+	"fmt"
 	"os"
 	"runtime"
 	"strconv"
@@ -23,15 +23,6 @@ import (
 
 	"github.com/beego/beego"
 )
-
-type Quota struct {
-	Organization int `json:"organization"`
-	User         int `json:"user"`
-	Application  int `json:"application"`
-	Provider     int `json:"provider"`
-}
-
-var quota = &Quota{-1, -1, -1, -1}
 
 func init() {
 	// this array contains the beego configuration items that may be modified via env
@@ -42,17 +33,6 @@ func init() {
 			if err != nil {
 				panic(err)
 			}
-		}
-	}
-	initQuota()
-}
-
-func initQuota() {
-	res := beego.AppConfig.String("quota")
-	if res != "" {
-		err := json.Unmarshal([]byte(res), quota)
-		if err != nil {
-			panic(err)
 		}
 	}
 }
@@ -67,7 +47,7 @@ func GetConfigString(key string) string {
 		if key == "staticBaseUrl" {
 			res = "https://cdn.casbin.org"
 		} else if key == "logConfig" {
-			res = "{\"filename\": \"logs/casdoor.log\", \"maxdays\":99999, \"perm\":\"0770\"}"
+			res = fmt.Sprintf("{\"filename\": \"logs/%s.log\", \"maxdays\":99999, \"perm\":\"0770\"}", beego.AppConfig.String("appname"))
 		}
 	}
 
@@ -127,10 +107,6 @@ func GetConfigBatchSize() int {
 		res = 100
 	}
 	return res
-}
-
-func GetConfigQuota() *Quota {
-	return quota
 }
 
 func GetConfigRealDataSourceName(driverName string) string {
