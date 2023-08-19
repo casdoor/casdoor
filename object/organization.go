@@ -437,14 +437,6 @@ func organizationChangeTrigger(oldName string, newName string) error {
 		return err
 	}
 
-	record := new(Record)
-	record.Owner = newName
-	record.Organization = newName
-	_, err = session.Where("organization=?", oldName).Update(record)
-	if err != nil {
-		return err
-	}
-
 	resource := new(Resource)
 	resource.Owner = newName
 	_, err = session.Where("owner=?", oldName).Update(resource)

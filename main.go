@@ -42,6 +42,7 @@ func main() {
 	proxy.InitHttpClient()
 	authz.InitApi()
 	object.InitUserManager()
+	object.InitCasvisorConfig()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 

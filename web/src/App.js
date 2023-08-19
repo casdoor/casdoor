@@ -43,7 +43,6 @@ import LdapEditPage from "./LdapEditPage";
 import LdapSyncPage from "./LdapSyncPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
-import RecordListPage from "./RecordListPage";
 import WebhookListPage from "./WebhookListPage";
 import WebhookEditPage from "./WebhookEditPage";
 import SyncerListPage from "./SyncerListPage";
@@ -439,10 +438,10 @@ class App extends Component {
         }
       })));
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/records">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
-        Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
-        Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
+      res.push(Setting.getItem(<Link style={{color: "black"}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
         Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
+        Setting.getItem(<a target="_blank" rel="noreferrer" href={"http://localhost:18001/records"}>{i18next.t("general:Records")}</a>, "/records"),
+        Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       ]));
 
       res.push(Setting.getItem(<Link style={{color: "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
@@ -527,7 +526,6 @@ class App extends Component {
         <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:organizationName/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/payments/:organizationName/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
-        <Route exact path="/records" render={(props) => this.renderLoginIfNotLoggedIn(<RecordListPage account={this.state.account} {...props} />)} />
         <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
         <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
         <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
