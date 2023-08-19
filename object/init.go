@@ -73,7 +73,6 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "3rd-party logins", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Properties", Visible: false, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
-		{Name: "Is global admin", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is forbidden", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Is deleted", Visible: true, ViewRule: "Admin", ModifyRule: "Admin"},
 		{Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
