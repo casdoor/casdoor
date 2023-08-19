@@ -20,19 +20,7 @@ import ShortcutsPage from "./basic/ShortcutsPage";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {
-  AppstoreTwoTone,
-  BarsOutlined, DollarTwoTone,
-  DownOutlined,
-  HomeTwoTone,
-  InfoCircleFilled,
-  LockTwoTone,
-  LogoutOutlined,
-  SafetyCertificateTwoTone,
-  SettingOutlined,
-  SettingTwoTone,
-  WalletTwoTone
-} from "@ant-design/icons";
+import {AppstoreTwoTone, BarsOutlined, DollarTwoTone, DownOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, WalletTwoTone} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
@@ -163,7 +151,7 @@ class App extends Component {
     this.setState({
       uri: uri,
     });
-    if (uri === "/" || uri.includes("/home") || uri.includes("/shortcuts") || uri.includes("/apps")) {
+    if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
       this.setState({selectedMenuKey: "/home"});
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
       this.setState({selectedMenuKey: "/orgs"});
