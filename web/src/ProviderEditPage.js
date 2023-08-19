@@ -20,6 +20,7 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./common/TestEmailWidget";
+import * as ProviderNotification from "./common/TestNotificationWidget";
 import * as ProviderEditTestSms from "./common/TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
@@ -275,6 +276,11 @@ class ProviderEditPage extends React.Component {
         text = i18next.t("provider:App ID");
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
+    } else if (provider.category === "Notification") {
+      if (provider.type === "Telegram") {
+        text = i18next.t("provider:Api Token");
+        tooltip = i18next.t("provider:Api Token - Tooltip");
+      }
     }
 
     if (text === "" && tooltip === "") {
@@ -379,6 +385,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Default");
               } else if (value === "Web3") {
                 this.updateProviderField("type", "MetaMask");
+              } else if (value === "Notification") {
+                this.updateProviderField("type", "Telegram");
               }
             })}>
               {
@@ -391,6 +399,7 @@ class ProviderEditPage extends React.Component {
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
+                  {id: "Notification", name: "Notification"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -555,7 +564,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
           (this.state.provider.category === "Web3") ||
-          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ? null : (
+          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" || (this.state.provider.category === "Notification")) ? null : (
               <React.Fragment>
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -759,7 +768,34 @@ class ProviderEditPage extends React.Component {
         }
         {this.getAppIdRow(this.state.provider)}
         {
-          this.state.provider.category === "Email" ? (
+          this.state.provider.category === "Notification" ? (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Notification content"), i18next.t("provider:Notification content - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
+                    this.updateProviderField("content", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Chat Id"), i18next.t("provider:Chat Id - Tooltip"))} :
+                </Col>
+                <Col span={4} >
+                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your chat id")} onChange={e => {
+                    this.updateProviderField("receiver", e.target.value);
+                  }} />
+                </Col>
+                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
+                  onClick={() => ProviderNotification.sendTestNotification(this.state.provider, this.state.provider.receiver)} >
+                  {i18next.t("provider:Send Testing Notification")}
+                </Button>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "Email" ? (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
