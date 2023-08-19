@@ -100,7 +100,6 @@ class AccountTable extends React.Component {
       {name: "Properties", label: i18next.t("user:Properties")},
       {name: "Is online", label: i18next.t("user:Is online")},
       {name: "Is admin", label: i18next.t("user:Is admin")},
-      {name: "Is global admin", label: i18next.t("user:Is global admin")},
       {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
       {name: "Is deleted", label: i18next.t("user:Is deleted")},
       {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
@@ -179,7 +178,7 @@ class AccountTable extends React.Component {
           }
 
           let options;
-          if (record.viewRule === "Admin" || record.name === "Is admin" || record.name === "Is global admin") {
+          if (record.viewRule === "Admin" || record.name === "Is admin") {
             options = [
               {id: "Admin", name: "Admin"},
               {id: "Immutable", name: "Immutable"},

@@ -79,7 +79,6 @@ const userTemplate = {
   "ranking": 10,
   "isOnline": false,
   "isAdmin": true,
-  "isGlobalAdmin": false,
   "isForbidden": false,
   "isDeleted": false,
   "signupApplication": "app-casnode",

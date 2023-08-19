@@ -81,7 +81,6 @@ class OrganizationListPage extends BaseListPage {
         {name: "Properties", visible: false, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is online", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
-        {name: "Is global admin", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is forbidden", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {name: "Is deleted", visible: true, viewRule: "Admin", modifyRule: "Admin"},
         {Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},

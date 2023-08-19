@@ -45,13 +45,13 @@ func (c *ApiController) Unlink() {
 	// the user will be unlinked from the provider
 	unlinkedUser := form.User
 
-	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin {
+	if user.Id != unlinkedUser.Id && !user.IsGlobalAdmin() {
 		// if the user is not the same as the one we are unlinking, we need to make sure the user is the global admin.
 		c.ResponseError(c.T("link:You are not the global admin, you can't unlink other users"))
 		return
 	}
 
-	if user.Id == unlinkedUser.Id && !user.IsGlobalAdmin {
+	if user.Id == unlinkedUser.Id && !user.IsGlobalAdmin() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application, err := object.GetApplicationByUser(user)
 		if err != nil {

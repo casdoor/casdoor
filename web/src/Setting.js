@@ -620,7 +620,7 @@ export function isAdminUser(account) {
   if (account === undefined || account === null) {
     return false;
   }
-  return account.owner === "built-in" || account.isGlobalAdmin === true;
+  return account.owner === "built-in";
 }
 
 export function isLocalAdminUser(account) {

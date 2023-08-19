@@ -171,7 +171,6 @@ func (c *ApiController) Signup() {
 		Region:            authForm.Region,
 		Score:             initScore,
 		IsAdmin:           false,
-		IsGlobalAdmin:     false,
 		IsForbidden:       false,
 		IsDeleted:         false,
 		SignupApplication: application.Name,
