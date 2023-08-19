@@ -15,6 +15,8 @@
 import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
+import Dashboard from "./basic/Dashboard";
+import ShortcutsPage from "./basic/ShortcutsPage";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
@@ -69,7 +71,7 @@ import SessionListPage from "./SessionListPage";
 import MfaSetupPage from "./auth/MfaSetupPage";
 import SystemInfo from "./SystemInfo";
 import AccountPage from "./account/AccountPage";
-import HomePage from "./basic/HomePage";
+import AppListPage from "./basic/AppListPage";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
 
@@ -148,8 +150,8 @@ class App extends Component {
     this.setState({
       uri: uri,
     });
-    if (uri === "/") {
-      this.setState({selectedMenuKey: "/"});
+    if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
+      this.setState({selectedMenuKey: "/home"});
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
       this.setState({selectedMenuKey: "/orgs"});
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
@@ -400,7 +402,13 @@ class App extends Component {
       return [];
     }
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/", <HomeTwoTone />));
+    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone />, [
+      Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
+      Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
+      Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
+    ].filter(item => {
+      return Setting.isLocalAdminUser(this.state.account);
+    })));
 
     if (Setting.isLocalAdminUser(this.state.account)) {
       if (Conf.ShowGithubCorner) {
@@ -476,7 +484,9 @@ class App extends Component {
   renderRouter() {
     return (
       <Switch>
-        <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<HomePage account={this.state.account} {...props} />)} />
+        <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<Dashboard account={this.state.account} {...props} />)} />
+        <Route exact path="/apps" render={(props) => this.renderLoginIfNotLoggedIn(<AppListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/shortcuts" render={(props) => this.renderLoginIfNotLoggedIn(<ShortcutsPage account={this.state.account} {...props} />)} />
         <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
         <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
