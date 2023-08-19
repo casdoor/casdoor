@@ -16,6 +16,7 @@ package object
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"runtime"
 	"strings"
@@ -33,6 +34,17 @@ import (
 )
 
 var ormer *Ormer
+var createDatabase = true
+
+func init() {
+	createDatabase = getCreateDatabaseFlag()
+}
+
+func getCreateDatabaseFlag() bool {
+	res := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
+	flag.Parse()
+	return *res
+}
 
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
@@ -42,12 +54,12 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
-	CreateTables(true)
+	InitAdapter()
+	CreateTables()
 	DoMigration()
 }
 
-func InitAdapter(createDatabase bool) {
+func InitAdapter() {
 	if createDatabase {
 		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 		if err != nil {
@@ -62,7 +74,7 @@ func InitAdapter(createDatabase bool) {
 	ormer.Engine.SetTableMapper(tbMapper)
 }
 
-func CreateTables(createDatabase bool) {
+func CreateTables() {
 	if createDatabase {
 		err := ormer.CreateDatabase()
 		if err != nil {

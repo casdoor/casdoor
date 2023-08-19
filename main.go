@@ -15,7 +15,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/beego/beego"
@@ -27,20 +26,11 @@ import (
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
-	"github.com/casdoor/casdoor/util"
 )
 
-func getCreateDatabaseFlag() bool {
-	res := flag.Bool("createDatabase", false, "true if you need Casdoor to create database")
-	flag.Parse()
-	return *res
-}
-
 func main() {
-	createDatabase := getCreateDatabaseFlag()
-
-	object.InitAdapter(createDatabase)
-	object.CreateTables(createDatabase)
+	object.InitAdapter()
+	object.CreateTables()
 	object.DoMigration()
 
 	object.InitDb()
