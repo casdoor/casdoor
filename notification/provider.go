@@ -16,9 +16,11 @@ package notification
 
 import "github.com/nikoksr/notify"
 
-func GetNotificationProvider(typ string, appId string, receiver string) (notify.Notifier, error) {
+func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
 	if typ == "Telegram" {
 		return NewTelegramProvider(appId, receiver)
+	} else if typ == "Custom HTTP" {
+		return NewCustomHttpProvider(receiver, method, title)
 	}
 
 	return nil, nil
