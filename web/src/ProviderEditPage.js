@@ -301,6 +301,36 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  getReceiverRow(provider) {
+    let text = "";
+    let tooltip = "";
+
+    if (provider.type === "Telegram") {
+      text = i18next.t("provider:Chat ID");
+      tooltip = i18next.t("provider:Chat ID - Tooltip");
+    } else if (provider.type === "Custom HTTP") {
+      text = i18next.t("provider:Endpoint");
+      tooltip = i18next.t("provider:Endpoint - Tooltip");
+    }
+
+    if (text === "" && tooltip === "") {
+      return null;
+    } else {
+      return (
+        <React.Fragment>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(text, tooltip)} :
+          </Col>
+          <Col span={6} >
+            <Input value={provider.receiver} onChange={e => {
+              this.updateProviderField("receiver", e.target.value);
+            }} />
+          </Col>
+        </React.Fragment>
+      );
+    }
+  }
+
   loadSamlConfiguration() {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
@@ -764,14 +794,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Chat ID"), i18next.t("provider:Chat ID - Tooltip"))} :
-                </Col>
-                <Col span={6} >
-                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your chat id")} onChange={e => {
-                    this.updateProviderField("receiver", e.target.value);
-                  }} />
-                </Col>
+                {this.getReceiverRow(this.state.provider)}
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   onClick={() => ProviderNotification.sendTestNotification(this.state.provider, this.state.provider.receiver)} >
                   {i18next.t("provider:Send Testing Notification")}
