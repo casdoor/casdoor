@@ -15,8 +15,8 @@
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-export function sendTestNotification(provider, notification) {
-  testNotificationProvider(provider, notification)
+export function sendTestNotification(provider) {
+  testNotificationProvider(provider.content, provider.name)
     .then((res) => {
       if (res.status === "ok") {
         Setting.showMessage("success", i18next.t("general:Successfully sent"));
@@ -29,12 +29,12 @@ export function sendTestNotification(provider, notification) {
     });
 }
 
-function testNotificationProvider(provider, email = "") {
+function testNotificationProvider(content, name) {
   const notificationForm = {
-    content: provider.content,
+    content: content,
   };
 
-  return fetch(`${Setting.ServerUrl}/api/send-notification?provider=` + provider.name, {
+  return fetch(`${Setting.ServerUrl}/api/send-notification?provider=${name}`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(notificationForm),
