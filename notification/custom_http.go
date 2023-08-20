@@ -18,8 +18,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/casdoor/casdoor/proxy"
 	"net/http"
+
+	"github.com/casdoor/casdoor/proxy"
 )
 
 type HttpNotificationClient struct {
