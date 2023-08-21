@@ -47,7 +47,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
 	github.com/russellhaering/goxmldsig v1.2.0
-	github.com/satori/go.uuid v1.2.0
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
