@@ -14,7 +14,7 @@
 
 import moment from "moment";
 import React from "react";
-import {Button, Card, Col, DatePicker, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, DatePicker, Input, InputNumber, Row, Select} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as SubscriptionBackend from "./backend/SubscriptionBackend";
@@ -171,21 +171,21 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Start date"), i18next.t("subscription:Start date - Tooltip"))}
+            {Setting.getLabel(i18next.t("subscription:Start time"), i18next.t("subscription:Start time - Tooltip"))}
           </Col>
           <Col span={22} >
-            <DatePicker value={dayjs(this.state.subscription.startDate)} onChange={value => {
-              this.updateSubscriptionField("startDate", value);
+            <DatePicker value={dayjs(this.state.subscription.startTime)} onChange={value => {
+              this.updateSubscriptionField("startTime", value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:End date"), i18next.t("subscription:End date - Tooltip"))}
+            {Setting.getLabel(i18next.t("subscription:End time"), i18next.t("subscription:End time - Tooltip"))}
           </Col>
           <Col span={22} >
-            <DatePicker value={dayjs(this.state.subscription.endDate)} onChange={value => {
-              this.updateSubscriptionField("endDate", value);
+            <DatePicker value={dayjs(this.state.subscription.endTime)} onChange={value => {
+              this.updateSubscriptionField("endTime", value);
             }} />
           </Col>
         </Row>
@@ -196,7 +196,7 @@ class SubscriptionEditPage extends React.Component {
           <Col span={22} >
             <Select style={{width: "100%"}} value={this.state.subscription.user}
               onChange={(value => {this.updateSubscriptionField("user", value);})}
-              options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
+              options={this.state.users.map((user) => Setting.getOption(user.name, user.name))}
             />
           </Col>
         </Row>
@@ -206,8 +206,9 @@ class SubscriptionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Plan"), i18next.t("general:Plan - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.plan} onChange={(value => {this.updateSubscriptionField("plan", value);})}
-              options={this.state.planes.map((plan) => Setting.getOption(`${plan.owner}/${plan.name}`, `${plan.owner}/${plan.name}`))
+            <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.plan}
+              onChange={(value => {this.updateSubscriptionField("plan", value);})}
+              options={this.state.planes.map((plan) => Setting.getOption(plan.name, plan.name))
               } />
           </Col>
         </Row>
@@ -218,46 +219,6 @@ class SubscriptionEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.subscription.description} onChange={e => {
               this.updateSubscriptionField("description", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
-          </Col>
-          <Col span={1} >
-            <Switch checked={this.state.subscription.isEnabled} onChange={checked => {
-              this.updateSubscriptionField("isEnabled", checked);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Submitter"), i18next.t("permission:Submitter - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={this.state.subscription.submitter} onChange={e => {
-              this.updateSubscriptionField("submitter", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Approver"), i18next.t("permission:Approver - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={this.state.subscription.approver} onChange={e => {
-              this.updateSubscriptionField("approver", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("permission:Approve time"), i18next.t("permission:Approve time - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={Setting.getFormattedDate(this.state.subscription.approveTime)} onChange={e => {
-              this.updatePermissionField("approveTime", e.target.value);
             }} />
           </Col>
         </Row>
@@ -280,8 +241,11 @@ class SubscriptionEditPage extends React.Component {
               this.updateSubscriptionField("state", value);
             })}
             options={[
-              {value: "Approved", name: i18next.t("permission:Approved")},
               {value: "Pending", name: i18next.t("permission:Pending")},
+              {value: "Active", name: i18next.t("permission:Active")},
+              {value: "Upcoming", name: i18next.t("permission:Upcoming")},
+              {value: "Expired", name: i18next.t("permission:Expired")},
+              {value: "Error", name: i18next.t("permission:Error")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>

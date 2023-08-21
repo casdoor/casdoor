@@ -190,7 +190,7 @@ class PricingEditPage extends React.Component {
               onChange={(value => {
                 this.updatePricingField("plans", value);
               })}
-              options={this.state.plans.map((plan) => Setting.getOption(`${plan.owner}/${plan.name}`, `${plan.owner}/${plan.name}`))}
+              options={this.state.plans.map((plan) => Setting.getOption(plan.name, plan.name))}
             />
           </Col>
         </Row>
@@ -294,7 +294,7 @@ class PricingEditPage extends React.Component {
           </Button>
         </Col>
         <Col>
-          <PricingPage pricing={this.state.pricing}></PricingPage>
+          <PricingPage pricing={this.state.pricing} owner={this.state.pricing.owner}></PricingPage>
         </Col>
       </React.Fragment>
     );

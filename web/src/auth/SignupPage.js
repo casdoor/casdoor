@@ -133,7 +133,12 @@ class SignupPage extends React.Component {
       });
   }
 
-  getResultPath(application) {
+  getResultPath(application, signupParams) {
+    window.console.log("signupParams=", signupParams);
+    if (signupParams?.plan && signupParams?.pricing) {
+      // signup before pay for plan
+      return `/buy-plan/${application.organization}/${application.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
+    }
     if (authConfig.appName === application.name) {
       return "/result";
     } else {
@@ -188,13 +193,13 @@ class SignupPage extends React.Component {
                   account.organization = res.data2;
 
                   this.onUpdateAccount(account);
-                  Setting.goToLinkSoft(this, this.getResultPath(application));
+                  Setting.goToLinkSoft(this, this.getResultPath(application, values));
                 } else {
                   Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
                 }
               });
           } else {
-            Setting.goToLinkSoft(this, this.getResultPath(application));
+            Setting.goToLinkSoft(this, this.getResultPath(application, values));
           }
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));

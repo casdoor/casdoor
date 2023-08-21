@@ -141,31 +141,31 @@ func (product *Product) isValidProvider(provider *Provider) bool {
 	return false
 }
 
-func (product *Product) getProvider(providerId string) (*Provider, error) {
-	provider, err := getProvider(product.Owner, providerId)
+func (product *Product) getProvider(providerName string) (*Provider, error) {
+	provider, err := getProvider(product.Owner, providerName)
 	if err != nil {
 		return nil, err
 	}
 
 	if provider == nil {
-		return nil, fmt.Errorf("the payment provider: %s does not exist", providerId)
+		return nil, fmt.Errorf("the payment provider: %s does not exist", providerName)
 	}
 
 	if !product.isValidProvider(provider) {
-		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerId, product.Name)
+		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerName, product.Name)
 	}
 
 	return provider, nil
 }
 
-func BuyProduct(id string, providerName string, user *User, host string) (string, string, error) {
-	product, err := GetProduct(id)
+func BuyProduct(productId string, user *User, providerName string, planName string, host string) (string, string, error) {
+	product, err := GetProduct(productId)
 	if err != nil {
 		return "", "", err
 	}
 
 	if product == nil {
-		return "", "", fmt.Errorf("the product: %s does not exist", id)
+		return "", "", fmt.Errorf("the product: %s does not exist", productId)
 	}
 
 	provider, err := product.getProvider(providerName)
@@ -181,18 +181,18 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	owner := product.Owner
 	productName := product.Name
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
-	paymentName := util.GenerateTimeId()
+	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
-	// Create an Order and get the payUrl
+	// Create an OrderId and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
 	}
-	// Create a Payment linked with Product and Order
+	// Create a Payment linked with Product and OrderId
 	payment := Payment{
 		Owner:       product.Owner,
 		Name:        paymentName,
@@ -210,10 +210,10 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 		Price:              product.Price,
 		ReturnUrl:          product.ReturnUrl,
 
-		User:       user.Name,
-		PayUrl:     payUrl,
-		State:      pp.PaymentStateCreated,
-		OutOrderId: orderId,
+		User:    user.Name,
+		PayUrl:  payUrl,
+		State:   pp.PaymentStateCreated,
+		OrderId: orderId,
 	}
 
 	if provider.Type == "Dummy" {
@@ -228,7 +228,14 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	if !affected {
 		return "", "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
-
+	// Create a subscription for `paid-user`
+	if user.Type == "paid-user" && planName != "" {
+		sub := NewSubscription(product.Owner, planName, user.Name, paymentName)
+		_, err := AddSubscription(sub)
+		if err != nil {
+			return "", "", err
+		}
+	}
 	return payUrl, orderId, err
 }
 

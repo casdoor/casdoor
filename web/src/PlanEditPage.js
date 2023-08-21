@@ -165,7 +165,7 @@ class PlanEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} onChange={(value => {this.updatePlanField("role", value);})}
-              options={this.state.roles.map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
+              options={this.state.roles.map((role) => Setting.getOption(role.name, role.name))
               } />
           </Col>
         </Row>

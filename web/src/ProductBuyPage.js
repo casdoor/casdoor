@@ -17,16 +17,24 @@ import {Button, Descriptions, Modal, Spin} from "antd";
 import {CheckCircleTwoTone} from "@ant-design/icons";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
+import * as PlanBackend from "./backend/PlanBackend";
+import * as PricingBackend from "./backend/PricingBackend";
 import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
-      organizationName: props.organizationName !== undefined ? props.organizationName : props?.match?.params?.organizationName,
-      productName: props.productName !== undefined ? props.productName : props?.match?.params?.productName,
+      owner: props?.organizationName ?? props?.match?.params?.organizationName ?? props?.match?.params?.owner ?? null,
+      productName: props?.productName ?? props?.match?.params?.productName ?? null,
+      pricingName: props?.pricingName ?? props?.match?.params?.pricingName ?? null,
+      planName: params.get("plan"),
+      userName: params.get("user"),
       product: null,
+      pricing: props?.pricing ?? null,
+      plan: null,
       isPlacingOrder: false,
       qrCodeModalProvider: null,
     };
@@ -36,20 +44,54 @@ class ProductBuyPage extends React.Component {
     this.getProduct();
   }
 
-  getProduct() {
-    if (this.state.productName === undefined || this.state.organizationName === undefined) {
+  setStateAsync(state) {
+    return new Promise((resolve, reject) => {
+      this.setState(state, () => {
+        resolve();
+      });
+    });
+  }
+
+  onUpdatePricing(pricing) {
+    this.props.onUpdatePricing(pricing);
+  }
+
+  async getProduct() {
+    window.console.log(this.state);
+    if (!this.state.owner || (!this.state.productName && !this.state.pricingName)) {
       return ;
     }
-    ProductBackend.getProduct(this.state.organizationName, this.state.productName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
+    try {
+      // load pricing & plan
+      if (this.state.pricingName) {
+        if (!this.state.planName || !this.state.userName) {
+          return ;
         }
-        this.setState({
-          product: res.data,
+        let res = await PricingBackend.getPricing(this.state.owner, this.state.pricingName);
+        const pricing = res.data;
+        res = await PlanBackend.getPlan(this.state.owner, this.state.planName);
+        const plan = res.data;
+        const productName = plan.product;
+        await this.setStateAsync({
+          pricing: pricing,
+          plan: plan,
+          productName: productName,
         });
+        this.onUpdatePricing(pricing);
+      }
+      // load product
+      const res = await ProductBackend.getProduct(this.state.owner, this.state.productName);
+      if (res.status === "error") {
+        Setting.showMessage("error", res.msg);
+        return;
+      }
+      this.setState({
+        product: res.data,
       });
+    } catch (err) {
+      Setting.showMessage("error", err);
+      return;
+    }
   }
 
   getProductObj() {
@@ -215,40 +257,46 @@ class ProductBuyPage extends React.Component {
     }
 
     return (
-      <div>
-        <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
-          <Descriptions title={i18next.t("product:Buy Product")} bordered>
-            <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-              <span style={{fontSize: 28}}>
-                {Setting.getLanguageText(product?.displayName)}
-              </span>
-            </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-              <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
-            </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Price")}>
-              <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
+      <React.Fragment>
+        <div className="login-content">
+          {/* <div className="login-panel">
+            <div className="login-form"> */}
+          <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
+            <Descriptions title={<span style={{fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
+              <Descriptions.Item label={i18next.t("general:Name")} span={3}>
+                <span style={{fontSize: 25}}>
+                  {Setting.getLanguageText(product?.displayName)}
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
+              <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Image")} span={3}>
+                <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Price")}>
+                <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
+                  {
+                    this.getPrice(product)
+                  }
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
                 {
-                  this.getPrice(product)
+                  this.renderPay(product)
                 }
-              </span>
-            </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
-              {
-                this.renderPay(product)
-              }
-            </Descriptions.Item>
-          </Descriptions>
-        </Spin>
-        {
-          this.renderQrCodeModal()
-        }
-      </div>
+              </Descriptions.Item>
+            </Descriptions>
+          </Spin>
+          {
+            this.renderQrCodeModal()
+          }
+          {/* </div>
+          </div> */}
+        </div>
+      </React.Fragment>
     );
   }
 }

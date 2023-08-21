@@ -153,12 +153,41 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	userType := "normal-user"
+	if authForm.Plan != "" && authForm.Pricing != "" {
+		pricingId := util.GetId(authForm.Organization, authForm.Pricing)
+		pricing, err := object.GetPricing(pricingId)
+		if pricing == nil || err != nil {
+			if pricing == nil && err == nil {
+				err = fmt.Errorf(c.T("pricing:The pricing: %s does not exist"), pricingId)
+			}
+			c.ResponseError(err.Error())
+			return
+		}
+
+		planId := util.GetId(authForm.Organization, authForm.Plan)
+		plan, err := object.GetPlan(planId)
+		if plan == nil || err != nil {
+			if plan == nil && err == nil {
+				err = fmt.Errorf(c.T("pricing:The plan: %s does not exist"), planId)
+			}
+			c.ResponseError(err.Error())
+			return
+		}
+		if !util.InSlice(pricing.Plans, planId) {
+			err = fmt.Errorf(c.T("pricing:The plan: %s does not exist in pricing %s"), planId, pricingId)
+			c.ResponseError(err.Error())
+			return
+		}
+		userType = "paid-user"
+	}
+
 	user := &object.User{
 		Owner:             authForm.Organization,
 		Name:              username,
 		CreatedTime:       util.GetCurrentTime(),
 		Id:                id,
-		Type:              "normal-user",
+		Type:              userType,
 		Password:          authForm.Password,
 		DisplayName:       authForm.Name,
 		Avatar:            organization.DefaultAvatar,
@@ -226,15 +255,6 @@ func (c *ApiController) Signup() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
-	}
-
-	isSignupFromPricing := authForm.Plan != "" && authForm.Pricing != ""
-	if isSignupFromPricing {
-		_, err = object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
 	}
 
 	record := object.NewRecord(c.Ctx)

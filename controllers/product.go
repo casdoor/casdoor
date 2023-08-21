@@ -161,10 +161,16 @@ func (c *ApiController) DeleteProduct() {
 // @router /buy-product [post]
 func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
-	providerName := c.Input().Get("providerName")
 	host := c.Ctx.Request.Host
+	providerName := c.Input().Get("providerName")
+	planName := c.Input().Get("planName")
 
-	userId := c.GetSessionUsername()
+	payUserName := c.Input().Get("userName")
+	owner, _ := util.GetOwnerAndNameFromId(id)
+	userId := util.GetId(owner, payUserName)
+	if payUserName == "" {
+		userId = c.GetSessionUsername()
+	}
 	if userId == "" {
 		c.ResponseError(c.T("general:Please login first"))
 		return
@@ -175,13 +181,12 @@ func (c *ApiController) BuyProduct() {
 		c.ResponseError(err.Error())
 		return
 	}
-
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 		return
 	}
 
-	payUrl, orderId, err := object.BuyProduct(id, providerName, user, host)
+	payUrl, orderId, err := object.BuyProduct(id, user, providerName, planName, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -60,7 +60,7 @@ class PricingPage extends React.Component {
 
   loadPlans() {
     const plans = this.state.pricing.plans.map((plan) =>
-      PlanBackend.getPlanById(plan, true));
+      PlanBackend.getPlan(this.state.owner, plan, true));
 
     Promise.all(plans)
       .then(results => {

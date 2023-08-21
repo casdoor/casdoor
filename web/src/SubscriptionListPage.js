@@ -26,24 +26,20 @@ class SubscriptionListPage extends BaseListPage {
   newSubscription() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
-    const defaultDuration = 365;
+    const defaultDuration = 30;
 
     return {
       owner: owner,
-      name: `subscription_${randomName}`,
+      name: `sub_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Subscription - ${randomName}`,
-      startDate: moment().format(),
-      endDate: moment().add(defaultDuration, "d").format(),
+      startTime: moment().format(),
+      endTime: moment().add(defaultDuration, "d").format(),
       duration: defaultDuration,
       description: "",
       user: "",
       plan: "",
-      isEnabled: true,
-      submitter: this.props.account.name,
-      approver: this.props.account.name,
-      approveTime: moment().format(),
-      state: "Approved",
+      state: "Active",
     };
   }
 
@@ -140,6 +136,20 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("duration"),
       },
       {
+        title: i18next.t("subscription:Start time"),
+        dataIndex: "startTime",
+        key: "startTime",
+        width: "140px",
+        ...this.getColumnSearchProps("startTime"),
+      },
+      {
+        title: i18next.t("subscription:End time"),
+        dataIndex: "endTime",
+        key: "endTime",
+        width: "140px",
+        ...this.getColumnSearchProps("endTime"),
+      },
+      {
         title: i18next.t("general:Plan"),
         dataIndex: "plan",
         key: "plan",
@@ -176,9 +186,15 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("state"),
         render: (text, record, index) => {
           switch (text) {
-          case "Approved":
-            return Setting.getTag("success", i18next.t("permission:Approved"));
           case "Pending":
+            return Setting.getTag("processing", i18next.t("permission:Pending"));
+          case "Active":
+            return Setting.getTag("success", i18next.t("permission:Active"));
+          case "Upcoming":
+            return Setting.getTag("warning", i18next.t("permission:Upcoming"));
+          case "Expired":
+            return Setting.getTag("warning", i18next.t("permission:Expired"));
+          case "Error":
             return Setting.getTag("error", i18next.t("permission:Pending"));
           default:
             return null;

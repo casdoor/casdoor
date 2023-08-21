@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -82,7 +83,10 @@ func (c *ApiController) GetPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	if plan == nil {
+		c.ResponseError(fmt.Sprintf(c.T("pricing:The plan: %s does not exist"), id))
+		return
+	}
 	if includeOption {
 		options, err := object.GetPermissionsByRole(plan.Role)
 		if err != nil {
@@ -118,13 +122,14 @@ func (c *ApiController) UpdatePlan() {
 		return
 	}
 	if plan.Product != "" {
-		product, err := object.GetProduct(plan.Product)
+		planId := util.GetId(plan.Owner, plan.Product)
+		product, err := object.GetProduct(planId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 		object.UpdateProductForPlan(&plan, product)
-		_, err = object.UpdateProduct(plan.Product, product)
+		_, err = object.UpdateProduct(planId, product)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -155,7 +160,7 @@ func (c *ApiController) AddPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	plan.Product = product.GetId()
+	plan.Product = product.Name
 	c.Data["json"] = wrapActionResponse(object.AddPlan(&plan))
 	c.ServeJSON()
 }
@@ -175,8 +180,7 @@ func (c *ApiController) DeletePlan() {
 		return
 	}
 	if plan.Product != "" {
-		owner, productName := util.GetOwnerAndNameFromId(plan.Product)
-		_, err = object.DeleteProduct(&object.Product{Owner: owner, Name: productName})
+		_, err = object.DeleteProduct(&object.Product{Owner: plan.Owner, Name: plan.Product})
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
