@@ -311,18 +311,20 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			}
 
 			newUser := &User{
-				Owner:       owner,
-				Name:        name,
-				CreatedTime: util.GetCurrentTime(),
-				DisplayName: syncUser.buildLdapDisplayName(),
-				Avatar:      organization.DefaultAvatar,
-				Email:       syncUser.Email,
-				Phone:       syncUser.Mobile,
-				Address:     []string{syncUser.Address},
-				Affiliation: affiliation,
-				Tag:         tag,
-				Score:       score,
-				Ldap:        syncUser.Uuid,
+				Owner:             owner,
+				Name:              name,
+				CreatedTime:       util.GetCurrentTime(),
+				DisplayName:       syncUser.buildLdapDisplayName(),
+				SignupApplication: organization.DefaultApplication,
+				Type:              "normal-user",
+				Avatar:            organization.DefaultAvatar,
+				Email:             syncUser.Email,
+				Phone:             syncUser.Mobile,
+				Address:           []string{syncUser.Address},
+				Affiliation:       affiliation,
+				Tag:               tag,
+				Score:             score,
+				Ldap:              syncUser.Uuid,
 			}
 
 			affected, err := AddUser(newUser)
