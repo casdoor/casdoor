@@ -134,9 +134,8 @@ class SignupPage extends React.Component {
   }
 
   getResultPath(application, signupParams) {
-    window.console.log("signupParams=", signupParams, "hasPromptPage=", Setting.hasPromptPage(application));
     if (signupParams?.plan && signupParams?.pricing) {
-      // go to buy-plan page for paid-user
+      // the prompt page needs the user to be signed in, so for paid-user sign up, just go to buy-plan page
       return `/buy-plan/${application.organization}/${signupParams?.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
     }
     if (authConfig.appName === application.name) {

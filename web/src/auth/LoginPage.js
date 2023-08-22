@@ -361,6 +361,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
+          window.console.log(res, values);
           const callback = (res) => {
             const responseType = values["type"];
 
@@ -405,6 +406,10 @@ class LoginPage extends React.Component {
                     />);
                 },
               });
+            } else if (res.data === "select-plan") {
+              // paid-user do not have active or pending subscription, go to application default pricing page to select-plan
+              const pricingId = res.data2;
+              Setting.goToLink(`/select-plan/${pricingId}?user=${values.username}`);
             } else {
               callback(res);
             }

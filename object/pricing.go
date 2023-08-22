@@ -74,7 +74,7 @@ func getPricing(owner, name string) (*Pricing, error) {
 	pricing := Pricing{Owner: owner, Name: name}
 	existed, err := ormer.Engine.Get(&pricing)
 	if err != nil {
-		return &pricing, err
+		return nil, err
 	}
 	if existed {
 		return &pricing, nil
@@ -86,6 +86,20 @@ func getPricing(owner, name string) (*Pricing, error) {
 func GetPricing(id string) (*Pricing, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getPricing(owner, name)
+}
+
+func GetApplicationDefaultPricing(owner, appName string) (*Pricing, error) {
+	pricings := make([]*Pricing, 0, 1)
+	err := ormer.Engine.Asc("created_time").Find(&pricings, &Pricing{Owner: owner, Application: appName})
+	if err != nil {
+		return nil, err
+	}
+	for _, pricing := range pricings {
+		if pricing.IsEnabled {
+			return pricing, nil
+		}
+	}
+	return nil, nil
 }
 
 func UpdatePricing(id string, pricing *Pricing) (bool, error) {

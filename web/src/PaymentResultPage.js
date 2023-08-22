@@ -135,6 +135,9 @@ class PaymentResultPage extends React.Component {
     if (payment.state === "Paid") {
       return (
         <div className="login-content">
+          {
+            Setting.renderHelmet(payment)
+          }
           <Result
             status="success"
             title={`${i18next.t("payment:You have successfully completed the payment")}: ${payment.productDisplayName}`}
@@ -168,6 +171,9 @@ class PaymentResultPage extends React.Component {
     } else if (payment.state === "Canceled") {
       return (
         <div className="login-content">
+          {
+            Setting.renderHelmet(payment)
+          }
           <Result
             status="warning"
             title={`${i18next.t("payment:The payment has been canceled")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
@@ -185,6 +191,9 @@ class PaymentResultPage extends React.Component {
     } else if (payment.state === "Timeout") {
       return (
         <div className="login-content">
+          {
+            Setting.renderHelmet(payment)
+          }
           <Result
             status="warning"
             title={`${i18next.t("payment:The payment has time out")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}
@@ -202,6 +211,9 @@ class PaymentResultPage extends React.Component {
     } else {
       return (
         <div className="login-content">
+          {
+            Setting.renderHelmet(payment)
+          }
           <Result
             status="error"
             title={`${i18next.t("payment:The payment has failed")}: ${payment.productDisplayName}, ${i18next.t("payment:the current state is")}: ${payment.state}`}

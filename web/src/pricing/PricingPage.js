@@ -24,11 +24,13 @@ import i18next from "i18next";
 class PricingPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
       applications: null,
       owner: props.owner ?? (props.match?.params?.owner ?? null),
       pricingName: (props.pricingName ?? props.match?.params?.pricingName) ?? null,
+      userName: params.get("user"),
       pricing: props.pricing,
       plans: null,
       loading: false,
@@ -39,7 +41,9 @@ class PricingPage extends React.Component {
     this.setState({
       applications: [],
     });
-
+    if (this.state.userName) {
+      Setting.showMessage("info", `${i18next.t("pricing:paid-user do not have active subscription or pending subscription, please select a plan to buy")}`);
+    }
     if (this.state.pricing) {
       this.loadPlans();
     } else {
@@ -69,7 +73,6 @@ class PricingPage extends React.Component {
           Setting.showMessage("error", i18next.t("pricing:Failed to get plans"));
           return;
         }
-        window.console.log("results=", results);
         this.setState({
           plans: results.map(result => result.data),
           loading: false,
@@ -106,10 +109,12 @@ class PricingPage extends React.Component {
 
   renderCards() {
 
-    const getUrlByPlan = (plan) => {
+    const getUrlByPlan = (planName) => {
       const pricing = this.state.pricing;
-      const signUpUrl = `/signup/${pricing.application}?plan=${plan}&pricing=${pricing.name}`;
-      window.console.log("signUpUrl=", signUpUrl);
+      let signUpUrl = `/signup/${pricing.application}?plan=${planName}&pricing=${pricing.name}`;
+      if (this.state.userName) {
+        signUpUrl = `/buy-plan/${pricing.owner}/${pricing.name}?plan=${planName}&user=${this.state.userName}`;
+      }
       return `${window.location.origin}${signUpUrl}`;
     };
 
