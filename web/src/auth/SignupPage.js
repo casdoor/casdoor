@@ -134,10 +134,10 @@ class SignupPage extends React.Component {
   }
 
   getResultPath(application, signupParams) {
-    window.console.log("signupParams=", signupParams);
+    window.console.log("signupParams=", signupParams, "hasPromptPage=", Setting.hasPromptPage(application));
     if (signupParams?.plan && signupParams?.pricing) {
-      // signup before pay for plan
-      return `/buy-plan/${application.organization}/${application.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
+      // go to buy-plan page for paid-user
+      return `/buy-plan/${application.organization}/${signupParams?.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
     }
     if (authConfig.appName === application.name) {
       return "/result";
@@ -178,13 +178,13 @@ class SignupPage extends React.Component {
     const application = this.getApplicationObj();
 
     const params = new URLSearchParams(window.location.search);
-    values["plan"] = params.get("plan");
-    values["pricing"] = params.get("pricing");
+    values.plan = params.get("plan");
+    values.pricing = params.get("pricing");
 
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
-          if (Setting.hasPromptPage(application)) {
+          if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {
                 let account = null;

@@ -138,7 +138,7 @@ class ProductBuyPage extends React.Component {
       isPlacingOrder: true,
     });
 
-    ProductBackend.buyProduct(product.owner, product.name, provider.name)
+    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "")
       .then((res) => {
         if (res.status === "ok") {
           const payUrl = res.data;
@@ -259,8 +259,6 @@ class ProductBuyPage extends React.Component {
     return (
       <React.Fragment>
         <div className="login-content">
-          {/* <div className="login-panel">
-            <div className="login-form"> */}
           <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
             <Descriptions title={<span style={{fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
               <Descriptions.Item label={i18next.t("general:Name")} span={3}>
@@ -293,8 +291,6 @@ class ProductBuyPage extends React.Component {
           {
             this.renderQrCodeModal()
           }
-          {/* </div>
-          </div> */}
         </div>
       </React.Fragment>
     );

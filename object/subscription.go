@@ -41,6 +41,7 @@ type Subscription struct {
 	Description string `xorm:"varchar(100)" json:"description"`
 
 	User    string `xorm:"varchar(100)" json:"user"`
+	Pricing string `xorm:"varchar(100)" json:"pricing"`
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
 
@@ -76,7 +77,7 @@ func (sub *Subscription) UpdateState() error {
 		}
 	}
 
-	if sub.State == SubStateActive || sub.State == SubStateUpcoming {
+	if sub.State == SubStateActive || sub.State == SubStateUpcoming || sub.State == SubStateExpired {
 		if sub.EndTime.Before(time.Now()) {
 			sub.State = SubStateExpired
 		} else if sub.StartTime.After(time.Now()) {
@@ -96,7 +97,7 @@ func (sub *Subscription) UpdateState() error {
 	return nil
 }
 
-func NewSubscription(owner, planName, userName, paymentName string) *Subscription {
+func NewSubscription(owner, userName, pricingName, planName, paymentName string) *Subscription {
 	id := util.GenerateId()[:6]
 	return &Subscription{
 		Owner:       owner,
@@ -105,6 +106,7 @@ func NewSubscription(owner, planName, userName, paymentName string) *Subscriptio
 		CreatedTime: util.GetCurrentTime(),
 
 		User:    userName,
+		Pricing: pricingName,
 		Plan:    planName,
 		Payment: paymentName,
 

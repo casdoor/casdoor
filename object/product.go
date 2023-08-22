@@ -158,7 +158,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(productId string, user *User, providerName string, planName string, host string) (string, string, error) {
+func BuyProduct(productId string, user *User, providerName, pricingName, planName, host string) (string, string, error) {
 	product, err := GetProduct(productId)
 	if err != nil {
 		return "", "", err
@@ -187,6 +187,17 @@ func BuyProduct(productId string, user *User, providerName string, planName stri
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
+	if user.Type == "paid-user" {
+		// Create a subscription for `paid-user`
+		if pricingName != "" && planName != "" {
+			sub := NewSubscription(owner, user.Name, pricingName, planName, paymentName)
+			_, err := AddSubscription(sub)
+			if err != nil {
+				return "", "", err
+			}
+			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscriptionName=%s", originFrontend, owner, pricingName, sub.Name)
+		}
+	}
 	// Create an OrderId and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
@@ -227,14 +238,6 @@ func BuyProduct(productId string, user *User, providerName string, planName stri
 
 	if !affected {
 		return "", "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
-	}
-	// Create a subscription for `paid-user`
-	if user.Type == "paid-user" && planName != "" {
-		sub := NewSubscription(product.Owner, planName, user.Name, paymentName)
-		_, err := AddSubscription(sub)
-		if err != nil {
-			return "", "", err
-		}
 	}
 	return payUrl, orderId, err
 }

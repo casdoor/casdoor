@@ -150,6 +150,20 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("endTime"),
       },
       {
+        title: i18next.t("general:Pricing"),
+        dataIndex: "pricing",
+        key: "pricing",
+        width: "140px",
+        ...this.getColumnSearchProps("pricing"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/pricings/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Plan"),
         dataIndex: "plan",
         key: "plan",
@@ -157,7 +171,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("plan"),
         render: (text, record, index) => {
           return (
-            <Link to={`/plans/${text}`}>
+            <Link to={`/plans/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -171,7 +185,21 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${text}`}>
+            <Link to={`/users/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Payment"),
+        dataIndex: "payment",
+        key: "payment",
+        width: "140px",
+        ...this.getColumnSearchProps("payment"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/payments/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -195,7 +223,7 @@ class SubscriptionListPage extends BaseListPage {
           case "Expired":
             return Setting.getTag("warning", i18next.t("permission:Expired"));
           case "Error":
-            return Setting.getTag("error", i18next.t("permission:Pending"));
+            return Setting.getTag("error", i18next.t("permission:Error"));
           default:
             return null;
           }

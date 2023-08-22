@@ -93,11 +93,27 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 		}
 		if !existActiveSubscription {
-			c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s have no active subscription"), user.Name))
+			// check pending subscription
+			if len(subscriptions) > 0 {
+				existPendingSubscription := false
+				for _, subscription := range subscriptions {
+					if subscription.State == object.SubStatePending {
+						existPendingSubscription = true
+						util.SafeGoroutine(func() {
+							object.NotifyPayment(c.Ctx.Request, c.Ctx.Input.RequestBody, subscription.Owner, subscription.Payment, "")
+						})
+					}
+				}
+				if !existPendingSubscription {
+					c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s do not have active or pending subscription"), user.Name))
+					return
+				}
+			}
+			c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s do not have active subscription but has a pending subscription, please try again"), user.Name))
 			return
 		}
-		// TODO check pending subscription
 	}
+
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)

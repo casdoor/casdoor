@@ -174,8 +174,8 @@ func (c *ApiController) Signup() {
 			c.ResponseError(err.Error())
 			return
 		}
-		if !util.InSlice(pricing.Plans, planId) {
-			err = fmt.Errorf(c.T("pricing:The plan: %s does not exist in pricing %s"), planId, pricingId)
+		if !util.InSlice(pricing.Plans, authForm.Plan) {
+			err = fmt.Errorf(c.T("pricing:The plan: %s does not exist in pricing %s"), planId, authForm.Plan)
 			c.ResponseError(err.Error())
 			return
 		}
@@ -240,7 +240,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	if application.HasPromptPage() {
+	if application.HasPromptPage() && user.Type == "normal-user" {
 		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 	}
