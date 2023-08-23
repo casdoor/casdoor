@@ -280,7 +280,7 @@ func CreateProductForPlan(plan *Plan) *Product {
 		Quantity: 999,
 		Sold:     0,
 
-		Providers: make([]string, 0),
+		Providers: plan.PaymentProviders,
 		State:     "Published",
 	}
 	return product
@@ -289,6 +289,7 @@ func CreateProductForPlan(plan *Plan) *Product {
 func UpdateProductForPlan(plan *Plan, product *Product) {
 	product.DisplayName = fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName)
 	product.Detail = fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName)
-	product.Price = plan.PricePerMonth
+	product.Price = plan.PricePerMonth // TODO
+	product.Providers = plan.PaymentProviders
 	product.Currency = plan.Currency
 }
