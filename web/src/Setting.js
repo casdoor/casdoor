@@ -1225,6 +1225,15 @@ export function setOrganization(organization) {
   window.dispatchEvent(new Event("storageOrganizationChanged"));
 }
 
+export function setIsTourVisible(visible) {
+  localStorage.setItem("isTourVisible", visible);
+  window.dispatchEvent(new Event("storageTourChanged"));
+}
+
+export function getTourVisible() {
+  return localStorage.getItem("isTourVisible") !== "false";
+}
+
 export function getRequestOrganization(account) {
   if (isAdminUser(account)) {
     return getOrganization() === "All" ? account.owner : getOrganization();

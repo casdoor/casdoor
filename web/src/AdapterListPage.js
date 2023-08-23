@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
@@ -23,6 +23,21 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class AdapterListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Adapter List",
+        description: "Casdoor supports using the UI to connect the adapter and manage the policy rules. In Casbin, the policy storage is implemented as an adapter (aka middleware for Casbin). A Casbin user can use an adapter to load policy rules from a storage, or save policy rules to it.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Go to \"Enforcer List\"",
+        },
+      },
+    ];
+  }
+
   newAdapter() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -74,6 +89,10 @@ class AdapterListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleTourComplete = () => {
+    this.props.history.push("/enforcers");
+  };
 
   renderTable(adapters) {
     const columns = [
@@ -214,7 +233,7 @@ class AdapterListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={adapters} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref={ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Adapters")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addAdapter.bind(this)}>{i18next.t("general:Add")}</Button>

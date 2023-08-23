@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Col, List, Row, Table, Tooltip} from "antd";
 import moment from "moment";
@@ -24,6 +24,25 @@ import {EditOutlined} from "@ant-design/icons";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class ProductListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      isTourVisible: true,
+    };
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Session List",
+        description: "You can add the product (or service) you want to sell. The following will tell you how to add a product.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Go to \"Payment List\"",
+        },
+      },
+    ];
+  }
+
   newProduct() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -76,6 +95,10 @@ class ProductListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleTourComplete = () => {
+    this.props.history.push("/payments");
+  };
 
   renderTable(products) {
     const columns = [
@@ -278,7 +301,7 @@ class ProductListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={products} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref={ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Products")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addProduct.bind(this)}>{i18next.t("general:Add")}</Button>

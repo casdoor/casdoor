@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
-import {Card, Col, Row, Spin, Statistic} from "antd";
+import React, {createRef} from "react";
+import {Card, Col, Row, Spin, Statistic, Tour} from "antd";
 import {ArrowUpOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as DashboardBackend from "../backend/DashboardBackend";
@@ -29,13 +29,54 @@ class HomePage extends React.Component {
       classes: props,
       applications: null,
       dashboardData: null,
+      isTourVisible: Setting.getTourVisible(),
     };
+    this.ref1 = createRef();
+    this.ref2 = createRef();
+    this.steps = [
+      {
+        title: "Welcome to casdoor",
+        description: "You can learn more about the use of CasDoor at https://casdoor.org/.",
+        cover: (
+          <img
+            alt="casdoor.png"
+            src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png"
+          />
+        ),
+        target: null,
+      },
+      {
+        title: "Statistic cards",
+        description: "Here are four statistic cards for user information.",
+        target: () => this.ref1,
+      },
+      {
+        title: "Import users",
+        description: "You can add new users or update existing Casdoor users by uploading a XLSX file of user information.",
+        target: () => this.ref2,
+        nextButtonProps: {
+          children: "Go to \"Organizations list\"",
+        },
+      },
+    ];
   }
 
   UNSAFE_componentWillMount() {
     this.getApplicationsByOrganization(this.props.account.owner);
     this.getDashboard();
   }
+
+  componentDidMount() {
+    window.addEventListener("storageTourChanged", this.handleTourChange);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("storageTourChanged", this.handleTourChange);
+  }
+
+  handleTourChange = () => {
+    this.setState({isTourVisible: Setting.getTourVisible()});
+  };
 
   getApplicationsByOrganization(organizationName) {
     ApplicationBackend.getApplicationsByOrganization("admin", organizationName)
@@ -60,6 +101,15 @@ class HomePage extends React.Component {
         }
       });
   }
+
+  setIsTourVisible = () => {
+    Setting.setIsTourVisible(false);
+    this.setState({isTourVisible: false});
+  };
+
+  handleTourComplete = () => {
+    this.props.history.push("/syncers");
+  };
 
   getItems() {
     let items = [];
@@ -190,14 +240,25 @@ class HomePage extends React.Component {
     return (
       <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"}}>
         <Row style={{width: "100%"}}>
-          <Col span={24} style={{display: "flex", justifyContent: "center"}} >
+          <Col span={24} style={{display: "flex", justifyContent: "center"}} ref={ref => this.ref1 = ref}>
             {
               this.renderCards()
             }
           </Col>
         </Row>
         <div id="echarts-chart"
-          style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}}></div>
+          style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}} ref={ref => this.ref2 = ref}></div>
+        <Tour
+          open={this.state.isTourVisible}
+          onClose={this.setIsTourVisible}
+          steps={this.steps}
+          indicatorsRender={(current, total) => (
+            <span>
+              {current + 1} / {total}
+            </span>
+          )}
+          onFinish={this.handleTourComplete}
+        />
       </div>
     );
   }

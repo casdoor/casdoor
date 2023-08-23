@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, Col, Divider, Progress, Row, Spin} from "antd";
+import {Card, Col, Divider, Progress, Row, Spin, Tour} from "antd";
 import * as SystemBackend from "./backend/SystemInfo";
-import React from "react";
+import React, {createRef} from "react";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import PrometheusInfoTable from "./table/PrometheusInfoTable";
@@ -29,7 +29,43 @@ class SystemInfo extends React.Component {
       prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
       loading: true,
+      isTourVisible: Setting.getTourVisible(),
     };
+    this.ref1 = createRef();
+    this.ref2 = createRef();
+    this.ref3 = createRef();
+    this.ref4 = createRef();
+    this.ref5 = createRef();
+    this.steps = [
+      {
+        title: "CPU Usage",
+        description: "You can see the CPU usage in real time.",
+        target: () => this.ref1,
+      },
+      {
+        title: "Memory Usage",
+        description: "You can see the Memory usage in real time.",
+        target: () => this.ref2,
+      },
+      {
+        title: "API Latency",
+        description: "You can see the usage statistics of each API latency in real time.",
+        target: () => this.ref3,
+      },
+      {
+        title: "API Throughput",
+        description: "You can see the usage statistics of each API throughput in real time.",
+        target: () => this.ref4,
+      },
+      {
+        title: "About Casdoor",
+        description: "You can get more Casdoor information in this card.",
+        target: () => this.ref5,
+        nextButtonProps: {
+          children: "Go to \"Syncer List\"",
+        },
+      },
+    ];
   }
 
   UNSAFE_componentWillMount() {
@@ -67,11 +103,29 @@ class SystemInfo extends React.Component {
     });
   }
 
+  componentDidMount() {
+    window.addEventListener("storageTourChanged", this.handleTourChange);
+  }
+
+  handleTourChange = () => {
+    this.setState({isTourVisible: Setting.getTourVisible()});
+  };
+
   componentWillUnmount() {
     if (this.state.intervalId !== null) {
       clearInterval(this.state.intervalId);
     }
+    window.removeEventListener("storageTourChanged", this.handleTourChange);
   }
+
+  handleTourComplete = () => {
+    this.props.history.push("/syncers");
+  };
+
+  setIsTourVisible = () => {
+    Setting.setIsTourVisible(false);
+    this.setState({isTourVisible: false});
+  };
 
   render() {
     const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("system:Failed to get CPU usage") :
@@ -99,45 +153,58 @@ class SystemInfo extends React.Component {
 
     if (!Setting.isMobile()) {
       return (
-        <Row>
-          <Col span={6}></Col>
-          <Col span={12}>
-            <Row gutter={[10, 10]}>
-              <Col span={12}>
-                <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : cpuUi}
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : memUi}
-                </Card>
-              </Col>
-              <Col span={24}>
-                <Card title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : latencyUi}
-                </Card>
-              </Col>
-              <Col span={24}>
-                <Card title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
-                  {this.state.loading ? <Spin size="large" /> : throughputUi}
-                </Card>
-              </Col>
-            </Row>
-            <Divider />
-            <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
-              <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-              GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
-              <br />
-              {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
-              <br />
-              {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
-              <br />
-              {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
-            </Card>
-          </Col>
-          <Col span={6}></Col>
-        </Row>
+        <>
+          <Row>
+            <Col span={6}></Col>
+            <Col span={12}>
+              <Row gutter={[10, 10]}>
+                <Col span={12}>
+                  <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref1 = ref}>
+                    {this.state.loading ? <Spin size="large" /> : cpuUi}
+                  </Card>
+                </Col>
+                <Col span={12}>
+                  <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}ref={ref => this.ref2 = ref}>
+                    {this.state.loading ? <Spin size="large" /> : memUi}
+                  </Card>
+                </Col>
+                <Col span={24}>
+                  <Card title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref3 = ref}>
+                    {this.state.loading ? <Spin size="large" /> : latencyUi}
+                  </Card>
+                </Col>
+                <Col span={24}>
+                  <Card title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref4 = ref}>
+                    {this.state.loading ? <Spin size="large" /> : throughputUi}
+                  </Card>
+                </Col>
+              </Row>
+              <Divider />
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}} ref={ref => this.ref5 = ref}>
+                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
+                <br />
+                {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
+                <br />
+                {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
+                <br />
+                {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
+              </Card>
+            </Col>
+            <Col span={6}></Col>
+          </Row>
+          <Tour
+            open={this.state.isTourVisible}
+            onClose={this.setIsTourVisible}
+            steps={this.steps}
+            indicatorsRender={(current, total) => (
+              <span>
+                {current + 1} / {total}
+              </span>
+            )}
+            onFinish={this.handleTourComplete}
+          />
+        </>
       );
     } else {
       return (

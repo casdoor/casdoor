@@ -18,8 +18,33 @@ import {Helmet} from "react-helmet";
 import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {AppstoreTwoTone, BarsOutlined, DollarTwoTone, DownOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, WalletTwoTone} from "@ant-design/icons";
-import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {
+  AppstoreTwoTone,
+  BarsOutlined,
+  DollarTwoTone,
+  DownOutlined,
+  HomeTwoTone,
+  InfoCircleFilled,
+  LockTwoTone,
+  LogoutOutlined,
+  SafetyCertificateTwoTone,
+  SettingOutlined,
+  SettingTwoTone,
+  WalletTwoTone
+} from "@ant-design/icons";
+import {
+  Alert,
+  Avatar,
+  Button,
+  Card,
+  ConfigProvider,
+  Drawer,
+  Dropdown,
+  FloatButton,
+  Layout,
+  Menu,
+  Result
+} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -92,6 +117,7 @@ import AccountAvatar from "./account/AccountAvatar";
 const {Header, Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
+import OpenTour from "./common/OpenTour";
 
 setTwoToneColor("rgb(87,52,211)");
 
@@ -369,6 +395,7 @@ class App extends Component {
       return (
         <React.Fragment>
           {this.renderRightDropdown()}
+          <OpenTour isTourVisible={false} />
           <ThemeSelect
             themeAlgorithm={this.state.themeAlgorithm}
             onChange={(nextThemeAlgorithm) => {

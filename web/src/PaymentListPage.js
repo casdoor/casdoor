@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
@@ -24,6 +24,21 @@ import * as Provider from "./auth/Provider";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class PaymentListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Payment List",
+        description: "After the payment is successful, you can see the transaction information of the products in Payment, such as organization, user, purchase time, product name, etc.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Go to \"Plan List\"",
+        },
+      },
+    ];
+  }
+
   newPayment() {
     const randomName = Setting.getRandomName();
     const organizationName = Setting.getRequestOrganization(this.props.account);
@@ -82,6 +97,10 @@ class PaymentListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleTourComplete = () => {
+    this.props.history.push("/plans");
+  };
 
   renderTable(payments) {
     const columns = [
@@ -244,7 +263,7 @@ class PaymentListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={payments} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref={ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Payments")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addPayment.bind(this)}>{i18next.t("general:Add")}</Button>

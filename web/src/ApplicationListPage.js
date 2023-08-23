@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Col, List, Row, Table, Tooltip} from "antd";
 import {EditOutlined} from "@ant-design/icons";
@@ -26,6 +26,17 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ApplicationListPage extends BaseListPage {
   constructor(props) {
     super(props);
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Application List",
+        description: "If you want to use Casdoor to provide login service for your web Web APPs, you can add them as Casdoor applications. Users can access all applications in their organizations without login twice.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Go to \"Provider List\"",
+        },
+      },
+    ];
   }
 
   newApplication() {
@@ -98,6 +109,10 @@ class ApplicationListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleTourComplete = () => {
+    this.props.history.push("/providers");
+  };
 
   renderTable(applications) {
     const columns = [
@@ -251,7 +266,7 @@ class ApplicationListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={applications} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref = {ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Applications")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addApplication.bind(this)}>{i18next.t("general:Add")}</Button>

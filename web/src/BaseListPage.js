@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Input, Result, Space} from "antd";
+import {Button, Input, Result, Space, Tour} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import i18next from "i18next";
@@ -32,7 +32,7 @@ class BaseListPage extends React.Component {
       loading: false,
       searchText: "",
       searchedColumn: "",
-      isAuthorized: true,
+      isTourVisible: Setting.getTourVisible(),
     };
   }
 
@@ -41,14 +41,23 @@ class BaseListPage extends React.Component {
     this.fetch({pagination});
   };
 
+  handleTourChange = () => {
+    this.setState({isTourVisible: Setting.getTourVisible()});
+  };
+
   componentDidMount() {
     window.addEventListener("storageOrganizationChanged", this.handleOrganizationChange);
+    window.addEventListener("storageTourChanged", this.handleTourChange);
     if (!Setting.isAdminUser(this.props.account)) {
       Setting.setOrganization("All");
     }
   }
 
   componentWillUnmount() {
+    if (this.state.intervalId !== null) {
+      clearInterval(this.state.intervalId);
+    }
+    window.removeEventListener("storageTourChanged", this.handleTourChange);
     window.removeEventListener("storageOrganizationChanged", this.handleOrganizationChange);
   }
 
@@ -144,6 +153,11 @@ class BaseListPage extends React.Component {
     });
   };
 
+  setIsTourVisible = () => {
+    Setting.setIsTourVisible(false);
+    this.setState({isTourVisible: false});
+  };
+
   render() {
     if (!this.state.isAuthorized) {
       return (
@@ -161,6 +175,17 @@ class BaseListPage extends React.Component {
         {
           this.renderTable(this.state.data)
         }
+        <Tour
+          open={this.state.isTourVisible}
+          onClose={this.setIsTourVisible}
+          steps={this.steps}
+          indicatorsRender={(current, total) => (
+            <span>
+              {current + 1} / {total}
+            </span>
+          )}
+          onFinish={this.handleTourComplete}
+        />
       </div>
     );
   }

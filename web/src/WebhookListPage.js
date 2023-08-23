@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table} from "antd";
 import moment from "moment";
@@ -23,6 +23,21 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class WebhookListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Webhook List",
+        description: "Event systems allow you to build integrations, which subscribe to certain events on Casdoor. When one of those event is triggered, we'll send a POST json payload to the configured URL. The application parsed the json payload and carry out the hooked function. Events consist of signup, login, logout, update users, which are stored in the action field of the record. Event systems can be used to update an external issue from users.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Finish",
+        },
+      },
+    ];
+  }
+
   newWebhook() {
     const randomName = Setting.getRandomName();
     const organizationName = Setting.getRequestOrganization(this.props.account);
@@ -73,6 +88,10 @@ class WebhookListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  handleTourComplete = () => {
+    Setting.setIsTourVisible(false);
+  };
 
   renderTable(webhooks) {
     const columns = [
@@ -220,7 +239,7 @@ class WebhookListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={webhooks} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref={ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Webhooks")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addWebhook.bind(this)}>{i18next.t("general:Add")}</Button>

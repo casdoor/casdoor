@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {createRef} from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table} from "antd";
 import moment from "moment";
@@ -23,6 +23,21 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class OrganizationListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.ref1 = createRef();
+    this.steps = [
+      {
+        title: "Organization List",
+        description: "Organization is the basic unit of Casdoor, which manages users and applications. If a user signed in to an organization, then he can access all applications belonging to the organization without signing in again.",
+        target: () => this.ref1,
+        nextButtonProps: {
+          children: "Go to \"Group List\"",
+        },
+      },
+    ];
+  }
+
   newOrganization() {
     const randomName = Setting.getRandomName();
     return {
@@ -128,6 +143,9 @@ class OrganizationListPage extends BaseListPage {
       });
   }
 
+  handleTourComplete = () => {
+    this.props.history.push("/trees/built-in");
+  };
   renderTable(organizations) {
     const columns = [
       {
@@ -272,7 +290,7 @@ class OrganizationListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={organizations} rowKey="name" size="middle" bordered pagination={paginationProps}
-          title={() => (
+          ref={ref => this.ref1 = ref} title={() => (
             <div>
               {i18next.t("general:Organizations")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" disabled={!Setting.isAdminUser(this.props.account)} onClick={this.addOrganization.bind(this)}>{i18next.t("general:Add")}</Button>
