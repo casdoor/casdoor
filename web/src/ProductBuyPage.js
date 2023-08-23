@@ -68,8 +68,14 @@ class ProductBuyPage extends React.Component {
           return ;
         }
         let res = await PricingBackend.getPricing(this.state.owner, this.state.pricingName);
+        if (res.status !== "ok") {
+          throw new Error(res.msg);
+        }
         const pricing = res.data;
         res = await PlanBackend.getPlan(this.state.owner, this.state.planName);
+        if (res.status !== "ok") {
+          throw new Error(res.msg);
+        }
         const plan = res.data;
         const productName = plan.product;
         await this.setStateAsync({
@@ -81,15 +87,14 @@ class ProductBuyPage extends React.Component {
       }
       // load product
       const res = await ProductBackend.getProduct(this.state.owner, this.state.productName);
-      if (res.status === "error") {
-        Setting.showMessage("error", res.msg);
-        return;
+      if (res.status !== "ok") {
+        throw new Error(res.msg);
       }
       this.setState({
         product: res.data,
       });
     } catch (err) {
-      Setting.showMessage("error", err);
+      Setting.showMessage("error", err.message);
       return;
     }
   }
@@ -257,42 +262,40 @@ class ProductBuyPage extends React.Component {
     }
 
     return (
-      <React.Fragment>
-        <div className="login-content">
-          <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
-            <Descriptions title={<span style={{fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
-              <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-                <span style={{fontSize: 25}}>
-                  {Setting.getLanguageText(product?.displayName)}
-                </span>
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
-              <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-                <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Price")}>
-                <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
-                  {
-                    this.getPrice(product)
-                  }
-                </span>
-              </Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
-              <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+      <div className="login-content">
+        <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
+          <Descriptions title={<span style={{fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
+            <Descriptions.Item label={i18next.t("general:Name")} span={3}>
+              <span style={{fontSize: 25}}>
+                {Setting.getLanguageText(product?.displayName)}
+              </span>
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Image")} span={3}>
+              <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Price")}>
+              <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
                 {
-                  this.renderPay(product)
+                  this.getPrice(product)
                 }
-              </Descriptions.Item>
-            </Descriptions>
-          </Spin>
-          {
-            this.renderQrCodeModal()
-          }
-        </div>
-      </React.Fragment>
+              </span>
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+              {
+                this.renderPay(product)
+              }
+            </Descriptions.Item>
+          </Descriptions>
+        </Spin>
+        {
+          this.renderQrCodeModal()
+        }
+      </div>
     );
   }
 }

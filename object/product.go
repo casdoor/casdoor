@@ -158,14 +158,14 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(productId string, user *User, providerName, pricingName, planName, host string) (string, string, error) {
-	product, err := GetProduct(productId)
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host string) (string, string, error) {
+	product, err := GetProduct(id)
 	if err != nil {
 		return "", "", err
 	}
 
 	if product == nil {
-		return "", "", fmt.Errorf("the product: %s does not exist", productId)
+		return "", "", fmt.Errorf("the product: %s does not exist", id)
 	}
 
 	provider, err := product.getProvider(providerName)
@@ -195,7 +195,7 @@ func BuyProduct(productId string, user *User, providerName, pricingName, planNam
 			if err != nil {
 				return "", "", err
 			}
-			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscriptionName=%s", originFrontend, owner, pricingName, sub.Name)
+			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
 		}
 	}
 	// Create an OrderId and get the payUrl
@@ -203,7 +203,7 @@ func BuyProduct(productId string, user *User, providerName, pricingName, planNam
 	if err != nil {
 		return "", "", err
 	}
-	// Create a Payment linked with Product and OrderId
+	// Create a Payment linked with Product and Order
 	payment := Payment{
 		Owner:       product.Owner,
 		Name:        paymentName,
@@ -221,10 +221,10 @@ func BuyProduct(productId string, user *User, providerName, pricingName, planNam
 		Price:              product.Price,
 		ReturnUrl:          product.ReturnUrl,
 
-		User:    user.Name,
-		PayUrl:  payUrl,
-		State:   pp.PaymentStateCreated,
-		OrderId: orderId,
+		User:       user.Name,
+		PayUrl:     payUrl,
+		State:      pp.PaymentStateCreated,
+		OutOrderId: orderId,
 	}
 
 	if provider.Type == "Dummy" {

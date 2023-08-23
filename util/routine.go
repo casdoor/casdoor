@@ -20,6 +20,23 @@ import (
 	"github.com/beego/beego/logs"
 )
 
+func SafeGoroutineWithArgs(fn func(args ...interface{}), args ...interface{}) {
+	var err error
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				var ok bool
+				err, ok = r.(error)
+				if !ok {
+					err = fmt.Errorf("%v", r)
+				}
+				logs.Error("goroutine panic: %v", err)
+			}
+		}()
+		fn(args...)
+	}()
+}
+
 func SafeGoroutine(fn func()) {
 	var err error
 	go func() {

@@ -94,20 +94,20 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 		if !existActiveSubscription {
 			// check pending subscription
-			if len(subscriptions) > 0 {
-				existPendingSubscription := false
-				for _, subscription := range subscriptions {
-					if subscription.State == object.SubStatePending {
-						existPendingSubscription = true
-						util.SafeGoroutine(func() {
-							object.NotifyPayment(c.Ctx.Request, c.Ctx.Input.RequestBody, subscription.Owner, subscription.Payment, "")
-						})
-					}
+			existPendingSubscription := false
+			for _, sub := range subscriptions {
+				if sub.State == object.SubStatePending {
+					existPendingSubscription = true
+					util.SafeGoroutineWithArgs(func(args ...interface{}) {
+						sub := args[0].(*object.Subscription)
+						object.NotifyPayment(c.Ctx.Request, c.Ctx.Input.RequestBody, sub.Owner, sub.Payment, "")
+						// util.LogInfo(c.Ctx, "notify payment %s/%s, err=%v", sub.Owner, sub.Payment, err)
+					}, sub)
 				}
-				if existPendingSubscription {
-					c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active subscription but has pending subscription, please try again"), user.Name))
-					return
-				}
+			}
+			if existPendingSubscription {
+				c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active subscription but has pending subscription, please try again"), user.Name))
+				return
 			}
 			// paid-user does not have active or pending subscription, find the default pricing of application
 			pricing, err := object.GetApplicationDefaultPricing(application.Organization, application.Name)

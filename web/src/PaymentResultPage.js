@@ -26,13 +26,13 @@ class PaymentResultPage extends React.Component {
     const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
-      owner: props?.match?.params?.organizationName ?? props?.match?.params?.owner ?? null,
-      paymentName: props?.match?.params?.paymentName ?? null,
-      pricingName: props?.pricingName ?? props?.match?.params?.pricingName ?? null,
-      subscriptionName: params.get("subscriptionName"),
+      owner: props.match?.params?.organizationName ?? props.match?.params?.owner ?? null,
+      paymentName: props.match?.params?.paymentName ?? null,
+      pricingName: props.pricingName ?? props.match?.params?.pricingName ?? null,
+      subscriptionName: params.get("subscription"),
       payment: null,
-      pricing: props?.pricing ?? null,
-      subscription: props?.subscription ?? null,
+      pricing: props.pricing ?? null,
+      subscription: props.subscription ?? null,
       timeout: null,
     };
   }
@@ -93,6 +93,9 @@ class PaymentResultPage extends React.Component {
         this.onUpdatePricing(this.state.pricing);
       }
       const res = await PaymentBackend.getPayment(this.state.owner, this.state.paymentName);
+      if (res.status !== "ok") {
+        throw new Error(res.msg);
+      }
       const payment = res.data;
       await this.setStateAsync({
         payment: payment,

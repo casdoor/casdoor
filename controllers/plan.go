@@ -84,7 +84,7 @@ func (c *ApiController) GetPlan() {
 		return
 	}
 	if plan == nil {
-		c.ResponseError(fmt.Sprintf(c.T("pricing:The plan: %s does not exist"), id))
+		c.ResponseError(fmt.Sprintf(c.T("plan:The plan: %s does not exist"), id))
 		return
 	}
 	if includeOption {

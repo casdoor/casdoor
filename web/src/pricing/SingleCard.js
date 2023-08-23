@@ -29,7 +29,6 @@ class SingleCard extends React.Component {
   }
 
   renderCard(plan, isSingle, link) {
-    window.console.log("plan=", plan);
     return (
       <Col style={{minWidth: "320px", paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px", paddingTop: "0px"}} span={6}>
         <Card

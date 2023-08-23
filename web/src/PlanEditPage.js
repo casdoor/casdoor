@@ -29,14 +29,14 @@ class PlanEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
-      planName: props.match.params.planName,
+      organizationName: props?.organizationName ?? props?.match?.params?.organizationName ?? null,
+      planName: props?.match?.params?.planName ?? null,
       plan: null,
       organizations: [],
       users: [],
       roles: [],
       paymentProviders: [],
-      mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      mode: props?.location?.mode ?? "edit",
     };
   }
 

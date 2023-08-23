@@ -52,11 +52,11 @@ type Payment struct {
 	InvoiceTaxId  string `xorm:"varchar(100)" json:"invoiceTaxId"`
 	InvoiceRemark string `xorm:"varchar(100)" json:"invoiceRemark"`
 	InvoiceUrl    string `xorm:"varchar(255)" json:"invoiceUrl"`
-	// OrderId Info
-	OrderId string          `xorm:"varchar(100) 'out_order_id'" json:"outOrderId"`
-	PayUrl  string          `xorm:"varchar(2000)" json:"payUrl"`
-	State   pp.PaymentState `xorm:"varchar(100)" json:"state"`
-	Message string          `xorm:"varchar(2000)" json:"message"`
+	// Order Info
+	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"`
+	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
+	State      pp.PaymentState `xorm:"varchar(100)" json:"state"`
+	Message    string          `xorm:"varchar(2000)" json:"message"`
 }
 
 func GetPaymentCount(owner, field, value string) (int64, error) {
@@ -181,7 +181,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 	}
 
 	if orderId == "" {
-		orderId = payment.OrderId
+		orderId = payment.OutOrderId
 	}
 
 	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, orderId)

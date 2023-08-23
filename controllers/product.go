@@ -163,12 +163,13 @@ func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
 	host := c.Ctx.Request.Host
 	providerName := c.Input().Get("providerName")
-	planName := c.Input().Get("planName")
+	// buy `pricingName/planName` for `paidUserName`
 	pricingName := c.Input().Get("pricingName")
-	payUserName := c.Input().Get("userName")
+	planName := c.Input().Get("planName")
+	paidUserName := c.Input().Get("userName")
 	owner, _ := util.GetOwnerAndNameFromId(id)
-	userId := util.GetId(owner, payUserName)
-	if payUserName == "" {
+	userId := util.GetId(owner, paidUserName)
+	if paidUserName == "" {
 		userId = c.GetSessionUsername()
 	}
 	if userId == "" {

@@ -59,7 +59,7 @@ func (sub *Subscription) GetId() string {
 
 func (sub *Subscription) UpdateState() error {
 	preState := sub.State
-	// update subscription state by Payment state
+	// update subscription state by payment state
 	if sub.State == SubStatePending {
 		if sub.Payment == "" {
 			return nil

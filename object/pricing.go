@@ -157,17 +157,16 @@ func CheckPricingAndPlan(owner, pricingName, planName string) error {
 	pricing, err := GetPricing(pricingId)
 	if pricing == nil || err != nil {
 		if pricing == nil && err == nil {
-			err = fmt.Errorf("pricing: %s does not exist", pricingId)
+			err = fmt.Errorf("pricing: %s does not exist", pricingName)
 		}
 		return err
 	}
-	planId := util.GetId(owner, planName)
 	ok, err := pricing.HasPlan(planName)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return fmt.Errorf("pricing: %s does not have plan: %s", pricingId, planId)
+		return fmt.Errorf("pricing: %s does not have plan: %s", pricingName, planName)
 	}
 	return nil
 }
