@@ -15,6 +15,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
+import {ClockCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, MinusCircleOutlined, SyncOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as SubscriptionBackend from "./backend/SubscriptionBackend";
@@ -215,15 +216,17 @@ class SubscriptionListPage extends BaseListPage {
         render: (text, record, index) => {
           switch (text) {
           case "Pending":
-            return Setting.getTag("processing", i18next.t("permission:Pending"));
+            return Setting.getTag("processing", i18next.t("permission:Pending"), <ExclamationCircleOutlined />);
           case "Active":
-            return Setting.getTag("success", i18next.t("permission:Active"));
+            return Setting.getTag("success", i18next.t("permission:Active"), <SyncOutlined spin />);
           case "Upcoming":
-            return Setting.getTag("warning", i18next.t("permission:Upcoming"));
+            return Setting.getTag("warning", i18next.t("permission:Upcoming"), <ClockCircleOutlined />);
           case "Expired":
-            return Setting.getTag("warning", i18next.t("permission:Expired"));
+            return Setting.getTag("warning", i18next.t("permission:Expired"), <ClockCircleOutlined />);
           case "Error":
-            return Setting.getTag("error", i18next.t("permission:Error"));
+            return Setting.getTag("error", i18next.t("permission:Error"), <CloseCircleOutlined />);
+          case "Suspended":
+            return Setting.getTag("default", i18next.t("permission:Suspended"), <MinusCircleOutlined />);
           default:
             return null;
           }

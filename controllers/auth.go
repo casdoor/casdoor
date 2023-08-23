@@ -105,21 +105,22 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 					}
 				}
 				if existPendingSubscription {
-					c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s do not have active subscription but has pending subscription, please try again"), user.Name))
+					c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active subscription but has pending subscription, please try again"), user.Name))
 					return
 				}
 			}
-			// paid-user do not have active or pending subscription, find the default pricing of application
+			// paid-user does not have active or pending subscription, find the default pricing of application
 			pricing, err := object.GetApplicationDefaultPricing(application.Organization, application.Name)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
 			if pricing == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s do not have active or pending subscription and the application: %s do not have default pricing"), user.Name, application.Name))
+				c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"), user.Name, application.Name))
 				return
 			} else {
-				c.ResponseOk("select-plan", pricing.GetId())
+				// let the paid-user select plan
+				c.ResponseOk("SelectPlan", pricing.GetId())
 				return
 			}
 

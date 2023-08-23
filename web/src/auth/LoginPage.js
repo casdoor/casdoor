@@ -406,7 +406,7 @@ class LoginPage extends React.Component {
                     />);
                 },
               });
-            } else if (res.data === "select-plan") {
+            } else if (res.data === "SelectPlan") {
               // paid-user do not have active or pending subscription, go to application default pricing page to select-plan
               const pricingId = res.data2;
               Setting.goToLink(`/select-plan/${pricingId}?user=${values.username}`);

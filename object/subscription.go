@@ -26,11 +26,13 @@ import (
 type SubscriptionState string
 
 const (
-	SubStatePending  SubscriptionState = "Pending"
+	SubStatePending   SubscriptionState = "Pending"
+	SubStateError     SubscriptionState = "Error"
+	SubStateSuspended SubscriptionState = "Suspended" // suspended by the admin
+
 	SubStateActive   SubscriptionState = "Active"
 	SubStateUpcoming SubscriptionState = "Upcoming"
 	SubStateExpired  SubscriptionState = "Expired"
-	SubStateError    SubscriptionState = "Error"
 )
 
 type Subscription struct {
@@ -59,6 +61,9 @@ func (sub *Subscription) UpdateState() error {
 	preState := sub.State
 	// update subscription state by Payment state
 	if sub.State == SubStatePending {
+		if sub.Payment == "" {
+			return nil
+		}
 		payment, err := GetPayment(util.GetId(sub.Owner, sub.Payment))
 		if err != nil {
 			return err
@@ -113,7 +118,7 @@ func NewSubscription(owner, userName, pricingName, planName, paymentName string)
 		StartTime: time.Now(),
 		EndTime:   time.Now().AddDate(0, 0, 30),
 		Duration:  30,              // TODO
-		State:     SubStatePending, // Waiting for payment complete
+		State:     SubStatePending, // waiting for payment complete
 	}
 }
 
@@ -128,12 +133,17 @@ func GetSubscriptions(owner string) ([]*Subscription, error) {
 	if err != nil {
 		return subscriptions, err
 	}
-
+	for _, sub := range subscriptions {
+		err = sub.UpdateState()
+		if err != nil {
+			return nil, err
+		}
+	}
 	return subscriptions, nil
 }
 
 func GetSubscriptionsByUser(owner, userName string) ([]*Subscription, error) {
-	var subscriptions []*Subscription
+	subscriptions := []*Subscription{}
 	err := ormer.Engine.Desc("created_time").Find(&subscriptions, &Subscription{Owner: owner, User: userName})
 	if err != nil {
 		return subscriptions, err
@@ -155,7 +165,12 @@ func GetPaginationSubscriptions(owner string, offset, limit int, field, value, s
 	if err != nil {
 		return subscriptions, err
 	}
-
+	for _, sub := range subscriptions {
+		err = sub.UpdateState()
+		if err != nil {
+			return nil, err
+		}
+	}
 	return subscriptions, nil
 }
 

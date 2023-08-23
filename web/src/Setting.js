@@ -1161,9 +1161,9 @@ export function getTags(tags, urlPrefix = null) {
   return res;
 }
 
-export function getTag(color, text) {
+export function getTag(color, text, icon) {
   return (
-    <Tag color={color}>
+    <Tag color={color} icon={icon}>
       {text}
     </Tag>
   );

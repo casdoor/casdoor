@@ -158,14 +158,6 @@ class PaymentListPage extends BaseListPage {
           return Setting.getFormattedDate(text);
         },
       },
-      // {
-      //   title: i18next.t("general:Display name"),
-      //   dataIndex: 'displayName',
-      //   key: 'displayName',
-      //   width: '160px',
-      //   sorter: true,
-      //   ...this.getColumnSearchProps('displayName'),
-      // },
       {
         title: i18next.t("provider:Type"),
         dataIndex: "type",
@@ -187,6 +179,13 @@ class PaymentListPage extends BaseListPage {
         // width: '160px',
         sorter: true,
         ...this.getColumnSearchProps("productDisplayName"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/products/${record.owner}/${record.productName}`}>
+              {text}
+            </Link>
+          );
+        },
       },
       {
         title: i18next.t("product:Price"),

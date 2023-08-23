@@ -155,27 +155,8 @@ func (c *ApiController) Signup() {
 
 	userType := "normal-user"
 	if authForm.Plan != "" && authForm.Pricing != "" {
-		pricingId := util.GetId(authForm.Organization, authForm.Pricing)
-		pricing, err := object.GetPricing(pricingId)
-		if pricing == nil || err != nil {
-			if pricing == nil && err == nil {
-				err = fmt.Errorf(c.T("pricing:The pricing: %s does not exist"), pricingId)
-			}
-			c.ResponseError(err.Error())
-			return
-		}
-
-		planId := util.GetId(authForm.Organization, authForm.Plan)
-		plan, err := object.GetPlan(planId)
-		if plan == nil || err != nil {
-			if plan == nil && err == nil {
-				err = fmt.Errorf(c.T("pricing:The plan: %s does not exist"), planId)
-			}
-			c.ResponseError(err.Error())
-			return
-		}
-		if !util.InSlice(pricing.Plans, authForm.Plan) {
-			err = fmt.Errorf(c.T("pricing:The plan: %s does not exist in pricing %s"), planId, authForm.Plan)
+		err = object.CheckPricingAndPlan(authForm.Organization, authForm.Pricing, authForm.Plan)
+		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}

@@ -16,6 +16,7 @@ import moment from "moment";
 import React from "react";
 import {Button, Card, Col, DatePicker, Input, InputNumber, Row, Select} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as PricingBackend from "./backend/PricingBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as SubscriptionBackend from "./backend/SubscriptionBackend";
 import * as UserBackend from "./backend/UserBackend";
@@ -33,7 +34,8 @@ class SubscriptionEditPage extends React.Component {
       subscription: null,
       organizations: [],
       users: [],
-      planes: [],
+      pricings: [],
+      plans: [],
       providers: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -62,15 +64,25 @@ class SubscriptionEditPage extends React.Component {
         });
 
         this.getUsers(this.state.organizationName);
-        this.getPlanes(this.state.organizationName);
+        this.getPricings(this.state.organizationName);
+        this.getPlans(this.state.organizationName);
       });
   }
 
-  getPlanes(organizationName) {
+  getPricings(organizationName) {
+    PricingBackend.getPricings(organizationName)
+      .then((res) => {
+        this.setState({
+          pricings: res.data,
+        });
+      });
+  }
+
+  getPlans(organizationName) {
     PlanBackend.getPlans(organizationName)
       .then((res) => {
         this.setState({
-          planes: res.data,
+          plans: res.data,
         });
       });
   }
@@ -133,7 +145,7 @@ class SubscriptionEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.owner} onChange={(owner => {
               this.updateSubscriptionField("owner", owner);
               this.getUsers(owner);
-              this.getPlanes(owner);
+              this.getPlans(owner);
             })}
             options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
             } />
@@ -200,7 +212,17 @@ class SubscriptionEditPage extends React.Component {
             />
           </Col>
         </Row>
-
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Pricing"), i18next.t("general:Pricing - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.pricing}
+              onChange={(value => {this.updateSubscriptionField("pricing", value);})}
+              options={this.state.pricings.map((pricing) => Setting.getOption(pricing.name, pricing.name))
+              } />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Plan"), i18next.t("general:Plan - Tooltip"))} :
@@ -208,8 +230,18 @@ class SubscriptionEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.subscription.plan}
               onChange={(value => {this.updateSubscriptionField("plan", value);})}
-              options={this.state.planes.map((plan) => Setting.getOption(plan.name, plan.name))
+              options={this.state.plans.map((plan) => Setting.getOption(plan.name, plan.name))
               } />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Payment"), i18next.t("general:Payment - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.subscription.payment} disabled={true} onChange={e => {
+              this.updateSubscriptionField("payment", e.target.value);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -246,6 +278,7 @@ class SubscriptionEditPage extends React.Component {
               {value: "Upcoming", name: i18next.t("permission:Upcoming")},
               {value: "Expired", name: i18next.t("permission:Expired")},
               {value: "Error", name: i18next.t("permission:Error")},
+              {value: "Suspended", name: i18next.t("permission:Suspended")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>
