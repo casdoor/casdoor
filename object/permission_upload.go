@@ -33,8 +33,8 @@ func getPermissionMap(owner string) (map[string]*Permission, error) {
 	return m, err
 }
 
-func UploadPermissions(owner string, fileId string) (bool, error) {
-	table := xlsx.ReadXlsxFile(fileId)
+func UploadPermissions(owner string, path string) (bool, error) {
+	table := xlsx.ReadXlsxFile(path)
 
 	oldUserMap, err := getPermissionMap(owner)
 	if err != nil {

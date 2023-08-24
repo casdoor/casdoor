@@ -14,13 +14,9 @@
 
 package xlsx
 
-import (
-	"github.com/casdoor/casdoor/util"
-	"github.com/tealeg/xlsx"
-)
+import "github.com/tealeg/xlsx"
 
-func ReadXlsxFile(fileId string) [][]string {
-	path := util.GetUploadXlsxPath(fileId)
+func ReadXlsxFile(path string) [][]string {
 	file, err := xlsx.OpenFile(path)
 	if err != nil {
 		panic(err)

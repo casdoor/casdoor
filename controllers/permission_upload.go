@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -32,16 +33,15 @@ func (c *ApiController) UploadPermissions() {
 	}
 
 	fileId := fmt.Sprintf("%s_%s_%s", owner, user, util.RemoveExt(header.Filename))
-
 	path := util.GetUploadXlsxPath(fileId)
-	util.EnsureFileFolderExists(path)
+	defer os.Remove(path)
 	err = saveFile(path, &file)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	affected, err := object.UploadPermissions(owner, fileId)
+	affected, err := object.UploadPermissions(owner, path)
 	if err != nil {
 		c.ResponseError(err.Error())
 	}

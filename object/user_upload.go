@@ -73,8 +73,8 @@ func parseListItem(lines *[]string, i int) []string {
 	return trimmedItems
 }
 
-func UploadUsers(owner string, fileId string) (bool, error) {
-	table := xlsx.ReadXlsxFile(fileId)
+func UploadUsers(owner string, path string) (bool, error) {
+	table := xlsx.ReadXlsxFile(path)
 
 	oldUserMap, err := getUserMap(owner)
 	if err != nil {

@@ -14,8 +14,13 @@
 
 package util
 
-import "fmt"
+import "io/ioutil"
 
 func GetUploadXlsxPath(fileId string) string {
-	return fmt.Sprintf("tmpFiles/%s.xlsx", fileId)
+	file, err := ioutil.TempFile("", fileId)
+	if err != nil {
+		panic(err)
+	}
+
+	return file.Name()
 }

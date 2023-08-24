@@ -34,16 +34,6 @@ func GetPath(path string) string {
 	return filepath.Dir(path)
 }
 
-func EnsureFileFolderExists(path string) {
-	p := GetPath(path)
-	if !FileExist(p) {
-		err := os.MkdirAll(p, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
 func ListFiles(path string) []string {
 	res := []string{}
 

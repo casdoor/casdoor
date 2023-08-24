@@ -33,8 +33,8 @@ func getRoleMap(owner string) (map[string]*Role, error) {
 	return m, nil
 }
 
-func UploadRoles(owner string, fileId string) (bool, error) {
-	table := xlsx.ReadXlsxFile(fileId)
+func UploadRoles(owner string, path string) (bool, error) {
+	table := xlsx.ReadXlsxFile(path)
 
 	oldUserMap, err := getRoleMap(owner)
 	if err != nil {
