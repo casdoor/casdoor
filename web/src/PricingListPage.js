@@ -146,7 +146,6 @@ class PricingListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("plans"),
         render: (plans, record, index) => {
-          window.console.log(plans, record);
           if (plans.length === 0) {
             return `(${i18next.t("general:empty")})`;
           }
