@@ -114,8 +114,8 @@ func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, auth
 	if err != nil {
 		return nil, err
 	}
-	if captureRsp.Code != paypal.Success {
-		errDetail := captureRsp.ErrorResponse.Details[0]
+	if detailRsp.Code != paypal.Success {
+		errDetail := detailRsp.ErrorResponse.Details[0]
 		switch errDetail.Issue {
 		case "ORDER_NOT_APPROVED":
 			notifyResult.PaymentStatus = PaymentStateCanceled

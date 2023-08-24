@@ -403,6 +403,14 @@ class LoginPage extends React.Component {
                     />);
                 },
               });
+            } else if (res.data === "SelectPlan") {
+              // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
+              const pricing = res.data2;
+              Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${values.username}`);
+            } else if (res.data === "BuyPlanResult") {
+              // paid-user has pending subscription, go to buy-plan/result apge to notify payment result
+              const sub = res.data2;
+              Setting.goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
             } else {
               callback(res);
             }

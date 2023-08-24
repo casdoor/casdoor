@@ -541,7 +541,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "email", "phone", "country_code")
+		columns = append(columns, "name", "email", "phone", "country_code", "type")
 	}
 
 	if util.ContainsString(columns, "groups") {

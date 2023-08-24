@@ -18,6 +18,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as RoleBackend from "./backend/RoleBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as UserBackend from "./backend/UserBackend";
+import * as ProviderBackend from "./backend/ProviderBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -28,14 +29,14 @@ class PlanEditPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
-      planName: props.match.params.planName,
+      organizationName: props?.organizationName ?? props?.match?.params?.organizationName ?? null,
+      planName: props?.match?.params?.planName ?? null,
       plan: null,
       organizations: [],
       users: [],
       roles: [],
-      providers: [],
-      mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      paymentProviders: [],
+      mode: props?.location?.mode ?? "edit",
     };
   }
 
@@ -58,6 +59,7 @@ class PlanEditPage extends React.Component {
 
         this.getUsers(this.state.organizationName);
         this.getRoles(this.state.organizationName);
+        this.getPaymentProviders(this.state.organizationName);
       });
   }
 
@@ -86,6 +88,20 @@ class PlanEditPage extends React.Component {
         this.setState({
           users: res.data,
         });
+      });
+  }
+
+  getPaymentProviders(organizationName) {
+    ProviderBackend.getProviders(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            paymentProviders: res.data.filter(provider => provider.category === "Payment"),
+          });
+          return;
+        }
+
+        Setting.showMessage("error", res.msg);
       });
   }
 
@@ -165,7 +181,7 @@ class PlanEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} onChange={(value => {this.updatePlanField("role", value);})}
-              options={this.state.roles.map((role) => Setting.getOption(`${role.owner}/${role.name}`, `${role.owner}/${role.name}`))
+              options={this.state.roles.map((role) => Setting.getOption(role.name, role.name))
               } />
           </Col>
         </Row>
@@ -212,6 +228,18 @@ class PlanEditPage extends React.Component {
                   {id: "USD", name: "USD"},
                   {id: "CNY", name: "CNY"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.plan.paymentProviders ?? []} onChange={(value => {this.updatePlanField("paymentProviders", value);})}>
+              {
+                this.state.paymentProviders.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
           </Col>

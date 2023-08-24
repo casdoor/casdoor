@@ -29,6 +29,8 @@ import PromptPage from "./auth/PromptPage";
 import ResultPage from "./auth/ResultPage";
 import CasLogout from "./auth/CasLogout";
 import {authConfig} from "./auth/Auth";
+import ProductBuyPage from "./ProductBuyPage";
+import PaymentResultPage from "./PaymentResultPage";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -108,7 +110,9 @@ class EntryPage extends React.Component {
           <Route exact path="/result/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<ResultPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/logout" render={(props) => this.renderHomeIfLoggedIn(<CasLogout {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
           <Route exact path="/cas/:owner/:casApplicationName/login" render={(props) => {return (<LoginPage {...this.props} application={this.state.application} type={"cas"} mode={"signin"} onUpdateApplication={onUpdateApplication} {...props} />);}} />
-          <Route exact path="/select-plan/:owner/:pricingName" render={(props) => this.renderHomeIfLoggedIn(<PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />)} />
+          <Route exact path="/select-plan/:owner/:pricingName" render={(props) => <PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
+          <Route exact path="/buy-plan/:owner/:pricingName" render={(props) => <ProductBuyPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
+          <Route exact path="/buy-plan/:owner/:pricingName/result" render={(props) => <PaymentResultPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
         </Switch>
       </div>
     );

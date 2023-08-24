@@ -133,7 +133,11 @@ class SignupPage extends React.Component {
       });
   }
 
-  getResultPath(application) {
+  getResultPath(application, signupParams) {
+    if (signupParams?.plan && signupParams?.pricing) {
+      // the prompt page needs the user to be signed in, so for paid-user sign up, just go to buy-plan page
+      return `/buy-plan/${application.organization}/${signupParams?.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
+    }
     if (authConfig.appName === application.name) {
       return "/result";
     } else {
@@ -173,13 +177,13 @@ class SignupPage extends React.Component {
     const application = this.getApplicationObj();
 
     const params = new URLSearchParams(window.location.search);
-    values["plan"] = params.get("plan");
-    values["pricing"] = params.get("pricing");
+    values.plan = params.get("plan");
+    values.pricing = params.get("pricing");
 
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
-          if (Setting.hasPromptPage(application)) {
+          if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {
                 let account = null;
@@ -188,13 +192,13 @@ class SignupPage extends React.Component {
                   account.organization = res.data2;
 
                   this.onUpdateAccount(account);
-                  Setting.goToLinkSoft(this, this.getResultPath(application));
+                  Setting.goToLinkSoft(this, this.getResultPath(application, values));
                 } else {
                   Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
                 }
               });
           } else {
-            Setting.goToLinkSoft(this, this.getResultPath(application));
+            Setting.goToLinkSoft(this, this.getResultPath(application, values));
           }
         } else {
           Setting.showMessage("error", i18next.t(`signup:${res.msg}`));

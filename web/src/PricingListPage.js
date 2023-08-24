@@ -14,7 +14,8 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table} from "antd";
+import {Button, Col, Row, Switch, Table, Tooltip} from "antd";
+import {EditOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as PricingBackend from "./backend/PricingBackend";
@@ -118,11 +119,58 @@ class PricingListPage extends BaseListPage {
         title: i18next.t("general:Display name"),
         dataIndex: "displayName",
         key: "displayName",
-        // width: "170px",
+        width: "170px",
         sorter: true,
         ...this.getColumnSearchProps("displayName"),
       },
-
+      {
+        title: i18next.t("general:Application"),
+        dataIndex: "application",
+        key: "application",
+        width: "170px",
+        sorter: true,
+        ...this.getColumnSearchProps("application"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/applications/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Plans"),
+        dataIndex: "plans",
+        key: "plans",
+        // width: "170px",
+        sorter: true,
+        ...this.getColumnSearchProps("plans"),
+        render: (plans, record, index) => {
+          if (plans.length === 0) {
+            return `(${i18next.t("general:empty")})`;
+          }
+          return (
+            <div>
+              <Row>
+                {
+                  plans.map((plan) => (
+                    <Col key={plan}>
+                      <div style={{display: "inline", marginRight: "20px"}}>
+                        <Tooltip placement="topLeft" title="Edit">
+                          <Button style={{marginRight: "5px"}} icon={<EditOutlined />} size="small" onClick={() => Setting.goToLinkSoft(this, `/plans/${record.owner}/${plan}`)} />
+                        </Tooltip>
+                        <Link to={`/plans/${record.owner}/${plan}`}>
+                          {plan}
+                        </Link>
+                      </div>
+                    </Col>
+                  ))
+                }
+              </Row>
+            </div>
+          );
+        },
+      },
       {
         title: i18next.t("general:Is enabled"),
         dataIndex: "isEnabled",

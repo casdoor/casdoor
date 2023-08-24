@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -80,7 +81,10 @@ func (c *ApiController) GetPricing() {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	if pricing == nil {
+		c.ResponseError(fmt.Sprintf(c.T("pricing:The pricing: %s does not exist"), id))
+		return
+	}
 	c.ResponseOk(pricing)
 }
 

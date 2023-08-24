@@ -141,24 +141,24 @@ func (product *Product) isValidProvider(provider *Provider) bool {
 	return false
 }
 
-func (product *Product) getProvider(providerId string) (*Provider, error) {
-	provider, err := getProvider(product.Owner, providerId)
+func (product *Product) getProvider(providerName string) (*Provider, error) {
+	provider, err := getProvider(product.Owner, providerName)
 	if err != nil {
 		return nil, err
 	}
 
 	if provider == nil {
-		return nil, fmt.Errorf("the payment provider: %s does not exist", providerId)
+		return nil, fmt.Errorf("the payment provider: %s does not exist", providerName)
 	}
 
 	if !product.isValidProvider(provider) {
-		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerId, product.Name)
+		return nil, fmt.Errorf("the payment provider: %s is not valid for the product: %s", providerName, product.Name)
 	}
 
 	return provider, nil
 }
 
-func BuyProduct(id string, providerName string, user *User, host string) (string, string, error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host string) (string, string, error) {
 	product, err := GetProduct(id)
 	if err != nil {
 		return "", "", err
@@ -181,13 +181,24 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	owner := product.Owner
 	productName := product.Name
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
-	paymentName := util.GenerateTimeId()
+	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
-	// Create an Order and get the payUrl
+	if user.Type == "paid-user" {
+		// Create a subscription for `paid-user`
+		if pricingName != "" && planName != "" {
+			sub := NewSubscription(owner, user.Name, pricingName, planName, paymentName)
+			_, err := AddSubscription(sub)
+			if err != nil {
+				return "", "", err
+			}
+			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
+		}
+	}
+	// Create an OrderId and get the payUrl
 	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
 	if err != nil {
 		return "", "", err
@@ -228,7 +239,6 @@ func BuyProduct(id string, providerName string, user *User, host string) (string
 	if !affected {
 		return "", "", fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
-
 	return payUrl, orderId, err
 }
 
@@ -251,4 +261,35 @@ func ExtendProductWithProviders(product *Product) error {
 	}
 
 	return nil
+}
+
+func CreateProductForPlan(plan *Plan) *Product {
+	product := &Product{
+		Owner:       plan.Owner,
+		Name:        fmt.Sprintf("product_%v", util.GetRandomName()),
+		DisplayName: fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		CreatedTime: plan.CreatedTime,
+
+		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png", // TODO
+		Detail:      fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		Description: plan.Description,
+		Tag:         "auto_created_product_for_plan",
+		Price:       plan.PricePerMonth, // TODO
+		Currency:    plan.Currency,
+
+		Quantity: 999,
+		Sold:     0,
+
+		Providers: plan.PaymentProviders,
+		State:     "Published",
+	}
+	return product
+}
+
+func UpdateProductForPlan(plan *Plan, product *Product) {
+	product.DisplayName = fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName)
+	product.Detail = fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName)
+	product.Price = plan.PricePerMonth // TODO
+	product.Providers = plan.PaymentProviders
+	product.Currency = plan.Currency
 }

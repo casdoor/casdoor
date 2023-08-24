@@ -153,12 +153,22 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	userType := "normal-user"
+	if authForm.Plan != "" && authForm.Pricing != "" {
+		err = object.CheckPricingAndPlan(authForm.Organization, authForm.Pricing, authForm.Plan)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		userType = "paid-user"
+	}
+
 	user := &object.User{
 		Owner:             authForm.Organization,
 		Name:              username,
 		CreatedTime:       util.GetCurrentTime(),
 		Id:                id,
-		Type:              "normal-user",
+		Type:              userType,
 		Password:          authForm.Password,
 		DisplayName:       authForm.Name,
 		Avatar:            organization.DefaultAvatar,
@@ -210,7 +220,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	if application.HasPromptPage() {
+	if application.HasPromptPage() && user.Type == "normal-user" {
 		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 	}
@@ -225,15 +235,6 @@ func (c *ApiController) Signup() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
-	}
-
-	isSignupFromPricing := authForm.Plan != "" && authForm.Pricing != ""
-	if isSignupFromPricing {
-		_, err = object.Subscribe(organization.Name, user.Name, authForm.Plan, authForm.Pricing)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
 	}
 
 	record := object.NewRecord(c.Ctx)

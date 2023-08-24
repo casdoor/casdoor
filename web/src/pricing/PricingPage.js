@@ -24,11 +24,13 @@ import i18next from "i18next";
 class PricingPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
       applications: null,
       owner: props.owner ?? (props.match?.params?.owner ?? null),
       pricingName: (props.pricingName ?? props.match?.params?.pricingName) ?? null,
+      userName: params.get("user"),
       pricing: props.pricing,
       plans: null,
       loading: false,
@@ -39,7 +41,9 @@ class PricingPage extends React.Component {
     this.setState({
       applications: [],
     });
-
+    if (this.state.userName) {
+      Setting.showMessage("info", `${i18next.t("pricing:paid-user do not have active subscription or pending subscription, please select a plan to buy")}`);
+    }
     if (this.state.pricing) {
       this.loadPlans();
     } else {
@@ -60,7 +64,7 @@ class PricingPage extends React.Component {
 
   loadPlans() {
     const plans = this.state.pricing.plans.map((plan) =>
-      PlanBackend.getPlanById(plan, true));
+      PlanBackend.getPlan(this.state.owner, plan, true));
 
     Promise.all(plans)
       .then(results => {
@@ -70,7 +74,7 @@ class PricingPage extends React.Component {
           return;
         }
         this.setState({
-          plans: results,
+          plans: results.map(result => result.data),
           loading: false,
         });
       })
@@ -90,7 +94,6 @@ class PricingPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
-
         this.setState({
           loading: false,
           pricing: res.data,
@@ -105,9 +108,12 @@ class PricingPage extends React.Component {
 
   renderCards() {
 
-    const getUrlByPlan = (plan) => {
+    const getUrlByPlan = (planName) => {
       const pricing = this.state.pricing;
-      const signUpUrl = `/signup/${pricing.application}?plan=${plan}&pricing=${pricing.name}`;
+      let signUpUrl = `/signup/${pricing.application}?plan=${planName}&pricing=${pricing.name}`;
+      if (this.state.userName) {
+        signUpUrl = `/buy-plan/${pricing.owner}/${pricing.name}?plan=${planName}&user=${this.state.userName}`;
+      }
       return `${window.location.origin}${signUpUrl}`;
     };
 

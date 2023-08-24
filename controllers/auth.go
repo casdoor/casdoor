@@ -78,6 +78,46 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 	}
 
+	// check whether paid-user have active subscription
+	if user.Type == "paid-user" {
+		subscriptions, err := object.GetSubscriptionsByUser(user.Owner, user.Name)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		existActiveSubscription := false
+		for _, subscription := range subscriptions {
+			if subscription.State == object.SubStateActive {
+				existActiveSubscription = true
+				break
+			}
+		}
+		if !existActiveSubscription {
+			// check pending subscription
+			for _, sub := range subscriptions {
+				if sub.State == object.SubStatePending {
+					c.ResponseOk("BuyPlanResult", sub)
+					return
+				}
+			}
+			// paid-user does not have active or pending subscription, find the default pricing of application
+			pricing, err := object.GetApplicationDefaultPricing(application.Organization, application.Name)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			if pricing == nil {
+				c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"), user.Name, application.Name))
+				return
+			} else {
+				// let the paid-user select plan
+				c.ResponseOk("SelectPlan", pricing)
+				return
+			}
+
+		}
+	}
+
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)

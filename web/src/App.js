@@ -657,7 +657,8 @@ class App extends Component {
         window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
         window.location.pathname.startsWith("/auto-signup") ||
-        window.location.pathname.startsWith("/select-plan");
+        window.location.pathname.startsWith("/select-plan") ||
+        window.location.pathname.startsWith("/buy-plan");
   }
 
   renderPage() {

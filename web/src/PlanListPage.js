@@ -127,6 +127,14 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
+        title: i18next.t("payment:Currency"),
+        dataIndex: "currency",
+        key: "currency",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("currency"),
+      },
+      {
         title: i18next.t("plan:Price per month"),
         dataIndex: "pricePerMonth",
         key: "pricePerMonth",
@@ -148,7 +156,21 @@ class PlanListPage extends BaseListPage {
         ...this.getColumnSearchProps("role"),
         render: (text, record, index) => {
           return (
-            <Link to={`/roles/${encodeURIComponent(text)}`}>
+            <Link to={`/roles/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("plan:Related product"),
+        dataIndex: "product",
+        key: "product",
+        width: "130px",
+        ...this.getColumnSearchProps("product"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/products/${record.owner}/${text}`}>
               {text}
             </Link>
           );

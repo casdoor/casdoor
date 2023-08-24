@@ -28,13 +28,19 @@ type Plan struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	PricePerMonth float64 `json:"pricePerMonth"`
-	PricePerYear  float64 `json:"pricePerYear"`
-	Currency      string  `xorm:"varchar(100)" json:"currency"`
-	IsEnabled     bool    `json:"isEnabled"`
+	PricePerMonth    float64  `json:"pricePerMonth"`
+	PricePerYear     float64  `json:"pricePerYear"`
+	Currency         string   `xorm:"varchar(100)" json:"currency"`
+	Product          string   `json:"product"`                              // related product id
+	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
+	IsEnabled        bool     `json:"isEnabled"`
 
 	Role    string   `xorm:"varchar(100)" json:"role"`
 	Options []string `xorm:"-" json:"options"`
+}
+
+func (plan *Plan) GetId() string {
+	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
 }
 
 func GetPlanCount(owner, field, value string) (int64, error) {
@@ -113,39 +119,4 @@ func DeletePlan(plan *Plan) (bool, error) {
 		return false, err
 	}
 	return affected != 0, nil
-}
-
-func (plan *Plan) GetId() string {
-	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
-}
-
-func Subscribe(owner string, user string, plan string, pricing string) (*Subscription, error) {
-	selectedPricing, err := GetPricing(fmt.Sprintf("%s/%s", owner, pricing))
-	if err != nil {
-		return nil, err
-	}
-
-	valid := selectedPricing != nil && selectedPricing.IsEnabled
-
-	if !valid {
-		return nil, nil
-	}
-
-	planBelongToPricing, err := selectedPricing.HasPlan(owner, plan)
-	if err != nil {
-		return nil, err
-	}
-
-	if planBelongToPricing {
-		newSubscription := NewSubscription(owner, user, plan, selectedPricing.TrialDuration)
-		affected, err := AddSubscription(newSubscription)
-		if err != nil {
-			return nil, err
-		}
-
-		if affected {
-			return newSubscription, nil
-		}
-	}
-	return nil, nil
 }

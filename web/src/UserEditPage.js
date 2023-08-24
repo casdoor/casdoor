@@ -390,7 +390,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}
-              options={["normal-user"].map(item => Setting.getOption(item, item))}
+              options={["normal-user", "paid-user"].map(item => Setting.getOption(item, item))}
             />
           </Col>
         </Row>

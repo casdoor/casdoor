@@ -29,21 +29,16 @@ class SingleCard extends React.Component {
   }
 
   renderCard(plan, isSingle, link) {
-
     return (
       <Col style={{minWidth: "320px", paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px", paddingTop: "0px"}} span={6}>
         <Card
           hoverable
           onClick={() => Setting.isMobile() ? window.location.href = link : null}
           style={isSingle ? {width: "320px", height: "100%"} : {width: "100%", height: "100%", paddingTop: "0px"}}
+          title={<h2>{plan.displayName}</h2>}
         >
-          <div style={{textAlign: "right"}}>
-            <h2
-              style={{marginTop: "0px"}}>{plan.displayName}</h2>
-          </div>
-
           <div style={{textAlign: "left"}} className="px-10 mt-5">
-            <span style={{fontWeight: 700, fontSize: "48px"}}>$ {plan.pricePerMonth}</span>
+            <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerMonth}</span>
             <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
           </div>
 

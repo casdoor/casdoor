@@ -15,17 +15,24 @@
 import React from "react";
 import {Button, Result, Spin} from "antd";
 import * as PaymentBackend from "./backend/PaymentBackend";
+import * as PricingBackend from "./backend/PricingBackend";
+import * as SubscriptionBackend from "./backend/SubscriptionBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
 class PaymentResultPage extends React.Component {
   constructor(props) {
     super(props);
+    const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
-      paymentName: props.match.params.paymentName,
-      organizationName: props.match.params.organizationName,
+      owner: props.match?.params?.organizationName ?? props.match?.params?.owner ?? null,
+      paymentName: props.match?.params?.paymentName ?? null,
+      pricingName: props.pricingName ?? props.match?.params?.pricingName ?? null,
+      subscriptionName: params.get("subscription"),
       payment: null,
+      pricing: props.pricing ?? null,
+      subscription: props.subscription ?? null,
       timeout: null,
     };
   }
@@ -40,28 +47,77 @@ class PaymentResultPage extends React.Component {
     }
   }
 
-  getPayment() {
-    PaymentBackend.getPayment(this.state.organizationName, this.state.paymentName)
-      .then((res) => {
-        this.setState({
-          payment: res.data,
-        });
-        // window.console.log("payment=", res.data);
-        if (res.data.state === "Created") {
-          if (["PayPal", "Stripe"].includes(res.data.type)) {
-            this.setState({
-              timeout: setTimeout(() => {
-                PaymentBackend.notifyPayment(this.state.organizationName, this.state.paymentName)
-                  .then((res) => {
-                    this.getPayment();
-                  });
-              }, 1000),
-            });
-          } else {
-            this.setState({timeout: setTimeout(() => this.getPayment(), 1000)});
-          }
-        }
+  setStateAsync(state) {
+    return new Promise((resolve, reject) => {
+      this.setState(state, () => {
+        resolve();
       });
+    });
+  }
+
+  onUpdatePricing(pricing) {
+    this.props.onUpdatePricing(pricing);
+  }
+
+  async getPayment() {
+    if (!(this.state.owner && (this.state.paymentName || (this.state.pricingName && this.state.subscriptionName)))) {
+      return ;
+    }
+    try {
+      // loading price & subscription
+      if (this.state.pricingName && this.state.subscriptionName) {
+        if (!this.state.pricing) {
+          const res = await PricingBackend.getPricing(this.state.owner, this.state.pricingName);
+          if (res.status !== "ok") {
+            throw new Error(res.msg);
+          }
+          const pricing = res.data;
+          await this.setStateAsync({
+            pricing: pricing,
+          });
+        }
+        if (!this.state.subscription) {
+          const res = await SubscriptionBackend.getSubscription(this.state.owner, this.state.subscriptionName);
+          if (res.status !== "ok") {
+            throw new Error(res.msg);
+          }
+          const subscription = res.data;
+          await this.setStateAsync({
+            subscription: subscription,
+          });
+        }
+        const paymentName = this.state.subscription.payment;
+        await this.setStateAsync({
+          paymentName: paymentName,
+        });
+        this.onUpdatePricing(this.state.pricing);
+      }
+      const res = await PaymentBackend.getPayment(this.state.owner, this.state.paymentName);
+      if (res.status !== "ok") {
+        throw new Error(res.msg);
+      }
+      const payment = res.data;
+      await this.setStateAsync({
+        payment: payment,
+      });
+      if (payment.state === "Created") {
+        if (["PayPal", "Stripe"].includes(payment.type)) {
+          this.setState({
+            timeout: setTimeout(async() => {
+              await PaymentBackend.notifyPayment(this.state.owner, this.state.paymentName);
+              this.getPayment();
+            }, 1000),
+          });
+        } else {
+          this.setState({
+            timeout: setTimeout(() => this.getPayment(), 1000),
+          });
+        }
+      }
+    } catch (err) {
+      Setting.showMessage("error", err.message);
+      return;
+    }
   }
 
   goToPaymentUrl(payment) {
@@ -81,7 +137,7 @@ class PaymentResultPage extends React.Component {
 
     if (payment.state === "Paid") {
       return (
-        <div>
+        <div className="login-content">
           {
             Setting.renderHelmet(payment)
           }
@@ -101,7 +157,7 @@ class PaymentResultPage extends React.Component {
       );
     } else if (payment.state === "Created") {
       return (
-        <div>
+        <div className="login-content">
           {
             Setting.renderHelmet(payment)
           }
@@ -117,7 +173,7 @@ class PaymentResultPage extends React.Component {
       );
     } else if (payment.state === "Canceled") {
       return (
-        <div>
+        <div className="login-content">
           {
             Setting.renderHelmet(payment)
           }
@@ -137,7 +193,7 @@ class PaymentResultPage extends React.Component {
       );
     } else if (payment.state === "Timeout") {
       return (
-        <div>
+        <div className="login-content">
           {
             Setting.renderHelmet(payment)
           }
@@ -157,7 +213,7 @@ class PaymentResultPage extends React.Component {
       );
     } else {
       return (
-        <div>
+        <div className="login-content">
           {
             Setting.renderHelmet(payment)
           }

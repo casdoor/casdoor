@@ -1170,9 +1170,9 @@ export function getTags(tags, urlPrefix = null) {
   return res;
 }
 
-export function getTag(color, text) {
+export function getTag(color, text, icon) {
   return (
-    <Tag color={color}>
+    <Tag color={color} icon={icon}>
       {text}
     </Tag>
   );
@@ -1253,4 +1253,14 @@ export function builtInObject(obj) {
     return false;
   }
   return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
+}
+
+export function getCurrencySymbol(currency) {
+  if (currency === "USD" || currency === "usd") {
+    return "$";
+  } else if (currency === "CNY" || currency === "cny") {
+    return "¥";
+  } else {
+    return currency;
+  }
 }
