@@ -98,16 +98,3 @@ export function getSamlMetadata(owner, name) {
     },
   }).then(res => res.text());
 }
-
-export function addInvitationCode(application) {
-  const newApplication = Setting.deepCopy(application);
-
-  return fetch(`${Setting.ServerUrl}/api/add-invitation-code`, {
-    method: "POST",
-    credentials: "include",
-    body: JSON.stringify(newApplication),
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}

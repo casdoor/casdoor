@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Temps d'expiration de jeton d'accès",
     "Token format": "Format de jeton",
     "Token format - Tooltip": "Le format du jeton d'accès",
-    "You are unexpected to see this prompt page": "Vous ne vous attendiez pas à voir cette page de saisie",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Vous ne vous attendiez pas à voir cette page de saisie"
   },
   "cert": {
     "Bit size": "Taille de bit",

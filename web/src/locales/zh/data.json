@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Access Token过期时间",
     "Token format": "Access Token格式",
     "Token format - Tooltip": "Access Token格式",
-    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
   },
   "cert": {
     "Bit size": "位大小",

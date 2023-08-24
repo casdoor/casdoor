@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "アクセストークンの有効期限",
     "Token format": "トークン形式",
     "Token format - Tooltip": "アクセストークンのフォーマット",
-    "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである"
   },
   "cert": {
     "Bit size": "ビットサイズ",

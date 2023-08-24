@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Время истечения токена доступа",
     "Token format": "Формат жетона",
     "Token format - Tooltip": "Формат токена доступа",
-    "You are unexpected to see this prompt page": "Вы не ожидали увидеть эту страницу-подсказку",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Вы не ожидали увидеть эту страницу-подсказку"
   },
   "cert": {
     "Bit size": "Размер бита",

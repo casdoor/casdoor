@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Waktu kadaluwarsa token akses",
     "Token format": "Format token",
     "Token format - Tooltip": "Format dari token akses",
-    "You are unexpected to see this prompt page": "Anda tidak mengharapkan untuk melihat halaman prompt ini",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Anda tidak mengharapkan untuk melihat halaman prompt ini"
   },
   "cert": {
     "Bit size": "Ukuran bit",

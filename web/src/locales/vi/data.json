@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Thời gian hết hạn của mã truy cập",
     "Token format": "Định dạng mã thông báo",
     "Token format - Tooltip": "Định dạng của mã thông báo truy cập",
-    "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên"
   },
   "cert": {
     "Bit size": "Kích cỡ bit",

@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Tiempo de expiración del token de acceso",
     "Token format": "Formato del token",
     "Token format - Tooltip": "El formato del token de acceso",
-    "You are unexpected to see this prompt page": "Es inesperado ver esta página de inicio",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Es inesperado ver esta página de inicio"
   },
   "cert": {
     "Bit size": "Tamaño de bit",

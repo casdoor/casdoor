@@ -106,8 +106,7 @@
     "Token expire - Tooltip": "Ablaufzeit des Access-Tokens",
     "Token format": "Token-Format",
     "Token format - Tooltip": "Das Format des Access-Tokens",
-    "You are unexpected to see this prompt page": "Sie sind unerwartet auf diese Aufforderungsseite gelangt",
-    "You must add at least one invitation code first": "You must add at least one invitation code first"
+    "You are unexpected to see this prompt page": "Sie sind unerwartet auf diese Aufforderungsseite gelangt"
   },
   "cert": {
     "Bit size": "Bitgröße",

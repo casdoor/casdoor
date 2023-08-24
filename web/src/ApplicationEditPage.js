@@ -13,21 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {
-  Button,
-  Card,
-  Col,
-  ConfigProvider,
-  Input,
-  List,
-  Popover,
-  Radio,
-  Result,
-  Row,
-  Select, Space,
-  Switch,
-  Upload
-} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -219,7 +205,6 @@ class ApplicationEditPage extends React.Component {
 
   updateApplicationField(key, value) {
     value = this.parseApplicationField(key, value);
-
     const application = this.state.application;
     application[key] = value;
     this.setState({
@@ -841,12 +826,6 @@ class ApplicationEditPage extends React.Component {
                     title={i18next.t("application:Signup items")}
                     table={this.state.application.signupItems}
                     onUpdateTable={(value) => {
-                      if (value.find(item => item.name === "Invitation code") !== undefined) {
-                        if (this.state.application.invitationCodes.length === 0) {
-                          Setting.showMessage("error", i18next.t("application:You must add at least one invitation code first"));
-                          return;
-                        }
-                      }
                       this.updateApplicationField("signupItems", value);
                     }}
                   />
@@ -858,16 +837,9 @@ class ApplicationEditPage extends React.Component {
                 </Col>
                 <Col span={22} >
                   <List
-                    rowKey="code"
                     header={
                       <Button type="primary" onClick={() => {
-                        ApplicationBackend.addInvitationCode(this.state.application).then((res) => {
-                          if (res.status === "ok") {
-                            this.updateApplicationField("invitationCodes", res.data);
-                          } else {
-                            Setting.showMessage("error", res.msg);
-                          }
-                        });
+                        this.updateApplicationField("invitationCodes", Setting.addRow(this.state.application.invitationCodes, Setting.getRandomName()));
                       }
                       }>
                         {i18next.t("general:Add")}
@@ -876,10 +848,14 @@ class ApplicationEditPage extends React.Component {
                     dataSource={this.state.application.invitationCodes.map(code => {
                       return {code: code};
                     })}
-                    renderItem={(item) => (
-                      <List.Item>
+                    renderItem={(item, index) => (
+                      <List.Item key={index}>
                         <Space>
-                          {item.code}
+                          <Input value={item.code} onChange={e => {
+                            const invitationCodes = [...this.state.application.invitationCodes];
+                            invitationCodes[index] = e.target.value;
+                            this.updateApplicationField("invitationCodes", invitationCodes);
+                          }} />
                         </Space>
                         <Space>
                           <Button icon={<CopyOutlined />} onClick={() => {
