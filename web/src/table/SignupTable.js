@@ -79,6 +79,7 @@ class SignupTable extends React.Component {
             {name: "Password", displayName: i18next.t("general:Password")},
             {name: "Confirm password", displayName: i18next.t("signup:Confirm")},
             {name: "Phone", displayName: i18next.t("general:Phone")},
+            {name: "Invitation code", displayName: i18next.t("application:Invitation code")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
           ];
 

@@ -124,6 +124,16 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 		}
 	}
 
+	if len(application.InvitationCodes) > 0 {
+		if form.InvitationCode == "" {
+			return i18n.Translate(lang, "check:Invitation code cannot be blank")
+		} else {
+			if !util.InSlice(application.InvitationCodes, form.InvitationCode) {
+				return i18n.Translate(lang, "check:Invitation code is invalid")
+			}
+		}
+	}
+
 	return ""
 }
 
