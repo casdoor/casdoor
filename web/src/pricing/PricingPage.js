@@ -94,7 +94,6 @@ class PricingPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
-
         this.setState({
           loading: false,
           pricing: res.data,
