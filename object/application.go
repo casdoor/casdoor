@@ -58,6 +58,7 @@ type Application struct {
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 	Tags                []string        `xorm:"mediumtext" json:"tags"`
+	InvitationCodes     []string        `xorm:"mediumtext" json:"invitationCodes"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
@@ -311,6 +312,11 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 			application.OrganizationObj.PasswordSalt = "***"
 		}
 	}
+
+	if application.InvitationCodes != nil {
+		application.InvitationCodes = []string{"***"}
+	}
+
 	return application
 }
 
@@ -533,4 +539,17 @@ func applicationChangeTrigger(oldName string, newName string) error {
 	}
 
 	return session.Commit()
+}
+
+func AddInvitationCode(application *Application) ([]string, error) {
+	application.InvitationCodes = append(application.InvitationCodes, util.GenerateInvitationCode())
+	affected, err := UpdateApplication(application.GetId(), application)
+	if err != nil {
+		return nil, err
+	}
+	if !affected {
+		return nil, fmt.Errorf("failed to add invitation code")
+	}
+
+	return application.InvitationCodes, nil
 }

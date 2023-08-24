@@ -13,7 +13,21 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  ConfigProvider,
+  Input,
+  List,
+  Popover,
+  Radio,
+  Result,
+  Row,
+  Select, Space,
+  Switch,
+  Upload
+} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -136,6 +150,10 @@ class ApplicationEditPage extends React.Component {
 
         if (application.tags === null || application.tags === undefined) {
           application.tags = [];
+        }
+
+        if (application.invitationCodes === null) {
+          application.invitationCodes = [];
         }
 
         this.setState({
@@ -813,18 +831,77 @@ class ApplicationEditPage extends React.Component {
         </Row>
         {
           !this.state.application.enableSignUp ? null : (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <SignupTable
-                  title={i18next.t("application:Signup items")}
-                  table={this.state.application.signupItems}
-                  onUpdateTable={(value) => {this.updateApplicationField("signupItems", value);}}
-                />
-              </Col>
-            </Row>
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <SignupTable
+                    title={i18next.t("application:Signup items")}
+                    table={this.state.application.signupItems}
+                    onUpdateTable={(value) => {
+                      if (value.find(item => item.name === "Invitation code") !== undefined) {
+                        if (this.state.application.invitationCodes.length === 0) {
+                          Setting.showMessage("error", i18next.t("application:You must add at least one invitation code first"));
+                          return;
+                        }
+                      }
+                      this.updateApplicationField("signupItems", value);
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("application:Invitation code"), i18next.t("application:Invitation code - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <List
+                    rowKey="code"
+                    header={
+                      <Button type="primary" onClick={() => {
+                        ApplicationBackend.addInvitationCode(this.state.application).then((res) => {
+                          if (res.status === "ok") {
+                            this.updateApplicationField("invitationCodes", res.data);
+                          } else {
+                            Setting.showMessage("error", res.msg);
+                          }
+                        });
+                      }
+                      }>
+                        {i18next.t("general:Add")}
+                      </Button>
+                    }
+                    dataSource={this.state.application.invitationCodes.map(code => {
+                      return {code: code};
+                    })}
+                    renderItem={(item) => (
+                      <List.Item>
+                        <Space>
+                          {item.code}
+                        </Space>
+                        <Space>
+                          <Button icon={<CopyOutlined />} onClick={() => {
+                            copy(item.code);
+                            Setting.showMessage("success", i18next.t("application:Invitation code copied to clipboard successfully"));
+                          }
+                          }>
+                            {i18next.t("general:Copy")}
+                          </Button>
+                          <Button type="primary" danger onClick={() => {
+                            this.updateApplicationField("invitationCodes", this.state.application.invitationCodes.filter(code => code !== item.code));
+                          }
+                          }>
+                            {i18next.t("general:Delete")}
+                          </Button>
+                        </Space>
+                      </List.Item>
+                    )}
+                  />
+                </Col>
+              </Row>
+            </React.Fragment>
           )
         }
         <Row style={{marginTop: "20px"}} >

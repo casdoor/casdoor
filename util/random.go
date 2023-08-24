@@ -23,3 +23,7 @@ func GenerateClientId() string {
 func GenerateClientSecret() string {
 	return randstr.Hex(20)
 }
+
+func GenerateInvitationCode() string {
+	return randstr.String(16)
+}

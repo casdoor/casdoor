@@ -245,3 +245,27 @@ func (c *ApiController) DeleteApplication() {
 	c.Data["json"] = wrapActionResponse(object.DeleteApplication(&application))
 	c.ServeJSON()
 }
+
+// AddInvitationCode
+// @Title AddInvitationCode
+// @Tag Application API
+// @Description add an invitation code
+// @Param   body   body   string  true    "The details of the application"
+// @Success 200 {object} string The Response object
+// @router /add-invitation-code [post]
+func (c *ApiController) AddInvitationCode() {
+	var application object.Application
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	invitationCodes, err := object.AddInvitationCode(&application)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(invitationCodes)
+}

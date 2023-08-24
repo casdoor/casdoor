@@ -124,6 +124,18 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 		}
 	}
 
+	if application.IsSignupItemVisible("Invitation code") {
+		if form.InvitationCode == "" {
+			if application.IsSignupItemRequired("Invitation code") {
+				return i18n.Translate(lang, "check:Invitation code cannot be blank")
+			}
+		} else {
+			if !util.ContainsString(application.InvitationCodes, form.InvitationCode) {
+				return i18n.Translate(lang, "check:Invitation code is invalid")
+			}
+		}
+	}
+
 	return ""
 }
 

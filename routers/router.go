@@ -165,6 +165,7 @@ func initAPI() {
 	beego.Router("/api/update-application", &controllers.ApiController{}, "POST:UpdateApplication")
 	beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 	beego.Router("/api/delete-application", &controllers.ApiController{}, "POST:DeleteApplication")
+	beego.Router("/api/add-invitation-code", &controllers.ApiController{}, "POST:AddInvitationCode")
 
 	beego.Router("/api/get-resources", &controllers.ApiController{}, "GET:GetResources")
 	beego.Router("/api/get-resource", &controllers.ApiController{}, "GET:GetResource")
