@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table, Upload} from "antd";
 import moment from "moment";
@@ -24,33 +24,6 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {UploadOutlined} from "@ant-design/icons";
 
 class PermissionListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.ref2 = createRef();
-    this.ref3 = createRef();
-    this.steps = [
-      {
-        title: "Permission List",
-        description: "All users associated with a single Casdoor organization are shared between the organization's applications and therefore have access to the applications. Sometimes you may want to restrict users' access to certain applications, or certain resources in a certain application. In this case, you can use Permission implemented by Casbin.",
-        target: () => this.ref1,
-      },
-      {
-        title: "Permission Add",
-        description: "In the Casdoor Web UI, you can add a Model for your organization in the Model configuration item, and a Policy for your organization in the Permission configuration item. ",
-        target: () => this.ref2,
-      },
-      {
-        title: "Permission Upload",
-        description: "With Casbin Online Editor, you can get Model and Policy files suitable for your usage scenarios. You can easily import the Model file into Casdoor through the Casdoor Web UI for use by the built-in Casbin. ",
-        target: () => this.ref3,
-        nextButtonProps: {
-          children: "Go to \"Model List\"",
-        },
-      },
-    ];
-  }
-
   newPermission() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -137,15 +110,11 @@ class PermissionListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button type="primary" size="small" ref={ref => this.ref3 = ref}>
+        <Button type="primary" size="small" id = "upload-button">
           <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
         </Button></Upload>
     );
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/models");
-  };
 
   renderTable(permissions) {
     const columns = [
@@ -390,10 +359,10 @@ class PermissionListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={permissions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Permissions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "5px"}} type="primary" size="small" ref={ref => this.ref2 = ref} onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button style={{marginRight: "5px"}} type="primary" size="small" id = "add-button" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
               {
                 this.renderPermissionUpload()
               }

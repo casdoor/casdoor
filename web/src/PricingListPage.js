@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table} from "antd";
 import moment from "moment";
@@ -23,21 +23,6 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class PricingListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Price List",
-        description: "Casdoor can be used as subscription management system via plan, pricing and subscription.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Subscription List\"",
-        },
-      },
-    ];
-  }
-
   newPricing() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -85,10 +70,6 @@ class PricingListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/subscriptions");
-  };
 
   renderTable(pricings) {
     const columns = [
@@ -185,7 +166,7 @@ class PricingListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={pricings} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Pricings")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addPricing.bind(this)}>{i18next.t("general:Add")}</Button>

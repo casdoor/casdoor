@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import "github.com/casdoor/casdoor/object"
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard [get]
 func (c *ApiController) GetDashboard() {
-	data, err := object.GetDashboard()
+	owner := c.Input().Get("owner")
+
+	data, err := object.GetDashboard(owner)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

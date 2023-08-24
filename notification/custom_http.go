@@ -12,37 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+package notification
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/casdoor/casdoor/proxy"
 )
 
-type HttpSmsClient struct {
+type HttpNotificationClient struct {
 	endpoint  string
 	method    string
 	paramName string
-	text      string
 }
 
-func newHttpSmsClient(endpoint string, method string, paramName string, text string) (*HttpSmsClient, error) {
-	client := &HttpSmsClient{
+func NewCustomHttpProvider(endpoint string, method string, paramName string) (*HttpNotificationClient, error) {
+	client := &HttpNotificationClient{
 		endpoint:  endpoint,
 		method:    method,
 		paramName: paramName,
-		text:      text,
 	}
 	return client, nil
 }
 
-func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber ...string) error {
+func (c *HttpNotificationClient) Send(ctx context.Context, subject string, content string) error {
 	var err error
 
-	content := param["code"]
 	httpClient := proxy.DefaultHttpClient
 
 	req, err := http.NewRequest(c.method, c.endpoint, bytes.NewBufferString(content))
@@ -68,7 +66,7 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("SendMessage() error, custom HTTP SMS request failed with status: %s", resp.Status)
+		return fmt.Errorf("SendMessage() error, custom HTTP Notification request failed with status: %s", resp.Status)
 	}
 
 	return err

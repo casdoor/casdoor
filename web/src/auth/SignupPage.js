@@ -506,6 +506,21 @@ class SignupPage extends React.Component {
           <Input.Password />
         </Form.Item>
       );
+    } else if (signupItem.name === "Invitation code") {
+      return (
+        <Form.Item
+          name="invitationCode"
+          label={i18next.t("application:Invitation code")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your invitation code!"),
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+      );
     } else if (signupItem.name === "Agreement") {
       return AgreementModal.renderAgreementFormItem(application, required, tailFormItemLayout, this);
     }

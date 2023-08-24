@@ -27,7 +27,7 @@ type Dashboard struct {
 	SubscriptionCounts []int `json:"subscriptionCounts"`
 }
 
-func GetDashboard() (*Dashboard, error) {
+func GetDashboard(owner string) (*Dashboard, error) {
 	dashboard := &Dashboard{
 		OrganizationCounts: make([]int, 31),
 		UserCounts:         make([]int, 31),
@@ -47,7 +47,7 @@ func GetDashboard() (*Dashboard, error) {
 	wg.Add(5)
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&organizations); err != nil {
+		if err := ormer.Engine.Find(&organizations, &Organization{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -55,7 +55,7 @@ func GetDashboard() (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&users); err != nil {
+		if err := ormer.Engine.Find(&users, &User{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -63,7 +63,7 @@ func GetDashboard() (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&providers); err != nil {
+		if err := ormer.Engine.Find(&providers, &Provider{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -71,7 +71,7 @@ func GetDashboard() (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&applications); err != nil {
+		if err := ormer.Engine.Find(&applications, &Application{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -79,7 +79,7 @@ func GetDashboard() (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&subscriptions); err != nil {
+		if err := ormer.Engine.Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()

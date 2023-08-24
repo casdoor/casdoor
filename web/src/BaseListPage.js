@@ -18,6 +18,7 @@ import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import i18next from "i18next";
 import * as Setting from "./Setting";
+import * as TourConfig from "./TourConfig";
 
 class BaseListPage extends React.Component {
   constructor(props) {
@@ -32,7 +33,8 @@ class BaseListPage extends React.Component {
       loading: false,
       searchText: "",
       searchedColumn: "",
-      isTourVisible: Setting.getTourVisible(),
+      isAuthorized: true,
+      isTourVisible: TourConfig.getTourVisible(),
     };
   }
 
@@ -42,7 +44,7 @@ class BaseListPage extends React.Component {
   };
 
   handleTourChange = () => {
-    this.setState({isTourVisible: Setting.getTourVisible()});
+    this.setState({isTourVisible: TourConfig.getTourVisible()});
   };
 
   componentDidMount() {
@@ -154,8 +156,34 @@ class BaseListPage extends React.Component {
   };
 
   setIsTourVisible = () => {
-    Setting.setIsTourVisible(false);
+    TourConfig.setIsTourVisible(false);
     this.setState({isTourVisible: false});
+  };
+
+  getSteps = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    const steps = TourConfig.getSteps();
+    steps.map((item, index) => {
+      if (!index) {
+        item.target = () => document.querySelector("table");
+      } else {
+        item.target = () => document.getElementById(item.id) || null;
+      }
+      if (index === steps.length - 1) {
+        item.nextButtonProps = {
+          children: TourConfig.getNextButtonChild(nextPathName),
+        };
+      }
+    });
+    return steps;
+  };
+
+  handleTourComplete = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    if (nextPathName !== "") {
+      this.props.history.push("/" + nextPathName);
+      TourConfig.setIsTourVisible(true);
+    }
   };
 
   render() {
@@ -178,7 +206,7 @@ class BaseListPage extends React.Component {
         <Tour
           open={this.state.isTourVisible}
           onClose={this.setIsTourVisible}
-          steps={this.steps}
+          steps={this.getSteps()}
           indicatorsRender={(current, total) => (
             <span>
               {current + 1} / {total}

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import React from "react";
+import * as TourConfig from "../TourConfig";
 import * as Setting from "../Setting";
 import {Tooltip} from "antd";
 import "../App.less";
@@ -22,7 +23,7 @@ class OpenTour extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isTourVisible: props.isTourVisible ?? Setting.getTourVisible(),
+      isTourVisible: props.isTourVisible ?? TourConfig.getTourVisible(),
     };
   }
 
@@ -30,7 +31,7 @@ class OpenTour extends React.Component {
     return (
       <Tooltip title="You can open the tour.">
         <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} >
-          <QuestionOutlined style={{fontSize: "24px", color: "#4d4d4d"}} onClick={() => Setting.setIsTourVisible(true)} />
+          <QuestionOutlined style={{fontSize: "24px", color: "#4d4d4d"}} onClick={() => TourConfig.setIsTourVisible(true)} />
         </div>
       </Tooltip>
     );

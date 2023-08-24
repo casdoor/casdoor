@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
@@ -23,21 +23,6 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class SubscriptionListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Subscription List",
-        description: "Subscription helps to manage user's selected plan that make easy to control application's features access.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Sysinfo List\"",
-        },
-      },
-    ];
-  }
-
   newSubscription() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -95,10 +80,6 @@ class SubscriptionListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/sysinfo");
-  };
 
   renderTable(subscriptions) {
     const columns = [
@@ -235,7 +216,7 @@ class SubscriptionListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={subscriptions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Subscriptions")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addSubscription.bind(this)}>{i18next.t("general:Add")}</Button>

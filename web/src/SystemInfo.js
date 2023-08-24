@@ -14,8 +14,9 @@
 
 import {Card, Col, Divider, Progress, Row, Spin, Tour} from "antd";
 import * as SystemBackend from "./backend/SystemInfo";
-import React, {createRef} from "react";
+import React from "react";
 import * as Setting from "./Setting";
+import * as TourConfig from "./TourConfig";
 import i18next from "i18next";
 import PrometheusInfoTable from "./table/PrometheusInfoTable";
 
@@ -29,43 +30,8 @@ class SystemInfo extends React.Component {
       prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
       loading: true,
-      isTourVisible: Setting.getTourVisible(),
+      isTourVisible: TourConfig.getTourVisible(),
     };
-    this.ref1 = createRef();
-    this.ref2 = createRef();
-    this.ref3 = createRef();
-    this.ref4 = createRef();
-    this.ref5 = createRef();
-    this.steps = [
-      {
-        title: "CPU Usage",
-        description: "You can see the CPU usage in real time.",
-        target: () => this.ref1,
-      },
-      {
-        title: "Memory Usage",
-        description: "You can see the Memory usage in real time.",
-        target: () => this.ref2,
-      },
-      {
-        title: "API Latency",
-        description: "You can see the usage statistics of each API latency in real time.",
-        target: () => this.ref3,
-      },
-      {
-        title: "API Throughput",
-        description: "You can see the usage statistics of each API throughput in real time.",
-        target: () => this.ref4,
-      },
-      {
-        title: "About Casdoor",
-        description: "You can get more Casdoor information in this card.",
-        target: () => this.ref5,
-        nextButtonProps: {
-          children: "Go to \"Syncer List\"",
-        },
-      },
-    ];
   }
 
   UNSAFE_componentWillMount() {
@@ -108,7 +74,7 @@ class SystemInfo extends React.Component {
   }
 
   handleTourChange = () => {
-    this.setState({isTourVisible: Setting.getTourVisible()});
+    this.setState({isTourVisible: TourConfig.getTourVisible()});
   };
 
   componentWillUnmount() {
@@ -118,13 +84,31 @@ class SystemInfo extends React.Component {
     window.removeEventListener("storageTourChanged", this.handleTourChange);
   }
 
-  handleTourComplete = () => {
-    this.props.history.push("/syncers");
+  setIsTourVisible = () => {
+    TourConfig.setIsTourVisible(false);
+    this.setState({isTourVisible: false});
   };
 
-  setIsTourVisible = () => {
-    Setting.setIsTourVisible(false);
-    this.setState({isTourVisible: false});
+  handleTourComplete = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    if (nextPathName !== "") {
+      this.props.history.push("/" + nextPathName);
+      TourConfig.setIsTourVisible(true);
+    }
+  };
+
+  getSteps = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    const steps = TourConfig.getSteps();
+    steps.map((item, index) => {
+      item.target = () => document.getElementById(item.id) || null;
+      if (index === steps.length - 1) {
+        item.nextButtonProps = {
+          children: TourConfig.getNextButtonChild(nextPathName),
+        };
+      }
+    });
+    return steps;
   };
 
   render() {
@@ -159,28 +143,28 @@ class SystemInfo extends React.Component {
             <Col span={12}>
               <Row gutter={[10, 10]}>
                 <Col span={12}>
-                  <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref1 = ref}>
+                  <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}} id = "cpu-card">
                     {this.state.loading ? <Spin size="large" /> : cpuUi}
                   </Card>
                 </Col>
                 <Col span={12}>
-                  <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}ref={ref => this.ref2 = ref}>
+                  <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}} id = "memory-card">
                     {this.state.loading ? <Spin size="large" /> : memUi}
                   </Card>
                 </Col>
                 <Col span={24}>
-                  <Card title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref3 = ref}>
+                  <Card title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}} id = "latency-card">
                     {this.state.loading ? <Spin size="large" /> : latencyUi}
                   </Card>
                 </Col>
                 <Col span={24}>
-                  <Card title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}} ref={ref => this.ref4 = ref}>
+                  <Card title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}} id = "throughput-card">
                     {this.state.loading ? <Spin size="large" /> : throughputUi}
                   </Card>
                 </Col>
               </Row>
               <Divider />
-              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}} ref={ref => this.ref5 = ref}>
+              <Card title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}} id = "about-card">
                 <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
                 GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
                 <br />
@@ -196,7 +180,7 @@ class SystemInfo extends React.Component {
           <Tour
             open={this.state.isTourVisible}
             onClose={this.setIsTourVisible}
-            steps={this.steps}
+            steps={this.getSteps()}
             indicatorsRender={(current, total) => (
               <span>
                 {current + 1} / {total}

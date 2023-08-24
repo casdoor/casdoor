@@ -23,7 +23,7 @@ import (
 
 func getNotificationClient(provider *Provider) (notify.Notifier, error) {
 	var client notify.Notifier
-	client, err := notification.GetNotificationProvider(provider.Type, provider.AppId, provider.Receiver)
+	client, err := notification.GetNotificationProvider(provider.Type, provider.AppId, provider.Receiver, provider.Method, provider.Title)
 	if err != nil {
 		return nil, err
 	}

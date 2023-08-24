@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table, Upload} from "antd";
 import moment from "moment";
@@ -24,20 +24,6 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {UploadOutlined} from "@ant-design/icons";
 
 class RoleListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Role List",
-        description: "Each user may have multiple roles. You can see the user's roles on the user's profile.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Permission List\"",
-        },
-      },
-    ];
-  }
   newRole() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -123,11 +109,6 @@ class RoleListPage extends BaseListPage {
       </Upload>
     );
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/permissions");
-  };
-
   renderTable(roles) {
     const columns = [
       {
@@ -254,7 +235,7 @@ class RoleListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={roles} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Roles")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addRole.bind(this)}>{i18next.t("general:Add")}</Button>

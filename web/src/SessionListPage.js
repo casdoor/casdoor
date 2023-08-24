@@ -17,25 +17,11 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import {Table, Tag} from "antd";
-import React, {createRef} from "react";
+import React from "react";
 import * as SessionBackend from "./backend/SessionBackend";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class SessionListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Session List",
-        description: "You can get Session ID in this list.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Product List\"",
-        },
-      },
-    ];
-  }
   deleteSession(i) {
     SessionBackend.deleteSession(this.state.data[i])
       .then((res) => {
@@ -53,10 +39,6 @@ class SessionListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/products");
-  };
 
   renderTable(sessions) {
     const columns = [
@@ -137,7 +119,7 @@ class SessionListPage extends BaseListPage {
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={sessions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           loading={this.state.loading}
-          onChange={this.handleTableChange} ref={ref => this.ref1 = ref}
+          onChange={this.handleTableChange}
         />
       </div>
     );

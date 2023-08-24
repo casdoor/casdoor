@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Space, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
@@ -33,23 +33,6 @@ class UserListPage extends BaseListPage {
       organizationName: this.props.organizationName ?? this.props.match?.params.organizationName ?? this.props.account.owner,
       organization: null,
     };
-    this.ref1 = createRef();
-    this.ref2 = createRef();
-    this.steps = [
-      {
-        title: "User List",
-        description: "As an authentication platform, Casdoor is able to manage users.",
-        target: () => this.ref1,
-      },
-      {
-        title: "Import users",
-        description: "You can add new users or update existing Casdoor users by uploading a XLSX file of user information.",
-        target: () => this.ref2,
-        nextButtonProps: {
-          children: "Go to \"Application List\"",
-        },
-      },
-    ];
   }
 
   UNSAFE_componentWillMount() {
@@ -204,16 +187,12 @@ class UserListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button type="primary" size="small" ref={ref => this.ref2 = ref}>
+        <Button type="primary" size="small" id = "upload-button">
           <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
         </Button>
       </Upload>
     );
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/applications");
-  };
 
   renderTable(users) {
     const columns = [
@@ -444,7 +423,7 @@ class UserListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>

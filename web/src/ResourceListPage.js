@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Button, Image, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
@@ -26,23 +26,6 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ResourceListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.ref1 = createRef();
-    this.ref2 = createRef();
-    this.steps = [
-      {
-        title: "Resource List",
-        description: "You can upload resources in casdoor. Before upload resources, you need to configure a storage provider. Please see Storage Provider.",
-        target: () => this.ref1,
-      },
-      {
-        title: "Upload Resource",
-        description: "Users can upload resources such as files and images to the previously configured cloud storage.",
-        target: () => this.ref2,
-        nextButtonProps: {
-          children: "Go to \"Role List\"",
-        },
-      },
-    ];
   }
 
   componentDidMount() {
@@ -93,16 +76,12 @@ class ResourceListPage extends BaseListPage {
     return (
       <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.csv,.xls,.xlsx" showUploadList={false}
         beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
-        <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small" ref={ref => this.ref2 = ref}>
+        <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small" id = "upload-button">
           {i18next.t("resource:Upload a file...")}
         </Button>
       </Upload>
     );
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/roles");
-  };
 
   renderTable(resources) {
     const columns = [
@@ -310,7 +289,7 @@ class ResourceListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={resources} rowKey="name" size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Resources")}&nbsp;&nbsp;&nbsp;&nbsp;
               {/* <Button type="primary" size="small" onClick={this.addResource.bind(this)}>{i18next.t("general:Add")}</Button>*/}

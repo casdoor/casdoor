@@ -12,16 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package notification
+package conf
 
-import "github.com/nikoksr/notify"
+import (
+	"encoding/json"
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
-	if typ == "Telegram" {
-		return NewTelegramProvider(appId, receiver)
-	} else if typ == "Custom HTTP" {
-		return NewCustomHttpProvider(receiver, method, title)
+	"github.com/beego/beego"
+)
+
+type Quota struct {
+	Organization int `json:"organization"`
+	User         int `json:"user"`
+	Application  int `json:"application"`
+	Provider     int `json:"provider"`
+}
+
+var quota = &Quota{-1, -1, -1, -1}
+
+func init() {
+	initQuota()
+}
+
+func initQuota() {
+	res := beego.AppConfig.String("quota")
+	if res != "" {
+		err := json.Unmarshal([]byte(res), quota)
+		if err != nil {
+			panic(err)
+		}
 	}
+}
 
-	return nil, nil
+func GetConfigQuota() *Quota {
+	return quota
 }

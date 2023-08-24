@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Controlled as CodeMirror} from "react-codemirror2";
 import {Link} from "react-router-dom";
 import {Button, Popover, Table} from "antd";
@@ -39,21 +39,6 @@ e = some(where (p.eft == allow))
 m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`;
 
 class ModelListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Model List",
-        description: "Model defines your permission policy structure, and how requests should match these permission policies and their effects. Then you can user model in Permission.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Adapter List\"",
-        },
-      },
-    ];
-  }
-
   newModel() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -99,10 +84,6 @@ class ModelListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/adapters");
-  };
 
   renderTable(models) {
     const columns = [
@@ -212,7 +193,7 @@ class ModelListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={models} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered
-          pagination={paginationProps} ref={ref => this.ref1 = ref}
+          pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Models")}&nbsp;&nbsp;&nbsp;&nbsp;

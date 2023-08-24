@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Switch, Table} from "antd";
 import moment from "moment";
@@ -23,21 +23,6 @@ import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 
 class PlanListPage extends BaseListPage {
-  constructor(props) {
-    super(props);
-    this.ref1 = createRef();
-    this.steps = [
-      {
-        title: "Plan List",
-        description: "Plan  describe list of application's features with own name and price. Plan features depends on Casdoor role with set of permissions.That allow to describe plan's features independ on naming and price. For example: plan may has diffrent prices depends on county or date.",
-        target: () => this.ref1,
-        nextButtonProps: {
-          children: "Go to \"Price List\"",
-        },
-      },
-    ];
-  }
-
   newPlan() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
@@ -89,10 +74,6 @@ class PlanListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/pricings");
-  };
 
   renderTable(plans) {
     const columns = [
@@ -216,7 +197,7 @@ class PlanListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={plans} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Plans")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button type="primary" size="small" onClick={this.addPlan.bind(this)}>{i18next.t("general:Add")}</Button>

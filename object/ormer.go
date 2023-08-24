@@ -16,13 +16,13 @@ package object
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"runtime"
 	"strings"
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
@@ -32,7 +32,24 @@ import (
 	_ "modernc.org/sqlite" // db = sqlite
 )
 
-var ormer *Ormer
+var (
+	ormer                   *Ormer = nil
+	isCreateDatabaseDefined        = false
+	createDatabase                 = true
+)
+
+func InitFlag() {
+	if !isCreateDatabaseDefined {
+		isCreateDatabaseDefined = true
+		createDatabase = getCreateDatabaseFlag()
+	}
+}
+
+func getCreateDatabaseFlag() bool {
+	res := flag.Bool("createDatabase", false, "true if you need to create database")
+	flag.Parse()
+	return *res
+}
 
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
@@ -42,12 +59,12 @@ func InitConfig() {
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
 
-	InitAdapter(true)
-	CreateTables(true)
+	InitAdapter()
+	CreateTables()
 	DoMigration()
 }
 
-func InitAdapter(createDatabase bool) {
+func InitAdapter() {
 	if createDatabase {
 		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 		if err != nil {
@@ -62,7 +79,7 @@ func InitAdapter(createDatabase bool) {
 	ormer.Engine.SetTableMapper(tbMapper)
 }
 
-func CreateTables(createDatabase bool) {
+func CreateTables() {
 	if createDatabase {
 		err := ormer.CreateDatabase()
 		if err != nil {
@@ -229,11 +246,6 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Record))
-	if err != nil {
-		panic(err)
-	}
-
 	err = a.Engine.Sync2(new(Webhook))
 	if err != nil {
 		panic(err)
@@ -293,77 +305,4 @@ func (a *Ormer) createTable() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
-	if offset != -1 && limit != -1 {
-		session.Limit(limit, offset)
-	}
-	if owner != "" {
-		session = session.And("owner=?", owner)
-	}
-	if field != "" && value != "" {
-		if util.FilterField(field) {
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-		}
-	}
-	if sortField == "" || sortOrder == "" {
-		sortField = "created_time"
-	}
-	if sortOrder == "ascend" {
-		session = session.Asc(util.SnakeString(sortField))
-	} else {
-		session = session.Desc(util.SnakeString(sortField))
-	}
-	return session
-}
-
-func GetSessionForUser(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
-	session := ormer.Engine.Prepare()
-	if offset != -1 && limit != -1 {
-		session.Limit(limit, offset)
-	}
-	if owner != "" {
-		if offset == -1 {
-			session = session.And("owner=?", owner)
-		} else {
-			session = session.And("a.owner=?", owner)
-		}
-	}
-	if field != "" && value != "" {
-		if util.FilterField(field) {
-			if offset != -1 {
-				field = fmt.Sprintf("a.%s", field)
-			}
-			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%s%%", value))
-		}
-	}
-	if sortField == "" || sortOrder == "" {
-		sortField = "created_time"
-	}
-
-	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tableName := tableNamePrefix + "user"
-	if offset == -1 {
-		if sortOrder == "ascend" {
-			session = session.Asc(util.SnakeString(sortField))
-		} else {
-			session = session.Desc(util.SnakeString(sortField))
-		}
-	} else {
-		if sortOrder == "ascend" {
-			session = session.Alias("a").
-				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
-				Select("b.*").
-				Asc("a." + util.SnakeString(sortField))
-		} else {
-			session = session.Alias("a").
-				Join("INNER", []string{tableName, "b"}, "a.owner = b.owner and a.name = b.name").
-				Select("b.*").
-				Desc("a." + util.SnakeString(sortField))
-		}
-	}
-
-	return session
 }

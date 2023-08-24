@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {createRef} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
 import moment from "moment";
@@ -26,23 +26,6 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class ProviderListPage extends BaseListPage {
   constructor(props) {
     super(props);
-    this.ref1 = createRef();
-    this.ref2 = createRef();
-    this.steps = [
-      {
-        title: "Provider List",
-        description: "We have 6 kinds of providers:OAuth providers、SMS Providers、Email Providers、Storage Providers、Payment Provider、Captcha Provider.",
-        target: () => this.ref1,
-      },
-      {
-        title: "Provider Add",
-        description: "You must add the provider to application, then you can use the provider in your application",
-        target: () => this.ref2,
-        nextButtonProps: {
-          children: "Go to \"Resource List\"",
-        },
-      },
-    ];
   }
 
   componentDidMount() {
@@ -105,10 +88,6 @@ class ProviderListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
-
-  handleTourComplete = () => {
-    this.props.history.push("/resources");
-  };
 
   renderTable(providers) {
     const columns = [
@@ -255,10 +234,10 @@ class ProviderListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={providers} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          ref={ref => this.ref1 = ref} title={() => (
+          title={() => (
             <div>
               {i18next.t("general:Providers")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" ref={ref => this.ref2 = ref} onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button type="primary" size="small" id = "add-button" onClick={this.addProvider.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
           loading={this.state.loading}
