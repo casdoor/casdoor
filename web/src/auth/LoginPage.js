@@ -361,7 +361,6 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          window.console.log(res, values);
           const callback = (res) => {
             const responseType = values["type"];
 
