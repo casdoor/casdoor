@@ -57,7 +57,6 @@ class ProductBuyPage extends React.Component {
   }
 
   async getProduct() {
-    window.console.log(this.state);
     if (!this.state.owner || (!this.state.productName && !this.state.pricingName)) {
       return ;
     }
