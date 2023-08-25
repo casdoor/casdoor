@@ -563,9 +563,7 @@ class App extends Component {
 
   renderContent() {
     const onClick = ({key}) => {
-      if (key === "/swagger") {
-        window.open(Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger", "_blank");
-      } else {
+      if (key !== "/swagger") {
         if (this.state.requiredEnableMfa) {
           Setting.showMessage("info", "Please enable MFA first!");
         } else {
