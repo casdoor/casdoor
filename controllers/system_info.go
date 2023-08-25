@@ -47,19 +47,16 @@ func (c *ApiController) GetSystemInfo() {
 // @router /get-version-info [get]
 func (c *ApiController) GetVersionInfo() {
 	versionInfo, err := util.GetVersionInfo()
+	if versionInfo.Version != "" {
+		c.ResponseOk(versionInfo)
+		return
+	}
+
+	versionInfo, err = util.GetVersionInfoFromFile()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	if versionInfo.Version == "" {
-		versionInfo, err = util.GetVersionInfoFromFile()
-
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	}
-
 	c.ResponseOk(versionInfo)
 }
 
