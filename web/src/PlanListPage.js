@@ -36,6 +36,7 @@ class PlanListPage extends BaseListPage {
       pricePerYear: 100,
       currency: "USD",
       isEnabled: true,
+      paymentProviders: [],
       role: "",
       options: [],
     };

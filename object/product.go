@@ -283,6 +283,9 @@ func CreateProductForPlan(plan *Plan) *Product {
 		Providers: plan.PaymentProviders,
 		State:     "Published",
 	}
+	if product.Providers == nil {
+		product.Providers = []string{}
+	}
 	return product
 }
 
