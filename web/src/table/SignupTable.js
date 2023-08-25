@@ -137,7 +137,7 @@ class SignupTable extends React.Component {
           }
 
           return (
-            <Switch checked={text} onChange={checked => {
+            <Switch checked={text} disabled={record.name === "Password"} onChange={checked => {
               this.updateField(table, index, "required", checked);
             }} />
           );
