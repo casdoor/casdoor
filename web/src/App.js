@@ -448,7 +448,7 @@ class App extends Component {
 
       res.push(Setting.getItem(<Link style={{color: "black"}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
         Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
-        Setting.getItem(<a target="_blank" rel="noreferrer" href={"http://localhost:18001/records"}>{i18next.t("general:Records")}</a>, "/records"),
+        Setting.getItem(<a target="_blank" rel="noreferrer" href={Conf.CasvisorUrl}>{i18next.t("general:Records")}</a>, "/records"),
         Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       ]));
 
@@ -569,7 +569,7 @@ class App extends Component {
 
   renderContent() {
     const onClick = ({key}) => {
-      if (key !== "/swagger") {
+      if (key !== "/swagger" && key !== "/records") {
         if (this.state.requiredEnableMfa) {
           Setting.showMessage("info", "Please enable MFA first!");
         } else {
