@@ -66,8 +66,11 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 		}
 	}
 
-	if len(form.Password) <= 5 {
-		return i18n.Translate(lang, "check:Password must have at least 6 characters")
+	if application.IsSignupItemVisible("Password") {
+		msg := CheckPasswordComplexityByOrg(organization, form.Password)
+		if msg != "" {
+			return msg
+		}
 	}
 
 	if application.IsSignupItemVisible("Email") {
@@ -126,7 +129,9 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 
 	if len(application.InvitationCodes) > 0 {
 		if form.InvitationCode == "" {
-			return i18n.Translate(lang, "check:Invitation code cannot be blank")
+			if application.IsSignupItemRequired("Invitation code") {
+				return i18n.Translate(lang, "check:Invitation code cannot be blank")
+			}
 		} else {
 			if !util.InSlice(application.InvitationCodes, form.InvitationCode) {
 				return i18n.Translate(lang, "check:Invitation code is invalid")
