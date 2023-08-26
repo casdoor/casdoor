@@ -423,13 +423,13 @@ class ProviderEditPage extends React.Component {
                 [
                   {id: "Captcha", name: "Captcha"},
                   {id: "Email", name: "Email"},
+                  {id: "Notification", name: "Notification"},
                   {id: "OAuth", name: "OAuth"},
                   {id: "Payment", name: "Payment"},
                   {id: "SAML", name: "SAML"},
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
-                  {id: "Notification", name: "Notification"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)

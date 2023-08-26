@@ -274,7 +274,7 @@ export const OtherProviderInfo = {
     },
     "Custom HTTP": {
       logo: `${StaticBaseUrl}/img/email_default.png`,
-      url: "https://casdoor.org/docs/provider/sms/overview",
+      url: "https://casdoor.org/docs/provider/notification/overview",
     },
   },
 };
@@ -927,7 +927,7 @@ export function getProviderTypeOptions(category) {
         {id: "Local File System", name: "Local File System"},
         {id: "AWS S3", name: "AWS S3"},
         {id: "MinIO", name: "MinIO"},
-        {id: "Aliyun OSS", name: "Aliyun OSS"},
+        {id: "Aliyun OSS", name: "Alibaba Cloud OSS"},
         {id: "Tencent Cloud COS", name: "Tencent Cloud COS"},
         {id: "Azure Blob", name: "Azure Blob"},
         {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
