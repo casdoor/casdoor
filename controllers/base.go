@@ -61,6 +61,10 @@ func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 		return true
 	}
 
+	if user == nil || user2 == nil {
+		return false
+	}
+
 	if user.Owner == user2.Owner && user.Name == user2.Name {
 		return true
 	}
