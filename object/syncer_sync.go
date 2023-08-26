@@ -19,9 +19,9 @@ import (
 	"time"
 )
 
-func (syncer *Syncer) syncUsers() {
+func (syncer *Syncer) syncUsers() error {
 	if len(syncer.TableColumns) == 0 {
-		return
+		return fmt.Errorf("The syncer table columns should not be empty")
 	}
 
 	fmt.Printf("Running syncUsers()..\n")
@@ -35,10 +35,8 @@ func (syncer *Syncer) syncUsers() {
 		line := fmt.Sprintf("[%s] %s\n", timestamp, err.Error())
 		_, err = updateSyncerErrorText(syncer, line)
 		if err != nil {
-			panic(err)
+			return err
 		}
-
-		return
 	}
 
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
@@ -71,28 +69,30 @@ func (syncer *Syncer) syncUsers() {
 					updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 					updatedUser.Hash = oHash
 					updatedUser.PreHash = oHash
+
+					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
 					_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
 					if err != nil {
-						panic(err)
+						return err
 					}
-					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
 				}
 			} else {
 				if user.PreHash == oHash {
 					if !syncer.IsReadOnly {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
+
+						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 						_, err = syncer.updateUser(updatedOUser)
 						if err != nil {
-							panic(err)
+							return err
 						}
-						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
 					}
 
 					// update preHash
 					user.PreHash = user.Hash
 					_, err = SetUserField(user, "pre_hash", user.PreHash)
 					if err != nil {
-						panic(err)
+						return err
 					}
 				} else {
 					if user.Hash == oHash {
@@ -100,17 +100,18 @@ func (syncer *Syncer) syncUsers() {
 						user.PreHash = user.Hash
 						_, err = SetUserField(user, "pre_hash", user.PreHash)
 						if err != nil {
-							panic(err)
+							return err
 						}
 					} else {
 						updatedUser := syncer.createUserFromOriginalUser(oUser, affiliationMap)
 						updatedUser.Hash = oHash
 						updatedUser.PreHash = oHash
+
+						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
 						_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
 						if err != nil {
-							panic(err)
+							return err
 						}
-						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
 					}
 				}
 			}
@@ -118,7 +119,7 @@ func (syncer *Syncer) syncUsers() {
 	}
 	_, err = AddUsersInBatch(newUsers)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if !syncer.IsReadOnly {
@@ -126,12 +127,22 @@ func (syncer *Syncer) syncUsers() {
 			id := user.Id
 			if _, ok := oUserMap[id]; !ok {
 				newOUser := syncer.createOriginalUserFromUser(user)
+
+				fmt.Printf("New oUser: %v\n", newOUser)
 				_, err = syncer.addUser(newOUser)
 				if err != nil {
-					panic(err)
+					return err
 				}
-				fmt.Printf("New oUser: %v\n", newOUser)
 			}
 		}
+	}
+
+	return nil
+}
+
+func (syncer *Syncer) syncUsersNoError() {
+	err := syncer.syncUsers()
+	if err != nil {
+		panic(err)
 	}
 }

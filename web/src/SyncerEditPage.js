@@ -236,10 +236,28 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.databaseType} onChange={(value => {this.updateSyncerField("databaseType", value);})}>
+              {
+                [
+                  {id: "mysql", name: "MySQL"},
+                  {id: "postgres", name: "PostgreSQL"},
+                  {id: "mssql", name: "SQL Server"},
+                  {id: "oracle", name: "Oracle"},
+                  {id: "sqlite3", name: "Sqlite 3"},
+                ].map((databaseType, index) => <Option key={index} value={databaseType.id}>{databaseType.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.syncer.host} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.syncer.host} onChange={e => {
               this.updateSyncerField("host", e.target.value);
             }} />
           </Col>
@@ -272,24 +290,6 @@ class SyncerEditPage extends React.Component {
             <Input value={this.state.syncer.password} onChange={e => {
               this.updateSyncerField("password", e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.databaseType} onChange={(value => {this.updateSyncerField("databaseType", value);})}>
-              {
-                [
-                  {id: "mysql", name: "MySQL"},
-                  {id: "postgres", name: "PostgreSQL"},
-                  {id: "mssql", name: "SQL Server"},
-                  {id: "oracle", name: "Oracle"},
-                  {id: "sqlite3", name: "Sqlite 3"},
-                ].map((databaseType, index) => <Option key={index} value={databaseType.id}>{databaseType.name}</Option>)
-              }
-            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

@@ -250,7 +250,7 @@ func (syncer *Syncer) getKey() string {
 	return key
 }
 
-func RunSyncer(syncer *Syncer) {
+func RunSyncer(syncer *Syncer) error {
 	syncer.initAdapter()
-	syncer.syncUsers()
+	return syncer.syncUsers()
 }

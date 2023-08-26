@@ -86,8 +86,13 @@ class SyncerListPage extends BaseListPage {
     this.setState({loading: true});
     SyncerBackend.runSyncer("admin", this.state.data[i].name)
       .then((res) => {
-        this.setState({loading: false});
-        Setting.showMessage("success", "Syncer sync users successfully");
+        if (res.status === "ok") {
+          this.setState({loading: false});
+          Setting.showMessage("success", i18next.t("general:Successfully synced"));
+        } else {
+          this.setState({loading: false});
+          Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: ${res.msg}`);
+        }
       }
       )
       .catch(error => {
@@ -152,6 +157,13 @@ class SyncerListPage extends BaseListPage {
         ],
       },
       {
+        title: i18next.t("syncer:Database type"),
+        dataIndex: "databaseType",
+        key: "databaseType",
+        width: "130px",
+        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
+      },
+      {
         title: i18next.t("provider:Host"),
         dataIndex: "host",
         key: "host",
@@ -184,13 +196,6 @@ class SyncerListPage extends BaseListPage {
         ...this.getColumnSearchProps("password"),
       },
       {
-        title: i18next.t("syncer:Database type"),
-        dataIndex: "databaseType",
-        key: "databaseType",
-        width: "120px",
-        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
-      },
-      {
         title: i18next.t("syncer:Database"),
         dataIndex: "database",
         key: "database",
@@ -208,7 +213,7 @@ class SyncerListPage extends BaseListPage {
         title: i18next.t("syncer:Sync interval"),
         dataIndex: "syncInterval",
         key: "syncInterval",
-        width: "130px",
+        width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("syncInterval"),
       },
