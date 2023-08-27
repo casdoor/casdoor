@@ -31,8 +31,8 @@ type Credential struct {
 }
 
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
-	sql := fmt.Sprintf("select * from %s", syncer.getTable())
-	results, err := syncer.Ormer.Engine.QueryString(sql)
+	var results []map[string]string
+	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
 	if err != nil {
 		return nil, err
 	}
@@ -64,19 +64,10 @@ func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*Origina
 
 func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
 	m := syncer.getMapFromOriginalUser(user)
-	keyString, valueString := syncer.getSqlKeyValueStringFromMap(m)
-
-	sql := fmt.Sprintf("insert into %s (%s) values (%s)", syncer.getTable(), keyString, valueString)
-	res, err := syncer.Ormer.Engine.Exec(sql)
+	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).Insert(m)
 	if err != nil {
 		return false, err
 	}
-
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-
 	return affected != 0, nil
 }
 
@@ -93,23 +84,14 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 
 func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	key := syncer.getKey()
-
 	m := syncer.getMapFromOriginalUser(user)
 	pkValue := m[key]
 	delete(m, key)
-	setString := syncer.getSqlSetStringFromMap(m)
 
-	sql := fmt.Sprintf("update %s set %s where %s = %s", syncer.getTable(), setString, key, pkValue)
-	res, err := syncer.Ormer.Engine.Exec(sql)
+	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).ID(pkValue).Update(&m)
 	if err != nil {
 		return false, err
 	}
-
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-
 	return affected != 0, nil
 }
 

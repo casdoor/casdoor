@@ -322,19 +322,3 @@ func (syncer *Syncer) getSqlSetStringFromMap(m map[string]string) string {
 	}
 	return strings.Join(tokens, ", ")
 }
-
-func (syncer *Syncer) getSqlKeyValueStringFromMap(m map[string]string) (string, string) {
-	typeMap := syncer.getTableColumnsTypeMap()
-
-	keys := []string{}
-	values := []string{}
-	for k, v := range m {
-		if typeMap[k] == "string" {
-			v = fmt.Sprintf("'%s'", v)
-		}
-
-		keys = append(keys, k)
-		values = append(values, v)
-	}
-	return strings.Join(keys, ", "), strings.Join(values, ", ")
-}
