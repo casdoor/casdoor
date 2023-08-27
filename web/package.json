@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
-    "build": "craco --max_old_space_size=4096 build",
+    "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
