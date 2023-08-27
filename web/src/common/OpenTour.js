@@ -17,7 +17,6 @@ import {Tooltip} from "antd";
 import {QuestionCircleOutlined} from "@ant-design/icons";
 import * as TourConfig from "../TourConfig";
 import * as Setting from "../Setting";
-import {TourUrlList} from "../TourConfig";
 
 class OpenTour extends React.Component {
   constructor(props) {
@@ -28,8 +27,8 @@ class OpenTour extends React.Component {
   }
 
   canTour = () => {
-    const pathName = window.location.pathname.replace("/", "");
-    return TourUrlList.indexOf(pathName) !== -1 || pathName === "";
+    const path = window.location.pathname.replace("/", "");
+    return TourConfig.TourUrlList.indexOf(path) !== -1 || path === "";
   };
 
   render() {
