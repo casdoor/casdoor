@@ -17,6 +17,7 @@ import {Tooltip} from "antd";
 import {QuestionCircleOutlined} from "@ant-design/icons";
 import * as TourConfig from "../TourConfig";
 import * as Setting from "../Setting";
+import {TourUrlList} from "../TourConfig";
 
 class OpenTour extends React.Component {
   constructor(props) {
@@ -26,13 +27,23 @@ class OpenTour extends React.Component {
     };
   }
 
+  canTour = () => {
+    const pathName = window.location.pathname.replace("/", "");
+    return TourUrlList.indexOf(pathName) !== -1 || pathName === "";
+  };
+
   render() {
     return (
-      <Tooltip title="Click to enable the help wizard">
-        <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} onClick={() => TourConfig.setIsTourVisible(true)} >
-          <QuestionCircleOutlined style={{fontSize: "24px", color: "#4d4d4d"}} />
+      this.canTour() ?
+        <Tooltip title="Click to enable the help wizard.">
+          <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} onClick={() => TourConfig.setIsTourVisible(true)} >
+            <QuestionCircleOutlined style={{fontSize: "24px", color: "#4d4d4d"}} />
+          </div>
+        </Tooltip>
+        :
+        <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, cursor: "not-allowed", ...this.props.style}} >
+          <QuestionCircleOutlined style={{fontSize: "24px", color: "#adadad"}} />
         </div>
-      </Tooltip>
     );
   }
 }
