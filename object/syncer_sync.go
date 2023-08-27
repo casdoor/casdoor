@@ -27,7 +27,7 @@ func (syncer *Syncer) syncUsers() error {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, _, _ := syncer.getUserMap()
-	oUsers, oUserMap, err := syncer.getOriginalUserMap()
+	oUsers, _, err := syncer.getOriginalUserMap()
 	if err != nil {
 		fmt.Printf(err.Error())
 
@@ -51,6 +51,11 @@ func (syncer *Syncer) syncUsers() error {
 	myUsers := map[string]*User{}
 	for _, m := range users {
 		myUsers[syncer.getUserValue(m, key)] = m
+	}
+
+	myOUsers := map[string]*User{}
+	for _, m := range oUsers {
+		myOUsers[syncer.getUserValue(m, key)] = m
 	}
 
 	newUsers := []*User{}
@@ -124,8 +129,8 @@ func (syncer *Syncer) syncUsers() error {
 
 	if !syncer.IsReadOnly {
 		for _, user := range users {
-			id := user.Id
-			if _, ok := oUserMap[id]; !ok {
+			primary := syncer.getUserValue(user, key)
+			if _, ok := myOUsers[primary]; !ok {
 				newOUser := syncer.createOriginalUserFromUser(user)
 
 				fmt.Printf("New oUser: %v\n", newOUser)
