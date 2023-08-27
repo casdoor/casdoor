@@ -13,15 +13,23 @@
 // limitations under the License.
 
 import {ArrowUpOutlined} from "@ant-design/icons";
-import {Card, Col, Row, Statistic} from "antd";
+import {Card, Col, Row, Statistic, Tour} from "antd";
 import * as echarts from "echarts";
 import i18next from "i18next";
 import React from "react";
 import * as DashboardBackend from "../backend/DashboardBackend";
 import * as Setting from "../Setting";
+import * as TourConfig from "../TourConfig";
 
 const Dashboard = (props) => {
   const [dashboardData, setDashboardData] = React.useState(null);
+  const [isTourVisible, setIsTourVisible] = React.useState(TourConfig.getTourVisible());
+  const nextPathName = TourConfig.getNextUrl("home");
+
+  React.useEffect(() => {
+    window.addEventListener("storageTourChanged", handleTourChange);
+    return () => window.removeEventListener("storageTourChanged", handleTourChange);
+  }, []);
 
   React.useEffect(() => {
     if (!Setting.isLocalAdminUser(props.account)) {
@@ -41,6 +49,35 @@ const Dashboard = (props) => {
       }
     });
   }, [props.owner]);
+
+  const handleTourChange = () => {
+    setIsTourVisible(TourConfig.getTourVisible());
+  };
+
+  const setIsTourToLocal = () => {
+    TourConfig.setIsTourVisible(false);
+    setIsTourVisible(false);
+  };
+
+  const handleTourComplete = () => {
+    if (nextPathName !== "") {
+      props.history.push("/" + nextPathName);
+      TourConfig.setIsTourVisible(true);
+    }
+  };
+
+  const getSteps = () => {
+    const steps = TourConfig.TourObj["home"];
+    steps.map((item, index) => {
+      item.target = () => document.getElementById(item.id) || null;
+      if (index === steps.length - 1) {
+        item.nextButtonProps = {
+          children: TourConfig.getNextButtonChild(nextPathName),
+        };
+      }
+    });
+    return steps;
+  };
 
   const renderEChart = () => {
     if (dashboardData === null) {
@@ -83,7 +120,7 @@ const Dashboard = (props) => {
     myChart.setOption(option);
 
     return (
-      <Row gutter={80}>
+      <Row id="statistic" gutter={80}>
         <Col span={50}>
           <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Statistic title={i18next.t("home:Total users")} fontSize="100px" value={dashboardData.userCounts[30]} valueStyle={{fontSize: "30px"}} style={{width: "200px", paddingLeft: "10px"}} />
@@ -112,6 +149,17 @@ const Dashboard = (props) => {
     <div style={{display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center"}}>
       {renderEChart()}
       <div id="echarts-chart" style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}} />
+      <Tour
+        open={isTourVisible}
+        onClose={setIsTourToLocal}
+        steps={getSteps()}
+        indicatorsRender={(current, total) => (
+          <span>
+            {current + 1} / {total}
+          </span>
+        )}
+        onFinish={handleTourComplete}
+      />
     </div>
   );
 };

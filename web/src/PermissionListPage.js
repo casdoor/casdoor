@@ -110,11 +110,12 @@ class PermissionListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button type="primary" size="small">
+        <Button id="upload-button" type="primary" size="small">
           <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
         </Button></Upload>
     );
   }
+
   renderTable(permissions) {
     const columns = [
       // https://github.com/ant-design/ant-design/issues/22184
@@ -361,7 +362,7 @@ class PermissionListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Permissions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button id="add-button" style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
               {
                 this.renderPermissionUpload()
               }

@@ -13,11 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Input, Result, Space} from "antd";
+import {Button, Input, Result, Space, Tour} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import i18next from "i18next";
 import * as Setting from "./Setting";
+import * as TourConfig from "./TourConfig";
 
 class BaseListPage extends React.Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class BaseListPage extends React.Component {
       searchText: "",
       searchedColumn: "",
       isAuthorized: true,
+      isTourVisible: TourConfig.getTourVisible(),
     };
   }
 
@@ -41,14 +43,23 @@ class BaseListPage extends React.Component {
     this.fetch({pagination});
   };
 
+  handleTourChange = () => {
+    this.setState({isTourVisible: TourConfig.getTourVisible()});
+  };
+
   componentDidMount() {
     window.addEventListener("storageOrganizationChanged", this.handleOrganizationChange);
+    window.addEventListener("storageTourChanged", this.handleTourChange);
     if (!Setting.isAdminUser(this.props.account)) {
       Setting.setOrganization("All");
     }
   }
 
   componentWillUnmount() {
+    if (this.state.intervalId !== null) {
+      clearInterval(this.state.intervalId);
+    }
+    window.removeEventListener("storageTourChanged", this.handleTourChange);
     window.removeEventListener("storageOrganizationChanged", this.handleOrganizationChange);
   }
 
@@ -144,6 +155,37 @@ class BaseListPage extends React.Component {
     });
   };
 
+  setIsTourVisible = () => {
+    TourConfig.setIsTourVisible(false);
+    this.setState({isTourVisible: false});
+  };
+
+  getSteps = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    const steps = TourConfig.getSteps();
+    steps.map((item, index) => {
+      if (!index) {
+        item.target = () => document.querySelector("table");
+      } else {
+        item.target = () => document.getElementById(item.id) || null;
+      }
+      if (index === steps.length - 1) {
+        item.nextButtonProps = {
+          children: TourConfig.getNextButtonChild(nextPathName),
+        };
+      }
+    });
+    return steps;
+  };
+
+  handleTourComplete = () => {
+    const nextPathName = TourConfig.getNextUrl();
+    if (nextPathName !== "") {
+      this.props.history.push("/" + nextPathName);
+      TourConfig.setIsTourVisible(true);
+    }
+  };
+
   render() {
     if (!this.state.isAuthorized) {
       return (
@@ -161,6 +203,17 @@ class BaseListPage extends React.Component {
         {
           this.renderTable(this.state.data)
         }
+        <Tour
+          open={this.state.isTourVisible}
+          onClose={this.setIsTourVisible}
+          steps={this.getSteps()}
+          indicatorsRender={(current, total) => (
+            <span>
+              {current + 1} / {total}
+            </span>
+          )}
+          onFinish={this.handleTourComplete}
+        />
       </div>
     );
   }

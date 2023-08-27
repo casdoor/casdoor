@@ -76,7 +76,7 @@ class ResourceListPage extends BaseListPage {
     return (
       <Upload maxCount={1} accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.csv,.xls,.xlsx" showUploadList={false}
         beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
-        <Button icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
+        <Button id="upload-button" icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
           {i18next.t("resource:Upload a file...")}
         </Button>
       </Upload>

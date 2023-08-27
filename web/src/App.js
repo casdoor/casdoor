@@ -89,6 +89,7 @@ import ThemeSelect from "./common/select/ThemeSelect";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
 import AccountAvatar from "./account/AccountAvatar";
+import OpenTour from "./common/OpenTour";
 
 const {Header, Footer, Content} = Layout;
 
@@ -379,6 +380,7 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
+          <OpenTour />
           {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
             <OrganizationSelect
               initValue={Setting.getOrganization()}
