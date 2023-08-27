@@ -37,7 +37,7 @@ const AppListPage = (props) => {
     return applications.map(application => {
       let homepageUrl = application.homepageUrl;
       if (homepageUrl === "<custom-url>") {
-        homepageUrl = this.props.account.homepage;
+        homepageUrl = props.account.homepage;
       }
 
       return {
