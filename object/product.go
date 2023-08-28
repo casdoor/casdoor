@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
