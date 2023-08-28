@@ -29,15 +29,10 @@ type Pricing struct {
 	Description string `xorm:"varchar(100)" json:"description"`
 
 	Plans         []string `xorm:"mediumtext" json:"plans"`
+	Modes         []string `json:"modes"`
 	IsEnabled     bool     `json:"isEnabled"`
 	TrialDuration int      `json:"trialDuration"`
 	Application   string   `xorm:"varchar(100)" json:"application"`
-
-	Submitter   string `xorm:"varchar(100)" json:"submitter"`
-	Approver    string `xorm:"varchar(100)" json:"approver"`
-	ApproveTime string `xorm:"varchar(100)" json:"approveTime"`
-
-	State string `xorm:"varchar(100)" json:"state"`
 }
 
 func (pricing *Pricing) GetId() string {

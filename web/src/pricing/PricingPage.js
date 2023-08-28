@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Card, Col, Row} from "antd";
+import {Card, Col, Radio, Row} from "antd";
 import * as PricingBackend from "../backend/PricingBackend";
 import * as PlanBackend from "../backend/PlanBackend";
 import CustomGithubCorner from "../common/CustomGithubCorner";
@@ -33,6 +33,8 @@ class PricingPage extends React.Component {
       userName: params.get("user"),
       pricing: props.pricing,
       plans: null,
+      modes: props.pricing?.modes ?? [],
+      selectedMode: props.pricing?.modes?.length ?? 0 >= 1 ? props.pricing?.modes[0] : null,
       loading: false,
     };
   }
@@ -83,27 +85,69 @@ class PricingPage extends React.Component {
       });
   }
 
-  loadPricing(pricingName) {
-    if (pricingName === undefined) {
+  async loadPricing(pricingName) {
+    if (!pricingName) {
       return;
     }
-
-    PricingBackend.getPricing(this.state.owner, pricingName)
-      .then((res) => {
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-        this.setState({
-          loading: false,
-          pricing: res.data,
-        });
-        this.onUpdatePricing(res.data);
+    try {
+      const res = await PricingBackend.getPricing(this.state.owner, pricingName);
+      if (res.status === "error") {
+        throw new Error(res.msg);
+      }
+      const pricing = res.data;
+      const modes = pricing.modes ?? [];
+      if (modes.length === 0) {
+        throw new Error("pricing does not configure available modes");
+      }
+      this.setState({
+        loading: false,
+        pricing: res.data,
+        modes: modes,
+        selectedMode: modes[0],
       });
+      this.onUpdatePricing(pricing);
+    } catch (err) {
+      Setting.showMessage("error", err.message);
+      return;
+    }
   }
 
   onUpdatePricing(pricing) {
     this.props.onUpdatePricing(pricing);
+  }
+
+  renderSelectMode() {
+    if (!this.state.modes || this.state.modes.length <= 1) {
+      return null;
+    }
+    const optionsMap = {
+      "month": {label: "Monthly", value: "month"},
+      "year": {label: "Yearly", value: "year"},
+    };
+    return (
+      <Radio.Group
+        value={this.state.selectedMode}
+        size="large"
+        buttonStyle="solid"
+        onChange={e => {
+          this.setState({selectedMode: e.target.value});
+        }}
+      >
+        {
+          this.state.modes.map(mode => {
+            const option = optionsMap[mode];
+            if (!option) {
+              return (
+                <Radio.Button key={mode} value={mode}>{mode}</Radio.Button>
+              );
+            }
+            return (
+              <Radio.Button key={mode} value={option.value}>{option.label}</Radio.Button>
+            );
+          })
+        }
+      </Radio.Group>
+    );
   }
 
   renderCards() {
@@ -136,7 +180,14 @@ class PricingPage extends React.Component {
             {
               this.state.plans.map(item => {
                 return (
-                  <SingleCard style={{marginRight: "5px", marginLeft: "5px"}} link={getUrlByPlan(item.name)} key={item.name} plan={item} isSingle={this.state.plans.length === 1} />
+                  <SingleCard
+                    style={{marginRight: "5px", marginLeft: "5px"}}
+                    link={getUrlByPlan(item.name)}
+                    key={item.name}
+                    plan={item}
+                    mode={this.state.selectedMode}
+                    isSingle={this.state.plans.length === 1}
+                  />
                 );
               })
             }
@@ -164,15 +215,22 @@ class PricingPage extends React.Component {
               <Row style={{width: "100%", marginTop: "40px"}}>
                 <Col span={24} style={{display: "flex", justifyContent: "center"}} >
                   {
+                    this.renderSelectMode()
+                  }
+                </Col>
+              </Row>
+              <Row style={{width: "100%", marginTop: "40px"}}>
+                <Col span={24} style={{display: "flex", justifyContent: "center"}} >
+                  {
                     this.renderCards()
                   }
                 </Col>
               </Row>
-              <Row style={{justifyContent: "center"}}>
+              {/* <Row style={{justifyContent: "center"}}>
                 {pricing && pricing.trialDuration > 0
                   ? <i>{i18next.t("pricing:Free")} {pricing.trialDuration}-{i18next.t("pricing:days trial available!")}</i>
                   : null}
-              </Row>
+              </Row> */}
             </div>
           </div>
         </div>

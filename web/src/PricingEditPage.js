@@ -15,7 +15,7 @@
 import {CopyOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Checkbox, Col, Input, Row, Select, Switch} from "antd";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PricingBackend from "./backend/PricingBackend";
@@ -196,6 +196,26 @@ class PricingEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Modes"), i18next.t("general:Modes - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Checkbox.Group
+              options={[{label: "Monthly", value: "month"}, {label: "Yearly", value: "year"}]}
+              value={() => {
+                try {
+                  return this.state.pricing.modes ?? [];
+                } catch {
+                  return ["month"];
+                }
+              }}
+              onChange={modes => {
+                this.updatePricingField("modes", modes);
+              }}
+            />
+          </Col>
+        </Row>
+        {/* <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("pricing:Trial duration"), i18next.t("pricing:Trial duration - Tooltip"))} :
           </Col>
           <Col span={22} >
@@ -203,7 +223,7 @@ class PricingEditPage extends React.Component {
               this.updatePricingField("trialDuration", value);
             }} />
           </Col>
-        </Row>
+        </Row> */}
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
