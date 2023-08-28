@@ -115,7 +115,6 @@ class PricingPage extends React.Component {
   }
 
   renderSelectPeriod() {
-    // if only one subscription mode support, do not render Radio.Group
     if (this.state.periods.length <= 1) {
       return null;
     }
@@ -214,11 +213,11 @@ class PricingPage extends React.Component {
                   }
                 </Col>
               </Row>
-              {/* <Row style={{justifyContent: "center"}}>
+              <Row style={{justifyContent: "center"}}>
                 {pricing && pricing.trialDuration > 0
                   ? <i>{i18next.t("pricing:Free")} {pricing.trialDuration}-{i18next.t("pricing:days trial available!")}</i>
                   : null}
-              </Row> */}
+              </Row>
             </div>
           </div>
         </div>

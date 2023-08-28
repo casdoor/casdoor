@@ -289,11 +289,11 @@ func CreateProductForPlan(plan *Plan, period Period) *Product {
 	return product
 }
 
-func UpdateProductForPlan(plan *Plan, product *Product, mode Period) {
+func UpdateProductForPlan(plan *Plan, product *Product, period Period) {
 	product.Owner = plan.Owner
-	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, mode)
-	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription mode is %v", plan.Name, plan.DisplayName, mode)
-	product.Price = plan.GetPrice(mode)
+	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, period)
+	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription period is %v", plan.Name, plan.DisplayName, period)
+	product.Price = plan.GetPrice(period)
 	product.Providers = plan.PaymentProviders
 	product.Currency = plan.Currency
 }
