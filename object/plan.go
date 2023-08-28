@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -52,8 +53,24 @@ func (plan *Plan) GetPrice(subMode string) float64 {
 	} else if subMode == "month" {
 		return plan.PricePerMonth
 	} else {
-		panic(fmt.Sprintf("invalid subMode: %s", subMode))
+		panic(fmt.Sprintf("invalid subscription mode: %s", subMode))
 	}
+}
+
+func GetDuration(subMode string) (startTime time.Time, endTime time.Time, duration int) {
+	subMode = strings.ToLower(subMode)
+	if subMode == "year" {
+		startTime = time.Now()
+		endTime = startTime.AddDate(1, 0, 0)
+		duration = int(endTime.Sub(startTime).Hours() / 24)
+	} else if subMode == "month" {
+		startTime = time.Now()
+		endTime = startTime.AddDate(0, 1, 0)
+		duration = int(endTime.Sub(startTime).Hours() / 24)
+	} else {
+		panic(fmt.Sprintf("invalid subscription mode: %s", subMode))
+	}
+	return
 }
 
 func GetPlanCount(owner, field, value string) (int64, error) {
