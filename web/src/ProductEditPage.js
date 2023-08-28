@@ -107,6 +107,18 @@ class ProductEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteProduct()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
+        <Row style={{marginTop: "10px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.product.owner} onChange={(value => {this.updateProductField("owner", value);})}>
+              {
+                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
@@ -125,18 +137,6 @@ class ProductEditPage extends React.Component {
             <Input value={this.state.product.displayName} onChange={e => {
               this.updateProductField("displayName", e.target.value);
             }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.product.owner} onChange={(value => {this.updateProductField("owner", value);})}>
-              {
-                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
-              }
-            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -312,7 +312,7 @@ class ProductEditPage extends React.Component {
 
   submitProductEdit(willExist) {
     const product = Setting.deepCopy(this.state.product);
-    ProductBackend.updateProduct(this.state.product.owner, this.state.productName, product)
+    ProductBackend.updateProduct(this.state.organizationName, this.state.productName, product)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
