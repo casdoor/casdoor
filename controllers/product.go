@@ -166,6 +166,7 @@ func (c *ApiController) BuyProduct() {
 	// buy `pricingName/planName` for `paidUserName`
 	pricingName := c.Input().Get("pricingName")
 	planName := c.Input().Get("planName")
+	subMode := c.Input().Get("subMode")
 	paidUserName := c.Input().Get("userName")
 	owner, _ := util.GetOwnerAndNameFromId(id)
 	userId := util.GetId(owner, paidUserName)
@@ -187,7 +188,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, orderId, err := object.BuyProduct(id, user, providerName, pricingName, planName, host)
+	payUrl, orderId, err := object.BuyProduct(id, user, providerName, pricingName, planName, subMode, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

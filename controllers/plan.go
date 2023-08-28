@@ -121,20 +121,52 @@ func (c *ApiController) UpdatePlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if plan.Product != "" {
-		planId := util.GetId(plan.Owner, plan.Product)
+	if plan.ProductMonth != "" {
+		planId := util.GetId(plan.Owner, plan.ProductMonth)
 		product, err := object.GetProduct(planId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, product)
+		object.UpdateProductForPlan(&plan, product, "month")
 		_, err = object.UpdateProduct(planId, product)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
+	} else {
+		productMonth := object.CreateProductForPlan(&plan, "month")
+		_, err = object.AddProduct(productMonth)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		plan.ProductMonth = productMonth.Name
 	}
+
+	if plan.ProductYear != "" {
+		planId := util.GetId(plan.Owner, plan.ProductYear)
+		product, err := object.GetProduct(planId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		object.UpdateProductForPlan(&plan, product, "year")
+		_, err = object.UpdateProduct(planId, product)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		productYear := object.CreateProductForPlan(&plan, "year")
+		_, err = object.AddProduct(productYear)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		plan.ProductYear = productYear.Name
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdatePlan(id, &plan))
 	c.ServeJSON()
 }
@@ -153,14 +185,23 @@ func (c *ApiController) AddPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	// Create a related product for plan
-	product := object.CreateProductForPlan(&plan)
-	_, err = object.AddProduct(product)
+	// Create related products for plan
+	productMonth := object.CreateProductForPlan(&plan, "month")
+	_, err = object.AddProduct(productMonth)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	plan.Product = product.Name
+	plan.ProductMonth = productMonth.Name
+
+	productYear := object.CreateProductForPlan(&plan, "year")
+	_, err = object.AddProduct(productYear)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	plan.ProductYear = productYear.Name
+
 	c.Data["json"] = wrapActionResponse(object.AddPlan(&plan))
 	c.ServeJSON()
 }
@@ -179,8 +220,15 @@ func (c *ApiController) DeletePlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if plan.Product != "" {
-		_, err = object.DeleteProduct(&object.Product{Owner: plan.Owner, Name: plan.Product})
+	if plan.ProductMonth != "" {
+		_, err = object.DeleteProduct(&object.Product{Owner: plan.Owner, Name: plan.ProductMonth})
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+	if plan.ProductYear != "" {
+		_, err = object.DeleteProduct(&object.Product{Owner: plan.Owner, Name: plan.ProductYear})
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

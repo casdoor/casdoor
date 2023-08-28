@@ -31,7 +31,8 @@ type Plan struct {
 	PricePerMonth    float64  `json:"pricePerMonth"`
 	PricePerYear     float64  `json:"pricePerYear"`
 	Currency         string   `xorm:"varchar(100)" json:"currency"`
-	Product          string   `json:"product"`                              // related product id
+	ProductMonth     string   `xorm:"'product'" json:"productMonth"`        // related product id (sub mode is month)
+	ProductYear      string   `json:"productYear"`                          // related product id (sub mode is year)
 	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
 	IsEnabled        bool     `json:"isEnabled"`
 

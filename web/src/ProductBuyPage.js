@@ -31,6 +31,7 @@ class ProductBuyPage extends React.Component {
       productName: props?.productName ?? props?.match?.params?.productName ?? null,
       pricingName: props?.pricingName ?? props?.match?.params?.pricingName ?? null,
       planName: params.get("plan"),
+      subMode: params.get("subMode"),
       userName: params.get("user"),
       product: null,
       pricing: props?.pricing ?? null,
@@ -76,7 +77,14 @@ class ProductBuyPage extends React.Component {
           throw new Error(res.msg);
         }
         const plan = res.data;
-        const productName = plan.product;
+        let productName = "";
+        if (this.state.subMode === "month") {
+          productName = plan.productMonth;
+        } else if (this.state.subMode === "year") {
+          productName = plan.productYear;
+        } else {
+          throw new Error("invalid subMode");
+        }
         await this.setStateAsync({
           pricing: pricing,
           plan: plan,
@@ -142,7 +150,7 @@ class ProductBuyPage extends React.Component {
       isPlacingOrder: true,
     });
 
-    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "")
+    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.subMode ?? "", this.state.userName ?? "")
       .then((res) => {
         if (res.status === "ok") {
           const payUrl = res.data;

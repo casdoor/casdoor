@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/pp"
@@ -103,7 +104,21 @@ func (sub *Subscription) UpdateState() error {
 	return nil
 }
 
-func NewSubscription(owner, userName, pricingName, planName, paymentName string) *Subscription {
+func NewSubscription(owner, userName, pricingName, planName, paymentName, subMode string) *Subscription {
+	subMode = strings.ToLower(subMode)
+	duration := 0
+	endTime := time.Now()
+	startTime := time.Now()
+	if subMode == "month" {
+		endTime = time.Now().AddDate(0, 1, 0)
+		duration = int(endTime.Sub(startTime).Hours() / 24)
+	} else if subMode == "year" {
+		endTime = time.Now().AddDate(1, 0, 0)
+		duration = int(endTime.Sub(startTime).Hours() / 24)
+	} else {
+		panic(fmt.Sprintf("invalid subscription mode: %s", subMode))
+	}
+
 	id := util.GenerateId()[:6]
 	return &Subscription{
 		Owner:       owner,
@@ -116,9 +131,9 @@ func NewSubscription(owner, userName, pricingName, planName, paymentName string)
 		Plan:    planName,
 		Payment: paymentName,
 
-		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0, 0, 30),
-		Duration:  30,              // TODO
+		StartTime: startTime,
+		EndTime:   endTime,
+		Duration:  duration,
 		State:     SubStatePending, // waiting for payment complete
 	}
 }

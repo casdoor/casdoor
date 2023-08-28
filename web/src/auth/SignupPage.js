@@ -136,7 +136,7 @@ class SignupPage extends React.Component {
   getResultPath(application, signupParams) {
     if (signupParams?.plan && signupParams?.pricing) {
       // the prompt page needs the user to be signed in, so for paid-user sign up, just go to buy-plan page
-      return `/buy-plan/${application.organization}/${signupParams?.pricing}?user=${signupParams.username}&plan=${signupParams.plan}`;
+      return `/buy-plan/${application.organization}/${signupParams?.pricing}?user=${signupParams.username}&plan=${signupParams.plan}&subMode=${signupParams.subMode}`;
     }
     if (authConfig.appName === application.name) {
       return "/result";
@@ -179,7 +179,7 @@ class SignupPage extends React.Component {
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
-
+    values.subMode = params.get("subMode");
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {

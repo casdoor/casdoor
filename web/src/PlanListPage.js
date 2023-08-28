@@ -164,11 +164,25 @@ class PlanListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("plan:Related product"),
-        dataIndex: "product",
-        key: "product",
+        title: i18next.t("plan:Related product (month)"),
+        dataIndex: "productMonth",
+        key: "productMonth",
         width: "130px",
-        ...this.getColumnSearchProps("product"),
+        ...this.getColumnSearchProps("productMonth"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/products/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("plan:Related product (year)"),
+        dataIndex: "productYear",
+        key: "productYear",
+        width: "130px",
+        ...this.getColumnSearchProps("productYear"),
         render: (text, record, index) => {
           return (
             <Link to={`/products/${record.owner}/${text}`}>

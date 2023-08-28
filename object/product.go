@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/pp"
 
@@ -158,7 +159,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host string) (string, string, error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, subMode, host string) (string, string, error) {
 	product, err := GetProduct(id)
 	if err != nil {
 		return "", "", err
@@ -189,8 +190,8 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 	if user.Type == "paid-user" {
 		// Create a subscription for `paid-user`
-		if pricingName != "" && planName != "" {
-			sub := NewSubscription(owner, user.Name, pricingName, planName, paymentName)
+		if pricingName != "" && planName != "" && subMode != "" {
+			sub := NewSubscription(owner, user.Name, pricingName, planName, paymentName, subMode)
 			_, err := AddSubscription(sub)
 			if err != nil {
 				return "", "", err
@@ -263,18 +264,25 @@ func ExtendProductWithProviders(product *Product) error {
 	return nil
 }
 
-func CreateProductForPlan(plan *Plan) *Product {
+func CreateProductForPlan(plan *Plan, subMode string) *Product {
+	subMode = strings.ToLower(subMode)
+	price := 0.0
+	if subMode == "year" {
+		price = plan.PricePerYear
+	} else if subMode == "month" {
+		price = plan.PricePerMonth
+	}
 	product := &Product{
 		Owner:       plan.Owner,
 		Name:        fmt.Sprintf("product_%v", util.GetRandomName()),
-		DisplayName: fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		DisplayName: fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, subMode),
 		CreatedTime: plan.CreatedTime,
 
 		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png", // TODO
-		Detail:      fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		Detail:      fmt.Sprintf("This product was auto created for plan %v(%v), subscription mode is %v", plan.Name, plan.DisplayName, subMode),
 		Description: plan.Description,
 		Tag:         "auto_created_product_for_plan",
-		Price:       plan.PricePerMonth, // TODO
+		Price:       price,
 		Currency:    plan.Currency,
 
 		Quantity: 999,
@@ -289,10 +297,17 @@ func CreateProductForPlan(plan *Plan) *Product {
 	return product
 }
 
-func UpdateProductForPlan(plan *Plan, product *Product) {
-	product.DisplayName = fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName)
-	product.Detail = fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName)
-	product.Price = plan.PricePerMonth // TODO
+func UpdateProductForPlan(plan *Plan, product *Product, subMode string) {
+	subMode = strings.ToLower(subMode)
+	price := 0.0
+	if subMode == "year" {
+		price = plan.PricePerYear
+	} else if subMode == "month" {
+		price = plan.PricePerMonth
+	}
+	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, subMode)
+	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription mode is %v", plan.Name, plan.DisplayName, subMode)
+	product.Price = price
 	product.Providers = plan.PaymentProviders
 	product.Currency = plan.Currency
 }
