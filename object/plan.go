@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -42,6 +43,17 @@ type Plan struct {
 
 func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
+}
+
+func (plan *Plan) GetPrice(subMode string) float64 {
+	subMode = strings.ToLower(subMode)
+	if subMode == "year" {
+		return plan.PricePerYear
+	} else if subMode == "month" {
+		return plan.PricePerMonth
+	} else {
+		panic(fmt.Sprintf("invalid subMode: %s", subMode))
+	}
 }
 
 func GetPlanCount(owner, field, value string) (int64, error) {

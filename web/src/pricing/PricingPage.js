@@ -32,7 +32,6 @@ class PricingPage extends React.Component {
       pricingName: (props.pricingName ?? props.match?.params?.pricingName) ?? null,
       userName: params.get("user"),
       pricing: props.pricing,
-      subDuration: "month",
       plans: null,
       loading: false,
     };

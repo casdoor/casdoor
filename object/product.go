@@ -16,8 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
@@ -265,13 +263,6 @@ func ExtendProductWithProviders(product *Product) error {
 }
 
 func CreateProductForPlan(plan *Plan, subMode string) *Product {
-	subMode = strings.ToLower(subMode)
-	price := 0.0
-	if subMode == "year" {
-		price = plan.PricePerYear
-	} else if subMode == "month" {
-		price = plan.PricePerMonth
-	}
 	product := &Product{
 		Owner:       plan.Owner,
 		Name:        fmt.Sprintf("product_%v", util.GetRandomName()),
@@ -282,7 +273,7 @@ func CreateProductForPlan(plan *Plan, subMode string) *Product {
 		Detail:      fmt.Sprintf("This product was auto created for plan %v(%v), subscription mode is %v", plan.Name, plan.DisplayName, subMode),
 		Description: plan.Description,
 		Tag:         "auto_created_product_for_plan",
-		Price:       price,
+		Price:       plan.GetPrice(subMode),
 		Currency:    plan.Currency,
 
 		Quantity: 999,
@@ -298,16 +289,9 @@ func CreateProductForPlan(plan *Plan, subMode string) *Product {
 }
 
 func UpdateProductForPlan(plan *Plan, product *Product, subMode string) {
-	subMode = strings.ToLower(subMode)
-	price := 0.0
-	if subMode == "year" {
-		price = plan.PricePerYear
-	} else if subMode == "month" {
-		price = plan.PricePerMonth
-	}
 	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, subMode)
 	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription mode is %v", plan.Name, plan.DisplayName, subMode)
-	product.Price = price
+	product.Price = plan.GetPrice(subMode)
 	product.Providers = plan.PaymentProviders
 	product.Currency = plan.Currency
 }

@@ -122,14 +122,14 @@ func (c *ApiController) UpdatePlan() {
 		return
 	}
 	if plan.ProductMonth != "" {
-		planId := util.GetId(plan.Owner, plan.ProductMonth)
-		product, err := object.GetProduct(planId)
+		productId := util.GetId(plan.Owner, plan.ProductMonth)
+		productMonth, err := object.GetProduct(productId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, product, "month")
-		_, err = object.UpdateProduct(planId, product)
+		object.UpdateProductForPlan(&plan, productMonth, "month")
+		_, err = object.UpdateProduct(productId, productMonth)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -145,14 +145,14 @@ func (c *ApiController) UpdatePlan() {
 	}
 
 	if plan.ProductYear != "" {
-		planId := util.GetId(plan.Owner, plan.ProductYear)
-		product, err := object.GetProduct(planId)
+		productId := util.GetId(plan.Owner, plan.ProductYear)
+		productYear, err := object.GetProduct(productId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, product, "year")
-		_, err = object.UpdateProduct(planId, product)
+		object.UpdateProductForPlan(&plan, productYear, "year")
+		_, err = object.UpdateProduct(productId, productYear)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
