@@ -163,10 +163,10 @@ func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
 	host := c.Ctx.Request.Host
 	providerName := c.Input().Get("providerName")
-	// buy `pricingName/planName` for `paidUserName`
+	// buy `pricingName/planName` for `paidUserName`, with subscription period `period`
 	pricingName := c.Input().Get("pricingName")
 	planName := c.Input().Get("planName")
-	subMode := c.Input().Get("subMode")
+	period := object.Period(c.Input().Get("period"))
 	paidUserName := c.Input().Get("userName")
 	owner, _ := util.GetOwnerAndNameFromId(id)
 	userId := util.GetId(owner, paidUserName)
@@ -188,7 +188,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, orderId, err := object.BuyProduct(id, user, providerName, pricingName, planName, subMode, host)
+	payUrl, orderId, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, period)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

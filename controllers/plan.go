@@ -114,7 +114,7 @@ func (c *ApiController) GetPlan() {
 // @router /update-plan [post]
 func (c *ApiController) UpdatePlan() {
 	id := c.Input().Get("id")
-
+	owner := util.GetOwnerFromId(id)
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
@@ -122,20 +122,25 @@ func (c *ApiController) UpdatePlan() {
 		return
 	}
 	if plan.ProductMonth != "" {
-		productId := util.GetId(plan.Owner, plan.ProductMonth)
+		productId := util.GetId(owner, plan.ProductMonth)
 		productMonth, err := object.GetProduct(productId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, productMonth, "month")
-		_, err = object.UpdateProduct(productId, productMonth)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if productMonth != nil {
+			object.UpdateProductForPlan(&plan, productMonth, object.PeriodMonthly)
+			_, err = object.UpdateProduct(productId, productMonth)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		} else {
+			plan.ProductMonth = ""
 		}
-	} else {
-		productMonth := object.CreateProductForPlan(&plan, "month")
+	}
+	if plan.ProductMonth == "" {
+		productMonth := object.CreateProductForPlan(&plan, object.PeriodMonthly)
 		_, err = object.AddProduct(productMonth)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -145,20 +150,25 @@ func (c *ApiController) UpdatePlan() {
 	}
 
 	if plan.ProductYear != "" {
-		productId := util.GetId(plan.Owner, plan.ProductYear)
+		productId := util.GetId(owner, plan.ProductYear)
 		productYear, err := object.GetProduct(productId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, productYear, "year")
-		_, err = object.UpdateProduct(productId, productYear)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if productYear != nil {
+			object.UpdateProductForPlan(&plan, productYear, object.PeriodYearly)
+			_, err = object.UpdateProduct(productId, productYear)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		} else {
+			plan.ProductYear = ""
 		}
-	} else {
-		productYear := object.CreateProductForPlan(&plan, "year")
+	}
+	if plan.ProductYear == "" {
+		productYear := object.CreateProductForPlan(&plan, object.PeriodYearly)
 		_, err = object.AddProduct(productYear)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -186,7 +196,7 @@ func (c *ApiController) AddPlan() {
 		return
 	}
 	// Create related products for plan
-	productMonth := object.CreateProductForPlan(&plan, "month")
+	productMonth := object.CreateProductForPlan(&plan, object.PeriodMonthly)
 	_, err = object.AddProduct(productMonth)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -194,7 +204,7 @@ func (c *ApiController) AddPlan() {
 	}
 	plan.ProductMonth = productMonth.Name
 
-	productYear := object.CreateProductForPlan(&plan, "year")
+	productYear := object.CreateProductForPlan(&plan, object.PeriodYearly)
 	_, err = object.AddProduct(productYear)
 	if err != nil {
 		c.ResponseError(err.Error())

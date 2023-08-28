@@ -24,6 +24,7 @@ import i18next from "i18next";
 class PricingPage extends React.Component {
   constructor(props) {
     super(props);
+    const periods = Setting.getValidArray(props.pricing?.billingPeriods, ["Monthly"]);
     const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
@@ -33,8 +34,8 @@ class PricingPage extends React.Component {
       userName: params.get("user"),
       pricing: props.pricing,
       plans: null,
-      modes: props.pricing?.modes ?? [],
-      selectedMode: props.pricing?.modes?.length ?? 0 >= 1 ? props.pricing?.modes[0] : null,
+      periods: periods,
+      selectedPeriod: periods[0],
       loading: false,
     };
   }
@@ -95,15 +96,12 @@ class PricingPage extends React.Component {
         throw new Error(res.msg);
       }
       const pricing = res.data;
-      const modes = pricing.modes ?? [];
-      if (modes.length === 0) {
-        throw new Error("pricing does not configure available modes");
-      }
+      const periods = Setting.getValidArray(pricing?.billingPeriods, ["Monthly"]);
       this.setState({
         loading: false,
         pricing: res.data,
-        modes: modes,
-        selectedMode: modes[0],
+        periods: periods,
+        selectedPeriod: periods[0],
       });
       this.onUpdatePricing(pricing);
     } catch (err) {
@@ -116,33 +114,24 @@ class PricingPage extends React.Component {
     this.props.onUpdatePricing(pricing);
   }
 
-  renderSelectMode() {
-    if (!this.state.modes || this.state.modes.length <= 1) {
+  renderSelectPeriod() {
+    // if only one subscription mode support, do not render Radio.Group
+    if (this.state.periods.length <= 1) {
       return null;
     }
-    const optionsMap = {
-      "month": {label: "Monthly", value: "month"},
-      "year": {label: "Yearly", value: "year"},
-    };
     return (
       <Radio.Group
-        value={this.state.selectedMode}
+        value={this.state.selectedPeriod}
         size="large"
         buttonStyle="solid"
         onChange={e => {
-          this.setState({selectedMode: e.target.value});
+          this.setState({selectedPeriod: e.target.value});
         }}
       >
         {
-          this.state.modes.map(mode => {
-            const option = optionsMap[mode];
-            if (!option) {
-              return (
-                <Radio.Button key={mode} value={mode}>{mode}</Radio.Button>
-              );
-            }
+          this.state.periods.map(period => {
             return (
-              <Radio.Button key={mode} value={option.value}>{option.label}</Radio.Button>
+              <Radio.Button key={period} value={period}>{period}</Radio.Button>
             );
           })
         }
@@ -151,7 +140,6 @@ class PricingPage extends React.Component {
   }
 
   renderCards() {
-
     const getUrlByPlan = (planName) => {
       const pricing = this.state.pricing;
       let signUpUrl = `/signup/${pricing.application}?plan=${planName}&pricing=${pricing.name}`;
@@ -185,7 +173,7 @@ class PricingPage extends React.Component {
                     link={getUrlByPlan(item.name)}
                     key={item.name}
                     plan={item}
-                    mode={this.state.selectedMode}
+                    period={this.state.selectedPeriod}
                     isSingle={this.state.plans.length === 1}
                   />
                 );
@@ -215,7 +203,7 @@ class PricingPage extends React.Component {
               <Row style={{width: "100%", marginTop: "40px"}}>
                 <Col span={24} style={{display: "flex", justifyContent: "center"}} >
                   {
-                    this.renderSelectMode()
+                    this.renderSelectPeriod()
                   }
                 </Col>
               </Row>

@@ -196,20 +196,16 @@ class PricingEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Modes"), i18next.t("general:Modes - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Billing periods"), i18next.t("general:Billing periods - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Checkbox.Group
-              options={[{label: "Monthly", value: "month"}, {label: "Yearly", value: "year"}]}
+              options={[{label: "Monthly", value: "Monthly"}, {label: "Yearly", value: "Yearly"}]}
               value={() => {
-                try {
-                  return this.state.pricing.modes ?? [];
-                } catch {
-                  return ["month"];
-                }
+                return Setting.getValidArray(this.state.pricing.billingPeriods, ["Monthly"]);
               }}
-              onChange={modes => {
-                this.updatePricingField("modes", modes);
+              onChange={periods => {
+                this.updatePricingField("billingPeriods", Setting.getValidArray(periods, ["Monthly"]));
               }}
             />
           </Col>

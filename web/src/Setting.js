@@ -1264,3 +1264,10 @@ export function getCurrencySymbol(currency) {
     return currency;
   }
 }
+
+export function getValidArray(array, defaultValue) {
+  if (!Array.isArray(array) || array.length === 0) {
+    return defaultValue;
+  }
+  return array;
+}

@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -33,8 +32,8 @@ type Plan struct {
 	PricePerMonth    float64  `json:"pricePerMonth"`
 	PricePerYear     float64  `json:"pricePerYear"`
 	Currency         string   `xorm:"varchar(100)" json:"currency"`
-	ProductMonth     string   `xorm:"'product'" json:"productMonth"`        // related product id (sub mode is month)
-	ProductYear      string   `json:"productYear"`                          // related product id (sub mode is year)
+	ProductMonth     string   `xorm:"'product'" json:"productMonth"`
+	ProductYear      string   `json:"productYear"`
 	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
 	IsEnabled        bool     `json:"isEnabled"`
 
@@ -46,29 +45,27 @@ func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
 }
 
-func (plan *Plan) GetPrice(subMode string) float64 {
-	subMode = strings.ToLower(subMode)
-	if subMode == "year" {
+func (plan *Plan) GetPrice(period Period) float64 {
+	if period == PeriodYearly {
 		return plan.PricePerYear
-	} else if subMode == "month" {
+	} else if period == PeriodMonthly {
 		return plan.PricePerMonth
 	} else {
-		panic(fmt.Sprintf("invalid subscription mode: %s", subMode))
+		panic(fmt.Sprintf("invalid subscription period: %s", period))
 	}
 }
 
-func GetDuration(subMode string) (startTime time.Time, endTime time.Time, duration int) {
-	subMode = strings.ToLower(subMode)
-	if subMode == "year" {
+func GetDuration(period Period) (startTime time.Time, endTime time.Time, duration int) {
+	if period == PeriodYearly {
 		startTime = time.Now()
 		endTime = startTime.AddDate(1, 0, 0)
 		duration = int(endTime.Sub(startTime).Hours() / 24)
-	} else if subMode == "month" {
+	} else if period == PeriodMonthly {
 		startTime = time.Now()
 		endTime = startTime.AddDate(0, 1, 0)
 		duration = int(endTime.Sub(startTime).Hours() / 24)
 	} else {
-		panic(fmt.Sprintf("invalid subscription mode: %s", subMode))
+		panic(fmt.Sprintf("invalid subscription period: %s", period))
 	}
 	return
 }

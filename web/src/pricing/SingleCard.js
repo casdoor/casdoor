@@ -28,7 +28,7 @@ class SingleCard extends React.Component {
     };
   }
 
-  renderCard(plan, isSingle, link, mode) {
+  renderCard(plan, isSingle, link, period) {
     return (
       <Col style={{minWidth: "320px", paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px", paddingTop: "0px"}} span={6}>
         <Card
@@ -38,23 +38,24 @@ class SingleCard extends React.Component {
           title={<h2>{plan.displayName}</h2>}
         >
           <Col>
-            {
-              mode === "month" ? (
-                <Row>
-                  <div style={{textAlign: "left"}} className="px-10 mt-5">
-                    <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerMonth}</span>
-                    <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
-                  </div>
-                </Row>
-              ) : mode === "year" ? (
-                <Row>
-                  <div style={{textAlign: "left"}} className="px-10 mt-5">
-                    <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerYear}</span>
-                    <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per year")}</span>
-                  </div>
-                </Row>
-              ) : null
-            }
+            <Row>
+              <div style={{textAlign: "left"}} className="px-10 mt-5">
+                {
+                  period === "Monthly" ? (
+                    <>
+                      <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerMonth}</span>
+                      <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
+                    </>
+                  ) : period === "Yearly" ? (
+                    <>
+                      <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerYear}</span>
+                      <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per year")}</span>
+                    </>
+                  ) : null
+                }
+              </div>
+            </Row>
+
             <Row style={{height: "90px", paddingTop: "15px"}}>
               <div style={{textAlign: "left", fontSize: "18px"}}>
                 <Meta description={plan.description} />
@@ -75,7 +76,7 @@ class SingleCard extends React.Component {
             </ul> */}
 
             <Row style={{paddingTop: "15px"}}>
-              <Button style={{width: "100%", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = `${link}&subMode=${mode}`}>
+              <Button style={{width: "100%", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = `${link}&period=${period}`}>
                 {
                   i18next.t("pricing:Getting started")
                 }
@@ -88,7 +89,7 @@ class SingleCard extends React.Component {
   }
 
   render() {
-    return this.renderCard(this.props.plan, this.props.isSingle, this.props.link, this.props.mode);
+    return this.renderCard(this.props.plan, this.props.isSingle, this.props.link, this.props.period);
   }
 }
 

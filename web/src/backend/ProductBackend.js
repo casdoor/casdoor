@@ -70,8 +70,8 @@ export function deleteProduct(product) {
   }).then(res => res.json());
 }
 
-export function buyProduct(owner, name, providerName, pricingName = "", planName = "", subMode = "", userName = "") {
-  return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerName=${providerName}&pricingName=${pricingName}&planName=${planName}&subMode=${subMode}&userName=${userName}`, {
+export function buyProduct(owner, name, providerName, pricingName = "", planName = "", period = "", userName = "") {
+  return fetch(`${Setting.ServerUrl}/api/buy-product?id=${owner}/${encodeURIComponent(name)}&providerName=${providerName}&pricingName=${pricingName}&planName=${planName}&period=${period}&userName=${userName}`, {
     method: "POST",
     credentials: "include",
     headers: {
