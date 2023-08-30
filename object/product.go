@@ -190,8 +190,15 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	if user.Type == "paid-user" {
 		// Create a subscription for `paid-user`
 		if pricingName != "" && planName != "" {
-			sub := NewSubscription(owner, user.Name, pricingName, planName, paymentName)
-			_, err := AddSubscription(sub)
+			plan, err := GetPlan(util.GetId(owner, planName))
+			if err != nil {
+				return "", "", err
+			}
+			if plan == nil {
+				return "", "", fmt.Errorf("the plan: %s does not exist", planName)
+			}
+			sub := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
+			_, err = AddSubscription(sub)
 			if err != nil {
 				return "", "", err
 			}
@@ -267,14 +274,14 @@ func CreateProductForPlan(plan *Plan) *Product {
 	product := &Product{
 		Owner:       plan.Owner,
 		Name:        fmt.Sprintf("product_%v", util.GetRandomName()),
-		DisplayName: fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		DisplayName: fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, plan.Period),
 		CreatedTime: plan.CreatedTime,
 
 		Image:       "https://cdn.casbin.org/img/casdoor-logo_1185x256.png", // TODO
-		Detail:      fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName),
+		Detail:      fmt.Sprintf("This product was auto created for plan %v(%v), subscription period is %v", plan.Name, plan.DisplayName, plan.Period),
 		Description: plan.Description,
 		Tag:         "auto_created_product_for_plan",
-		Price:       plan.PricePerMonth, // TODO
+		Price:       plan.Price,
 		Currency:    plan.Currency,
 
 		Quantity: 999,
@@ -290,9 +297,10 @@ func CreateProductForPlan(plan *Plan) *Product {
 }
 
 func UpdateProductForPlan(plan *Plan, product *Product) {
-	product.DisplayName = fmt.Sprintf("Auto Created Product for Plan %v(%v)", plan.GetId(), plan.DisplayName)
-	product.Detail = fmt.Sprintf("This Product was auto created for Plan %v(%v)", plan.GetId(), plan.DisplayName)
-	product.Price = plan.PricePerMonth // TODO
-	product.Providers = plan.PaymentProviders
+	product.Owner = plan.Owner
+	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, plan.Period)
+	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription period is %v", plan.Name, plan.DisplayName, plan.Period)
+	product.Price = plan.Price
 	product.Currency = plan.Currency
+	product.Providers = plan.PaymentProviders
 }

@@ -50,7 +50,7 @@ type Subscription struct {
 
 	StartTime time.Time         `json:"startTime"`
 	EndTime   time.Time         `json:"endTime"`
-	Duration  int               `json:"duration"`
+	Period    string            `xorm:"varchar(100)" json:"period"`
 	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
 }
 
@@ -103,7 +103,8 @@ func (sub *Subscription) UpdateState() error {
 	return nil
 }
 
-func NewSubscription(owner, userName, pricingName, planName, paymentName string) *Subscription {
+func NewSubscription(owner, userName, planName, paymentName, period string) *Subscription {
+	startTime, endTime := GetDuration(period)
 	id := util.GenerateId()[:6]
 	return &Subscription{
 		Owner:       owner,
@@ -112,13 +113,12 @@ func NewSubscription(owner, userName, pricingName, planName, paymentName string)
 		CreatedTime: util.GetCurrentTime(),
 
 		User:    userName,
-		Pricing: pricingName,
 		Plan:    planName,
 		Payment: paymentName,
 
-		StartTime: time.Now(),
-		EndTime:   time.Now().AddDate(0, 0, 30),
-		Duration:  30,              // TODO
+		StartTime: startTime,
+		EndTime:   endTime,
+		Period:    period,
 		State:     SubStatePending, // waiting for payment complete
 	}
 }

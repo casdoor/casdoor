@@ -14,7 +14,7 @@
 
 import i18next from "i18next";
 import React from "react";
-import {Button, Card, Col} from "antd";
+import {Button, Card, Col, Row} from "antd";
 import * as Setting from "../Setting";
 import {withRouter} from "react-router-dom";
 
@@ -37,36 +37,41 @@ class SingleCard extends React.Component {
           style={isSingle ? {width: "320px", height: "100%"} : {width: "100%", height: "100%", paddingTop: "0px"}}
           title={<h2>{plan.displayName}</h2>}
         >
-          <div style={{textAlign: "left"}} className="px-10 mt-5">
-            <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerMonth}</span>
-            <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
-          </div>
+          <Col>
+            <Row>
+              <div style={{textAlign: "left"}} className="px-10 mt-5">
+                <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.price}</span>
+                <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}> {plan.period === "Yearly" ? i18next.t("plan:per year") : i18next.t("plan:per month")}</span>
+              </div>
+            </Row>
 
-          <br />
-          <div style={{textAlign: "left", fontSize: "18px"}}>
-            <Meta description={plan.description} />
-          </div>
-          <br />
-          <ul style={{listStyleType: "none", paddingLeft: "0px", textAlign: "left"}}>
-            {(plan.options ?? []).map((option) => {
-            // eslint-disable-next-line react/jsx-key
-              return <li>
-                <svg style={{height: "1rem", width: "1rem", fill: "green", marginRight: "10px"}} xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20">
-                  <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"></path>
-                </svg>
-                <span style={{fontSize: "16px"}}>{option}</span>
-              </li>;
-            })}
-          </ul>
-          <div style={{minHeight: "60px"}}>
+            <Row style={{height: "90px", paddingTop: "15px"}}>
+              <div style={{textAlign: "left", fontSize: "18px"}}>
+                <Meta description={plan.description} />
+              </div>
+            </Row>
 
-          </div>
-          <Button style={{width: "100%", position: "absolute", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = link}>
-            {
-              i18next.t("pricing:Getting started")
-            }
-          </Button>
+            {/* <ul style={{listStyleType: "none", paddingLeft: "0px", textAlign: "left"}}>
+              {(plan.options ?? []).map((option) => {
+              // eslint-disable-next-line react/jsx-key
+                return <li>
+                  <svg style={{height: "1rem", width: "1rem", fill: "green", marginRight: "10px"}} xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20">
+                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z"></path>
+                  </svg>
+                  <span style={{fontSize: "16px"}}>{option}</span>
+                </li>;
+              })}
+            </ul> */}
+
+            <Row style={{paddingTop: "15px"}}>
+              <Button style={{width: "100%", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = link}>
+                {
+                  i18next.t("pricing:Getting started")
+                }
+              </Button>
+            </Row>
+          </Col>
         </Card>
       </Col>
     );

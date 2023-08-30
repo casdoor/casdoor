@@ -76,11 +76,10 @@ class ProductBuyPage extends React.Component {
           throw new Error(res.msg);
         }
         const plan = res.data;
-        const productName = plan.product;
         await this.setStateAsync({
           pricing: pricing,
           plan: plan,
-          productName: productName,
+          productName: plan.product,
         });
         this.onUpdatePricing(pricing);
       }

@@ -114,7 +114,7 @@ func (c *ApiController) GetPlan() {
 // @router /update-plan [post]
 func (c *ApiController) UpdatePlan() {
 	id := c.Input().Get("id")
-
+	owner := util.GetOwnerFromId(id)
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
@@ -122,17 +122,19 @@ func (c *ApiController) UpdatePlan() {
 		return
 	}
 	if plan.Product != "" {
-		planId := util.GetId(plan.Owner, plan.Product)
-		product, err := object.GetProduct(planId)
+		productId := util.GetId(owner, plan.Product)
+		product, err := object.GetProduct(productId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		object.UpdateProductForPlan(&plan, product)
-		_, err = object.UpdateProduct(planId, product)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if product != nil {
+			object.UpdateProductForPlan(&plan, product)
+			_, err = object.UpdateProduct(productId, product)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	}
 	c.Data["json"] = wrapActionResponse(object.UpdatePlan(id, &plan))

@@ -179,7 +179,6 @@ class SignupPage extends React.Component {
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
-
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {

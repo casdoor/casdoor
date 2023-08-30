@@ -98,6 +98,7 @@ class ProductEditPage extends React.Component {
   }
 
   renderProduct() {
+    const isCreatedByPlan = this.state.product.tag === "auto_created_product_for_plan";
     return (
       <Card size="small" title={
         <div>
@@ -112,7 +113,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.product.owner} onChange={(value => {this.updateProductField("owner", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || isCreatedByPlan} value={this.state.product.owner} onChange={(value => {this.updateProductField("owner", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -124,7 +125,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.product.name} onChange={e => {
+            <Input value={this.state.product.name} disabled={isCreatedByPlan} onChange={e => {
               this.updateProductField("name", e.target.value);
             }} />
           </Col>
@@ -171,7 +172,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Tag"), i18next.t("product:Tag - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.product.tag} onChange={e => {
+            <Input value={this.state.product.tag} disabled={isCreatedByPlan} onChange={e => {
               this.updateProductField("tag", e.target.value);
             }} />
           </Col>
@@ -201,7 +202,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.product.currency} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.product.currency} disabled={isCreatedByPlan} onChange={(value => {
               this.updateProductField("currency", value);
             })}>
               {
@@ -218,7 +219,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Price"), i18next.t("product:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.product.price} onChange={value => {
+            <InputNumber value={this.state.product.price} disabled={isCreatedByPlan} onChange={value => {
               this.updateProductField("price", value);
             }} />
           </Col>
@@ -228,7 +229,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Quantity"), i18next.t("product:Quantity - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.product.quantity} onChange={value => {
+            <InputNumber value={this.state.product.quantity} disabled={isCreatedByPlan} onChange={value => {
               this.updateProductField("quantity", value);
             }} />
           </Col>
@@ -238,7 +239,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Sold"), i18next.t("product:Sold - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.product.sold} onChange={value => {
+            <InputNumber value={this.state.product.sold} disabled={isCreatedByPlan} onChange={value => {
               this.updateProductField("sold", value);
             }} />
           </Col>
@@ -248,7 +249,7 @@ class ProductEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.product.providers} onChange={(value => {this.updateProductField("providers", value);})}>
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} disabled={isCreatedByPlan} value={this.state.product.providers} onChange={(value => {this.updateProductField("providers", value);})}>
               {
                 this.state.providers.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }

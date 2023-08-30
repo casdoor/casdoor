@@ -253,11 +253,13 @@ class ProductListPage extends BaseListPage {
         width: "230px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const isCreatedByPlan = record.tag === "auto_created_product_for_plan";
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/products/${record.owner}/${record.name}/buy`)}>{i18next.t("product:Buy")}</Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/products/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
+                disabled={isCreatedByPlan}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteProduct(index)}
               >

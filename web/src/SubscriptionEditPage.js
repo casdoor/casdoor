@@ -14,7 +14,7 @@
 
 import moment from "moment";
 import React from "react";
-import {Button, Card, Col, DatePicker, Input, InputNumber, Row, Select} from "antd";
+import {Button, Card, Col, DatePicker, Input, Row, Select} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -173,16 +173,6 @@ class SubscriptionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("subscription:Duration"), i18next.t("subscription:Duration - Tooltip"))}
-          </Col>
-          <Col span={22} >
-            <InputNumber value={this.state.subscription.duration} onChange={value => {
-              this.updateSubscriptionField("duration", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("subscription:Start time"), i18next.t("subscription:Start time - Tooltip"))}
           </Col>
           <Col span={22} >
@@ -199,6 +189,23 @@ class SubscriptionEditPage extends React.Component {
             <DatePicker value={dayjs(this.state.subscription.endTime)} onChange={value => {
               this.updateSubscriptionField("endTime", value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("plan:Period"), i18next.t("plan:Period - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select
+              defaultValue={this.state.subscription.period === "" ? "Monthly" : this.state.subscription.period}
+              onChange={value => {
+                this.updateSubscriptionField("period", value);
+              }}
+              options={[
+                {value: "Monthly", label: "Monthly"},
+                {value: "Yearly", label: "Yearly"},
+              ]}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
