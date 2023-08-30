@@ -218,6 +218,12 @@ export function getNextButtonChild(nextPathName) {
     : "Finish";
 }
 
-export function getSteps(pathName = window.location.pathname) {
-  return TourObj[(pathName.replace("/", ""))];
+export function getSteps() {
+  const path = window.location.pathname.replace("/", "");
+  const res = TourObj[path];
+  if (res === undefined) {
+    return [];
+  } else {
+    return res;
+  }
 }
