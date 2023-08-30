@@ -156,7 +156,7 @@ func (c *ApiController) AddPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	// Create related products for plan
+	// Create a related product for plan
 	product := object.CreateProductForPlan(&plan)
 	_, err = object.AddProduct(product)
 	if err != nil {

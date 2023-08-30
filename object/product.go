@@ -189,7 +189,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 	if user.Type == "paid-user" {
 		// Create a subscription for `paid-user`
-		if planName != "" {
+		if pricingName != "" && planName != "" {
 			plan, err := GetPlan(util.GetId(owner, planName))
 			if err != nil {
 				return "", "", err
