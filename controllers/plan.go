@@ -137,7 +137,6 @@ func (c *ApiController) UpdatePlan() {
 			}
 		}
 	}
-
 	c.Data["json"] = wrapActionResponse(object.UpdatePlan(id, &plan))
 	c.ServeJSON()
 }
@@ -164,7 +163,6 @@ func (c *ApiController) AddPlan() {
 		return
 	}
 	plan.Product = product.Name
-
 	c.Data["json"] = wrapActionResponse(object.AddPlan(&plan))
 	c.ServeJSON()
 }
@@ -190,7 +188,6 @@ func (c *ApiController) DeletePlan() {
 			return
 		}
 	}
-
 	c.Data["json"] = wrapActionResponse(object.DeletePlan(&plan))
 	c.ServeJSON()
 }
