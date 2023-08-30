@@ -28,7 +28,7 @@ class SingleCard extends React.Component {
     };
   }
 
-  renderCard(plan, isSingle, link, period) {
+  renderCard(plan, isSingle, link) {
     return (
       <Col style={{minWidth: "320px", paddingLeft: "20px", paddingRight: "20px", paddingBottom: "20px", marginBottom: "20px", paddingTop: "0px"}} span={6}>
         <Card
@@ -40,19 +40,8 @@ class SingleCard extends React.Component {
           <Col>
             <Row>
               <div style={{textAlign: "left"}} className="px-10 mt-5">
-                {
-                  period === "Monthly" ? (
-                    <>
-                      <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerMonth}</span>
-                      <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per month")}</span>
-                    </>
-                  ) : period === "Yearly" ? (
-                    <>
-                      <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.pricePerYear}</span>
-                      <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}>  {i18next.t("plan:per year")}</span>
-                    </>
-                  ) : null
-                }
+                <span style={{fontSize: "40px", fontWeight: 700}}>{Setting.getCurrencySymbol(plan.currency)} {plan.price}</span>
+                <span style={{fontSize: "18px", fontWeight: 600, color: "gray"}}> {plan.period === "Yearly" ? i18next.t("plan:per year") : i18next.t("plan:per month")}</span>
               </div>
             </Row>
 
@@ -76,7 +65,7 @@ class SingleCard extends React.Component {
             </ul> */}
 
             <Row style={{paddingTop: "15px"}}>
-              <Button style={{width: "100%", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = `${link}&period=${period}`}>
+              <Button style={{width: "100%", height: "50px", borderRadius: "0px", bottom: "0", left: "0"}} type="primary" key="subscribe" onClick={() => window.location.href = link}>
                 {
                   i18next.t("pricing:Getting started")
                 }
@@ -89,7 +78,7 @@ class SingleCard extends React.Component {
   }
 
   render() {
-    return this.renderCard(this.props.plan, this.props.isSingle, this.props.link, this.props.period);
+    return this.renderCard(this.props.plan, this.props.isSingle, this.props.link);
   }
 }
 

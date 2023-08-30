@@ -197,22 +197,29 @@ class PlanEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("plan:Price per month"), i18next.t("plan:Price per month - Tooltip"))} :
+            {Setting.getLabel(i18next.t("plan:Price"), i18next.t("plan:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.plan.pricePerMonth} onChange={value => {
-              this.updatePlanField("pricePerMonth", value);
+            <InputNumber value={this.state.plan.price} onChange={value => {
+              this.updatePlanField("price", value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("plan:Price per year"), i18next.t("plan:Price per year - Tooltip"))} :
+            {Setting.getLabel(i18next.t("plan:Period"), i18next.t("plan:Period - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.plan.pricePerYear} onChange={value => {
-              this.updatePlanField("pricePerYear", value);
-            }} />
+            <Select
+              defaultValue={this.state.plan.period === "" ? "Monthly" : this.state.plan.period}
+              onChange={value => {
+                this.updatePlanField("period", value);
+              }}
+              options={[
+                {value: "Monthly", label: "Monthly"},
+                {value: "Yearly", label: "Yearly"},
+              ]}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

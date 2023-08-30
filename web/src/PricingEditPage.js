@@ -15,7 +15,7 @@
 import {CopyOutlined} from "@ant-design/icons";
 import copy from "copy-to-clipboard";
 import React from "react";
-import {Button, Card, Checkbox, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as PricingBackend from "./backend/PricingBackend";
@@ -191,22 +191,6 @@ class PricingEditPage extends React.Component {
                 this.updatePricingField("plans", value);
               })}
               options={this.state.plans.map((plan) => Setting.getOption(plan.name, plan.name))}
-            />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Billing periods"), i18next.t("general:Billing periods - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Checkbox.Group
-              options={[{label: "Monthly", value: "Monthly"}, {label: "Yearly", value: "Yearly"}]}
-              value={() => {
-                return Setting.getValidArray(this.state.pricing.billingPeriods, ["Monthly"]);
-              }}
-              onChange={periods => {
-                this.updatePricingField("billingPeriods", Setting.getValidArray(periods, ["Monthly"]));
-              }}
             />
           </Col>
         </Row>

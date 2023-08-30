@@ -29,11 +29,10 @@ type Plan struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	PricePerMonth    float64  `json:"pricePerMonth"`
-	PricePerYear     float64  `json:"pricePerYear"`
+	Price            float64  `json:"price"`
 	Currency         string   `xorm:"varchar(100)" json:"currency"`
-	ProductMonth     string   `xorm:"'product'" json:"productMonth"`
-	ProductYear      string   `json:"productYear"`
+	Period           string   `xorm:"varchar(100)" json:"period"`
+	Product          string   `xorm:"varchar(100)" json:"product"`
 	PaymentProviders []string `xorm:"varchar(100)" json:"paymentProviders"` // payment providers for related product
 	IsEnabled        bool     `json:"isEnabled"`
 
@@ -41,31 +40,24 @@ type Plan struct {
 	Options []string `xorm:"-" json:"options"`
 }
 
+const (
+	PeriodMonthly = "Monthly"
+	PeriodYearly  = "Yearly"
+)
+
 func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
 }
 
-func (plan *Plan) GetPrice(period Period) float64 {
-	if period == PeriodYearly {
-		return plan.PricePerYear
-	} else if period == PeriodMonthly {
-		return plan.PricePerMonth
-	} else {
-		panic(fmt.Sprintf("invalid subscription period: %s", period))
-	}
-}
-
-func GetDuration(period Period) (startTime time.Time, endTime time.Time, duration int) {
+func GetDuration(period string) (startTime time.Time, endTime time.Time) {
 	if period == PeriodYearly {
 		startTime = time.Now()
 		endTime = startTime.AddDate(1, 0, 0)
-		duration = int(endTime.Sub(startTime).Hours() / 24)
 	} else if period == PeriodMonthly {
 		startTime = time.Now()
 		endTime = startTime.AddDate(0, 1, 0)
-		duration = int(endTime.Sub(startTime).Hours() / 24)
 	} else {
-		panic(fmt.Sprintf("invalid subscription period: %s", period))
+		panic(fmt.Sprintf("invalid period: %s", period))
 	}
 	return
 }

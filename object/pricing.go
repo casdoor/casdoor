@@ -21,13 +21,6 @@ import (
 	"github.com/xorm-io/core"
 )
 
-type Period string
-
-const (
-	PeriodMonthly Period = "Monthly"
-	PeriodYearly  Period = "Yearly"
-)
-
 type Pricing struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -35,11 +28,10 @@ type Pricing struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 	Description string `xorm:"varchar(100)" json:"description"`
 
-	Plans          []string `xorm:"mediumtext" json:"plans"`
-	BillingPeriods []Period `json:"billingPeriods"`
-	IsEnabled      bool     `json:"isEnabled"`
-	TrialDuration  int      `json:"trialDuration"`
-	Application    string   `xorm:"varchar(100)" json:"application"`
+	Plans         []string `xorm:"mediumtext" json:"plans"`
+	IsEnabled     bool     `json:"isEnabled"`
+	TrialDuration int      `json:"trialDuration"`
+	Application   string   `xorm:"varchar(100)" json:"application"`
 }
 
 func (pricing *Pricing) GetId() string {

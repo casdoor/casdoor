@@ -27,7 +27,6 @@ class SubscriptionListPage extends BaseListPage {
   newSubscription() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
-    const defaultDuration = 30;
 
     return {
       owner: owner,
@@ -35,8 +34,8 @@ class SubscriptionListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Subscription - ${randomName}`,
       startTime: moment().format(),
-      endTime: moment().add(defaultDuration, "d").format(),
-      duration: defaultDuration,
+      endTime: moment().add(30, "d").format(),
+      period: "Monthly",
       description: "",
       user: "",
       plan: "",
@@ -130,11 +129,11 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("subscription:Duration"),
-        dataIndex: "duration",
-        key: "duration",
+        title: i18next.t("subscription:Period"),
+        dataIndex: "period",
+        key: "period",
         width: "140px",
-        ...this.getColumnSearchProps("duration"),
+        ...this.getColumnSearchProps("period"),
       },
       {
         title: i18next.t("subscription:Start time"),
@@ -149,20 +148,6 @@ class SubscriptionListPage extends BaseListPage {
         key: "endTime",
         width: "140px",
         ...this.getColumnSearchProps("endTime"),
-      },
-      {
-        title: i18next.t("general:Pricing"),
-        dataIndex: "pricing",
-        key: "pricing",
-        width: "140px",
-        ...this.getColumnSearchProps("pricing"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/pricings/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
       },
       {
         title: i18next.t("general:Plan"),

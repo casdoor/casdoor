@@ -24,7 +24,6 @@ import i18next from "i18next";
 class PricingPage extends React.Component {
   constructor(props) {
     super(props);
-    const periods = Setting.getValidArray(props.pricing?.billingPeriods, ["Monthly"]);
     const params = new URLSearchParams(window.location.search);
     this.state = {
       classes: props,
@@ -34,8 +33,8 @@ class PricingPage extends React.Component {
       userName: params.get("user"),
       pricing: props.pricing,
       plans: null,
-      periods: periods,
-      selectedPeriod: periods[0],
+      periods: null,
+      selectedPeriod: null,
       loading: false,
     };
   }
@@ -76,8 +75,12 @@ class PricingPage extends React.Component {
           Setting.showMessage("error", i18next.t("pricing:Failed to get plans"));
           return;
         }
+        const plans = results.map(result => result.data);
+        const periods = [... new Set(plans.map(plan => plan.period).filter(period => period !== ""))];
         this.setState({
-          plans: results.map(result => result.data),
+          plans: plans,
+          periods: periods,
+          selectedPeriod: periods?.[0],
           loading: false,
         });
       })
@@ -86,28 +89,22 @@ class PricingPage extends React.Component {
       });
   }
 
-  async loadPricing(pricingName) {
+  loadPricing(pricingName) {
     if (!pricingName) {
       return;
     }
-    try {
-      const res = await PricingBackend.getPricing(this.state.owner, pricingName);
-      if (res.status === "error") {
-        throw new Error(res.msg);
-      }
-      const pricing = res.data;
-      const periods = Setting.getValidArray(pricing?.billingPeriods, ["Monthly"]);
-      this.setState({
-        loading: false,
-        pricing: res.data,
-        periods: periods,
-        selectedPeriod: periods[0],
+    PricingBackend.getPricing(this.state.owner, pricingName)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return ;
+        }
+        this.setState({
+          loading: false,
+          pricing: res.data,
+        });
+        this.onUpdatePricing(res.data);
       });
-      this.onUpdatePricing(pricing);
-    } catch (err) {
-      Setting.showMessage("error", err.message);
-      return;
-    }
   }
 
   onUpdatePricing(pricing) {
@@ -115,7 +112,7 @@ class PricingPage extends React.Component {
   }
 
   renderSelectPeriod() {
-    if (this.state.periods.length <= 1) {
+    if (!this.state.periods || this.state.periods.length <= 1) {
       return null;
     }
     return (
@@ -153,9 +150,9 @@ class PricingPage extends React.Component {
         <Card style={{border: "none"}} bodyStyle={{padding: 0}}>
           {
             this.state.plans.map(item => {
-              return (
+              return item.period === this.state.selectedPeriod ? (
                 <SingleCard link={getUrlByPlan(item.name)} key={item.name} plan={item} isSingle={this.state.plans.length === 1} />
-              );
+              ) : null;
             })
           }
         </Card>
@@ -166,16 +163,9 @@ class PricingPage extends React.Component {
           <Row style={{justifyContent: "center"}} gutter={24}>
             {
               this.state.plans.map(item => {
-                return (
-                  <SingleCard
-                    style={{marginRight: "5px", marginLeft: "5px"}}
-                    link={getUrlByPlan(item.name)}
-                    key={item.name}
-                    plan={item}
-                    period={this.state.selectedPeriod}
-                    isSingle={this.state.plans.length === 1}
-                  />
-                );
+                return item.period === this.state.selectedPeriod ? (
+                  <SingleCard style={{marginRight: "5px", marginLeft: "5px"}} link={getUrlByPlan(item.name)} key={item.name} plan={item} isSingle={this.state.plans.length === 1} />
+                ) : null;
               })
             }
           </Row>
