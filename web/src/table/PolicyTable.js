@@ -41,7 +41,7 @@ class PolicyTable extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    if (this.props.mode === "edit") {
+    if (this.props.mode === "edit" && this.props.enforcer.adapter !== "") {
       this.getPolicies();
     }
   }
@@ -186,7 +186,7 @@ class PolicyTable extends React.Component {
     ];
 
     const columnKeys = ["V0", "V1", "V2", "V3", "V4", "V5"];
-    const columnTitles = this.props.modelCfg["p"].split(",");
+    const columnTitles = this.props.modelCfg ? this.props.modelCfg["p"].split(",") : columnKeys;
     columnTitles.forEach((title, i) => {
       columns.push({
         title: title,
@@ -247,7 +247,7 @@ class PolicyTable extends React.Component {
         loading={this.state.loading}
         title={() => (
           <div>
-            <Button disabled={this.state.editingIndex !== "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.adapter === "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
@@ -257,7 +257,7 @@ class PolicyTable extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Button style={{marginBottom: "10px", width: "150px"}} type="primary" disabled={this.state.editingIndex !== ""} onClick={() => {this.getPolicies();}}>
+        <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.adapter === ""} style={{marginBottom: "10px", width: "150px"}} type="primary" onClick={() => {this.getPolicies();}}>
           {i18next.t("general:Sync")}
         </Button>
         {

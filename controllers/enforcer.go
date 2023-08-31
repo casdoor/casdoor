@@ -83,7 +83,7 @@ func (c *ApiController) GetEnforcer() {
 		return
 	}
 
-	if loadModelCfg == "true" {
+	if loadModelCfg == "true" && enforcer.Model != "" {
 		err := enforcer.LoadModelCfg()
 		if err != nil {
 			return
