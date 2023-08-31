@@ -105,7 +105,7 @@ class PolicyTable extends React.Component {
     AdapterBackend.getPolicies(this.props.enforcer.owner, this.props.enforcer.name)
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("adapter:Sync policies successfully"));
+          // Setting.showMessage("success", i18next.t("adapter:Sync policies successfully"));
 
           const policyList = res.data;
           policyList.map((policy, index) => {
@@ -175,7 +175,7 @@ class PolicyTable extends React.Component {
         render: (text, record, index) => {
           const editing = this.isEditing(index);
           return (
-            editing ?
+            (editing && this.props.modelCfg) ?
               <Select size={"small"} style={{width: "60px"}} options={Object.keys(this.props.modelCfg).reverse().map(item => Setting.getOption(item, item))} value={text} onChange={value => {
                 this.updateField(table, index, "Ptype", value);
               }} />
@@ -209,7 +209,7 @@ class PolicyTable extends React.Component {
       title: i18next.t("general:Action"),
       dataIndex: "",
       key: "op",
-      width: "130px",
+      width: "150px",
       render: (text, record, index) => {
         const editable = this.isEditing(index);
         return editable ? (
@@ -247,7 +247,7 @@ class PolicyTable extends React.Component {
         loading={this.state.loading}
         title={() => (
           <div>
-            <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.adapter === "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.model === "" || this.props.enforcer.adapter === "" || Setting.builtInObject(this.props.enforcer)} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
@@ -257,7 +257,7 @@ class PolicyTable extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.adapter === ""} style={{marginBottom: "10px", width: "150px"}} type="primary" onClick={() => {this.getPolicies();}}>
+        <Button disabled={this.state.editingIndex !== "" || this.props.enforcer.model === "" || this.props.enforcer.adapter === ""} style={{marginBottom: "10px", width: "150px"}} type="primary" onClick={() => {this.getPolicies();}}>
           {i18next.t("general:Sync")}
         </Button>
         {
