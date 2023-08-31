@@ -18,6 +18,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"regexp"
 	"runtime"
 	"strings"
 
@@ -122,9 +123,14 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) *Ormer 
 	return a
 }
 
+func refineDataSourceNameForPostgres(dataSourceName string) string {
+	reg := regexp.MustCompile(`dbname=[^ ]+\s*`)
+	return reg.ReplaceAllString(dataSourceName, "")
+}
+
 func createDatabaseForPostgres(driverName string, dataSourceName string, dbName string) error {
 	if driverName == "postgres" {
-		db, err := sql.Open(driverName, dataSourceName)
+		db, err := sql.Open(driverName, refineDataSourceNameForPostgres(dataSourceName))
 		if err != nil {
 			return err
 		}
