@@ -280,6 +280,9 @@ class ProviderEditPage extends React.Component {
       if (provider.type === "Telegram") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
+      } else if (provider.type === "DingTalk") {
+        text = i18next.t("provider:App Key");
+        tooltip = i18next.t("provider:App Key - Tooltip");
       }
     }
 
@@ -311,6 +314,9 @@ class ProviderEditPage extends React.Component {
     } else if (provider.type === "Custom HTTP") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
+    } else if (provider.type === "DingTalk") {
+      text = i18next.t("provider:Secret Key");
+      tooltip = i18next.t("provider:Secret Key - Tooltip");
     }
 
     if (text === "" && tooltip === "") {

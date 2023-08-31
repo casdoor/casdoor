@@ -14,16 +14,17 @@
 
 package notification
 
-import "github.com/nikoksr/notify"
+import (
+	"github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/dingding"
+)
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
-	if typ == "Telegram" {
-		return NewTelegramProvider(appId, receiver)
-	} else if typ == "Custom HTTP" {
-		return NewCustomHttpProvider(receiver, method, title)
-	} else if typ == "DingTalk" {
-		return NewDingTalkProvider(appId, receiver)
+func NewDingTalkProvider(token string, secret string) (notify.Notifier, error) {
+	cfg := dingding.Config{
+		Token:  token,
+		Secret: secret,
 	}
+	d := dingding.New(&cfg)
 
-	return nil, nil
+	return d, nil
 }
