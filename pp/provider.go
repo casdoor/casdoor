@@ -14,9 +14,7 @@
 
 package pp
 
-import (
-	"net/http"
-)
+import "net/http"
 
 type PaymentState string
 
