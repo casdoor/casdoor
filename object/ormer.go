@@ -18,12 +18,14 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"os"
 	"regexp"
 	"runtime"
 	"strings"
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
@@ -66,6 +68,17 @@ func InitConfig() {
 }
 
 func InitAdapter() {
+	if conf.GetConfigString("driverName") == "" {
+		if !util.FileExist("conf/app.conf") {
+			dir, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			dir = strings.ReplaceAll(dir, "\\", "/")
+			panic(fmt.Sprintf("The Casdoor config file: \"app.conf\" was not found, it should be placed at: \"%s/conf/app.conf\"", dir))
+		}
+	}
+
 	if createDatabase {
 		err := createDatabaseForPostgres(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
 		if err != nil {
