@@ -16,6 +16,7 @@ package routers
 
 import (
 	"compress/gzip"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -59,6 +60,13 @@ func StaticFilter(ctx *context.Context) {
 		path = "web/build/index.html"
 	}
 	if !util.FileExist(path) {
+		dir, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		dir = strings.ReplaceAll(dir, "\\", "/")
+		errorText := fmt.Sprintf("The Casdoor frontend HTML file: \"index.html\" was not found, it should be placed at: \"%s/web/build/index.html\". For more information, see: https://casdoor.org/docs/basic/server-installation/#frontend-1", dir)
+		http.ServeContent(ctx.ResponseWriter, ctx.Request, "Casdoor frontend has encountered error...", time.Now(), strings.NewReader(errorText))
 		return
 	}
 
