@@ -24,6 +24,7 @@ import (
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
@@ -142,6 +143,21 @@ func createDatabaseForPostgres(driverName string, dataSourceName string, dbName 
 				return err
 			}
 		}
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			db, err = sql.Open(driverName, dataSourceName)
+			if err != nil {
+				return err
+			}
+			defer db.Close()
+
+			_, err = db.Exec(fmt.Sprintf("CREATE SCHEMA %s;", schema))
+			if err != nil {
+				if !strings.Contains(err.Error(), "already exists") {
+					return err
+				}
+			}
+		}
 
 		return nil
 	} else {
@@ -173,6 +189,12 @@ func (a *Ormer) open() {
 	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
 		panic(err)
+	}
+	if a.driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
 	}
 
 	a.Engine = engine

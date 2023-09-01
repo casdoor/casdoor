@@ -183,6 +183,14 @@ func (adapter *Adapter) InitAdapter() error {
 
 		var err error
 		engine, err := xorm.NewEngine(adapter.DatabaseType, dataSourceName)
+
+		if adapter.builtInAdapter() && adapter.DatabaseType == "postgres" {
+			schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+			if schema != "" {
+				engine.SetSchema(schema)
+			}
+		}
+
 		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, adapter.getTable(), adapter.TableNamePrefix)
 		if err != nil {
 			return err

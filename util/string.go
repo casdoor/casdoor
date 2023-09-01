@@ -23,6 +23,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -314,4 +315,14 @@ func ParseIdToString(input interface{}) (string, error) {
 	default:
 		return "", fmt.Errorf("unsupported id type: %T", input)
 	}
+}
+
+func GetValueFromDataSourceName(key string, dataSourceName string) string {
+	reg := regexp.MustCompile(key + "=([^ ]+)")
+	matches := reg.FindStringSubmatch(dataSourceName)
+	if len(matches) >= 2 {
+		return matches[1]
+	}
+
+	return ""
 }
