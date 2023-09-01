@@ -155,6 +155,21 @@ func createDatabaseForPostgres(driverName string, dataSourceName string, dbName 
 				return err
 			}
 		}
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			db, err = sql.Open(driverName, dataSourceName)
+			if err != nil {
+				return err
+			}
+			defer db.Close()
+
+			_, err = db.Exec(fmt.Sprintf("CREATE SCHEMA %s;", schema))
+			if err != nil {
+				if !strings.Contains(err.Error(), "already exists") {
+					return err
+				}
+			}
+		}
 
 		return nil
 	} else {
@@ -186,6 +201,12 @@ func (a *Ormer) open() {
 	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
 		panic(err)
+	}
+	if a.driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
 	}
 
 	a.Engine = engine

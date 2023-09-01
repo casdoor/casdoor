@@ -151,7 +151,7 @@ func (adapter *Adapter) InitAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 
-		if adapter.builtInAdapter() {
+		if adapter.isBuiltIn() {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 			if adapter.DatabaseType == "mysql" {
 				dataSourceName = dataSourceName + adapter.Database
@@ -183,6 +183,14 @@ func (adapter *Adapter) InitAdapter() error {
 
 		var err error
 		engine, err := xorm.NewEngine(adapter.DatabaseType, dataSourceName)
+
+		if adapter.isBuiltIn() && adapter.DatabaseType == "postgres" {
+			schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+			if schema != "" {
+				engine.SetSchema(schema)
+			}
+		}
+
 		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, adapter.getTable(), adapter.TableNamePrefix)
 		if err != nil {
 			return err
@@ -211,7 +219,7 @@ func adapterChangeTrigger(oldName string, newName string) error {
 	return session.Commit()
 }
 
-func (adapter *Adapter) builtInAdapter() bool {
+func (adapter *Adapter) isBuiltIn() bool {
 	if adapter.Owner != "built-in" {
 		return false
 	}

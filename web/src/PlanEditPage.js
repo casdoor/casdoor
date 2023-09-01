@@ -210,15 +210,13 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("plan:Period"), i18next.t("plan:Period - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select
-              defaultValue={this.state.plan.period === "" ? "Monthly" : this.state.plan.period}
-              onChange={value => {
-                this.updatePlanField("period", value);
-              }}
-              options={[
-                {value: "Monthly", label: "Monthly"},
-                {value: "Yearly", label: "Yearly"},
-              ]}
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.period} onChange={value => {
+              this.updatePlanField("period", value);
+            }}
+            options={[
+              {value: "Monthly", label: "Monthly"},
+              {value: "Yearly", label: "Yearly"},
+            ]}
             />
           </Col>
         </Row>
