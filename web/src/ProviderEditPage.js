@@ -311,7 +311,7 @@ class ProviderEditPage extends React.Component {
     if (provider.type === "Telegram") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
-    } else if (provider.type === "Custom HTTP") {
+    } else if (provider.type === "Custom HTTP" || provider.type === "Lark") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
     } else if (provider.type === "DingTalk") {

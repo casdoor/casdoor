@@ -280,6 +280,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_dingtalk.png`,
       url: "https://casdoor.org/docs/provider/notification/overview",
     },
+    "Lark": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://casdoor.org/docs/provider/notification/overview",
+    },
   },
 };
 
@@ -971,6 +975,7 @@ export function getProviderTypeOptions(category) {
       {id: "Telegram", name: "Telegram"},
       {id: "Custom HTTP", name: "Custom HTTP"},
       {id: "DingTalk", name: "DingTalk"},
+      {id: "Lark", name: "Lark"},
     ]);
   } else {
     return [];
