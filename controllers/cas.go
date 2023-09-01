@@ -122,13 +122,15 @@ func (c *RootController) CasP3ProxyValidate() {
 		// todo: check whether it is https
 		pgtUrlObj, err := url.Parse(pgtUrl)
 		if err != nil {
-			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, "callback is not valid url", format)
+			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, err.Error(), format)
 			return
 		}
+
 		if pgtUrlObj.Scheme != "https" {
 			c.sendCasAuthenticationResponseErr(InvalidProxyCallback, "callback is not https", format)
 			return
 		}
+
 		// make a request to pgturl passing pgt and pgtiou
 		param := pgtUrlObj.Query()
 		param.Add("pgtId", pgt)
