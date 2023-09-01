@@ -57,6 +57,7 @@ type Application struct {
 	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
+	CertPublicKey       string          `xorm:"-" json:"certPublicKey"`
 	Tags                []string        `xorm:"mediumtext" json:"tags"`
 	InvitationCodes     []string        `xorm:"varchar(200)" json:"invitationCodes"`
 
