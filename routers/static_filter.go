@@ -56,9 +56,7 @@ func StaticFilter(ctx *context.Context) {
 	}
 
 	if !util.FileExist(path) {
-		path = "web/build/index.html"
-	}
-	if !util.FileExist(path) {
+		responseError(ctx, "Not Found: "+path)
 		return
 	}
 
