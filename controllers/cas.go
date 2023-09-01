@@ -35,6 +35,11 @@ const (
 	UnauthorizedService      string = "UNAUTHORIZED_SERVICE"
 )
 
+func queryUnescape(service string) string {
+	s, _ := url.QueryUnescape(service)
+	return s
+}
+
 func (c *RootController) CasValidate() {
 	ticket := c.Input().Get("ticket")
 	service := c.Input().Get("service")
@@ -60,24 +65,25 @@ func (c *RootController) CasServiceValidate() {
 	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 	}
-	c.CasP3ServiceAndProxyValidate()
+	c.CasP3ProxyValidate()
 }
 
 func (c *RootController) CasProxyValidate() {
+	// https://apereo.github.io/cas/6.6.x/protocol/CAS-Protocol-Specification.html#26-proxyvalidate-cas-20
+	// "/proxyValidate" should accept both service tickets and proxy tickets.
+	c.CasP3ProxyValidate()
+}
+
+func (c *RootController) CasP3ServiceValidate() {
 	ticket := c.Input().Get("ticket")
 	format := c.Input().Get("format")
-	if !strings.HasPrefix(ticket, "PT") {
+	if !strings.HasPrefix(ticket, "ST") {
 		c.sendCasAuthenticationResponseErr(InvalidTicket, fmt.Sprintf("Ticket %s not recognized", ticket), format)
 	}
-	c.CasP3ServiceAndProxyValidate()
+	c.CasP3ProxyValidate()
 }
 
-func queryUnescape(service string) string {
-	s, _ := url.QueryUnescape(service)
-	return s
-}
-
-func (c *RootController) CasP3ServiceAndProxyValidate() {
+func (c *RootController) CasP3ProxyValidate() {
 	ticket := c.Input().Get("ticket")
 	format := c.Input().Get("format")
 	service := c.Input().Get("service")
@@ -263,7 +269,6 @@ func (c *RootController) sendCasAuthenticationResponseErr(code, msg, format stri
 			Message: msg,
 		},
 	}
-
 	if format == "json" {
 		c.Data["json"] = serviceResponse
 		c.ServeJSON()
