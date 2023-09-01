@@ -284,6 +284,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
       url: "https://casdoor.org/docs/provider/notification/overview",
     },
+    "Microsoft Teams": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://casdoor.org/docs/provider/notification/overview",
+    },
   },
 };
 

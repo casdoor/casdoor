@@ -14,20 +14,15 @@
 
 package notification
 
-import "github.com/nikoksr/notify"
+import (
+	"github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/msteams"
+)
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
-	if typ == "Telegram" {
-		return NewTelegramProvider(appId, receiver)
-	} else if typ == "Custom HTTP" {
-		return NewCustomHttpProvider(receiver, method, title)
-	} else if typ == "DingTalk" {
-		return NewDingTalkProvider(appId, receiver)
-	} else if typ == "Lark" {
-		return NewLarkProvider(receiver)
-	} else if typ == "Microsoft Teams" {
-		return NewMicrosoftTeamsProvider(receiver)
-	}
+func NewMicrosoftTeamsProvider(webhookURL string) (notify.Notifier, error) {
+	client := msteams.New()
 
-	return nil, nil
+	client.AddReceivers(webhookURL)
+
+	return client, nil
 }
