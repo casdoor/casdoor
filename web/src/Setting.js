@@ -32,7 +32,8 @@ export const ServerUrl = "";
 
 export const StaticBaseUrl = "https://cdn.casbin.org";
 
-export const Countries = [{label: "English", key: "en", country: "US", alt: "English"},
+export const Countries = [
+  {label: "English", key: "en", country: "US", alt: "English"},
   {label: "Español", key: "es", country: "ES", alt: "Español"},
   {label: "Français", key: "fr", country: "FR", alt: "Français"},
   {label: "Deutsch", key: "de", country: "DE", alt: "Deutsch"},
@@ -48,7 +49,13 @@ export const Countries = [{label: "English", key: "en", country: "US", alt: "Eng
   {label: "Türkçe", key: "tr", country: "TR", alt: "Türkçe"},
   {label: "لغة عربية", key: "ar", country: "SA", alt: "لغة عربية"},
   {label: "עִבְרִית", key: "he", country: "IL", alt: "עִבְרִית"},
-  {label: "Filipino", key: "fi", country: "PH", alt: "Filipino"},
+  {label: "Nederlands", key: "nl", country: "NL", alt: "Nederlands"},
+  {label: "Polski", key: "pl", country: "PL", alt: "Polski"},
+  {label: "Suomi", key: "fi", country: "FI", alt: "Suomi"},
+  {label: "Svenska", key: "sv", country: "SE", alt: "Svenska"},
+  {label: "Українська", key: "uk", country: "UA", alt: "Українська"},
+  {label: "Қазақ", key: "kk", country: "KZ", alt: "Қазақ"},
+  {label: "فارسی", key: "fa", country: "IR", alt: "فارسی"},
 ];
 
 export function getThemeData(organization, application) {
