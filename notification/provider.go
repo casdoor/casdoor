@@ -29,6 +29,8 @@ func GetNotificationProvider(typ string, appId string, receiver string, method s
 		return NewMicrosoftTeamsProvider(receiver)
 	} else if typ == "Bark" {
 		return NewBarkProvider(receiver)
+	} else if typ == "Pushover" {
+		return NewPushoverProvider(appId, receiver)
 	}
 
 	return nil, nil

@@ -292,6 +292,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
       url: "https://apps.apple.com/us/app/bark-customed-notifications/id1403753865",
     },
+    "Pushover": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://pushover.net/",
+    },
   },
 };
 
@@ -986,6 +990,7 @@ export function getProviderTypeOptions(category) {
       {id: "Lark", name: "Lark"},
       {id: "Microsoft Teams", name: "Microsoft Teams"},
       {id: "Bark", name: "Bark"},
+      {id: "Pushover", name: "Pushover"},
     ]);
   } else {
     return [];
