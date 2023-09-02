@@ -278,15 +278,19 @@ export const OtherProviderInfo = {
     },
     "DingTalk": {
       logo: `${StaticBaseUrl}/img/social_dingtalk.png`,
-      url: "https://casdoor.org/docs/provider/notification/overview",
+      url: "https://www.dingtalk.com/",
     },
     "Lark": {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
-      url: "https://casdoor.org/docs/provider/notification/overview",
+      url: "https://www.larksuite.com/",
     },
     "Microsoft Teams": {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
-      url: "https://casdoor.org/docs/provider/notification/overview",
+      url: "https://www.microsoft.com/microsoft-teams",
+    },
+    "Bark": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://apps.apple.com/us/app/bark-customed-notifications/id1403753865",
     },
   },
 };
@@ -980,6 +984,8 @@ export function getProviderTypeOptions(category) {
       {id: "Custom HTTP", name: "Custom HTTP"},
       {id: "DingTalk", name: "DingTalk"},
       {id: "Lark", name: "Lark"},
+      {id: "Microsoft Teams", name: "Microsoft Teams"},
+      {id: "Bark", name: "Bark"},
     ]);
   } else {
     return [];

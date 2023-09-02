@@ -14,22 +14,13 @@
 
 package notification
 
-import "github.com/nikoksr/notify"
+import (
+	"github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/bark"
+)
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
-	if typ == "Telegram" {
-		return NewTelegramProvider(appId, receiver)
-	} else if typ == "Custom HTTP" {
-		return NewCustomHttpProvider(receiver, method, title)
-	} else if typ == "DingTalk" {
-		return NewDingTalkProvider(appId, receiver)
-	} else if typ == "Lark" {
-		return NewLarkProvider(receiver)
-	} else if typ == "Microsoft Teams" {
-		return NewMicrosoftTeamsProvider(receiver)
-	} else if typ == "Bark" {
-		return NewBarkProvider(receiver)
-	}
+func NewBarkProvider(deviceKey string) (notify.Notifier, error) {
+	b := bark.New(deviceKey)
 
-	return nil, nil
+	return b, nil
 }

@@ -314,7 +314,7 @@ class ProviderEditPage extends React.Component {
     } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
-    } else if (provider.type === "DingTalk") {
+    } else if (provider.type === "DingTalk" || provider.type === "Bark") {
       text = i18next.t("provider:Secret Key");
       tooltip = i18next.t("provider:Secret Key - Tooltip");
     }
