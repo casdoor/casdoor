@@ -277,7 +277,7 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
     } else if (provider.category === "Notification") {
-      if (provider.type === "Telegram" || provider.type === "Pushover") {
+      if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       } else if (provider.type === "DingTalk") {
@@ -308,7 +308,7 @@ class ProviderEditPage extends React.Component {
     let text = "";
     let tooltip = "";
 
-    if (provider.type === "Telegram" || provider.type === "Pushover") {
+    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
     } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams") {

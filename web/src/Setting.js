@@ -296,6 +296,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
       url: "https://pushover.net/",
     },
+    "Pushbullet": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://www.pushbullet.com/",
+    },
   },
 };
 
@@ -991,6 +995,7 @@ export function getProviderTypeOptions(category) {
       {id: "Microsoft Teams", name: "Microsoft Teams"},
       {id: "Bark", name: "Bark"},
       {id: "Pushover", name: "Pushover"},
+      {id: "Pushbullet", name: "Pushbullet"},
     ]);
   } else {
     return [];

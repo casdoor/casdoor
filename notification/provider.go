@@ -31,6 +31,8 @@ func GetNotificationProvider(typ string, appId string, receiver string, method s
 		return NewBarkProvider(receiver)
 	} else if typ == "Pushover" {
 		return NewPushoverProvider(appId, receiver)
+	} else if typ == "Pushbullet" {
+		return NewPushbulletProvider(appId, receiver)
 	}
 
 	return nil, nil
