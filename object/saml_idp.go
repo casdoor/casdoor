@@ -103,6 +103,25 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
+	// add tencent role
+	roles := attributes.CreateElement("saml:Attribute")
+	roles.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/Role")
+	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	roles.CreateAttr("FriendlyName", "tencent cloud")
+	for _, value := range []string{
+		"qcs::cam::uin/{AccountID}:roleName/{RoleName1},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName1}",
+		"qcs::cam::uin/{AccountID}:roleName/{RoleName2},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName2}",
+	} {
+		roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(value)
+	}
+
+	// add tencent role session
+	roleSessionName := attributes.CreateElement("saml:Attribute")
+	roleSessionName.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/RoleSessionName")
+	roleSessionName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	roleSessionName.CreateAttr("FriendlyName", "tencent cloud")
+	roleSessionName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText("casdoor")
+
 	roles := attributes.CreateElement("saml:Attribute")
 	roles.CreateAttr("Name", "Roles")
 	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
@@ -184,10 +203,11 @@ type SingleSignOnService struct {
 
 type Attribute struct {
 	XMLName      xml.Name
-	Name         string `xml:"Name,attr"`
-	NameFormat   string `xml:"NameFormat,attr"`
-	FriendlyName string `xml:"FriendlyName,attr"`
-	Xmlns        string `xml:"xmlns,attr"`
+	Name         string   `xml:"Name,attr"`
+	NameFormat   string   `xml:"NameFormat,attr"`
+	FriendlyName string   `xml:"FriendlyName,attr"`
+	Xmlns        string   `xml:"xmlns,attr"`
+	Values       []string `xml:"AttributeValue"`
 }
 
 func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
@@ -233,6 +253,23 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Email", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "E-Mail"},
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "DisplayName", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "displayName"},
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Name", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "Name"},
+				{
+					Xmlns:        "urn:oasis:names:tc:SAML:2.0:assertion",
+					Name:         "https://cloud.tencent.com/SAML/Attributes/Role",
+					NameFormat:   "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+					FriendlyName: "tencent cloud",
+					Values: []string{
+						"qcs::cam::uin/{AccountID}:roleName/{RoleName1},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName1}",
+						"qcs::cam::uin/{AccountID}:roleName/{RoleName2},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName2}",
+					},
+				},
+				{
+					Xmlns:        "urn:oasis:names:tc:SAML:2.0:assertion",
+					Name:         "https://cloud.tencent.com/SAML/Attributes/RoleSessionName",
+					NameFormat:   "urn:oasis:names:tc:SAML:2.0:attrname-format:basic",
+					FriendlyName: "tencent cloud",
+					Values:       []string{"casdoor"},
+				},
 			},
 			SingleSignOnService: SingleSignOnService{
 				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
