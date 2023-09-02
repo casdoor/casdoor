@@ -448,9 +448,8 @@ func (c *ApiController) SetPassword() {
 	}
 
 	targetUser, err := object.GetUser(userId)
-
 	if targetUser == nil {
-		c.ResponseError("the user doesn't exist: " + userId)
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 		return
 	}
 	if err != nil {
