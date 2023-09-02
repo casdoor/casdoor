@@ -26,6 +26,7 @@ export const PasswordModal = (props) => {
   const [newPassword, setNewPassword] = React.useState("");
   const [rePassword, setRePassword] = React.useState("");
   const {user} = props;
+  const {userName} = props;
   const {organization} = props;
   const {account} = props;
 
@@ -90,7 +91,7 @@ export const PasswordModal = (props) => {
       return;
     }
 
-    UserBackend.setPassword(user.owner, user.name, oldPassword, newPassword)
+    UserBackend.setPassword(user.owner, userName, oldPassword, newPassword)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));
