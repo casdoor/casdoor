@@ -72,13 +72,13 @@ type FacebookCheckToken struct {
 }
 
 // FacebookCheckTokenData
-// Get more detail via: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#checktoken
+// Get more detail via: https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow#checktoken
 type FacebookCheckTokenData struct {
 	UserId string `json:"user_id"`
 }
 
 // GetToken use code get access_token (*operation of getting code ought to be done in front)
-// get more detail via: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow#confirm
+// get more detail via: https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow#confirm
 func (idp *FacebookIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params := url.Values{}
 	params.Add("client_id", idp.Config.ClientID)
