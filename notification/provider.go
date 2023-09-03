@@ -16,7 +16,7 @@ package notification
 
 import "github.com/nikoksr/notify"
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
+func GetNotificationProvider(typ string, clientId string, clientSecret string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
 	if typ == "Telegram" {
 		return NewTelegramProvider(appId, receiver)
 	} else if typ == "Custom HTTP" {
@@ -35,6 +35,8 @@ func GetNotificationProvider(typ string, appId string, receiver string, method s
 		return NewPushbulletProvider(appId, receiver)
 	} else if typ == "Slack" {
 		return NewSlackProvider(appId, receiver)
+	} else if typ == "Webpush" {
+		return NewWebpushProvider(clientId, clientSecret, receiver)
 	}
 
 	return nil, nil

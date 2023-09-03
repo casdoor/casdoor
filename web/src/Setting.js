@@ -304,6 +304,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
       url: "https://slack.com/",
     },
+    "Webpush": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://developer.mozilla.org/en-US/docs/Web/API/Push_API",
+    },
   },
 };
 
@@ -1001,6 +1005,7 @@ export function getProviderTypeOptions(category) {
       {id: "Pushover", name: "Pushover"},
       {id: "Pushbullet", name: "Pushbullet"},
       {id: "Slack", name: "Slack"},
+      {id: "Webpush", name: "Webpush"},
     ]);
   } else {
     return [];
