@@ -300,6 +300,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_lark.png`,
       url: "https://www.pushbullet.com/",
     },
+    "Slack": {
+      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      url: "https://slack.com/",
+    },
   },
 };
 
@@ -996,6 +1000,7 @@ export function getProviderTypeOptions(category) {
       {id: "Bark", name: "Bark"},
       {id: "Pushover", name: "Pushover"},
       {id: "Pushbullet", name: "Pushbullet"},
+      {id: "Slack", name: "Slack"},
     ]);
   } else {
     return [];

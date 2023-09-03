@@ -33,6 +33,8 @@ func GetNotificationProvider(typ string, appId string, receiver string, method s
 		return NewPushoverProvider(appId, receiver)
 	} else if typ == "Pushbullet" {
 		return NewPushbulletProvider(appId, receiver)
+	} else if typ == "Slack" {
+		return NewSlackProvider(appId, receiver)
 	}
 
 	return nil, nil
