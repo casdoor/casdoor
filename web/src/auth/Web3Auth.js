@@ -303,7 +303,7 @@ export function initWeb3Onboard(application, provider) {
     description: "Connect a wallet using Casdoor",
     recommendedInjectedWallets: [
       {name: "MetaMask", url: "https://metamask.io"},
-      {name: "Coinbase", url: "https://wallet.coinbase.com/"},
+      {name: "Coinbase", url: "https://www.coinbase.com/wallet"},
     ],
   };
 
