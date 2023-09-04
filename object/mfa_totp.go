@@ -81,12 +81,15 @@ func (mfa *TotpMfa) SetupVerify(ctx *context.Context, passcode string) error {
 		return errors.New("totp secret is missing")
 	}
 
-	result, _ := totp.ValidateCustom(passcode, secret.(string), time.Now().UTC(), totp.ValidateOpts{
+	result, err := totp.ValidateCustom(passcode, secret.(string), time.Now().UTC(), totp.ValidateOpts{
 		Period:    MfaTotpPeriodInSeconds,
 		Skew:      1,
 		Digits:    otp.DigitsSix,
 		Algorithm: otp.AlgorithmSHA1,
 	})
+	if err != nil {
+		return err
+	}
 
 	if result {
 		return nil
@@ -125,7 +128,15 @@ func (mfa *TotpMfa) Enable(ctx *context.Context, user *User) error {
 }
 
 func (mfa *TotpMfa) Verify(passcode string) error {
-	result := totp.Validate(passcode, mfa.Config.Secret)
+	result, err := totp.ValidateCustom(passcode, mfa.Config.Secret, time.Now().UTC(), totp.ValidateOpts{
+		Period:    MfaTotpPeriodInSeconds,
+		Skew:      1,
+		Digits:    otp.DigitsSix,
+		Algorithm: otp.AlgorithmSHA1,
+	})
+	if err != nil {
+		return err
+	}
 
 	if result {
 		return nil
