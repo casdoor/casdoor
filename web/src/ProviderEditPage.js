@@ -182,6 +182,8 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
+    case "Notification":
+      return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret access key - Tooltip"));
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -308,7 +310,7 @@ class ProviderEditPage extends React.Component {
     let text = "";
     let tooltip = "";
 
-    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord") {
+    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
     } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush") {
@@ -603,18 +605,22 @@ class ProviderEditPage extends React.Component {
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
-          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" || (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush")) ? null : (
+          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" || (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line")) ? null : (
               <React.Fragment>
-                <Row style={{marginTop: "20px"}} >
-                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.getClientIdLabel(this.state.provider)} :
-                  </Col>
-                  <Col span={22} >
-                    <Input value={this.state.provider.clientId} onChange={e => {
-                      this.updateProviderField("clientId", e.target.value);
-                    }} />
-                  </Col>
-                </Row>
+                {
+                  this.state.provider.type === "Line" ? null : (
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {this.getClientIdLabel(this.state.provider)} :
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.clientId} onChange={e => {
+                          this.updateProviderField("clientId", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  )
+                }
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                     {this.getClientSecretLabel(this.state.provider)} :
