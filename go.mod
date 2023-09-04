@@ -66,5 +66,6 @@ require (
 	google.golang.org/api v0.138.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
+	maunium.net/go/mautrix v0.16.0
 	modernc.org/sqlite v1.18.2
 )

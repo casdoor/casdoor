@@ -324,6 +324,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "https://www.matrix.org/",
     },
+    "Twitter": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://twitter.com/",
+    },
   },
 };
 
@@ -1026,6 +1030,7 @@ export function getProviderTypeOptions(category) {
       {id: "Google Chat", name: "Google Chat"},
       {id: "Line", name: "Line"},
       {id: "Matrix", name: "Matrix"},
+      {id: "Twitter", name: "Twitter"},
     ]);
   } else {
     return [];

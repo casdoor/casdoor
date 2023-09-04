@@ -314,7 +314,7 @@ class ProviderEditPage extends React.Component {
     let text = "";
     let tooltip = "";
 
-    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line") {
+    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line" || provider.type === "Twitter") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
     } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush" || provider.type === "Matrix") {
@@ -610,7 +610,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" ||
-          (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix")) ? null : (
+          (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix" && this.state.provider.type !== "Twitter")) ? null : (
               <React.Fragment>
                 {
                   this.state.provider.type === "Line" ? null : (
@@ -640,7 +640,7 @@ class ProviderEditPage extends React.Component {
             )
         }
         {
-          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>

@@ -16,7 +16,7 @@ package notification
 
 import "github.com/casdoor/notify"
 
-func GetNotificationProvider(typ string, clientId string, clientSecret string, appId string, receiver string, method string, title string, metaData string) (notify.Notifier, error) {
+func GetNotificationProvider(typ string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, appId string, receiver string, method string, title string, metaData string) (notify.Notifier, error) {
 	if typ == "Telegram" {
 		return NewTelegramProvider(appId, receiver)
 	} else if typ == "Custom HTTP" {
@@ -45,6 +45,8 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, a
 		return NewLineProvider(clientSecret, appId, receiver)
 	} else if typ == "Matrix" {
 		return NewMatrixProvider(clientId, clientSecret, appId, receiver)
+	} else if typ == "Twitter" {
+		return NewTwitterProvider(clientId, clientSecret, clientId2, clientSecret2, receiver)
 	}
 
 	return nil, nil
