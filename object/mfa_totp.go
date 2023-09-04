@@ -125,7 +125,12 @@ func (mfa *TotpMfa) Enable(ctx *context.Context, user *User) error {
 }
 
 func (mfa *TotpMfa) Verify(passcode string) error {
-	result := totp.Validate(passcode, mfa.Config.Secret)
+    result, _ := totp.ValidateCustom(passcode, mfa.Config.Secret, time.Now().UTC(), totp.ValidateOpts{
+     	Period:    MfaTotpPeriodInSeconds,
+     	Skew:      1,
+     	Digits:    otp.DigitsSix,
+     	Algorithm: otp.AlgorithmSHA1,
+     })
 
 	if result {
 		return nil
