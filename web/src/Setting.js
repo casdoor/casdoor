@@ -301,11 +301,11 @@ export const OtherProviderInfo = {
       url: "https://www.pushbullet.com/",
     },
     "Slack": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/social_slack.png`,
       url: "https://slack.com/",
     },
     "Webpush": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "https://developer.mozilla.org/en-US/docs/Web/API/Push_API",
     },
   },

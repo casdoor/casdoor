@@ -18,7 +18,7 @@ import (
 	"context"
 
 	"github.com/casdoor/casdoor/notification"
-	"github.com/nikoksr/notify"
+	"github.com/casdoor/notify"
 )
 
 func getNotificationClient(provider *Provider) (notify.Notifier, error) {

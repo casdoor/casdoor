@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/webpush"
+	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/webpush"
 )
 
 func NewWebpushProvider(publicKey string, privateKey string, endpoint string) (*notify.Notify, error) {

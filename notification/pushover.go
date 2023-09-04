@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/pushover"
+	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/pushover"
 )
 
 func NewPushoverProvider(appToken string, recipientID string) (notify.Notifier, error) {

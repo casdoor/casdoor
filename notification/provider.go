@@ -14,7 +14,7 @@
 
 package notification
 
-import "github.com/nikoksr/notify"
+import "github.com/casdoor/notify"
 
 func GetNotificationProvider(typ string, clientId string, clientSecret string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
 	if typ == "Telegram" {

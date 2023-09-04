@@ -18,9 +18,9 @@ import (
 	"strconv"
 
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/telegram"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/telegram"
 )
 
 func NewTelegramProvider(apiToken string, chatIdStr string) (notify.Notifier, error) {

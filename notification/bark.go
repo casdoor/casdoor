@@ -15,8 +15,8 @@
 package notification
 
 import (
-	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/bark"
+	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/bark"
 )
 
 func NewBarkProvider(deviceKey string) (notify.Notifier, error) {
