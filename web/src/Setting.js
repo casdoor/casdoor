@@ -308,6 +308,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "https://developer.mozilla.org/en-US/docs/Web/API/Push_API",
     },
+    "Discord": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://discord.com/",
+    },
   },
 };
 
@@ -1006,6 +1010,7 @@ export function getProviderTypeOptions(category) {
       {id: "Pushbullet", name: "Pushbullet"},
       {id: "Slack", name: "Slack"},
       {id: "Webpush", name: "Webpush"},
+      {id: "Discord", name: "Discord"},
     ]);
   } else {
     return [];

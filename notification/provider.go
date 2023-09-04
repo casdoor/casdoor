@@ -37,6 +37,8 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, a
 		return NewSlackProvider(appId, receiver)
 	} else if typ == "Webpush" {
 		return NewWebpushProvider(clientId, clientSecret, receiver)
+	} else if typ == "Discord" {
+		return NewDiscordProvider(appId, receiver)
 	}
 
 	return nil, nil
