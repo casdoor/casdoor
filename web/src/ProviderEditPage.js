@@ -280,10 +280,7 @@ class ProviderEditPage extends React.Component {
       if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
-      } else if (provider.type === "DingTalk") {
-        text = i18next.t("provider:App Key");
-        tooltip = i18next.t("provider:App Key - Tooltip");
-      } else {
+      } else if (provider.type === "DingTalk" || provider.type === "Discord") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       }
@@ -323,7 +320,13 @@ class ProviderEditPage extends React.Component {
     }
 
     if (text === "" && tooltip === "") {
-      return null;
+      return (
+        <React.Fragment>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel("Test Notification", "Test Notification")} :
+          </Col>
+        </React.Fragment>
+      );
     } else {
       return (
         <React.Fragment>
@@ -788,6 +791,18 @@ class ProviderEditPage extends React.Component {
                   <Col span={22} >
                     <Input value={this.state.provider.title} onChange={e => {
                       this.updateProviderField("title", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+              ) : null}
+              {["Google Chat"].includes(this.state.provider.type) ? (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
+                  </Col>
+                  <Col span={22}>
+                    <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
+                      this.updateProviderField("metadata", e.target.value);
                     }} />
                   </Col>
                 </Row>

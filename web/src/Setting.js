@@ -312,6 +312,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "https://discord.com/",
     },
+    "Google Chat": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://workspace.google.com/intl/en/products/chat/",
+    },
   },
 };
 
@@ -1011,6 +1015,7 @@ export function getProviderTypeOptions(category) {
       {id: "Slack", name: "Slack"},
       {id: "Webpush", name: "Webpush"},
       {id: "Discord", name: "Discord"},
+      {id: "Google Chat", name: "Google Chat"},
     ]);
   } else {
     return [];
