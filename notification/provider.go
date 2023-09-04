@@ -43,6 +43,8 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, a
 		return NewGoogleChatProvider(metaData)
 	} else if typ == "Line" {
 		return NewLineProvider(clientSecret, appId, receiver)
+	} else if typ == "Matrix" {
+		return NewMatrixProvider(clientId, clientSecret, appId, receiver)
 	}
 
 	return nil, nil

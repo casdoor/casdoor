@@ -183,7 +183,11 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
     case "Notification":
-      return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret access key - Tooltip"));
+      if (provider.type === "Line") {
+        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -282,7 +286,7 @@ class ProviderEditPage extends React.Component {
       if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
-      } else if (provider.type === "DingTalk" || provider.type === "Discord") {
+      } else if (provider.type === "DingTalk" || provider.type === "Discord" || provider.type === "Matrix") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       }
@@ -313,7 +317,7 @@ class ProviderEditPage extends React.Component {
     if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
-    } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush") {
+    } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush" || provider.type === "Matrix") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
     } else if (provider.type === "DingTalk" || provider.type === "Bark") {
@@ -605,7 +609,8 @@ class ProviderEditPage extends React.Component {
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
-          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" || (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line")) ? null : (
+          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" ||
+          (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix")) ? null : (
               <React.Fragment>
                 {
                   this.state.provider.type === "Line" ? null : (

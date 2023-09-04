@@ -17,16 +17,20 @@ package notification
 import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/line"
+	"github.com/casdoor/notify/service/matrix"
+	"maunium.net/go/mautrix/id"
 )
 
-func NewLineProvider(channelSecret string, accessToken string, receiver string) (*notify.Notify, error) {
-	lineSrv, _ := line.NewWithHttpClient(channelSecret, accessToken, proxy.ProxyHttpClient)
+func NewMatrixProvider(userId string, roomId string, accessToken string, homeServer string) (*notify.Notify, error) {
+	matrixSrv, err := matrix.New(id.UserID(userId), id.RoomID(roomId), homeServer, accessToken)
+	if err != nil {
+		return nil, err
+	}
 
-	lineSrv.AddReceivers(receiver)
+	matrixSrv.SetHttpClient(proxy.ProxyHttpClient)
 
 	notifier := notify.New()
-	notifier.UseServices(lineSrv)
+	notifier.UseServices(matrixSrv)
 
 	return notifier, nil
 }

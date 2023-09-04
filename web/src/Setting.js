@@ -318,7 +318,11 @@ export const OtherProviderInfo = {
     },
     "Line": {
       logo: `${StaticBaseUrl}/img/email_default.png`,
-      url: "https://line.me",
+      url: "https://line.me/",
+    },
+    "Matrix": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://www.matrix.org/",
     },
   },
 };
@@ -1021,6 +1025,7 @@ export function getProviderTypeOptions(category) {
       {id: "Discord", name: "Discord"},
       {id: "Google Chat", name: "Google Chat"},
       {id: "Line", name: "Line"},
+      {id: "Matrix", name: "Matrix"},
     ]);
   } else {
     return [];
