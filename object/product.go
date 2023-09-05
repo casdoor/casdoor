@@ -37,7 +37,7 @@ type Product struct {
 	Price       float64  `json:"price"`
 	Quantity    int      `json:"quantity"`
 	Sold        int      `json:"sold"`
-	Providers   []string `xorm:"varchar(100)" json:"providers"`
+	Providers   []string `xorm:"varchar(255)" json:"providers"`
 	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
 
 	State string `xorm:"varchar(100)" json:"state"`
