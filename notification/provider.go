@@ -47,6 +47,12 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, c
 		return NewMatrixProvider(clientId, clientSecret, appId, receiver)
 	} else if typ == "Twitter" {
 		return NewTwitterProvider(clientId, clientSecret, clientId2, clientSecret2, receiver)
+	} else if typ == "Reddit" {
+		return NewRedditProvider(clientId, clientSecret, clientId2, clientSecret2, receiver)
+	} else if typ == "Rocket Chat" {
+		return NewRocketChatProvider(clientId, clientSecret, appId, receiver)
+	} else if typ == "Viber" {
+		return NewViberProvider(clientId, clientSecret, appId, receiver)
 	}
 
 	return nil, nil

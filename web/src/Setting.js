@@ -325,6 +325,18 @@ export const OtherProviderInfo = {
       url: "https://www.matrix.org/",
     },
     "Twitter": {
+      logo: `${StaticBaseUrl}/img/social_twitter.png`,
+      url: "https://twitter.com/",
+    },
+    "Reddit": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://twitter.com/",
+    },
+    "Rocket Chat": {
+      logo: `${StaticBaseUrl}/img/email_default.png`,
+      url: "https://twitter.com/",
+    },
+    "Viber": {
       logo: `${StaticBaseUrl}/img/email_default.png`,
       url: "https://twitter.com/",
     },
@@ -1031,6 +1043,9 @@ export function getProviderTypeOptions(category) {
       {id: "Line", name: "Line"},
       {id: "Matrix", name: "Matrix"},
       {id: "Twitter", name: "Twitter"},
+      {id: "Reddit", name: "Reddit"},
+      {id: "Rocket Chat", name: "Rocket Chat"},
+      {id: "Viber", name: "Viber"},
     ]);
   } else {
     return [];
