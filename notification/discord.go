@@ -12,31 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+package notification
 
 import (
-	"context"
-
-	"github.com/casdoor/casdoor/notification"
+	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/discord"
 )
 
-func getNotificationClient(provider *Provider) (notify.Notifier, error) {
-	var client notify.Notifier
-	client, err := notification.GetNotificationProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.ClientId2, provider.ClientSecret2, provider.AppId, provider.Receiver, provider.Method, provider.Title, provider.Metadata)
+func NewDiscordProvider(token string, channelId string) (*notify.Notify, error) {
+	discordSrv := discord.New()
+
+	err := discordSrv.AuthenticateWithBotToken(token)
 	if err != nil {
 		return nil, err
 	}
 
-	return client, nil
-}
+	discordSrv.SetHttpClient(proxy.ProxyHttpClient)
+	discordSrv.AddReceivers(channelId)
 
-func SendNotification(provider *Provider, content string) error {
-	client, err := getNotificationClient(provider)
-	if err != nil {
-		return err
-	}
+	notifier := notify.NewWithServices(discordSrv)
 
-	err = client.Send(context.Background(), "", content)
-	return err
+	return notifier, nil
 }

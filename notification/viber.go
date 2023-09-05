@@ -12,31 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+package notification
 
 import (
-	"context"
-
-	"github.com/casdoor/casdoor/notification"
 	"github.com/casdoor/notify"
+	"github.com/casdoor/notify/service/viber"
 )
 
-func getNotificationClient(provider *Provider) (notify.Notifier, error) {
-	var client notify.Notifier
-	client, err := notification.GetNotificationProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.ClientId2, provider.ClientSecret2, provider.AppId, provider.Receiver, provider.Method, provider.Title, provider.Metadata)
+func NewViberProvider(senderName string, appKey string, webhookURL string, receiverId string) (notify.Notifier, error) {
+	viberSrv := viber.New(appKey, senderName, "")
+
+	err := viberSrv.SetWebhook(webhookURL)
 	if err != nil {
 		return nil, err
 	}
 
-	return client, nil
-}
+	viberSrv.AddReceivers(receiverId)
 
-func SendNotification(provider *Provider, content string) error {
-	client, err := getNotificationClient(provider)
-	if err != nil {
-		return err
-	}
+	notifier := notify.New()
+	notifier.UseServices(viberSrv)
 
-	err = client.Send(context.Background(), "", content)
-	return err
+	return notifier, nil
 }

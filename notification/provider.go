@@ -14,13 +14,45 @@
 
 package notification
 
-import "github.com/nikoksr/notify"
+import "github.com/casdoor/notify"
 
-func GetNotificationProvider(typ string, appId string, receiver string, method string, title string) (notify.Notifier, error) {
+func GetNotificationProvider(typ string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, appId string, receiver string, method string, title string, metaData string) (notify.Notifier, error) {
 	if typ == "Telegram" {
 		return NewTelegramProvider(appId, receiver)
 	} else if typ == "Custom HTTP" {
 		return NewCustomHttpProvider(receiver, method, title)
+	} else if typ == "DingTalk" {
+		return NewDingTalkProvider(appId, receiver)
+	} else if typ == "Lark" {
+		return NewLarkProvider(receiver)
+	} else if typ == "Microsoft Teams" {
+		return NewMicrosoftTeamsProvider(receiver)
+	} else if typ == "Bark" {
+		return NewBarkProvider(receiver)
+	} else if typ == "Pushover" {
+		return NewPushoverProvider(appId, receiver)
+	} else if typ == "Pushbullet" {
+		return NewPushbulletProvider(appId, receiver)
+	} else if typ == "Slack" {
+		return NewSlackProvider(appId, receiver)
+	} else if typ == "Webpush" {
+		return NewWebpushProvider(clientId, clientSecret, receiver)
+	} else if typ == "Discord" {
+		return NewDiscordProvider(appId, receiver)
+	} else if typ == "Google Chat" {
+		return NewGoogleChatProvider(metaData)
+	} else if typ == "Line" {
+		return NewLineProvider(clientSecret, appId, receiver)
+	} else if typ == "Matrix" {
+		return NewMatrixProvider(clientId, clientSecret, appId, receiver)
+	} else if typ == "Twitter" {
+		return NewTwitterProvider(clientId, clientSecret, clientId2, clientSecret2, receiver)
+	} else if typ == "Reddit" {
+		return NewRedditProvider(clientId, clientSecret, clientId2, clientSecret2, receiver)
+	} else if typ == "Rocket Chat" {
+		return NewRocketChatProvider(clientId, clientSecret, appId, receiver)
+	} else if typ == "Viber" {
+		return NewViberProvider(clientId, clientSecret, appId, receiver)
 	}
 
 	return nil, nil

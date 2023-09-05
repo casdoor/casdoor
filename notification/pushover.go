@@ -15,31 +15,17 @@
 package notification
 
 import (
-	"strconv"
-
-	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/telegram"
-	api "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/casdoor/notify/service/pushover"
 )
 
-func NewTelegramProvider(apiToken string, chatIdStr string) (notify.Notifier, error) {
-	client, err := api.NewBotAPIWithClient(apiToken, proxy.ProxyHttpClient)
-	if err != nil {
-		return nil, err
-	}
-	telegramSrv := &telegram.Telegram{}
-	telegramSrv.SetClient(client)
+func NewPushoverProvider(appToken string, recipientID string) (notify.Notifier, error) {
+	pushoverSrv := pushover.New(appToken)
 
-	chatId, err := strconv.ParseInt(chatIdStr, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	telegramSrv.AddReceivers(chatId)
+	pushoverSrv.AddReceivers(recipientID)
 
 	notifier := notify.New()
-	notifier.UseServices(telegramSrv)
+	notifier.UseServices(pushoverSrv)
 
 	return notifier, nil
 }

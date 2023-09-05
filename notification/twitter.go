@@ -15,31 +15,24 @@
 package notification
 
 import (
-	"strconv"
-
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/notify"
-	"github.com/casdoor/notify/service/telegram"
-	api "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/casdoor/notify/service/twitter"
 )
 
-func NewTelegramProvider(apiToken string, chatIdStr string) (notify.Notifier, error) {
-	client, err := api.NewBotAPIWithClient(apiToken, proxy.ProxyHttpClient)
-	if err != nil {
-		return nil, err
+func NewTwitterProvider(consumerKey string, consumerSecret string, accessToken string, accessTokenSecret string, twitterId string) (*notify.Notify, error) {
+	credentials := twitter.Credentials{
+		ConsumerKey:       consumerKey,
+		ConsumerSecret:    consumerSecret,
+		AccessToken:       accessToken,
+		AccessTokenSecret: accessTokenSecret,
 	}
-	telegramSrv := &telegram.Telegram{}
-	telegramSrv.SetClient(client)
+	twitterSrv, _ := twitter.NewWithHttpClient(credentials, proxy.ProxyHttpClient)
 
-	chatId, err := strconv.ParseInt(chatIdStr, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	telegramSrv.AddReceivers(chatId)
+	twitterSrv.AddReceivers(twitterId)
 
 	notifier := notify.New()
-	notifier.UseServices(telegramSrv)
+	notifier.UseServices(twitterSrv)
 
 	return notifier, nil
 }

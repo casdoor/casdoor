@@ -182,6 +182,12 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
+    case "Notification":
+      if (provider.type === "Line") {
+        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
     default:
       return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
     }
@@ -277,7 +283,10 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
     } else if (provider.category === "Notification") {
-      if (provider.type === "Telegram") {
+      if (provider.type === "Viber") {
+        text = i18next.t("provider:Domain");
+        tooltip = i18next.t("provider:Domain - Tooltip");
+      } else {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       }
@@ -305,16 +314,25 @@ class ProviderEditPage extends React.Component {
     let text = "";
     let tooltip = "";
 
-    if (provider.type === "Telegram") {
+    if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line" || provider.type === "Twitter" || provider.type === "Reddit" || provider.type === "Rocket Chat" || provider.type === "Viber") {
       text = i18next.t("provider:Chat ID");
       tooltip = i18next.t("provider:Chat ID - Tooltip");
-    } else if (provider.type === "Custom HTTP") {
+    } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush" || provider.type === "Matrix") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
+    } else if (provider.type === "DingTalk" || provider.type === "Bark") {
+      text = i18next.t("provider:Secret Key");
+      tooltip = i18next.t("provider:Secret Key - Tooltip");
     }
 
     if (text === "" && tooltip === "") {
-      return null;
+      return (
+        <React.Fragment>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel("Test Notification", "Test Notification")} :
+          </Col>
+        </React.Fragment>
+      );
     } else {
       return (
         <React.Fragment>
@@ -590,18 +608,23 @@ class ProviderEditPage extends React.Component {
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
-          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" || (this.state.provider.category === "Notification")) ? null : (
+          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" ||
+          (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" && this.state.provider.type !== "Rocket Chat" && this.state.provider.type !== "Viber")) ? null : (
               <React.Fragment>
-                <Row style={{marginTop: "20px"}} >
-                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.getClientIdLabel(this.state.provider)} :
-                  </Col>
-                  <Col span={22} >
-                    <Input value={this.state.provider.clientId} onChange={e => {
-                      this.updateProviderField("clientId", e.target.value);
-                    }} />
-                  </Col>
-                </Row>
+                {
+                  this.state.provider.type === "Line" ? null : (
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {this.getClientIdLabel(this.state.provider)} :
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.clientId} onChange={e => {
+                          this.updateProviderField("clientId", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  )
+                }
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                     {this.getClientSecretLabel(this.state.provider)} :
@@ -616,7 +639,7 @@ class ProviderEditPage extends React.Component {
             )
         }
         {
-          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -778,6 +801,18 @@ class ProviderEditPage extends React.Component {
                   <Col span={22} >
                     <Input value={this.state.provider.title} onChange={e => {
                       this.updateProviderField("title", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+              ) : null}
+              {["Google Chat"].includes(this.state.provider.type) ? (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
+                  </Col>
+                  <Col span={22}>
+                    <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
+                      this.updateProviderField("metadata", e.target.value);
                     }} />
                   </Col>
                 </Row>
