@@ -33,6 +33,7 @@ class PermissionListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Permission - ${randomName}`,
       users: [`${this.props.account.owner}/${this.props.account.name}`],
+      groups: [],
       roles: [],
       domains: [],
       resourceType: "Application",
@@ -177,6 +178,17 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("users"),
         render: (text, record, index) => {
           return Setting.getTags(text, "users");
+        },
+      },
+      {
+        title: i18next.t("role:Sub groups"),
+        dataIndex: "groups",
+        key: "groups",
+        // width: '100px',
+        sorter: true,
+        ...this.getColumnSearchProps("groups"),
+        render: (text, record, index) => {
+          return Setting.getTags(text, "groups");
         },
       },
       {

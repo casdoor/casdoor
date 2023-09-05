@@ -17,6 +17,7 @@ import {Button, Card, Col, Input, Row, Select, Switch} from "antd";
 import * as PermissionBackend from "./backend/PermissionBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as UserBackend from "./backend/UserBackend";
+import * as GroupBackend from "./backend/GroupBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as RoleBackend from "./backend/RoleBackend";
@@ -35,6 +36,7 @@ class PermissionEditPage extends React.Component {
       organizations: [],
       model: null,
       users: [],
+      groups: [],
       roles: [],
       models: [],
       resources: [],
@@ -67,6 +69,7 @@ class PermissionEditPage extends React.Component {
         });
 
         this.getUsers(permission.owner);
+        this.getGroups(permission.owner);
         this.getRoles(permission.owner);
         this.getModels(permission.owner);
         this.getResources(permission.owner);
@@ -93,6 +96,20 @@ class PermissionEditPage extends React.Component {
 
         this.setState({
           users: res.data,
+        });
+      });
+  }
+
+  getGroups(organizationName) {
+    GroupBackend.getGroups(organizationName)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.setState({
+          groups: res.data,
         });
       });
   }
@@ -192,6 +209,7 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.permission.owner} onChange={(owner => {
               this.updatePermissionField("owner", owner);
               this.getUsers(owner);
+              this.getGroups(owner);
               this.getRoles(owner);
               this.getModels(owner);
               this.getResources(owner);
@@ -260,6 +278,17 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.users}
               onChange={(value => {this.updatePermissionField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("role:Sub groups"), i18next.t("role:Sub groups - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.groups}
+              onChange={(value => {this.updatePermissionField("groups", value);})}
+              options={this.state.groups.map((group) => Setting.getOption(`${group.owner}/${group.name}`, `${group.owner}/${group.name}`))}
             />
           </Col>
         </Row>
