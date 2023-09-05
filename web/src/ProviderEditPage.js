@@ -406,7 +406,6 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Twilio SMS");
               } else if (value === "Storage") {
                 this.updateProviderField("type", "AWS S3");
-                this.updateProviderField("domain", Setting.getFullServerUrl());
               } else if (value === "SAML") {
                 this.updateProviderField("type", "Keycloak");
               } else if (value === "Payment") {
