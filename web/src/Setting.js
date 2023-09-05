@@ -285,7 +285,7 @@ export const OtherProviderInfo = {
       url: "https://www.larksuite.com/",
     },
     "Microsoft Teams": {
-      logo: `${StaticBaseUrl}/img/social_microsoftteams.png`,
+      logo: `${StaticBaseUrl}/img/social_teams.png`,
       url: "https://www.microsoft.com/microsoft-teams",
     },
     "Bark": {
