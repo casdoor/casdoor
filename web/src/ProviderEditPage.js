@@ -283,15 +283,12 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
     } else if (provider.category === "Notification") {
-      if (provider.type === "Telegram" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack") {
-        text = i18next.t("provider:App Key");
-        tooltip = i18next.t("provider:App Key - Tooltip");
-      } else if (provider.type === "DingTalk" || provider.type === "Discord" || provider.type === "Matrix") {
-        text = i18next.t("provider:App Key");
-        tooltip = i18next.t("provider:App Key - Tooltip");
-      } else if (provider.type === "Viber") {
+      if (provider.type === "Viber") {
         text = i18next.t("provider:Domain");
         tooltip = i18next.t("provider:Domain - Tooltip");
+      } else {
+        text = i18next.t("provider:App Key");
+        tooltip = i18next.t("provider:App Key - Tooltip");
       }
     }
 

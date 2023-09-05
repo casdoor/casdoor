@@ -285,19 +285,19 @@ export const OtherProviderInfo = {
       url: "https://www.larksuite.com/",
     },
     "Microsoft Teams": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/social_microsoftteams.png`,
       url: "https://www.microsoft.com/microsoft-teams",
     },
     "Bark": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/social_bark.png`,
       url: "https://apps.apple.com/us/app/bark-customed-notifications/id1403753865",
     },
     "Pushover": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/social_pushover.png`,
       url: "https://pushover.net/",
     },
     "Pushbullet": {
-      logo: `${StaticBaseUrl}/img/social_lark.png`,
+      logo: `${StaticBaseUrl}/img/social_pushbullet.png`,
       url: "https://www.pushbullet.com/",
     },
     "Slack": {
@@ -309,19 +309,19 @@ export const OtherProviderInfo = {
       url: "https://developer.mozilla.org/en-US/docs/Web/API/Push_API",
     },
     "Discord": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
+      logo: `${StaticBaseUrl}/img/social_discord.png`,
       url: "https://discord.com/",
     },
     "Google Chat": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
+      logo: `${StaticBaseUrl}/img/social_google_chat.png`,
       url: "https://workspace.google.com/intl/en/products/chat/",
     },
     "Line": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
+      logo: `${StaticBaseUrl}/img/social_line.png`,
       url: "https://line.me/",
     },
     "Matrix": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
+      logo: `${StaticBaseUrl}/img/social_matrix.png`,
       url: "https://www.matrix.org/",
     },
     "Twitter": {
@@ -329,16 +329,16 @@ export const OtherProviderInfo = {
       url: "https://twitter.com/",
     },
     "Reddit": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
-      url: "https://twitter.com/",
+      logo: `${StaticBaseUrl}/img/social_reddit.png`,
+      url: "https://www.reddit.com/",
     },
     "Rocket Chat": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
-      url: "https://twitter.com/",
+      logo: `${StaticBaseUrl}/img/social_rocket_chat.png`,
+      url: "https://rocket.chat/",
     },
     "Viber": {
-      logo: `${StaticBaseUrl}/img/email_default.png`,
-      url: "https://twitter.com/",
+      logo: `${StaticBaseUrl}/img/social_viber.png`,
+      url: "https://www.viber.com/",
     },
   },
 };
