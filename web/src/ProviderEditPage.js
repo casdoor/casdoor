@@ -41,7 +41,6 @@ class ProviderEditPage extends React.Component {
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
       certs: [],
-      selectedOrg: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };

@@ -176,11 +176,10 @@ func (c *ApiController) DeletePayment() {
 func (c *ApiController) NotifyPayment() {
 	owner := c.Ctx.Input.Param(":owner")
 	paymentName := c.Ctx.Input.Param(":payment")
-	orderId := c.Ctx.Input.Param("order")
 
 	body := c.Ctx.Input.RequestBody
 
-	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, paymentName, orderId)
+	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, paymentName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
