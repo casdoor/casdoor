@@ -34,6 +34,7 @@
     "i18next": "^19.8.9",
     "libphonenumber-js": "^1.10.19",
     "moment": "^2.29.1",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-app-polyfill": "^3.0.0",
     "react-codemirror2": "^7.2.1",
@@ -82,6 +83,9 @@
     "@babel/eslint-parser": "^7.18.9",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/preset-react": "^7.18.6",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
     "cross-env": "^7.0.3",
     "cypress": "^12.5.1",
     "eslint": "8.22.0",
@@ -91,10 +95,7 @@
     "lint-staged": "^13.0.3",
     "stylelint": "^14.11.0",
     "stylelint-config-recommended-less": "^1.0.4",
-    "stylelint-config-standard": "^28.0.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2"
+    "stylelint-config-standard": "^28.0.0"
   },
   "lint-staged": {
     "src/**/*.{css,less}": [

@@ -16,6 +16,8 @@ import React from "react";
 import {Button, Card, Checkbox, Col, Input, InputNumber, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
@@ -24,7 +26,6 @@ import * as ProviderNotification from "./common/TestNotificationWidget";
 import * as ProviderEditTestSms from "./common/TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
-import * as OrganizationBackend from "./backend/OrganizationBackend";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
 
@@ -39,6 +40,8 @@ class ProviderEditPage extends React.Component {
       providerName: props.match.params.providerName,
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       provider: null,
+      certs: [],
+      selectedOrg: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
@@ -47,6 +50,7 @@ class ProviderEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getOrganizations();
     this.getProvider();
+    this.getCerts(this.state.owner);
   }
 
   getProvider() {
@@ -80,6 +84,17 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            certs: res.data || [],
+          });
+        }
+      });
+  }
+
   parseProviderField(key, value) {
     if (["port"].includes(key)) {
       value = Setting.myParseInt(value);
@@ -91,6 +106,11 @@ class ProviderEditPage extends React.Component {
     value = this.parseProviderField(key, value);
 
     const provider = this.state.provider;
+    if (key === "owner" && provider["owner"] !== value) {
+      // the provider change the owner, reset the cert
+      provider["cert"] = "";
+      this.getCerts(value);
+    }
     provider[key] = value;
     this.setState({
       provider: provider,
@@ -1042,9 +1062,11 @@ class ProviderEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
               </Col>
               <Col span={22} >
-                <Input value={this.state.provider.cert} onChange={e => {
-                  this.updateProviderField("cert", e.target.value);
-                }} />
+                <Select virtual={false} style={{width: "100%"}} value={this.state.provider.cert} onChange={(value => {this.updateProviderField("cert", value);})}>
+                  {
+                    this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                  }
+                </Select>
               </Col>
             </Row>
           ) : null
