@@ -28,15 +28,18 @@ func NewTelegramProvider(apiToken string, chatIdStr string) (notify.Notifier, er
 	if err != nil {
 		return nil, err
 	}
-	t := &telegram.Telegram{}
-	t.SetClient(client)
+	telegramSrv := &telegram.Telegram{}
+	telegramSrv.SetClient(client)
 
 	chatId, err := strconv.ParseInt(chatIdStr, 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	t.AddReceivers(chatId)
+	telegramSrv.AddReceivers(chatId)
 
-	return t, nil
+	notifier := notify.New()
+	notifier.UseServices(telegramSrv)
+
+	return notifier, nil
 }

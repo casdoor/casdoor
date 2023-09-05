@@ -24,7 +24,10 @@ func NewDingTalkProvider(token string, secret string) (notify.Notifier, error) {
 		Token:  token,
 		Secret: secret,
 	}
-	d := dingding.New(&cfg)
+	dingtalkSrv := dingding.New(&cfg)
 
-	return d, nil
+	notifier := notify.New()
+	notifier.UseServices(dingtalkSrv)
+
+	return notifier, nil
 }

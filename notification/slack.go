@@ -20,12 +20,11 @@ import (
 )
 
 func NewSlackProvider(apiToken string, channelID string) (*notify.Notify, error) {
+	slackSrv := slack.New(apiToken)
+	slackSrv.AddReceivers(channelID)
+
 	notifier := notify.New()
-
-	slackService := slack.New(apiToken)
-	slackService.AddReceivers(channelID)
-
-	notifier.UseServices(slackService)
+	notifier.UseServices(slackSrv)
 
 	return notifier, nil
 }

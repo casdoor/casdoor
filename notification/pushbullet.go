@@ -20,9 +20,12 @@ import (
 )
 
 func NewPushbulletProvider(apiToken string, deviceNickname string) (notify.Notifier, error) {
-	p := pushbullet.New(apiToken)
+	pushbulletSrv := pushbullet.New(apiToken)
 
-	p.AddReceivers(deviceNickname)
+	pushbulletSrv.AddReceivers(deviceNickname)
 
-	return p, nil
+	notifier := notify.New()
+	notifier.UseServices(pushbulletSrv)
+
+	return notifier, nil
 }

@@ -20,14 +20,14 @@ import (
 )
 
 func NewWebpushProvider(publicKey string, privateKey string, endpoint string) (*notify.Notify, error) {
-	webpushService := webpush.New(publicKey, privateKey)
+	webpushSrv := webpush.New(publicKey, privateKey)
 
 	subscription := webpush.Subscription{
 		Endpoint: endpoint,
 	}
-	webpushService.AddReceivers(subscription)
+	webpushSrv.AddReceivers(subscription)
 
-	notifier := notify.NewWithServices(webpushService)
+	notifier := notify.NewWithServices(webpushSrv)
 
 	return notifier, nil
 }

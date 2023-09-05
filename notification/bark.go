@@ -20,7 +20,10 @@ import (
 )
 
 func NewBarkProvider(deviceKey string) (notify.Notifier, error) {
-	b := bark.New(deviceKey)
+	barkSrv := bark.New(deviceKey)
 
-	return b, nil
+	notifier := notify.New()
+	notifier.UseServices(barkSrv)
+
+	return notifier, nil
 }

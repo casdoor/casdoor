@@ -20,9 +20,12 @@ import (
 )
 
 func NewMicrosoftTeamsProvider(webhookURL string) (notify.Notifier, error) {
-	client := msteams.New()
+	msTeamsSrv := msteams.New()
 
-	client.AddReceivers(webhookURL)
+	msTeamsSrv.AddReceivers(webhookURL)
 
-	return client, nil
+	notifier := notify.New()
+	notifier.UseServices(msTeamsSrv)
+
+	return notifier, nil
 }

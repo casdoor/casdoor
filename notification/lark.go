@@ -20,10 +20,10 @@ import (
 )
 
 func NewLarkProvider(webhookURL string) (notify.Notifier, error) {
-	l := lark.NewWebhookService(webhookURL)
+	larkSrv := lark.NewWebhookService(webhookURL)
 
 	notifier := notify.New()
-	notifier.UseServices(l)
+	notifier.UseServices(larkSrv)
 
 	return notifier, nil
 }

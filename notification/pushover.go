@@ -20,9 +20,12 @@ import (
 )
 
 func NewPushoverProvider(appToken string, recipientID string) (notify.Notifier, error) {
-	p := pushover.New(appToken)
+	pushoverSrv := pushover.New(appToken)
 
-	p.AddReceivers(recipientID)
+	pushoverSrv.AddReceivers(recipientID)
 
-	return p, nil
+	notifier := notify.New()
+	notifier.UseServices(pushoverSrv)
+
+	return notifier, nil
 }

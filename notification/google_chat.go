@@ -16,11 +16,12 @@ package notification
 
 import (
 	"context"
+	"strings"
+
 	"github.com/casdoor/notify"
 	"github.com/casdoor/notify/service/googlechat"
 	"google.golang.org/api/chat/v1"
 	"google.golang.org/api/option"
-	"strings"
 )
 
 func NewGoogleChatProvider(credentials string) (*notify.Notify, error) {
