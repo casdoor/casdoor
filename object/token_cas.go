@@ -196,7 +196,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 			},
 			ProxyGrantingTicket: fmt.Sprintf("PGTIOU-%s", util.GenerateId()),
 		}
-		data, _ := json.Marshal(user)
+		data, _ := json.Marshal(user.SecretDataRemoved())
 		tmp := map[string]string{}
 		json.Unmarshal(data, &tmp)
 		for k, v := range tmp {

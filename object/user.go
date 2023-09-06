@@ -206,6 +206,29 @@ type Userinfo struct {
 	Groups      []string `json:"groups,omitempty"`
 }
 
+func (user *User) SecretDataRemoved() User {
+	masked := *user
+	masked.Password = ""
+	masked.PasswordSalt = ""
+	masked.AccessKey = ""
+	masked.AccessSecret = ""
+	masked.TotpSecret = ""
+	masked.WebauthnCredentials = nil
+	masked.MultiFactorAuths = nil
+	if len(user.ManagedAccounts) != 0 {
+		masked.ManagedAccounts = make([]ManagedAccount, 0, len(user.ManagedAccounts))
+		for _, acc := range user.ManagedAccounts {
+			masked.ManagedAccounts = append(masked.ManagedAccounts, ManagedAccount{
+				Application: acc.Application,
+				Username:    acc.Username,
+				Password:    "",
+				SigninUrl:   acc.SigninUrl,
+			})
+		}
+	}
+	return masked
+}
+
 type ManagedAccount struct {
 	Application string `xorm:"varchar(100)" json:"application"`
 	Username    string `xorm:"varchar(100)" json:"username"`
