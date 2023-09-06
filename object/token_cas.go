@@ -193,6 +193,8 @@ func GenerateCasToken(userId string, service string) (string, error) {
 		return "", fmt.Errorf("The user: %s doesn't exist", userId)
 	}
 
+	user, _ = GetMaskedUser(user, false)
+
 	authenticationSuccess := CasAuthenticationSuccess{
 		User: user.Name,
 		Attributes: &CasAttributes{
