@@ -286,7 +286,7 @@ class ProviderEditPage extends React.Component {
       if (provider.type === "Viber") {
         text = i18next.t("provider:Domain");
         tooltip = i18next.t("provider:Domain - Tooltip");
-      } else {
+      } else if (provider.type === "Telegram" || provider.type === "DingTalk" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line" || provider.type === "Matrix" || provider.type === "Rocket Chat") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       }
