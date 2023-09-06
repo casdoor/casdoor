@@ -27,7 +27,10 @@ func NewTwitterProvider(consumerKey string, consumerSecret string, accessToken s
 		AccessToken:       accessToken,
 		AccessTokenSecret: accessTokenSecret,
 	}
-	twitterSrv, _ := twitter.NewWithHttpClient(credentials, proxy.ProxyHttpClient)
+	twitterSrv, err := twitter.NewWithHttpClient(credentials, proxy.ProxyHttpClient)
+	if err != nil {
+		return nil, err
+	}
 
 	twitterSrv.AddReceivers(twitterId)
 
