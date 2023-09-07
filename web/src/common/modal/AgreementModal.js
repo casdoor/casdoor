@@ -49,7 +49,11 @@ export const AgreementModal = (props) => {
 function getTermsOfUseContent(url) {
   return fetch(url, {
     method: "GET",
-  }).then(r => r.text());
+  })
+    .then(r => r.text())
+    .catch(error => {
+      Setting.showMessage("error", `${i18next.t("general:Failed to get TermsOfUse URL")}: ${url}, ${error}`);
+    });
 }
 
 export function isAgreementRequired(application) {

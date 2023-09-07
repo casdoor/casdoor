@@ -542,7 +542,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("signup:Terms of Use"), i18next.t("signup:Terms of Use - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
+            <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
               this.updateApplicationField("termsOfUse", e.target.value);
             }} />
             <Upload maxCount={1} accept=".html" showUploadList={false}

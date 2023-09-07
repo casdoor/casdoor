@@ -50,11 +50,15 @@ window.fetch = async(url, option = {}) => {
   requestFilters.forEach(filter => filter(url, option));
 
   return new Promise((resolve, reject) => {
-    originalFetch(url, option).then(res => {
-      if (!url.startsWith("/api/get-organizations")) {
-        responseFilters.forEach(filter => filter(res.clone()));
-      }
-      resolve(res);
-    });
+    originalFetch(url, option)
+      .then(res => {
+        if (!url.startsWith("/api/get-organizations")) {
+          responseFilters.forEach(filter => filter(res.clone()));
+        }
+        resolve(res);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
 };
