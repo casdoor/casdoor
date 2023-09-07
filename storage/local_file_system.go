@@ -15,6 +15,7 @@
 package storage
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -23,76 +24,69 @@ import (
 	"github.com/casdoor/oss"
 )
 
-var baseFolder = "files"
-
-// FileSystem file system storage
-type FileSystem struct {
-	Base string
+// LocalFileSystemProvider file system storage
+type LocalFileSystemProvider struct {
+	BaseDir string
 }
 
-// NewFileSystem initialize the local file system storage
-func NewFileSystem(base string) *FileSystem {
-	absBase, err := filepath.Abs(base)
+// NewLocalFileSystemStorageProvider initialize the local file system storage
+func NewLocalFileSystemStorageProvider() *LocalFileSystemProvider {
+	baseFolder := "files"
+	absBase, err := filepath.Abs(baseFolder)
 	if err != nil {
-		panic("local file system storage's base folder is not initialized")
+		panic(err)
 	}
 
-	return &FileSystem{Base: absBase}
+	return &LocalFileSystemProvider{BaseDir: absBase}
 }
 
 // GetFullPath get full path from absolute/relative path
-func (fileSystem FileSystem) GetFullPath(path string) string {
+func (sp LocalFileSystemProvider) GetFullPath(path string) string {
 	fullPath := path
-	if !strings.HasPrefix(path, fileSystem.Base) {
-		fullPath, _ = filepath.Abs(filepath.Join(fileSystem.Base, path))
+	if !strings.HasPrefix(path, sp.BaseDir) {
+		fullPath, _ = filepath.Abs(filepath.Join(sp.BaseDir, path))
 	}
 	return fullPath
 }
 
 // Get receive file with given path
-func (fileSystem FileSystem) Get(path string) (*os.File, error) {
-	return os.Open(fileSystem.GetFullPath(path))
+func (sp LocalFileSystemProvider) Get(path string) (*os.File, error) {
+	return os.Open(sp.GetFullPath(path))
 }
 
 // GetStream get file as stream
-func (fileSystem FileSystem) GetStream(path string) (io.ReadCloser, error) {
-	return os.Open(fileSystem.GetFullPath(path))
+func (sp LocalFileSystemProvider) GetStream(path string) (io.ReadCloser, error) {
+	return os.Open(sp.GetFullPath(path))
 }
 
 // Put store a reader into given path
-func (fileSystem FileSystem) Put(path string, reader io.Reader) (*oss.Object, error) {
-	var (
-		fullPath = fileSystem.GetFullPath(path)
-		err      = os.MkdirAll(filepath.Dir(fullPath), os.ModePerm)
-	)
+func (sp LocalFileSystemProvider) Put(path string, reader io.Reader) (*oss.Object, error) {
+	fullPath := sp.GetFullPath(path)
 
+	err := os.MkdirAll(filepath.Dir(fullPath), os.ModePerm)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Casdoor fails to create folder: \"%s\" for local file system storage provider: %s. Make sure Casdoor process has correct permission to create/access it, or you can create it manually in advance", filepath.Dir(fullPath), err.Error())
 	}
 
 	dst, err := os.Create(filepath.Clean(fullPath))
-
 	if err == nil {
 		if seeker, ok := reader.(io.ReadSeeker); ok {
 			seeker.Seek(0, 0)
 		}
 		_, err = io.Copy(dst, reader)
 	}
-
-	return &oss.Object{Path: path, Name: filepath.Base(path), StorageInterface: fileSystem}, err
+	return &oss.Object{Path: path, Name: filepath.Base(path), StorageInterface: sp}, err
 }
 
 // Delete delete file
-func (fileSystem FileSystem) Delete(path string) error {
-	return os.Remove(fileSystem.GetFullPath(path))
+func (sp LocalFileSystemProvider) Delete(path string) error {
+	return os.Remove(sp.GetFullPath(path))
 }
 
 // List list all objects under current path
-func (fileSystem FileSystem) List(path string) ([]*oss.Object, error) {
-	var (
-		objects  []*oss.Object
-		fullPath = fileSystem.GetFullPath(path)
-	)
+func (sp LocalFileSystemProvider) List(path string) ([]*oss.Object, error) {
+	objects := []*oss.Object{}
+	fullPath := sp.GetFullPath(path)
 
 	filepath.Walk(fullPath, func(path string, info os.FileInfo, err error) error {
 		if path == fullPath {
@@ -102,10 +96,10 @@ func (fileSystem FileSystem) List(path string) ([]*oss.Object, error) {
 		if err == nil && !info.IsDir() {
 			modTime := info.ModTime()
 			objects = append(objects, &oss.Object{
-				Path:             strings.TrimPrefix(path, fileSystem.Base),
+				Path:             strings.TrimPrefix(path, sp.BaseDir),
 				Name:             info.Name(),
 				LastModified:     &modTime,
-				StorageInterface: fileSystem,
+				StorageInterface: sp,
 			})
 		}
 		return nil
@@ -114,16 +108,12 @@ func (fileSystem FileSystem) List(path string) ([]*oss.Object, error) {
 	return objects, nil
 }
 
-// GetEndpoint get endpoint, FileSystem's endpoint is /
-func (fileSystem FileSystem) GetEndpoint() string {
+// GetEndpoint get endpoint, LocalFileSystemProvider's endpoint is /
+func (sp LocalFileSystemProvider) GetEndpoint() string {
 	return "/"
 }
 
 // GetURL get public accessible URL
-func (fileSystem FileSystem) GetURL(path string) (url string, err error) {
+func (sp LocalFileSystemProvider) GetURL(path string) (url string, err error) {
 	return path, nil
-}
-
-func NewLocalFileSystemStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
-	return NewFileSystem(baseFolder)
 }
