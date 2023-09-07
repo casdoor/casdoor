@@ -51,7 +51,7 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 	if err != nil {
 		return nil, err
 	}
-	clientV3.DebugSwitch = gopay.DebugOn
+
 	platformCert, serialNo, err := clientV3.GetAndSelectNewestCert()
 	if err != nil {
 		return nil, err
