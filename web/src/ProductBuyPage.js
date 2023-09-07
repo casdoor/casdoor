@@ -13,8 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions, Modal, Spin} from "antd";
-import {CheckCircleTwoTone} from "@ant-design/icons";
+import {Button, Descriptions, Spin} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -36,7 +35,6 @@ class ProductBuyPage extends React.Component {
       pricing: props?.pricing ?? null,
       plan: null,
       isPlacingOrder: false,
-      qrCodeModalProvider: null,
     };
   }
 
@@ -130,13 +128,6 @@ class ProductBuyPage extends React.Component {
   }
 
   buyProduct(product, provider) {
-    if (provider.clientId.startsWith("http")) {
-      this.setState({
-        qrCodeModalProvider: provider,
-      });
-      return;
-    }
-
     this.setState({
       isPlacingOrder: true,
     });
@@ -144,7 +135,11 @@ class ProductBuyPage extends React.Component {
     ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "")
       .then((res) => {
         if (res.status === "ok") {
-          const payUrl = res.data;
+          const payment = res.data;
+          let payUrl = payment.payUrl;
+          if (provider.type === "WeChat Pay") {
+            payUrl = `/qrcode/${payment.owner}/${payment.name}?providerName=${provider.name}&payUrl=${encodeURI(payment.payUrl)}&successUrl=${encodeURI(payment.successUrl)}`;
+          }
           Setting.goToLink(payUrl);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
@@ -157,45 +152,6 @@ class ProductBuyPage extends React.Component {
       .catch(error => {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
-  }
-
-  renderQrCodeModal() {
-    if (this.state.qrCodeModalProvider === undefined || this.state.qrCodeModalProvider === null) {
-      return null;
-    }
-
-    return (
-      <Modal title={
-        <div>
-          <CheckCircleTwoTone twoToneColor="rgb(45,120,213)" />
-          {" " + i18next.t("product:Please scan the QR code to pay")}
-        </div>
-      }
-      open={this.state.qrCodeModalProvider !== undefined && this.state.qrCodeModalProvider !== null}
-      onOk={() => {
-        Setting.goToLink(this.state.product.returnUrl);
-      }}
-      onCancel={() => {
-        this.setState({
-          qrCodeModalProvider: null,
-        });
-      }}
-      okText={i18next.t("product:I have completed the payment")}
-      cancelText={i18next.t("general:Cancel")}>
-        <p key={this.state.qrCodeModalProvider?.name}>
-          {
-            i18next.t("product:Please provide your username in the remark")
-          }
-          :&nbsp;&nbsp;
-          {
-            Setting.getTag("default", this.props.account.name)
-          }
-          <br />
-          <br />
-          <img src={this.state.qrCodeModalProvider?.clientId} alt={this.state.qrCodeModalProvider?.name} width={"472px"} style={{marginBottom: "20px"}} />
-        </p>
-      </Modal>
-    );
   }
 
   getPayButton(provider) {
@@ -290,9 +246,6 @@ class ProductBuyPage extends React.Component {
             </Descriptions.Item>
           </Descriptions>
         </Spin>
-        {
-          this.renderQrCodeModal()
-        }
       </div>
     );
   }

@@ -187,11 +187,11 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payUrl, orderId, err := object.BuyProduct(id, user, providerName, pricingName, planName, host)
+	payment, err := object.BuyProduct(id, user, providerName, pricingName, planName, host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(payUrl, orderId)
+	c.ResponseOk(payment)
 }

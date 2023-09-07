@@ -31,6 +31,7 @@ import CasLogout from "./auth/CasLogout";
 import {authConfig} from "./auth/Auth";
 import ProductBuyPage from "./ProductBuyPage";
 import PaymentResultPage from "./PaymentResultPage";
+import QrCodePage from "./QrCodePage";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -113,6 +114,7 @@ class EntryPage extends React.Component {
           <Route exact path="/select-plan/:owner/:pricingName" render={(props) => <PricingPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
           <Route exact path="/buy-plan/:owner/:pricingName" render={(props) => <ProductBuyPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
           <Route exact path="/buy-plan/:owner/:pricingName/result" render={(props) => <PaymentResultPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
+          <Route exact path="/qrcode/:owner/:paymentName" render={(props) => <QrCodePage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />} />
         </Switch>
       </div>
     );
