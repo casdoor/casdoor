@@ -13,64 +13,123 @@
 // limitations under the License.
 
 import React from "react";
-import {useEffect, useState} from "react";
 import QRCode from "qrcode.react";
-import {Col, Row} from "antd";
+import {Button, Col, Row} from "antd";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
+import * as ProviderBackend from "./backend/ProviderBackend";
+import i18next from "i18next";
 
-export default function QrCodePage({providerDisplay, owner, paymentName, payUrl, successUrl, size}) {
-  window.console.log(payUrl, successUrl);
-  const [paymentState, setPaymentState] = useState("Created");
+class QrCodePage extends React.Component {
+  constructor(props) {
+    super(props);
+    const params = new URLSearchParams(window.location.search);
+    this.state = {
+      classes: props,
+      owner: props.owner ?? (props.match?.params?.owner ?? null),
+      paymentName: props.paymentName ?? (props.match?.params?.paymentName ?? null),
+      providerName: props.providerName ?? params.get("providerName"),
+      payUrl: props.payUrl ?? params.get("payUrl"),
+      successUrl: props.successUrl ?? params.get("successUrl"),
+      provider: props.provider ?? null,
+      payment: null,
+      timer: null,
+    };
+  }
 
-  useEffect(() => {
-    if (!owner || !paymentName) {
+  async getProvider() {
+    if (!this.state.owner || !this.state.providerName) {
+      return ;
+    }
+    try {
+      const res = await ProviderBackend.getProvider(this.state.owner, this.state.providerName);
+      if (res.status !== "ok") {
+        throw new Error(res.msg);
+      }
+      const provider = res.data;
+      this.setState({
+        provider: provider,
+      });
+    } catch (err) {
+      Setting.showMessage("error", err.message);
+      return ;
+    }
+  }
+
+  setNotifyTask() {
+    if (!this.state.owner || !this.state.paymentName) {
       return ;
     }
 
     const notifyTask = async() => {
       try {
-        const res = await PaymentBackend.notifyPayment(owner, paymentName);
+        const res = await PaymentBackend.notifyPayment(this.state.owner, this.state.paymentName);
         if (res.status !== "ok") {
           throw new Error(res.msg);
         }
         const payment = res.data;
-        setPaymentState(payment.state);
+        if (payment.state !== "Created") {
+          Setting.goToLink(this.state.successUrl);
+        }
       } catch (err) {
         Setting.showMessage("error", err.message);
         return ;
       }
     };
 
-    const timer = setInterval(() => {
-      if (paymentState === "Created") {
-        notifyTask();
-      }
-    }, 2000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  });
-
-  useEffect(() => {
-    if (paymentState !== "Created") {
-      // the successUrl is redirected from payUrl after pay success, not the product's returnUrl
-      Setting.goToLink(successUrl);
-    }
-  }, [paymentState]);
-
-  if (!payUrl || !successUrl) {
-    return null;
+    this.setState({
+      timer: setTimeout(async() => {
+        await notifyTask();
+        this.setNotifyTask();
+      }, 2000),
+    });
   }
-  return (
-    <Col>
-      <Row style={{justifyContent: "center"}}>
-        {providerDisplay}
-      </Row>
-      <Row style={{marginTop: "10px", justifyContent: "center"}}>
-        <QRCode value={payUrl} size={size} />
-      </Row>
-    </Col>
-  );
+
+  componentDidMount() {
+    if (this.props.onUpdateApplication) {
+      this.props.onUpdateApplication(null);
+    }
+    this.getProvider();
+    this.setNotifyTask();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.timer);
+  }
+
+  renderProviderInfo(provider) {
+    if (!provider) {
+      return null;
+    }
+    const text = i18next.t(`product:${provider.type}`);
+    return (
+      <Button style={{height: "50px", borderWidth: "2px"}} shape="round" icon={
+        <img style={{marginRight: "10px"}} width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
+      } size={"large"} >
+        {
+          text
+        }
+      </Button>
+    );
+  }
+
+  render() {
+    if (!this.state.payUrl || !this.state.successUrl || !this.state.owner || !this.state.paymentName) {
+      return null;
+    }
+    return (
+      <div className="login-content">
+        <Col>
+          <Row style={{justifyContent: "center"}}>
+            {this.renderProviderInfo(this.state.provider)}
+          </Row>
+          <Row style={{marginTop: "10px", justifyContent: "center"}}>
+            <QRCode value={this.state.payUrl} size={this.props.size ?? 200} />
+          </Row>
+        </Col>
+      </div>
+    );
+  }
 }
+
+export default QrCodePage;

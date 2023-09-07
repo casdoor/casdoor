@@ -13,14 +13,12 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions, Modal, Row, Spin} from "antd";
-import {CheckCircleTwoTone} from "@ant-design/icons";
+import {Button, Descriptions, Spin} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as Setting from "./Setting";
-import QrCodePage from "./QrCodePage";
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
@@ -37,7 +35,6 @@ class ProductBuyPage extends React.Component {
       pricing: props?.pricing ?? null,
       plan: null,
       isPlacingOrder: false,
-      qrCodeInfo: null,
     };
   }
 
@@ -139,20 +136,11 @@ class ProductBuyPage extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const payment = res.data;
-          window.console.log("buyProduct res=", payment);
+          let payUrl = payment.payUrl;
           if (provider.type === "WeChat Pay") {
-            this.setState({
-              qrCodeInfo: {
-                owner: payment.owner,
-                paymentName: payment.name,
-                successUrl: payment.successUrl,
-                payUrl: payment.payUrl,
-                provider: provider,
-              },
-            });
-            return ;
+            payUrl = `/qrcode/${payment.owner}/${payment.name}?providerName=${provider.name}&payUrl=${encodeURI(payment.payUrl)}&successUrl=${encodeURI(payment.successUrl)}`;
           }
-          Setting.goToLink(payment.payUrl);
+          Setting.goToLink(payUrl);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
 
@@ -164,38 +152,6 @@ class ProductBuyPage extends React.Component {
       .catch(error => {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
-  }
-
-  renderQrCodeModal() {
-    if (!this.state.qrCodeInfo) {
-      return null;
-    }
-    const handleCancel = () => {
-      this.setState({
-        qrCodeInfo: null,
-        isPlacingOrder: false,
-      });
-    };
-    return (
-      <Modal
-        title={
-          <div>
-            <CheckCircleTwoTone twoToneColor="rgb(45,120,213)" />
-            {" " + i18next.t("product:Please scan the QR code to pay")}
-          </div>
-        }
-        open={this.state.qrCodeInfo}
-        onCancel={handleCancel}
-        footer={
-          <Button onClick={handleCancel} type="primary">
-            {i18next.t("general:Cancel")}
-          </Button>
-        }>
-        <Row style={{width: "100%", marginTop: "20px", justifyContent: "center"}}>
-          <QrCodePage {...this.state.qrCodeInfo} size={200} providerDisplay={this.getPayButton(this.state.qrCodeInfo.provider)} />
-        </Row>
-      </Modal>
-    );
   }
 
   getPayButton(provider) {
@@ -290,9 +246,6 @@ class ProductBuyPage extends React.Component {
             </Descriptions.Item>
           </Descriptions>
         </Spin>
-        {
-          this.renderQrCodeModal()
-        }
       </div>
     );
   }
