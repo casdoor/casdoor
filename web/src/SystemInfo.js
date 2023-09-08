@@ -178,7 +178,7 @@ class SystemInfo extends React.Component {
             <Col span={6}></Col>
           </Row>
           <Tour
-            open={this.state.isTourVisible}
+            open={Setting.isMobile() ? false : this.state.isTourVisible}
             onClose={this.setIsTourVisible}
             steps={this.getSteps()}
             indicatorsRender={(current, total) => (

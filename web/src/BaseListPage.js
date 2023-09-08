@@ -204,7 +204,7 @@ class BaseListPage extends React.Component {
           this.renderTable(this.state.data)
         }
         <Tour
-          open={this.state.isTourVisible}
+          open={Setting.isMobile() ? false : this.state.isTourVisible}
           onClose={this.setIsTourVisible}
           steps={this.getSteps()}
           indicatorsRender={(current, total) => (
