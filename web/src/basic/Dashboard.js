@@ -150,7 +150,7 @@ const Dashboard = (props) => {
       {renderEChart()}
       <div id="echarts-chart" style={{width: "80%", height: "400px", textAlign: "center", marginTop: "20px"}} />
       <Tour
-        open={isTourVisible}
+        open={Setting.isMobile() ? false : isTourVisible}
         onClose={setIsTourToLocal}
         steps={getSteps()}
         indicatorsRender={(current, total) => (
