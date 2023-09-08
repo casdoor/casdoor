@@ -962,15 +962,15 @@ class ProviderEditPage extends React.Component {
                 <Col span={4} >
                   <Input.Group compact>
                     <CountryCodeSelect
-                      style={{width: "30%"}}
-                      value={this.state.provider.content}
+                      style={{width: "90px"}}
+                      initValue={this.state.provider.content}
                       onChange={(value) => {
                         this.updateProviderField("content", value);
                       }}
                       countryCodes={this.props.account.organization.countryCodes}
                     />
                     <Input value={this.state.provider.receiver}
-                      style={{width: "70%"}}
+                      style={{width: "150px"}}
                       placeholder = {i18next.t("user:Input your phone number")}
                       onChange={e => {
                         this.updateProviderField("receiver", e.target.value);
