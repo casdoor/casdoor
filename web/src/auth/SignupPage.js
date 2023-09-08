@@ -182,6 +182,9 @@ class SignupPage extends React.Component {
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
+          // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
+          values.username = res.data.split("/")[1];
+          window.console.log("values=", values);
           if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
             AuthBackend.getAccount("")
               .then((res) => {
