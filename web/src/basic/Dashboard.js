@@ -105,8 +105,8 @@ const Dashboard = (props) => {
         i18next.t("general:Applications"),
         i18next.t("general:Organizations"),
         i18next.t("general:Subscriptions"),
-      ]},
-      grid: {left: "3%", right: "4%", bottom: "3%", containLabel: true},
+      ], top: "10%"},
+      grid: {left: "3%", right: "4%", bottom: "0", top: "25%", containLabel: true},
       xAxis: {type: "category", boundaryGap: false, data: dateArray},
       yAxis: {type: "value"},
       series: [
@@ -120,24 +120,24 @@ const Dashboard = (props) => {
     myChart.setOption(option);
 
     return (
-      <Row id="statistic" gutter={80}>
-        <Col span={50}>
-          <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+      <Row id="statistic" gutter={80} justify={"center"}>
+        <Col span={50} style={{marginBottom: "10px"}}>
+          <Card bordered={false} bodyStyle={{width: Setting.isMobile() ? "340px" : "100%", height: Setting.isMobile() ? "100px" : "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Statistic title={i18next.t("home:Total users")} fontSize="100px" value={dashboardData.userCounts[30]} valueStyle={{fontSize: "30px"}} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50}>
-          <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <Col span={50} style={{marginBottom: "10px"}}>
+          <Card bordered={false} bodyStyle={{width: Setting.isMobile() ? "340px" : "100%", height: Setting.isMobile() ? "100px" : "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Statistic title={i18next.t("home:New users today")} fontSize="100px" value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 1]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50}>
-          <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <Col span={50} style={{marginBottom: "10px"}}>
+          <Card bordered={false} bodyStyle={{width: Setting.isMobile() ? "340px" : "100%", height: Setting.isMobile() ? "100px" : "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Statistic title={i18next.t("home:New users past 7 days")} value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 7]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
-        <Col span={50}>
-          <Card bordered={false} bodyStyle={{width: "100%", height: "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+        <Col span={50} style={{marginBottom: "10px"}}>
+          <Card bordered={false} bodyStyle={{width: Setting.isMobile() ? "340px" : "100%", height: Setting.isMobile() ? "100px" : "150px", display: "flex", alignItems: "center", justifyContent: "center"}}>
             <Statistic title={i18next.t("home:New users past 30 days")} value={dashboardData.userCounts[30] - dashboardData.userCounts[30 - 30]} valueStyle={{fontSize: "30px"}} prefix={<ArrowUpOutlined />} style={{width: "200px", paddingLeft: "10px"}} />
           </Card>
         </Col>
