@@ -189,45 +189,6 @@ func TestIsStrsEmpty(t *testing.T) {
 	}
 }
 
-func TestGetMaxLenStr(t *testing.T) {
-	scenarios := []struct {
-		description string
-		input       []string
-		expected    interface{}
-	}{
-		{"Should be return casdoor", []string{"", "casdoor", "casbin"}, "casdoor"},
-		{"Should be return casdoor_jdk", []string{"", "casdoor", "casbin", "casdoor_jdk"}, "casdoor_jdk"},
-		{"Should be return empty string", []string{""}, ""},
-	}
-	for _, scenery := range scenarios {
-		t.Run(scenery.description, func(t *testing.T) {
-			actual := GetMaxLenStr(scenery.input...)
-			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
-		})
-	}
-}
-
-func TestGetMinLenStr(t *testing.T) {
-	scenarios := []struct {
-		description string
-		input       []string
-		expected    interface{}
-	}{
-		{"Should be return casbin", []string{"casdoor", "casbin"}, "casbin"},
-		{"Should be return casbin", []string{"casdoor", "casbin", "casdoor_jdk"}, "casbin"},
-		{"Should be return empty string", []string{"a", "", "casbin"}, ""},
-		{"Should be return a", []string{"a", "casdoor", "casbin"}, "a"},
-		{"Should be return a", []string{"casdoor", "a", "casbin"}, "a"},
-		{"Should be return a", []string{"casbin", "casdoor", "a"}, "a"},
-	}
-	for _, scenery := range scenarios {
-		t.Run(scenery.description, func(t *testing.T) {
-			actual := GetMinLenStr(scenery.input...)
-			assert.Equal(t, scenery.expected, actual, "The returned value not is expected")
-		})
-	}
-}
-
 func TestSnakeString(t *testing.T) {
 	scenarios := []struct {
 		description string

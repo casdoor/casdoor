@@ -187,32 +187,6 @@ func IsStringsEmpty(strs ...string) bool {
 	return false
 }
 
-func GetMaxLenStr(strs ...string) string {
-	m := 0
-	i := 0
-	for j, str := range strs {
-		l := len(str)
-		if l > m {
-			m = l
-			i = j
-		}
-	}
-	return strs[i]
-}
-
-func GetMinLenStr(strs ...string) string {
-	m := int(^uint(0) >> 1)
-	i := 0
-	for j, str := range strs {
-		l := len(str)
-		if l < m {
-			m = l
-			i = j
-		}
-	}
-	return strs[i]
-}
-
 func ReadStringFromPath(path string) string {
 	data, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {

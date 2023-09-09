@@ -29,7 +29,13 @@ func AutoSigninFilter(ctx *context.Context) {
 
 	// GET parameter like "/page?access_token=123" or
 	// HTTP Bearer token like "Authorization: Bearer 123"
-	accessToken := util.GetMaxLenStr(ctx.Input.Query("accessToken"), ctx.Input.Query("access_token"), parseBearerToken(ctx))
+	accessToken := ctx.Input.Query("accessToken")
+	if accessToken == "" {
+		accessToken = ctx.Input.Query("access_token")
+	}
+	if accessToken == "" {
+		accessToken = parseBearerToken(ctx)
+	}
 
 	if accessToken != "" {
 		token, err := object.GetTokenByAccessToken(accessToken)
