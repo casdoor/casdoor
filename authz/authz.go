@@ -121,6 +121,10 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
+	if subOwner == "app" {
+		return true
+	}
+
 	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 		return true
 	}
