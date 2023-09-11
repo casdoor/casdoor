@@ -19,8 +19,8 @@ type EmailProvider interface {
 }
 
 func GetEmailProvider(typ string, clientId string, clientSecret string, appId string, host string, port int, disableSsl bool) EmailProvider {
-	if typ == "ACS" {
-		return NewACSEmailProvider(appId, host)
+	if typ == "Azure ACS" {
+		return NewAzureACSEmailProvider(appId, host)
 	} else {
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl)
 	}

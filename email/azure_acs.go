@@ -84,13 +84,13 @@ type CommunicationError struct {
 	Message string `json:"message"`
 }
 
-type ACSEmailProvider struct {
+type AzureACSEmailProvider struct {
 	AccessKey string
 	Endpoint  string
 }
 
-func NewACSEmailProvider(accessKey string, endpoint string) *ACSEmailProvider {
-	return &ACSEmailProvider{
+func NewAzureACSEmailProvider(accessKey string, endpoint string) *AzureACSEmailProvider {
+	return &AzureACSEmailProvider{
 		AccessKey: accessKey,
 		Endpoint:  endpoint,
 	}
@@ -115,7 +115,7 @@ func newEmail(fromAddress string, toAddress string, subject string, content stri
 	}
 }
 
-func (a *ACSEmailProvider) sendEmail(e *Email) error {
+func (a *AzureACSEmailProvider) sendEmail(e *Email) error {
 	postBody, err := json.Marshal(e)
 	if err != nil {
 		return fmt.Errorf("email JSON marshall failed: %s", err)
@@ -125,13 +125,13 @@ func (a *ACSEmailProvider) sendEmail(e *Email) error {
 
 	req, err := http.NewRequest("POST", a.Endpoint+sendEmailEndpoint+"?api-version="+apiVersion, bodyBuffer)
 	if err != nil {
-		return fmt.Errorf("error creating ACS API request: %s", err)
+		return fmt.Errorf("error creating AzureACS API request: %s", err)
 	}
 
-	// Sign the request using the ACS access key and HMAC-SHA256
+	// Sign the request using the AzureACS access key and HMAC-SHA256
 	err = signRequestHMAC(a.AccessKey, req)
 	if err != nil {
-		return fmt.Errorf("error signing ACS API request: %s", err)
+		return fmt.Errorf("error signing AzureACS API request: %s", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -144,7 +144,7 @@ func (a *ACSEmailProvider) sendEmail(e *Email) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error sending ACS API request: %s", err)
+		return fmt.Errorf("error sending AzureACS API request: %s", err)
 	}
 	defer resp.Body.Close()
 
@@ -220,7 +220,7 @@ func GetHmac(content string, key []byte) string {
 	return base64.StdEncoding.EncodeToString(hmac.Sum(nil))
 }
 
-func (a *ACSEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
 	e := newEmail(fromAddress, toAddress, subject, content)
 
 	return a.sendEmail(e)
