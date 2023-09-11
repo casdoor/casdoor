@@ -200,7 +200,7 @@ type Userinfo struct {
 	Name          string   `json:"preferred_username,omitempty"`
 	DisplayName   string   `json:"name,omitempty"`
 	Email         string   `json:"email,omitempty"`
-	EmailVerified bool     `json:"email,omitempty"`
+	EmailVerified bool     `json:"email_verified,omitempty"`
 	Avatar        string   `json:"picture,omitempty"`
 	Address       string   `json:"address,omitempty"`
 	Phone         string   `json:"phone,omitempty"`
