@@ -672,7 +672,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               {
-                this.state.provider.type === "WeChat Pay" ? null : (
+                this.state.provider.type === "WeChat Pay" || this.state.provider.type === "ACS" ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                       {this.getClientSecret2Label(this.state.provider)} :
