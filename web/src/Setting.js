@@ -161,6 +161,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/email_mailtrap.png`,
       url: "https://mailtrap.io",
     },
+    "Azure ACS": {
+      logo: `${StaticBaseUrl}/img/social_azure.png`,
+      url: "https://learn.microsoft.com/zh-cn/azure/communication-services",
+    },
   },
   Storage: {
     "Local File System": {
@@ -972,6 +976,7 @@ export function getProviderTypeOptions(category) {
         {id: "Default", name: "Default"},
         {id: "SUBMAIL", name: "SUBMAIL"},
         {id: "Mailtrap", name: "Mailtrap"},
+        {id: "Azure ACS", name: "Azure ACS"},
       ]
     );
   } else if (category === "SMS") {

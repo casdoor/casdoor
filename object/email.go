@@ -19,6 +19,7 @@ package object
 import (
 	"crypto/tls"
 
+	"github.com/casdoor/casdoor/email"
 	"github.com/casdoor/gomail/v2"
 )
 
@@ -35,9 +36,7 @@ func getDialer(provider *Provider) *gomail.Dialer {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest string, sender string) error {
-	dialer := getDialer(provider)
-
-	message := gomail.NewMessage()
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.AppId, provider.Host, provider.Port, provider.DisableSsl)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
@@ -49,14 +48,7 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 		fromName = sender
 	}
 
-	message.SetAddressHeader("From", fromAddress, fromName)
-	message.SetHeader("To", dest)
-	message.SetHeader("Subject", title)
-	message.SetBody("text/html", content)
-
-	message.SkipUsernameCheck = true
-
-	return dialer.DialAndSend(message)
+	return emailProvider.Send(fromAddress, fromName, dest, title, content)
 }
 
 // DailSmtpServer Dail Smtp server

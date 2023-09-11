@@ -297,7 +297,7 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:Project Id - Tooltip");
       }
     } else if (provider.category === "Email") {
-      if (provider.type === "SUBMAIL") {
+      if (provider.type === "SUBMAIL" || provider.type === "Azure ACS") {
         text = i18next.t("provider:App ID");
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
@@ -626,6 +626,7 @@ class ProviderEditPage extends React.Component {
         }
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
+          (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ||
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" ||
           (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" && this.state.provider.type !== "Rocket Chat" && this.state.provider.type !== "Viber")) ? null : (
@@ -671,7 +672,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
               {
-                this.state.provider.type === "WeChat Pay" ? null : (
+                (this.state.provider.type === "WeChat Pay") || (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ? null : (
                   <Row style={{marginTop: "20px"}} >
                     <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                       {this.getClientSecret2Label(this.state.provider)} :
@@ -866,26 +867,30 @@ class ProviderEditPage extends React.Component {
                   }} />
                 </Col>
               </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <InputNumber value={this.state.provider.port} onChange={value => {
-                    this.updateProviderField("port", value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
-                </Col>
-                <Col span={1} >
-                  <Switch checked={this.state.provider.disableSsl} onChange={checked => {
-                    this.updateProviderField("disableSsl", checked);
-                  }} />
-                </Col>
-              </Row>
+              {["Azure ACS"].includes(this.state.provider.type) ? null : (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                  </Col>
+                  <Col span={22} >
+                    <InputNumber value={this.state.provider.port} onChange={value => {
+                      this.updateProviderField("port", value);
+                    }} />
+                  </Col>
+                </Row>
+              )}
+              {["Azure ACS"].includes(this.state.provider.type) ? null : (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
+                  </Col>
+                  <Col span={1} >
+                    <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                      this.updateProviderField("disableSsl", checked);
+                    }} />
+                  </Col>
+                </Row>
+              )}
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
@@ -915,9 +920,11 @@ class ProviderEditPage extends React.Component {
                     this.updateProviderField("receiver", e.target.value);
                   }} />
                 </Col>
-                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
-                  {i18next.t("provider:Test SMTP Connection")}
-                </Button>
+                {["Azure ACS"].includes(this.state.provider.type) ? null : (
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                    {i18next.t("provider:Test SMTP Connection")}
+                  </Button>
+                )}
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   disabled={!Setting.isValidEmail(this.state.provider.receiver)}
                   onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
