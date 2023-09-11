@@ -920,9 +920,11 @@ class ProviderEditPage extends React.Component {
                     this.updateProviderField("receiver", e.target.value);
                   }} />
                 </Col>
-                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
-                  {i18next.t("provider:Test SMTP Connection")}
-                </Button>
+                {["ACS"].includes(this.state.provider.type) ? null : (
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                    {i18next.t("provider:Test SMTP Connection")}
+                  </Button>
+                )}
                 <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                   disabled={!Setting.isValidEmail(this.state.provider.receiver)}
                   onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
