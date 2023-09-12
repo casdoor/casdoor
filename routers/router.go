@@ -247,10 +247,10 @@ func initAPI() {
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 	beego.Router("/api/send-notification", &controllers.ApiController{}, "POST:SendNotification")
 
-	beego.Router("/api/webauthn/signup/begin", &controllers.ApiController{}, "Get:WebAuthnSignupBegin")
-	beego.Router("/api/webauthn/signup/finish", &controllers.ApiController{}, "Post:WebAuthnSignupFinish")
-	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "Get:WebAuthnSigninBegin")
-	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "Post:WebAuthnSigninFinish")
+	beego.Router("/api/webauthn/signup/begin", &controllers.ApiController{}, "GET:WebAuthnSignupBegin")
+	beego.Router("/api/webauthn/signup/finish", &controllers.ApiController{}, "POST:WebAuthnSignupFinish")
+	beego.Router("/api/webauthn/signin/begin", &controllers.ApiController{}, "GET:WebAuthnSigninBegin")
+	beego.Router("/api/webauthn/signin/finish", &controllers.ApiController{}, "POST:WebAuthnSigninFinish")
 
 	beego.Router("/api/mfa/setup/initiate", &controllers.ApiController{}, "POST:MfaSetupInitiate")
 	beego.Router("/api/mfa/setup/verify", &controllers.ApiController{}, "POST:MfaSetupVerify")
