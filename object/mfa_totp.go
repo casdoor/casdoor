@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/beego/beego"
 	"github.com/beego/beego/context"
 	"github.com/google/uuid"
 	"github.com/pquerna/otp"
@@ -39,10 +38,11 @@ type TotpMfa struct {
 }
 
 func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
-	issuer := beego.AppConfig.String("appname")
-	if issuer == "" {
-		issuer = "casdoor"
-	}
+	//issuer := beego.AppConfig.String("appname")
+	//if issuer == "" {
+	//	issuer = "casdoor"
+	//}
+	issuer := "casdoor"
 
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      issuer,
