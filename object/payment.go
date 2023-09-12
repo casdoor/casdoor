@@ -167,7 +167,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 	if err != nil {
 		return nil, nil, err
 	}
-	pProvider, cert, err := provider.getPaymentProvider()
+	pProvider, err := provider.getPaymentProvider()
 	if err != nil {
 		return nil, nil, err
 	}
@@ -181,7 +181,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 		return nil, nil, err
 	}
 
-	notifyResult, err := pProvider.Notify(request, body, cert.AuthorityPublicKey, payment.OutOrderId)
+	notifyResult, err := pProvider.Notify(request, body, payment.OutOrderId)
 	if err != nil {
 		return payment, nil, err
 	}
@@ -231,7 +231,7 @@ func invoicePayment(payment *Payment) (string, error) {
 		return "", fmt.Errorf("the payment provider: %s does not exist", payment.Provider)
 	}
 
-	pProvider, _, err := provider.getPaymentProvider()
+	pProvider, err := provider.getPaymentProvider()
 	if err != nil {
 		return "", err
 	}

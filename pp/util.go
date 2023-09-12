@@ -49,3 +49,11 @@ func priceFloat64ToInt64(price float64) int64 {
 func priceFloat64ToString(price float64) string {
 	return strconv.FormatFloat(price, 'f', 2, 64)
 }
+
+func priceStringToFloat64(price string) float64 {
+	f, err := strconv.ParseFloat(price, 64)
+	if err != nil {
+		panic(err)
+	}
+	return f
+}

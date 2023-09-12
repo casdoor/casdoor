@@ -172,7 +172,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, err
 	}
 
-	pProvider, _, err := provider.getPaymentProvider()
+	pProvider, err := provider.getPaymentProvider()
 	if err != nil {
 		return nil, err
 	}
