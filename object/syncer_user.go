@@ -15,6 +15,7 @@
 package object
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -31,7 +32,7 @@ type Credential struct {
 }
 
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
-	var results []map[string]string
+	var results []map[string]sql.NullString
 	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
 	if err != nil {
 		return nil, err

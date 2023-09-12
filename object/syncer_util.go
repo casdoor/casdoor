@@ -15,6 +15,7 @@
 package object
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -196,7 +197,7 @@ func (syncer *Syncer) getUserValue(user *User, key string) string {
 	}
 }
 
-func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*OriginalUser {
+func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullString) []*OriginalUser {
 	users := []*OriginalUser{}
 	for _, result := range results {
 		originalUser := &OriginalUser{
@@ -216,11 +217,11 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 				names := strings.Split(tableColumnName, "+")
 				var values []string
 				for _, name := range names {
-					values = append(values, result[strings.Trim(name, " ")])
+					values = append(values, result[strings.Trim(name, " ")].String)
 				}
 				value = strings.Join(values, " ")
 			} else {
-				value = result[tableColumnName]
+				value = result[tableColumnName].String
 			}
 			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, value)
 		}
@@ -249,9 +250,9 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]string) []*Or
 			// enable
 			value, ok := result["ENABLED"]
 			if ok {
-				originalUser.IsForbidden = !util.ParseBool(value)
+				originalUser.IsForbidden = !util.ParseBool(value.String)
 			} else {
-				originalUser.IsForbidden = !util.ParseBool(result["enabled"])
+				originalUser.IsForbidden = !util.ParseBool(result["enabled"].String)
 			}
 		}
 
