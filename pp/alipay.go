@@ -49,7 +49,7 @@ func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey
 }
 
 func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
-	pp.Client.DebugSwitch = gopay.DebugOn
+	//pp.Client.DebugSwitch = gopay.DebugOn
 	bm := gopay.BodyMap{}
 	pp.Client.SetReturnUrl(returnUrl)
 	pp.Client.SetNotifyUrl(notifyUrl)
