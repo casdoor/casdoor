@@ -16,8 +16,6 @@ package object
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
@@ -153,7 +151,7 @@ func DeletePayment(payment *Payment) (bool, error) {
 	return affected != 0, nil
 }
 
-func notifyPayment(request *http.Request, body []byte, owner string, paymentName string) (*Payment, *pp.NotifyResult, error) {
+func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp.NotifyResult, error) {
 	payment, err := getPayment(owner, paymentName)
 	if err != nil {
 		return nil, nil, err
@@ -167,7 +165,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 	if err != nil {
 		return nil, nil, err
 	}
-	pProvider, err := provider.getPaymentProvider()
+	pProvider, err := GetPaymentProvider(provider)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -181,7 +179,7 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 		return nil, nil, err
 	}
 
-	notifyResult, err := pProvider.Notify(request, body, payment.OutOrderId)
+	notifyResult, err := pProvider.Notify(body, payment.OutOrderId)
 	if err != nil {
 		return payment, nil, err
 	}
@@ -202,8 +200,8 @@ func notifyPayment(request *http.Request, body []byte, owner string, paymentName
 	return payment, notifyResult, nil
 }
 
-func NotifyPayment(request *http.Request, body []byte, owner string, paymentName string) (*Payment, error) {
-	payment, notifyResult, err := notifyPayment(request, body, owner, paymentName)
+func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, error) {
+	payment, notifyResult, err := notifyPayment(body, owner, paymentName)
 	if payment != nil {
 		if err != nil {
 			payment.State = pp.PaymentStateError
@@ -231,7 +229,7 @@ func invoicePayment(payment *Payment) (string, error) {
 		return "", fmt.Errorf("the payment provider: %s does not exist", payment.Provider)
 	}
 
-	pProvider, err := provider.getPaymentProvider()
+	pProvider, err := GetPaymentProvider(provider)
 	if err != nil {
 		return "", err
 	}

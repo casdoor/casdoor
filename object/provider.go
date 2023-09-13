@@ -251,17 +251,6 @@ func DeleteProvider(provider *Provider) (bool, error) {
 	return affected != 0, nil
 }
 
-func (p *Provider) getPaymentProvider() (pp.PaymentProvider, error) {
-	pProvider, err := GetPaymentProvider(p)
-	if err != nil {
-		return nil, err
-	}
-	if pProvider == nil {
-		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
-	}
-	return pProvider, nil
-}
-
 func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	cert := &Cert{}
 	if p.Cert != "" {
@@ -320,6 +309,8 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			return nil, err
 		}
 		return pp, nil
+	} else {
+		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}
 
 	return nil, nil

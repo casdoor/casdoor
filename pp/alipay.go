@@ -16,9 +16,8 @@ package pp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
 )
@@ -65,14 +64,23 @@ func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, pa
 	return payUrl, paymentName, nil
 }
 
-func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, orderId string) (*NotifyResult, error) {
+func (pp *AlipayPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	bm := gopay.BodyMap{}
 	bm.Set("out_trade_no", orderId)
 	aliRsp, err := pp.Client.TradeQuery(context.Background(), bm)
+	notifyResult := &NotifyResult{}
 	if err != nil {
+		errRsp := &alipay.ErrorResponse{}
+		unmarshalErr := json.Unmarshal([]byte(err.Error()), errRsp)
+		if unmarshalErr != nil {
+			return nil, err
+		}
+		if errRsp.SubCode == "ACQ.TRADE_NOT_EXIST" {
+			notifyResult.PaymentStatus = PaymentStateCanceled
+			return notifyResult, nil
+		}
 		return nil, err
 	}
-	notifyResult := &NotifyResult{}
 	switch aliRsp.Response.TradeStatus {
 	case "WAIT_BUYER_PAY":
 		notifyResult.PaymentStatus = PaymentStateCreated

@@ -14,10 +14,6 @@
 
 package pp
 
-import (
-	"net/http"
-)
-
 type PaymentState string
 
 const (
@@ -44,7 +40,7 @@ type NotifyResult struct {
 
 type PaymentProvider interface {
 	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
-	Notify(request *http.Request, body []byte, orderId string) (*NotifyResult, error)
+	Notify(body []byte, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
 }
