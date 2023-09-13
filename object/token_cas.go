@@ -77,9 +77,9 @@ type CasUserAttributes struct {
 }
 
 type CasNamedAttribute struct {
-	XMLName xml.Name `xml:"cas:attribute" json:"-"`
-	Name    string   `xml:"name,attr,omitempty"`
-	Value   string   `xml:",innerxml"`
+	XMLName xml.Name    `xml:"cas:attribute" json:"-"`
+	Name    string      `xml:"name,attr,omitempty"`
+	Value   interface{} `xml:",innerxml"`
 }
 
 type CasAnyAttribute struct {
@@ -209,7 +209,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 		return "", err
 	}
 
-	tmp := map[string]string{}
+	tmp := map[string]interface{}{}
 	err = json.Unmarshal(data, &tmp)
 	if err != nil {
 		return "", err
