@@ -216,7 +216,7 @@ func (pp *GcPaymentProvider) Pay(providerName string, productName string, payerN
 	return payRespInfo.PayUrl, "", nil
 }
 
-func (pp *GcPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+func (pp *GcPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	reqBody := GcRequestBody{}
 	m, err := url.ParseQuery(string(body))
 	if err != nil {

@@ -179,7 +179,7 @@ func (c *ApiController) NotifyPayment() {
 
 	body := c.Ctx.Input.RequestBody
 
-	payment, err := object.NotifyPayment(c.Ctx.Request, body, owner, paymentName)
+	payment, err := object.NotifyPayment(body, owner, paymentName)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

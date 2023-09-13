@@ -16,9 +16,9 @@ package pp
 
 import (
 	"context"
-	"net/http"
+	"encoding/json"
+	"fmt"
 
-	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/alipay"
 )
@@ -28,6 +28,11 @@ type AlipayPaymentProvider struct {
 }
 
 func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string) (*AlipayPaymentProvider, error) {
+	// clientId => appId
+	// cert.Certificate => appCertificate
+	// cert.PrivateKey => appPrivateKey
+	// rootCert.Certificate => authorityPublicKey
+	// rootCert.PrivateKey => authorityRootPublicKey
 	pp := &AlipayPaymentProvider{}
 
 	client, err := alipay.NewClient(appId, appPrivateKey, true)
@@ -46,54 +51,60 @@ func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey
 
 func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
 	// pp.Client.DebugSwitch = gopay.DebugOn
-
 	bm := gopay.BodyMap{}
-
-	bm.Set("providerName", providerName)
-	bm.Set("productName", productName)
-
-	bm.Set("return_url", returnUrl)
-	bm.Set("notify_url", notifyUrl)
-
-	bm.Set("subject", productDisplayName)
+	pp.Client.SetReturnUrl(returnUrl)
+	pp.Client.SetNotifyUrl(notifyUrl)
+	bm.Set("subject", joinAttachString([]string{productName, productDisplayName, providerName}))
 	bm.Set("out_trade_no", paymentName)
-	bm.Set("total_amount", getPriceString(price))
+	bm.Set("total_amount", priceFloat64ToString(price))
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {
 		return "", "", err
 	}
-	return payUrl, "", nil
+	return payUrl, paymentName, nil
 }
 
-func (pp *AlipayPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
-	bm, err := alipay.ParseNotifyToBodyMap(request)
+func (pp *AlipayPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
+	bm := gopay.BodyMap{}
+	bm.Set("out_trade_no", orderId)
+	aliRsp, err := pp.Client.TradeQuery(context.Background(), bm)
+	notifyResult := &NotifyResult{}
 	if err != nil {
+		errRsp := &alipay.ErrorResponse{}
+		unmarshalErr := json.Unmarshal([]byte(err.Error()), errRsp)
+		if unmarshalErr != nil {
+			return nil, err
+		}
+		if errRsp.SubCode == "ACQ.TRADE_NOT_EXIST" {
+			notifyResult.PaymentStatus = PaymentStateCanceled
+			return notifyResult, nil
+		}
 		return nil, err
 	}
-
-	providerName := bm.Get("providerName")
-	productName := bm.Get("productName")
-
-	productDisplayName := bm.Get("subject")
-	paymentName := bm.Get("out_trade_no")
-	price := util.ParseFloat(bm.Get("total_amount"))
-
-	ok, err := alipay.VerifySignWithCert(authorityPublicKey, bm)
-	if err != nil {
-		return nil, err
+	switch aliRsp.Response.TradeStatus {
+	case "WAIT_BUYER_PAY":
+		notifyResult.PaymentStatus = PaymentStateCreated
+		return notifyResult, nil
+	case "TRADE_CLOSED":
+		notifyResult.PaymentStatus = PaymentStateTimeout
+		return notifyResult, nil
+	case "TRADE_SUCCESS":
+		// skip
+	default:
+		notifyResult.PaymentStatus = PaymentStateError
+		notifyResult.NotifyMessage = fmt.Sprintf("unexpected alipay trade state: %v", aliRsp.Response.TradeStatus)
+		return notifyResult, nil
 	}
-	if !ok {
-		return nil, err
-	}
-	notifyResult := &NotifyResult{
+	productDisplayName, productName, providerName, _ := parseAttachString(aliRsp.Response.Subject)
+	notifyResult = &NotifyResult{
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
 		OrderId:            orderId,
 		PaymentStatus:      PaymentStatePaid,
-		Price:              price,
-		PaymentName:        paymentName,
+		Price:              priceStringToFloat64(aliRsp.Response.TotalAmount),
+		PaymentName:        orderId,
 	}
 	return notifyResult, nil
 }

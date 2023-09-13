@@ -33,10 +33,8 @@ type Cert struct {
 	BitSize         int    `json:"bitSize"`
 	ExpireInYears   int    `json:"expireInYears"`
 
-	Certificate            string `xorm:"mediumtext" json:"certificate"`
-	PrivateKey             string `xorm:"mediumtext" json:"privateKey"`
-	AuthorityPublicKey     string `xorm:"mediumtext" json:"authorityPublicKey"`
-	AuthorityRootPublicKey string `xorm:"mediumtext" json:"authorityRootPublicKey"`
+	Certificate string `xorm:"mediumtext" json:"certificate"`
+	PrivateKey  string `xorm:"mediumtext" json:"privateKey"`
 }
 
 func GetMaskedCert(cert *Cert) *Cert {

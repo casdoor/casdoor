@@ -18,7 +18,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
@@ -87,7 +86,7 @@ func (pp *WechatPaymentProvider) Pay(providerName string, productName string, pa
 	return nativeRsp.Response.CodeUrl, paymentName, nil // Wechat can use paymentName as the OutTradeNo to query order status
 }
 
-func (pp *WechatPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+func (pp *WechatPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	notifyResult := &NotifyResult{}
 	queryRsp, err := pp.Client.V3TransactionQueryOrder(context.Background(), wechat.OutTradeNo, orderId)
 	if err != nil {
