@@ -90,14 +90,24 @@ func (c *ApiController) GetApplication() {
 		return
 	}
 
-	if c.Input().Get("withKey") != "" && application.Cert != "" {
+	if c.Input().Get("withKey") != "" && application != nil && application.Cert != "" {
 		cert, err := object.GetCert(util.GetId(application.Owner, application.Cert))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		application.CertPublicKey = cert.Certificate
+		if cert == nil {
+			cert, err = object.GetCert(util.GetId(application.Organization, application.Cert))
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
+		if cert != nil {
+			application.CertPublicKey = cert.Certificate
+		}
 	}
 
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
