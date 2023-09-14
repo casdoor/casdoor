@@ -61,10 +61,6 @@ type PermissionRule struct {
 
 const builtInAvailableField = 5 // Casdoor built-in adapter, use V5 to filter permission, so has 5 available field
 
-func (p *Permission) GetId() string {
-	return util.GetId(p.Owner, p.Name)
-}
-
 func GetPermissionCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	return session.Count(&Permission{})
@@ -346,20 +342,6 @@ func GetPermissionsByModel(owner string, model string) ([]*Permission, error) {
 	return permissions, nil
 }
 
-func ContainsAsterisk(userId string, users []string) bool {
-	containsAsterisk := false
-	group, _ := util.GetOwnerAndNameFromId(userId)
-	for _, user := range users {
-		permissionGroup, permissionUserName := util.GetOwnerAndNameFromId(user)
-		if permissionGroup == group && permissionUserName == "*" {
-			containsAsterisk = true
-			break
-		}
-	}
-
-	return containsAsterisk
-}
-
 func GetMaskedPermissions(permissions []*Permission) []*Permission {
 	for _, permission := range permissions {
 		permission.Users = nil
@@ -388,4 +370,28 @@ func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]stri
 	}
 
 	return m
+}
+
+func (p *Permission) GetId() string {
+	return util.GetId(p.Owner, p.Name)
+}
+
+func (p *Permission) isUserHit(name string) bool {
+	targetOrg, _ := util.GetOwnerAndNameFromId(name)
+	for _, user := range p.Users {
+		userOrg, userName := util.GetOwnerAndNameFromId(user)
+		if userOrg == targetOrg && userName == "*" {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *Permission) isResourceHit(name string) bool {
+	for _, resource := range p.Resources {
+		if name == resource {
+			return true
+		}
+	}
+	return false
 }
