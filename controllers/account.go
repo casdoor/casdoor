@@ -264,18 +264,32 @@ func (c *ApiController) Logout() {
 			c.ResponseOk()
 			return
 		}
-
-		c.ClearUserSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
-		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		var application *object.Application
+		var err error
+		if applicationI := c.GetSession("application"); applicationI != nil {
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", applicationI))
+		} else {
+			application, err = object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
+		}
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
+		c.ClearUserSession()
 
+		isDeleteSessionId, err := object.DeleteSessionId(util.GetSessionId(owner, username, application.Name), c.Ctx.Input.CruSession.SessionID())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if !isDeleteSessionId {
+			c.ResponseError("delete session id failed!")
+			return
+		}
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
-		application := c.GetSessionApplication()
+		application = c.GetSessionApplication()
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 			c.ResponseOk(user)
 			return

@@ -249,7 +249,7 @@ func (c *ApiController) GetApplicationLogin() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), id))
 			return
 		}
-
+		c.SetSession("application", application.Name)
 		err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -376,6 +376,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
+			c.SetSession("application", application.Name)
 			if !application.EnablePassword {
 				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
 				return
@@ -414,7 +415,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
-
+			c.SetSession("application", application.Name)
 			organization, err := object.GetOrganizationByUser(user)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -460,6 +461,7 @@ func (c *ApiController) Login() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
+		c.SetSession("application", application.Name)
 		organization, err := object.GetOrganization(util.GetId("admin", application.Organization))
 		if err != nil {
 			c.ResponseError(c.T(err.Error()))
@@ -763,7 +765,7 @@ func (c *ApiController) Login() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
-
+		c.SetSession("application", application.Name)
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
@@ -784,7 +786,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
-
+			c.SetSession("application", application.Name)
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
