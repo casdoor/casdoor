@@ -221,7 +221,7 @@ func GenerateCasToken(userId string, service string) (string, error) {
 			value = ""
 		}
 
-		if v != "" {
+		if value != "" {
 			authenticationSuccess.Attributes.UserAttributes.Attributes = append(authenticationSuccess.Attributes.UserAttributes.Attributes, &CasNamedAttribute{
 				Name:  k,
 				Value: value,
