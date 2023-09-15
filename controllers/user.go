@@ -457,7 +457,16 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	if oldPassword != "" {
+	isAdmin := c.IsAdmin()
+	if isAdmin {
+		if oldPassword != "" {
+			msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			if msg != "" {
+				c.ResponseError(msg)
+				return
+			}
+		}
+	} else {
 		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
