@@ -16,7 +16,6 @@ package pp
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/casdoor/casdoor/conf"
@@ -94,7 +93,7 @@ func (pp *StripePaymentProvider) Pay(providerName string, productName string, pa
 	return sCheckout.URL, sCheckout.ID, nil
 }
 
-func (pp *StripePaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+func (pp *StripePaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	notifyResult := &NotifyResult{}
 	sCheckout, err := stripeCheckout.Get(orderId, nil)
 	if err != nil {

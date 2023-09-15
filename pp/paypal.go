@@ -18,7 +18,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
@@ -88,7 +87,7 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 	return ppRsp.Response.Links[1].Href, ppRsp.Response.Id, nil
 }
 
-func (pp *PaypalPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+func (pp *PaypalPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	notifyResult := &NotifyResult{}
 	captureRsp, err := pp.Client.OrderCapture(context.Background(), orderId, nil)
 	if err != nil {

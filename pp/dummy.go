@@ -14,8 +14,6 @@
 
 package pp
 
-import "net/http"
-
 type DummyPaymentProvider struct{}
 
 func NewDummyPaymentProvider() (*DummyPaymentProvider, error) {
@@ -27,7 +25,7 @@ func (pp *DummyPaymentProvider) Pay(providerName string, productName string, pay
 	return returnUrl, "", nil
 }
 
-func (pp *DummyPaymentProvider) Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error) {
+func (pp *DummyPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	return &NotifyResult{
 		PaymentStatus: PaymentStatePaid,
 	}, nil

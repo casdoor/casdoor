@@ -156,7 +156,7 @@ func (c *ApiController) DeleteToken() {
 // @Success 200 {object} object.TokenWrapper The Response object
 // @Success 400 {object} object.TokenError The Response object
 // @Success 401 {object} object.TokenError The Response object
-// @router /login/oauth/access_token [post]
+// @router api/login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
 	grantType := c.Input().Get("grant_type")
 	refreshToken := c.Input().Get("refresh_token")

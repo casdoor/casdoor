@@ -14,8 +14,6 @@
 
 package pp
 
-import "net/http"
-
 type PaymentState string
 
 const (
@@ -42,45 +40,7 @@ type NotifyResult struct {
 
 type PaymentProvider interface {
 	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
-	Notify(request *http.Request, body []byte, authorityPublicKey string, orderId string) (*NotifyResult, error)
+	Notify(body []byte, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string
-}
-
-func GetPaymentProvider(typ string, clientId string, clientSecret string, host string, appCertificate string, appPrivateKey string, authorityPublicKey string, authorityRootPublicKey string, clientId2 string) (PaymentProvider, error) {
-	if typ == "Dummy" {
-		pp, err := NewDummyPaymentProvider()
-		if err != nil {
-			return nil, err
-		}
-		return pp, nil
-	} else if typ == "Alipay" {
-		pp, err := NewAlipayPaymentProvider(clientId, appCertificate, appPrivateKey, authorityPublicKey, authorityRootPublicKey)
-		if err != nil {
-			return nil, err
-		}
-		return pp, nil
-	} else if typ == "GC" {
-		return NewGcPaymentProvider(clientId, clientSecret, host), nil
-	} else if typ == "WeChat Pay" {
-		pp, err := NewWechatPaymentProvider(clientId, clientSecret, clientId2, appCertificate, appPrivateKey)
-		if err != nil {
-			return nil, err
-		}
-		return pp, nil
-	} else if typ == "PayPal" {
-		pp, err := NewPaypalPaymentProvider(clientId, clientSecret)
-		if err != nil {
-			return nil, err
-		}
-		return pp, nil
-	} else if typ == "Stripe" {
-		pp, err := NewStripePaymentProvider(clientId, clientSecret)
-		if err != nil {
-			return nil, err
-		}
-		return pp, nil
-	}
-
-	return nil, nil
 }
