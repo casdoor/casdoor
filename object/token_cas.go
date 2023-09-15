@@ -216,10 +216,15 @@ func GenerateCasToken(userId string, service string) (string, error) {
 	}
 
 	for k, v := range tmp {
+		value := fmt.Sprintf("%v", v)
+		if value == "<nil>" || value == "[]" || value == "map[]" {
+			value = ""
+		}
+
 		if v != "" {
 			authenticationSuccess.Attributes.UserAttributes.Attributes = append(authenticationSuccess.Attributes.UserAttributes.Attributes, &CasNamedAttribute{
 				Name:  k,
-				Value: fmt.Sprintf("%v", v),
+				Value: value,
 			})
 		}
 	}
