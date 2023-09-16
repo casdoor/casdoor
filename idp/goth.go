@@ -83,6 +83,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const appleUserNamePrefix = "apple"
+
 type GothIdProvider struct {
 	Provider goth.Provider
 	Session  goth.Session
@@ -97,6 +99,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &amazon.Session{},
 		}
 	case "Apple":
+		redirectUrl = util.GetApiCallbackUrl(redirectUrl)
 		idp = GothIdProvider{
 			Provider: apple.New(clientId, clientSecret, redirectUrl, nil),
 			Session:  &apple.Session{},
@@ -391,6 +394,10 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 // SetHttpClient
 // Goth's idp all implement the Client method, but since the goth.Provider interface does not provide to modify idp's client method, reflection is required
 func (idp *GothIdProvider) SetHttpClient(client *http.Client) {
+	if idp.Provider.Name() == "apple" {
+		return
+	}
+
 	idpClient := reflect.ValueOf(idp.Provider).Elem().FieldByName("HTTPClient")
 	idpClient.Set(reflect.ValueOf(client))
 }
@@ -468,6 +475,10 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 	if provider == "steam" {
 		user.Username = user.Id
 		user.Email = ""
+	}
+	// to set username and email
+	if provider == "apple" {
+		user.Username = appleUserNamePrefix + "-" + util.GenerateIdSuffix()
 	}
 	return &user
 }

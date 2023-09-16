@@ -115,6 +115,9 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return false
 		}
 	}
+	if urlPath == "/api/callback" {
+		return true
+	}
 
 	user, err := object.GetUser(util.GetId(subOwner, subName))
 	if err != nil {

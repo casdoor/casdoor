@@ -896,3 +896,23 @@ func (c *ApiController) GetCaptchaStatus() {
 	}
 	c.ResponseOk(captchaEnabled)
 }
+
+// Callback
+// @Title Callback
+// @Tag Callback API
+// @Description Get Login Error Counts
+// @router /api/Callback [post]
+func (c *ApiController) Callback() {
+	code := c.GetString("code")
+	state := c.GetString("state")
+	// When apple calls back casdoor, it provides user, which can be read as follows
+	//userJson := c.GetString("user")
+	//
+	////var user form.User
+	////_ = json.Unmarshal([]byte(userJson), &user)
+	////fmt.Printf("userjson: %+v", user)
+
+	redirectURL := "/callback?code=" + code + "&state=" + state
+
+	c.Ctx.Redirect(302, redirectURL)
+}

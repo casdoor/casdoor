@@ -300,3 +300,8 @@ func GetValueFromDataSourceName(key string, dataSourceName string) string {
 
 	return ""
 }
+
+func GetApiCallbackUrl(originalURL string) string {
+	modifiedURL := strings.Replace(originalURL, "/callback", "/api/callback", 1)
+	return modifiedURL
+}
