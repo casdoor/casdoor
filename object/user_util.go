@@ -320,6 +320,11 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if oldUser.Score != newUser.Score {
+		item := GetAccountItemByName("Score", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	for i := range itemsChanged {
 		if pass, err := CheckAccountItemModifyRule(itemsChanged[i], isAdmin, lang); !pass {
 			return pass, err
