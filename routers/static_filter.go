@@ -16,6 +16,7 @@ package routers
 
 import (
 	"compress/gzip"
+	"embed"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,7 +27,6 @@ import (
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/util"
 )
 
 var (
@@ -34,6 +34,25 @@ var (
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
 	enableGzip       = conf.GetConfigBool("enableGzip")
 )
+
+var WebFolder embed.FS
+
+func SetWebFolder(f embed.FS) {
+	WebFolder = f
+}
+
+func WebFileExist(path string) bool {
+	f, err := WebFolder.Open(filepath.Clean(path))
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	if _, err := f.Stat(); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
 
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
@@ -56,10 +75,10 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	if !util.FileExist(path) {
+	if !WebFileExist(path) {
 		path = "web/build/index.html"
 	}
-	if !util.FileExist(path) {
+	if !WebFileExist(path) {
 		dir, err := os.Getwd()
 		if err != nil {
 			panic(err)
@@ -78,7 +97,7 @@ func StaticFilter(ctx *context.Context) {
 }
 
 func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string) {
-	f, err := os.Open(filepath.Clean(name))
+	f, err := WebFolder.Open(filepath.Clean(name))
 	if err != nil {
 		panic(err)
 	}
@@ -89,8 +108,8 @@ func serveFileWithReplace(w http.ResponseWriter, r *http.Request, name string) {
 		panic(err)
 	}
 
-	oldContent := util.ReadStringFromPath(name)
-	newContent := strings.ReplaceAll(oldContent, oldStaticBaseUrl, newStaticBaseUrl)
+	oldContent, _ := WebFolder.ReadFile(filepath.Clean(name))
+	newContent := strings.ReplaceAll(string(oldContent), oldStaticBaseUrl, newStaticBaseUrl)
 
 	http.ServeContent(w, r, d.Name(), d.ModTime(), strings.NewReader(newContent))
 }

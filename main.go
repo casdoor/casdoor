@@ -15,6 +15,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 
 	"github.com/beego/beego"
@@ -28,6 +29,11 @@ import (
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
 )
+
+// Pack static files into the program
+//
+//go:embed web/build/*
+var WebFolder embed.FS
 
 func main() {
 	object.InitFlag()
@@ -52,6 +58,8 @@ func main() {
 	beego.BConfig.WebConfig.DirectoryIndex = true
 	beego.SetStaticPath("/swagger", "swagger")
 	beego.SetStaticPath("/files", "files")
+
+	routers.SetWebFolder(WebFolder)
 	// https://studygolang.com/articles/2303
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
