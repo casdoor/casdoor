@@ -72,7 +72,7 @@ func GetTruncatedPath(provider *Provider, fullFilePath string, limit int) string
 }
 
 func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool) (string, string) {
-	escapedPath := util.UrlJoin(provider.PathPrefix, escapePath(fullFilePath))
+	escapedPath := util.UrlJoin(provider.PathPrefix, fullFilePath)
 	objectKey := util.UrlJoin(util.GetUrlPath(provider.Domain), escapedPath)
 
 	host := ""
