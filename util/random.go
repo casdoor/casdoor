@@ -23,7 +23,3 @@ func GenerateClientId() string {
 func GenerateClientSecret() string {
 	return randstr.Hex(20)
 }
-
-func GenerateIdSuffix() string {
-	return randstr.Hex(5)
-}

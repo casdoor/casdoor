@@ -305,3 +305,11 @@ func GetApiCallbackUrl(originalURL string) string {
 	modifiedURL := strings.Replace(originalURL, "/callback", "/api/callback", 1)
 	return modifiedURL
 }
+
+func GetUserNameFromEmail(email string) string {
+	atIndex := strings.Index(email, "@")
+	if atIndex != -1 {
+		return email[:atIndex]
+	}
+	return ""
+}

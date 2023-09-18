@@ -83,8 +83,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const appleUserNamePrefix = "apple"
-
 type GothIdProvider struct {
 	Provider goth.Provider
 	Session  goth.Session
@@ -478,7 +476,7 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 	}
 	// to set username and email
 	if provider == "apple" {
-		user.Username = appleUserNamePrefix + "-" + util.GenerateIdSuffix()
+		user.Username = util.GetUserNameFromEmail(user.Email)
 	}
 	return &user
 }

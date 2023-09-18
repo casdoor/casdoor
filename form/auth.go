@@ -59,11 +59,3 @@ type AuthForm struct {
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`
 }
-
-type User struct {
-	Name struct {
-		FirstName string `json:"firstName"`
-		LastName  string `json:"lastName"`
-	} `json:"name"`
-	Email string `json:"email"`
-}
