@@ -20,6 +20,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -895,4 +896,17 @@ func (c *ApiController) GetCaptchaStatus() {
 		captchaEnabled = true
 	}
 	c.ResponseOk(captchaEnabled)
+}
+
+// Callback
+// @Title Callback
+// @Tag Callback API
+// @Description Get Login Error Counts
+// @router /api/Callback [post]
+func (c *ApiController) Callback() {
+	code := c.GetString("code")
+	state := c.GetString("state")
+
+	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", code, state)
+	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
 }

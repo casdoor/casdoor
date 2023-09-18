@@ -300,3 +300,12 @@ func GetValueFromDataSourceName(key string, dataSourceName string) string {
 
 	return ""
 }
+
+func GetUsernameFromEmail(email string) string {
+	tokens := strings.Split(email, "@")
+	if len(tokens) == 0 {
+		return uuid.NewString()
+	} else {
+		return tokens[0]
+	}
+}
