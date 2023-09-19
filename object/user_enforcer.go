@@ -87,7 +87,7 @@ func (e *UserGroupEnforcer) GetAllUsersByGroup(group string) ([]string, error) {
 
 	users, err := e.enforcer.GetUsersForRole(GetGroupWithPrefix(group))
 	if err != nil {
-		if err == errors.ERR_NAME_NOT_FOUND {
+		if err == errors.ErrNameNotFound {
 			return []string{}, nil
 		}
 		return nil, err
