@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
@@ -483,7 +484,7 @@ func GetMaskedUsers(users []*User, errs ...error) ([]*User, error) {
 	return users, nil
 }
 
-func GetLastUser(owner string) (*User, error) {
+func getLastUser(owner string) (*User, error) {
 	user := User{Owner: owner}
 	existed, err := ormer.Engine.Desc("created_time", "id").Get(&user)
 	if err != nil {
@@ -899,4 +900,23 @@ func (user *User) IsGlobalAdmin() bool {
 	}
 
 	return user.Owner == "built-in"
+}
+
+func GenerateIdForNewUser(application *Application) (string, error) {
+	if application.GetSignupItemRule("ID") != "Incremental" {
+		return util.GenerateId(), nil
+	}
+
+	lastUser, err := getLastUser(application.Organization)
+	if err != nil {
+		return "", err
+	}
+
+	lastUserId := -1
+	if lastUser != nil {
+		lastUserId = util.ParseInt(lastUser.Id)
+	}
+
+	res := strconv.Itoa(lastUserId + 1)
+	return res, nil
 }
