@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// https://support.huawei.com/enterprise/zh/doc/EDOC1000178159/35071f9a#tab_3
 func StartRadiusServer() {
 	server := radius.PacketServer{
 		Addr:         "0.0.0.0:" + conf.GetConfigString("radiusServerPort"),
@@ -31,14 +32,17 @@ func handlerRadius(w radius.ResponseWriter, r *radius.Request) {
 
 func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	username := rfc2865.UserName_GetString(r.Packet)
-	org := "built-in" // TODO
 	password := rfc2865.UserPassword_GetString(r.Packet)
+	organization := parseOrganization(r.Packet)
+	code := radius.CodeAccessAccept
 
-	var (
-		code = radius.CodeAccessAccept
-		lang = "en"
-	)
-	_, msg := object.CheckUserPassword(org, username, password, lang)
+	log.Printf("username=%v, password=%v, code=%v, org=%v", username, password, code, organization)
+	if organization == "" {
+		code = radius.CodeAccessReject
+		w.Write(r.Response(code))
+		return
+	}
+	_, msg := object.CheckUserPassword(organization, username, password, "en")
 	if msg != "" {
 		code = radius.CodeAccessReject
 		w.Write(r.Response(code))

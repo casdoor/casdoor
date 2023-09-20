@@ -10,8 +10,13 @@ import (
 
 func TestAccessRequestRejected(t *testing.T) {
 	packet := radius.New(radius.CodeAccessRequest, []byte(`secret`))
-	rfc2865.UserName_SetString(packet, "tim")
+	rfc2865.UserName_SetString(packet, "admin")
 	rfc2865.UserPassword_SetString(packet, "12345")
+	vsa, err := radius.NewVendorSpecific(OrganizationVendorID, []byte("built-in"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	packet.Add(rfc2865.VendorSpecific_Type, vsa)
 	response, err := radius.Exchange(context.Background(), packet, "localhost:1812")
 	if err != nil {
 		t.Fatal(err)
@@ -25,6 +30,11 @@ func TestAccessRequestAccepted(t *testing.T) {
 	packet := radius.New(radius.CodeAccessRequest, []byte(`secret`))
 	rfc2865.UserName_SetString(packet, "admin")
 	rfc2865.UserPassword_SetString(packet, "123")
+	vsa, err := radius.NewVendorSpecific(OrganizationVendorID, []byte("built-in"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	packet.Add(rfc2865.VendorSpecific_Type, vsa)
 	response, err := radius.Exchange(context.Background(), packet, "localhost:1812")
 	if err != nil {
 		t.Fatal(err)
