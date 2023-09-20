@@ -615,9 +615,18 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 }
 
 func AddUser(user *User) (bool, error) {
-	var err error
 	if user.Id == "" {
-		user.Id = util.GenerateId()
+		application, err := GetApplicationByUser(user)
+		if err != nil {
+			return false, err
+		}
+
+		id, err := GenerateIdForNewUser(application)
+		if err != nil {
+			return false, err
+		}
+
+		user.Id = id
 	}
 
 	if user.Owner == "" || user.Name == "" {
@@ -633,7 +642,7 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
-	err = user.UpdateUserHash()
+	err := user.UpdateUserHash()
 	if err != nil {
 		return false, err
 	}
