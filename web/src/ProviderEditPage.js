@@ -116,6 +116,12 @@ class ProviderEditPage extends React.Component {
     });
   }
 
+  // 馬在飛
+  removeFistZeroOfPhoneNumber(countryCode, phone) {
+    const updatedPhone = (phone.startsWith("0")) ? phone.substring(1) : phone;
+    ProviderEditTestSms.sendTestSms(this.state.provider, "+" + countryCode + updatedPhone);
+  }
+
   updateUserMappingField(key, value) {
     const provider = this.state.provider;
     provider.userMapping[key] = value;
@@ -987,7 +993,9 @@ class ProviderEditPage extends React.Component {
                 <Col span={2} >
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                     disabled={!Setting.isValidPhone(this.state.provider.receiver)}
-                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
+                    // 馬在飛
+                    // onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
+                    onClick={() => this.removeFistZeroOfPhoneNumber(Setting.getCountryCode(this.state.provider.content), this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
                 </Col>
