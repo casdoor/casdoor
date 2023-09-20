@@ -107,6 +107,7 @@ export const OtherProviderInfo = {
     "Infobip SMS": {
       logo: `${StaticBaseUrl}/img/social_infobip.png`,
       url: "https://portal.infobip.com/homepage/",
+    //   url: "https://www.infobip.com", 馬在飛
     },
     "Tencent Cloud SMS": {
       logo: `${StaticBaseUrl}/img/social_tencent_cloud.jpg`,

@@ -31,6 +31,7 @@ require (
 	github.com/go-webauthn/webauthn v0.6.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.1
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v1.2.21
 	github.com/lib/pq v1.10.9
@@ -68,3 +69,6 @@ require (
 	maunium.net/go/mautrix v0.16.0
 	modernc.org/sqlite v1.18.2
 )
+
+// 馬在飛
+// replace github.com/casdoor/go-sms-sender => github.com/ivancetus/go-sms-sender v0.0.0

@@ -16,6 +16,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
+	"log"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -30,6 +32,10 @@ import (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	object.InitFlag()
 	object.InitAdapter()
 	object.CreateTables()
@@ -72,7 +78,7 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
+	err = logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
 	if err != nil {
 		panic(err)
 	}
