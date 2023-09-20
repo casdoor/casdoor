@@ -1,0 +1,150 @@
+{
+  "account": {
+    "Failed to add user": "添加用戶失敗",
+    "Get init score failed, error: %w": "初始化分數失敗: %w",
+    "Please sign out first": "請先退出登錄",
+    "The application does not allow to sign up new account": "該應用不允許注冊新用戶"
+  },
+  "auth": {
+    "Challenge method should be S256": "Challenge方法應該為S256",
+    "Failed to create user, user information is invalid: %s": "創建用戶失敗，用戶信息無效: %s",
+    "Failed to login in: %s": "登錄失敗: %s",
+    "Invalid token": "無效token",
+    "State expected: %s, but got: %s": "期望狀態為: %s, 實際狀態為: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商賬戶: %s 與用戶名: %s (%s) 不存在且 不允許通過 %s 注冊新賬戶, 請使用其他方式注冊",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商賬戶: %s 與用戶名: %s (%s) 不存在且 不允許注冊新賬戶, 請聯系IT支持",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商賬戶: %s與用戶名: %s (%s)已經與其他賬戶綁定: %s (%s)",
+    "The application: %s does not exist": "應用%s不存在",
+    "The login method: login with password is not enabled for the application": "該應用禁止采用密碼登錄方式",
+    "The provider: %s is not enabled for the application": "該應用的提供商: %s未被啟用",
+    "Unauthorized operation": "未授權的操作",
+    "Unknown authentication type (not password or provider), form = %s": "未知的認證類型（非密碼或第三方提供商）：%s",
+    "User's tag: %s is not listed in the application's tags": "用戶的標簽: %s不在該應用的標簽列表中"
+  },
+  "cas": {
+    "Service %s and %s do not match": "服務%s與%s不匹配"
+  },
+  "chat": {
+    "The chat type must be \\\"AI\\\"": "The chat type must be \\\"AI\\\"",
+    "The chat: %s is not found": "The chat: %s is not found",
+    "The message is invalid": "The message is invalid",
+    "The message: %s is not found": "The message: %s is not found",
+    "The provider: %s is invalid": "The provider: %s is invalid",
+    "The provider: %s is not found": "The provider: %s is not found"
+  },
+  "check": {
+    "Affiliation cannot be blank": "工作單位不可為空",
+    "DisplayName cannot be blank": "顯示名稱不可為空",
+    "DisplayName is not valid real name": "顯示名稱必須是真實姓名",
+    "Email already exists": "該郵箱已存在",
+    "Email cannot be empty": "郵箱不可為空",
+    "Email is invalid": "無效郵箱",
+    "Empty username.": "用戶名不可為空",
+    "FirstName cannot be blank": "名不可以為空",
+    "LDAP user name or password incorrect": "LDAP密碼錯誤",
+    "LastName cannot be blank": "姓不可以為空",
+    "Multiple accounts with same uid, please check your ldap server": "多個帳戶具有相同的uid，請檢查您的 LDAP 服務器",
+    "Organization does not exist": "組織不存在",
+    "Password must have at least 6 characters": "新密碼至少為6位",
+    "Phone already exists": "該手機號已存在",
+    "Phone cannot be empty": "手機號不可為空",
+    "Phone number is invalid": "無效手機號",
+    "Session outdated, please login again": "會話已過期，請重新登錄",
+    "The user is forbidden to sign in, please contact the administrator": "該用戶被禁止登錄，請聯系管理員",
+    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用戶名只能包含字母數字字符、下劃線或連字符，不能有連續的連字符或下劃線，也不能以連字符或下劃線開頭或結尾",
+    "Username already exists": "用戶名已存在",
+    "Username cannot be an email address": "用戶名不可以是郵箱地址",
+    "Username cannot contain white spaces": "用戶名禁止包含空格",
+    "Username cannot start with a digit": "用戶名禁止使用數字開頭",
+    "Username is too long (maximum is 39 characters).": "用戶名過長（最大允許長度為39個字符）",
+    "Username must have at least 2 characters": "用戶名至少要有2個字符",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密碼錯誤次數已達上限，請在 %d 分後重試",
+    "Your region is not allow to signup by phone": "所在地區不支持手機號注冊",
+    "password or code is incorrect": "密碼錯誤",
+    "password or code is incorrect, you have %d remaining chances": "密碼錯誤，您還有 %d 次嘗試的機會",
+    "unsupported password type: %s": "不支持的密碼類型: %s"
+  },
+  "general": {
+    "Missing parameter": "缺少參數",
+    "Please login first": "請先登錄",
+    "The user: %s doesn't exist": "用戶: %s不存在",
+    "don't support captchaProvider: ": "不支持驗證碼提供商: ",
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+  },
+  "ldap": {
+    "Ldap server exist": "LDAP服務器已存在"
+  },
+  "link": {
+    "Please link first": "請先綁定",
+    "This application has no providers": "該應用無可用的提供商",
+    "This application has no providers of type": "應用沒有該類型的提供商",
+    "This provider can't be unlinked": "該提供商被禁止解綁",
+    "You are not the global admin, you can't unlink other users": "您不是全局管理員，無法解綁其他用戶",
+    "You can't unlink yourself, you are not a member of any application": "您無法自行解綁，您不是任何應用程序的成員"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "僅允許管理員可以修改%s",
+    "The %s is immutable.": "%s 是不可變的",
+    "Unknown modify rule %s.": "未知的修改規則: %s"
+  },
+  "provider": {
+    "Invalid application id": "無效的應用ID",
+    "the provider: %s does not exist": "提供商: %s不存在"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "上傳頭像時用戶為空",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username或fullFilePath為空: username = %s, fullFilePath = %s"
+  },
+  "saml": {
+    "Application %s not found": "未找到應用: %s"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "提供商: %s不是SAML類型"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "郵件參數為空: %v",
+    "Invalid Email receivers: %s": "無效的郵箱收件人: %s",
+    "Invalid phone receivers: %s": "無效的手機短信收信人: %s"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "objectKey: %s被禁止",
+    "The provider type: %s is not supported": "不支持的提供商類型: %s"
+  },
+  "token": {
+    "Empty clientId or clientSecret": "clientId或clientSecret為空",
+    "Grant_type: %s is not supported in this application": "該應用不支持Grant_type: %s",
+    "Invalid application or wrong clientSecret": "無效應用或錯誤的clientSecret",
+    "Invalid client_id": "無效的ClientId",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s在許可跳轉列表中未找到",
+    "Token not found, invalid accessToken": "未查詢到對應token, accessToken無效"
+  },
+  "user": {
+    "Display name cannot be empty": "顯示名稱不可為空",
+    "New password cannot contain blank space.": "新密碼不可以包含空格"
+  },
+  "user_upload": {
+    "Failed to import users": "導入用戶失敗"
+  },
+  "util": {
+    "No application is found for userId: %s": "未找到用戶: %s的應用",
+    "No provider for category: %s is found for application: %s": "未找到類別為: %s的提供商來滿足應用: %s",
+    "The provider: %s is not found": "未找到提供商: %s"
+  },
+  "verification": {
+    "Code has not been sent yet!": "驗證碼還未發送",
+    "Invalid captcha provider.": "非法的驗證碼提供商",
+    "Phone number is invalid in your region %s": "您所在地區的電話號碼無效 %s",
+    "Turing test failed.": "驗證碼還未發送",
+    "Unable to get the email modify rule.": "無法獲取郵箱修改規則",
+    "Unable to get the phone modify rule.": "無法獲取手機號修改規則",
+    "Unknown type": "未知類型",
+    "Wrong verification code!": "驗證碼錯誤!",
+    "You should verify your code in %d min!": "請在 %d 分鐘內輸入正確驗證碼",
+    "the user does not exist, please sign up first": "用戶不存在，請先注冊"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "該用戶沒有 WebAuthn 憑據",
+    "Please call WebAuthnSigninBegin first": "請先調用WebAuthnSigninBegin函數"
+  }
+}
