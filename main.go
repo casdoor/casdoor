@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/radius"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -81,6 +82,7 @@ func main() {
 	logs.SetLogFuncCall(false)
 
 	go ldap.StartLdapServer()
+	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
 
 	beego.Run(fmt.Sprintf(":%v", port))
