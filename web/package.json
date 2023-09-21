@@ -52,7 +52,8 @@
     "react-social-login-buttons": "^3.4.0"
   },
   "scripts": {
-    "start": "cross-env PORT=7001 craco start",
+    "check-node-version": "node -e \"if (parseInt(process.version.split('.')[0].slice(1)) < 18) { console.error('Node.js version must be >= 18'); process.exit(1); }\"",
+    "start": "yarn check-node-version && cross-env PORT=7001 craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
