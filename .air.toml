@@ -1,0 +1,95 @@
+# Config file for [Air](https://github.com/cosmtrek/air) in TOML format
+
+# Working directory
+# . or absolute path, please note that the directories following must be under root.
+root = "."
+tmp_dir = "tmp"
+testdata_dir = "testdata"
+
+[build]
+    # Array of commands to run before each build
+    #pre_cmd = ["echo 'hello air' > pre_cmd.txt"]
+
+    # Just plain old shell command. You could use `make` as well.
+    cmd = "go build -o ./tmp/main ."
+
+    # Array of commands to run after ^C
+    #post_cmd = ["echo 'hello air' > post_cmd.txt"]
+
+    # Binary file yields from `cmd`.
+    bin = "./tmp/main"
+
+    # Customize binary, can setup environment variables when run your app.
+    #full_bin = "APP_ENV=dev APP_USER=air ./tmp/main"
+    full_bin = ""
+
+    # Watch these filename extensions, directories, files
+    include_ext = ["go", "tpl", "tmpl", "html"]
+    include_dir = []
+    include_file = []
+
+    # Ignore these filename extensions or directories.
+    exclude_dir = ["assets", "tmp", "vendor", "testdata", "web", "logs"]
+    exclude_file = []
+    exclude_regex = ["_test.go"]
+    # Exclude unchanged files.
+    exclude_unchanged = false
+
+    # Follow symlink for directories
+    #follow_symlink = true
+    follow_symlink = false
+
+    # This log file places in your tmp_dir.
+    log = "build-errors.log"
+
+    # Poll files for changes instead of using fsnotify.
+    poll = false
+    # Poll interval (defaults to the minimum interval of 500ms).
+    #poll_interval = 500 # ms
+    poll_interval = 0
+
+    # It's not necessary to trigger build each time file changes if it's too frequent.
+    delay = 0 # ms
+
+    # Stop running old binary when build errors occur.
+    #stop_on_error = true
+    stop_on_error = false
+
+    # Send Interrupt signal before killing process (windows does not support this feature)
+    send_interrupt = false
+
+    # Delay after sending Interrupt signal
+    #kill_delay = 500 # ms
+    kill_delay = 0
+
+    # Rerun binary or not
+    rerun = false
+    # Delay after each executions
+    rerun_delay = 500
+    # Add additional arguments when running binary (bin/full_bin). Will run './tmp/main hello world'.
+    #args_bin = ["hello", "world"]
+    args_bin = []
+
+[log]
+    # Show log time
+    time = false
+    # Only show main log (silences watcher, build, runner)
+    main_only = false
+
+[color]
+    # Customize each part's color. If no color found, use the raw app log.
+    main = "magenta"
+    watcher = "cyan"
+    build = "yellow"
+    runner = "green"
+    app = ""
+
+[misc]
+    # Delete tmp directory on exit
+    #clean_on_exit = true
+    clean_on_exit = false
+
+[screen]
+    #clear_on_rebuild = true
+    clear_on_rebuild = false
+    keep_scroll = true
