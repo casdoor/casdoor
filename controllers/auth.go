@@ -314,6 +314,7 @@ func isProxyProviderType(providerType string) bool {
 // @router /login [post]
 func (c *ApiController) Login() {
 	resp := &Response{}
+	user := &object.User{}
 
 	var authForm form.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
@@ -330,7 +331,6 @@ func (c *ApiController) Login() {
 			}
 		}
 
-		var user *object.User
 		var msg string
 
 		if authForm.Password == "" {
@@ -522,7 +522,6 @@ func (c *ApiController) Login() {
 		}
 
 		if authForm.Method == "signup" {
-			user := &object.User{}
 			if provider.Category == "SAML" {
 				user, err = object.GetUser(util.GetId(application.Organization, userInfo.Id))
 				if err != nil {
@@ -619,6 +618,7 @@ func (c *ApiController) Login() {
 						Owner:             application.Organization,
 						Name:              userInfo.Username,
 						CreatedTime:       util.GetCurrentTime(),
+						UpdatedTime:       util.GetCurrentTime(),
 						Id:                util.GenerateId(),
 						Type:              "normal-user",
 						DisplayName:       userInfo.DisplayName,
@@ -695,7 +695,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			user, err := object.GetUser(userId)
+			user, err = object.GetUser(userId)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -786,7 +786,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			user := c.getCurrentUser()
+			user = c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
 			record := object.NewRecord(c.Ctx)
@@ -795,6 +795,30 @@ func (c *ApiController) Login() {
 			util.SafeGoroutine(func() { object.AddRecord(record) })
 		} else {
 			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
+			return
+		}
+	}
+
+	// when user sign in, update the databse
+	isAdmin := c.IsAdmin()
+	id := c.Input().Get("id")
+	if id == "" {
+		id = c.GetSessionUsername()
+		if id == "" {
+			c.ResponseError(c.T("general:Missing parameter"))
+			return
+		}
+	}
+	user.IsOnline = true
+	affected, err := object.UpdateUser(id, user, []string{}, isAdmin)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if affected {
+		err = object.UpdateUserToOriginalDatabase(user)
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
 	}

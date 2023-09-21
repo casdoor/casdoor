@@ -256,31 +256,51 @@ func (c *ApiController) Logout() {
 	redirectUri := c.Input().Get("post_logout_redirect_uri")
 	state := c.Input().Get("state")
 
-	user := c.GetSessionUsername()
+	username := c.GetSessionUsername()
+	user, err := object.GetUser(username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	isAdmin := c.IsAdmin()
+	id := c.GetSessionUsername()
+	user.IsOnline = false 
+	affected, err := object.UpdateUser(id, user, []string{}, isAdmin)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if affected {
+		err = object.UpdateUserToOriginalDatabase(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return 
+		}
+	}
 
 	if accessToken == "" && redirectUri == "" {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		if user == "" {
+		if username == "" {
 			c.ResponseOk()
 			return
 		}
 
 		c.ClearUserSession()
-		owner, username := util.GetOwnerAndNameFromId(user)
+		owner, username := util.GetOwnerAndNameFromId(username)
 		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+		util.LogInfo(c.Ctx, "API: [%s] logged out", username)
 
 		application := c.GetSessionApplication()
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
-			c.ResponseOk(user)
+			c.ResponseOk(username)
 			return
 		}
-		c.ResponseOk(user, application.HomepageUrl)
+		c.ResponseOk(username, application.HomepageUrl)
 		return
 	} else {
 		// "post_logout_redirect_uri" has been made optional, see: https://github.com/casdoor/casdoor/issues/2151
@@ -309,13 +329,13 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		if user == "" {
-			user = util.GetId(token.Organization, token.User)
+		if username == "" {
+			username = util.GetId(token.Organization, token.User)
 		}
 
 		c.ClearUserSession()
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		owner, username := util.GetOwnerAndNameFromId(user)
+		owner, username := util.GetOwnerAndNameFromId(username)
 
 		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
@@ -323,7 +343,7 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+		util.LogInfo(c.Ctx, "API: [%s] logged out", username)
 
 		if redirectUri == "" {
 			c.ResponseOk()

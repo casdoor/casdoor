@@ -528,9 +528,9 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if len(columns) == 0 {
 		columns = []string{
-			"owner", "display_name", "avatar",
+			"owner", "display_name", "avatar", "updated_time",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
-			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
+			"is_online","is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
@@ -540,6 +540,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
 			"yammer", "yandex", "zoom", "custom",
 		}
+	} else {
+		columns = append(columns, "updated_time", "is_online")
 	}
 	if isAdmin {
 		columns = append(columns, "name", "email", "phone", "country_code", "type")
