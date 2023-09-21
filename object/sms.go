@@ -36,7 +36,7 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 	return client, nil
 }
 
-func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
+func SendSms(provider *Provider, params map[string]string, phoneNumbers ...string) error {
 	client, err := getSmsClient(provider)
 	if err != nil {
 		return err
@@ -52,13 +52,16 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		}
 	}
 
+	err = client.SendMessage(params, phoneNumbers...)
+	return err
+}
+
+func CodeToSmsParams(provider *Provider, content string) map[string]string {
 	params := map[string]string{}
 	if provider.Type == sender.TencentCloud {
 		params["0"] = content
 	} else {
 		params["code"] = content
 	}
-
-	err = client.SendMessage(params, phoneNumbers...)
-	return err
+	return params
 }

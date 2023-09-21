@@ -35,9 +35,10 @@ type EmailForm struct {
 }
 
 type SmsForm struct {
-	Content   string   `json:"content"`
-	Receivers []string `json:"receivers"`
-	OrgId     string   `json:"organizationId"` // e.g. "admin/built-in"
+	Content   string            `json:"content"`
+	Params    map[string]string `json:"params"`
+	Receivers []string          `json:"receivers"`
+	OrgId     string            `json:"organizationId"` // e.g. "admin/built-in"
 }
 
 type NotificationForm struct {
@@ -152,7 +153,11 @@ func (c *ApiController) SendSms() {
 		}
 	}
 
-	err = object.SendSms(provider, smsForm.Content, smsForm.Receivers...)
+	if smsForm.Content != "" {
+		smsForm.Params = object.CodeToSmsParams(provider, smsForm.Content)
+	}
+
+	err = object.SendSms(provider, smsForm.Params, smsForm.Receivers...)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

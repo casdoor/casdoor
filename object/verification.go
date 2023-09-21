@@ -115,7 +115,10 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 	}
 
 	code := getRandomCode(6)
-	if err := SendSms(provider, code, dest); err != nil {
+
+	params := CodeToSmsParams(provider, code)
+
+	if err := SendSms(provider, params, dest); err != nil {
 		return err
 	}
 
