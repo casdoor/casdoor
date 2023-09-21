@@ -16,9 +16,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
-	"log"
-
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
 	_ "github.com/beego/beego/session/redis"
@@ -32,10 +29,14 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	var err error
+	// only if using .env file, don't enable if using docker or other method to load .env
+	// =======
+	//err = godotenv.Load()
+	//if err != nil {
+	//	log.Fatal("Error loading .env file")
+	//}
+	// ======
 	object.InitFlag()
 	object.InitAdapter()
 	object.CreateTables()

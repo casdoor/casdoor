@@ -1,11 +1,11 @@
-FROM node:16.18.0 AS FRONT
+FROM node:18.16.1 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 
-FROM golang:1.19.9 AS BACK
+FROM golang:1.20.8 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
@@ -39,31 +39,31 @@ COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
 ENTRYPOINT ["/server"]
 
-
-FROM debian:latest AS db
-RUN apt update \
-    && apt install -y \
-        mariadb-server \
-        mariadb-client \
-    && rm -rf /var/lib/apt/lists/*
-
-
-FROM db AS ALLINONE
-LABEL MAINTAINER="https://casdoor.org/"
-ARG TARGETOS
-ARG TARGETARCH
-ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
-
-RUN apt update
-RUN apt install -y ca-certificates && update-ca-certificates
-
-WORKDIR /
-COPY --from=BACK /go/src/casdoor/server_${BUILDX_ARCH} ./server
-COPY --from=BACK /go/src/casdoor/swagger ./swagger
-COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
-COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
-COPY --from=BACK /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
-COPY --from=FRONT /web/build ./web/build
-
-ENTRYPOINT ["/bin/bash"]
-CMD ["/docker-entrypoint.sh"]
+# DEMO purpose, mysql db in docker
+#FROM debian:latest AS db
+#RUN apt update \
+#    && apt install -y \
+#        mariadb-server \
+#        mariadb-client \
+#    && rm -rf /var/lib/apt/lists/*
+#
+#
+#FROM db AS ALLINONE
+#LABEL MAINTAINER="https://casdoor.org/"
+#ARG TARGETOS
+#ARG TARGETARCH
+#ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
+#
+#RUN apt update
+#RUN apt install -y ca-certificates && update-ca-certificates
+#
+#WORKDIR /
+#COPY --from=BACK /go/src/casdoor/server_${BUILDX_ARCH} ./server
+#COPY --from=BACK /go/src/casdoor/swagger ./swagger
+#COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
+#COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
+#COPY --from=BACK /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
+#COPY --from=FRONT /web/build ./web/build
+#
+#ENTRYPOINT ["/bin/bash"]
+#CMD ["/docker-entrypoint.sh"]
