@@ -30,8 +30,8 @@ const {Option} = Select;
 
 export const ServerUrl = "";
 
-// export const StaticBaseUrl = "https://cdn.casbin.org";
-export const StaticBaseUrl = "https://storage.googleapis.com/vc3_member/static";
+// export const StaticBaseUrl = "https://storage.googleapis.com/vc3_member/static";
+export const StaticBaseUrl = "https://cdn.casbin.org";
 
 export const Countries = [
   {label: "English", key: "en", country: "US", alt: "English"},

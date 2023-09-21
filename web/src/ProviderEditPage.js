@@ -116,18 +116,18 @@ class ProviderEditPage extends React.Component {
     });
   }
 
-  // 馬在飛
-  removeFistZeroOfPhoneNumber(countryCode, phone) {
-    const updatedPhone = (phone.startsWith("0")) ? phone.substring(1) : phone;
-    ProviderEditTestSms.sendTestSms(this.state.provider, "+" + countryCode + updatedPhone);
-  }
-
   updateUserMappingField(key, value) {
     const provider = this.state.provider;
     provider.userMapping[key] = value;
     this.setState({
       provider: provider,
     });
+  }
+
+  // remove phone number first 0 if any
+  removeFistZeroOfPhoneNumber(countryCode, phone) {
+    const updatedPhone = (phone.startsWith("0")) ? phone.substring(1) : phone;
+    ProviderEditTestSms.sendTestSms(this.state.provider, "+" + countryCode + updatedPhone);
   }
 
   renderUserMappingInput() {
