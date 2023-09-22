@@ -18,11 +18,11 @@ import "github.com/casdoor/notify"
 
 func GetNotificationProvider(typ string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, appId string, receiver string, method string, title string, metaData string) (notify.Notifier, error) {
 	if typ == "Telegram" {
-		return NewTelegramProvider(appId, receiver)
+		return NewTelegramProvider(clientSecret, receiver)
 	} else if typ == "Custom HTTP" {
 		return NewCustomHttpProvider(receiver, method, title)
 	} else if typ == "DingTalk" {
-		return NewDingTalkProvider(appId, receiver)
+		return NewDingTalkProvider(clientId, clientSecret)
 	} else if typ == "Lark" {
 		return NewLarkProvider(receiver)
 	} else if typ == "Microsoft Teams" {
@@ -30,15 +30,15 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, c
 	} else if typ == "Bark" {
 		return NewBarkProvider(receiver)
 	} else if typ == "Pushover" {
-		return NewPushoverProvider(appId, receiver)
+		return NewPushoverProvider(clientSecret, receiver)
 	} else if typ == "Pushbullet" {
-		return NewPushbulletProvider(appId, receiver)
+		return NewPushbulletProvider(clientSecret, receiver)
 	} else if typ == "Slack" {
-		return NewSlackProvider(appId, receiver)
+		return NewSlackProvider(clientSecret, receiver)
 	} else if typ == "Webpush" {
 		return NewWebpushProvider(clientId, clientSecret, receiver)
 	} else if typ == "Discord" {
-		return NewDiscordProvider(appId, receiver)
+		return NewDiscordProvider(clientSecret, receiver)
 	} else if typ == "Google Chat" {
 		return NewGoogleChatProvider(metaData)
 	} else if typ == "Line" {

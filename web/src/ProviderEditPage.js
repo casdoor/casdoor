@@ -172,6 +172,12 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Site key"), i18next.t("provider:Site key - Tooltip"));
       }
+    case "Notification":
+      if (provider.type === "DingTalk") {
+        return Setting.getLabel(i18next.t("provider:Access key"), i18next.t("provider:Access key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
+      }
     default:
       return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
     }
@@ -180,7 +186,11 @@ class ProviderEditPage extends React.Component {
   getClientSecretLabel(provider) {
     switch (provider.category) {
     case "Email":
-      return Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
+      if (provider.type === "Azure ACS") {
+        return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"));
+      }
     case "SMS":
       if (provider.type === "Volc Engine SMS" || provider.type === "Amazon SNS" || provider.type === "Baidu Cloud SMS") {
         return Setting.getLabel(i18next.t("provider:Secret access key"), i18next.t("provider:Secret access key - Tooltip"));
@@ -202,7 +212,7 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       }
     case "Notification":
-      if (provider.type === "Line") {
+      if (provider.type === "Line" || provider.type === "Telegram" || provider.type === "Bark" || provider.type === "DingTalk" || provider.type === "Discord" || provider.type === "Slack" || provider.type === "Pushover" || provider.type === "Pushbullet") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
@@ -297,7 +307,7 @@ class ProviderEditPage extends React.Component {
         tooltip = i18next.t("provider:Project Id - Tooltip");
       }
     } else if (provider.category === "Email") {
-      if (provider.type === "SUBMAIL" || provider.type === "Azure ACS") {
+      if (provider.type === "SUBMAIL") {
         text = i18next.t("provider:App ID");
         tooltip = i18next.t("provider:App ID - Tooltip");
       }
@@ -305,7 +315,7 @@ class ProviderEditPage extends React.Component {
       if (provider.type === "Viber") {
         text = i18next.t("provider:Domain");
         tooltip = i18next.t("provider:Domain - Tooltip");
-      } else if (provider.type === "Telegram" || provider.type === "DingTalk" || provider.type === "Pushover" || provider.type === "Pushbullet" || provider.type === "Slack" || provider.type === "Discord" || provider.type === "Line" || provider.type === "Matrix" || provider.type === "Rocket Chat") {
+      } else if (provider.type === "Line" || provider.type === "Matrix" || provider.type === "Rocket Chat") {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       }
@@ -339,9 +349,6 @@ class ProviderEditPage extends React.Component {
     } else if (provider.type === "Custom HTTP" || provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "Webpush" || provider.type === "Matrix") {
       text = i18next.t("provider:Endpoint");
       tooltip = i18next.t("provider:Endpoint - Tooltip");
-    } else if (provider.type === "DingTalk" || provider.type === "Bark") {
-      text = i18next.t("provider:Secret Key");
-      tooltip = i18next.t("provider:Secret Key - Tooltip");
     }
 
     if (text === "" && tooltip === "") {
@@ -626,25 +633,22 @@ class ProviderEditPage extends React.Component {
         }
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
-          (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ||
           (this.state.provider.category === "Web3") ||
-          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System" ||
-          (this.state.provider.category === "Notification" && this.state.provider.type !== "Webpush" && this.state.provider.type !== "Line" && this.state.provider.type !== "Matrix" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" && this.state.provider.type !== "Rocket Chat" && this.state.provider.type !== "Viber")) ? null : (
+          (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
+          (this.state.provider.category === "Notification" && this.state.provider.type === "Custom HTTP" || this.state.provider.type === "Google Chat" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams") ? null : (
               <React.Fragment>
-                {
-                  this.state.provider.type === "Line" ? null : (
-                    <Row style={{marginTop: "20px"}} >
-                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                        {this.getClientIdLabel(this.state.provider)} :
-                      </Col>
-                      <Col span={22} >
-                        <Input value={this.state.provider.clientId} onChange={e => {
-                          this.updateProviderField("clientId", e.target.value);
-                        }} />
-                      </Col>
-                    </Row>
-                  )
-                }
+                {["Line", "Telegram", "Bark", "Discord", "Slack", "Pushbullet", "Pushover"].includes(this.state.provider.type) || (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ? null : (
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {this.getClientIdLabel(this.state.provider)} :
+                    </Col>
+                    <Col span={22} >
+                      <Input value={this.state.provider.clientId} onChange={e => {
+                        this.updateProviderField("clientId", e.target.value);
+                      }} />
+                    </Col>
+                  </Row>
+                )}
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                     {this.getClientSecretLabel(this.state.provider)} :
