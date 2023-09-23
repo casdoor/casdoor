@@ -618,12 +618,12 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	return affected != 0, nil
 }
 
-func UpdateUserOnlineTriker(apiTriker *time.Ticker) {
+func UpdateUserOnlineTiker(apiTiker *time.Ticker, IsOnline bool) {
 	for {
 		select {
-		case <- apiTriker.C:
+		case <- apiTiker.C:
 			users := []User{}
-			err := ormer.Engine.Where("is_online=1").Find(&users)
+			err := ormer.Engine.Where("is_online = ?", IsOnline).Find(&users)
 			if err != nil {
 				panic(err)
 			}
@@ -633,9 +633,9 @@ func UpdateUserOnlineTriker(apiTriker *time.Ticker) {
 					panic(err)
 				}
 				currentTime := time.Now()
-				oneBeforeTime := currentTime.Add(-1 * time.Hour)
+				oneHourBefore := currentTime.Add(-1 * time.Hour)
 
-				if !lastUpdateTime.After(oneBeforeTime) {
+				if !lastUpdateTime.After(oneHourBefore) {
 					user.IsOnline = false
 					affected, err := UpdateUser(user.GetId(), &user, []string{}, true)
 					if err != nil {

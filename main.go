@@ -46,7 +46,7 @@ func main() {
 	object.InitCasvisorConfig()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
-	util.SafeGoroutine(func() { object.UpdateUserOnlineTriker(time.NewTicker(1*time.Minute)) })
+	util.SafeGoroutine(func() { object.UpdateUserOnlineTiker(time.NewTicker(1*time.Minute), true) })
 
 	// beego.DelStaticPath("/static")
 	// beego.SetStaticPath("/static", "web/build/static")
