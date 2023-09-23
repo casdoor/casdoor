@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/form"
@@ -119,20 +118,10 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	id := util.GenerateId()
-	if application.GetSignupItemRule("ID") == "Incremental" {
-		lastUser, err := object.GetLastUser(authForm.Organization)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		lastIdInt := -1
-		if lastUser != nil {
-			lastIdInt = util.ParseInt(lastUser.Id)
-		}
-
-		id = strconv.Itoa(lastIdInt + 1)
+	id, err := object.GenerateIdForNewUser(application)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	username := authForm.Username

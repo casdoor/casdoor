@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -484,7 +485,7 @@ func GetMaskedUsers(users []*User, errs ...error) ([]*User, error) {
 	return users, nil
 }
 
-func GetLastUser(owner string) (*User, error) {
+func getLastUser(owner string) (*User, error) {
 	user := User{Owner: owner}
 	existed, err := ormer.Engine.Desc("created_time", "id").Get(&user)
 	if err != nil {
@@ -655,9 +656,18 @@ func UpdateUserOnlineTriker(apiTriker *time.Ticker) error {
 
 
 func AddUser(user *User) (bool, error) {
-	var err error
 	if user.Id == "" {
-		user.Id = util.GenerateId()
+		application, err := GetApplicationByUser(user)
+		if err != nil {
+			return false, err
+		}
+
+		id, err := GenerateIdForNewUser(application)
+		if err != nil {
+			return false, err
+		}
+
+		user.Id = id
 	}
 
 	if user.Owner == "" || user.Name == "" {
@@ -673,7 +683,7 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
-	err = user.UpdateUserHash()
+	err := user.UpdateUserHash()
 	if err != nil {
 		return false, err
 	}
@@ -940,4 +950,23 @@ func (user *User) IsGlobalAdmin() bool {
 	}
 
 	return user.Owner == "built-in"
+}
+
+func GenerateIdForNewUser(application *Application) (string, error) {
+	if application.GetSignupItemRule("ID") != "Incremental" {
+		return util.GenerateId(), nil
+	}
+
+	lastUser, err := getLastUser(application.Organization)
+	if err != nil {
+		return "", err
+	}
+
+	lastUserId := -1
+	if lastUser != nil {
+		lastUserId = util.ParseInt(lastUser.Id)
+	}
+
+	res := strconv.Itoa(lastUserId + 1)
+	return res, nil
 }
