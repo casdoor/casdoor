@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -45,6 +46,7 @@ func main() {
 	object.InitCasvisorConfig()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
+	util.SafeGoroutine(func() { object.UpdateUserOnlineTriker(time.NewTicker(1*time.Minute)) })
 
 	// beego.DelStaticPath("/static")
 	// beego.SetStaticPath("/static", "web/build/static")

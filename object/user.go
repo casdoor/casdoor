@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -553,6 +554,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			return false, err
 		}
 	}
+	user.UpdatedTime = util.GetCurrentTime()
 
 	affected, err := updateUser(id, user, columns)
 	if err != nil {
@@ -614,6 +616,43 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 
 	return affected != 0, nil
 }
+
+func UpdateUserOnlineTriker(apiTriker *time.Ticker) error {
+	for {
+		select {
+		case <- apiTriker.C:
+			users := []User{}
+			err := ormer.Engine.Where("is_online=1").Find(&users)
+			if err != nil {
+				return err
+			}
+			for _, user := range users {
+				lastUpdateTime, err := time.Parse(time.RFC3339, user.UpdatedTime)
+				if err != nil {
+					return err
+				}
+				currentTime := time.Now()
+				oneBeforeTime := currentTime.Add(-1 * time.Hour)
+
+				if !lastUpdateTime.After(oneBeforeTime) {
+					user.IsOnline = false
+					affected, err := UpdateUser(user.GetId(), &user, []string{}, true)
+					if err != nil {
+						return err
+					}
+					if affected {
+						err = UpdateUserToOriginalDatabase(&user)
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+
+	}
+}
+
 
 func AddUser(user *User) (bool, error) {
 	var err error
