@@ -259,7 +259,14 @@ func getRolesByUserInternal(userId string) ([]*Role, error) {
 		return roles, err
 	}
 
-	return roles, nil
+	res := []*Role{}
+	for _, role := range roles {
+		if util.InSlice(role.Users, userId) {
+			res = append(res, role)
+		}
+	}
+
+	return res, nil
 }
 
 func getRolesByUser(userId string) ([]*Role, error) {
