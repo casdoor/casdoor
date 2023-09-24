@@ -24,11 +24,11 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, c
 	} else if typ == "DingTalk" {
 		return NewDingTalkProvider(clientId, clientSecret)
 	} else if typ == "Lark" {
-		return NewLarkProvider(receiver)
+		return NewLarkProvider(clientSecret)
 	} else if typ == "Microsoft Teams" {
-		return NewMicrosoftTeamsProvider(receiver)
+		return NewMicrosoftTeamsProvider(clientSecret)
 	} else if typ == "Bark" {
-		return NewBarkProvider(receiver)
+		return NewBarkProvider(clientSecret)
 	} else if typ == "Pushover" {
 		return NewPushoverProvider(clientSecret, receiver)
 	} else if typ == "Pushbullet" {
