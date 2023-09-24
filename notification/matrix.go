@@ -21,7 +21,7 @@ import (
 	"maunium.net/go/mautrix/id"
 )
 
-func NewMatrixProvider(userId string, roomId string, accessToken string, homeServer string) (*notify.Notify, error) {
+func NewMatrixProvider(userId string, accessToken string, roomId string, homeServer string) (*notify.Notify, error) {
 	matrixSrv, err := matrix.New(id.UserID(userId), id.RoomID(roomId), homeServer, accessToken)
 	if err != nil {
 		return nil, err
