@@ -258,9 +258,18 @@ func DeletePermission(permission *Permission) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
+func getPermissionsByUser(userId string) ([]*Permission, error) {
 	permissions := []*Permission{}
 	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	return permissions, nil
+}
+
+func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
+	permissions, err := getPermissionsByUser(userId)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -277,14 +286,13 @@ func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 
 	permFromRoles := []*Permission{}
 
-	roles, err := GetRolesByUser(userId)
+	roles, err := getRolesByUser(userId)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	for _, role := range roles {
-		perms := []*Permission{}
-		err := ormer.Engine.Where("roles like ?", "%"+role.GetId()+"\"%").Find(&perms)
+		perms, err := GetPermissionsByRole(role.GetId())
 		if err != nil {
 			return nil, nil, err
 		}
