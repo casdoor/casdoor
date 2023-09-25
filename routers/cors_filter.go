@@ -16,6 +16,7 @@ package routers
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
@@ -38,6 +39,11 @@ func setCorsHeaders(ctx *context.Context, origin string) {
 func CorsFilter(ctx *context.Context) {
 	origin := ctx.Input.Header(headerOrigin)
 	originConf := conf.GetConfigString("origin")
+
+	if strings.HasPrefix(origin, "http://localhost") {
+		setCorsHeaders(ctx, origin)
+		return
+	}
 
 	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
 		setCorsHeaders(ctx, origin)
