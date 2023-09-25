@@ -20,10 +20,12 @@ import * as Setting from "../Setting";
 
 const {confirm} = Modal;
 const {fetch: originalFetch} = window;
+let demoModalShow = false;
 
 const demoModeCallback = (res) => {
   res.json().then(data => {
-    if (Setting.isResponseDenied(data)) {
+    if (Setting.isResponseDenied(data) && !demoModalShow) {
+      demoModalShow = true;
       confirm({
         title: i18next.t("general:This is a read-only demo site!"),
         icon: <ExclamationCircleFilled />,
@@ -34,6 +36,9 @@ const demoModeCallback = (res) => {
           Setting.openLink(`https://demo.casdoor.com${location.pathname}${location.search}?username=built-in/admin&password=123`);
         },
         onCancel() {},
+        afterClose() {
+          demoModalShow = false;
+        },
       });
     }
   });
