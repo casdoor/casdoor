@@ -29,21 +29,23 @@ const (
 	headerAllowHeaders = "Access-Control-Allow-Headers"
 )
 
+func setCorsHeaders(ctx *context.Context, origin string) {
+	ctx.Output.Header(headerAllowOrigin, origin)
+	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
+	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+}
+
 func CorsFilter(ctx *context.Context) {
 	origin := ctx.Input.Header(headerOrigin)
 	originConf := conf.GetConfigString("origin")
 
 	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
-		ctx.Output.Header(headerAllowOrigin, origin)
-		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		setCorsHeaders(ctx, origin)
 		return
 	}
 
 	if ctx.Request.RequestURI == "/api/userinfo" {
-		ctx.Output.Header(headerAllowOrigin, origin)
-		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		setCorsHeaders(ctx, origin)
 		return
 	}
 
@@ -54,9 +56,7 @@ func CorsFilter(ctx *context.Context) {
 		}
 
 		if ok {
-			ctx.Output.Header(headerAllowOrigin, origin)
-			ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-			ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+			setCorsHeaders(ctx, origin)
 		} else {
 			ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 			return
