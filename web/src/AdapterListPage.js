@@ -130,6 +130,13 @@ class AdapterListPage extends BaseListPage {
         ],
       },
       {
+        title: i18next.t("syncer:Database type"),
+        dataIndex: "databaseType",
+        key: "databaseType",
+        width: "120px",
+        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
+      },
+      {
         title: i18next.t("provider:Host"),
         dataIndex: "host",
         key: "host",
@@ -144,6 +151,12 @@ class AdapterListPage extends BaseListPage {
         width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("port"),
+        render: (text, record, index) => {
+          if (text === 0) {
+            return "";
+          }
+          return text;
+        },
       },
       {
         title: i18next.t("general:User"),
@@ -160,13 +173,6 @@ class AdapterListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("password"),
-      },
-      {
-        title: i18next.t("syncer:Database type"),
-        dataIndex: "databaseType",
-        key: "databaseType",
-        width: "120px",
-        sorter: (a, b) => a.databaseType.localeCompare(b.databaseType),
       },
       {
         title: i18next.t("syncer:Database"),

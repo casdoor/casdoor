@@ -10,7 +10,7 @@ require (
 	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin v1.9.1 // indirect
-	github.com/casbin/casbin/v2 v2.37.0
+	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.14.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.43.0
@@ -54,6 +54,7 @@ require (
 	github.com/stripe/stripe-go/v74 v74.29.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
+	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/xorm-io/builder v0.3.13
 	github.com/xorm-io/core v0.7.4

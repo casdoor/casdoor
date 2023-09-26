@@ -226,7 +226,7 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 	} else {
 		return ormer.Engine.Table("user").
 			Where("owner = ?", owner).In("name", names).
-			And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%").
+			And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%").
 			Count()
 	}
 }
@@ -247,7 +247,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	}
 
 	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("user.%s LIKE ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+		session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
 
 	if sortField == "" || sortOrder == "" {

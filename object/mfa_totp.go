@@ -42,7 +42,7 @@ func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, er
 	//if issuer == "" {
 	//	issuer = "casdoor"
 	//}
-	issuer := "casdoor"
+	issuer := "Casdoor"
 
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      issuer,

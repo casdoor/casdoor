@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/form"
@@ -119,20 +118,10 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	id := util.GenerateId()
-	if application.GetSignupItemRule("ID") == "Incremental" {
-		lastUser, err := object.GetLastUser(authForm.Organization)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		lastIdInt := -1
-		if lastUser != nil {
-			lastIdInt = util.ParseInt(lastUser.Id)
-		}
-
-		id = strconv.Itoa(lastIdInt + 1)
+	id, err := object.GenerateIdForNewUser(application)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	username := authForm.Username
@@ -309,27 +298,32 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		if application.IsRedirectUriValid(redirectUri) {
-			if user == "" {
-				user = util.GetId(token.Organization, token.User)
-			}
+		if user == "" {
+			user = util.GetId(token.Organization, token.User)
+		}
 
-			c.ClearUserSession()
-			// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-			owner, username := util.GetOwnerAndNameFromId(user)
+		c.ClearUserSession()
+		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
+		owner, username := util.GetOwnerAndNameFromId(user)
 
-			_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
-			if err != nil {
-				c.ResponseError(err.Error())
+		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
+
+		if redirectUri == "" {
+			c.ResponseOk()
+			return
+		} else {
+			if application.IsRedirectUriValid(redirectUri) {
+				c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))
+			} else {
+				c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
 				return
 			}
-
-			util.LogInfo(c.Ctx, "API: [%s] logged out", user)
-
-			c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))
-		} else {
-			c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
-			return
 		}
 	}
 }

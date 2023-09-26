@@ -227,7 +227,7 @@ class AdapterEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:DB Test"), i18next.t("provider:DB Test - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
           </Col>
           <Col span={2} >
             <Button type={"primary"} onClick={() => {
