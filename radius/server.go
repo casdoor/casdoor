@@ -35,7 +35,7 @@ func StartRadiusServer() {
 	}
 	log.Printf("Starting Radius server on %s", server.Addr)
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("StartRadiusServer() failed, err = %v", err)
+		log.Printf("StartRadiusServer() failed, err = %v", err)
 	}
 }
 
