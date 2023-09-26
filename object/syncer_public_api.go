@@ -38,7 +38,11 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 
 	for _, syncer := range syncers {
 		if syncer.Organization == organization && syncer.IsEnabled {
-			syncer.initAdapter()
+			err = syncer.initAdapter()
+			if err != nil {
+				return nil, err
+			}
+
 			return syncer, nil
 		}
 	}

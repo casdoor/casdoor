@@ -50,9 +50,12 @@ func addSyncerJob(syncer *Syncer) error {
 		return nil
 	}
 
-	syncer.initAdapter()
+	err := syncer.initAdapter()
+	if err != nil {
+		return err
+	}
 
-	err := syncer.syncUsers()
+	err = syncer.syncUsers()
 	if err != nil {
 		return err
 	}
