@@ -912,7 +912,7 @@ func (user *User) IsGlobalAdmin() bool {
 }
 
 func GenerateIdForNewUser(application *Application) (string, error) {
-	if application.GetSignupItemRule("ID") != "Incremental" {
+	if application == nil || application.GetSignupItemRule("ID") != "Incremental" {
 		return util.GenerateId(), nil
 	}
 
