@@ -30,6 +30,7 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
+	UseSameDb       bool   `json:"useSameDb"`
 	Type            string `xorm:"varchar(100)" json:"type"`
 	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
 	Host            string `xorm:"varchar(100)" json:"host"`
@@ -151,7 +152,7 @@ func (adapter *Adapter) InitAdapter() error {
 	if adapter.Adapter == nil {
 		var dataSourceName string
 
-		if adapter.isBuiltIn() {
+		if adapter.UseSameDb || adapter.isBuiltIn() {
 			dataSourceName = conf.GetConfigString("dataSourceName")
 			if adapter.DatabaseType == "mysql" {
 				dataSourceName = dataSourceName + adapter.Database
@@ -184,7 +185,7 @@ func (adapter *Adapter) InitAdapter() error {
 		var err error
 		engine, err := xorm.NewEngine(adapter.DatabaseType, dataSourceName)
 
-		if adapter.isBuiltIn() && adapter.DatabaseType == "postgres" {
+		if (adapter.UseSameDb || adapter.isBuiltIn()) && adapter.DatabaseType == "postgres" {
 			schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
 			if schema != "" {
 				engine.SetSchema(schema)
