@@ -426,8 +426,8 @@ func initBuiltInUserAdapter() {
 		Owner:       "built-in",
 		Name:        "user-adapter-built-in",
 		CreatedTime: util.GetCurrentTime(),
-		UseSameDb:   true,
 		Table:       "casbin_user_rule",
+		UseSameDb:   true,
 	}
 	_, err = AddAdapter(adapter)
 	if err != nil {
@@ -449,8 +449,8 @@ func initBuiltInApiAdapter() {
 		Owner:       "built-in",
 		Name:        "api-adapter-built-in",
 		CreatedTime: util.GetCurrentTime(),
-		UseSameDb:   true,
 		Table:       "casbin_api_rule",
+		UseSameDb:   true,
 	}
 	_, err = AddAdapter(adapter)
 	if err != nil {

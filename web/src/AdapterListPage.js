@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button, Switch, Table} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as AdapterBackend from "./backend/AdapterBackend";
@@ -30,14 +30,8 @@ class AdapterListPage extends BaseListPage {
       owner: owner,
       name: `adapter_${randomName}`,
       createdTime: moment().format(),
-      type: "Database",
-      host: "localhost",
-      port: 3306,
-      user: "root",
-      password: "123456",
-      databaseType: "mysql",
-      database: "dbName",
       table: "tableName",
+      useSameDb: true,
     };
   }
 
@@ -119,6 +113,25 @@ class AdapterListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("syncer:Table"),
+        dataIndex: "table",
+        key: "table",
+        width: "120px",
+        sorter: true,
+      },
+      {
+        title: i18next.t("adapter:Use same DB"),
+        dataIndex: "useSameDb",
+        key: "useSameDb",
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          );
+        },
+      },
+      {
         title: i18next.t("provider:Type"),
         dataIndex: "type",
         key: "type",
@@ -178,13 +191,6 @@ class AdapterListPage extends BaseListPage {
         title: i18next.t("syncer:Database"),
         dataIndex: "database",
         key: "database",
-        width: "120px",
-        sorter: true,
-      },
-      {
-        title: i18next.t("syncer:Table"),
-        dataIndex: "table",
-        key: "table",
         width: "120px",
         sorter: true,
       },

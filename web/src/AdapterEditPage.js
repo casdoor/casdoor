@@ -116,12 +116,40 @@ class AdapterEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.adapter.table}
+              disabled={Setting.builtInObject(this.state.adapter)} onChange={e => {
+                this.updateAdapterField("table", e.target.value);
+              }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("adapter:Use same DB"), i18next.t("adapter:Use same DB - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch disabled={Setting.builtInObject(this.state.adapter)} checked={this.state.adapter.useSameDb || Setting.builtInObject(this.state.adapter)} onChange={checked => {
               this.updateAdapterField("useSameDb", checked);
+              if (checked) {
+                this.updateAdapterField("type", "");
+                this.updateAdapterField("databaseType", "");
+                this.updateAdapterField("host", "");
+                this.updateAdapterField("port", 0);
+                this.updateAdapterField("user", "");
+                this.updateAdapterField("password", "");
+                this.updateAdapterField("database", "");
+              } else {
+                this.updateAdapterField("type", "Database");
+                this.updateAdapterField("databaseType", "mysql");
+                this.updateAdapterField("host", "localhost");
+                this.updateAdapterField("port", 3306);
+                this.updateAdapterField("user", "root");
+                this.updateAdapterField("password", "123456");
+                this.updateAdapterField("database", "dbName");
+              }
             }} />
           </Col>
         </Row>
@@ -219,17 +247,6 @@ class AdapterEditPage extends React.Component {
             </React.Fragment>
           )
         }
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.adapter.table}
-              disabled={Setting.builtInObject(this.state.adapter)} onChange={e => {
-                this.updateAdapterField("table", e.target.value);
-              }} />
-          </Col>
-        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
