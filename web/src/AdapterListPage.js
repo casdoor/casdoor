@@ -30,7 +30,7 @@ class AdapterListPage extends BaseListPage {
       owner: owner,
       name: `adapter_${randomName}`,
       createdTime: moment().format(),
-      table: "tableName",
+      table: "table_name",
       useSameDb: true,
     };
   }

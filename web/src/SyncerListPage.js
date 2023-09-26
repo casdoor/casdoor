@@ -38,7 +38,7 @@ class SyncerListPage extends BaseListPage {
       password: "123456",
       databaseType: "mysql",
       database: "dbName",
-      table: "tableName",
+      table: "table_name",
       tableColumns: [],
       affiliationTable: "",
       avatarBaseUrl: "",
