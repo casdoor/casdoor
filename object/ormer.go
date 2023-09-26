@@ -316,6 +316,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(RadiusAccounting))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(PermissionRule))
 	if err != nil {
 		panic(err)
