@@ -117,7 +117,7 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 
 		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, "en")
 		if !hasPermission {
-			log.Printf("ErrMsg = %v", err.Error())
+			log.Printf("err = %v", err.Error())
 			return nil, ldap.LDAPResultInsufficientAccessRights
 		}
 

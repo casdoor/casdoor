@@ -252,6 +252,10 @@ func (syncer *Syncer) getKey() string {
 }
 
 func RunSyncer(syncer *Syncer) error {
-	syncer.initAdapter()
+	err := syncer.initAdapter()
+	if err != nil {
+		return err
+	}
+
 	return syncer.syncUsers()
 }

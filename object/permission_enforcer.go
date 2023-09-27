@@ -258,7 +258,7 @@ func BatchEnforce(permission *Permission, requests *[]CasbinRequest, permissionI
 }
 
 func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []string {
-	permissions, _, err := GetPermissionsAndRolesByUser(userId)
+	permissions, _, err := getPermissionsAndRolesByUser(userId)
 	if err != nil {
 		panic(err)
 	}
@@ -293,7 +293,7 @@ func GetAllActions(userId string) []string {
 }
 
 func GetAllRoles(userId string) []string {
-	roles, err := GetRolesByUser(userId)
+	roles, err := getRolesByUser(userId)
 	if err != nil {
 		panic(err)
 	}

@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -83,11 +82,8 @@ func (c *ApiController) GetPlan() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if plan == nil {
-		c.ResponseError(fmt.Sprintf(c.T("plan:The plan: %s does not exist"), id))
-		return
-	}
-	if includeOption {
+
+	if plan != nil && includeOption {
 		options, err := object.GetPermissionsByRole(plan.Role)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -97,11 +93,9 @@ func (c *ApiController) GetPlan() {
 		for _, option := range options {
 			plan.Options = append(plan.Options, option.DisplayName)
 		}
-
-		c.ResponseOk(plan)
-	} else {
-		c.ResponseOk(plan)
 	}
+
+	c.ResponseOk(plan)
 }
 
 // UpdatePlan

@@ -30,15 +30,15 @@ type Adapter struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Type            string `xorm:"varchar(100)" json:"type"`
-	DatabaseType    string `xorm:"varchar(100)" json:"databaseType"`
-	Host            string `xorm:"varchar(100)" json:"host"`
-	Port            int    `json:"port"`
-	User            string `xorm:"varchar(100)" json:"user"`
-	Password        string `xorm:"varchar(100)" json:"password"`
-	Database        string `xorm:"varchar(100)" json:"database"`
-	Table           string `xorm:"varchar(100)" json:"table"`
-	TableNamePrefix string `xorm:"varchar(100)" json:"tableNamePrefix"`
+	Table        string `xorm:"varchar(100)" json:"table"`
+	UseSameDb    bool   `json:"useSameDb"`
+	Type         string `xorm:"varchar(100)" json:"type"`
+	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
+	Host         string `xorm:"varchar(100)" json:"host"`
+	Port         int    `json:"port"`
+	User         string `xorm:"varchar(100)" json:"user"`
+	Password     string `xorm:"varchar(100)" json:"password"`
+	Database     string `xorm:"varchar(100)" json:"database"`
 
 	*xormadapter.Adapter `xorm:"-" json:"-"`
 }
@@ -139,63 +139,69 @@ func (adapter *Adapter) GetId() string {
 	return fmt.Sprintf("%s/%s", adapter.Owner, adapter.Name)
 }
 
-func (adapter *Adapter) getTable() string {
-	if adapter.DatabaseType == "mssql" {
-		return fmt.Sprintf("[%s]", adapter.Table)
-	} else {
-		return adapter.Table
-	}
-}
-
 func (adapter *Adapter) InitAdapter() error {
-	if adapter.Adapter == nil {
-		var dataSourceName string
+	if adapter.Adapter != nil {
+		return nil
+	}
 
-		if adapter.isBuiltIn() {
-			dataSourceName = conf.GetConfigString("dataSourceName")
-			if adapter.DatabaseType == "mysql" {
-				dataSourceName = dataSourceName + adapter.Database
-			}
-		} else {
-			switch adapter.DatabaseType {
-			case "mssql":
-				dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "mysql":
-				dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "postgres":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
-					adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "CockroachDB":
-				dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
-					adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
-			case "sqlite3":
-				dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
-			default:
-				return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
-			}
+	var driverName string
+	var dataSourceName string
+	if adapter.UseSameDb || adapter.isBuiltIn() {
+		driverName = conf.GetConfigString("driverName")
+		dataSourceName = conf.GetConfigString("dataSourceName")
+		if conf.GetConfigString("driverName") == "mysql" {
+			dataSourceName = dataSourceName + conf.GetConfigString("dbName")
 		}
-
-		if !isCloudIntranet {
-			dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
-		}
-
-		var err error
-		engine, err := xorm.NewEngine(adapter.DatabaseType, dataSourceName)
-
-		if adapter.isBuiltIn() && adapter.DatabaseType == "postgres" {
-			schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
-			if schema != "" {
-				engine.SetSchema(schema)
-			}
-		}
-
-		adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, adapter.getTable(), adapter.TableNamePrefix)
-		if err != nil {
-			return err
+	} else {
+		driverName = adapter.DatabaseType
+		switch driverName {
+		case "mssql":
+			dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", adapter.User,
+				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		case "mysql":
+			dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", adapter.User,
+				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		case "postgres":
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s", adapter.User,
+				adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		case "CockroachDB":
+			dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=disable dbname=%s serial_normalization=virtual_sequence",
+				adapter.User, adapter.Password, adapter.Host, adapter.Port, adapter.Database)
+		case "sqlite3":
+			dataSourceName = fmt.Sprintf("file:%s", adapter.Host)
+		default:
+			return fmt.Errorf("unsupported database type: %s", adapter.DatabaseType)
 		}
 	}
+
+	if !isCloudIntranet {
+		dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
+	}
+
+	engine, err := xorm.NewEngine(driverName, dataSourceName)
+	if err != nil {
+		return err
+	}
+
+	if (adapter.UseSameDb || adapter.isBuiltIn()) && driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
+	}
+
+	var tableName string
+	if driverName == "mssql" {
+		tableName = fmt.Sprintf("[%s]", adapter.Table)
+	} else {
+		tableName = adapter.Table
+	}
+
+	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

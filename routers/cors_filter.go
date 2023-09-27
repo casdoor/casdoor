@@ -16,6 +16,8 @@ package routers
 
 import (
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
@@ -29,42 +31,69 @@ const (
 	headerAllowHeaders = "Access-Control-Allow-Headers"
 )
 
+func setCorsHeaders(ctx *context.Context, origin string) {
+	ctx.Output.Header(headerAllowOrigin, origin)
+	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
+	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+}
+
+func getHostname(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	l, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+
+	res := l.Hostname()
+	return res
+}
+
 func CorsFilter(ctx *context.Context) {
 	origin := ctx.Input.Header(headerOrigin)
 	originConf := conf.GetConfigString("origin")
+	originHostname := getHostname(origin)
+	host := ctx.Request.Host
+
+	if strings.HasPrefix(origin, "http://localhost") {
+		setCorsHeaders(ctx, origin)
+		return
+	}
 
 	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
-		ctx.Output.Header(headerAllowOrigin, origin)
-		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		setCorsHeaders(ctx, origin)
 		return
 	}
 
 	if ctx.Request.RequestURI == "/api/userinfo" {
-		ctx.Output.Header(headerAllowOrigin, origin)
-		ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-		ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+		setCorsHeaders(ctx, origin)
 		return
 	}
 
-	if origin != "" && originConf != "" && origin != originConf {
-		ok, err := object.IsOriginAllowed(origin)
-		if err != nil {
-			panic(err)
-		}
-
-		if ok {
-			ctx.Output.Header(headerAllowOrigin, origin)
-			ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
-			ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+	if origin != "" {
+		if origin == originConf {
+			setCorsHeaders(ctx, origin)
+		} else if originHostname == host {
+			setCorsHeaders(ctx, origin)
 		} else {
-			ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
-			return
-		}
+			ok, err := object.IsOriginAllowed(origin)
+			if err != nil {
+				panic(err)
+			}
 
-		if ctx.Input.Method() == "OPTIONS" {
-			ctx.ResponseWriter.WriteHeader(http.StatusOK)
-			return
+			if ok {
+				setCorsHeaders(ctx, origin)
+			} else {
+				ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
+				return
+			}
+
+			if ctx.Input.Method() == "OPTIONS" {
+				ctx.ResponseWriter.WriteHeader(http.StatusOK)
+				return
+			}
 		}
 	}
 

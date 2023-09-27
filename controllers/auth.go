@@ -615,11 +615,16 @@ func (c *ApiController) Login() {
 						return
 					}
 
+					userId := userInfo.Id
+					if userId == "" {
+						userId = util.GenerateId()
+					}
+
 					user = &object.User{
 						Owner:             application.Organization,
 						Name:              userInfo.Username,
 						CreatedTime:       util.GetCurrentTime(),
-						Id:                util.GenerateId(),
+						Id:                userId,
 						Type:              "normal-user",
 						DisplayName:       userInfo.DisplayName,
 						Avatar:            userInfo.AvatarUrl,

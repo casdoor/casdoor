@@ -258,9 +258,59 @@ func DeletePermission(permission *Permission) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
+func getPermissionsByUser(userId string) ([]*Permission, error) {
 	permissions := []*Permission{}
 	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	res := []*Permission{}
+	for _, permission := range permissions {
+		if util.InSlice(permission.Users, userId) {
+			res = append(res, permission)
+		}
+	}
+
+	return res, nil
+}
+
+func GetPermissionsByRole(roleId string) ([]*Permission, error) {
+	permissions := []*Permission{}
+	err := ormer.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	res := []*Permission{}
+	for _, permission := range permissions {
+		if util.InSlice(permission.Roles, roleId) {
+			res = append(res, permission)
+		}
+	}
+
+	return res, nil
+}
+
+func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
+	permissions := []*Permission{}
+	err := ormer.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
+	if err != nil {
+		return permissions, err
+	}
+
+	res := []*Permission{}
+	for _, permission := range permissions {
+		if util.InSlice(permission.Resources, resourceId) {
+			res = append(res, permission)
+		}
+	}
+
+	return res, nil
+}
+
+func getPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error) {
+	permissions, err := getPermissionsByUser(userId)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -277,14 +327,13 @@ func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 
 	permFromRoles := []*Permission{}
 
-	roles, err := GetRolesByUser(userId)
+	roles, err := getRolesByUser(userId)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	for _, role := range roles {
-		perms := []*Permission{}
-		err := ormer.Engine.Where("roles like ?", "%"+role.GetId()+"\"%").Find(&perms)
+		perms, err := GetPermissionsByRole(role.GetId())
 		if err != nil {
 			return nil, nil, err
 		}
@@ -300,26 +349,6 @@ func GetPermissionsAndRolesByUser(userId string) ([]*Permission, []*Role, error)
 	}
 
 	return permissions, roles, nil
-}
-
-func GetPermissionsByRole(roleId string) ([]*Permission, error) {
-	permissions := []*Permission{}
-	err := ormer.Engine.Where("roles like ?", "%"+roleId+"\"%").Find(&permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
-}
-
-func GetPermissionsByResource(resourceId string) ([]*Permission, error) {
-	permissions := []*Permission{}
-	err := ormer.Engine.Where("resources like ?", "%"+resourceId+"\"%").Find(&permissions)
-	if err != nil {
-		return permissions, err
-	}
-
-	return permissions, nil
 }
 
 func GetPermissionsBySubmitter(owner string, submitter string) ([]*Permission, error) {

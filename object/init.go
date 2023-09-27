@@ -423,14 +423,11 @@ func initBuiltInUserAdapter() {
 	}
 
 	adapter = &Adapter{
-		Owner:           "built-in",
-		Name:            "user-adapter-built-in",
-		CreatedTime:     util.GetCurrentTime(),
-		Type:            "Database",
-		DatabaseType:    conf.GetConfigString("driverName"),
-		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
-		Database:        conf.GetConfigString("dbName"),
-		Table:           "casbin_user_rule",
+		Owner:       "built-in",
+		Name:        "user-adapter-built-in",
+		CreatedTime: util.GetCurrentTime(),
+		Table:       "casbin_user_rule",
+		UseSameDb:   true,
 	}
 	_, err = AddAdapter(adapter)
 	if err != nil {
@@ -449,14 +446,11 @@ func initBuiltInApiAdapter() {
 	}
 
 	adapter = &Adapter{
-		Owner:           "built-in",
-		Name:            "api-adapter-built-in",
-		CreatedTime:     util.GetCurrentTime(),
-		Type:            "Database",
-		DatabaseType:    conf.GetConfigString("driverName"),
-		TableNamePrefix: conf.GetConfigString("tableNamePrefix"),
-		Database:        conf.GetConfigString("dbName"),
-		Table:           "casbin_api_rule",
+		Owner:       "built-in",
+		Name:        "api-adapter-built-in",
+		CreatedTime: util.GetCurrentTime(),
+		Table:       "casbin_api_rule",
+		UseSameDb:   true,
 	}
 	_, err = AddAdapter(adapter)
 	if err != nil {

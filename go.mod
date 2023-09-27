@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.45.5
 	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
+	github.com/casbin/casbin v1.9.1 // indirect
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/casdoor v1.421.1
 	github.com/casdoor/go-sms-sender v0.14.0
@@ -19,6 +20,7 @@ require (
 	github.com/casvisor/casvisor-go-sdk v1.0.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
+	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-git/go-git/v5 v5.6.0
@@ -31,11 +33,13 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.1
 	github.com/joho/godotenv v1.5.1
+	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v1.2.21
 	github.com/lib/pq v1.10.9
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
 	github.com/markbates/goth v1.75.2
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
 	github.com/prometheus/client_golang v1.11.1
@@ -44,6 +48,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
 	github.com/russellhaering/goxmldsig v1.2.0
+	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
@@ -51,14 +56,19 @@ require (
 	github.com/stripe/stripe-go/v74 v74.29.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
+	github.com/tidwall/pretty v1.2.1 // indirect
+	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/xorm-io/builder v0.3.13
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
+	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.12.0
 	golang.org/x/net v0.14.0
 	golang.org/x/oauth2 v0.11.0
 	google.golang.org/api v0.138.0
+	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
+	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68 // indirect
 	maunium.net/go/mautrix v0.16.0
 	modernc.org/sqlite v1.18.2
 )

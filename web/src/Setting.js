@@ -752,7 +752,7 @@ export function isMobile() {
 }
 
 export function getFormattedDate(date) {
-  if (date === undefined) {
+  if (!date) {
     return null;
   }
 

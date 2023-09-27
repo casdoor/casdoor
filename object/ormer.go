@@ -86,7 +86,11 @@ func InitAdapter() {
 		}
 	}
 
-	ormer = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	var err error
+	ormer, err = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	if err != nil {
+		panic(err)
+	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
@@ -121,19 +125,22 @@ func finalizer(a *Ormer) {
 }
 
 // NewAdapter is the constructor for Ormer.
-func NewAdapter(driverName string, dataSourceName string, dbName string) *Ormer {
+func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer, error) {
 	a := &Ormer{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
 	a.dbName = dbName
 
 	// Open the DB, create it if not existed.
-	a.open()
+	err := a.open()
+	if err != nil {
+		return nil, err
+	}
 
 	// Call the destructor when the object is released.
 	runtime.SetFinalizer(a, finalizer)
 
-	return a
+	return a, nil
 }
 
 func refineDataSourceNameForPostgres(dataSourceName string) string {
@@ -192,7 +199,7 @@ func (a *Ormer) CreateDatabase() error {
 	return err
 }
 
-func (a *Ormer) open() {
+func (a *Ormer) open() error {
 	dataSourceName := a.dataSourceName + a.dbName
 	if a.driverName != "mysql" {
 		dataSourceName = a.dataSourceName
@@ -200,8 +207,9 @@ func (a *Ormer) open() {
 
 	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
 	if a.driverName == "postgres" {
 		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
 		if schema != "" {
@@ -210,6 +218,7 @@ func (a *Ormer) open() {
 	}
 
 	a.Engine = engine
+	return nil
 }
 
 func (a *Ormer) close() {
@@ -312,6 +321,11 @@ func (a *Ormer) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(Ldap))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(RadiusAccounting))
 	if err != nil {
 		panic(err)
 	}

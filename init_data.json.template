@@ -176,9 +176,7 @@
   ],
   "permissions": [
     {
-      "actions": [
-        ""
-      ],
+      "actions": [],
       "displayName": "",
       "effect": "",
       "isEnabled": true,
@@ -186,15 +184,9 @@
       "name": "",
       "owner": "",
       "resourceType": "",
-      "resources": [
-        ""
-      ],
-      "roles": [
-        ""
-      ],
-      "users": [
-        ""
-      ]
+      "resources": [],
+      "roles": [],
+      "users": []
     }
   ],
   "payments": [
@@ -236,9 +228,7 @@
       "name": "",
       "owner": "",
       "price": 0,
-      "providers": [
-        ""
-      ],
+      "providers": [],
       "quantity": 0,
       "returnUrl": "",
       "sold": 0,
@@ -268,12 +258,8 @@
       "isEnabled": true,
       "name": "",
       "owner": "",
-      "roles": [
-        ""
-      ],
-      "users": [
-        ""
-      ]
+      "roles": [],
+      "users": []
     }
   ],
   "syncers": [
@@ -284,7 +270,7 @@
       "databaseType": "",
       "errorText": "",
       "host": "",
-      "isEnabled": true,
+      "isEnabled": false,
       "name": "",
       "organization": "",
       "owner": "",
@@ -298,9 +284,7 @@
           "isHashed": true,
           "name": "",
           "type": "",
-          "values": [
-            ""
-          ]
+          "values": []
         }
       ],
       "tablePrimaryKey": "",
@@ -330,9 +314,7 @@
   "webhooks": [
     {
       "contentType": "",
-      "events": [
-        ""
-      ],
+      "events": [],
       "headers": [
         {
           "name": "",

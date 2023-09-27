@@ -123,7 +123,9 @@ func (a *AzureACSEmailProvider) sendEmail(e *Email) error {
 
 	bodyBuffer := bytes.NewBuffer(postBody)
 
-	req, err := http.NewRequest("POST", a.Endpoint+sendEmailEndpoint+"?api-version="+apiVersion, bodyBuffer)
+	endpoint := strings.TrimSuffix(a.Endpoint, "/")
+	url := fmt.Sprintf("%s/emails:send?api-version=2023-03-31", endpoint)
+	req, err := http.NewRequest("POST", url, bodyBuffer)
 	if err != nil {
 		return fmt.Errorf("error creating AzureACS API request: %s", err)
 	}
@@ -149,7 +151,7 @@ func (a *AzureACSEmailProvider) sendEmail(e *Email) error {
 	defer resp.Body.Close()
 
 	// Response error Handling
-	if resp.StatusCode == http.StatusBadRequest {
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusUnauthorized {
 		commError := ErrorResponse{}
 
 		err = json.NewDecoder(resp.Body).Decode(&commError)
