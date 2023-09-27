@@ -26,16 +26,18 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
+	"github.com/joho/godotenv"
+	"log"
 )
 
 func main() {
 	var err error
 	// only if using .env file, don't enable if using docker or other method to load .env
 	// =======
-	//err = godotenv.Load()
-	//if err != nil {
-	//	log.Fatal("Error loading .env file")
-	//}
+	err = godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file (ignore this message if running with docker image)")
+	}
 	// ======
 	object.InitFlag()
 	object.InitAdapter()

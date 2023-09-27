@@ -4,7 +4,6 @@ COPY ./web .
 RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
-
 FROM golang:1.20.8 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
@@ -14,9 +13,13 @@ RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
 ARG USER=casdoor
-ARG TARGETOS
-ARG TARGETARCH
-ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
+#ARG TARGETOS
+#ARG TARGETARCH
+#ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
+#build the image for amd64 os, to run in aws node
+ENV BUILDX_ARCH="linux_amd64"
+#build the image for apple chip
+#ENV BUILDX_ARCH="linux_arm64"
 
 RUN sed -i 's/https/http/' /etc/apk/repositories
 RUN apk add --update sudo
@@ -38,6 +41,8 @@ COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/version_info.txt ./go/src/c
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
 ENTRYPOINT ["/server"]
+#ENTRYPOINT ["/bin/bash"]
+#CMD ["exec", "/server"]
 
 # DEMO purpose, mysql db in docker
 #FROM debian:latest AS db

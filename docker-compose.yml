@@ -8,6 +8,7 @@ services:
       target: STANDARD
 #    entrypoint: /bin/sh -c './server --createDatabase=true'
     entrypoint: /bin/sh -c './server'
+    image: casdoor-v230926-arm64
     ports:
       - "8000:8000"
 #    depends_on:
