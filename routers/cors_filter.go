@@ -57,7 +57,7 @@ func CorsFilter(ctx *context.Context) {
 	originHostname := getHostname(origin)
 	host := ctx.Request.Host
 
-	if strings.HasPrefix(origin, "http://localhost") || strings.HasPrefix(origin, "http://127.0.0.1") {
+	if strings.HasPrefix(origin, "http://localhost") || strings.HasPrefix(origin, "http://127.0.0.1") || strings.HasPrefix(origin, "http://casdoor-app") {
 		setCorsHeaders(ctx, origin)
 		return
 	}

@@ -428,7 +428,7 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
-	redirectUris := append([]string{"http://localhost:", "http://127.0.0.1:"}, application.RedirectUris...)
+	redirectUris := append([]string{"http://localhost:", "http://127.0.0.1:", "http://casdoor-app"}, application.RedirectUris...)
 	for _, targetUri := range redirectUris {
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
