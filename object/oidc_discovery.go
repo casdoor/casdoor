@@ -60,9 +60,9 @@ func isIpAddress(host string) bool {
 }
 
 func getOriginFromHost(host string) (string, string) {
-	origin := conf.GetConfigString("origin")
-	if origin != "" {
-		return origin, origin
+	domain := conf.GetConfigString("domain")
+	if domain != "" {
+		return domain, domain
 	}
 
 	// "door.casdoor.com"
@@ -83,7 +83,8 @@ func getOriginFromHost(host string) (string, string) {
 }
 
 func GetOidcDiscovery(host string) OidcDiscovery {
-	originFrontend, originBackend := getOriginFromHost(host)
+	_, originBackend := getOriginFromHost(host)
+
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
@@ -92,7 +93,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
 		Issuer:                                 originBackend,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originBackend),
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
