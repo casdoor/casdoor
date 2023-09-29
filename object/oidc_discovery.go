@@ -85,7 +85,6 @@ func getOriginFromHost(host string) (string, string) {
 func GetOidcDiscovery(host string) OidcDiscovery {
 	_, originBackend := getOriginFromHost(host)
 
-
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
 	// https://auth0.auth0.com/.well-known/openid-configuration
