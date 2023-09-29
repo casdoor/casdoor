@@ -35,6 +35,10 @@ func setCorsHeaders(ctx *context.Context, origin string) {
 	ctx.Output.Header(headerAllowOrigin, origin)
 	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
 	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+
+	if ctx.Input.Method() == "OPTIONS" {
+		ctx.ResponseWriter.WriteHeader(http.StatusOK)
+	}
 }
 
 func getHostname(s string) string {
@@ -87,11 +91,6 @@ func CorsFilter(ctx *context.Context) {
 				setCorsHeaders(ctx, origin)
 			} else {
 				ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
-				return
-			}
-
-			if ctx.Input.Method() == "OPTIONS" {
-				ctx.ResponseWriter.WriteHeader(http.StatusOK)
 				return
 			}
 		}
