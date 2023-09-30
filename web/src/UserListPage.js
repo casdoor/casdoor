@@ -298,13 +298,6 @@ class UserListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("phone"),
       },
-      // {
-      //   title: 'Phone',
-      //   dataIndex: 'phone',
-      //   key: 'phone',
-      //   width: '120px',
-      //   sorter: (a, b) => a.phone.localeCompare(b.phone),
-      // },
       {
         title: i18next.t("user:Affiliation"),
         dataIndex: "affiliation",
