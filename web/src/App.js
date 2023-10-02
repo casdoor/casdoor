@@ -206,9 +206,11 @@ class App extends Component {
 
   getLogo(themes) {
     if (themes.includes("dark")) {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
     } else {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
     }
   }
 
@@ -642,7 +644,7 @@ class App extends Component {
           {
             Conf.CustomFooter !== null ? Conf.CustomFooter : (
               <React.Fragment>
-                Powered by <a target="_blank" href="https://member.ppgs.co" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                Powered by <a target="_blank" href="https://www.ppg.live" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
               </React.Fragment>
             )
           }

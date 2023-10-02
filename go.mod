@@ -1,4 +1,4 @@
-module github.com/ivancetus/casdoor
+module github.com/casdoor/casdoor
 
 go 1.16
 
@@ -11,7 +11,6 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin v1.9.1 // indirect
 	github.com/casbin/casbin/v2 v2.77.2
-	github.com/casdoor/casdoor v1.421.1
 	github.com/casdoor/go-sms-sender v0.14.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.43.0
