@@ -26,6 +26,7 @@ import (
 )
 
 type OriginalUser = User
+
 type OriginalGroup = Group
 
 type Affiliation struct {
