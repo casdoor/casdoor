@@ -15,10 +15,11 @@
 import {Button, Col, Input, Modal, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
+import PhoneInput from "antd-phone-input";
 import * as Setting from "../../Setting";
 import * as UserBackend from "../../backend/UserBackend";
 import {SendCodeInput} from "../SendCodeInput";
-import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
+import {MailOutlined} from "@ant-design/icons";
 
 export const ResetModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -85,16 +86,23 @@ export const ResetModal = (props) => {
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input
-              addonBefore={destType === "email" ? i18next.t("user:New Email") : i18next.t("user:New phone")}
-              prefix={destType === "email" ? <React.Fragment><MailOutlined />&nbsp;&nbsp;</React.Fragment> : (<React.Fragment><PhoneOutlined />&nbsp;&nbsp;{countryCode !== "" ? "+" : null}{Setting.getCountryCode(countryCode)}&nbsp;</React.Fragment>)}
-              placeholder={placeholder}
-              onChange={e => setDest(e.target.value)}
-            />
+            {destType === "email" ? (
+              <Input
+                placeholder={placeholder}
+                onChange={e => setDest(e.target.value)}
+                prefix={<><MailOutlined />&nbsp;&nbsp;</>}
+              />
+            ) : (
+              <PhoneInput
+                placeholder={placeholder}
+                country={countryCode.toLowerCase()}
+                addonBefore={i18next.t("user:New phone")}
+                onChange={({countryCode, areaCode, phoneNumber}) => setDest([countryCode, areaCode, phoneNumber].filter(Boolean).join(''))}
+              />
+            )}
           </Row>
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <SendCodeInput
-              textBefore={i18next.t("code:Code you received")}
               onChange={setCode}
               method={"reset"}
               onButtonClickArgs={[dest, destType, Setting.getApplicationName(application)]}

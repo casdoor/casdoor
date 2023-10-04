@@ -61,7 +61,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
         addonBefore={textBefore}
         disabled={disabled}
         value={value}
-        prefix={<SafetyOutlined />}
+        prefix={<><SafetyOutlined />&nbsp;&nbsp;</>}
         placeholder={i18next.t("code:Enter your code")}
         onChange={e => onChange(e.target.value)}
         enterButton={
