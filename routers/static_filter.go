@@ -33,7 +33,18 @@ var (
 	oldStaticBaseUrl = "https://cdn.casbin.org"
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
 	enableGzip       = conf.GetConfigBool("enableGzip")
+	frontendBaseDir  = conf.GetConfigString("frontendBaseDir")
 )
+
+func getWebBuildFolder() string {
+	path := "web/build"
+	if util.FileExist(filepath.Join(path, "index.html")) || frontendBaseDir == "" {
+		return path
+	}
+
+	path = filepath.Join(frontendBaseDir, "web/build")
+	return path
+}
 
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
@@ -49,7 +60,8 @@ func StaticFilter(ctx *context.Context) {
 		return
 	}
 
-	path := "web/build"
+	webBuildFolder := getWebBuildFolder()
+	path := webBuildFolder
 	if urlPath == "/" {
 		path += "/index.html"
 	} else {
@@ -57,7 +69,7 @@ func StaticFilter(ctx *context.Context) {
 	}
 
 	if !util.FileExist(path) {
-		path = "web/build/index.html"
+		path = webBuildFolder + "/index.html"
 	}
 	if !util.FileExist(path) {
 		dir, err := os.Getwd()
