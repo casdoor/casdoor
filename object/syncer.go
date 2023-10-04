@@ -54,7 +54,9 @@ type Syncer struct {
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
-	Ormer *Ormer `xorm:"-" json:"-"`
+	Secret string `xorm:"varchar(100)" json:"secret"`
+
+	OSyncer OriginalSyncer `xorm:"-" json:"-"`
 }
 
 func GetSyncerCount(owner, organization, field, value string) (int64, error) {
@@ -252,10 +254,20 @@ func (syncer *Syncer) getKey() string {
 }
 
 func RunSyncer(syncer *Syncer) error {
-	err := syncer.initAdapter()
+	var err error
+	syncer.OSyncer, err = GetOriginalSyncer(syncer)
 	if err != nil {
 		return err
 	}
 
-	return syncer.syncUsers()
+	err = syncer.syncUsers()
+	if err != nil {
+		return err
+	}
+	err = syncer.syncGroups()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

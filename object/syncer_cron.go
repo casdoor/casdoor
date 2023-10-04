@@ -50,7 +50,8 @@ func addSyncerJob(syncer *Syncer) error {
 		return nil
 	}
 
-	err := syncer.initAdapter()
+	var err error
+	syncer.OSyncer, err = GetOriginalSyncer(syncer)
 	if err != nil {
 		return err
 	}

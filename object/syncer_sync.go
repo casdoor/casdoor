@@ -20,14 +20,14 @@ import (
 )
 
 func (syncer *Syncer) syncUsers() error {
-	if len(syncer.TableColumns) == 0 {
+	if len(syncer.TableColumns) == 0 && syncer.Type != "WeCom" {
 		return fmt.Errorf("The syncer table columns should not be empty")
 	}
 
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, _, _ := syncer.getUserMap()
-	oUsers, _, err := syncer.getOriginalUserMap()
+	oUsers, _, err := syncer.OSyncer.GetOriginalUserMap()
 	if err != nil {
 		fmt.Printf(err.Error())
 
@@ -43,7 +43,7 @@ func (syncer *Syncer) syncUsers() error {
 
 	var affiliationMap map[int]string
 	if syncer.AffiliationTable != "" {
-		_, affiliationMap, err = syncer.getAffiliationMap()
+		_, affiliationMap, err = syncer.OSyncer.GetAffiliationMap()
 	}
 
 	key := syncer.getKey()
@@ -87,7 +87,7 @@ func (syncer *Syncer) syncUsers() error {
 						updatedOUser := syncer.createOriginalUserFromUser(user)
 
 						fmt.Printf("Update from user to oUser: %v\n", updatedOUser)
-						_, err = syncer.updateUser(updatedOUser)
+						_, err = syncer.OSyncer.UpdateUser(updatedOUser)
 						if err != nil {
 							return err
 						}
@@ -134,7 +134,7 @@ func (syncer *Syncer) syncUsers() error {
 				newOUser := syncer.createOriginalUserFromUser(user)
 
 				fmt.Printf("New oUser: %v\n", newOUser)
-				_, err = syncer.addUser(newOUser)
+				_, err = syncer.OSyncer.AddUser(newOUser)
 				if err != nil {
 					return err
 				}
@@ -146,8 +146,133 @@ func (syncer *Syncer) syncUsers() error {
 }
 
 func (syncer *Syncer) syncUsersNoError() {
+	syncer.OSyncer, _ = GetOriginalSyncer(syncer)
 	err := syncer.syncUsers()
 	if err != nil {
 		fmt.Printf("syncUsersNoError() error: %s\n", err.Error())
 	}
+}
+
+func (syncer *Syncer) syncGroups() error {
+	fmt.Printf("Running syncUsers()..\n")
+
+	groups, err := GetGroups(syncer.Owner)
+	if err != nil {
+		return err
+	}
+	oGroups, _, err := syncer.OSyncer.GetOriginalGroupMap()
+	if err != nil {
+		fmt.Printf(err.Error())
+
+		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		line := fmt.Sprintf("[%s] %s\n", timestamp, err.Error())
+		_, err = updateSyncerErrorText(syncer, line)
+		if err != nil {
+			return err
+		}
+	}
+
+	fmt.Printf("Groups: %d, oGroups: %d\n", len(groups), len(oGroups))
+
+	var affiliationMap map[int]string
+	if syncer.AffiliationTable != "" {
+		_, affiliationMap, err = syncer.OSyncer.GetAffiliationMap()
+	}
+
+	key := "name"
+
+	myGroups := map[string]*Group{}
+	for _, m := range groups {
+		myGroups[syncer.getGroupValue(m, key)] = m
+	}
+
+	myOGroups := map[string]*Group{}
+	for _, m := range oGroups {
+		myOGroups[syncer.getGroupValue(m, key)] = m
+	}
+
+	newGroups := []*Group{}
+	for _, oGroup := range oGroups {
+		primary := syncer.getGroupValue(oGroup, key)
+
+		if _, ok := myGroups[primary]; !ok {
+			fmt.Printf("New user: %v\n", oGroup)
+			newGroups = append(newGroups, oGroup)
+		} else {
+			group := myGroups[primary]
+			oHash := syncer.calculateGroupHash(oGroup)
+			if group.Hash == group.PreHash {
+				if group.Hash != oHash {
+					updatedGroup := syncer.createGroupFromOriginalGroup(oGroup, affiliationMap)
+					updatedGroup.Hash = oHash
+					updatedGroup.PreHash = oHash
+
+					fmt.Printf("Update from oGroup to group: %v\n", updatedGroup)
+					_, err = syncer.updateGroupForOriginalByFields(updatedGroup, key)
+					if err != nil {
+						return err
+					}
+				}
+			} else {
+				if group.PreHash == oHash {
+					if !syncer.IsReadOnly {
+						updatedOGroup := group
+
+						fmt.Printf("Update from group to oGroup: %v\n", updatedOGroup)
+						_, err = syncer.OSyncer.UpdateGroup(updatedOGroup)
+						if err != nil {
+							return err
+						}
+					}
+
+					// update preHash
+					group.PreHash = group.Hash
+					_, err = SetGroupField(group, "pre_hash", group.PreHash)
+					if err != nil {
+						return err
+					}
+				} else {
+					if group.Hash == oHash {
+						// update preHash
+						group.PreHash = group.Hash
+						_, err = SetGroupField(group, "pre_hash", group.PreHash)
+						if err != nil {
+							return err
+						}
+					} else {
+						updatedGroup := syncer.createGroupFromOriginalGroup(oGroup, affiliationMap)
+						updatedGroup.Hash = oHash
+						updatedGroup.PreHash = oHash
+
+						fmt.Printf("Update from oGroup to group (2nd condition): %v\n", updatedGroup)
+						_, err = syncer.updateGroupForOriginalByFields(updatedGroup, key)
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+	}
+	_, err = AddGroupsInBatch(newGroups)
+	if err != nil {
+		return err
+	}
+
+	if !syncer.IsReadOnly {
+		for _, group := range groups {
+			primary := syncer.getGroupValue(group, key)
+			if _, ok := myOGroups[primary]; !ok {
+				newOGroup := group
+
+				fmt.Printf("New oGroup: %v\n", newOGroup)
+				_, err = syncer.OSyncer.AddGroup(newOGroup)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }

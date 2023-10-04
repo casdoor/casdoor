@@ -15,7 +15,6 @@
 package object
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"reflect"
@@ -25,6 +24,138 @@ import (
 
 	"github.com/casdoor/casdoor/util"
 )
+
+type OriginalUser = User
+type OriginalGroup = Group
+
+type Affiliation struct {
+	Id   int    `xorm:"int notnull pk autoincr" json:"id"`
+	Name string `xorm:"varchar(128)" json:"name"`
+}
+
+type Credential struct {
+	Value string `json:"value"`
+	Salt  string `json:"salt"`
+}
+
+func (syncer *Syncer) getUsers() []*User {
+	users, err := GetUsers(syncer.Organization)
+	if err != nil {
+		panic(err)
+	}
+
+	return users
+}
+
+func (syncer *Syncer) getUserMap() ([]*User, map[string]*User, map[string]*User) {
+	users := syncer.getUsers()
+
+	m1 := map[string]*User{}
+	m2 := map[string]*User{}
+	for _, user := range users {
+		m1[user.Id] = user
+		m2[user.Name] = user
+	}
+
+	return users, m1, m2
+}
+
+func (syncer *Syncer) getCasdoorColumns() []string {
+	res := []string{}
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.CasdoorName != "Id" {
+			v := util.CamelToSnakeCase(tableColumn.CasdoorName)
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
+func (syncer *Syncer) updateUserForOriginalByFields(user *User, key string) (bool, error) {
+	var err error
+	oldUser := User{}
+
+	existed, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(user, key), user.Owner).Get(&oldUser)
+	if err != nil {
+		return false, err
+	}
+	if !existed {
+		return false, nil
+	}
+
+	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
+		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	columns := syncer.getCasdoorColumns()
+	columns = append(columns, "affiliation", "hash", "pre_hash")
+	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getUserValue(&oldUser, key), oldUser.Owner).Cols(columns...).Update(user)
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func (syncer *Syncer) updateGroupForOriginalByFields(group *Group, key string) (bool, error) {
+	var err error
+	oldGroup := Group{}
+
+	existed, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getGroupValue(group, key), group.Owner).Get(&oldGroup)
+	if err != nil {
+		return false, err
+	}
+	if !existed {
+		return false, nil
+	}
+
+	affected, err := ormer.Engine.Where(key+" = ? and owner = ?", syncer.getGroupValue(&oldGroup, key), oldGroup.Owner).Update(group)
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func (syncer *Syncer) calculateHash(user *OriginalUser) string {
+	values := []string{}
+	m := syncer.getMapFromOriginalUser(user)
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.IsHashed {
+			values = append(values, m[tableColumn.Name])
+		}
+	}
+
+	s := strings.Join(values, "|")
+	return util.GetMd5Hash(s)
+}
+
+func (syncer *Syncer) calculateGroupHash(group *OriginalGroup) string {
+	values := []string{}
+	m := syncer.getMapFromOriginalGroup(group)
+	for _, value := range m {
+		values = append(values, value)
+	}
+
+	s := strings.Join(values, "|")
+	return util.GetMd5Hash(s)
+}
+
+func RunSyncUsersJob() {
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, syncer := range syncers {
+		addSyncerJob(syncer)
+	}
+
+	time.Sleep(time.Duration(1<<63 - 1))
+}
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
 	if syncer.AvatarBaseUrl == "" {
@@ -79,95 +210,25 @@ func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, aff
 	return &user
 }
 
+func (syncer *Syncer) createGroupFromOriginalGroup(originalGroup *OriginalGroup, affiliationMap map[int]string) *Group {
+	group := *originalGroup
+	group.Owner = syncer.Organization
+
+	if group.CreatedTime == "" {
+		group.CreatedTime = util.GetCurrentTime()
+	}
+
+	if group.Type == "" {
+		group.Type = "Virtual"
+	}
+
+	return &group
+}
+
 func (syncer *Syncer) createOriginalUserFromUser(user *User) *OriginalUser {
 	originalUser := *user
 	originalUser.Avatar = syncer.getPartialAvatarUrl(user.Avatar)
 	return &originalUser
-}
-
-func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
-	switch key {
-	case "Name":
-		user.Name = value
-	case "CreatedTime":
-		user.CreatedTime = value
-	case "UpdatedTime":
-		user.UpdatedTime = value
-	case "Id":
-		user.Id = value
-	case "Type":
-		user.Type = value
-	case "Password":
-		user.Password = value
-	case "PasswordSalt":
-		user.PasswordSalt = value
-	case "DisplayName":
-		user.DisplayName = value
-	case "FirstName":
-		user.FirstName = value
-	case "LastName":
-		user.LastName = value
-	case "Avatar":
-		user.Avatar = syncer.getPartialAvatarUrl(value)
-	case "PermanentAvatar":
-		user.PermanentAvatar = value
-	case "Email":
-		user.Email = value
-	case "EmailVerified":
-		user.EmailVerified = util.ParseBool(value)
-	case "Phone":
-		user.Phone = value
-	case "Location":
-		user.Location = value
-	case "Address":
-		user.Address = []string{value}
-	case "Affiliation":
-		user.Affiliation = value
-	case "Title":
-		user.Title = value
-	case "IdCardType":
-		user.IdCardType = value
-	case "IdCard":
-		user.IdCard = value
-	case "Homepage":
-		user.Homepage = value
-	case "Bio":
-		user.Bio = value
-	case "Tag":
-		user.Tag = value
-	case "Region":
-		user.Region = value
-	case "Language":
-		user.Language = value
-	case "Gender":
-		user.Gender = value
-	case "Birthday":
-		user.Birthday = value
-	case "Education":
-		user.Education = value
-	case "Score":
-		user.Score = util.ParseInt(value)
-	case "Ranking":
-		user.Ranking = util.ParseInt(value)
-	case "IsDefaultAvatar":
-		user.IsDefaultAvatar = util.ParseBool(value)
-	case "IsOnline":
-		user.IsOnline = util.ParseBool(value)
-	case "IsAdmin":
-		user.IsAdmin = util.ParseBool(value)
-	case "IsForbidden":
-		user.IsForbidden = util.ParseBool(value)
-	case "IsDeleted":
-		user.IsDeleted = util.ParseBool(value)
-	case "CreatedIp":
-		user.CreatedIp = value
-	case "PreferredMfaType":
-		user.PreferredMfaType = value
-	case "TotpSecret":
-		user.TotpSecret = value
-	case "SignupApplication":
-		user.SignupApplication = value
-	}
 }
 
 func (syncer *Syncer) getUserValue(user *User, key string) string {
@@ -197,68 +258,31 @@ func (syncer *Syncer) getUserValue(user *User, key string) string {
 	}
 }
 
-func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullString) []*OriginalUser {
-	users := []*OriginalUser{}
-	for _, result := range results {
-		originalUser := &OriginalUser{
-			Address:    []string{},
-			Properties: map[string]string{},
-			Groups:     []string{},
-		}
-
-		for _, tableColumn := range syncer.TableColumns {
-			tableColumnName := tableColumn.Name
-			if syncer.Type == "Keycloak" && syncer.DatabaseType == "postgres" {
-				tableColumnName = strings.ToLower(tableColumnName)
-			}
-
-			value := ""
-			if strings.Contains(tableColumnName, "+") {
-				names := strings.Split(tableColumnName, "+")
-				var values []string
-				for _, name := range names {
-					values = append(values, result[strings.Trim(name, " ")].String)
-				}
-				value = strings.Join(values, " ")
-			} else {
-				value = result[tableColumnName].String
-			}
-			syncer.setUserByKeyValue(originalUser, tableColumn.CasdoorName, value)
-		}
-
-		if syncer.Type == "Keycloak" {
-			// query and set password and password salt from credential table
-			sql := fmt.Sprintf("select * from credential where type = 'password' and user_id = '%s'", originalUser.Id)
-			credentialResult, _ := syncer.Ormer.Engine.QueryString(sql)
-			if len(credentialResult) > 0 {
-				credential := Credential{}
-				_ = json.Unmarshal([]byte(credentialResult[0]["SECRET_DATA"]), &credential)
-				originalUser.Password = credential.Value
-				originalUser.PasswordSalt = credential.Salt
-			}
-			// query and set signup application from user group table
-			sql = fmt.Sprintf("select name from keycloak_group where id = "+
-				"(select group_id as gid from user_group_membership where user_id = '%s')", originalUser.Id)
-			groupResult, _ := syncer.Ormer.Engine.QueryString(sql)
-			if len(groupResult) > 0 {
-				originalUser.SignupApplication = groupResult[0]["name"]
-			}
-			// create time
-			i, _ := strconv.ParseInt(originalUser.CreatedTime, 10, 64)
-			tm := time.Unix(i/int64(1000), 0)
-			originalUser.CreatedTime = tm.Format("2006-01-02T15:04:05+08:00")
-			// enable
-			value, ok := result["ENABLED"]
-			if ok {
-				originalUser.IsForbidden = !util.ParseBool(value.String)
-			} else {
-				originalUser.IsForbidden = !util.ParseBool(result["enabled"].String)
-			}
-		}
-
-		users = append(users, originalUser)
+func (syncer *Syncer) getGroupValue(group *Group, key string) string {
+	jsonData, _ := json.Marshal(group)
+	var mapData map[string]interface{}
+	if err := json.Unmarshal(jsonData, &mapData); err != nil {
+		fmt.Println("conversion failed:", err)
+		return group.Name
 	}
-	return users
+	value := mapData[util.SnakeToCamel(key)]
+
+	if str, ok := value.(string); ok {
+		return str
+	} else {
+		if value != nil {
+			valType := reflect.TypeOf(value)
+
+			typeName := valType.Name()
+			switch typeName {
+			case "bool":
+				return strconv.FormatBool(value.(bool))
+			case "int":
+				return strconv.Itoa(value.(int))
+			}
+		}
+		return group.Name
+	}
 }
 
 func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]string {
@@ -307,6 +331,22 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	}
 
 	return m2
+}
+
+func (syncer *Syncer) getMapFromOriginalGroup(group *OriginalGroup) map[string]string {
+	m := map[string]string{}
+	m["Name"] = group.Name
+	m["DisplayName"] = group.DisplayName
+	m["Manager"] = group.Manager
+	m["ContactEmail"] = group.ContactEmail
+	m["Type"] = group.Type
+	m["ParentId"] = group.ParentId
+	m["IsTopGroup"] = util.BoolToString(group.IsTopGroup)
+	m["Title"] = group.Title
+	m["Key"] = group.Key
+	m["IsEnabled"] = util.BoolToString(group.IsEnabled)
+
+	return m
 }
 
 func (syncer *Syncer) getSqlSetStringFromMap(m map[string]string) string {

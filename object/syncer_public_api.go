@@ -30,6 +30,20 @@ func getDbSyncerForUser(user *User) (*Syncer, error) {
 	return nil, nil
 }
 
+func getSyncerForGroup(group *Group) (*Syncer, error) {
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		return nil, err
+	}
+
+	for _, syncer := range syncers {
+		if syncer.Organization == group.Owner && syncer.IsEnabled && syncer.Type == "WeCom" {
+			return syncer, nil
+		}
+	}
+	return nil, nil
+}
+
 func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 	syncers, err := GetSyncers("admin")
 	if err != nil {
@@ -38,11 +52,10 @@ func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 
 	for _, syncer := range syncers {
 		if syncer.Organization == organization && syncer.IsEnabled {
-			err = syncer.initAdapter()
+			syncer.OSyncer, err = GetOriginalSyncer(syncer)
 			if err != nil {
 				return nil, err
 			}
-
 			return syncer, nil
 		}
 	}
@@ -60,7 +73,7 @@ func AddUserToOriginalDatabase(user *User) error {
 	}
 
 	updatedOUser := syncer.createOriginalUserFromUser(user)
-	_, err = syncer.addUser(updatedOUser)
+	_, err = syncer.OSyncer.AddUser(updatedOUser)
 	if err != nil {
 		return err
 	}
@@ -84,7 +97,7 @@ func UpdateUserToOriginalDatabase(user *User) error {
 	}
 
 	updatedOUser := syncer.createOriginalUserFromUser(newUser)
-	_, err = syncer.updateUser(updatedOUser)
+	_, err = syncer.OSyncer.UpdateUser(updatedOUser)
 	if err != nil {
 		return err
 	}
