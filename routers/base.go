@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -33,6 +34,8 @@ type Response struct {
 }
 
 func responseError(ctx *context.Context, error string, data ...interface{}) {
+	ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
+
 	resp := Response{Status: "error", Msg: error}
 	switch len(data) {
 	case 2:
