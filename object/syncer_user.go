@@ -75,7 +75,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	pkValue := m[key]
 	delete(m, key)
 
-	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).ID(pkValue).Update(&m)
+	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).Where(fmt.Sprintf("%s = ?", key), pkValue).Update(&m)
 	if err != nil {
 		return false, err
 	}
