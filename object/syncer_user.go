@@ -21,7 +21,6 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/xorm-io/core"
 )
 
 type OriginalUser = User
@@ -48,19 +47,6 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	}
 
 	return users, nil
-}
-
-func (syncer *Syncer) getOriginalUserMap() ([]*OriginalUser, map[string]*OriginalUser, error) {
-	users, err := syncer.getOriginalUsers()
-	if err != nil {
-		return users, nil, err
-	}
-
-	m := map[string]*OriginalUser{}
-	for _, user := range users {
-		m[user.Id] = user
-	}
-	return users, m, nil
 }
 
 func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
@@ -96,31 +82,7 @@ func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
 	return affected != 0, nil
 }
 
-func (syncer *Syncer) updateUserForOriginalFields(user *User) (bool, error) {
-	var err error
-	owner, name := util.GetOwnerAndNameFromId(user.GetId())
-	oldUser, err := getUserById(owner, name)
-	if oldUser == nil || err != nil {
-		return false, err
-	}
-
-	if user.Avatar != oldUser.Avatar && user.Avatar != "" {
-		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	columns := syncer.getCasdoorColumns()
-	columns = append(columns, "affiliation", "hash", "pre_hash")
-	affected, err := ormer.Engine.ID(core.PK{oldUser.Owner, oldUser.Name}).Cols(columns...).Update(user)
-	if err != nil {
-		return false, err
-	}
-	return affected != 0, nil
-}
-
-func (syncer *Syncer) updateUserForOriginalByFields(user *User, key string) (bool, error) {
+func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool, error) {
 	var err error
 	oldUser := User{}
 
