@@ -13,7 +13,7 @@ require (
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.14.0
 	github.com/casdoor/gomail/v2 v2.0.1
-	github.com/casdoor/notify v0.43.0
+	github.com/casdoor/notify v0.44.0
 	github.com/casdoor/oss v1.3.0
 	github.com/casdoor/xorm-adapter/v3 v3.0.4
 	github.com/casvisor/casvisor-go-sdk v1.0.3
