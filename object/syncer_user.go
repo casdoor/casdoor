@@ -196,7 +196,10 @@ func RunSyncUsersJob() {
 	}
 
 	for _, syncer := range syncers {
-		addSyncerJob(syncer)
+		err = addSyncerJob(syncer)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	time.Sleep(time.Duration(1<<63 - 1))

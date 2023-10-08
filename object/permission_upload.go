@@ -82,5 +82,6 @@ func UploadPermissions(owner string, path string) (bool, error) {
 	if len(newPermissions) == 0 {
 		return false, nil
 	}
+
 	return AddPermissionsInBatch(newPermissions), nil
 }
