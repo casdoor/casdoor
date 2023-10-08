@@ -139,6 +139,10 @@ func getUrlPath(urlPath string) string {
 		return "/cas"
 	}
 
+	if strings.HasPrefix(urlPath, "/scim") {
+		return "/scim"
+	}
+
 	if strings.HasPrefix(urlPath, "/api/login/oauth") {
 		return "/api/login/oauth"
 	}
