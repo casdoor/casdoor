@@ -633,7 +633,7 @@ class App extends Component {
   renderFooter() {
     return (
       <React.Fragment>
-        {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
+        {/* {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
         <Footer id="footer" style={
           {
             textAlign: "center",
@@ -646,7 +646,7 @@ class App extends Component {
               </React.Fragment>
             )
           }
-        </Footer>
+        </Footer> */}
       </React.Fragment>
     );
   }
