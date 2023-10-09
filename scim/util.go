@@ -1,76 +1,37 @@
-package object
+package scim
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/optional"
+	"github.com/elimity-com/scim/schema"
 	"log"
 )
 
-/*
-Example json user resource
-
-	{
-	  "schemas":[
-	     "urn:ietf:params:scim:schemas:core:2.0:User"
-	  ],
-	  "id":"3cc032f5-2361-417f-9e2f-bc80adddf4a3",
-	  "meta":{
-	     "resourceType":"User",
-	     "created":"2019-11-20T13:09:00",
-	     "lastModified":"2019-11-20T13:09:00",
-	     "location":"https://identity.imulab.io/Users/3cc032f5-2361-417f-9e2f-bc80adddf4a3",
-	     "version":"W/\"1\""
-	  },
-	  "userName":"imulab",
-	  "name":{
-	     "formatted":"Mr. Weinan Qiu",
-	     "familyName":"Qiu",
-	     "givenName":"Weinan",
-	     "honorificPrefix":"Mr."
-	  },
-	  "displayName":"Weinan",
-	  "profileUrl":"https://identity.imulab.io/profiles/3cc032f5-2361-417f-9e2f-bc80adddf4a3",
-	  "userType":"Employee",
-	  "preferredLanguage":"zh_CN",
-	  "locale":"zh_CN",
-	  "timezone":"Asia/Shanghai",
-	  "active":true,
-	  "emails":[
-	     {
-	        "value":"imulab@foo.com",
-	        "type":"work",
-	        "primary":true,
-	        "display":"imulab@foo.com"
-	     },
-	     {
-	        "value":"imulab@bar.com",
-	        "type":"home",
-	        "display":"imulab@bar.com"
-	     }
-	  ],
-	  "phoneNumbers":[
-	     {
-	        "value":"123-45678",
-	        "type":"work",
-	        "primary":true,
-	        "display":"123-45678"
-	     },
-	     {
-	        "value":"123-45679",
-	        "type":"work",
-	        "display":"123-45679"
-	     }
-	  ]
+func newStringParams(name string, required, unique bool) schema.SimpleParams {
+	uniqueness := schema.AttributeUniquenessNone()
+	if unique {
+		uniqueness = schema.AttributeUniquenessServer()
 	}
-*/
+	return schema.SimpleStringParams(schema.StringParams{
+		Name:       name,
+		Required:   required,
+		Uniqueness: uniqueness,
+	})
+}
 
-const (
-	UserExtensionKey = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"
-)
+func newComplexParams(name string, required bool, multi bool, subAttributes []schema.SimpleParams) schema.ComplexParams {
+	return schema.ComplexParams{
+		Name:          name,
+		Required:      required,
+		MultiValued:   multi,
+		SubAttributes: subAttributes,
+	}
+}
 
-func buildExternalId(user *User) optional.String {
+func buildExternalId(user *object.User) optional.String {
 	if user.ExternalId != "" {
 		return optional.NewString(user.ExternalId)
 	} else {
@@ -78,7 +39,7 @@ func buildExternalId(user *User) optional.String {
 	}
 }
 
-func buildMeta(user *User) scim.Meta {
+func buildMeta(user *object.User) scim.Meta {
 	createdTime := util.String2Time(user.CreatedTime)
 	updatedTime := util.String2Time(user.UpdatedTime)
 	return scim.Meta{
@@ -123,7 +84,7 @@ func getAttrJsonValue(attrs scim.ResourceAttributes, key1 string, key2 string) s
 	}
 }
 
-func user2resource(user *User) *scim.Resource {
+func user2resource(user *object.User) *scim.Resource {
 	attrs := make(map[string]interface{})
 	// Singular attributes
 	attrs["userName"] = user.Name
@@ -136,7 +97,7 @@ func user2resource(user *User) *scim.Resource {
 	attrs["nickName"] = user.DisplayName
 	attrs["userType"] = user.Type
 	attrs["profileUrl"] = user.Homepage
-	attrs["preferredLanguage"] = user.Language
+	//attrs["preferredLanguage"] = user.Language
 	//attrs["locale"] = language.Make(user.Region).String() // e.g. zh_CN
 	attrs["active"] = !user.IsForbidden && !user.IsDeleted
 	// Multi-Valued attributes
@@ -157,9 +118,9 @@ func user2resource(user *User) *scim.Resource {
 	}
 	attrs["addresses"] = []scim.ResourceAttributes{
 		{
-			"locality": user.Location, // City of residence
-			"region":   user.Region,   // e.g. CN
-			"country":  user.CountryCode,
+			"locality": user.Location,    // e.g. Hollywood
+			"region":   user.Region,      // e.g. CN CA
+			"country":  user.CountryCode, // e.g. USA
 		},
 	}
 	// Enterprise user schema extension
@@ -175,7 +136,7 @@ func user2resource(user *User) *scim.Resource {
 	}
 }
 
-func resource2user(attrs scim.ResourceAttributes) (user *User, err error) {
+func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Printf("panic in resource2user(): %v", r)
@@ -183,13 +144,13 @@ func resource2user(attrs scim.ResourceAttributes) (user *User, err error) {
 		}
 	}()
 
-	user = &User{
+	user = &object.User{
 		ExternalId:  getAttrString(attrs, "externalId"),
 		Name:        getAttrString(attrs, "userName"),
 		DisplayName: getAttrString(attrs, "displayName"),
 		Homepage:    getAttrString(attrs, "profileUrl"),
-		Language:    getAttrString(attrs, "preferredLanguage"),
-		Type:        getAttrString(attrs, "userType"),
+		//Language:    getAttrString(attrs, "preferredLanguage"),
+		Type: getAttrString(attrs, "userType"),
 
 		Owner:       getAttrJsonValue(attrs, UserExtensionKey, "organization"),
 		FirstName:   getAttrJsonValue(attrs, "name", "givenName"),
@@ -205,32 +166,4 @@ func resource2user(attrs scim.ResourceAttributes) (user *User, err error) {
 	}
 
 	return
-}
-
-func GetScimUser(id string) (*scim.Resource, error) {
-	user, err := GetUser(id)
-	if err != nil {
-		return nil, err
-	}
-	r := user2resource(user)
-	return r, nil
-}
-
-func AddScimUser(r *scim.Resource) error {
-	user, err := resource2user(r.Attributes)
-	if err != nil {
-		return err
-	}
-	affect, err := AddUser(user)
-	if err != nil {
-		return err
-	}
-	if !affect {
-		return fmt.Errorf("add user failed")
-	}
-
-	r.ID = user.GetId()
-	r.ExternalID = buildExternalId(user)
-	r.Meta = buildMeta(user)
-	return nil
 }
