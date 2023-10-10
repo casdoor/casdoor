@@ -26,8 +26,8 @@ import {SendCodeInput} from "../common/SendCodeInput";
 import RegionSelect from "../common/select/RegionSelect";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import LanguageSelect from "../common/select/LanguageSelect";
+import PhoneInput from "antd-phone-input";
 import {withRouter} from "react-router-dom";
-import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
 
 const formItemLayout = {
@@ -388,55 +388,25 @@ class SignupPage extends React.Component {
     } else if (signupItem.name === "Phone") {
       return (
         <React.Fragment>
-          <Form.Item label={i18next.t("general:Phone")} required={required}>
-            <Input.Group compact>
-              <Form.Item
-                name="countryCode"
-                noStyle
-                rules={[
-                  {
-                    required: required,
-                    message: i18next.t("signup:Please select your country code!"),
-                  },
-                ]}
-              >
-                <CountryCodeSelect
-                  style={{width: "35%"}}
-                  countryCodes={this.getApplicationObj().organizationObj.countryCodes}
-                />
-              </Form.Item>
-              <Form.Item
-                name="phone"
-                dependencies={["countryCode"]}
-                noStyle
-                rules={[
-                  {
-                    required: required,
-                    message: i18next.t("signup:Please input your phone number!"),
-                  },
-                  ({getFieldValue}) => ({
-                    validator: (_, value) => {
-                      if (!required && !value) {
-                        return Promise.resolve();
-                      }
-
-                      if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
-                        this.setState({validPhone: false});
-                        return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-                      }
-
-                      this.setState({validPhone: true});
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Input
-                  style={{width: "65%"}}
-                  onChange={e => this.setState({phone: e.target.value})}
-                />
-              </Form.Item>
-            </Input.Group>
+          <Form.Item
+            label={i18next.t("general:Phone")}
+            required={{
+              validator: (_, {valid}) => {
+                if (valid()) {
+                  this.setState({validPhone: true});
+                  return Promise.resolve();
+                }
+                this.setState({validPhone: false});
+                return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+              }
+            }}
+          >
+            <PhoneInput
+              onChange={({countryCode, areaCode, phoneNumber}) => {
+                this.setState({countryCode: countryCode.toString()});
+                this.setState({phone: [areaCode, phoneNumber].filter(Boolean).join("")});
+              }}
+            />
           </Form.Item>
           {
             signupItem.rule !== "No verification" &&
@@ -455,7 +425,7 @@ class SignupPage extends React.Component {
                 method={"signup"}
                 onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
                 application={application}
-                countryCode={this.form.current?.getFieldValue("countryCode")}
+                countryCode={this.state.countryCode}
               />
             </Form.Item>
           }
