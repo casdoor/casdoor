@@ -251,7 +251,7 @@ class CertEditPage extends React.Component {
     );
   }
 
-  submitCertEdit(willExist) {
+  submitCertEdit(exitAfterSave) {
     const cert = Setting.deepCopy(this.state.cert);
     CertBackend.updateCert(this.state.owner, this.state.certName, cert)
       .then((res) => {
@@ -261,7 +261,7 @@ class CertEditPage extends React.Component {
             certName: this.state.cert.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/certs");
           } else {
             this.props.history.push(`/certs/${this.state.cert.owner}/${this.state.cert.name}`);

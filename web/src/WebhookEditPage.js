@@ -322,7 +322,7 @@ class WebhookEditPage extends React.Component {
     );
   }
 
-  submitWebhookEdit(willExist) {
+  submitWebhookEdit(exitAfterSave) {
     const webhook = Setting.deepCopy(this.state.webhook);
     WebhookBackend.updateWebhook(this.state.webhook.owner, this.state.webhookName, webhook)
       .then((res) => {
@@ -332,7 +332,7 @@ class WebhookEditPage extends React.Component {
             webhookName: this.state.webhook.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/webhooks");
           } else {
             this.props.history.push(`/webhooks/${this.state.webhook.name}`);

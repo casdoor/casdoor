@@ -425,7 +425,7 @@ class SyncerEditPage extends React.Component {
     );
   }
 
-  submitSyncerEdit(willExist) {
+  submitSyncerEdit(exitAfterSave) {
     const syncer = Setting.deepCopy(this.state.syncer);
     SyncerBackend.updateSyncer(this.state.syncer.owner, this.state.syncerName, syncer)
       .then((res) => {
@@ -435,7 +435,7 @@ class SyncerEditPage extends React.Component {
             syncerName: this.state.syncer.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/syncers");
           } else {
             this.props.history.push(`/syncers/${this.state.syncer.name}`);

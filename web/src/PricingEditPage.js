@@ -226,7 +226,7 @@ class PricingEditPage extends React.Component {
     );
   }
 
-  submitPricingEdit(willExist) {
+  submitPricingEdit(exitAfterSave) {
     const pricing = Setting.deepCopy(this.state.pricing);
     PricingBackend.updatePricing(this.state.organizationName, this.state.pricingName, pricing)
       .then((res) => {
@@ -236,7 +236,7 @@ class PricingEditPage extends React.Component {
             pricingName: this.state.pricing.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/pricings");
           } else {
             this.props.history.push(`/pricings/${this.state.pricing.owner}/${this.state.pricing.name}`);

@@ -263,7 +263,7 @@ class PlanEditPage extends React.Component {
     );
   }
 
-  submitPlanEdit(willExist) {
+  submitPlanEdit(exitAfterSave) {
     const plan = Setting.deepCopy(this.state.plan);
     PlanBackend.updatePlan(this.state.organizationName, this.state.planName, plan)
       .then((res) => {
@@ -273,7 +273,7 @@ class PlanEditPage extends React.Component {
             planName: this.state.plan.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/plans");
           } else {
             this.props.history.push(`/plans/${this.state.plan.owner}/${this.state.plan.name}`);
