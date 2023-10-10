@@ -101,7 +101,7 @@ var (
 
 func GetScimServer() scim.Server {
 	config := scim.ServiceProviderConfig{
-		//DocumentationURI: optional.NewString("www.example.com/scim"),
+		// DocumentationURI: optional.NewString("www.example.com/scim"),
 		SupportPatch: true,
 	}
 

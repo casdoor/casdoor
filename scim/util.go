@@ -16,12 +16,13 @@ package scim
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/optional"
 	"github.com/elimity-com/scim/schema"
-	"log"
 )
 
 type AnyMap map[string]interface{}
@@ -211,7 +212,7 @@ func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error)
 		Password:    getAttrString(attrs, "password"),
 		DisplayName: getAttrString(attrs, "displayName"),
 		Homepage:    getAttrString(attrs, "profileUrl"),
-		//Language:    getAttrString(attrs, "preferredLanguage"),
+		// Language:    getAttrString(attrs, "preferredLanguage"),
 		Type: getAttrString(attrs, "userType"),
 
 		Owner:       getAttrJsonValue(attrs, UserExtensionKey, "organization"),

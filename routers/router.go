@@ -279,5 +279,4 @@ func initAPI() {
 	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
 
 	beego.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
-
 }

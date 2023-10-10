@@ -16,11 +16,12 @@ package scim
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
-	"net/http"
 )
 
 type UserResourceHandler struct{}
@@ -156,7 +157,6 @@ func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r sci
 		if r := recover(); r != nil {
 			err = fmt.Errorf("invalid patch op value: %v", r)
 		}
-
 	}()
 
 	for _, op := range ops {
