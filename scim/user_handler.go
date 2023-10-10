@@ -118,12 +118,9 @@ func UpdateScimUser(id string, r *scim.Resource) error {
 	if err != nil {
 		return err
 	}
-	affect, err := object.UpdateUser(id, user, nil, true)
+	_, err = object.UpdateUser(id, user, nil, true)
 	if err != nil {
 		return err
-	}
-	if !affect {
-		return fmt.Errorf("update user failed")
 	}
 
 	r.ID = user.GetId()
@@ -132,6 +129,7 @@ func UpdateScimUser(id string, r *scim.Resource) error {
 	return nil
 }
 
+// https://datatracker.ietf.org/doc/html/rfc7644#section-3.5.2 Modifying with PATCH
 func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r scim.Resource, err error) {
 	user, err := object.GetUser(id)
 	if err != nil {
@@ -147,72 +145,68 @@ func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r sci
 
 	}()
 
-	getValue := func(v interface{}, defaultV interface{}) interface{} {
-		if v == nil {
-			return defaultV
-		}
-		return v
-	}
 	for _, op := range ops {
 		value := op.Value
 		if op.Op == scim.PatchOperationRemove {
 			value = nil
 		}
+		// PatchOperationAdd and PatchOperationReplace is same in Casdoor, just replace the value
 		switch op.Path.String() {
 		case "userName":
-			user.Name = getValue(value, "").(string)
+			user.Name = ToString(value, "")
 		case "externalId":
-			user.ExternalId = getValue(value, "").(string)
+			user.ExternalId = ToString(value, "")
 		case "displayName":
-			user.DisplayName = getValue(value, "").(string)
+			user.DisplayName = ToString(value, "")
 		case "profileUrl":
-			user.Homepage = getValue(value, "").(string)
+			user.Homepage = ToString(value, "")
 		case "userType":
-			user.Type = getValue(value, "").(string)
+			user.Type = ToString(value, "")
 		case "name.givenName":
-			user.FirstName = getValue(value, "").(string)
+			user.FirstName = ToString(value, "")
 		case "name.familyName":
-			user.LastName = getValue(value, "").(string)
+			user.LastName = ToString(value, "")
 		case "name":
-			defaultV := map[string]interface{}{"givenName": "", "familyName": ""}
-			v := getValue(value, defaultV).(map[string]interface{}) // e.g. {"givenName": "AA", "familyName": "BB"}
-			if v["givenName"] != nil {
-				user.FirstName = v["givenName"].(string)
-			}
-			if v["familyName"] != nil {
-				user.LastName = v["familyName"].(string)
-			}
+			defaultV := AnyMap{"givenName": "", "familyName": ""}
+			v := ToAnyMap(value, defaultV) // e.g. {"givenName": "AA", "familyName": "BB"}
+			user.FirstName = ToString(v["givenName"], user.FirstName)
+			user.LastName = ToString(v["familyName"], user.LastName)
 		case "emails":
-			defaultV := []map[string]interface{}{{"value": ""}}
-			vs := getValue(value, defaultV).([]map[string]interface{}) // e.g. [{"value": "test@casdoor"}]
-			if len(vs) > 0 && vs[0]["value"] != nil {
-				user.Email = vs[0]["value"].(string)
+			defaultV := AnyArray{AnyMap{"value": ""}}
+			vs := ToAnyArray(value, defaultV) // e.g. [{"value": "test@casdoor"}]
+			if len(vs) > 0 {
+				v := ToAnyMap(vs[0])
+				user.Email = ToString(v["value"], user.Email)
 			}
 		case "phoneNumbers":
-			defaultV := []map[string]interface{}{{"value": ""}}
-			vs := getValue(value, defaultV).([]map[string]interface{}) // e.g. [{"value": "18750004417"}]
-			if len(vs) > 0 && vs[0]["value"] != nil {
-				user.Phone = vs[0]["value"].(string)
+			defaultV := AnyArray{AnyMap{"value": ""}}
+			vs := ToAnyArray(value, defaultV) // e.g. [{"value": "18750004417"}]
+			if len(vs) > 0 {
+				v := ToAnyMap(vs[0])
+				user.Phone = ToString(v["value"], user.Phone)
 			}
 		case "photos":
-			defaultV := []map[string]interface{}{{"value": ""}}
-			vs := getValue(value, defaultV).([]map[string]interface{}) // e.g. [{"value": "https://cdn.casbin.org/img/casbin.svg"}]
-			if len(vs) > 0 && vs[0]["value"] != nil {
-				user.Avatar = vs[0]["value"].(string)
+			defaultV := AnyArray{AnyMap{"value": ""}}
+			vs := ToAnyArray(value, defaultV) // e.g. [{"value": "https://cdn.casbin.org/img/casbin.svg"}]
+			if len(vs) > 0 {
+				v := ToAnyMap(vs[0])
+				user.Avatar = ToString(v["value"], user.Avatar)
 			}
 		case "addresses":
-			defaultV := []map[string]interface{}{{"locality": "", "region": "", "country": ""}}
-			vs := getValue(value, defaultV).([]map[string]interface{}) // e.g. [{"locality": "Hollywood", "region": "CN", "country": "USA"}]
-			if len(vs) > 0 && vs[0]["locality"] != nil {
-				user.Location = vs[0]["locality"].(string)
-			}
-			if len(vs) > 0 && vs[0]["region"] != nil {
-				user.Region = vs[0]["region"].(string)
-			}
-			if len(vs) > 0 && vs[0]["country"] != nil {
-				user.CountryCode = vs[0]["country"].(string)
+			defaultV := AnyArray{AnyMap{"locality": "", "region": "", "country": ""}}
+			vs := ToAnyArray(value, defaultV) // e.g. [{"locality": "Hollywood", "region": "CN", "country": "USA"}]
+			if len(vs) > 0 {
+				v := ToAnyMap(vs[0])
+				user.Location = ToString(v["locality"], user.Location)
+				user.Region = ToString(v["region"], user.Region)
+				user.CountryCode = ToString(v["country"], user.CountryCode)
 			}
 		}
 	}
-	return scim.Resource{}, nil
+	_, err = object.UpdateUser(id, user, nil, true)
+	if err != nil {
+		return scim.Resource{}, err
+	}
+	r = *user2resource(user)
+	return r, nil
 }

@@ -10,6 +10,45 @@ import (
 	"log"
 )
 
+type AnyMap map[string]interface{}
+
+type AnyArray []interface{}
+
+func ToString(v interface{}, defaultV ...interface{}) string {
+	if v == nil {
+		if len(defaultV) > 0 {
+			v = defaultV[0]
+		}
+	}
+	return v.(string)
+}
+
+func ToAnyMap(v interface{}, defaultV ...interface{}) AnyMap {
+	if v == nil {
+		if len(defaultV) > 0 {
+			v = defaultV[0]
+		}
+	}
+	m, ok := v.(map[string]interface{})
+	if !ok {
+		m = v.(AnyMap)
+	}
+	return m
+}
+
+func ToAnyArray(v interface{}, defaultV ...interface{}) AnyArray {
+	if v == nil {
+		if len(defaultV) > 0 {
+			v = defaultV[0]
+		}
+	}
+	m, ok := v.([]interface{})
+	if !ok {
+		m = v.(AnyArray)
+	}
+	return m
+}
+
 func newStringParams(name string, required, unique bool) schema.SimpleParams {
 	uniqueness := schema.AttributeUniquenessNone()
 	if unique {
@@ -88,8 +127,15 @@ func user2resource(user *object.User) *scim.Resource {
 	attrs := make(map[string]interface{})
 	// Singular attributes
 	attrs["userName"] = user.Name
+	formatted := fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+	if user.FirstName == "" {
+		formatted = user.LastName
+	}
+	if user.LastName == "" {
+		formatted = user.FirstName
+	}
 	attrs["name"] = scim.ResourceAttributes{
-		"formatted":  fmt.Sprintf("%v %v", user.FirstName, user.LastName),
+		"formatted":  formatted,
 		"familyName": user.LastName,
 		"givenName":  user.FirstName,
 	}
