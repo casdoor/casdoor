@@ -171,6 +171,14 @@ func getHostname(s string) string {
 	return res
 }
 
+func removePort(s string) string {
+	ipStr, _, err := net.SplitHostPort(s)
+	if err != nil {
+		ipStr = s
+	}
+	return ipStr
+}
+
 func isHostIntranet(s string) bool {
 	ipStr, _, err := net.SplitHostPort(s)
 	if err != nil {
