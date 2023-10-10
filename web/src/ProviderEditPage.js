@@ -21,12 +21,12 @@ import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
+import PhoneInput from "antd-phone-input";
 import * as ProviderEditTestEmail from "./common/TestEmailWidget";
 import * as ProviderNotification from "./common/TestNotificationWidget";
 import * as ProviderEditTestSms from "./common/TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
-import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
 
 const {Option} = Select;
@@ -975,28 +975,19 @@ class ProviderEditPage extends React.Component {
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :
                 </Col>
-                <Col span={4} >
-                  <Input.Group compact>
-                    <CountryCodeSelect
-                      style={{width: "90px"}}
-                      initValue={this.state.provider.content}
-                      onChange={(value) => {
-                        this.updateProviderField("content", value);
-                      }}
-                      countryCodes={this.props.account.organization.countryCodes}
-                    />
-                    <Input value={this.state.provider.receiver}
-                      style={{width: "150px"}}
-                      placeholder = {i18next.t("user:Input your phone number")}
-                      onChange={e => {
-                        this.updateProviderField("receiver", e.target.value);
-                      }} />
-                  </Input.Group>
+                <Col span={4}>
+                  <PhoneInput
+                    value={this.state.provider.content}
+                    onChange={({countryCode, areaCode, phoneNumber, valid}) => {
+                      this.updateProviderField("valid", valid());
+                      this.updateProviderField("content", countryCode.toString());
+                      this.updateProviderField("receiver", [areaCode, phoneNumber].filter(Boolean).join(""));
+                    }}
+                  />
                 </Col>
-                <Col span={2} >
-                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                    disabled={!Setting.isValidPhone(this.state.provider.receiver)}
-                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
+                <Col span={2}>
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" disabled={!this.state.provider.valid}
+                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + this.state.provider.content + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
                 </Col>

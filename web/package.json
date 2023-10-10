@@ -21,6 +21,7 @@
     "@web3-onboard/taho": "^2.0.5",
     "@web3-onboard/trust": "^2.0.4",
     "antd": "5.2.3",
+    "antd-phone-input": "^0.2.4",
     "antd-token-previewer": "^1.1.0-22",
     "buffer": "^6.0.3",
     "codemirror": "^5.61.1",
