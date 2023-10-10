@@ -22,6 +22,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import EnableMfaModal from "./common/modal/EnableMfaModal";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import PhoneInput from "antd-phone-input";
 import CropperDivModal from "./common/modal/CropperDivModal.js";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PasswordModal from "./common/modal/PasswordModal";
@@ -33,7 +34,6 @@ import RegionSelect from "./common/select/RegionSelect";
 import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
 import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
-import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
@@ -435,23 +435,14 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
-            <Input.Group compact style={{width: "280Px"}}>
-              <CountryCodeSelect
-                style={{width: "30%"}}
-                // disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-                initValue={this.state.user.countryCode}
-                onChange={(value) => {
-                  this.updateUserField("countryCode", value);
-                }}
-                countryCodes={this.getUserOrganization()?.countryCodes}
-              />
-              <Input value={this.state.user.phone}
-                style={{width: "70%"}}
-                disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-                onChange={e => {
-                  this.updateUserField("phone", e.target.value);
-                }} />
-            </Input.Group>
+            <PhoneInput
+              value={this.state.user.countryCode + this.state.user.phone}
+              disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
+              onChange={({countryCode, areaCode, phoneNumber}) => {
+                this.updateUserField("countryCode", countryCode.toString());
+                this.updateUserField("phone", [areaCode, phoneNumber].filter(Boolean).join(""));
+              }}
+            />
           </Col>
           <Col span={Setting.isMobile() ? 24 : 11} >
             {this.isSelf() ? (<ResetModal application={this.state.application} countryCode={this.getCountryCode()} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
