@@ -1,3 +1,17 @@
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package scim
 
 import (
@@ -127,6 +141,8 @@ func user2resource(user *object.User) *scim.Resource {
 	attrs := make(map[string]interface{})
 	// Singular attributes
 	attrs["userName"] = user.Name
+	// The cleartext value or the hashed value of a password SHALL NOT be returnable by a service provider.
+	// attrs["password"] = user.Password
 	formatted := fmt.Sprintf("%s %s", user.FirstName, user.LastName)
 	if user.FirstName == "" {
 		formatted = user.LastName
@@ -143,9 +159,8 @@ func user2resource(user *object.User) *scim.Resource {
 	attrs["nickName"] = user.DisplayName
 	attrs["userType"] = user.Type
 	attrs["profileUrl"] = user.Homepage
-	//attrs["preferredLanguage"] = user.Language
-	//attrs["locale"] = language.Make(user.Region).String() // e.g. zh_CN
 	attrs["active"] = !user.IsForbidden && !user.IsDeleted
+
 	// Multi-Valued attributes
 	attrs["emails"] = []scim.ResourceAttributes{
 		{
@@ -165,10 +180,11 @@ func user2resource(user *object.User) *scim.Resource {
 	attrs["addresses"] = []scim.ResourceAttributes{
 		{
 			"locality": user.Location,    // e.g. Hollywood
-			"region":   user.Region,      // e.g. CN CA
+			"region":   user.Region,      // e.g. CN
 			"country":  user.CountryCode, // e.g. USA
 		},
 	}
+
 	// Enterprise user schema extension
 	attrs[UserExtensionKey] = scim.ResourceAttributes{
 		"organization": user.Owner,
@@ -185,14 +201,14 @@ func user2resource(user *object.User) *scim.Resource {
 func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("panic in resource2user(): %v", r)
+			log.Printf("failed to parse attrs: %v", r)
 			err = fmt.Errorf("%v", r)
 		}
 	}()
-
 	user = &object.User{
 		ExternalId:  getAttrString(attrs, "externalId"),
 		Name:        getAttrString(attrs, "userName"),
+		Password:    getAttrString(attrs, "password"),
 		DisplayName: getAttrString(attrs, "displayName"),
 		Homepage:    getAttrString(attrs, "profileUrl"),
 		//Language:    getAttrString(attrs, "preferredLanguage"),
@@ -211,5 +227,8 @@ func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error)
 		CreatedTime: util.GetCurrentTime(),
 	}
 
+	if user.Owner == "" {
+		err = fmt.Errorf("organization in %s is required", UserExtensionKey)
+	}
 	return
 }
