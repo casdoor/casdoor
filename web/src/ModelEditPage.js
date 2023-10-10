@@ -165,7 +165,7 @@ class ModelEditPage extends React.Component {
     );
   }
 
-  submitModelEdit(willExist) {
+  submitModelEdit(exitAfterSave) {
     const model = Setting.deepCopy(this.state.model);
     ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
       .then((res) => {
@@ -175,7 +175,7 @@ class ModelEditPage extends React.Component {
             modelName: this.state.model.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/models");
           } else {
             this.props.history.push(`/models/${this.state.model.owner}/${this.state.model.name}`);

@@ -198,7 +198,7 @@ class EnforcerEditPage extends React.Component {
     );
   }
 
-  submitEnforcerEdit(willExist) {
+  submitEnforcerEdit(exitAfterSave) {
     const enforcer = Setting.deepCopy(this.state.enforcer);
     EnforcerBackend.updateEnforcer(this.state.organizationName, this.state.enforcerName, enforcer)
       .then((res) => {
@@ -208,7 +208,7 @@ class EnforcerEditPage extends React.Component {
             enforcerName: this.state.enforcer.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/enforcers");
           } else {
             this.props.history.push(`/enforcers/${this.state.enforcer.owner}/${this.state.enforcer.name}`);

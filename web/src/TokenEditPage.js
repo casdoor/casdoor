@@ -173,7 +173,7 @@ class TokenEditPage extends React.Component {
     );
   }
 
-  submitTokenEdit(willExist) {
+  submitTokenEdit(exitAfterSave) {
     const token = Setting.deepCopy(this.state.token);
     TokenBackend.updateToken(this.state.token.owner, this.state.tokenName, token)
       .then((res) => {
@@ -183,7 +183,7 @@ class TokenEditPage extends React.Component {
             tokenName: this.state.token.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/tokens");
           } else {
             this.props.history.push(`/tokens/${this.state.token.name}`);
