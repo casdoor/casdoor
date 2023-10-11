@@ -240,7 +240,7 @@ class RoleEditPage extends React.Component {
     );
   }
 
-  submitRoleEdit(willExist) {
+  submitRoleEdit(exitAfterSave) {
     const role = Setting.deepCopy(this.state.role);
     RoleBackend.updateRole(this.state.organizationName, this.state.roleName, role)
       .then((res) => {
@@ -250,7 +250,7 @@ class RoleEditPage extends React.Component {
             roleName: this.state.role.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/roles");
           } else {
             this.props.history.push(`/roles/${this.state.role.owner}/${encodeURIComponent(this.state.role.name)}`);

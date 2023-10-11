@@ -200,6 +200,10 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 		return nil, errors.New("please set a cert for the application first")
 	}
 
+	if cert.Certificate == "" {
+		return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+	}
+
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
@@ -286,6 +290,10 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return "", "", "", err
+	}
+
+	if cert.Certificate == "" {
+		return "", "", "", fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
 	}
 
 	block, _ := pem.Decode([]byte(cert.Certificate))

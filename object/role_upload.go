@@ -68,5 +68,6 @@ func UploadRoles(owner string, path string) (bool, error) {
 	if len(newRoles) == 0 {
 		return false, nil
 	}
+
 	return AddRolesInBatch(newRoles), nil
 }

@@ -411,7 +411,7 @@ class OrganizationEditPage extends React.Component {
     );
   }
 
-  submitOrganizationEdit(willExist) {
+  submitOrganizationEdit(exitAfterSave) {
     const organization = Setting.deepCopy(this.state.organization);
     organization.accountItems = organization.accountItems?.filter(accountItem => accountItem.name !== "Please select an account item");
 
@@ -429,7 +429,7 @@ class OrganizationEditPage extends React.Component {
           });
           window.dispatchEvent(new Event("storageOrganizationsChanged"));
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/organizations");
           } else {
             this.props.history.push(`/organizations/${this.state.organization.name}`);

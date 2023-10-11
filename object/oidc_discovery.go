@@ -127,9 +127,16 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 			continue
 		}
 
+		if cert.Certificate == "" {
+			return jwks, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		}
+
 		certPemBlock := []byte(cert.Certificate)
 		certDerBlock, _ := pem.Decode(certPemBlock)
-		x509Cert, _ := x509.ParseCertificate(certDerBlock.Bytes)
+		x509Cert, err := x509.ParseCertificate(certDerBlock.Bytes)
+		if err != nil {
+			return jwks, err
+		}
 
 		var jwk jose.JSONWebKey
 		jwk.Key = x509Cert.PublicKey
