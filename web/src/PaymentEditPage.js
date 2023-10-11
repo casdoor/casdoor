@@ -438,7 +438,7 @@ class PaymentEditPage extends React.Component {
     return "";
   }
 
-  submitPaymentEdit(willExist) {
+  submitPaymentEdit(exitAfterSave) {
     const errorText = this.checkError();
     if (errorText !== "") {
       Setting.showMessage("error", errorText);
@@ -454,7 +454,7 @@ class PaymentEditPage extends React.Component {
             paymentName: this.state.payment.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/payments");
           } else {
             this.props.history.push(`/payments/${this.state.payment.name}`);

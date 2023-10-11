@@ -16,7 +16,8 @@ package object
 
 import (
 	"fmt"
-	"time"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 func (syncer *Syncer) syncUsers() error {
@@ -26,17 +27,26 @@ func (syncer *Syncer) syncUsers() error {
 
 	fmt.Printf("Running syncUsers()..\n")
 
-	users, _, _ := syncer.getUserMap()
-	oUsers, _, err := syncer.getOriginalUserMap()
+	users, err := GetUsers(syncer.Organization)
 	if err != nil {
-		fmt.Printf(err.Error())
-
-		timestamp := time.Now().Format("2006-01-02 15:04:05")
-		line := fmt.Sprintf("[%s] %s\n", timestamp, err.Error())
-		_, err = updateSyncerErrorText(syncer, line)
-		if err != nil {
-			return err
+		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
+		_, err2 := updateSyncerErrorText(syncer, line)
+		if err2 != nil {
+			panic(err2)
 		}
+
+		return err
+	}
+
+	oUsers, err := syncer.getOriginalUsers()
+	if err != nil {
+		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
+		_, err2 := updateSyncerErrorText(syncer, line)
+		if err2 != nil {
+			panic(err2)
+		}
+
+		return err
 	}
 
 	fmt.Printf("Users: %d, oUsers: %d\n", len(users), len(oUsers))
@@ -76,7 +86,7 @@ func (syncer *Syncer) syncUsers() error {
 					updatedUser.PreHash = oHash
 
 					fmt.Printf("Update from oUser to user: %v\n", updatedUser)
-					_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
+					_, err = syncer.updateUserForOriginalFields(updatedUser, key)
 					if err != nil {
 						return err
 					}
@@ -113,7 +123,7 @@ func (syncer *Syncer) syncUsers() error {
 						updatedUser.PreHash = oHash
 
 						fmt.Printf("Update from oUser to user (2nd condition): %v\n", updatedUser)
-						_, err = syncer.updateUserForOriginalByFields(updatedUser, key)
+						_, err = syncer.updateUserForOriginalFields(updatedUser, key)
 						if err != nil {
 							return err
 						}
@@ -122,6 +132,7 @@ func (syncer *Syncer) syncUsers() error {
 			}
 		}
 	}
+
 	_, err = AddUsersInBatch(newUsers)
 	if err != nil {
 		return err

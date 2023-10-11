@@ -16,7 +16,6 @@ package routers
 
 import (
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -41,25 +40,11 @@ func setCorsHeaders(ctx *context.Context, origin string) {
 	}
 }
 
-func getHostname(s string) string {
-	if s == "" {
-		return ""
-	}
-
-	l, err := url.Parse(s)
-	if err != nil {
-		panic(err)
-	}
-
-	res := l.Hostname()
-	return res
-}
-
 func CorsFilter(ctx *context.Context) {
 	origin := ctx.Input.Header(headerOrigin)
 	originConf := conf.GetConfigString("origin")
 	originHostname := getHostname(origin)
-	host := ctx.Request.Host
+	host := removePort(ctx.Request.Host)
 
 	if strings.HasPrefix(origin, "http://localhost") || strings.HasPrefix(origin, "https://localhost") || strings.HasPrefix(origin, "http://127.0.0.1") || strings.HasPrefix(origin, "http://casdoor-app") {
 		setCorsHeaders(ctx, origin)
@@ -80,6 +65,8 @@ func CorsFilter(ctx *context.Context) {
 		if origin == originConf {
 			setCorsHeaders(ctx, origin)
 		} else if originHostname == host {
+			setCorsHeaders(ctx, origin)
+		} else if isHostIntranet(host) {
 			setCorsHeaders(ctx, origin)
 		} else {
 			ok, err := object.IsOriginAllowed(origin)

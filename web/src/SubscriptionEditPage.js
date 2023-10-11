@@ -294,7 +294,7 @@ class SubscriptionEditPage extends React.Component {
     );
   }
 
-  submitSubscriptionEdit(willExist) {
+  submitSubscriptionEdit(exitAfterSave) {
     const subscription = Setting.deepCopy(this.state.subscription);
     SubscriptionBackend.updateSubscription(this.state.organizationName, this.state.subscriptionName, subscription)
       .then((res) => {
@@ -304,7 +304,7 @@ class SubscriptionEditPage extends React.Component {
             subscriptionName: this.state.subscription.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/subscriptions");
           } else {
             this.props.history.push(`/subscriptions/${this.state.subscription.owner}/${this.state.subscription.name}`);

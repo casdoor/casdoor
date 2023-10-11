@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,26 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package object
+package controllers
 
-func (syncer *Syncer) getUsers() []*User {
-	users, err := GetUsers(syncer.Organization)
-	if err != nil {
-		panic(err)
-	}
+import (
+	"strings"
 
-	return users
-}
+	"github.com/casdoor/casdoor/scim"
+)
 
-func (syncer *Syncer) getUserMap() ([]*User, map[string]*User, map[string]*User) {
-	users := syncer.getUsers()
-
-	m1 := map[string]*User{}
-	m2 := map[string]*User{}
-	for _, user := range users {
-		m1[user.Id] = user
-		m2[user.Name] = user
-	}
-
-	return users, m1, m2
+func (c *RootController) HandleScim() {
+	path := c.Ctx.Request.URL.Path
+	c.Ctx.Request.URL.Path = strings.TrimPrefix(path, "/scim")
+	scim.Server.ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
 }

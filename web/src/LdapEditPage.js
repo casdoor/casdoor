@@ -230,7 +230,7 @@ class LdapEditPage extends React.Component {
     );
   }
 
-  submitLdapEdit(willExist) {
+  submitLdapEdit(exitAfterSave) {
     LddpBackend.updateLdap(this.state.ldap)
       .then((res) => {
         if (res.status === "ok") {
@@ -239,7 +239,7 @@ class LdapEditPage extends React.Component {
             organizationName: this.state.ldap.owner,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push(`/organizations/${this.state.organizationName}`);
           }
         } else {

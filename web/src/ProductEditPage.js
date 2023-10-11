@@ -311,7 +311,7 @@ class ProductEditPage extends React.Component {
     );
   }
 
-  submitProductEdit(willExist) {
+  submitProductEdit(exitAfterSave) {
     const product = Setting.deepCopy(this.state.product);
     ProductBackend.updateProduct(this.state.organizationName, this.state.productName, product)
       .then((res) => {
@@ -321,7 +321,7 @@ class ProductEditPage extends React.Component {
             productName: this.state.product.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/products");
           } else {
             this.props.history.push(`/products/${this.state.product.owner}/${this.state.product.name}`);

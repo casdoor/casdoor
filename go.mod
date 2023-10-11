@@ -13,13 +13,14 @@ require (
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.14.0
 	github.com/casdoor/gomail/v2 v2.0.1
-	github.com/casdoor/notify v0.43.0
+	github.com/casdoor/notify v0.44.0
 	github.com/casdoor/oss v1.3.0
 	github.com/casdoor/xorm-adapter/v3 v3.0.4
 	github.com/casvisor/casvisor-go-sdk v1.0.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
+	github.com/elimity-com/scim v0.0.0-20230426070224-941a5eac92f3 // indirect
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-git/go-git/v5 v5.6.0
@@ -63,6 +64,7 @@ require (
 	golang.org/x/crypto v0.12.0
 	golang.org/x/net v0.14.0
 	golang.org/x/oauth2 v0.11.0
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/api v0.138.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0

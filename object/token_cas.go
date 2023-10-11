@@ -286,6 +286,10 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", err
 	}
 
+	if cert.Certificate == "" {
+		return "", "", fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+	}
+
 	block, _ := pem.Decode([]byte(cert.Certificate))
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 	randomKeyStore := &X509Key{

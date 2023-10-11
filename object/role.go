@@ -208,16 +208,15 @@ func AddRolesInBatch(roles []*Role) bool {
 	}
 
 	affected := false
-	for i := 0; i < (len(roles)-1)/batchSize+1; i++ {
-		start := i * batchSize
-		end := (i + 1) * batchSize
+	for i := 0; i < len(roles); i += batchSize {
+		start := i
+		end := i + batchSize
 		if end > len(roles) {
 			end = len(roles)
 		}
 
 		tmp := roles[start:end]
-		// TODO: save to log instead of standard output
-		// fmt.Printf("Add users: [%d - %d].\n", start, end)
+		fmt.Printf("The syncer adds roles: [%d - %d]\n", start, end)
 		if AddRoles(tmp) {
 			affected = true
 		}

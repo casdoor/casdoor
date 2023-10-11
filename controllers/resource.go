@@ -272,6 +272,11 @@ func (c *ApiController) UploadResource() {
 		return
 	}
 
+	if username == "Built-in-Untracked" {
+		c.ResponseOk(fileUrl, objectKey)
+		return
+	}
+
 	if createdTime == "" {
 		createdTime = util.GetCurrentTime()
 	}

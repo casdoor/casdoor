@@ -87,7 +87,7 @@ func AddRecord(record *casvisorsdk.Record) bool {
 
 	affected, err := casvisorsdk.AddRecord(record)
 	if err != nil {
-		panic(err)
+		fmt.Printf("AddRecord() error: %s", err.Error())
 	}
 
 	return affected

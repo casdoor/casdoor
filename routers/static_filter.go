@@ -33,7 +33,18 @@ var (
 	oldStaticBaseUrl = "https://cdn.casbin.org"
 	newStaticBaseUrl = conf.GetConfigString("staticBaseUrl")
 	enableGzip       = conf.GetConfigBool("enableGzip")
+	frontendBaseDir  = conf.GetConfigString("frontendBaseDir")
 )
+
+func getWebBuildFolder() string {
+	path := "web/build"
+	if util.FileExist(filepath.Join(path, "index.html")) || frontendBaseDir == "" {
+		return path
+	}
+
+	path = filepath.Join(frontendBaseDir, "web/build")
+	return path
+}
 
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
@@ -48,8 +59,12 @@ func StaticFilter(ctx *context.Context) {
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return
 	}
+	if strings.HasPrefix(urlPath, "/scim") {
+		return
+	}
 
-	path := "web/build"
+	webBuildFolder := getWebBuildFolder()
+	path := webBuildFolder
 	if urlPath == "/" {
 		path += "/index.html"
 	} else {
@@ -57,7 +72,7 @@ func StaticFilter(ctx *context.Context) {
 	}
 
 	if !util.FileExist(path) {
-		path = "web/build/index.html"
+		path = webBuildFolder + "/index.html"
 	}
 	if !util.FileExist(path) {
 		dir, err := os.Getwd()
@@ -65,6 +80,7 @@ func StaticFilter(ctx *context.Context) {
 			panic(err)
 		}
 		dir = strings.ReplaceAll(dir, "\\", "/")
+		ctx.ResponseWriter.WriteHeader(http.StatusNotFound)
 		errorText := fmt.Sprintf("The Casdoor frontend HTML file: \"index.html\" was not found, it should be placed at: \"%s/web/build/index.html\". For more information, see: https://casdoor.org/docs/basic/server-installation/#frontend-1", dir)
 		http.ServeContent(ctx.ResponseWriter, ctx.Request, "Casdoor frontend has encountered error...", time.Now(), strings.NewReader(errorText))
 		return
