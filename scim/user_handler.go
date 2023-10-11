@@ -19,7 +19,6 @@ import (
 	"net/http"
 
 	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
 	"github.com/elimity-com/scim"
 	"github.com/elimity-com/scim/errors"
 )
@@ -40,12 +39,21 @@ func (h UserResourceHandler) Get(r *http.Request, id string) (scim.Resource, err
 	if err != nil {
 		return scim.Resource{}, err
 	}
+	if resource == nil {
+		return scim.Resource{}, errors.ScimErrorResourceNotFound(id)
+	}
 	return *resource, nil
 }
 
 func (h UserResourceHandler) Delete(r *http.Request, id string) error {
-	owner, name := util.GetOwnerAndNameFromId(id)
-	_, err := object.DeleteUser(&object.User{Owner: owner, Name: name})
+	user, err := object.GetUserByUserIdOnly(id)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.ScimErrorResourceNotFound(id)
+	}
+	_, err = object.DeleteUser(user)
 	return err
 }
 
@@ -74,7 +82,7 @@ func (h UserResourceHandler) GetAll(r *http.Request, params scim.ListRequestPara
 }
 
 func (h UserResourceHandler) Patch(r *http.Request, id string, operations []scim.PatchOperation) (scim.Resource, error) {
-	user, err := object.GetUser(id)
+	user, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return scim.Resource{}, err
 	}
@@ -85,7 +93,7 @@ func (h UserResourceHandler) Patch(r *http.Request, id string, operations []scim
 }
 
 func (h UserResourceHandler) Replace(r *http.Request, id string, attrs scim.ResourceAttributes) (scim.Resource, error) {
-	user, err := object.GetUser(id)
+	user, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return scim.Resource{}, err
 	}
@@ -98,7 +106,7 @@ func (h UserResourceHandler) Replace(r *http.Request, id string, attrs scim.Reso
 }
 
 func GetScimUser(id string) (*scim.Resource, error) {
-	user, err := object.GetUser(id)
+	user, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return nil, err
 	}
@@ -110,43 +118,61 @@ func GetScimUser(id string) (*scim.Resource, error) {
 }
 
 func AddScimUser(r *scim.Resource) error {
-	user, err := resource2user(r.Attributes)
+	newUser, err := resource2user(r.Attributes)
 	if err != nil {
 		return err
 	}
-	affect, err := object.AddUser(user)
+
+	// Check whether the user exists.
+	oldUser, err := object.GetUser(newUser.GetId())
+	if err != nil {
+		return err
+	}
+	if oldUser != nil {
+		return errors.ScimErrorUniqueness
+	}
+
+	affect, err := object.AddUser(newUser)
 	if err != nil {
 		return err
 	}
 	if !affect {
-		return fmt.Errorf("add user failed")
+		return fmt.Errorf("add new user failed")
 	}
 
-	r.ID = user.GetId()
-	r.ExternalID = buildExternalId(user)
-	r.Meta = buildMeta(user)
+	r.Attributes = user2resource(newUser).Attributes
+	r.ID = newUser.Id
+	r.ExternalID = buildExternalId(newUser)
+	r.Meta = buildMeta(newUser)
 	return nil
 }
 
 func UpdateScimUser(id string, r *scim.Resource) error {
-	user, err := resource2user(r.Attributes)
+	oldUser, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return err
 	}
-	_, err = object.UpdateUser(id, user, nil, true)
+	if oldUser == nil {
+		return errors.ScimErrorResourceNotFound(id)
+	}
+	newUser, err := resource2user(r.Attributes)
+	if err != nil {
+		return err
+	}
+	_, err = object.UpdateUser(oldUser.GetId(), newUser, nil, true)
 	if err != nil {
 		return err
 	}
 
-	r.ID = user.GetId()
-	r.ExternalID = buildExternalId(user)
-	r.Meta = buildMeta(user)
+	r.ID = newUser.Id
+	r.ExternalID = buildExternalId(newUser)
+	r.Meta = buildMeta(newUser)
 	return nil
 }
 
 // https://datatracker.ietf.org/doc/html/rfc7644#section-3.5.2 Modifying with PATCH
 func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r scim.Resource, err error) {
-	user, err := object.GetUser(id)
+	user, err := object.GetUserByUserIdOnly(id)
 	if err != nil {
 		return scim.Resource{}, err
 	}
@@ -158,7 +184,7 @@ func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r sci
 			err = fmt.Errorf("invalid patch op value: %v", r)
 		}
 	}()
-
+	old := user.GetId()
 	for _, op := range ops {
 		value := op.Value
 		if op.Op == scim.PatchOperationRemove {
@@ -217,9 +243,15 @@ func UpdateScimUserByPatchOperation(id string, ops []scim.PatchOperation) (r sci
 				user.Region = ToString(v["region"], user.Region)
 				user.CountryCode = ToString(v["country"], user.CountryCode)
 			}
+		case UserExtensionKey:
+			defaultV := AnyMap{"organization": user.Owner}
+			v := ToAnyMap(value, defaultV) // e.g. {"organization": "org1"}
+			user.Owner = ToString(v["organization"], user.Owner)
+		case fmt.Sprintf("%v.%v", UserExtensionKey, "organization"):
+			user.Owner = ToString(value, user.Owner)
 		}
 	}
-	_, err = object.UpdateUser(id, user, nil, true)
+	_, err = object.UpdateUser(old, user, nil, true)
 	if err != nil {
 		return scim.Resource{}, err
 	}

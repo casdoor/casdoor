@@ -408,6 +408,24 @@ func GetUserByUserId(owner string, userId string) (*User, error) {
 	}
 }
 
+func GetUserByUserIdOnly(userId string) (*User, error) {
+	if userId == "" {
+		return nil, nil
+	}
+
+	user := User{Id: userId}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByAccessKey(accessKey string) (*User, error) {
 	if accessKey == "" {
 		return nil, nil
@@ -546,6 +564,9 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if isAdmin {
 		columns = append(columns, "name", "email", "phone", "country_code", "type")
 	}
+
+	columns = append(columns, "updated_time")
+	user.UpdatedTime = util.GetCurrentTime()
 
 	if util.ContainsString(columns, "groups") {
 		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)

@@ -99,7 +99,7 @@ func buildMeta(user *object.User) scim.Meta {
 	return scim.Meta{
 		Created:      &createdTime,
 		LastModified: &updatedTime,
-		Version:      user.GetId(),
+		Version:      user.Id,
 	}
 }
 
@@ -192,7 +192,7 @@ func user2resource(user *object.User) *scim.Resource {
 	}
 
 	return &scim.Resource{
-		ID:         user.GetId(),
+		ID:         user.Id,
 		ExternalID: buildExternalId(user),
 		Attributes: attrs,
 		Meta:       buildMeta(user),
@@ -212,8 +212,7 @@ func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error)
 		Password:    getAttrString(attrs, "password"),
 		DisplayName: getAttrString(attrs, "displayName"),
 		Homepage:    getAttrString(attrs, "profileUrl"),
-		// Language:    getAttrString(attrs, "preferredLanguage"),
-		Type: getAttrString(attrs, "userType"),
+		Type:        getAttrString(attrs, "userType"),
 
 		Owner:       getAttrJsonValue(attrs, UserExtensionKey, "organization"),
 		FirstName:   getAttrJsonValue(attrs, "name", "givenName"),
@@ -226,6 +225,7 @@ func resource2user(attrs scim.ResourceAttributes) (user *object.User, err error)
 		CountryCode: getAttrJsonValue(attrs, "addresses", "country"),
 
 		CreatedTime: util.GetCurrentTime(),
+		UpdatedTime: util.GetCurrentTime(),
 	}
 
 	if user.Owner == "" {

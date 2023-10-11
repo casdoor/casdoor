@@ -71,7 +71,7 @@ var (
 	UserStringField = []schema.SimpleParams{
 		newStringParams("externalId", false, true),
 		newStringParams("userName", true, true),
-		newStringParams("password", true, false),
+		newStringParams("password", false, false),
 		newStringParams("displayName", false, false),
 		newStringParams("profileUrl", false, false),
 		newStringParams("userType", false, false),
