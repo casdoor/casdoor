@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/config"
 	"github.com/casdoor/casdoor/util"
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
@@ -254,15 +253,9 @@ func (enforcer *Enforcer) LoadModelCfg() error {
 		return fmt.Errorf("the model: %s for enforcer: %s is not found", enforcer.Model, enforcer.GetId())
 	}
 
-	cfg, err := config.NewConfigFromText(model.ModelText)
+	enforcer.ModelCfg, err = getModelCfg(model)
 	if err != nil {
 		return err
-	}
-
-	enforcer.ModelCfg = make(map[string]string)
-	enforcer.ModelCfg["p"] = cfg.String("policy_definition::p")
-	if cfg.String("role_definition::g") != "" {
-		enforcer.ModelCfg["g"] = cfg.String("role_definition::g")
 	}
 
 	return nil

@@ -150,6 +150,21 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		return false, nil
 	}
 
+	if permission.ResourceType == "Application" {
+		model, err := GetModel(util.GetId(owner, permission.Model))
+		if err != nil {
+			return false, err
+		}
+		modelCfg, err := getModelCfg(model)
+		if err != nil {
+			return false, err
+		}
+
+		if len(strings.Split(modelCfg["p"], ",")) != 3 {
+			return false, fmt.Errorf("the model: %s for permission: %s is not valid, application type resources need 3 size [policy_defination] model", permission.Model, permission.GetId())
+		}
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
 	if err != nil {
 		return false, err
