@@ -977,7 +977,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={4}>
                   <PhoneInput
-                    value={this.state.provider.content}
+                    value={this.state.provider.content + this.state.provider.receiver}
                     onChange={({countryCode, areaCode, phoneNumber, valid}) => {
                       this.updateProviderField("valid", valid());
                       this.updateProviderField("content", countryCode.toString());

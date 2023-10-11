@@ -436,10 +436,10 @@ class UserEditPage extends React.Component {
           </Col>
           <Col style={{paddingRight: "20px"}} span={11} >
             <PhoneInput
-              value={this.state.user.countryCode + this.state.user.phone}
+              country={this.state.user.countryCode.toLowerCase()}
               disabled={!Setting.isLocalAdminUser(this.props.account) ? true : disabled}
-              onChange={({countryCode, areaCode, phoneNumber}) => {
-                this.updateUserField("countryCode", countryCode.toString());
+              onChange={({isoCode, areaCode, phoneNumber}) => {
+                this.updateUserField("countryCode", isoCode.toUpperCase());
                 this.updateUserField("phone", [areaCode, phoneNumber].filter(Boolean).join(""));
               }}
             />

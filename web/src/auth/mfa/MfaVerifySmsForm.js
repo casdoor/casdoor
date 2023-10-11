@@ -73,15 +73,13 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
                 placeholder={i18next.t("general:Email")}
                 onChange={(e) => {setDest(e.target.value);}}
               />
-            </Form.Item> : <Form.Item
-              noStyle
-              initialValue={mfaProps.countryCode + dest}
-            >
+            </Form.Item> : <Form.Item noStyle initialValue={dest}>
               <PhoneInput
                 onChange={({isoCode, areaCode, phoneNumber}) => {
                   form.setFieldValue("countryCode", isoCode.toUpperCase());
                   setDest([areaCode, phoneNumber].filter(Boolean).join(""));
                 }}
+                country={mfaProps.countryCode.toLowerCase()}
                 placeholder={i18next.t("general:Phone")}
               />
             </Form.Item>}

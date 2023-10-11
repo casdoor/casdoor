@@ -402,10 +402,11 @@ class SignupPage extends React.Component {
             }}
           >
             <PhoneInput
-              onChange={({countryCode, areaCode, phoneNumber}) => {
-                this.setState({countryCode: countryCode.toString()});
+              onChange={({isoCode, areaCode, phoneNumber}) => {
                 this.setState({phone: [areaCode, phoneNumber].filter(Boolean).join("")});
+                this.setState({countryCode: isoCode.toUpperCase()});
               }}
+              country={this.state.countryCode.toLowerCase()}
             />
           </Form.Item>
           {
