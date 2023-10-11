@@ -921,6 +921,8 @@ github.com/casbin/casbin/v2 v2.37.0 h1:/poEwPSovi4bTOcP752/CsTQiRz2xycyVKFG7GUhb
 github.com/casbin/casbin/v2 v2.37.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/casbin/v2 v2.77.2 h1:yQinn/w9x8AswiwqwtrXz93VU48R1aYTXdHEx4RI3jM=
 github.com/casbin/casbin/v2 v2.77.2/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
+github.com/casdoor/casdoor v1.421.1 h1:IAxmkHXLYN/3ewQ3S0bD0/qcaZjM1U45wQQDw0PKvxQ=
+github.com/casdoor/casdoor v1.421.1/go.mod h1:ZOwbtkbRNQa6HBxYji0h665ZV2+OkU0mkBqegUr0u4A=
 github.com/casdoor/go-sms-sender v0.14.0 h1:yqrzWIHUg64OYPynzF5Fr0XDuCWIWxtXIjOQAAkRKuw=
 github.com/casdoor/go-sms-sender v0.14.0/go.mod h1:cQs7qqohMJBgIVZebOCB8ko09naG1vzFJEH59VNIscs=
 github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR/w=
@@ -1388,6 +1390,8 @@ github.com/jmespath/go-jmespath/internal/testify v1.5.1/go.mod h1:L3OGu8Wl2/fWfC
 github.com/jmoiron/sqlx v1.3.3/go.mod h1:2BljVx/86SuTyjE+aPYlHCTNvZrnJXghYGpNiXLBMCQ=
 github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
 github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/jonboulle/clockwork v0.2.2 h1:UOGuzwb1PwsrDAObMuhUnj0p5ULPj8V/xJ7Kx9qUBdQ=
 github.com/jonboulle/clockwork v0.2.2/go.mod h1:Pkfl5aHPm1nk2H9h0bjmnJD/BcgbGXUBGnn1kMkgxc8=

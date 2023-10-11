@@ -16,7 +16,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
 	_ "github.com/beego/beego/session/redis"
@@ -28,9 +27,19 @@ import (
 	"github.com/casdoor/casdoor/radius"
 	"github.com/casdoor/casdoor/routers"
 	"github.com/casdoor/casdoor/util"
+	"github.com/joho/godotenv"
+	"log"
 )
 
 func main() {
+	var err error
+	// only if using .env file, don't enable if using docker or other method to load .env
+	// =======
+	err = godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file (ignore this message if running with docker image)")
+	}
+	// ======
 	object.InitFlag()
 	object.InitAdapter()
 	object.CreateTables()
@@ -73,7 +82,7 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
+	err = logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
 	if err != nil {
 		panic(err)
 	}

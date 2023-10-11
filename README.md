@@ -1,4 +1,4 @@
-<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor</h1>
+<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor Test</h1>
 <h3 align="center">A UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.</h3>
 <p align="center">
   <a href="#badge">

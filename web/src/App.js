@@ -206,9 +206,11 @@ class App extends Component {
 
   getLogo(themes) {
     if (themes.includes("dark")) {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
     } else {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
     }
   }
 
@@ -404,7 +406,7 @@ class App extends Component {
       return [];
     }
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone />, [
+    res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone />, [
       Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
       Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
       Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
@@ -421,20 +423,20 @@ class App extends Component {
         </a>, "#"));
       }
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone />, [
+      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone />, [
         Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
         Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
         Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
       ]));
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
+      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
         Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
         Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
         Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
         Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
       ]));
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
+      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
         Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
         Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
         Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>, "/models"),
@@ -448,13 +450,13 @@ class App extends Component {
         }
       })));
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
+      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
         Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
         Setting.getItem(<a target="_blank" rel="noreferrer" href={Conf.CasvisorUrl}>{i18next.t("general:Records")}</a>, "/records"),
         Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
       ]));
 
-      res.push(Setting.getItem(<Link style={{color: "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
+      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
         Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
         Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
         Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
@@ -463,13 +465,13 @@ class App extends Component {
       ]));
 
       if (Setting.isAdminUser(this.state.account)) {
-        res.push(Setting.getItem(<Link style={{color: "black"}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
+        res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
           Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>, "/sysinfo"),
           Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
           Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
           Setting.getItem(<a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>, "/swagger")]));
       } else {
-        res.push(Setting.getItem(<Link style={{color: "black"}} to="/syncers">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
+        res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/syncers">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
           Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
           Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks")]));
       }
@@ -642,7 +644,7 @@ class App extends Component {
           {
             Conf.CustomFooter !== null ? Conf.CustomFooter : (
               <React.Fragment>
-                Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                Powered by <a target="_blank" href="https://www.ppg.live" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
               </React.Fragment>
             )
           }
