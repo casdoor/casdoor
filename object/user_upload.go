@@ -144,5 +144,6 @@ func UploadUsers(owner string, path string) (bool, error) {
 	if len(newUsers) == 0 {
 		return false, nil
 	}
+
 	return AddUsersInBatch(newUsers)
 }

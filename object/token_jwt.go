@@ -368,6 +368,10 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
+		if cert.Certificate == "" {
+			return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		}
+
 		// RSA certificate
 		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
 		if err != nil {

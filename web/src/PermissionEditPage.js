@@ -444,7 +444,7 @@ class PermissionEditPage extends React.Component {
     );
   }
 
-  submitPermissionEdit(willExist) {
+  submitPermissionEdit(exitAfterSave) {
     if (this.state.permission.users.length === 0 && this.state.permission.roles.length === 0) {
       Setting.showMessage("error", "The users and roles cannot be empty at the same time");
       return;
@@ -475,7 +475,7 @@ class PermissionEditPage extends React.Component {
             permissionName: this.state.permission.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/permissions");
           } else {
             this.props.history.push(`/permissions/${this.state.permission.owner}/${encodeURIComponent(this.state.permission.name)}`);

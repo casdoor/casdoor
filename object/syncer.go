@@ -230,25 +230,32 @@ func (syncer *Syncer) getTable() string {
 	}
 }
 
-func (syncer *Syncer) getKey() string {
-	key := "id"
-	hasKey := false
-	hasId := false
+func (syncer *Syncer) getKeyColumn() *TableColumn {
+	var column *TableColumn
 	for _, tableColumn := range syncer.TableColumns {
 		if tableColumn.IsKey {
-			hasKey = true
-			key = tableColumn.Name
-		}
-		if tableColumn.Name == "id" {
-			hasId = true
+			column = tableColumn
 		}
 	}
 
-	if !hasKey && !hasId {
-		key = syncer.TableColumns[0].Name
+	if column == nil {
+		for _, tableColumn := range syncer.TableColumns {
+			if tableColumn.Name == "id" {
+				column = tableColumn
+			}
+		}
 	}
 
-	return key
+	if column == nil {
+		column = syncer.TableColumns[0]
+	}
+
+	return column
+}
+
+func (syncer *Syncer) getKey() string {
+	column := syncer.getKeyColumn()
+	return util.CamelToSnakeCase(column.CasdoorName)
 }
 
 func RunSyncer(syncer *Syncer) error {

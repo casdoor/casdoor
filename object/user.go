@@ -739,16 +739,15 @@ func AddUsersInBatch(users []*User) (bool, error) {
 	}
 
 	affected := false
-	for i := 0; i < (len(users)-1)/batchSize+1; i++ {
-		start := i * batchSize
-		end := (i + 1) * batchSize
+	for i := 0; i < len(users); i += batchSize {
+		start := i
+		end := i + batchSize
 		if end > len(users) {
 			end = len(users)
 		}
 
 		tmp := users[start:end]
-		// TODO: save to log instead of standard output
-		// fmt.Printf("Add users: [%d - %d].\n", start, end)
+		fmt.Printf("The syncer adds users: [%d - %d]\n", start, end)
 		if ok, err := AddUsers(tmp); err != nil {
 			return false, err
 		} else if ok {

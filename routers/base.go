@@ -16,7 +16,9 @@ package routers
 
 import (
 	"fmt"
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -153,4 +155,40 @@ func parseBearerToken(ctx *context.Context) string {
 	}
 
 	return tokens[1]
+}
+
+func getHostname(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	l, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+
+	res := l.Hostname()
+	return res
+}
+
+func removePort(s string) string {
+	ipStr, _, err := net.SplitHostPort(s)
+	if err != nil {
+		ipStr = s
+	}
+	return ipStr
+}
+
+func isHostIntranet(s string) bool {
+	ipStr, _, err := net.SplitHostPort(s)
+	if err != nil {
+		ipStr = s
+	}
+
+	ip := net.ParseIP(ipStr)
+	if ip == nil {
+		return false
+	}
+
+	return ip.IsPrivate()
 }

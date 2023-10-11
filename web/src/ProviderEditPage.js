@@ -1198,7 +1198,7 @@ class ProviderEditPage extends React.Component {
     );
   }
 
-  submitProviderEdit(willExist) {
+  submitProviderEdit(exitAfterSave) {
     const provider = Setting.deepCopy(this.state.provider);
     ProviderBackend.updateProvider(this.state.owner, this.state.providerName, provider)
       .then((res) => {
@@ -1209,7 +1209,7 @@ class ProviderEditPage extends React.Component {
             providerName: this.state.provider.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/providers");
           } else {
             this.props.history.push(`/providers/${this.state.provider.owner}/${this.state.provider.name}`);

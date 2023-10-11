@@ -272,7 +272,7 @@ class AdapterEditPage extends React.Component {
     );
   }
 
-  submitAdapterEdit(willExist) {
+  submitAdapterEdit(exitAfterSave) {
     const adapter = Setting.deepCopy(this.state.adapter);
     AdapterBackend.updateAdapter(this.state.organizationName, this.state.adapterName, adapter)
       .then((res) => {
@@ -282,7 +282,7 @@ class AdapterEditPage extends React.Component {
             adapterName: this.state.adapter.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             this.props.history.push("/adapters");
           } else {
             this.props.history.push(`/adapters/${this.state.organizationName}/${this.state.adapter.name}`);

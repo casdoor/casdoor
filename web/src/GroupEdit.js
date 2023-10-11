@@ -191,7 +191,7 @@ class GroupEditPage extends React.Component {
     );
   }
 
-  submitGroupEdit(willExist) {
+  submitGroupEdit(exitAfterSave) {
     const group = Setting.deepCopy(this.state.group);
     group["isTopGroup"] = this.state.organizations.some((organization) => organization.name === group.parentId);
 
@@ -203,7 +203,7 @@ class GroupEditPage extends React.Component {
             groupName: this.state.group.name,
           });
 
-          if (willExist) {
+          if (exitAfterSave) {
             const groupTreeUrl = sessionStorage.getItem("groupTreeUrl");
             if (groupTreeUrl !== null) {
               sessionStorage.removeItem("groupTreeUrl");
