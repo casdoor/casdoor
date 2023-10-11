@@ -1,8 +1,8 @@
-import {UserOutlined} from "@ant-design/icons";
+import {MailOutlined} from "@ant-design/icons";
 import {Button, Form, Input} from "antd";
 import i18next from "i18next";
 import React, {useEffect} from "react";
-import {CountryCodeSelect} from "../../common/select/CountryCodeSelect";
+import PhoneInput from "antd-phone-input";
 import {SendCodeInput} from "../../common/SendCodeInput";
 import * as Setting from "../../Setting";
 import {EmailMfaType, SmsMfaType} from "../MfaSetupPage";
@@ -62,36 +62,29 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
             i18next.t("mfa:Please bind your phone first, the system automatically uses the phone for multi-factor authentication")}
           </p>
           <Input.Group compact style={{width: "300Px", marginBottom: "30px"}}>
-            {isEmail() ? null :
-              <Form.Item
-                name="countryCode"
-                noStyle
-                rules={[
-                  {
-                    required: false,
-                    message: i18next.t("signup:Please select your country code!"),
-                  },
-                ]}
-              >
-                <CountryCodeSelect
-                  initValue={mfaProps.countryCode}
-                  style={{width: "30%"}}
-                  countryCodes={application.organizationObj.countryCodes}
-                />
-              </Form.Item>
-            }
-            <Form.Item
-              name="dest"
+            {isEmail() ? <Form.Item
               noStyle
+              name="dest"
               rules={[{required: true, message: i18next.t("login:Please input your Email or Phone!")}]}
             >
               <Input
-                style={{width: isEmail() ? "100% " : "70%"}}
+                style={{width: "100%"}}
+                prefix={<><MailOutlined />&nbsp;&nbsp;</>}
+                placeholder={i18next.t("general:Email")}
                 onChange={(e) => {setDest(e.target.value);}}
-                prefix={<UserOutlined />}
-                placeholder={isEmail() ? i18next.t("general:Email") : i18next.t("general:Phone")}
               />
-            </Form.Item>
+            </Form.Item> : <Form.Item
+              noStyle
+              initialValue={mfaProps.countryCode + dest}
+            >
+              <PhoneInput
+                onChange={({isoCode, areaCode, phoneNumber}) => {
+                  form.setFieldValue("countryCode", isoCode.toUpperCase());
+                  setDest([areaCode, phoneNumber].filter(Boolean).join(""));
+                }}
+                placeholder={i18next.t("general:Phone")}
+              />
+            </Form.Item>}
           </Input.Group>
         </React.Fragment>
         )
