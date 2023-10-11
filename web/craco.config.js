@@ -35,6 +35,10 @@ module.exports = {
         target: "http://localhost:8000",
         changeOrigin: true,
       },
+      "/scim": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      }
     },
   },
   plugins: [

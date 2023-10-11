@@ -277,4 +277,6 @@ func initAPI() {
 	beego.Router("/cas/:organization/:application/p3/serviceValidate", &controllers.RootController{}, "GET:CasP3ServiceValidate")
 	beego.Router("/cas/:organization/:application/p3/proxyValidate", &controllers.RootController{}, "GET:CasP3ProxyValidate")
 	beego.Router("/cas/:organization/:application/samlValidate", &controllers.RootController{}, "POST:SamlValidate")
+
+	beego.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 }
