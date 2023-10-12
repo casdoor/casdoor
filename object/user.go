@@ -372,12 +372,48 @@ func GetUserByEmail(owner string, email string) (*User, error) {
 	}
 }
 
+func GetUserByEmailOnly(email string) (*User, error) {
+	if email == "" {
+		return nil, nil
+	}
+
+	user := User{Email: email}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByPhone(owner string, phone string) (*User, error) {
 	if owner == "" || phone == "" {
 		return nil, nil
 	}
 
 	user := User{Owner: owner, Phone: phone}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetUserByPhoneOnly(phone string) (*User, error) {
+	if phone == "" {
+		return nil, nil
+	}
+
+	user := User{Phone: phone}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
