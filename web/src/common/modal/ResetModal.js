@@ -97,7 +97,7 @@ export const ResetModal = (props) => {
                 placeholder={placeholder}
                 country={countryCode.toLowerCase()}
                 addonBefore={i18next.t("user:New phone")}
-                onChange={({countryCode, areaCode, phoneNumber}) => setDest([countryCode, areaCode, phoneNumber].filter(Boolean).join(''))}
+                onChange={({countryCode, areaCode, phoneNumber}) => setDest([countryCode, areaCode, phoneNumber].filter(Boolean).join(""))}
               />
             )}
           </Row>

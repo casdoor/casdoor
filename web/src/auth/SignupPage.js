@@ -398,7 +398,7 @@ class SignupPage extends React.Component {
                 }
                 this.setState({validPhone: false});
                 return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-              }
+              },
             }}
           >
             <PhoneInput
