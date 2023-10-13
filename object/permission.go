@@ -424,10 +424,10 @@ func (p *Permission) GetId() string {
 }
 
 func (p *Permission) isUserHit(name string) bool {
-	targetOrg, _ := util.GetOwnerAndNameFromId(name)
+	targetOrg, targetName := util.GetOwnerAndNameFromId(name)
 	for _, user := range p.Users {
 		userOrg, userName := util.GetOwnerAndNameFromId(user)
-		if userOrg == targetOrg && userName == "*" {
+		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
 			return true
 		}
 	}
@@ -436,7 +436,7 @@ func (p *Permission) isUserHit(name string) bool {
 
 func (p *Permission) isResourceHit(name string) bool {
 	for _, resource := range p.Resources {
-		if name == resource {
+		if resource == "*" || resource == name {
 			return true
 		}
 	}
