@@ -154,14 +154,17 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		model, err := GetModel(util.GetId(owner, permission.Model))
 		if err != nil {
 			return false, err
+		} else if model == nil {
+			return false, fmt.Errorf("the model: %s for permission: %s is not found", permission.Model, permission.GetId())
 		}
+
 		modelCfg, err := getModelCfg(model)
 		if err != nil {
 			return false, err
 		}
 
 		if len(strings.Split(modelCfg["p"], ",")) != 3 {
-			return false, fmt.Errorf("the model: %s for permission: %s is not valid, application type resources need 3 size [policy_defination] model", permission.Model, permission.GetId())
+			return false, fmt.Errorf("the model: %s for permission: %s is not valid, Casbin model's [policy_defination] section should have 3 elements", permission.Model, permission.GetId())
 		}
 	}
 
