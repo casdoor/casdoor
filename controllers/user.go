@@ -160,35 +160,47 @@ func (c *ApiController) GetUser() {
 		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
 	}
 
-	if owner == "" {
-		owner = util.GetOwnerFromId(id)
-	}
+	var user *object.User
 
-	organization, err := object.GetOrganization(util.GetId("admin", owner))
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
+	if id == "" && owner == "" {
+		switch {
+		case email != "":
+			user, err = object.GetUserByEmailOnly(email)
+		case phone != "":
+			user, err = object.GetUserByPhoneOnly(phone)
+		case userId != "":
+			user, err = object.GetUserByUserIdOnly(userId)
+		}
+	} else {
+		if owner == "" {
+			owner = util.GetOwnerFromId(id)
+		}
 
-	if !organization.IsProfilePublic {
-		requestUserId := c.GetSessionUsername()
-		hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
-		if !hasPermission {
+		organization, err := object.GetOrganization(util.GetId("admin", owner))
+		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-	}
 
-	var user *object.User
-	switch {
-	case email != "":
-		user, err = object.GetUserByEmail(owner, email)
-	case phone != "":
-		user, err = object.GetUserByPhone(owner, phone)
-	case userId != "":
-		user = userFromUserId
-	default:
-		user, err = object.GetUser(id)
+		if !organization.IsProfilePublic {
+			requestUserId := c.GetSessionUsername()
+			hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
+			if !hasPermission {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
+		switch {
+		case email != "":
+			user, err = object.GetUserByEmail(owner, email)
+		case phone != "":
+			user, err = object.GetUserByPhone(owner, phone)
+		case userId != "":
+			user = userFromUserId
+		default:
+			user, err = object.GetUser(id)
+		}
 	}
 
 	if err != nil {

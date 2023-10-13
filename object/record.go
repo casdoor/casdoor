@@ -93,12 +93,8 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	return affected
 }
 
-func SendWebhooks(record *casvisorsdk.Record) error {
-	webhooks, err := getWebhooksByOrganization(record.Organization)
-	if err != nil {
-		return err
-	}
-
+func getFilteredWebhooks(webhooks []*Webhook, action string) []*Webhook {
+	res := []*Webhook{}
 	for _, webhook := range webhooks {
 		if !webhook.IsEnabled {
 			continue
@@ -106,28 +102,56 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 
 		matched := false
 		for _, event := range webhook.Events {
-			if record.Action == event {
+			if action == event {
 				matched = true
 				break
 			}
 		}
 
 		if matched {
-			var user *User
-			if webhook.IsUserExtended {
-				user, err = getUser(record.Organization, record.User)
-				user, err = GetMaskedUser(user, false, err)
-				if err != nil {
-					return err
-				}
+			res = append(res, webhook)
+		}
+	}
+	return res
+}
+
+func SendWebhooks(record *casvisorsdk.Record) error {
+	webhooks, err := getWebhooksByOrganization(record.Organization)
+	if err != nil {
+		return err
+	}
+
+	errs := []error{}
+	webhooks = getFilteredWebhooks(webhooks, record.Action)
+	for _, webhook := range webhooks {
+		var user *User
+		if webhook.IsUserExtended {
+			user, err = getUser(record.Organization, record.User)
+			if err != nil {
+				errs = append(errs, err)
+				continue
 			}
 
-			err = sendWebhook(webhook, record, user)
+			user, err = GetMaskedUser(user, false, err)
 			if err != nil {
-				return err
+				errs = append(errs, err)
+				continue
 			}
+		}
+
+		err = sendWebhook(webhook, record, user)
+		if err != nil {
+			errs = append(errs, err)
+			continue
 		}
 	}
 
+	if len(errs) > 0 {
+		errStrings := []string{}
+		for _, err := range errs {
+			errStrings = append(errStrings, err.Error())
+		}
+		return fmt.Errorf(strings.Join(errStrings, " | "))
+	}
 	return nil
 }

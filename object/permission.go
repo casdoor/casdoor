@@ -151,17 +151,20 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if permission.ResourceType == "Application" {
-		model, err := GetModel(util.GetId(owner, permission.Model))
+		model, err := GetModelEx(util.GetId(owner, permission.Model))
 		if err != nil {
 			return false, err
+		} else if model == nil {
+			return false, fmt.Errorf("the model: %s for permission: %s is not found", permission.Model, permission.GetId())
 		}
+
 		modelCfg, err := getModelCfg(model)
 		if err != nil {
 			return false, err
 		}
 
 		if len(strings.Split(modelCfg["p"], ",")) != 3 {
-			return false, fmt.Errorf("the model: %s for permission: %s is not valid, application type resources need 3 size [policy_defination] model", permission.Model, permission.GetId())
+			return false, fmt.Errorf("the model: %s for permission: %s is not valid, Casbin model's [policy_defination] section should have 3 elements", permission.Model, permission.GetId())
 		}
 	}
 
@@ -421,10 +424,10 @@ func (p *Permission) GetId() string {
 }
 
 func (p *Permission) isUserHit(name string) bool {
-	targetOrg, _ := util.GetOwnerAndNameFromId(name)
+	targetOrg, targetName := util.GetOwnerAndNameFromId(name)
 	for _, user := range p.Users {
 		userOrg, userName := util.GetOwnerAndNameFromId(user)
-		if userOrg == targetOrg && userName == "*" {
+		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
 			return true
 		}
 	}
@@ -433,7 +436,7 @@ func (p *Permission) isUserHit(name string) bool {
 
 func (p *Permission) isResourceHit(name string) bool {
 	for _, resource := range p.Resources {
-		if name == resource {
+		if resource == "*" || resource == name {
 			return true
 		}
 	}

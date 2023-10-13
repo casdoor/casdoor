@@ -84,6 +84,19 @@ func GetModel(id string) (*Model, error) {
 	return getModel(owner, name)
 }
 
+func GetModelEx(id string) (*Model, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	model, err := getModel(owner, name)
+	if err != nil {
+		return nil, err
+	}
+	if model != nil {
+		return model, nil
+	}
+
+	return getModel("built-in", name)
+}
+
 func UpdateModelWithCheck(id string, modelObj *Model) error {
 	// check model grammar
 	_, err := model.NewModelFromString(modelObj.ModelText)
