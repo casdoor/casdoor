@@ -151,7 +151,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if permission.ResourceType == "Application" {
-		model, err := GetModel(util.GetId(owner, permission.Model))
+		model, err := GetModelEx(util.GetId(owner, permission.Model))
 		if err != nil {
 			return false, err
 		} else if model == nil {

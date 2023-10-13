@@ -246,7 +246,7 @@ func (enforcer *Enforcer) LoadModelCfg() error {
 		return nil
 	}
 
-	model, err := GetModel(enforcer.Model)
+	model, err := GetModelEx(enforcer.Model)
 	if err != nil {
 		return err
 	} else if model == nil {
