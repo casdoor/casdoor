@@ -1,4 +1,5 @@
 const CracoLessPlugin = require("craco-less");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
   devServer: {
@@ -38,7 +39,7 @@ module.exports = {
       "/scim": {
         target: "http://localhost:8000",
         changeOrigin: true,
-      }
+      },
     },
   },
   plugins: [
@@ -62,10 +63,10 @@ module.exports = {
         function ignoreSourcemapsloaderWarnings(warning) {
           return (
             warning.module &&
-            warning.module.resource.includes('node_modules') &&
+            warning.module.resource.includes("node_modules") &&
             warning.details &&
-            warning.details.includes('source-map-loader')
-          )
+            warning.details.includes("source-map-loader")
+          );
         },
       ],
       // use polyfill Buffer with Webpack 5
@@ -81,7 +82,7 @@ module.exports = {
           // "http": require.resolve("stream-http"),
           // "https": require.resolve("https-browserify"),
           // "assert": require.resolve("assert/"),
-          "buffer": require.resolve('buffer/'),    
+          "buffer": require.resolve("buffer/"),
           "process": false,
           "util": false,
           "url": false,
@@ -90,11 +91,24 @@ module.exports = {
           "http": false,
           "https": false,
           "assert": false,
-          "buffer": false,
           "crypto": false,
           "os": false,
         },
-      }
+      },
+      optimization: {
+        splitChunks: {
+          chunks: "all",
+        },
+      },
     },
-  }
+    plugins: [
+      new BundleAnalyzerPlugin(
+        {
+          analyzerMode: "static",
+          reportFilename: "../report.html",
+          openAnalyzer: false,
+        }
+      ),
+    ],
+  },
 };

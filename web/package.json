@@ -53,7 +53,7 @@
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
-    "build": "craco build",
+    "build": "craco --max_old_space_size=4096 build",
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
@@ -95,7 +95,8 @@
     "lint-staged": "^13.0.3",
     "stylelint": "^14.11.0",
     "stylelint-config-recommended-less": "^1.0.4",
-    "stylelint-config-standard": "^28.0.0"
+    "stylelint-config-standard": "^28.0.0",
+    "webpack-bundle-analyzer": "^4.9.1"
   },
   "lint-staged": {
     "src/**/*.{css,less}": [
