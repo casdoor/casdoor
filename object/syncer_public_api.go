@@ -30,6 +30,20 @@ func getDbSyncerForUser(user *User) (*Syncer, error) {
 	return nil, nil
 }
 
+func getSyncerForGroup(group *Group) (*Syncer, error) {
+	syncers, err := GetSyncers("admin")
+	if err != nil {
+		return nil, err
+	}
+
+	for _, syncer := range syncers {
+		if syncer.Organization == group.Owner && syncer.IsEnabled && syncer.Type == "WeCom" {
+			return syncer, nil
+		}
+	}
+	return nil, nil
+}
+
 func getEnabledSyncerForOrganization(organization string) (*Syncer, error) {
 	syncers, err := GetSyncers("admin")
 	if err != nil {

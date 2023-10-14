@@ -59,6 +59,10 @@ func addSyncerJob(syncer *Syncer) error {
 	if err != nil {
 		return err
 	}
+	err = syncer.syncGroups()
+	if err != nil {
+		return err
+	}
 
 	schedule := fmt.Sprintf("@every %ds", syncer.SyncInterval)
 	cron := getCronMap(syncer.Name)

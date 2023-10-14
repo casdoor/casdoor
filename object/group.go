@@ -17,7 +17,9 @@ package object
 import (
 	"errors"
 	"fmt"
+	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
@@ -42,6 +44,10 @@ type Group struct {
 	Children []*Group `json:"children,omitempty"`
 
 	IsEnabled bool `json:"isEnabled"`
+
+	Hash      string `xorm:"varchar(100)" json:"hash"`
+	PreHash   string `xorm:"varchar(100)" json:"preHash"`
+	ParentKey string `xorm:"varchar(100)" json:"parentKey"`
 }
 
 type GroupNode struct{}
@@ -119,6 +125,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 		}
 	}
 
+	err = group.UpdateGroupHash()
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(group)
 	if err != nil {
 		return false, err
@@ -129,6 +140,11 @@ func UpdateGroup(id string, group *Group) (bool, error) {
 
 func AddGroup(group *Group) (bool, error) {
 	err := checkGroupName(group.Name)
+	if err != nil {
+		return false, err
+	}
+
+	err = group.UpdateGroupHash()
 	if err != nil {
 		return false, err
 	}
@@ -145,6 +161,16 @@ func AddGroups(groups []*Group) (bool, error) {
 	if len(groups) == 0 {
 		return false, nil
 	}
+
+	for _, group := range groups {
+		err := group.UpdateGroupHash()
+		if err != nil {
+			return false, err
+		}
+
+		group.PreHash = group.Hash
+	}
+
 	affected, err := ormer.Engine.Insert(groups)
 	if err != nil {
 		return false, err
@@ -316,4 +342,82 @@ func GroupChangeTrigger(oldName, newName string) error {
 		return err
 	}
 	return nil
+}
+
+func calculateGroupHash(group *Group) (string, error) {
+	syncer, err := getSyncerForGroup(group)
+	if err != nil {
+		return "", err
+	}
+
+	if syncer == nil {
+		return "", nil
+	}
+
+	return syncer.calculateGroupHash(group), nil
+}
+
+func (group *Group) UpdateGroupHash() error {
+	hash, err := calculateGroupHash(group)
+	if err != nil {
+		return err
+	}
+
+	group.Hash = hash
+	return nil
+}
+
+func AddGroupsInBatch(groups []*Group) (bool, error) {
+	batchSize := conf.GetConfigBatchSize()
+
+	if len(groups) == 0 {
+		return false, nil
+	}
+
+	affected := false
+	for i := 0; i < (len(groups)-1)/batchSize+1; i++ {
+		start := i * batchSize
+		end := (i + 1) * batchSize
+		if end > len(groups) {
+			end = len(groups)
+		}
+
+		tmp := groups[start:end]
+		// TODO: save to log instead of standard output
+		if ok, err := AddGroups(tmp); err != nil {
+			return false, err
+		} else if ok {
+			affected = true
+		}
+	}
+
+	return affected, nil
+}
+
+func SetGroupField(group *Group, field string, value string) (bool, error) {
+	bean := make(map[string]interface{})
+
+	bean[strings.ToLower(field)] = value
+
+	affected, err := ormer.Engine.Table(group).ID(core.PK{group.Owner, group.Name}).Update(bean)
+	if err != nil {
+		return false, err
+	}
+
+	group, err = getGroup(group.Owner, group.Name)
+	if err != nil {
+		return false, err
+	}
+
+	err = group.UpdateGroupHash()
+	if err != nil {
+		return false, err
+	}
+
+	_, err = ormer.Engine.ID(core.PK{group.Owner, group.Name}).Cols("hash").Update(group)
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
 }

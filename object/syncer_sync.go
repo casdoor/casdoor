@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -161,4 +160,137 @@ func (syncer *Syncer) syncUsersNoError() {
 	if err != nil {
 		fmt.Printf("syncUsersNoError() error: %s\n", err.Error())
 	}
+}
+
+func (syncer *Syncer) syncGroups() error {
+	if syncer.Type != "WeCom" {
+		return nil
+	}
+
+	fmt.Printf("Running syncUsers()..\n")
+
+	groups, err := GetGroups(syncer.Owner)
+	if err != nil {
+		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
+		_, err2 := updateSyncerErrorText(syncer, line)
+		if err2 != nil {
+			panic(err2)
+		}
+
+		return err
+	}
+	oGroups, _, err := syncer.getOriginalGroupMap()
+	if err != nil {
+		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
+		_, err2 := updateSyncerErrorText(syncer, line)
+		if err2 != nil {
+			panic(err2)
+		}
+
+		return err
+	}
+
+	fmt.Printf("Groups: %d, oGroups: %d\n", len(groups), len(oGroups))
+
+	var affiliationMap map[int]string
+	if syncer.AffiliationTable != "" {
+		_, affiliationMap, err = syncer.getAffiliationMap()
+	}
+
+	key := "name"
+
+	myGroups := map[string]*Group{}
+	for _, m := range groups {
+		myGroups[syncer.getGroupValue(m, key)] = m
+	}
+
+	myOGroups := map[string]*Group{}
+	for _, m := range oGroups {
+		myOGroups[syncer.getGroupValue(m, key)] = m
+	}
+
+	newGroups := []*Group{}
+	for _, oGroup := range oGroups {
+		primary := syncer.getGroupValue(oGroup, key)
+
+		if _, ok := myGroups[primary]; !ok {
+			fmt.Printf("New user: %v\n", oGroup)
+			newGroups = append(newGroups, oGroup)
+		} else {
+			group := myGroups[primary]
+			oHash := syncer.calculateGroupHash(oGroup)
+			if group.Hash == group.PreHash {
+				if group.Hash != oHash {
+					updatedGroup := syncer.createGroupFromOriginalGroup(oGroup, affiliationMap)
+					updatedGroup.Hash = oHash
+					updatedGroup.PreHash = oHash
+
+					fmt.Printf("Update from oGroup to group: %v\n", updatedGroup)
+					_, err = syncer.updateGroupForOriginalByFields(updatedGroup, key)
+					if err != nil {
+						return err
+					}
+				}
+			} else {
+				if group.PreHash == oHash {
+					if !syncer.IsReadOnly {
+						updatedOGroup := group
+
+						fmt.Printf("Update from group to oGroup: %v\n", updatedOGroup)
+						_, err = syncer.updateGroup(updatedOGroup)
+						if err != nil {
+							return err
+						}
+					}
+
+					// update preHash
+					group.PreHash = group.Hash
+					_, err = SetGroupField(group, "pre_hash", group.PreHash)
+					if err != nil {
+						return err
+					}
+				} else {
+					if group.Hash == oHash {
+						// update preHash
+						group.PreHash = group.Hash
+						_, err = SetGroupField(group, "pre_hash", group.PreHash)
+						if err != nil {
+							return err
+						}
+					} else {
+						updatedGroup := syncer.createGroupFromOriginalGroup(oGroup, affiliationMap)
+						updatedGroup.Hash = oHash
+						updatedGroup.PreHash = oHash
+
+						fmt.Printf("Update from oGroup to group (2nd condition): %v\n", updatedGroup)
+						_, err = syncer.updateGroupForOriginalByFields(updatedGroup, key)
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+	}
+	_, err = AddGroupsInBatch(newGroups)
+	if err != nil {
+		return err
+	}
+
+	if !syncer.IsReadOnly {
+		for _, group := range groups {
+			primary := syncer.getGroupValue(group, key)
+			if _, ok := myOGroups[primary]; !ok {
+				newOGroup := group
+
+				fmt.Printf("New oGroup: %v\n", newOGroup)
+				_, err = syncer.addGroup(newOGroup)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }

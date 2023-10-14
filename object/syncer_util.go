@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
+	wework "github.com/go-laoji/wecom-go-sdk/v2"
 )
 
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
@@ -195,6 +196,40 @@ func (syncer *Syncer) getUserValue(user *User, key string) string {
 		}
 		return user.Id
 	}
+}
+
+func (syncer *Syncer) getUserGroups(groupIdList []int32, m map[string]*OriginalGroup) []string {
+	groupNameList := make([]string, 0)
+	for _, groupId := range groupIdList {
+		groupName := syncer.Organization + "/" + m[string(groupId)].Name
+		groupNameList = append(groupNameList, groupName)
+	}
+
+	return groupNameList
+}
+
+func (syncer *Syncer) getOriginalUsersFromWeCom(weComUserList []wework.User) ([]*OriginalUser, error) {
+	_, m, err := syncer.getOriginalGroupMap()
+	if err != nil {
+		return nil, err
+	}
+
+	users := make([]*OriginalUser, 0)
+	for _, wecomUser := range weComUserList {
+		oUser := &OriginalUser{
+			Id:          wecomUser.Userid,
+			Name:        wecomUser.Name,
+			DisplayName: wecomUser.Alias,
+			Avatar:      wecomUser.Avatar,
+			Email:       wecomUser.BizEmail,
+			Phone:       wecomUser.Mobile,
+			Location:    wecomUser.Address,
+			Gender:      wecomUser.Gender,
+			Groups:      syncer.getUserGroups(wecomUser.Department, m),
+		}
+		users = append(users, oUser)
+	}
+	return users, nil
 }
 
 func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullString) []*OriginalUser {

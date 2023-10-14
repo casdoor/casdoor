@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
+	wework "github.com/go-laoji/wecom-go-sdk/v2"
 )
 
 type OriginalUser = User
@@ -31,6 +32,39 @@ type Credential struct {
 }
 
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
+	if syncer.Type == "WeCom" {
+		syncer.WeComClient.SetAppSecretFunc(func(id uint) (string, string, bool) {
+			if id == 0 {
+				return syncer.User, syncer.Password, true
+			} else {
+				return syncer.User, syncer.Secret, true
+			}
+		})
+
+		userList := make([]wework.User, 0)
+		var nextCursor string
+		for {
+			listRsp := syncer.WeComClient.UserListId(1, nextCursor, 10000)
+			if listRsp.ErrCode != 0 {
+				return nil, fmt.Errorf(listRsp.ErrorMsg)
+			}
+			nextCursor = listRsp.NextCursor
+			wecomUsers := listRsp.DeptUser
+
+			for i := 0; i < len(wecomUsers); i++ {
+				userRsp := syncer.WeComClient.UserGet(0, wecomUsers[i].UserId)
+				if userRsp.ErrCode != 0 {
+					return nil, fmt.Errorf(userRsp.ErrorMsg)
+				}
+				userList = append(userList, userRsp.User)
+			}
+			if nextCursor == "" {
+				break
+			}
+		}
+		return syncer.getOriginalUsersFromWeCom(userList)
+	}
+
 	var results []map[string]sql.NullString
 	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
 	if err != nil {
@@ -50,6 +84,17 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 }
 
 func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
+	if syncer.Type == "WeCom" {
+		wecomUser := syncer.getWeComUserFromOriginalUser(user)
+
+		createRsp := syncer.WeComClient.UserCreate(0, wecomUser)
+		if createRsp.ErrCode != 0 {
+			return false, fmt.Errorf(createRsp.ErrorMsg)
+		}
+
+		return true, nil
+	}
+
 	m := syncer.getMapFromOriginalUser(user)
 	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).Insert(m)
 	if err != nil {
@@ -69,7 +114,31 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 	return res
 }
 
+func (syncer *Syncer) getWeComUserFromOriginalUser(oUsher *OriginalUser) wework.User {
+	return wework.User{
+		Userid:   oUsher.Id,
+		Name:     oUsher.Name,
+		Alias:    oUsher.DisplayName,
+		Avatar:   oUsher.Avatar,
+		BizEmail: oUsher.Email,
+		Mobile:   oUsher.Phone,
+		Address:  oUsher.Location,
+		Gender:   oUsher.Gender,
+	}
+}
+
 func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
+	if syncer.Type == "WeCom" {
+		wecomUser := syncer.getWeComUserFromOriginalUser(user)
+
+		updateRsp := syncer.WeComClient.UserUpdate(0, wecomUser)
+		if updateRsp.ErrCode != 0 {
+			return false, fmt.Errorf(updateRsp.ErrorMsg)
+		}
+
+		return true, nil
+	}
+
 	key := syncer.getKey()
 	m := syncer.getMapFromOriginalUser(user)
 	pkValue := m[key]
@@ -125,7 +194,22 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 }
 
 func (syncer *Syncer) initAdapter() error {
-	if syncer.Ormer != nil {
+	if syncer.Ormer != nil || syncer.WeComClient != nil {
+		return nil
+	}
+
+	if syncer.Type == "WeCom" {
+		syncer.WeComClient = wework.NewWeWork(wework.WeWorkConfig{
+			CorpId: syncer.User,
+		})
+		syncer.WeComClient.SetAppSecretFunc(func(id uint) (string, string, bool) {
+			if id == 0 {
+				return syncer.User, syncer.Password, true
+			} else {
+				return syncer.User, syncer.Secret, true
+			}
+		})
+
 		return nil
 	}
 

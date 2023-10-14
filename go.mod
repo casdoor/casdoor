@@ -24,10 +24,11 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-git/go-git/v5 v5.6.0
+	github.com/go-laoji/wecom-go-sdk/v2 v2.0.2
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-mysql-org/go-mysql v1.7.0
 	github.com/go-pay/gopay v1.5.72
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-webauthn/webauthn v0.6.0
 	github.com/golang-jwt/jwt/v4 v4.5.0

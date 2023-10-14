@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
+	wework "github.com/go-laoji/wecom-go-sdk/v2"
 	"github.com/xorm-io/core"
 )
 
@@ -44,6 +45,7 @@ type Syncer struct {
 	Port             int            `json:"port"`
 	User             string         `xorm:"varchar(100)" json:"user"`
 	Password         string         `xorm:"varchar(100)" json:"password"`
+	Secret           string         `xorm:"varchar(100)" json:"secret"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
@@ -54,7 +56,8 @@ type Syncer struct {
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
-	Ormer *Ormer `xorm:"-" json:"-"`
+	Ormer       *Ormer         `xorm:"-" json:"-"`
+	WeComClient wework.IWeWork `xorm:"-" json:"-"`
 }
 
 func GetSyncerCount(owner, organization, field, value string) (int64, error) {
@@ -264,5 +267,14 @@ func RunSyncer(syncer *Syncer) error {
 		return err
 	}
 
-	return syncer.syncUsers()
+	err = syncer.syncUsers()
+	if err != nil {
+		return err
+	}
+	err = syncer.syncGroups()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
