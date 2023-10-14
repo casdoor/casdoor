@@ -190,5 +190,5 @@ func isHostIntranet(s string) bool {
 		return false
 	}
 
-	return ip.IsPrivate()
+	return ip.IsPrivate() || ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast()
 }

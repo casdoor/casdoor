@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casbin/casbin/v2/config"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -81,6 +82,19 @@ func getModel(owner string, name string) (*Model, error) {
 func GetModel(id string) (*Model, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getModel(owner, name)
+}
+
+func GetModelEx(id string) (*Model, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	model, err := getModel(owner, name)
+	if err != nil {
+		return nil, err
+	}
+	if model != nil {
+		return model, nil
+	}
+
+	return getModel("built-in", name)
 }
 
 func UpdateModelWithCheck(id string, modelObj *Model) error {
@@ -187,4 +201,18 @@ func (m *Model) initModel() error {
 	}
 
 	return nil
+}
+
+func getModelCfg(m *Model) (map[string]string, error) {
+	cfg, err := config.NewConfigFromText(m.ModelText)
+	if err != nil {
+		return nil, err
+	}
+
+	modelCfg := make(map[string]string)
+	modelCfg["p"] = cfg.String("policy_definition::p")
+	if cfg.String("role_definition::g") != "" {
+		modelCfg["g"] = cfg.String("role_definition::g")
+	}
+	return modelCfg, nil
 }

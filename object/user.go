@@ -50,6 +50,7 @@ type User struct {
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
+	ExternalId        string   `xorm:"varchar(100) index" json:"externalId"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
 	Password          string   `xorm:"varchar(100)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
@@ -371,6 +372,24 @@ func GetUserByEmail(owner string, email string) (*User, error) {
 	}
 }
 
+func GetUserByEmailOnly(email string) (*User, error) {
+	if email == "" {
+		return nil, nil
+	}
+
+	user := User{Email: email}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByPhone(owner string, phone string) (*User, error) {
 	if owner == "" || phone == "" {
 		return nil, nil
@@ -389,12 +408,48 @@ func GetUserByPhone(owner string, phone string) (*User, error) {
 	}
 }
 
+func GetUserByPhoneOnly(phone string) (*User, error) {
+	if phone == "" {
+		return nil, nil
+	}
+
+	user := User{Phone: phone}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByUserId(owner string, userId string) (*User, error) {
 	if owner == "" || userId == "" {
 		return nil, nil
 	}
 
 	user := User{Owner: owner, Id: userId}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetUserByUserIdOnly(userId string) (*User, error) {
+	if userId == "" {
+		return nil, nil
+	}
+
+	user := User{Id: userId}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
@@ -529,7 +584,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if len(columns) == 0 {
 		columns = []string{
-			"owner", "display_name", "avatar",
+			"owner", "display_name", "avatar", "first_name", "last_name",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
@@ -545,6 +600,9 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if isAdmin {
 		columns = append(columns, "name", "email", "phone", "country_code", "type")
 	}
+
+	columns = append(columns, "updated_time")
+	user.UpdatedTime = util.GetCurrentTime()
 
 	if util.ContainsString(columns, "groups") {
 		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)

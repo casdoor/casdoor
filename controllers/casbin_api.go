@@ -37,6 +37,11 @@ func (c *ApiController) Enforce() {
 	resourceId := c.Input().Get("resourceId")
 	enforcerId := c.Input().Get("enforcerId")
 
+	if len(c.Ctx.Input.RequestBody) == 0 {
+		c.ResponseError("The request body should not be empty")
+		return
+	}
+
 	var request object.CasbinRequest
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
