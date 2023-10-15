@@ -38,7 +38,7 @@ import (
 
 // NewSamlResponse
 // returns a saml2 response
-func NewSamlResponse(user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
+func NewSamlResponse(application *Application, user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
 		Space: "samlp",
 		Tag:   "Response",
@@ -104,25 +104,17 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
-	roles := attributes.CreateElement("saml:Attribute")
-	if strings.Contains(destination, "tencent") {
-		roles.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/Role")
-		roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
-		roles.CreateAttr("FriendlyName", "tencent cloud")
-		for _, value := range []string{
-			"qcs::cam::uin/{AccountID}:roleName/{RoleName1},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName1}",
-			"qcs::cam::uin/{AccountID}:roleName/{RoleName2},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName2}",
-		} {
-			roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(value)
+	var roles *etree.Element
+	if strings.Contains(destination, "tencent") && application.SamlAttribute != nil {
+		for _, item := range application.SamlAttribute {
+			roles = attributes.CreateElement("saml:Attribute")
+			roles.CreateAttr("Name", item.AttributeName)
+			roles.CreateAttr("NameFormat", item.Nameformat)
+			roles.CreateAttr("FriendlyName", "tencent cloud")
+			roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
 		}
-	
-		// add tencent role session
-		roleSessionName := attributes.CreateElement("saml:Attribute")
-		roleSessionName.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/RoleSessionName")
-		roleSessionName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
-		roleSessionName.CreateAttr("FriendlyName", "tencent cloud")
-		roleSessionName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText("casdoor")
 	} else {
+		roles = attributes.CreateElement("saml:Attribute")
 		roles.CreateAttr("Name", "Roles")
 		roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	}
@@ -330,7 +322,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	_, originBackend := getOriginFromHost(host)
 	// build signedResponse
-	samlResponse, _ := NewSamlResponse(user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
+	samlResponse, _ := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
 		X509Certificate: certificate,
