@@ -96,6 +96,13 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 		return nil, false
 	}
 
+	if strings.HasPrefix(userId, "app/") {
+		tmpUserId := c.Input().Get("userId")
+		if tmpUserId != "" {
+			userId = tmpUserId
+		}
+	}
+
 	user, err := object.GetUser(userId)
 	if err != nil {
 		c.ResponseError(err.Error())
