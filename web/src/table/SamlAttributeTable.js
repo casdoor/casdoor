@@ -53,7 +53,8 @@ class SamlAttributeTable extends React.Component {
     const columns = [
       {
         title: i18next.t("user:Name"),
-        dataIndex: "AttributeName",
+        dataIndex: "attributename",
+        key: "attributename",
         width: "200px",
         render: (text, record, index) => {
           return (
@@ -66,6 +67,7 @@ class SamlAttributeTable extends React.Component {
       {
         title: i18next.t("user:Name format"),
         dataIndex: "nameformat",
+        key: "nameformat",
         width: "200px",
         render: (text, record, index) => {
           return (
@@ -78,6 +80,7 @@ class SamlAttributeTable extends React.Component {
       {
         title: i18next.t("user:Value"),
         dataIndex: "value",
+        key: "value",
         width: "200px",
         render: (text, record, index) => {
           return (
@@ -90,6 +93,7 @@ class SamlAttributeTable extends React.Component {
       {
         title: i18next.t("general:Action"),
         dataIndex: "operation",
+        key: "opertion",
         width: "20px",
         render: (text, record, index) => {
           return (
