@@ -30,10 +30,10 @@ import ProviderTable from "./table/ProviderTable";
 import SignupTable from "./table/SignupTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
+import ThemeEditor from "./common/theme/ThemeEditor";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import ThemeEditor from "./common/theme/ThemeEditor";
 
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");

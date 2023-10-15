@@ -529,6 +529,10 @@ class SignupPage extends React.Component {
       );
     } else if (signupItem.name === "Agreement") {
       return AgreementModal.renderAgreementFormItem(application, required, tailFormItemLayout, this);
+    } else if (signupItem.name.startsWith("Text ")) {
+      return (
+        <div dangerouslySetInnerHTML={{__html: signupItem.label}} />
+      );
     }
   }
 
