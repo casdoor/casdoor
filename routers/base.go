@@ -66,7 +66,7 @@ func denyRequest(ctx *context.Context) {
 	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
 }
 
-func getUsernameByClientIdSecret(ctx *context.Context) string {
+func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {
 	clientId, clientSecret, ok := ctx.Request.BasicAuth()
 	if !ok {
 		clientId = ctx.Input.Query("clientId")
@@ -74,19 +74,22 @@ func getUsernameByClientIdSecret(ctx *context.Context) string {
 	}
 
 	if clientId == "" || clientSecret == "" {
-		return ""
+		return "", nil
 	}
 
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		panic(err)
+		return "", err
+	}
+	if application == nil {
+		return "", fmt.Errorf("Application not found for client ID: %s", clientId)
 	}
 
-	if application == nil || application.ClientSecret != clientSecret {
-		return ""
+	if application.ClientSecret != clientSecret {
+		return "", fmt.Errorf("Incorrect client secret for application: %s", application.Name)
 	}
 
-	return fmt.Sprintf("app/%s", application.Name)
+	return fmt.Sprintf("app/%s", application.Name), nil
 }
 
 func getUsernameByKeys(ctx *context.Context) string {

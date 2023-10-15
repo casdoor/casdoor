@@ -35,14 +35,14 @@ type Object struct {
 func getUsername(ctx *context.Context) (username string) {
 	defer func() {
 		if r := recover(); r != nil {
-			username = getUsernameByClientIdSecret(ctx)
+			username, _ = getUsernameByClientIdSecret(ctx)
 		}
 	}()
 
 	username = ctx.Input.Session("username").(string)
 
 	if username == "" {
-		username = getUsernameByClientIdSecret(ctx)
+		username, _ = getUsernameByClientIdSecret(ctx)
 	}
 
 	if username == "" {
