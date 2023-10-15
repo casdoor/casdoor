@@ -33,7 +33,13 @@ func (c *ApiController) GetSamlMeta() {
 		c.ResponseError(fmt.Sprintf(c.T("saml:Application %s not found"), paramApp))
 		return
 	}
-	metadata, _ := object.GetSamlMeta(application, host)
+
+	metadata, err := object.GetSamlMeta(application, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["xml"] = metadata
 	c.ServeXML()
 }
