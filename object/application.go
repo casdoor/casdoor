@@ -25,11 +25,13 @@ import (
 )
 
 type SignupItem struct {
-	Name     string `json:"name"`
-	Visible  bool   `json:"visible"`
-	Required bool   `json:"required"`
-	Prompted bool   `json:"prompted"`
-	Rule     string `json:"rule"`
+	Name        string `json:"name"`
+	Visible     bool   `json:"visible"`
+	Required    bool   `json:"required"`
+	Prompted    bool   `json:"prompted"`
+	Label       string `json:"label"`
+	Placeholder string `json:"placeholder"`
+	Rule        string `json:"rule"`
 }
 
 type Application struct {
@@ -54,7 +56,7 @@ type Application struct {
 	OrgChoiceMode       string          `json:"orgChoiceMode"`
 	SamlReplyUrl        string          `xorm:"varchar(100)" json:"samlReplyUrl"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`
-	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
+	SignupItems         []*SignupItem   `xorm:"varchar(2000)" json:"signupItems"`
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 	CertPublicKey       string          `xorm:"-" json:"certPublicKey"`

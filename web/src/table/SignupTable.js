@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -160,6 +160,32 @@ class SignupTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, "prompted", checked);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("provider:Label"),
+        dataIndex: "label",
+        key: "label",
+        width: "150px",
+        render: (text, record, index) => {
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "label", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("provider:Placeholder"),
+        dataIndex: "placeholder",
+        key: "placeholder",
+        width: "150px",
+        render: (text, record, index) => {
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "placeholder", e.target.value);
             }} />
           );
         },
