@@ -26,6 +26,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/RobotsAndPencils/go-saml"
@@ -104,8 +105,27 @@ func NewSamlResponse(user *User, host string, certificate string, destination st
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
 	roles := attributes.CreateElement("saml:Attribute")
-	roles.CreateAttr("Name", "Roles")
-	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	if strings.Contains(destination, "tencent") {
+		roles.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/Role")
+		roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+		roles.CreateAttr("FriendlyName", "tencent cloud")
+		for _, value := range []string{
+			"qcs::cam::uin/{AccountID}:roleName/{RoleName1},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName1}",
+			"qcs::cam::uin/{AccountID}:roleName/{RoleName2},qcs::cam::uin/{AccountID}:saml-provider/{ProviderName2}",
+		} {
+			roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(value)
+		}
+	
+		// add tencent role session
+		roleSessionName := attributes.CreateElement("saml:Attribute")
+		roleSessionName.CreateAttr("Name", "https://cloud.tencent.com/SAML/Attributes/RoleSessionName")
+		roleSessionName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+		roleSessionName.CreateAttr("FriendlyName", "tencent cloud")
+		roleSessionName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText("casdoor")
+	} else {
+		roles.CreateAttr("Name", "Roles")
+		roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	}
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
@@ -188,6 +208,7 @@ type Attribute struct {
 	NameFormat   string `xml:"NameFormat,attr"`
 	FriendlyName string `xml:"FriendlyName,attr"`
 	Xmlns        string `xml:"xmlns,attr"`
+	Values       []string `xml:"AttributeValue"`
 }
 
 func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
