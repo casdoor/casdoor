@@ -105,7 +105,7 @@ class ApplicationEditPage extends React.Component {
       providers: [],
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
-      samlAttribute: [],
+      samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
     };
