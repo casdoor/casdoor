@@ -647,9 +647,9 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <SamlAttributeTable
               title={i18next.t("general:SAML Attribute")}
-              table={this.state.application.samlAttribute}
+              table={this.state.application.samlAttributes}
               application={this.state.application}
-              onUpdateTable={(value) => {this.updateApplicationField("samlAttribute", value);}}
+              onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
             />
           </Col>
         </Row>

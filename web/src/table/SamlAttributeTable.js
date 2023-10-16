@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Table} from "antd";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {Button, Col, Input, Row, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -49,23 +49,33 @@ class SamlAttributeTable extends React.Component {
     this.updateTable(table);
   }
 
+  upRow(table, i) {
+    table = Setting.swapRow(table, i - 1, i);
+    this.updateTable(table);
+  }
+
+  downRow(table, i) {
+    table = Setting.swapRow(table, i, i + 1);
+    this.updateTable(table);
+  }
+
   renderTable(table) {
     const columns = [
       {
         title: i18next.t("user:Name"),
-        dataIndex: "attributename",
-        key: "attributename",
+        dataIndex: "name",
+        key: "name",
         width: "200px",
         render: (text, record, index) => {
           return (
             <Input value={text} onChange={e => {
-              this.updateField(table, index, "attributeName", e.target.value);
+              this.updateField(table, index, "name", e.target.value);
             }} />
           );
         },
       },
       {
-        title: i18next.t("user:Name format"),
+        title: i18next.t("user:Name Format"),
         dataIndex: "nameformat",
         key: "nameformat",
         width: "200px",
@@ -92,12 +102,22 @@ class SamlAttributeTable extends React.Component {
       },
       {
         title: i18next.t("general:Action"),
-        dataIndex: "operation",
-        key: "opertion",
+        dataIndex: "action",
+        key: "action",
         width: "20px",
         render: (text, record, index) => {
           return (
-            <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+            <div>
+              <Tooltip placement="bottomLeft" title={i18next.t("general:Up")}>
+                <Button style={{marginRight: "5px"}} disabled={index === 0} icon={<UpOutlined />} size="small" onClick={() => this.upRow(table, index)} />
+              </Tooltip>
+              <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
+                <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              </Tooltip>
+              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
+                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+              </Tooltip>
+            </div>
           );
         },
       },

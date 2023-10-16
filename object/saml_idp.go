@@ -105,11 +105,11 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
 	var roles *etree.Element
-	if strings.Contains(destination, "tencent") && application.SamlAttribute != nil {
-		for _, item := range application.SamlAttribute {
+	if strings.Contains(destination, "tencent") && application.SamlAttributes != nil {
+		for _, item := range application.SamlAttributes {
 			roles = attributes.CreateElement("saml:Attribute")
-			roles.CreateAttr("Name", item.AttributeName)
-			roles.CreateAttr("NameFormat", item.Nameformat)
+			roles.CreateAttr("Name", item.Name)
+			roles.CreateAttr("NameFormat", item.NameFormat)
 			roles.CreateAttr("FriendlyName", "tencent cloud")
 			roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
 		}
