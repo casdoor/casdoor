@@ -14,9 +14,11 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Table, Tooltip} from "antd";
+import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+
+const {Option} = Select;
 
 class SamlAttributeTable extends React.Component {
   constructor(props) {
@@ -81,9 +83,17 @@ class SamlAttributeTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "nameformat", e.target.value);
-            }} />
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              defaultValue="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
+              onChange={value => {
+                this.updateField(table, index, "nameformat", value);
+              }} >
+              <Option key="Unspecified" value="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">{i18next.t("general:Unspecified")}</Option>
+              <Option key="Basic" value="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">{i18next.t("application:Basic")}</Option>
+              <Option key="URIReference" value="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">{i18next.t("application:URIReference")}</Option>
+              <Option key="x500AttributeName" value="urn:oasis:names:tc:SAML:2.0:attrname-format:X500">{i18next.t("application:x500AttributeName")}</Option>
+            </Select>
           );
         },
       },
