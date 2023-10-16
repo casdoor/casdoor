@@ -196,10 +196,10 @@ type SingleSignOnService struct {
 
 type Attribute struct {
 	XMLName      xml.Name
-	Name         string `xml:"Name,attr"`
-	NameFormat   string `xml:"NameFormat,attr"`
-	FriendlyName string `xml:"FriendlyName,attr"`
-	Xmlns        string `xml:"xmlns,attr"`
+	Name         string   `xml:"Name,attr"`
+	NameFormat   string   `xml:"NameFormat,attr"`
+	FriendlyName string   `xml:"FriendlyName,attr"`
+	Xmlns        string   `xml:"xmlns,attr"`
 	Values       []string `xml:"AttributeValue"`
 }
 
