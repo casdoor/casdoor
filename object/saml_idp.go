@@ -26,7 +26,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/RobotsAndPencils/go-saml"
@@ -104,20 +103,16 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
-	var roles *etree.Element
-	if strings.Contains(destination, "tencent") && application.SamlAttributes != nil {
-		for _, item := range application.SamlAttributes {
-			roles = attributes.CreateElement("saml:Attribute")
-			roles.CreateAttr("Name", item.Name)
-			roles.CreateAttr("NameFormat", item.NameFormat)
-			roles.CreateAttr("FriendlyName", "tencent cloud")
-			roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
-		}
-	} else {
-		roles = attributes.CreateElement("saml:Attribute")
-		roles.CreateAttr("Name", "Roles")
-		roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	for _, item := range application.SamlAttributes {
+		role := attributes.CreateElement("saml:Attribute")
+		role.CreateAttr("Name", item.Name)
+		role.CreateAttr("NameFormat", item.NameFormat)
+		role.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
 	}
+
+	roles := attributes.CreateElement("saml:Attribute")
+	roles.CreateAttr("Name", "Roles")
+	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
