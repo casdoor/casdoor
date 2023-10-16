@@ -91,7 +91,7 @@ class SamlAttributeTable extends React.Component {
               }} >
               <Option key="Unspecified" value="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">{i18next.t("general:Unspecified")}</Option>
               <Option key="Basic" value="urn:oasis:names:tc:SAML:2.0:attrname-format:basic">{i18next.t("application:Basic")}</Option>
-              <Option key="UriReference" value="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">{i18next.t("application:URIReference")}</Option>
+              <Option key="UriReference" value="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">{i18next.t("application:UriReference")}</Option>
               <Option key="x500AttributeName" value="urn:oasis:names:tc:SAML:2.0:attrname-format:X500">{i18next.t("application:x500AttributeName")}</Option>
             </Select>
           );
