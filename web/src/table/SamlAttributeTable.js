@@ -77,7 +77,7 @@ class SamlAttributeTable extends React.Component {
         },
       },
       {
-        title: i18next.t("user:Name Format"),
+        title: i18next.t("user:Name format"),
         dataIndex: "nameformat",
         key: "nameformat",
         width: "200px",
