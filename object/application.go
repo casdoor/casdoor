@@ -34,6 +34,12 @@ type SignupItem struct {
 	Rule        string `json:"rule"`
 }
 
+type SamlItem struct {
+	Name       string `json:"name"`
+	NameFormat string `json:"nameformat"`
+	Value      string `json:"value"`
+}
+
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -62,6 +68,7 @@ type Application struct {
 	CertPublicKey       string          `xorm:"-" json:"certPublicKey"`
 	Tags                []string        `xorm:"mediumtext" json:"tags"`
 	InvitationCodes     []string        `xorm:"varchar(200)" json:"invitationCodes"`
+	SamlAttributes      []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
