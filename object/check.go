@@ -370,7 +370,7 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			continue
 		}
 
-		if !permission.isUserHit(userId) {
+		if !permission.isUserHit(userId) && !permission.isRoleHit(userId) {
 			if permission.Effect == "Allow" {
 				allowPermissionCount += 1
 			} else {
