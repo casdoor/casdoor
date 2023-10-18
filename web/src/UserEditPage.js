@@ -205,7 +205,7 @@ class UserEditPage extends React.Component {
   }
 
   isSelfOrAdmin() {
-    return this.isSelf() || Setting.isAdminUser(this.props.account);
+    return this.isSelf() || Setting.isLocalAdminUser(this.props.account);
   }
 
   getCountryCode() {
