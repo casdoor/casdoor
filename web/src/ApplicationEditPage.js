@@ -28,12 +28,13 @@ import i18next from "i18next";
 import UrlTable from "./table/UrlTable";
 import ProviderTable from "./table/ProviderTable";
 import SignupTable from "./table/SignupTable";
+import SamlAttributeTable from "./table/SamlAttributeTable";
 import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
+import ThemeEditor from "./common/theme/ThemeEditor";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
-import ThemeEditor from "./common/theme/ThemeEditor";
 
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
@@ -104,6 +105,7 @@ class ApplicationEditPage extends React.Component {
       providers: [],
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
     };
@@ -636,6 +638,19 @@ class ApplicationEditPage extends React.Component {
             <Switch checked={this.state.application.enableSamlCompress} onChange={checked => {
               this.updateApplicationField("enableSamlCompress", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:SAML Attribute"), i18next.t("general:SAML Attribute - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <SamlAttributeTable
+              title={i18next.t("general:SAML Attribute")}
+              table={this.state.application.samlAttributes}
+              application={this.state.application}
+              onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

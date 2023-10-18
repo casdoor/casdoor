@@ -142,6 +142,10 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if provider == nil {
+			c.ResponseError(fmt.Sprintf("please add an Email provider to the \"Providers\" list for the application: %s", application.Name))
+			return
+		}
 
 		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, vform.Dest)
 	case object.VerifyTypePhone:
@@ -182,6 +186,10 @@ func (c *ApiController) SendVerificationCode() {
 		provider, err := application.GetSmsProvider()
 		if err != nil {
 			c.ResponseError(err.Error())
+			return
+		}
+		if provider == nil {
+			c.ResponseError(fmt.Sprintf("please add a SMS provider to the \"Providers\" list for the application: %s", application.Name))
 			return
 		}
 

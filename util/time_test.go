@@ -102,7 +102,7 @@ func Test_IsTokenExpired(t *testing.T) {
 		},
 	} {
 		t.Run(scenario.description, func(t *testing.T) {
-			result := IsTokenExpired(scenario.input.createdTime, scenario.input.expiresIn)
+			result, _ := IsTokenExpired(scenario.input.createdTime, scenario.input.expiresIn)
 			assert.Equal(t, scenario.expected, result, fmt.Sprintf("Expected %t, but was founded %t", scenario.expected, result))
 		})
 	}

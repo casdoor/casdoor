@@ -434,6 +434,21 @@ func (p *Permission) isUserHit(name string) bool {
 	return false
 }
 
+func (p *Permission) isRoleHit(userId string) bool {
+	targetRoles, err := getRolesByUser(userId)
+	if err != nil {
+		return false
+	}
+	for _, role := range p.Roles {
+		for _, targetRole := range targetRoles {
+			if targetRole.GetId() == role {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func (p *Permission) isResourceHit(name string) bool {
 	for _, resource := range p.Resources {
 		if resource == "*" || resource == name {

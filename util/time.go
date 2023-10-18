@@ -54,8 +54,14 @@ func String2Time(timestamp string) time.Time {
 	return parseTime
 }
 
-func IsTokenExpired(createdTime string, expiresIn int) bool {
+func Time2String(timestamp time.Time) string {
+	return timestamp.Format(time.RFC3339)
+}
+
+func IsTokenExpired(createdTime string, expiresIn int) (bool, string) {
 	createdTimeObj, _ := time.Parse(time.RFC3339, createdTime)
 	expiresAtObj := createdTimeObj.Add(time.Duration(expiresIn) * time.Second)
-	return time.Now().After(expiresAtObj)
+	isExpired := time.Now().After(expiresAtObj)
+	expireTime := expiresAtObj.Local().Format(time.RFC3339)
+	return isExpired, expireTime
 }

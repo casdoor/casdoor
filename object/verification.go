@@ -80,10 +80,6 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 }
 
 func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	if provider == nil {
-		return fmt.Errorf("please set an Email provider first")
-	}
-
 	sender := organization.DisplayName
 	title := provider.Title
 	code := getRandomCode(6)
@@ -106,10 +102,6 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 }
 
 func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	if provider == nil {
-		return errors.New("please set a SMS provider first")
-	}
-
 	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
 		return err
 	}

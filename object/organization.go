@@ -64,6 +64,7 @@ type Organization struct {
 	Languages          []string   `xorm:"varchar(255)" json:"languages"`
 	ThemeData          *ThemeData `xorm:"json" json:"themeData"`
 	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
+	DefaultPassword    string     `xorm:"varchar(100)" json:"defaultPassword"`
 	InitScore          int        `json:"initScore"`
 	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
 	IsProfilePublic    bool       `json:"isProfilePublic"`
@@ -155,6 +156,9 @@ func GetMaskedOrganization(organization *Organization, errs ...error) (*Organiza
 	if organization.MasterPassword != "" {
 		organization.MasterPassword = "***"
 	}
+	if organization.DefaultPassword != "" {
+		organization.DefaultPassword = "***"
+	}
 	return organization, nil
 }
 
@@ -202,9 +206,14 @@ func UpdateOrganization(id string, organization *Organization) (bool, error) {
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
+
 	if organization.MasterPassword == "***" {
 		session.Omit("master_password")
 	}
+	if organization.DefaultPassword == "***" {
+		session.Omit("default_password")
+	}
+
 	affected, err := session.Update(organization)
 	if err != nil {
 		return false, err

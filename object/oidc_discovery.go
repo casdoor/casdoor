@@ -59,7 +59,7 @@ func isIpAddress(host string) bool {
 	return ip != nil
 }
 
-func getOriginFromHost(host string) (string, string) {
+func getOriginFromHostInternal(host string) (string, string) {
 	origin := conf.GetConfigString("origin")
 	if origin != "" {
 		return origin, origin
@@ -80,6 +80,17 @@ func getOriginFromHost(host string) (string, string) {
 	} else {
 		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
 	}
+}
+
+func getOriginFromHost(host string) (string, string) {
+	originF, originB := getOriginFromHostInternal(host)
+
+	originFrontend := conf.GetConfigString("originFrontend")
+	if originFrontend != "" {
+		originF = originFrontend
+	}
+
+	return originF, originB
 }
 
 func GetOidcDiscovery(host string) OidcDiscovery {

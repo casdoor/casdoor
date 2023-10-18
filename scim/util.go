@@ -96,10 +96,13 @@ func buildExternalId(user *object.User) optional.String {
 func buildMeta(user *object.User) scim.Meta {
 	createdTime := util.String2Time(user.CreatedTime)
 	updatedTime := util.String2Time(user.UpdatedTime)
+	if user.UpdatedTime == "" {
+		updatedTime = createdTime
+	}
 	return scim.Meta{
 		Created:      &createdTime,
 		LastModified: &updatedTime,
-		Version:      user.Id,
+		Version:      util.Time2String(updatedTime),
 	}
 }
 
