@@ -205,7 +205,7 @@ class UserEditPage extends React.Component {
   }
 
   isSelfOrAdmin() {
-    return this.isSelf() || Setting.isAdminUser(this.props.account);
+    return this.isSelf() || Setting.isLocalAdminUser(this.props.account);
   }
 
   getCountryCode() {
@@ -241,7 +241,7 @@ class UserEditPage extends React.Component {
       return null;
     }
 
-    const isAdmin = Setting.isAdminUser(this.props.account);
+    const isAdmin = Setting.isLocalAdminUser(this.props.account);
 
     if (accountItem.viewRule === "Self") {
       if (!this.isSelfOrAdmin()) {

@@ -361,6 +361,8 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		return false, err
 	}
 
+	allowPermissionCount := 0
+	denyPermissionCount := 0
 	allowCount := 0
 	denyCount := 0
 	for _, permission := range permissions {
@@ -368,8 +370,13 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			continue
 		}
 
-		if permission.isUserHit(userId) {
-			allowCount += 1
+		if !permission.isUserHit(userId) && !permission.isRoleHit(userId) {
+			if permission.Effect == "Allow" {
+				allowPermissionCount += 1
+			} else {
+				denyPermissionCount += 1
+			}
+			continue
 		}
 
 		enforcer := getPermissionEnforcer(permission)
@@ -391,7 +398,17 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		}
 	}
 
+	// Deny-override, if one deny is found, then deny
 	if denyCount > 0 {
+		return false, nil
+	} else if allowCount > 0 {
+		return true, nil
+	}
+
+	// For no-allow and no-deny condition
+	// If only allow permissions exist, we suppose it's Deny-by-default, aka no-allow means deny
+	// Otherwise, it's Allow-by-default, aka no-deny means allow
+	if allowPermissionCount > 0 && denyPermissionCount == 0 {
 		return false, nil
 	}
 	return true, nil

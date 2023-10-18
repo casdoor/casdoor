@@ -25,11 +25,19 @@ import (
 )
 
 type SignupItem struct {
-	Name     string `json:"name"`
-	Visible  bool   `json:"visible"`
-	Required bool   `json:"required"`
-	Prompted bool   `json:"prompted"`
-	Rule     string `json:"rule"`
+	Name        string `json:"name"`
+	Visible     bool   `json:"visible"`
+	Required    bool   `json:"required"`
+	Prompted    bool   `json:"prompted"`
+	Label       string `json:"label"`
+	Placeholder string `json:"placeholder"`
+	Rule        string `json:"rule"`
+}
+
+type SamlItem struct {
+	Name       string `json:"name"`
+	NameFormat string `json:"nameformat"`
+	Value      string `json:"value"`
 }
 
 type Application struct {
@@ -54,12 +62,13 @@ type Application struct {
 	OrgChoiceMode       string          `json:"orgChoiceMode"`
 	SamlReplyUrl        string          `xorm:"varchar(100)" json:"samlReplyUrl"`
 	Providers           []*ProviderItem `xorm:"mediumtext" json:"providers"`
-	SignupItems         []*SignupItem   `xorm:"varchar(1000)" json:"signupItems"`
+	SignupItems         []*SignupItem   `xorm:"varchar(2000)" json:"signupItems"`
 	GrantTypes          []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 	CertPublicKey       string          `xorm:"-" json:"certPublicKey"`
 	Tags                []string        `xorm:"mediumtext" json:"tags"`
 	InvitationCodes     []string        `xorm:"varchar(200)" json:"invitationCodes"`
+	SamlAttributes      []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`
@@ -305,6 +314,9 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	if application.OrganizationObj != nil {
 		if application.OrganizationObj.MasterPassword != "" {
 			application.OrganizationObj.MasterPassword = "***"
+		}
+		if application.OrganizationObj.DefaultPassword != "" {
+			application.OrganizationObj.DefaultPassword = "***"
 		}
 		if application.OrganizationObj.PasswordType != "" {
 			application.OrganizationObj.PasswordType = "***"

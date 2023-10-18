@@ -22,14 +22,15 @@ config: |
   dataSourceName = "file:ent?mode=memory&cache=shared&_fk=1"
   dbName = casdoor
   redisEndpoint =
-  defaultStorageProvider = 
+  defaultStorageProvider =
   isCloudIntranet = false
   authState = "casdoor"
   socks5Proxy = ""
   verificationCodeTimeout = 10
-  initScore = 2000
+  initScore = 0
   logPostOnly = true
-  origin = "https://door.casbin.com"
+  origin =
+  enableGzip = true
 
 imagePullSecrets: []
 nameOverride: ""

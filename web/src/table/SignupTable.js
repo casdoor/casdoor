@@ -14,9 +14,15 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, Input, Popover, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
+
+import {Controlled as CodeMirror} from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+
+require("codemirror/theme/material-darker.css");
+require("codemirror/mode/htmlmixed/htmlmixed");
 
 const {Option} = Select;
 
@@ -81,6 +87,11 @@ class SignupTable extends React.Component {
             {name: "Phone", displayName: i18next.t("general:Phone")},
             {name: "Invitation code", displayName: i18next.t("application:Invitation code")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
+            {name: "Text 1", displayName: i18next.t("signup:Text 1")},
+            {name: "Text 2", displayName: i18next.t("signup:Text 2")},
+            {name: "Text 3", displayName: i18next.t("signup:Text 3")},
+            {name: "Text 4", displayName: i18next.t("signup:Text 4")},
+            {name: "Text 5", displayName: i18next.t("signup:Text 5")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -160,6 +171,55 @@ class SignupTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, "prompted", checked);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("signup:Label"),
+        dataIndex: "label",
+        key: "label",
+        width: "200px",
+        render: (text, record, index) => {
+          if (record.name.startsWith("Text ")) {
+            return (
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}} >
+                  <CodeMirror value={text}
+                    options={{mode: "htmlmixed", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateField(table, index, "label", value);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("signup:Label HTML")} trigger="click">
+                <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
+                  this.updateField(table, index, "label", e.target.value);
+                }} />
+              </Popover>
+            );
+          }
+
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "label", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("signup:Placeholder"),
+        dataIndex: "placeholder",
+        key: "placeholder",
+        width: "200px",
+        render: (text, record, index) => {
+          if (record.name.startsWith("Text ")) {
+            return null;
+          }
+
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "placeholder", e.target.value);
             }} />
           );
         },

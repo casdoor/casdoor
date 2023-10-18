@@ -35,14 +35,14 @@ type Object struct {
 func getUsername(ctx *context.Context) (username string) {
 	defer func() {
 		if r := recover(); r != nil {
-			username = getUsernameByClientIdSecret(ctx)
+			username, _ = getUsernameByClientIdSecret(ctx)
 		}
 	}()
 
 	username = ctx.Input.Session("username").(string)
 
 	if username == "" {
-		username = getUsernameByClientIdSecret(ctx)
+		username, _ = getUsernameByClientIdSecret(ctx)
 	}
 
 	if username == "" {
@@ -137,6 +137,10 @@ func willLog(subOwner string, subName string, method string, urlPath string, obj
 func getUrlPath(urlPath string) string {
 	if strings.HasPrefix(urlPath, "/cas") && (strings.HasSuffix(urlPath, "/serviceValidate") || strings.HasSuffix(urlPath, "/proxy") || strings.HasSuffix(urlPath, "/proxyValidate") || strings.HasSuffix(urlPath, "/validate") || strings.HasSuffix(urlPath, "/p3/serviceValidate") || strings.HasSuffix(urlPath, "/p3/proxyValidate") || strings.HasSuffix(urlPath, "/samlValidate")) {
 		return "/cas"
+	}
+
+	if strings.HasPrefix(urlPath, "/scim") {
+		return "/scim"
 	}
 
 	if strings.HasPrefix(urlPath, "/api/login/oauth") {
