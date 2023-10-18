@@ -644,7 +644,23 @@ class App extends Component {
           {
             Conf.CustomFooter !== null ? Conf.CustomFooter : (
               <React.Fragment>
-                Powered by <a target="_blank" href="https://www.ppg.live" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                <a target="_blank" href="https://privacy-policy.ppg.live" rel="noreferrer" style={{
+                  textDecorationLine: "underline",
+                }}>
+                  隱私權
+                </a>
+                &nbsp;&nbsp;
+                <a target="_blank" href="https://terms-of-use.ppg.live" rel="noreferrer" style={{
+                  textDecorationLine: "underline",
+                }}>
+                  服務條款
+                </a>
+                &nbsp;&nbsp;
+                Copyright &copy; {new Date().getFullYear()} - VC3 Networks Groups.
+                &nbsp;&nbsp;
+                <a target="_blank" href="https://sso.ppg.live" rel="noreferrer">
+                  <img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} />
+                </a>
               </React.Fragment>
             )
           }

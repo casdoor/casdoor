@@ -1,6 +1,7 @@
 FROM node:18.16.1 AS FRONT
 WORKDIR /web
 COPY ./web .
+#RUN yarn config set registry https://registry.npmmirror.com
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 FROM golang:1.20.8 AS BACK
@@ -16,7 +17,7 @@ ARG USER=casdoor
 #ARG TARGETARCH
 #ENV BUILDX_ARCH="${TARGETOS:-linux}_${TARGETARCH:-amd64}"
 #build the image for amd64 os, to run in aws node
-ENV BUILDX_ARCH="linux_amd64"
+#ENV BUILDX_ARCH="linux_amd64"
 #build the image for apple chip
 #ENV BUILDX_ARCH="linux_arm64"
 
@@ -33,7 +34,7 @@ RUN adduser -D $USER -u 1000 \
 
 USER 1000
 WORKDIR /
-COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server_${BUILDX_ARCH} ./server
+COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server ./server
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/swagger ./swagger
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
