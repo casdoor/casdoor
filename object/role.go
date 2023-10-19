@@ -254,14 +254,24 @@ func (role *Role) GetId() string {
 
 func getRolesByUserInternal(userId string) ([]*Role, error) {
 	roles := []*Role{}
-	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
+	user, err := GetUser(userId)
+	if err != nil {
+		return roles, err
+	}
+
+	query := ormer.Engine.Where("role.users like ?", fmt.Sprintf("%%%s%%", userId))
+	for _, group := range user.Groups {
+		query = query.Or("role.groups like ?", fmt.Sprintf("%%%s%%", group))
+	}
+
+	err = query.Find(&roles)
 	if err != nil {
 		return roles, err
 	}
 
 	res := []*Role{}
 	for _, role := range roles {
-		if util.InSlice(role.Users, userId) {
+		if util.InSlice(role.Users, userId) || util.HaveIntersection(role.Groups, user.Groups) {
 			res = append(res, role)
 		}
 	}
