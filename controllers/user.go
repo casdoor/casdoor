@@ -478,7 +478,7 @@ func (c *ApiController) SetPassword() {
 				return
 			}
 		}
-	} else {
+	} else if code == "" {
 		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		if msg != "" {
 			c.ResponseError(msg)
