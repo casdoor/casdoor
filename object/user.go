@@ -696,6 +696,10 @@ func AddUser(user *User) (bool, error) {
 		return false, nil
 	}
 
+	if organization.DefaultPassword != "" && user.Password == "123" {
+		user.Password = organization.DefaultPassword
+	}
+
 	if user.PasswordType == "" || user.PasswordType == "plain" {
 		user.UpdateUserPassword(organization)
 	}

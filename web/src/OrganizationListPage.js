@@ -41,6 +41,7 @@ class OrganizationListPage extends BaseListPage {
       tags: [],
       languages: Setting.Countries.map(item => item.key),
       masterPassword: "",
+      defaultPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
       accountItems: [
