@@ -258,7 +258,7 @@ func getRolesByUserInternal(userId string) ([]*Role, error) {
 	if err != nil {
 		return roles, err
 	}
-    
+
 	query := ormer.Engine.Where("role.users like ?", fmt.Sprintf("%%%s%%", userId))
 	for _, group := range user.Groups {
 		query = query.Or("role.groups like ?", fmt.Sprintf("%%%s%%", group))
@@ -271,7 +271,7 @@ func getRolesByUserInternal(userId string) ([]*Role, error) {
 
 	res := []*Role{}
 	for _, role := range roles {
-		if util.InSlice(role.Users, userId) || util.HaveIntersection(role.Groups, user.Groups)  {
+		if util.InSlice(role.Users, userId) || util.HaveIntersection(role.Groups, user.Groups) {
 			res = append(res, role)
 		}
 	}

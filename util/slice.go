@@ -62,17 +62,17 @@ func ReturnAnyNotEmpty(strs ...string) string {
 }
 
 func HaveIntersection(arr1 []string, arr2 []string) bool {
-    elements := make(map[string]bool)
+	elements := make(map[string]bool)
 
-    for _, str := range arr1 {
-        elements[str] = true
-    }
+	for _, str := range arr1 {
+		elements[str] = true
+	}
 
-    for _, str := range arr2 {
-        if elements[str] {
-            return true
-        }
-    }
+	for _, str := range arr2 {
+		if elements[str] {
+			return true
+		}
+	}
 
-    return false
+	return false
 }
