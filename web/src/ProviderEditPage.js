@@ -379,10 +379,14 @@ class ProviderEditPage extends React.Component {
 
   loadSamlConfiguration() {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
-    const cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
-    const endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
-    const issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
+    const rawXml = this.state.provider.metadata.replace("\n", "");
+    const xmlDoc = parser.parseFromString(rawXml, "text/xml");
+    // const cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
+    const cert = xmlDoc.querySelector("X509Certificate").childNodes[0].nodeValue.replace(" ", "");
+    // const endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
+    const endpoint = xmlDoc.querySelector("SingleSignOnService").getAttribute("Location");
+    // const issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
+    const issuerUrl = xmlDoc.querySelector("EntityDescriptor").getAttribute("entityID");
     this.updateProviderField("idP", cert);
     this.updateProviderField("endpoint", endpoint);
     this.updateProviderField("issuerUrl", issuerUrl);
@@ -491,7 +495,7 @@ class ProviderEditPage extends React.Component {
               this.updateProviderField("type", value);
               if (value === "Local File System") {
                 this.updateProviderField("domain", Setting.getFullServerUrl());
-              } else if (value === "Custom") {
+              } else if (value === "Custom" && this.state.provider.category === "OAuth") {
                 this.updateProviderField("customAuthUrl", "https://door.casdoor.com/login/oauth/authorize");
                 this.updateProviderField("scopes", "openid profile email");
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
@@ -553,48 +557,54 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Custom" ? null : (
+          this.state.provider.type === "Custom" ? (
             <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customAuthUrl} onChange={e => {
-                    this.updateProviderField("customAuthUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customTokenUrl} onChange={e => {
-                    this.updateProviderField("customTokenUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.scopes} onChange={e => {
-                    this.updateProviderField("scopes", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
-                    this.updateProviderField("customUserInfoUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
+              {
+                this.state.provider.category === "OAuth" ? (
+                  <Col>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customAuthUrl} onChange={e => {
+                          this.updateProviderField("customAuthUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customTokenUrl} onChange={e => {
+                          this.updateProviderField("customTokenUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.scopes} onChange={e => {
+                          this.updateProviderField("scopes", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
+                          this.updateProviderField("customUserInfoUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  </Col>
+                ) : null
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
@@ -631,7 +641,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
-          )
+          ) : null
         }
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
