@@ -651,6 +651,15 @@ func (c *ApiController) Login() {
 						c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
 						return
 					}
+
+					if providerItem.SignupGroup != "" {
+						user.Groups = []string{providerItem.SignupGroup}
+						_, err = object.UpdateUser(user.GetId(), user, []string{"groups"}, false)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+					}
 				}
 
 				// sync info from 3rd-party if possible
