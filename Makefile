@@ -114,7 +114,7 @@
 
 # Ivan
 # MODE: dev, prod
-IMG ?= casdoor-v231011
+IMG ?= casdoor-v1020
 MODE ?= dev
 
 deploy:
@@ -125,6 +125,13 @@ deploy:
 	fi
 	docker build . -t ${IMG}
 	aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com
+	docker tag ${IMG}:latest 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com/casdoor-${MODE}:latest
+	docker push 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com/casdoor-${MODE}:latest
+	kubectl delete deployment casdoor-deployment -n casdoor-${MODE}
+	kubectl apply -f /Users/ivan/GolandProjects/_WINDFLIGHT/casdoor/.spec/${MODE}/casdoor-deployment.yaml
+
+nextDeploy:
+	@echo "Deploying with image: ${IMG}, mode: ${MODE}"
 	docker tag ${IMG}:latest 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com/casdoor-${MODE}:latest
 	docker push 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com/casdoor-${MODE}:latest
 	kubectl delete deployment casdoor-deployment -n casdoor-${MODE}

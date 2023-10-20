@@ -644,23 +644,24 @@ class App extends Component {
           {
             Conf.CustomFooter !== null ? Conf.CustomFooter : (
               <React.Fragment>
-                <a target="_blank" href="https://privacy-policy.ppg.live" rel="noreferrer" style={{
-                  textDecorationLine: "underline",
-                }}>
-                  隱私權
-                </a>
-                &nbsp;&nbsp;
-                <a target="_blank" href="https://terms-of-use.ppg.live" rel="noreferrer" style={{
-                  textDecorationLine: "underline",
-                }}>
-                  服務條款
-                </a>
-                &nbsp;&nbsp;
-                Copyright &copy; {new Date().getFullYear()} - VC3 Networks Groups.
-                &nbsp;&nbsp;
-                <a target="_blank" href="https://sso.ppg.live" rel="noreferrer">
-                  <img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} />
-                </a>
+                <div style={
+                  {
+                    display: "flex", flexDirection: "column",
+                  }
+                }>
+                  <span style={{display: "flex", gap: 4, justifyContent: "center"}}>
+                    <span><a target="_blank" href="https://privacy-policy.ppg.live" rel="noreferrer" style={{
+                      color: "#000",
+                    }}>隱私權</a></span>
+                    <span>|</span>
+                    <span><a target="_blank" href="https://terms-of-use.ppg.live" rel="noreferrer" style={{
+                      color: "#000",
+                    }}>服務條款</a></span>
+                  </span>
+                  <span>
+                    Copyright &copy; {new Date().getFullYear()} - VC3 Networks Groups.
+                  </span>
+                </div>
               </React.Fragment>
             )
           }
