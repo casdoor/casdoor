@@ -381,11 +381,8 @@ class ProviderEditPage extends React.Component {
     const parser = new DOMParser();
     const rawXml = this.state.provider.metadata.replace("\n", "");
     const xmlDoc = parser.parseFromString(rawXml, "text/xml");
-    // const cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
     const cert = xmlDoc.querySelector("X509Certificate").childNodes[0].nodeValue.replace(" ", "");
-    // const endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
     const endpoint = xmlDoc.querySelector("SingleSignOnService").getAttribute("Location");
-    // const issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
     const issuerUrl = xmlDoc.querySelector("EntityDescriptor").getAttribute("entityID");
     this.updateProviderField("idP", cert);
     this.updateProviderField("endpoint", endpoint);

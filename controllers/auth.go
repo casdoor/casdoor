@@ -523,7 +523,7 @@ func (c *ApiController) Login() {
 		if authForm.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				// user, err = object.GetUser(util.GetId(application.Organization, userInfo.Id))
+				// The userInfo.Id is the NameID in SAML response, it could be name / email / phone
 				user, err = object.GetUserByFields(application.Organization, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
