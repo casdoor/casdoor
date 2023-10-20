@@ -641,12 +641,22 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Enable SAML C14N10"), i18next.t("application:Enable SAML C14N10 - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSamlC14n10} onChange={checked => {
+              this.updateApplicationField("enableSamlC14n10", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:SAML Attribute"), i18next.t("general:SAML Attribute - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
           </Col>
           <Col span={22} >
             <SamlAttributeTable
-              title={i18next.t("general:SAML Attribute")}
+              title={i18next.t("general:SAML attributes")}
               table={this.state.application.samlAttributes}
               application={this.state.application}
               onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}

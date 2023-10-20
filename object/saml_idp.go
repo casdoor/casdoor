@@ -324,6 +324,11 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
 	ctx.Hash = crypto.SHA1
+
+	if application.EnableSamlC14n10 {
+		ctx.Canonicalizer = dsig.MakeC14N10RecCanonicalizer()
+	}
+
 	//signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
 	//if err != nil {
 	//	return "", "", fmt.Errorf("err: %s", err.Error())
