@@ -44,7 +44,7 @@ class ApplicationListPage extends BaseListPage {
       enableCodeSignin: false,
       enableSamlCompress: false,
       providers: [
-        {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false, alertType: "None"},
+        {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false},
       ],
       signupItems: [
         {name: "ID", visible: false, required: true, rule: "Random"},
