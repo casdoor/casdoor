@@ -477,7 +477,6 @@ func (c *ApiController) Login() {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s is not enabled for the application"), provider.Name))
 			return
 		}
-
 		userInfo := &idp.UserInfo{}
 		if provider.Category == "SAML" {
 			// SAML
@@ -524,7 +523,7 @@ func (c *ApiController) Login() {
 		if authForm.Method == "signup" {
 			user := &object.User{}
 			if provider.Category == "SAML" {
-				//user, err = object.GetUser(util.GetId(application.Organization, userInfo.Id))
+				// user, err = object.GetUser(util.GetId(application.Organization, userInfo.Id))
 				user, err = object.GetUserByFields(application.Organization, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())

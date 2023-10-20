@@ -19,11 +19,12 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"fmt"
-	"github.com/casdoor/casdoor/idp"
-	"github.com/mitchellh/mapstructure"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/casdoor/casdoor/idp"
+	"github.com/mitchellh/mapstructure"
 
 	"github.com/casdoor/casdoor/i18n"
 	saml2 "github.com/russellhaering/gosaml2"
