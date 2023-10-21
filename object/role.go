@@ -151,8 +151,16 @@ func UpdateRole(id string, role *Role) (bool, error) {
 	}
 
 	for _, permission := range permissions {
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
 		visited[permission.GetId()] = struct{}{}
 	}
 
@@ -166,10 +174,15 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+
 		for _, permission := range permissions {
 			permissionId := permission.GetId()
 			if _, ok := visited[permissionId]; !ok {
-				addGroupingPolicies(permission)
+				err = addGroupingPolicies(permission)
+				if err != nil {
+					return false, err
+				}
+
 				visited[permissionId] = struct{}{}
 			}
 		}
