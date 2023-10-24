@@ -2,8 +2,9 @@ package sync_v2
 
 import (
 	"fmt"
-	"github.com/xorm-io/xorm"
 	"log"
+
+	"github.com/xorm-io/xorm"
 )
 
 type Database struct {

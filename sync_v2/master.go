@@ -6,13 +6,12 @@ import (
 )
 
 func createSlaveUser(masterdb *Database) {
-	var res = make([]map[string]string, 0)
+	res := make([]map[string]string, 0)
 	defer func() {
 		if err := recover(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
-
 	res = masterdb.exec("show databases")
 	dbNames := make([]string, 0, len(res))
 	for _, dbInfo := range res {
@@ -49,7 +48,6 @@ func createSlaveUser(masterdb *Database) {
 	res = masterdb.exec("show variables like 'binlog_format'")
 	log.Println("binlog_format: ", res[0]["Value"])
 	res = masterdb.exec("show variables like 'binlog_row_image'")
-
 }
 
 func masterStatus(masterdb *Database) {
@@ -60,6 +58,8 @@ func masterStatus(masterdb *Database) {
 	}
 	pos := res[0]["Position"]
 	file := res[0]["File"]
-	log.Printf("\n[master: %v:%v]\nfile: %v\nposition: %v\nmaster status: %v\n", masterdb.host, masterdb.port, file, pos, res)
-
+	log.Println("*****check master status*****")
+	log.Println("master:", masterdb.host, ":", masterdb.port)
+	log.Println("file:", file, ", position:", pos, ", master status:", res)
+	log.Println("*****************************")
 }

@@ -9,15 +9,26 @@ func slaveStatus(slavedb *Database) {
 		log.Printf("no slave status for slave [%v:%v]\n", slavedb.host, slavedb.port)
 		return
 	}
-	slaveIoState := res[0]["Slave_IO_State"]
-	slaveIoRunning := res[0]["Slave_IO_Running"]
-	slaveSqlRunning := res[0]["Slave_SQL_Running"]
-	slaveSqlRunningState := res[0]["Slave_SQL_Running_State"]
+	log.Println("*****check slave status*****")
+	log.Println("slave:", slavedb.host, ":", slavedb.port)
 	masterServerId := res[0]["Master_Server_Id"]
-	slaveSecondsBehindMaster := res[0]["Seconds_Behind_Master"]
+	log.Println("master server id:", masterServerId)
+	lastError := res[0]["Last_Error"]
+	log.Println("last error:", lastError) // this should be empty
 	lastIoError := res[0]["Last_IO_Error"]
-	log.Printf("\n[slave: %v:%v]\nlast io err: %v\nslave io state: %v\nslave io running: %v\nslave sql running: %v\nslave sql running state: %v\nmaster server id: %v\nseconds behind master: %v\nslave status: %v\n",
-		slavedb.host, slavedb.port, lastIoError, slaveIoState, slaveIoRunning, slaveSqlRunning, slaveSqlRunningState, masterServerId, slaveSecondsBehindMaster, res)
+	log.Println("last io error:", lastIoError) // this should be empty
+	slaveIoState := res[0]["Slave_IO_State"]
+	log.Println("slave io state:", slaveIoState)
+	slaveIoRunning := res[0]["Slave_IO_Running"]
+	log.Println("slave io running:", slaveIoRunning) // this should be Yes
+	slaveSqlRunning := res[0]["Slave_SQL_Running"]
+	log.Println("slave sql running:", slaveSqlRunning) // this should be Yes
+	slaveSqlRunningState := res[0]["Slave_SQL_Running_State"]
+	log.Println("slave sql running state:", slaveSqlRunningState)
+	slaveSecondsBehindMaster := res[0]["Seconds_Behind_Master"]
+	log.Println("seconds behind master:", slaveSecondsBehindMaster) // this should be 0, if not, it means the slave is behind the master
+	log.Println("slave status:", res)
+	log.Println("****************************")
 }
 
 // stopSlave stops slave
@@ -33,7 +44,7 @@ func stopSlave(slavedb *Database) {
 
 // startSlave starts slave
 func startSlave(masterdb *Database, slavedb *Database) {
-	var res = make([]map[string]string, 0)
+	res := make([]map[string]string, 0)
 	defer func() {
 		if err := recover(); err != nil {
 			log.Fatalln(err)

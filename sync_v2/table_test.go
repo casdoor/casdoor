@@ -1,10 +1,11 @@
 package sync_v2
 
 import (
-	"github.com/casdoor/casdoor/util"
 	"log"
 	"math/rand"
 	"testing"
+
+	"github.com/casdoor/casdoor/util"
 )
 
 type TestUser struct {
@@ -29,6 +30,17 @@ func TestInsertUser(t *testing.T) {
 		Age:      rand.Intn(100) + 10,
 	}
 	_, err := db.engine.Insert(user)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	db := newDatabase(&Configs[0])
+	user := &TestUser{
+		Id: 10,
+	}
+	_, err := db.engine.Delete(user)
 	if err != nil {
 		log.Fatalln(err)
 	}

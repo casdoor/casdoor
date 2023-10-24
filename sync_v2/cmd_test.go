@@ -1,8 +1,9 @@
 package sync_v2
 
 import (
-	_ "github.com/go-sql-driver/mysql"
 	"testing"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var Configs = []Database{
@@ -26,18 +27,20 @@ var Configs = []Database{
 	},
 }
 
-func TestMasterCreateSlaveUser(t *testing.T) {
+func TestStartSlave(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
 	createSlaveUser(db0)
 	createSlaveUser(db1)
-}
-
-func TestStartSlave(t *testing.T) {
-	db0 := newDatabase(&Configs[0])
-	db1 := newDatabase(&Configs[1])
 	startSlave(db0, db1)
 	startSlave(db1, db0)
+}
+
+func TestStopSlave(t *testing.T) {
+	db0 := newDatabase(&Configs[0])
+	db1 := newDatabase(&Configs[1])
+	stopSlave(db0)
+	stopSlave(db1)
 }
 
 func TestCheckSlaveStatus(t *testing.T) {
