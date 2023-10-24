@@ -326,7 +326,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	ctx.Hash = crypto.SHA1
 
 	if application.EnableSamlC14n10 {
-		ctx.Canonicalizer = dsig.MakeC14N10RecCanonicalizer()
+		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
 	}
 
 	//signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
