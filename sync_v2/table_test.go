@@ -28,6 +28,8 @@ import (
 type TestUser struct {
 	Id       int64  `xorm:"pk autoincr"`
 	Username string `xorm:"varchar(50)"`
+	Address  string `xorm:"varchar(50)"`
+	Card     string `xorm:"varchar(50)"`
 	Age      int
 }
 

@@ -34,29 +34,29 @@ import (
 	auto_increment_increment = 2 # this is same as the number of mysql instances (2)
 	log-bin = mysql-bin
 	replicate-do-db = casdoor # this is the database name
-	replicate-ignore-db = mysql,information_schema,performance_schema,sys
 	binlog-do-db = casdoor # this is the database name
-	binlog-ignore-db = mysql,information_schema,performance_schema,sys
 */
 
 var Configs = []Database{
 	{
-		host:          "test-db.v2tl.com", // this is aliyun rds
-		port:          3306,
-		username:      "root",
-		password:      "password",
+		host:     "test-db.v2tl.com",
+		port:     3306,
+		username: "root",
+		password: "password",
+		database: "casdoor",
+		// the following two fields are used to create replication user, you don't need to change them
 		slaveUser:     "repl_user",
 		slavePassword: "repl_user",
-		database:      "casdoor",
 	},
 	{
-		host:          "localhost", // this is local mysql instance
-		port:          3306,
-		username:      "root",
-		password:      "password",
+		host:     "localhost",
+		port:     3306,
+		username: "root",
+		password: "password",
+		database: "casdoor",
+		// the following two fields are used to create replication user, you don't need to change them
 		slaveUser:     "repl_user",
 		slavePassword: "repl_user",
-		database:      "casdoor",
 	},
 }
 
@@ -65,14 +65,19 @@ func TestStartMasterSlaveSync(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	// for example, this is local mysql instance
 	db1 := newDatabase(&Configs[1])
+
 	createSlaveUser(db0)
 	// db0 is master, db1 is slave
 	startSlave(db0, db1)
 }
 
 func TestStopMasterSlaveSync(t *testing.T) {
+	// for example, this is aliyun rds
+	db0 := newDatabase(&Configs[0])
 	// for example, this is local mysql instance
 	db1 := newDatabase(&Configs[1])
+
+	deleteSlaveUser(db0)
 	stopSlave(db1)
 }
 
@@ -90,6 +95,8 @@ func TestStartMasterMasterSync(t *testing.T) {
 func TestStopMasterMasterSync(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
+	deleteSlaveUser(db0)
+	deleteSlaveUser(db1)
 	stopSlave(db0)
 	stopSlave(db1)
 }

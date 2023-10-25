@@ -19,6 +19,16 @@ import (
 	"log"
 )
 
+func deleteSlaveUser(masterdb *Database) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+	masterdb.exec("delete from mysql.user where user = '%v'", masterdb.slaveUser)
+	masterdb.exec("flush privileges")
+}
+
 func createSlaveUser(masterdb *Database) {
 	res := make([]map[string]string, 0)
 	defer func() {
