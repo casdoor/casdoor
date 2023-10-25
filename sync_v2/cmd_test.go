@@ -77,8 +77,8 @@ func TestStopMasterSlaveSync(t *testing.T) {
 	// for example, this is local mysql instance
 	db1 := newDatabase(&Configs[1])
 
-	deleteSlaveUser(db0)
 	stopSlave(db1)
+	deleteSlaveUser(db0)
 }
 
 func TestStartMasterMasterSync(t *testing.T) {
@@ -95,10 +95,10 @@ func TestStartMasterMasterSync(t *testing.T) {
 func TestStopMasterMasterSync(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
-	deleteSlaveUser(db0)
-	deleteSlaveUser(db1)
 	stopSlave(db0)
 	stopSlave(db1)
+	deleteSlaveUser(db0)
+	deleteSlaveUser(db1)
 }
 
 func TestShowSlaveStatus(t *testing.T) {
