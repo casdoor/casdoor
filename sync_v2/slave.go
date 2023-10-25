@@ -66,6 +66,9 @@ func startSlave(masterdb *Database, slavedb *Database) {
 	}()
 	stopSlave(slavedb)
 	res = masterdb.exec("show master status")
+	if len(res) == 0 {
+		log.Println("no master status")
+	}
 	pos := res[0]["Position"]
 	file := res[0]["File"]
 	log.Println("file:", file, ", position:", pos, ", master status:", res)
