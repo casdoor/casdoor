@@ -26,62 +26,82 @@ import (
 /*
 	The following config should be added to my.cnf:
 
+	gtid_mode=on
+	enforce_gtid_consistency=on
 	binlog-format=ROW
 	server-id = 1 # this should be different for each mysql instance (1,2)
 	auto_increment_offset = 1 # this is same as server-id
 	auto_increment_increment = 2 # this is same as the number of mysql instances (2)
 	log-bin = mysql-bin
-	replicate-do-db = testdb # this is the database name
+	replicate-do-db = casdoor # this is the database name
 	replicate-ignore-db = mysql,information_schema,performance_schema,sys
-	binlog-do-db = testdb # this is the database name
+	binlog-do-db = casdoor # this is the database name
 	binlog-ignore-db = mysql,information_schema,performance_schema,sys
 */
 
 var Configs = []Database{
 	{
-		host:          "127.0.0.1",
+		host:          "test-db.v2tl.com", // this is aliyun rds
 		port:          3306,
 		username:      "root",
-		password:      "test_mysql_password",
+		password:      "password",
 		slaveUser:     "repl_user",
 		slavePassword: "repl_user",
 		database:      "casdoor",
 	},
 	{
-		host:          "127.0.0.1",
-		port:          3307,
+		host:          "localhost", // this is local mysql instance
+		port:          3306,
 		username:      "root",
-		password:      "test_mysql_password",
+		password:      "password",
 		slaveUser:     "repl_user",
 		slavePassword: "repl_user",
 		database:      "casdoor",
 	},
 }
 
-func TestStartSlave(t *testing.T) {
+func TestStartMasterSlaveSync(t *testing.T) {
+	// for example, this is aliyun rds
+	db0 := newDatabase(&Configs[0])
+	// for example, this is local mysql instance
+	db1 := newDatabase(&Configs[1])
+	createSlaveUser(db0)
+	// db0 is master, db1 is slave
+	startSlave(db0, db1)
+}
+
+func TestStopMasterSlaveSync(t *testing.T) {
+	// for example, this is local mysql instance
+	db1 := newDatabase(&Configs[1])
+	stopSlave(db1)
+}
+
+func TestStartMasterMasterSync(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
 	createSlaveUser(db0)
 	createSlaveUser(db1)
+	// db0 is master, db1 is slave
 	startSlave(db0, db1)
+	// db1 is master, db0 is slave
 	startSlave(db1, db0)
 }
 
-func TestStopSlave(t *testing.T) {
+func TestStopMasterMasterSync(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
 	stopSlave(db0)
 	stopSlave(db1)
 }
 
-func TestCheckSlaveStatus(t *testing.T) {
+func TestShowSlaveStatus(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
 	slaveStatus(db0)
 	slaveStatus(db1)
 }
 
-func TestCheckMasterStatus(t *testing.T) {
+func TestShowMasterStatus(t *testing.T) {
 	db0 := newDatabase(&Configs[0])
 	db1 := newDatabase(&Configs[1])
 	masterStatus(db0)
