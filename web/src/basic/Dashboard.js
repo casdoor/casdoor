@@ -33,6 +33,11 @@ const Dashboard = (props) => {
 
   React.useEffect(() => {
     if (!Setting.isLocalAdminUser(props.account)) {
+      const from = sessionStorage.getItem("from");
+      if (from.startsWith("/account?returnUrl")) {
+        window.location.href = from;
+        sessionStorage.setItem("from", "/");
+      }
       props.history.push("/apps");
     }
   }, [props.account]);

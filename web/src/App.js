@@ -89,7 +89,7 @@ import ThemeSelect from "./common/select/ThemeSelect";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
 import AccountAvatar from "./account/AccountAvatar";
-import OpenTour from "./common/OpenTour";
+// import OpenTour from "./common/OpenTour";
 
 const {Header, Footer, Content} = Layout;
 
@@ -382,7 +382,7 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
-          <OpenTour />
+          {/* <OpenTour /> */}
           {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
             <OrganizationSelect
               initValue={Setting.getOrganization()}
@@ -482,7 +482,10 @@ class App extends Component {
 
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
-      sessionStorage.setItem("from", window.location.pathname);
+      sessionStorage.setItem("from", window.location.pathname + window.location.search);
+      if (window.location.search !== "") {
+        return <Redirect to="/login/PPG" />;
+      }
       return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
       return null;
