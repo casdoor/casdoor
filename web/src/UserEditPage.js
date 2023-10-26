@@ -500,7 +500,7 @@ class UserEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.user.address} onChange={e => {
               this.updateUserField("address", e.target.value);
-            }} />
+            }} disabled={!isAdmin} />
           </Col>
         </Row>
       );
