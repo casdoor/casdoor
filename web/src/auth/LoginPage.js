@@ -102,7 +102,7 @@ class LoginPage extends React.Component {
     }
 
     if (prevProps.account !== this.props.account && this.props.account !== undefined) {
-      if (this.props.account.owner === this.props.application?.organization) {
+      if (this.props.account && this.props.account.owner === this.props.application?.organization) {
         const params = new URLSearchParams(this.props.location.search);
         const silentSignin = params.get("silentSignin");
         if (silentSignin !== null) {
