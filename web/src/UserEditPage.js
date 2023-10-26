@@ -477,33 +477,35 @@ class UserEditPage extends React.Component {
         );
       }
     } else if (accountItem.name === "Location") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {/* {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} : */}
+            {/* 取代 地址 的功用, userinfo 回傳 Location */}
+            {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.location} onChange={e => {
+              this.updateUserField("location", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Address") {
       if (isAdmin) {
         return (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
+              {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
             </Col>
             <Col span={22} >
-              <Input value={this.state.user.location} onChange={e => {
-                this.updateUserField("location", e.target.value);
+              <Input value={this.state.user.address} onChange={e => {
+                this.updateUserField("address", e.target.value);
               }} />
             </Col>
           </Row>
         );
       }
-    } else if (accountItem.name === "Address") {
-      return (
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Address"), i18next.t("user:Address - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.user.address} onChange={e => {
-              this.updateUserField("address", e.target.value);
-            }} disabled={!isAdmin} />
-          </Col>
-        </Row>
-      );
     } else if (accountItem.name === "Affiliation") {
       if (isAdmin) {
         return (
