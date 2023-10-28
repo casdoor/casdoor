@@ -579,7 +579,7 @@ class App extends Component {
         }
       }
     };
-    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
+    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "280px";
     return (
       <Layout id="parent-area">
         <EnableMfaNotification account={this.state.account} />
