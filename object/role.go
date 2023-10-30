@@ -272,9 +272,9 @@ func getRolesByUserInternal(userId string) ([]*Role, error) {
 		return roles, err
 	}
 
-	query := ormer.Engine.Where("users like ?", fmt.Sprintf("%%%s%%", userId))
+	query := ormer.Engine.Alias("r").Where("r.users like ?", fmt.Sprintf("%%%s%%", userId))
 	for _, group := range user.Groups {
-		query = query.Or("groups like ?", fmt.Sprintf("%%%s%%", group))
+		query = query.Or("r.groups like ?", fmt.Sprintf("%%%s%%", group))
 	}
 
 	err = query.Find(&roles)
