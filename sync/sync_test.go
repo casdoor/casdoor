@@ -24,7 +24,10 @@ import (
 )
 
 func TestStartSyncJob(t *testing.T) {
-	db1 := newDatabase("127.0.0.1", 3306, "casdoor", "root", "123456")
-	db2 := newDatabase("127.0.0.1", 3306, "casdoor2", "root", "123456")
-	startSyncJob(db1, db2)
+	db1 := newDatabase("localhost", 3306, "casdoor", "root", "123456")
+	db2 := newDatabase("localhost", 3306, "casdoor2", "root", "123456")
+	err := startSyncJob(db1, db2)
+	if err != nil {
+		panic(err)
+	}
 }

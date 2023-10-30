@@ -17,11 +17,10 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import Dashboard from "./basic/Dashboard";
 import ShortcutsPage from "./basic/ShortcutsPage";
-import {MfaRuleRequired} from "./Setting";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {AppstoreTwoTone, BarsOutlined, DollarTwoTone, DownOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, WalletTwoTone} from "@ant-design/icons";
-import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
+import {AppstoreTwoTone, BarsOutlined, DeploymentUnitOutlined, DollarTwoTone, DownOutlined, GithubOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, ShareAltOutlined, WalletTwoTone} from "@ant-design/icons";
+import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result, Tooltip} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
@@ -110,6 +109,7 @@ class App extends Component {
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
       requiredEnableMfa: false,
+      isAiAssistantOpen: false,
     };
 
     Setting.initServerUrl();
@@ -137,8 +137,8 @@ class App extends Component {
       });
 
       if (requiredEnableMfa === true) {
-        const mfaType = Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [MfaRuleRequired])
-          .find((item) => item.rule === MfaRuleRequired)?.name;
+        const mfaType = Setting.getMfaItemsByRules(this.state.account, this.state.account?.organization, [Setting.MfaRuleRequired])
+          .find((item) => item.rule === Setting.MfaRuleRequired)?.name;
         if (mfaType !== undefined) {
           this.props.history.push(`/mfa/setup?mfaType=${mfaType}`, {from: "/login"});
         }
@@ -380,6 +380,15 @@ class App extends Component {
               });
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
+          <Tooltip title="Click to open AI assitant">
+            <div className="select-box" onClick={() => {
+              this.setState({
+                isAiAssistantOpen: true,
+              });
+            }}>
+              <DeploymentUnitOutlined style={{fontSize: "24px", color: "rgb(77,77,77)"}} />
+            </div>
+          </Tooltip>
           <OpenTour />
           {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
             <OrganizationSelect
@@ -579,7 +588,7 @@ class App extends Component {
         }
       }
     };
-    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 260px)" : "260px";
+    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "280px";
     return (
       <Layout id="parent-area">
         <EnableMfaNotification account={this.state.account} />
@@ -625,7 +634,12 @@ class App extends Component {
             </Card>
           }
         </Content>
-        {this.renderFooter()}
+        {
+          this.renderFooter()
+        }
+        {
+          this.renderAiAssistant()
+        }
       </Layout>
     );
   }
@@ -648,6 +662,40 @@ class App extends Component {
           }
         </Footer>
       </React.Fragment>
+    );
+  }
+
+  renderAiAssistant() {
+    return (
+      <Drawer
+        title={
+          <React.Fragment>
+            <Tooltip title="Want to deploy your own AI assistant? Click to learn more!">
+              <a target="_blank" rel="noreferrer" href={"https://casdoor.com"}>
+                <img style={{width: "20px", marginRight: "10px", marginBottom: "2px"}} alt="help" src="https://casbin.org/img/casbin.svg" />
+                AI Assistant
+              </a>
+            </Tooltip>
+            <a className="custom-link" style={{float: "right", marginTop: "2px"}} target="_blank" rel="noreferrer" href={"https://ai.casbin.com"}>
+              <ShareAltOutlined className="custom-link" style={{fontSize: "20px", color: "rgb(140,140,140)"}} />
+            </a>
+            <a className="custom-link" style={{float: "right", marginRight: "30px", marginTop: "2px"}} target="_blank" rel="noreferrer" href={"https://github.com/casibase/casibase"}>
+              <GithubOutlined className="custom-link" style={{fontSize: "20px", color: "rgb(140,140,140)"}} />
+            </a>
+          </React.Fragment>
+        }
+        placement="right"
+        width={500}
+        mask={false}
+        onClose={() => {
+          this.setState({
+            isAiAssistantOpen: false,
+          });
+        }}
+        visible={this.state.isAiAssistantOpen}
+      >
+        <iframe id="iframeHelper" title={"iframeHelper"} src={"https://ai.casbin.com/?isRaw=1"} width="100%" height="100%" scrolling="no" frameBorder="no" />
+      </Drawer>
     );
   }
 
@@ -695,6 +743,9 @@ class App extends Component {
           </Content>
           {
             this.renderFooter()
+          }
+          {
+            this.renderAiAssistant()
           }
         </Layout>
       );

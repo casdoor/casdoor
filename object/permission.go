@@ -113,11 +113,15 @@ func GetPermission(id string) (*Permission, error) {
 
 // checkPermissionValid verifies if the permission is valid
 func checkPermissionValid(permission *Permission) error {
-	enforcer := getPermissionEnforcer(permission)
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
 	enforcer.EnableAutoSave(false)
 
 	policies := getPolicies(permission)
-	_, err := enforcer.AddPolicies(policies)
+	_, err = enforcer.AddPolicies(policies)
 	if err != nil {
 		return err
 	}
@@ -129,7 +133,7 @@ func checkPermissionValid(permission *Permission) error {
 
 	groupingPolicies := getGroupingPolicies(permission)
 	if len(groupingPolicies) > 0 {
-		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+		_, err = enforcer.AddGroupingPolicies(groupingPolicies)
 		if err != nil {
 			return err
 		}
@@ -150,7 +154,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		return false, nil
 	}
 
-	if permission.ResourceType == "Application" {
+	if permission.ResourceType == "Application" && permission.Model != "" {
 		model, err := GetModelEx(util.GetId(owner, permission.Model))
 		if err != nil {
 			return false, err
@@ -174,8 +178,16 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		removeGroupingPolicies(oldPermission)
-		removePolicies(oldPermission)
+		err = removeGroupingPolicies(oldPermission)
+		if err != nil {
+			return false, err
+		}
+
+		err = removePolicies(oldPermission)
+		if err != nil {
+			return false, err
+		}
+
 		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
 			isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
 			if isEmpty {
@@ -185,8 +197,16 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 				}
 			}
 		}
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -199,40 +219,54 @@ func AddPermission(permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
 }
 
-func AddPermissions(permissions []*Permission) bool {
+func AddPermissions(permissions []*Permission) (bool, error) {
 	if len(permissions) == 0 {
-		return false
+		return false, nil
 	}
 
 	affected, err := ormer.Engine.Insert(permissions)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
-			panic(err)
+			return false, err
 		}
 	}
 
 	for _, permission := range permissions {
 		// add using for loop
 		if affected != 0 {
-			addGroupingPolicies(permission)
-			addPolicies(permission)
+			err = addGroupingPolicies(permission)
+			if err != nil {
+				return false, err
+			}
+
+			err = addPolicies(permission)
+			if err != nil {
+				return false, err
+			}
 		}
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddPermissionsInBatch(permissions []*Permission) bool {
+func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
 	batchSize := conf.GetConfigBatchSize()
 
 	if len(permissions) == 0 {
-		return false
+		return false, nil
 	}
 
 	affected := false
@@ -245,12 +279,18 @@ func AddPermissionsInBatch(permissions []*Permission) bool {
 
 		tmp := permissions[start:end]
 		fmt.Printf("The syncer adds permissions: [%d - %d]\n", start, end)
-		if AddPermissions(tmp) {
+
+		b, err := AddPermissions(tmp)
+		if err != nil {
+			return false, err
+		}
+
+		if b {
 			affected = true
 		}
 	}
 
-	return affected
+	return affected, nil
 }
 
 func DeletePermission(permission *Permission) (bool, error) {
@@ -260,8 +300,16 @@ func DeletePermission(permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		removeGroupingPolicies(permission)
-		removePolicies(permission)
+		err = removeGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = removePolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
 		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
 			isEmpty, _ := ormer.Engine.IsTableEmpty(permission.Adapter)
 			if isEmpty {

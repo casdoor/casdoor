@@ -920,12 +920,14 @@ github.com/casbin/casbin/v2 v2.28.3/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRt
 github.com/casbin/casbin/v2 v2.37.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/casbin/v2 v2.77.2 h1:yQinn/w9x8AswiwqwtrXz93VU48R1aYTXdHEx4RI3jM=
 github.com/casbin/casbin/v2 v2.77.2/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
+github.com/casdoor/go-reddit/v2 v2.1.0 h1:kIbfdJ7AA7H0uTQ8s0q4GGZqSS5V9wVE74RrXyD9XPs=
+github.com/casdoor/go-reddit/v2 v2.1.0/go.mod h1:eagkvwlZ4Hcsuc/uQsLHYEulz5jN65SVSwV/AIE7zsc=
 github.com/casdoor/go-sms-sender v0.15.0 h1:9SWj/jd5c7jIteTRUrqbkpWbtIXMDv+t1CEfDhO06m0=
 github.com/casdoor/go-sms-sender v0.15.0/go.mod h1:cQs7qqohMJBgIVZebOCB8ko09naG1vzFJEH59VNIscs=
 github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR/w=
 github.com/casdoor/gomail/v2 v2.0.1/go.mod h1:VnGPslEAtpix5FjHisR/WKB1qvZDBaujbikxDe9d+2Q=
-github.com/casdoor/notify v0.44.0 h1:/j2TqO5lXEKYyu2WWtmGh3jh4aeN8m6p+9tWb5j1PWU=
-github.com/casdoor/notify v0.44.0/go.mod h1:HgLPFmSmy9+uB72cp2z3Tk5KxpZfStqpLMr+5RddXmw=
+github.com/casdoor/notify v0.45.0 h1:OlaFvcQFjGOgA4mRx07M8AH1gvb5xNo21mcqrVGlLgk=
+github.com/casdoor/notify v0.45.0/go.mod h1:wNHQu0tiDROMBIvz0j3Om3Lhd5yZ+AIfnFb8MYb8OLQ=
 github.com/casdoor/oss v1.3.0 h1:D5pcz65tJRqJrWY11Ks7D9LUsmlhqqMHugjDhSxWTvk=
 github.com/casdoor/oss v1.3.0/go.mod h1:YOi6KpG1pZHTkiy9AYaqI0UaPfE7YkaA07d89f1idqY=
 github.com/casdoor/xorm-adapter/v3 v3.0.4 h1:vB04Ao8n2jA7aFBI9F+gGXo9+Aa1IQP6mTdo50913DM=
@@ -1829,8 +1831,6 @@ github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljT
 github.com/urfave/cli/v2 v2.3.0/go.mod h1:LJmUH05zAU44vOAcrfzZQKsZbVcdbOG8rtL3/XcUArI=
 github.com/utahta/go-linenotify v0.5.0 h1:E1tJaB/XhqRY/iz203FD0MaHm10DjQPOq5/Mem2A3Gs=
 github.com/utahta/go-linenotify v0.5.0/go.mod h1:KsvBXil2wx+ByaCR0e+IZKTbp4pDesc7yjzRigLf6pE=
-github.com/vartanbeno/go-reddit/v2 v2.0.0 h1:fxYMqx5lhbmJ3yYRN1nnQC/gecRB3xpUS2BbG7GLpsk=
-github.com/vartanbeno/go-reddit/v2 v2.0.0/go.mod h1:758/S10hwZSLm43NPtwoNQdZFSg3sjB5745Mwjb0ANI=
 github.com/volcengine/volc-sdk-golang v1.0.117 h1:ykFVSwsVq9qvIoWP9jeP+VKNAUjrblAdsZl46yVWiH8=
 github.com/volcengine/volc-sdk-golang v1.0.117/go.mod h1:ojXSFvj404o2UKnZR9k9LUUWIUU+9XtlRlzk2+UFc/M=
 github.com/wendal/errors v0.0.0-20181209125328-7f31f4b264ec/go.mod h1:Q12BUT7DqIlHRmgv3RskH+UCM/4eqVMgI0EMmlSpAXc=

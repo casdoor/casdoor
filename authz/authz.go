@@ -127,8 +127,14 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		return true
 	}
 
-	if user != nil && user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
-		return true
+	if user != nil {
+		if user.IsDeleted {
+			return false
+		}
+
+		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
+			return true
+		}
 	}
 
 	res, err := Enforcer.Enforce(subOwner, subName, method, urlPath, objOwner, objName)

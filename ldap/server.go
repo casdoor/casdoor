@@ -25,6 +25,11 @@ import (
 )
 
 func StartLdapServer() {
+	ldapServerPort := conf.GetConfigString("ldapServerPort")
+	if ldapServerPort == "" || ldapServerPort == "0" {
+		return
+	}
+
 	server := ldap.NewServer()
 	routes := ldap.NewRouteMux()
 
@@ -32,7 +37,7 @@ func StartLdapServer() {
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
-	err := server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
+	err := server.ListenAndServe("0.0.0.0:" + ldapServerPort)
 	if err != nil {
 		log.Printf("StartLdapServer() failed, err = %s", err.Error())
 	}

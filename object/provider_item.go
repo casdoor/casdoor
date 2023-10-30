@@ -18,13 +18,13 @@ type ProviderItem struct {
 	Owner string `json:"owner"`
 	Name  string `json:"name"`
 
-	CanSignUp bool      `json:"canSignUp"`
-	CanSignIn bool      `json:"canSignIn"`
-	CanUnlink bool      `json:"canUnlink"`
-	Prompted  bool      `json:"prompted"`
-	AlertType string    `json:"alertType"`
-	Rule      string    `json:"rule"`
-	Provider  *Provider `json:"provider"`
+	CanSignUp   bool      `json:"canSignUp"`
+	CanSignIn   bool      `json:"canSignIn"`
+	CanUnlink   bool      `json:"canUnlink"`
+	Prompted    bool      `json:"prompted"`
+	SignupGroup string    `json:"signupGroup"`
+	Rule        string    `json:"rule"`
+	Provider    *Provider `json:"provider"`
 }
 
 func (application *Application) GetProviderItem(providerName string) *ProviderItem {

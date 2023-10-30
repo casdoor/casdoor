@@ -20,11 +20,21 @@ func startSyncJob(db1 *Database, db2 *Database) error {
 	var wg sync.WaitGroup
 
 	// start canal1 replication
-	go db1.startCanal(db2)
+	go func(db1 *Database, db2 *Database) {
+		err := db1.startCanal(db2)
+		if err != nil {
+			panic(err)
+		}
+	}(db1, db2)
 	wg.Add(1)
 
 	// start canal2 replication
-	go db2.startCanal(db1)
+	go func(db1 *Database, db2 *Database) {
+		err := db2.startCanal(db1)
+		if err != nil {
+			panic(err)
+		}
+	}(db1, db2)
 	wg.Add(1)
 
 	wg.Wait()
