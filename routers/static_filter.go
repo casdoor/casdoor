@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -83,8 +84,14 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", fmt.Errorf(code.Message)
 	}
 
-	res := fmt.Sprintf("%s?code=%s&state=%s", redirectUri, code.Code, state)
-	return res, nil
+	// If redirectUri already has parameters, and if so, concatenate the code and state parameters with &
+	redirectUrl, _ := url.Parse(redirectUri)
+	urlParams, _ := url.ParseQuery(redirectUrl.RawQuery)
+	if urlParams != nil && len(urlParams) > 0 {
+		return fmt.Sprintf("%s&code=%s&state=%s", redirectUri, code.Code, state), nil
+	} else {
+		return fmt.Sprintf("%s?code=%s&state=%s", redirectUri, code.Code, state), nil
+	}
 }
 
 func StaticFilter(ctx *context.Context) {
