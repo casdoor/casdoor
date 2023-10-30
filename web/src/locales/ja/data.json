@@ -238,7 +238,7 @@
     "Identity": "Identity",
     "Is enabled": "可能になっています",
     "Is enabled - Tooltip": "使用可能かどうかを設定してください",
-    "LDAPs": "LDAPs",
+    "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPサーバー",
     "Languages": "言語",
     "Languages - Tooltip": "利用可能な言語",
@@ -367,7 +367,7 @@
     "Total users": "Total users"
   },
   "ldap": {
-    "Admin": "Admin",
+    "Admin": "管理者",
     "Admin - Tooltip": "LDAPサーバー管理者のCNまたはID",
     "Admin Password": "管理者パスワード",
     "Admin Password - Tooltip": "LDAPサーバーの管理者パスワード",
@@ -737,7 +737,7 @@
     "SMS account": "SMSアカウント",
     "SMS account - Tooltip": "SMSアカウント",
     "SP ACS URL": "SP ACS URL",
-    "SP ACS URL - Tooltip": "SP ACS URL",
+    "SP ACS URL - Tooltip": "SP ACS URL - ツールチップ",
     "SP Entity ID": "SPエンティティID",
     "Scene": "シーン",
     "Scene - Tooltip": "シーン",
