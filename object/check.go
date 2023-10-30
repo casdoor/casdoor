@@ -379,7 +379,10 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			continue
 		}
 
-		enforcer := getPermissionEnforcer(permission)
+		enforcer, err := getPermissionEnforcer(permission)
+		if err != nil {
+			return false, err
+		}
 
 		var isAllowed bool
 		isAllowed, err = enforcer.Enforce(userId, application.Name, "Read")

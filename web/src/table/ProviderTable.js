@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as Provider from "../auth/Provider";
@@ -39,7 +39,7 @@ class ProviderTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, alertType: "None", rule: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a provider"), canSignUp: true, canSignIn: true, canUnlink: true, prompted: false, signupGroup: "", rule: "None"};
     if (table === undefined) {
       table = [];
     }
@@ -168,6 +168,23 @@ class ProviderTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, "prompted", checked);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("provider:Signup group"),
+        dataIndex: "signupGroup",
+        key: "signupGroup",
+        width: "120px",
+        render: (text, record, index) => {
+          if (!["OAuth", "Web3"].includes(record.provider?.category)) {
+            return null;
+          }
+
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "signupGroup", e.target.value);
             }} />
           );
         },

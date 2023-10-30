@@ -26,23 +26,23 @@ import (
 	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
-func getPermissionEnforcer(p *Permission, permissionIDs ...string) *casbin.Enforcer {
+func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enforcer, error) {
 	// Init an enforcer instance without specifying a model or adapter.
 	// If you specify an adapter, it will load all policies, which is a
 	// heavy process that can slow down the application.
 	enforcer, err := casbin.NewEnforcer(&log.DefaultLogger{}, false)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = p.setEnforcerModel(enforcer)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = p.setEnforcerAdapter(enforcer)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	policyFilterV5 := []string{p.GetId()}
@@ -60,10 +60,10 @@ func getPermissionEnforcer(p *Permission, permissionIDs ...string) *casbin.Enfor
 
 	err = enforcer.LoadFilteredPolicy(policyFilter)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return enforcer
+	return enforcer, nil
 }
 
 func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
@@ -201,72 +201,96 @@ func getGroupingPolicies(permission *Permission) [][]string {
 	return groupingPolicies
 }
 
-func addPolicies(permission *Permission) {
-	enforcer := getPermissionEnforcer(permission)
+func addPolicies(permission *Permission) error {
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
 	policies := getPolicies(permission)
 
-	_, err := enforcer.AddPolicies(policies)
-	if err != nil {
-		panic(err)
-	}
+	_, err = enforcer.AddPolicies(policies)
+	return err
 }
 
-func addGroupingPolicies(permission *Permission) {
-	enforcer := getPermissionEnforcer(permission)
+func removePolicies(permission *Permission) error {
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
+	policies := getPolicies(permission)
+
+	_, err = enforcer.RemovePolicies(policies)
+	return err
+}
+
+func addGroupingPolicies(permission *Permission) error {
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
 	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
-		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+		_, err = enforcer.AddGroupingPolicies(groupingPolicies)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
+
+	return nil
 }
 
-func removeGroupingPolicies(permission *Permission) {
-	enforcer := getPermissionEnforcer(permission)
+func removeGroupingPolicies(permission *Permission) error {
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
 	groupingPolicies := getGroupingPolicies(permission)
 
 	if len(groupingPolicies) > 0 {
-		_, err := enforcer.RemoveGroupingPolicies(groupingPolicies)
+		_, err = enforcer.RemoveGroupingPolicies(groupingPolicies)
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
-}
 
-func removePolicies(permission *Permission) {
-	enforcer := getPermissionEnforcer(permission)
-	policies := getPolicies(permission)
-
-	_, err := enforcer.RemovePolicies(policies)
-	if err != nil {
-		panic(err)
-	}
+	return nil
 }
 
 type CasbinRequest = []interface{}
 
 func Enforce(permission *Permission, request *CasbinRequest, permissionIds ...string) (bool, error) {
-	enforcer := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	if err != nil {
+		return false, err
+	}
+
 	return enforcer.Enforce(*request...)
 }
 
 func BatchEnforce(permission *Permission, requests *[]CasbinRequest, permissionIds ...string) ([]bool, error) {
-	enforcer := getPermissionEnforcer(permission, permissionIds...)
+	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
+	if err != nil {
+		return nil, err
+	}
+
 	return enforcer.BatchEnforce(*requests)
 }
 
-func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []string {
+func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) ([]string, error) {
 	permissions, _, err := getPermissionsAndRolesByUser(userId)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	for _, role := range GetAllRoles(userId) {
 		permissionsByRole, err := GetPermissionsByRole(role)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		permissions = append(permissions, permissionsByRole...)
@@ -274,19 +298,24 @@ func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) []
 
 	var values []string
 	for _, permission := range permissions {
-		enforcer := getPermissionEnforcer(permission)
+		enforcer, err := getPermissionEnforcer(permission)
+		if err != nil {
+			return nil, err
+		}
+
 		values = append(values, fn(enforcer)...)
 	}
-	return values
+
+	return values, nil
 }
 
-func GetAllObjects(userId string) []string {
+func GetAllObjects(userId string) ([]string, error) {
 	return getAllValues(userId, func(enforcer *casbin.Enforcer) []string {
 		return enforcer.GetAllObjects()
 	})
 }
 
-func GetAllActions(userId string) []string {
+func GetAllActions(userId string) ([]string, error) {
 	return getAllValues(userId, func(enforcer *casbin.Enforcer) []string {
 		return enforcer.GetAllActions()
 	})
@@ -330,17 +359,23 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 
 		// load [policy_definition]
 		policyDefinition := strings.Split(cfg.String("policy_definition::p"), ",")
+
 		fieldsNum := len(policyDefinition)
 		if fieldsNum > builtInAvailableField {
-			panic(fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInAvailableField, fieldsNum))
+			return nil, fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInAvailableField, fieldsNum)
 		}
+
 		// filled empty field with "" and V5 with "permissionId"
 		for i := builtInAvailableField - fieldsNum; i > 0; i-- {
 			policyDefinition = append(policyDefinition, "")
 		}
 		policyDefinition = append(policyDefinition, "permissionId")
 
-		m, _ := model.NewModelFromString(modelText)
+		m, err := model.NewModelFromString(modelText)
+		if err != nil {
+			return nil, err
+		}
+
 		m.AddDef("p", "p", strings.Join(policyDefinition, ","))
 
 		return m, err

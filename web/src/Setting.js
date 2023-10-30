@@ -209,6 +209,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_keycloak.png`,
       url: "https://www.keycloak.org/",
     },
+    "Custom": {
+      logo: `${StaticBaseUrl}/img/social_custom.png`,
+      url: "https://door.casdoor.com/",
+    },
   },
   Payment: {
     "Dummy": {
@@ -866,10 +870,10 @@ export function getClickable(text) {
 }
 
 export function getProviderLogoURL(provider) {
+  if (provider.type === "Custom" && provider.customLogo) {
+    return provider.customLogo;
+  }
   if (provider.category === "OAuth") {
-    if (provider.type === "Custom" && provider.customLogo) {
-      return provider.customLogo;
-    }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
@@ -1014,6 +1018,7 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Aliyun IDaaS", name: "Aliyun IDaaS"},
       {id: "Keycloak", name: "Keycloak"},
+      {id: "Custom", name: "Custom"},
     ]);
   } else if (category === "Payment") {
     return ([

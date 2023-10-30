@@ -83,5 +83,10 @@ func UploadPermissions(owner string, path string) (bool, error) {
 		return false, nil
 	}
 
-	return AddPermissionsInBatch(newPermissions), nil
+	affected, err := AddPermissionsInBatch(newPermissions)
+	if err != nil {
+		return false, err
+	}
+
+	return affected, nil
 }
