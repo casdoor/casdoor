@@ -19,7 +19,7 @@
     "The provider: %s is not enabled for the application": "Le fournisseur :%s n'est pas activé pour l'application",
     "Unauthorized operation": "Opération non autorisée",
     "Unknown authentication type (not password or provider), form = %s": "Type d'authentification inconnu (pas de mot de passe ou de fournisseur), formulaire = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "Le tag de l’utilisateur %s n’est pas répertorié dans les tags de l’application"
   },
   "cas": {
     "Service %s and %s do not match": "Les services %s et %s ne correspondent pas"
@@ -43,7 +43,7 @@
     "Phone number is invalid": "Le numéro de téléphone est invalide",
     "Session outdated, please login again": "Session expirée, veuillez vous connecter à nouveau",
     "The user is forbidden to sign in, please contact the administrator": "L'utilisateur est interdit de se connecter, veuillez contacter l'administrateur",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "L'utilisateur %s n'existe pas sur le serveur LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Le nom d'utilisateur ne peut contenir que des caractères alphanumériques, des traits soulignés ou des tirets, ne peut pas avoir de tirets ou de traits soulignés consécutifs et ne peut pas commencer ou se terminer par un tiret ou un trait souligné.",
     "Username already exists": "Nom d'utilisateur existe déjà",
     "Username cannot be an email address": "Nom d'utilisateur ne peut pas être une adresse e-mail",
@@ -53,7 +53,7 @@
     "Username must have at least 2 characters": "Le nom d'utilisateur doit comporter au moins 2 caractères",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Vous avez entré le mauvais mot de passe ou code plusieurs fois, veuillez attendre %d minutes et réessayer",
     "Your region is not allow to signup by phone": "Votre région n'est pas autorisée à s'inscrire par téléphone",
-    "password or code is incorrect": "password or code is incorrect",
+    "password or code is incorrect": "mot de passe ou code invalide",
     "password or code is incorrect, you have %d remaining chances": "Le mot de passe ou le code est incorrect, il vous reste %d chances",
     "unsupported password type: %s": "Type de mot de passe non pris en charge : %s"
   },
@@ -61,8 +61,8 @@
     "Missing parameter": "Paramètre manquant",
     "Please login first": "Veuillez d'abord vous connecter",
     "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
-    "don't support captchaProvider: ": "Ne pas prendre en charge la captchaProvider",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "don't support captchaProvider: ": "ne prend pas en charge captchaProvider: ",
+    "this operation is not allowed in demo mode": "cette opération n’est pas autorisée en mode démo"
   },
   "ldap": {
     "Ldap server exist": "Le serveur LDAP existe"
