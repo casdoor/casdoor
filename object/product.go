@@ -298,8 +298,6 @@ func CreateProductForPlan(plan *Plan) *Product {
 
 func UpdateProductForPlan(plan *Plan, product *Product) {
 	product.Owner = plan.Owner
-	product.DisplayName = fmt.Sprintf("Product for Plan %v/%v/%v", plan.Name, plan.DisplayName, plan.Period)
-	product.Detail = fmt.Sprintf("This product was auto created for plan %v(%v), subscription period is %v", plan.Name, plan.DisplayName, plan.Period)
 	product.Price = plan.Price
 	product.Currency = plan.Currency
 	product.Providers = plan.PaymentProviders
