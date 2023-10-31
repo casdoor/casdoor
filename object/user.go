@@ -561,7 +561,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, err
 	}
 	if oldUser == nil {
-		return false, nil
+		return false, fmt.Errorf("the user: %s is not found", id)
 	}
 
 	if name != user.Name {
@@ -642,7 +642,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	}
 
 	if oldUser == nil {
-		return false, nil
+		return false, fmt.Errorf("the user: %s is not found", id)
 	}
 
 	if name != user.Name {
@@ -688,12 +688,15 @@ func AddUser(user *User) (bool, error) {
 	}
 
 	if user.Owner == "" || user.Name == "" {
-		return false, nil
+		return false, fmt.Errorf("the user's owner and name should not be empty")
 	}
 
-	organization, _ := GetOrganizationByUser(user)
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, err
+	}
 	if organization == nil {
-		return false, nil
+		return false, fmt.Errorf("the organization: %s is not found", user.Owner)
 	}
 
 	if organization.DefaultPassword != "" && user.Password == "123" {
@@ -704,7 +707,7 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
-	err := user.UpdateUserHash()
+	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
 	}
@@ -738,9 +741,8 @@ func AddUser(user *User) (bool, error) {
 }
 
 func AddUsers(users []*User) (bool, error) {
-	var err error
 	if len(users) == 0 {
-		return false, nil
+		return false, fmt.Errorf("no users are provided")
 	}
 
 	// organization := GetOrganizationByUser(users[0])
@@ -748,7 +750,7 @@ func AddUsers(users []*User) (bool, error) {
 		// this function is only used for syncer or batch upload, so no need to encrypt the password
 		// user.UpdateUserPassword(organization)
 
-		err = user.UpdateUserHash()
+		err := user.UpdateUserHash()
 		if err != nil {
 			return false, err
 		}
@@ -772,11 +774,11 @@ func AddUsers(users []*User) (bool, error) {
 }
 
 func AddUsersInBatch(users []*User) (bool, error) {
-	batchSize := conf.GetConfigBatchSize()
-
 	if len(users) == 0 {
-		return false, nil
+		return false, fmt.Errorf("no users are provided")
 	}
+
+	batchSize := conf.GetConfigBatchSize()
 
 	affected := false
 	for i := 0; i < len(users); i += batchSize {
@@ -945,9 +947,9 @@ func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
 	return user.GetMfaProps(user.PreferredMfaType, masked)
 }
 
-func AddUserkeys(user *User, isAdmin bool) (bool, error) {
+func AddUserKeys(user *User, isAdmin bool) (bool, error) {
 	if user == nil {
-		return false, nil
+		return false, fmt.Errorf("the user is not found")
 	}
 
 	user.AccessKey = util.GenerateId()
