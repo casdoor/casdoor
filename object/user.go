@@ -707,7 +707,7 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
-	err := user.UpdateUserHash()
+	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
 	}
@@ -947,7 +947,7 @@ func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
 	return user.GetMfaProps(user.PreferredMfaType, masked)
 }
 
-func AddUserkeys(user *User, isAdmin bool) (bool, error) {
+func AddUserKeys(user *User, isAdmin bool) (bool, error) {
 	if user == nil {
 		return false, fmt.Errorf("the user is not found")
 	}

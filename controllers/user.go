@@ -572,11 +572,11 @@ func (c *ApiController) GetUserCount() {
 	c.ResponseOk(count)
 }
 
-// AddUserkeys
-// @Title AddUserkeys
+// AddUserKeys
+// @Title AddUserKeys
 // @router /add-user-keys [post]
 // @Tag User API
-func (c *ApiController) AddUserkeys() {
+func (c *ApiController) AddUserKeys() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
@@ -585,7 +585,7 @@ func (c *ApiController) AddUserkeys() {
 	}
 
 	isAdmin := c.IsAdmin()
-	affected, err := object.AddUserkeys(&user, isAdmin)
+	affected, err := object.AddUserKeys(&user, isAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
