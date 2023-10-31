@@ -54,7 +54,7 @@ type Payment struct {
 	// Order Info
 	OutOrderId string          `xorm:"varchar(100)" json:"outOrderId"`
 	PayUrl     string          `xorm:"varchar(2000)" json:"payUrl"`
-	SuccessUrl string          `xorm:"varchar(2000)" json:"successUrl""` // `successUrl` is redirected from `payUrl` after pay success
+	SuccessUrl string          `xorm:"varchar(2000)" json:"successUrl"` // `successUrl` is redirected from `payUrl` after pay success
 	State      pp.PaymentState `xorm:"varchar(100)" json:"state"`
 	Message    string          `xorm:"varchar(2000)" json:"message"`
 }
