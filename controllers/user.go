@@ -181,6 +181,10 @@ func (c *ApiController) GetUser() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if organization == nil {
+			c.ResponseError(fmt.Sprintf("the organization: %s is not found", owner))
+			return
+		}
 
 		if !organization.IsProfilePublic {
 			requestUserId := c.GetSessionUsername()
