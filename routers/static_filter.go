@@ -83,7 +83,11 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", fmt.Errorf(code.Message)
 	}
 
-	res := fmt.Sprintf("%s?code=%s&state=%s", redirectUri, code.Code, state)
+	sep := "?"
+	if strings.Contains(redirectUri, "?") {
+		sep = "&"
+	}
+	res := fmt.Sprintf("%s%scode=%s&state=%s", redirectUri, sep, code.Code, state)
 	return res, nil
 }
 

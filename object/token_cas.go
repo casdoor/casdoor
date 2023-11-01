@@ -195,6 +195,9 @@ func GenerateCasToken(userId string, service string) (string, error) {
 
 	user, _ = GetMaskedUser(user, false)
 
+	user.WebauthnCredentials = nil
+	user.Properties = nil
+
 	authenticationSuccess := CasAuthenticationSuccess{
 		User: user.Name,
 		Attributes: &CasAttributes{

@@ -351,8 +351,8 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 }
 
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
-	var err error
-	if userId == "built-in/admin" {
+	owner, _ := util.GetOwnerAndNameFromId(userId)
+	if owner == "built-in" {
 		return true, nil
 	}
 

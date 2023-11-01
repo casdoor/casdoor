@@ -39,7 +39,7 @@ type Provider struct {
 	ClientId          string            `xorm:"varchar(200)" json:"clientId"`
 	ClientSecret      string            `xorm:"varchar(2000)" json:"clientSecret"`
 	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
-	ClientSecret2     string            `xorm:"varchar(100)" json:"clientSecret2"`
+	ClientSecret2     string            `xorm:"varchar(500)" json:"clientSecret2"`
 	Cert              string            `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
@@ -398,16 +398,18 @@ func providerChangeTrigger(oldName string, newName string) error {
 
 func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.ProviderInfo {
 	providerInfo := &idp.ProviderInfo{
-		Type:         provider.Type,
-		SubType:      provider.SubType,
-		ClientId:     provider.ClientId,
-		ClientSecret: provider.ClientSecret,
-		AppId:        provider.AppId,
-		HostUrl:      provider.Host,
-		TokenURL:     provider.CustomTokenUrl,
-		AuthURL:      provider.CustomAuthUrl,
-		UserInfoURL:  provider.CustomUserInfoUrl,
-		UserMapping:  provider.UserMapping,
+		Type:          provider.Type,
+		SubType:       provider.SubType,
+		ClientId:      provider.ClientId,
+		ClientSecret:  provider.ClientSecret,
+		ClientId2:     provider.ClientId2,
+		ClientSecret2: provider.ClientSecret2,
+		AppId:         provider.AppId,
+		HostUrl:       provider.Host,
+		TokenURL:      provider.CustomTokenUrl,
+		AuthURL:       provider.CustomAuthUrl,
+		UserInfoURL:   provider.CustomUserInfoUrl,
+		UserMapping:   provider.UserMapping,
 	}
 
 	if provider.Type == "WeChat" {

@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -84,6 +83,7 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	payload.Set("code", code)
 	payload.Set("grant_type", "authorization_code")
 	payload.Set("client_id", idp.Config.ClientID)
+	payload.Set("client_secret", idp.Config.ClientSecret)
 	payload.Set("redirect_uri", idp.Config.RedirectURL)
 	resp, err := idp.Client.PostForm(idp.Config.Endpoint.TokenURL, payload)
 	if err != nil {
@@ -118,11 +118,25 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	body, err := ioutil.ReadAll(resp.Body)
-	keyset, err := jwk.ParseKey(body)
+	body, err := io.ReadAll(resp.Body)
+	var respKeys struct {
+		Keys []interface{} `json:"keys"`
+	}
+
+	if err := json.Unmarshal(body, &respKeys); err != nil {
+		return nil, err
+	}
+
+	respKey, err := json.Marshal(&(respKeys.Keys[0]))
 	if err != nil {
 		return nil, err
 	}
+
+	keyset, err := jwk.ParseKey(respKey)
+	if err != nil {
+		return nil, err
+	}
+
 	tokenSrc := []byte(token.AccessToken)
 	publicKey, _ := keyset.PublicKey()
 	idToken, _ := jwt.Parse(tokenSrc, jwt.WithVerify(jwa.RS256, publicKey))

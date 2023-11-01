@@ -15,6 +15,7 @@
 package idp
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -33,13 +34,15 @@ type UserInfo struct {
 }
 
 type ProviderInfo struct {
-	Type         string
-	SubType      string
-	ClientId     string
-	ClientSecret string
-	AppId        string
-	HostUrl      string
-	RedirectUrl  string
+	Type          string
+	SubType       string
+	ClientId      string
+	ClientSecret  string
+	ClientId2     string
+	ClientSecret2 string
+	AppId         string
+	HostUrl       string
+	RedirectUrl   string
 
 	TokenURL    string
 	AuthURL     string
@@ -53,71 +56,71 @@ type IdProvider interface {
 	GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 }
 
-func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) IdProvider {
+func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error) {
 	switch idpInfo.Type {
 	case "GitHub":
-		return NewGithubIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewGithubIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Google":
-		return NewGoogleIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewGoogleIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "QQ":
-		return NewQqIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewQqIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeChat":
-		return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Facebook":
-		return NewFacebookIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewFacebookIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "DingTalk":
-		return NewDingTalkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewDingTalkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Weibo":
-		return NewWeiBoIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewWeiBoIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Gitee":
-		return NewGiteeIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewGiteeIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "LinkedIn":
-		return NewLinkedInIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewLinkedInIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeCom":
 		if idpInfo.SubType == "Internal" {
-			return NewWeComInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+			return NewWeComInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 		} else if idpInfo.SubType == "Third-party" {
-			return NewWeComIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+			return NewWeComIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 		} else {
-			return nil
+			return nil, fmt.Errorf("WeCom provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Lark":
-		return NewLarkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewLarkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "GitLab":
-		return NewGitlabIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewGitlabIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "ADFS":
-		return NewAdfsIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl)
+		return NewAdfsIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Baidu":
-		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
-		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewAlipayIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Custom":
-		return NewCustomIdProvider(idpInfo, redirectUrl)
+		return NewCustomIdProvider(idpInfo, redirectUrl), nil
 	case "Infoflow":
 		if idpInfo.SubType == "Internal" {
-			return NewInfoflowInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl)
+			return NewInfoflowInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil
 		} else if idpInfo.SubType == "Third-party" {
-			return NewInfoflowIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl)
+			return NewInfoflowIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.AppId, redirectUrl), nil
 		} else {
-			return nil
+			return nil, fmt.Errorf("Infoflow provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Casdoor":
-		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl)
+		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Okta":
-		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl)
+		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Douyin":
-		return NewDouyinIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewDouyinIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Bilibili":
-		return NewBilibiliIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl)
+		return NewBilibiliIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "MetaMask":
-		return NewMetaMaskIdProvider()
+		return NewMetaMaskIdProvider(), nil
 	case "Web3Onboard":
-		return NewWeb3OnboardIdProvider()
+		return NewWeb3OnboardIdProvider(), nil
 	default:
 		if isGothSupport(idpInfo.Type) {
-			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl)
+			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
 		}
-		return nil
+		return nil, fmt.Errorf("OAuth provider type: %s is not supported", idpInfo.Type)
 	}
 }
 
