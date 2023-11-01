@@ -122,14 +122,21 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	var respKeys struct {
 		Keys []interface{} `json:"keys"`
 	}
+
 	if err := json.Unmarshal(body, &respKeys); err != nil {
-		return nil, fmt.Errorf("adfs discovery keys error: can not unmarshal body")
+		return nil, err
 	}
-	respKey, _ := json.Marshal(&(respKeys.Keys[0]))
+
+	respKey, err := json.Marshal(&(respKeys.Keys[0]))
+	if err != nil {
+		return nil, err
+	}
+
 	keyset, err := jwk.ParseKey(respKey)
 	if err != nil {
 		return nil, err
 	}
+
 	tokenSrc := []byte(token.AccessToken)
 	publicKey, _ := keyset.PublicKey()
 	idToken, _ := jwt.Parse(tokenSrc, jwt.WithVerify(jwa.RS256, publicKey))
