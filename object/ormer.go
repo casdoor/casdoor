@@ -64,7 +64,6 @@ func InitConfig() {
 
 	InitAdapter()
 	CreateTables()
-	DoMigration()
 }
 
 func InitAdapter() {
