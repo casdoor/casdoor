@@ -15,7 +15,7 @@
 import React, {useEffect} from "react";
 
 export const CaptchaWidget = (props) => {
-  const {captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2, onChange} = props;
+  const {captchaType, subType, siteKey, scene, appKey, onChange} = props;
 
   const loadScript = (src) => {
     const tag = document.createElement("script");
@@ -64,14 +64,14 @@ export const CaptchaWidget = (props) => {
         }
 
         if (window.AWSC) {
-          if (clientSecret2 && clientSecret2 !== "***") {
+          if (appKey && appKey !== "***") {
             window.AWSC.use(subType, function(state, module) {
               module.init({
-                appkey: clientSecret2,
-                scene: clientId2,
+                appkey: appKey,
+                scene: scene,
                 renderTo: "captcha",
                 success: function(data) {
-                  onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${clientId2}&AppKey=${clientSecret2}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
+                  onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${scene}&AppKey=${appKey}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
                 },
               });
             });
@@ -125,7 +125,7 @@ export const CaptchaWidget = (props) => {
     default:
       break;
     }
-  }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
+  }, [captchaType, subType, siteKey, scene, appKey]);
 
   return <div id="captcha" />;
 };

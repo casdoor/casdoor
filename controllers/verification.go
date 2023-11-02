@@ -53,11 +53,31 @@ func (c *ApiController) SendVerificationCode() {
 		return
 	}
 
-	if vform.CaptchaType != "none" {
-		if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
-			c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
+	captchaProvider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if captchaProvider != nil {
+		if vform.CaptchaToken == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": captchaToken.")
 			return
-		} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, vform.ClientSecret); err != nil {
+		}
+
+		var clientSecret string
+
+		if captchaProvider.Type == "Default" {
+			if vform.CaptchaId == "" {
+				c.ResponseError(c.T("general:Missing parameter") + ": captchaId.")
+				return
+			}
+			clientSecret = vform.CaptchaId
+		} else {
+			clientSecret = captchaProvider.ClientSecret
+		}
+
+		if isHuman, err := captcha.VerifyCaptchaByCaptchaType(captchaProvider.Type, vform.CaptchaToken, clientSecret); err != nil {
 			c.ResponseError(err.Error())
 			return
 		} else if !isHuman {
@@ -225,13 +245,30 @@ func (c *ApiController) VerifyCaptcha() {
 		return
 	}
 
-	provider := captcha.GetCaptchaProvider(vform.CaptchaType)
-	if provider == nil {
-		c.ResponseError(c.T("verification:Invalid captcha provider."))
+	captchaProvider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "true", c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
-	isValid, err := provider.VerifyCaptcha(vform.CaptchaToken, vform.ClientSecret)
+	if vform.CaptchaToken == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": captchaToken.")
+		return
+	}
+
+	var clientSecret string
+
+	if captchaProvider.Type == "Default" {
+		if vform.CaptchaId == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": captchaId.")
+			return
+		}
+		clientSecret = vform.CaptchaId
+	} else {
+		clientSecret = captchaProvider.ClientSecret
+	}
+
+	isValid, err := captcha.VerifyCaptchaByCaptchaType(captchaProvider.Type, vform.CaptchaToken, clientSecret)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

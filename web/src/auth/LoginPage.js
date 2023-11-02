@@ -667,11 +667,10 @@ class LoginPage extends React.Component {
       owner={provider.owner}
       name={provider.name}
       visible={this.state.openCaptchaModal}
-      onOk={(captchaType, captchaToken, clientSecret) => {
+      onOk={(captchaToken, captchaId) => {
         const values = this.state.values;
-        values["captchaType"] = captchaType;
         values["captchaToken"] = captchaToken;
-        values["clientSecret"] = clientSecret;
+        values["captchaId"] = captchaId;
 
         this.login(values);
         this.setState({openCaptchaModal: false});

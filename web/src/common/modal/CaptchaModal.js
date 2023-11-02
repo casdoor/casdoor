@@ -24,10 +24,10 @@ export const CaptchaModal = (props) => {
 
   const [captchaType, setCaptchaType] = React.useState("none");
   const [clientId, setClientId] = React.useState("");
-  const [clientSecret, setClientSecret] = React.useState("");
+  const [captchaId, setCaptchaId] = React.useState("");
   const [subType, setSubType] = React.useState("");
-  const [clientId2, setClientId2] = React.useState("");
-  const [clientSecret2, setClientSecret2] = React.useState("");
+  const [scene, setScene] = React.useState("");
+  const [appKey, setAppKey] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
   const [captchaImg, setCaptchaImg] = React.useState("");
@@ -45,7 +45,7 @@ export const CaptchaModal = (props) => {
   }, [visible]);
 
   const handleOk = () => {
-    onOk?.(captchaType, captchaToken, clientSecret);
+    onOk?.(captchaToken, captchaId);
   };
 
   const handleCancel = () => {
@@ -57,19 +57,15 @@ export const CaptchaModal = (props) => {
     UserBackend.getCaptcha(owner, name, isCurrentProvider).then((res) => {
       if (res.type === "none") {
         handleOk();
-      } else if (res.type === "Default") {
-        setOpen(true);
-        setClientSecret(res.captchaId);
-        setCaptchaImg(res.captchaImage);
-        setCaptchaType("Default");
       } else {
         setOpen(true);
+        setCaptchaId(res.captchaId);
+        setCaptchaImg(res.captchaImage);
         setCaptchaType(res.type);
         setClientId(res.clientId);
-        setClientSecret(res.clientSecret);
         setSubType(res.subType);
-        setClientId2(res.clientId2);
-        setClientSecret2(res.clientSecret2);
+        setScene(res.scene);
+        setAppKey(res.appKey);
       }
     });
   };
@@ -120,10 +116,9 @@ export const CaptchaModal = (props) => {
               captchaType={captchaType}
               subType={subType}
               siteKey={clientId}
-              clientSecret={clientSecret}
               onChange={onChange}
-              clientId2={clientId2}
-              clientSecret2={clientSecret2}
+              scene={scene}
+              appKey={appKey}
             />
           </Row>
         </Col>

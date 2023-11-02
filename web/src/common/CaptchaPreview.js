@@ -49,8 +49,8 @@ export const CaptchaPreview = (props) => {
     return false;
   };
 
-  const onOk = (captchaType, captchaToken, clientSecret) => {
-    UserBackend.verifyCaptcha(captchaType, captchaToken, clientSecret).then(() => {
+  const onOk = (captchaToken, captchaId) => {
+    UserBackend.verifyCaptcha(owner, name, captchaToken, captchaId).then(() => {
       setVisible(false);
     });
   };

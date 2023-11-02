@@ -124,11 +124,10 @@ export function setPassword(userOwner, userName, oldPassword, newPassword, code 
   }).then(res => res.json());
 }
 
-export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode = "", dest, type, applicationId, checkUser = "") {
+export function sendCode(captchaToken, captchaId, method, countryCode = "", dest, type, applicationId, checkUser = "") {
   const formData = new FormData();
-  formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);
-  formData.append("clientSecret", clientSecret);
+  formData.append("captchaId", captchaId);
   formData.append("method", method);
   formData.append("countryCode", countryCode);
   formData.append("dest", dest);
@@ -153,11 +152,11 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
   });
 }
 
-export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
+export function verifyCaptcha(owner, name, captchaToken, captchaId) {
   const formData = new FormData();
-  formData.append("captchaType", captchaType);
+  formData.append("applicationId", `${owner}/${name}`);
   formData.append("captchaToken", captchaToken);
-  formData.append("clientSecret", clientSecret);
+  formData.append("captchaId", captchaId);
   return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
     method: "POST",
     credentials: "include",

@@ -48,9 +48,8 @@ type AuthForm struct {
 	SamlRequest  string `json:"samlRequest"`
 	SamlResponse string `json:"samlResponse"`
 
-	CaptchaType  string `json:"captchaType"`
 	CaptchaToken string `json:"captchaToken"`
-	ClientSecret string `json:"clientSecret"`
+	CaptchaId    string `json:"captchaId"`
 
 	MfaType      string `json:"mfaType"`
 	Passcode     string `json:"passcode"`

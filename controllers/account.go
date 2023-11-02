@@ -468,14 +468,20 @@ func (c *ApiController) GetCaptcha() {
 
 			c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
 			return
+		} else if captchaProvider.Type == "Aliyun Captcha" {
+			c.ResponseOk(Captcha{
+				Type:     captchaProvider.Type,
+				SubType:  captchaProvider.SubType,
+				ClientId: captchaProvider.ClientId,
+				Scene:    captchaProvider.ClientId2,
+				AppKey:   captchaProvider.ClientSecret2,
+			})
+			return
 		} else if captchaProvider.Type != "" {
 			c.ResponseOk(Captcha{
-				Type:          captchaProvider.Type,
-				SubType:       captchaProvider.SubType,
-				ClientId:      captchaProvider.ClientId,
-				ClientSecret:  captchaProvider.ClientSecret,
-				ClientId2:     captchaProvider.ClientId2,
-				ClientSecret2: captchaProvider.ClientSecret2,
+				Type:     captchaProvider.Type,
+				SubType:  captchaProvider.SubType,
+				ClientId: captchaProvider.ClientId,
 			})
 			return
 		}
