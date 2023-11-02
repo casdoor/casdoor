@@ -49,17 +49,6 @@ type Permission struct {
 	State       string `xorm:"varchar(100)" json:"state"`
 }
 
-type PermissionRule struct {
-	Ptype string `xorm:"varchar(100) index not null default ''" json:"ptype"`
-	V0    string `xorm:"varchar(100) index not null default ''" json:"v0"`
-	V1    string `xorm:"varchar(100) index not null default ''" json:"v1"`
-	V2    string `xorm:"varchar(100) index not null default ''" json:"v2"`
-	V3    string `xorm:"varchar(100) index not null default ''" json:"v3"`
-	V4    string `xorm:"varchar(100) index not null default ''" json:"v4"`
-	V5    string `xorm:"varchar(100) index not null default ''" json:"v5"`
-	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
-}
-
 const builtInAvailableField = 5 // Casdoor built-in adapter, use V5 to filter permission, so has 5 available field
 
 func GetPermissionCount(owner, field, value string) (int64, error) {

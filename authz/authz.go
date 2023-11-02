@@ -96,7 +96,7 @@ p, *, *, GET, /api/get-organization-names, *, *
 
 		sa := stringadapter.NewAdapter(ruleText)
 		// load all rules from string adapter to enforcer's memory
-		err := sa.LoadPolicy(Enforcer.GetModel())
+		err = sa.LoadPolicy(Enforcer.GetModel())
 		if err != nil {
 			panic(err)
 		}
