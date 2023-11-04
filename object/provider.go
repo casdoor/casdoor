@@ -264,6 +264,7 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			return nil, fmt.Errorf("the cert: %s does not exist", p.Cert)
 		}
 	}
+
 	typ := p.Type
 	if typ == "Dummy" {
 		pp, err := pp.NewDummyPaymentProvider()
@@ -271,7 +272,9 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			return nil, err
 		}
 		return pp, nil
-	} else if typ == "Alipay" {
+	}
+
+	if typ == "Alipay" {
 		if p.Metadata != "" {
 			// alipay provider store rootCert's name in metadata
 			rootCert, err := GetCert(util.GetId(p.Owner, p.Metadata))
@@ -286,34 +289,38 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 				return nil, err
 			}
 			return pp, nil
-		} else {
-			return nil, fmt.Errorf("the metadata of alipay provider is empty")
 		}
-	} else if typ == "GC" {
+		return nil, fmt.Errorf("the metadata of alipay provider is empty")
+	}
+
+	if typ == "GC" {
 		return pp.NewGcPaymentProvider(p.ClientId, p.ClientSecret, p.Host), nil
-	} else if typ == "WeChat Pay" {
+	}
+
+	if typ == "WeChat Pay" {
 		pp, err := pp.NewWechatPaymentProvider(p.ClientId, p.ClientSecret, p.ClientId2, cert.Certificate, cert.PrivateKey)
 		if err != nil {
 			return nil, err
 		}
 		return pp, nil
-	} else if typ == "PayPal" {
+	}
+
+	if typ == "PayPal" {
 		pp, err := pp.NewPaypalPaymentProvider(p.ClientId, p.ClientSecret)
 		if err != nil {
 			return nil, err
 		}
 		return pp, nil
-	} else if typ == "Stripe" {
+	}
+
+	if typ == "Stripe" {
 		pp, err := pp.NewStripePaymentProvider(p.ClientId, p.ClientSecret)
 		if err != nil {
 			return nil, err
 		}
 		return pp, nil
-	} else {
-		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}
-
-	return nil, nil
+	return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 }
 
 func (p *Provider) GetId() string {
