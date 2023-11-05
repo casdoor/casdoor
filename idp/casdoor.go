@@ -52,7 +52,7 @@ func (idp *CasdoorIdProvider) getConfig(hostUrl string) *oauth2.Config {
 		Endpoint: oauth2.Endpoint{
 			TokenURL: hostUrl + "/api/login/oauth/access_token",
 		},
-		Scopes: []string{"openid email profile"},
+		Scopes: []string{"openid email profile role permission"},
 	}
 }
 

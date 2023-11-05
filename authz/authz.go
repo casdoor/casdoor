@@ -58,6 +58,7 @@ p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *
 p, *, *, GET, /api/get-organization-applications, *, *
 p, *, *, GET, /api/get-user, *, *
+p, *, *, GET, /api/get-users, *, *
 p, *, *, GET, /api/get-user-application, *, *
 p, *, *, GET, /api/get-resources, *, *
 p, *, *, GET, /api/get-records, *, *

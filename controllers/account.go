@@ -401,6 +401,19 @@ func (c *ApiController) GetUserinfo() {
 
 	scope, aud := c.GetSessionOidc()
 	host := c.Ctx.Request.Host
+
+	//get Permissions
+	err := object.ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if user != nil {
+		user.Permissions = object.GetMaskedPermissions(user.Permissions)
+		user.Roles = object.GetMaskedRoles(user.Roles)
+	}
+
 	userInfo := object.GetUserInfo(user, scope, aud, host)
 
 	c.Data["json"] = userInfo
