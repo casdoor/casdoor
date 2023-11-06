@@ -89,7 +89,7 @@ type GothIdProvider struct {
 	Session  goth.Session
 }
 
-func NewGothIdProvider(providerType string, clientId string, clientSecret string, redirectUrl string, hostUrl string) *GothIdProvider {
+func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
 	var idp GothIdProvider
 	switch providerType {
 	case "Amazon":
@@ -101,8 +101,24 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		if !strings.Contains(redirectUrl, "/api/callback") {
 			redirectUrl = strings.Replace(redirectUrl, "/callback", "/api/callback", 1)
 		}
+
+		iat := time.Now().Unix()
+		exp := iat + 60*60
+		sp := apple.SecretParams{
+			ClientId:        clientId,
+			TeamId:          clientSecret,
+			KeyId:           clientId2,
+			PKCS8PrivateKey: clientSecret2,
+			Iat:             int(iat),
+			Exp:             int(exp),
+		}
+		secret, err := apple.MakeSecret(sp)
+		if err != nil {
+			return nil, err
+		}
+
 		idp = GothIdProvider{
-			Provider: apple.New(clientId, clientSecret, redirectUrl, nil),
+			Provider: apple.New(clientId, *secret, redirectUrl, nil),
 			Session:  &apple.Session{},
 		}
 	case "AzureAD":
@@ -386,10 +402,10 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &zoom.Session{},
 		}
 	default:
-		return nil
+		return nil, fmt.Errorf("OAuth Goth provider type: %s is not supported", providerType)
 	}
 
-	return &idp
+	return &idp, nil
 }
 
 // SetHttpClient

@@ -488,7 +488,11 @@ func (c *ApiController) Login() {
 		} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 			// OAuth
 			idpInfo := object.FromProviderToIdpInfo(c.Ctx, provider)
-			idProvider := idp.GetIdProvider(idpInfo, authForm.RedirectUri)
+			idProvider, err := idp.GetIdProvider(idpInfo, authForm.RedirectUri)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 			if idProvider == nil {
 				c.ResponseError(fmt.Sprintf(c.T("storage:The provider type: %s is not supported"), provider.Type))
 				return

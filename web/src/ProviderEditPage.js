@@ -152,6 +152,12 @@ class ProviderEditPage extends React.Component {
   }
   getClientIdLabel(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Service ID identifier"), i18next.t("provider:Service ID identifier - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
@@ -185,6 +191,12 @@ class ProviderEditPage extends React.Component {
 
   getClientSecretLabel(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Team ID"), i18next.t("provider:Team ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
     case "Email":
       if (provider.type === "Azure ACS") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
@@ -226,6 +238,12 @@ class ProviderEditPage extends React.Component {
 
   getClientId2Label(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Key ID"), i18next.t("provider:Key ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"));
     default:
@@ -241,6 +259,12 @@ class ProviderEditPage extends React.Component {
 
   getClientSecret2Label(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Key text"), i18next.t("provider:Key text - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"));
     default:
@@ -675,7 +699,7 @@ class ProviderEditPage extends React.Component {
             )
         }
         {
-          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Apple" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>

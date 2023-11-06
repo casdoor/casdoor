@@ -1,23 +1,23 @@
 {
   "account": {
-    "Logout": "Logout",
-    "My Account": "My Account",
-    "Sign Up": "Sign Up"
+    "Logout": "Esci",
+    "My Account": "Profilo",
+    "Sign Up": "Registrati"
   },
   "adapter": {
-    "Duplicated policy rules": "Duplicated policy rules",
-    "Edit Adapter": "Edit Adapter",
-    "Failed to sync policies": "Failed to sync policies",
-    "New Adapter": "New Adapter",
-    "Policies": "Policies",
-    "Policies - Tooltip": "Casbin policy rules",
+    "Duplicated policy rules": "Policy Duplicate",
+    "Edit Adapter": "Modifica Adattatore",
+    "Failed to sync policies": "Impossibile sincronizzare le policy",
+    "New Adapter": "Nuovo Adattatore",
+    "Policies": "Policy",
+    "Policies - Tooltip": "Regole Casbin",
     "Rule type": "Rule type",
-    "Sync policies successfully": "Sync policies successfully"
+    "Sync policies successfully": "Sincronizzazione delle policy completata correttamente"
   },
   "application": {
-    "Always": "Always",
-    "Auto signin": "Auto signin",
-    "Auto signin - Tooltip": "When a logged-in session exists in Casdoor, it is automatically used for application-side login",
+    "Always": "Sempre",
+    "Auto signin": "Accesso automatico",
+    "Auto signin - Tooltip": "Quando una sessione esiste in Casdoor, viene utilizzata automaticamente per il login lato applicazione",
     "Background URL": "Background URL",
     "Background URL - Tooltip": "URL of the background image used in the login page",
     "Binding providers": "Binding providers",
