@@ -563,6 +563,7 @@ func GetAccessibleAppplications(userId string, applications []*Application) ([]*
     for _, app := range applications {
 		if user.IsAdmin {
 			result = append(result, app)
+			continue
 		}
 		allowed, _ := CheckLoginPermission(userId, app)
 		if allowed {
