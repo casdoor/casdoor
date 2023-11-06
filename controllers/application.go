@@ -172,7 +172,12 @@ func (c *ApiController) GetOrganizationApplications() {
 			c.ResponseError(err.Error())
 			return
 		}
-
+        
+		applications, err = object.GetAccessibleAppplications(userId, applications)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 		c.ResponseOk(object.GetMaskedApplications(applications, userId))
 	} else {
 		limit := util.ParseInt(limit)

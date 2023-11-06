@@ -553,3 +553,21 @@ func applicationChangeTrigger(oldName string, newName string) error {
 
 	return session.Commit()
 }
+
+func GetAccessibleAppplications(userId string, applications []*Application) ([]*Application, error) {
+    var result []*Application
+	user, err := GetUser(userId)
+	if err != nil {
+		return result, err
+	}
+    for _, app := range applications {
+		if user.IsAdmin {
+			result = append(result, app)
+		}
+		allowed, _ := CheckLoginPermission(userId, app)
+		if allowed {
+			result = append(result, app)
+        }
+    }
+    return result, nil
+}
