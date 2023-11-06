@@ -64,7 +64,6 @@ func InitConfig() {
 
 	InitAdapter()
 	CreateTables()
-	DoMigration()
 }
 
 func InitAdapter() {
@@ -326,11 +325,6 @@ func (a *Ormer) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(RadiusAccounting))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(PermissionRule))
 	if err != nil {
 		panic(err)
 	}

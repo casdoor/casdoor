@@ -161,7 +161,6 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-
 	if id == "" && owner == "" {
 		switch {
 		case email != "":
@@ -176,7 +175,8 @@ func (c *ApiController) GetUser() {
 			owner = util.GetOwnerFromId(id)
 		}
 
-		organization, err := object.GetOrganization(util.GetId("admin", owner))
+		var organization *object.Organization
+		organization, err = object.GetOrganization(util.GetId("admin", owner))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
