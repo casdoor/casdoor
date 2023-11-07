@@ -555,12 +555,12 @@ func applicationChangeTrigger(oldName string, newName string) error {
 }
 
 func GetAccessibleAppplications(userId string, applications []*Application) ([]*Application, error) {
-    var result []*Application
+	var result []*Application
 	user, err := GetUser(userId)
 	if err != nil {
 		return result, err
 	}
-    for _, app := range applications {
+	for _, app := range applications {
 		if user.IsAdmin {
 			result = append(result, app)
 			continue
@@ -568,7 +568,7 @@ func GetAccessibleAppplications(userId string, applications []*Application) ([]*
 		allowed, _ := CheckLoginPermission(userId, app)
 		if allowed {
 			result = append(result, app)
-        }
-    }
-    return result, nil
+		}
+	}
+	return result, nil
 }
