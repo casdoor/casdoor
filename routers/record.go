@@ -26,8 +26,9 @@ func getUser(ctx *context.Context) (username string) {
 			username = getUserByClientIdSecret(ctx)
 		}
 	}()
-
-	username = ctx.Input.Session("username").(string)
+	if ctx.Input.Session("username") != nil {
+		username = ctx.Input.Session("username").(string)
+	}
 
 	if username == "" {
 		username = getUserByClientIdSecret(ctx)

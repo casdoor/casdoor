@@ -39,21 +39,24 @@ func getUsername(ctx *context.Context) (username string) {
 		}
 	}()
 
-	username = ctx.Input.Session("username").(string)
+	if ctx.Input.Session("username") != nil {
+		username = ctx.Input.Session("username").(string)
+	}
 
-	if username == "" {
+	if len(strings.TrimSpace(username)) == 0 {
 		username, _ = getUsernameByClientIdSecret(ctx)
 	}
 
-	if username == "" {
+	if len(strings.TrimSpace(username)) == 0 {
 		username = getUsernameByKeys(ctx)
 	}
+
 	return
 }
 
 func getSubject(ctx *context.Context) (string, string) {
 	username := getUsername(ctx)
-	if username == "" {
+	if len(strings.TrimSpace(username)) == 0 {
 		return "anonymous", "anonymous"
 	}
 
