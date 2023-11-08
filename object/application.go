@@ -346,7 +346,7 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 }
 
 func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
-	if isUserIdGlobalAdmin(userId) {
+	if userId == "" || isUserIdGlobalAdmin(userId) {
 		return applications, nil
 	}
 
@@ -354,8 +354,7 @@ func GetAllowedApplications(applications []*Application, userId string) ([]*Appl
 	if err != nil {
 		return nil, err
 	}
-
-	if user.IsAdmin {
+	if user != nil && user.IsAdmin {
 		return applications, nil
 	}
 
