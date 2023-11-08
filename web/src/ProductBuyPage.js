@@ -31,6 +31,7 @@ class ProductBuyPage extends React.Component {
       pricingName: props?.pricingName ?? props?.match?.params?.pricingName ?? null,
       planName: params.get("plan"),
       userName: params.get("user"),
+      paymentEnv: "",
       product: null,
       pricing: props?.pricing ?? null,
       plan: null,
@@ -38,8 +39,20 @@ class ProductBuyPage extends React.Component {
     };
   }
 
+  getPaymentEnv() {
+    let env = "";
+    const ua = navigator.userAgent.toLocaleLowerCase();
+    if (ua.indexOf("micromessenger") !== -1) {
+      env = "WechatBrowser";
+    }
+    this.setState({
+      paymentEnv: env,
+    });
+  }
+
   UNSAFE_componentWillMount() {
     this.getProduct();
+    this.getPaymentEnv();
   }
 
   setStateAsync(state) {
@@ -127,23 +140,61 @@ class ProductBuyPage extends React.Component {
     return `${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`;
   }
 
+  onBridgeReady(attachInfo) {
+    const {WeixinJSBridge} = window;
+    Setting.showMessage("success", "attachInfo is " + attachInfo);
+    WeixinJSBridge.invoke(
+      "getBrandWCPayRequest", {
+        "appId": attachInfo.appId,
+        "timeStamp": attachInfo.timeStamp,
+        "nonceStr": attachInfo.nonceStr,
+        "package": attachInfo.package,
+        "signType": attachInfo.signType,
+        "paySign": attachInfo.paySign,
+      },
+      function(res) {
+        if (res.err_msg === "get_brand_wcpay_request:ok") {
+          window.console.log("success", "pay success: " + res);
+        }
+      }
+    );
+  }
+
+  callWechatPay(attachInfo) {
+    const {WeixinJSBridge} = window;
+    if (typeof WeixinJSBridge === "undefined") {
+      if (document.addEventListener) {
+        document.addEventListener("WeixinJSBridgeReady", () => this.onBridgeReady(attachInfo), false);
+      } else if (document.attachEvent) {
+        document.attachEvent("WeixinJSBridgeReady", () => this.onBridgeReady(attachInfo));
+        document.attachEvent("onWeixinJSBridgeReady", () => this.onBridgeReady(attachInfo));
+      }
+    } else {
+      this.onBridgeReady(attachInfo);
+    }
+  }
+
   buyProduct(product, provider) {
     this.setState({
       isPlacingOrder: true,
     });
 
-    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "")
+    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "", this.state.paymentEnv)
       .then((res) => {
         if (res.status === "ok") {
           const payment = res.data;
+          const attachInfo = res.data2;
           let payUrl = payment.payUrl;
           if (provider.type === "WeChat Pay") {
+            if (this.state.paymentEnv === "WechatBrowser") {
+              this.callWechatPay(attachInfo);
+              return ;
+            }
             payUrl = `/qrcode/${payment.owner}/${payment.name}?providerName=${provider.name}&payUrl=${encodeURI(payment.payUrl)}&successUrl=${encodeURI(payment.successUrl)}`;
           }
           Setting.goToLink(payUrl);
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-
           this.setState({
             isPlacingOrder: false,
           });

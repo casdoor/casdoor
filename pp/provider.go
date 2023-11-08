@@ -24,6 +24,32 @@ const (
 	PaymentStateError    PaymentState = "Error"
 )
 
+const (
+	PaymentEnvWechatBrowser = "WechatBrowser"
+)
+
+type PayReq struct {
+	ProviderName       string
+	ProductName        string
+	PayerName          string
+	PayerId            string
+	PaymentName        string
+	ProductDisplayName string
+	Price              float64
+	Currency           string
+
+	ReturnUrl string
+	NotifyUrl string
+
+	PaymentEnv string
+}
+
+type PayResp struct {
+	PayUrl     string
+	OrderId    string
+	AttachInfo map[string]interface{}
+}
+
 type NotifyResult struct {
 	PaymentName   string
 	PaymentStatus PaymentState
@@ -39,7 +65,7 @@ type NotifyResult struct {
 }
 
 type PaymentProvider interface {
-	Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error)
+	Pay(req *PayReq) (*PayResp, error)
 	Notify(body []byte, orderId string) (*NotifyResult, error)
 	GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error)
 	GetResponseError(err error) string

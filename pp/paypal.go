@@ -49,16 +49,16 @@ func NewPaypalPaymentProvider(clientID string, secret string) (*PaypalPaymentPro
 	return pp, nil
 }
 
-func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
+func (pp *PaypalPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// https://github.com/go-pay/gopay/blob/main/doc/paypal.md
 	units := make([]*paypal.PurchaseUnit, 0, 1)
 	unit := &paypal.PurchaseUnit{
 		ReferenceId: util.GetRandomString(16),
 		Amount: &paypal.Amount{
-			CurrencyCode: currency,                    // e.g."USD"
-			Value:        priceFloat64ToString(price), // e.g."100.00"
+			CurrencyCode: r.Currency,                    // e.g."USD"
+			Value:        priceFloat64ToString(r.Price), // e.g."100.00"
 		},
-		Description: joinAttachString([]string{productDisplayName, productName, providerName}),
+		Description: joinAttachString([]string{r.ProductDisplayName, r.ProductName, r.ProviderName}),
 	}
 	units = append(units, unit)
 
@@ -68,23 +68,27 @@ func (pp *PaypalPaymentProvider) Pay(providerName string, productName string, pa
 	bm.SetBodyMap("application_context", func(b gopay.BodyMap) {
 		b.Set("brand_name", "Casdoor")
 		b.Set("locale", "en-PT")
-		b.Set("return_url", returnUrl)
-		b.Set("cancel_url", returnUrl)
+		b.Set("return_url", r.ReturnUrl)
+		b.Set("cancel_url", r.ReturnUrl)
 	})
 
 	ppRsp, err := pp.Client.CreateOrder(context.Background(), bm)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 	if ppRsp.Code != paypal.Success {
-		return "", "", errors.New(ppRsp.Error)
+		return nil, errors.New(ppRsp.Error)
 	}
 	// {"id":"9BR68863NE220374S","status":"CREATED",
 	// "links":[{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S","rel":"self","method":"GET"},
 	// 			{"href":"https://www.sandbox.paypal.com/checkoutnow?token=9BR68863NE220374S","rel":"approve","method":"GET"},
 	// 			{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S","rel":"update","method":"PATCH"},
 	// 			{"href":"https://api.sandbox.paypal.com/v2/checkout/orders/9BR68863NE220374S/capture","rel":"capture","method":"POST"}]}
-	return ppRsp.Response.Links[1].Href, ppRsp.Response.Id, nil
+	payResp := &PayResp{
+		PayUrl:  ppRsp.Response.Links[1].Href,
+		OrderId: ppRsp.Response.Id,
+	}
+	return payResp, nil
 }
 
 func (pp *PaypalPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
