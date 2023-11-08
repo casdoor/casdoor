@@ -345,6 +345,35 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
+func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
+	if isUserIdGlobalAdmin(userId) {
+		return applications, nil
+	}
+
+	user, err := GetUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if user.IsAdmin {
+		return applications, nil
+	}
+
+	res := []*Application{}
+	for _, application := range applications {
+		var allowed bool
+		allowed, err = CheckLoginPermission(userId, application)
+		if err != nil {
+			return nil, err
+		}
+
+		if allowed {
+			res = append(res, application)
+		}
+	}
+	return res, nil
+}
+
 func UpdateApplication(id string, application *Application) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldApplication, err := getApplication(owner, name)
