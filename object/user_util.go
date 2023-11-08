@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/idp"
+	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
 
@@ -108,6 +109,10 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
+	}
+
+	if user != nil {
+		user.UpdatedTime = util.GetCurrentTime()
 	}
 
 	_, err = ormer.Engine.ID(core.PK{user.Owner, user.Name}).Cols("hash").Update(user)
