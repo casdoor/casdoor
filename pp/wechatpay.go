@@ -75,11 +75,11 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		bm.Set("total", priceFloat64ToInt64(r.Price))
 		bm.Set("currency", r.Currency)
 	})
-	bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
-		bm.Set("openid", r.PayerId) // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI
-	})
 	// In Wechat browser, we use JSAPI
 	if r.PaymentEnv == PaymentEnvWechatBrowser {
+		bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
+			bm.Set("openid", "oCxQw6ZlfJqmXD9uy0mf5ZNiejrs") // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI
+		})
 		jsapiRsp, err := pp.Client.V3TransactionJsapi(context.Background(), bm)
 		if err != nil {
 			return nil, err
@@ -96,7 +96,7 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 				"nonceStr":  jsapiRsp.SignInfo.HeaderNonce,
 				"package":   fmt.Sprintf("prepay_id=%s", jsapiRsp.Response.PrepayId),
 				"signType":  "RSA",
-				"paySign":   jsapiRsp.SignInfo.SignBody,
+				"paySign":   jsapiRsp.SignInfo.HeaderSignature,
 			},
 		}
 		return payResp, nil

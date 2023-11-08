@@ -142,7 +142,7 @@ class ProductBuyPage extends React.Component {
 
   onBridgeReady(attachInfo) {
     const {WeixinJSBridge} = window;
-    Setting.showMessage("success", "attachInfo is " + attachInfo);
+    Setting.showMessage("success", "attachInfo is " + JSON.stringify(attachInfo));
     WeixinJSBridge.invoke(
       "getBrandWCPayRequest", {
         "appId": attachInfo.appId,
@@ -153,9 +153,10 @@ class ProductBuyPage extends React.Component {
         "paySign": attachInfo.paySign,
       },
       function(res) {
-        if (res.err_msg === "get_brand_wcpay_request:ok") {
-          window.console.log("success", "pay success: " + res);
-        }
+        Setting.showMessage("success", "res is " + JSON.stringify(res));
+        // if (res.err_msg === "get_brand_wcpay_request:ok") {
+        //   Setting.showMessage("success", "res is " + JSON.stringify(res));
+        // }
       }
     );
   }
