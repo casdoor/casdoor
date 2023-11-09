@@ -140,6 +140,7 @@ class ProductBuyPage extends React.Component {
     return `${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`;
   }
 
+  // Call Weechat Pay via jsapi
   onBridgeReady(attachInfo) {
     const {WeixinJSBridge} = window;
     Setting.showMessage("success", "attachInfo is " + JSON.stringify(attachInfo));
@@ -154,13 +155,24 @@ class ProductBuyPage extends React.Component {
       },
       function(res) {
         Setting.showMessage("success", "res is " + JSON.stringify(res));
-        // if (res.err_msg === "get_brand_wcpay_request:ok") {
-        //   Setting.showMessage("success", "res is " + JSON.stringify(res));
-        // }
+        if (res.err_msg === "get_brand_wcpay_request:ok") {
+          Setting.goToLink(attachInfo.payment.successUrl);
+          return ;
+        } else {
+          this.setState({
+            isPlacingOrder: false,
+          });
+          if (res.err_msg === "get_brand_wcpay_request:cancel") {
+            Setting.showMessage("error", i18next.t("product:Payment cancelled"));
+          } else {
+            Setting.showMessage("error", i18next.t("product:Payment failed"));
+          }
+        }
       }
     );
   }
 
+  // In Wechat browser, call this function to pay via jsapi
   callWechatPay(attachInfo) {
     const {WeixinJSBridge} = window;
     if (typeof WeixinJSBridge === "undefined") {
@@ -188,6 +200,7 @@ class ProductBuyPage extends React.Component {
           let payUrl = payment.payUrl;
           if (provider.type === "WeChat Pay") {
             if (this.state.paymentEnv === "WechatBrowser") {
+              attachInfo.payment = payment;
               this.callWechatPay(attachInfo);
               return ;
             }
