@@ -101,7 +101,7 @@ class PaymentResultPage extends React.Component {
         payment: payment,
       });
       if (payment.state === "Created") {
-        if (["PayPal", "Stripe", "Alipay"].includes(payment.type)) {
+        if (["PayPal", "Stripe", "Alipay", "WeChat Pay"].includes(payment.type)) {
           this.setState({
             timeout: setTimeout(async() => {
               await PaymentBackend.notifyPayment(this.state.owner, this.state.paymentName);
