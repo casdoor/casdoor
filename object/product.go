@@ -218,8 +218,12 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		NotifyUrl:          notifyUrl,
 		PaymentEnv:         paymentEnv,
 	}
+	// custom process for WeChat & WeChat Pay
 	if provider.Type == "WeChat Pay" {
-		payReq.PayerId = getUserProperty(user, idp.BuildWechatOpenIdKey(provider.AppId))
+		payReq.PayerId, err = getUserExtraProperty(user, "WeChat", idp.BuildWechatOpenIdKey(provider.AppId))
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 	payResp, err := pProvider.Pay(payReq)
 	if err != nil {

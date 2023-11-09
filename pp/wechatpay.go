@@ -79,9 +79,12 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	})
 	// In Wechat browser, we use JSAPI
 	if r.PaymentEnv == PaymentEnvWechatBrowser {
+		if r.PayerId == "" {
+			return nil, errors.New("failed to get the payer's openid, please retry login")
+		}
 		bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
 			log.Printf("r.PayerId=%s", r.PayerId)
-			bm.Set("openid", "oCxQw6ZlfJqmXD9uy0mf5ZNiejrs") // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI
+			bm.Set("openid", r.PayerId) // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI
 		})
 		jsapiRsp, err := pp.Client.V3TransactionJsapi(context.Background(), bm)
 		if err != nil {

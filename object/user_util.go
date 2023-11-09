@@ -145,6 +145,18 @@ func getUserProperty(user *User, field string) string {
 	return user.Properties[field]
 }
 
+func getUserExtraProperty(user *User, providerType, key string) (string, error) {
+	extraJson := getUserProperty(user, fmt.Sprintf("oauth_%s_extra", providerType))
+	if extraJson == "" {
+		return "", nil
+	}
+	extra := make(map[string]string)
+	if err := jsoniter.Unmarshal([]byte(extraJson), &extra); err != nil {
+		return "", err
+	}
+	return extra[key], nil
+}
+
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
