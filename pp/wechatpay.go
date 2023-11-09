@@ -18,10 +18,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/wechat/v3"
+	"log"
 )
 
 type WechatPayNotifyResponse struct {
@@ -30,8 +30,9 @@ type WechatPayNotifyResponse struct {
 }
 
 type WechatPaymentProvider struct {
-	Client *wechat.ClientV3
-	AppId  string
+	Client     *wechat.ClientV3
+	AppId      string
+	PrivateKey string
 }
 
 func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, serialNo string, privateKey string) (*WechatPaymentProvider, error) {
@@ -56,8 +57,9 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 		return nil, err
 	}
 	pp := &WechatPaymentProvider{
-		Client: clientV3.SetPlatformCert([]byte(platformCert), serialNo),
-		AppId:  appId,
+		Client:     clientV3.SetPlatformCert([]byte(platformCert), serialNo),
+		AppId:      appId,
+		PrivateKey: privateKey,
 	}
 
 	return pp, nil
@@ -87,18 +89,25 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		if jsapiRsp.Code != wechat.Success {
 			return nil, errors.New(jsapiRsp.Error)
 		}
+		// use RSA256 to sign the pay request
+
+		params, err := pp.Client.PaySignOfJSAPI(pp.AppId, jsapiRsp.Response.PrepayId)
+		if err != nil {
+			return nil, err
+		}
 		payResp := &PayResp{
 			PayUrl:  "",
 			OrderId: r.PaymentName, // Wechat can use paymentName as the OutTradeNo to query order status
 			AttachInfo: map[string]interface{}{
-				"appId":     pp.AppId,
-				"timeStamp": jsapiRsp.SignInfo.HeaderTimestamp,
-				"nonceStr":  jsapiRsp.SignInfo.HeaderNonce,
-				"package":   fmt.Sprintf("prepay_id=%s", jsapiRsp.Response.PrepayId),
+				"appId":     params.AppId,
+				"timeStamp": params.TimeStamp,
+				"nonceStr":  params.NonceStr,
+				"package":   params.Package,
 				"signType":  "RSA",
-				"paySign":   jsapiRsp.SignInfo.HeaderSignature,
+				"paySign":   params.PaySign,
 			},
 		}
+		log.Printf("payResp=%+v, jsapiRsp=%+v", payResp, jsapiRsp)
 		return payResp, nil
 		// In other case, we use Native
 	} else {
