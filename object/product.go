@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/idp"
 
 	"github.com/casdoor/casdoor/pp"
 
@@ -218,7 +219,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		PaymentEnv:         paymentEnv,
 	}
 	if provider.Type == "WeChat Pay" {
-		payReq.PayerId = user.WeChat // OpenId
+		payReq.PayerId = getUserProperty(user, idp.BuildWechatOpenIdKey(provider.AppId))
 	}
 	payResp, err := pProvider.Pay(payReq)
 	if err != nil {

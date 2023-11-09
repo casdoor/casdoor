@@ -31,6 +31,7 @@ type UserInfo struct {
 	Phone       string
 	CountryCode string
 	AvatarUrl   string
+	Extra       map[string]string
 }
 
 type ProviderInfo struct {

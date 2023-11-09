@@ -42,7 +42,8 @@ class ProductBuyPage extends React.Component {
   getPaymentEnv() {
     let env = "";
     const ua = navigator.userAgent.toLocaleLowerCase();
-    if (ua.indexOf("micromessenger") !== -1) {
+    // Only support Wechat Pay in Wechat Browser for mobile devices
+    if (ua.indexOf("micromessenger") !== -1 && ua.indexOf("mobile") !== -1) {
       env = "WechatBrowser";
     }
     this.setState({
