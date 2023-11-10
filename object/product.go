@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+
 	"github.com/casdoor/casdoor/idp"
 
 	"github.com/casdoor/casdoor/pp"
@@ -179,7 +180,6 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	}
 
 	owner := product.Owner
-	productName := product.Name
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
 	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 
@@ -207,7 +207,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	// Create an order
 	payReq := &pp.PayReq{
 		ProviderName:       providerName,
-		ProductName:        productName,
+		ProductName:        product.Name,
 		PayerName:          payerName,
 		PayerId:            user.Id,
 		PaymentName:        paymentName,
@@ -239,7 +239,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		ProductName:        productName,
+		ProductName:        product.Name,
 		ProductDisplayName: product.DisplayName,
 		Detail:             product.Detail,
 		Tag:                product.Tag,

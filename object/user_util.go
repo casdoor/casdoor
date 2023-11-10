@@ -17,9 +17,10 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 
 	"github.com/casdoor/casdoor/idp"
 	"github.com/xorm-io/core"

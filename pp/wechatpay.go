@@ -18,10 +18,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/wechat/v3"
-	"log"
 )
 
 type WechatPayNotifyResponse struct {
@@ -128,7 +129,6 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		}
 		return payResp, nil
 	}
-
 }
 
 func (pp *WechatPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
