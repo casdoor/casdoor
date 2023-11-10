@@ -144,7 +144,7 @@ class ProductBuyPage extends React.Component {
   // Call Weechat Pay via jsapi
   onBridgeReady(attachInfo) {
     const {WeixinJSBridge} = window;
-    Setting.showMessage("success", "attachInfo is " + JSON.stringify(attachInfo));
+    // Setting.showMessage("success", "attachInfo is " + JSON.stringify(attachInfo));
     WeixinJSBridge.invoke(
       "getBrandWCPayRequest", {
         "appId": attachInfo.appId,
@@ -155,7 +155,6 @@ class ProductBuyPage extends React.Component {
         "paySign": attachInfo.paySign,
       },
       function(res) {
-        Setting.showMessage("success", "res is " + JSON.stringify(res));
         if (res.err_msg === "get_brand_wcpay_request:ok") {
           Setting.goToLink(attachInfo.payment.successUrl);
           return ;
