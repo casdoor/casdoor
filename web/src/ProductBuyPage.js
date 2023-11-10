@@ -145,6 +145,9 @@ class ProductBuyPage extends React.Component {
   onBridgeReady(attachInfo) {
     const {WeixinJSBridge} = window;
     // Setting.showMessage("success", "attachInfo is " + JSON.stringify(attachInfo));
+    this.setState({
+      isPlacingOrder: false,
+    });
     WeixinJSBridge.invoke(
       "getBrandWCPayRequest", {
         "appId": attachInfo.appId,
@@ -159,9 +162,6 @@ class ProductBuyPage extends React.Component {
           Setting.goToLink(attachInfo.payment.successUrl);
           return ;
         } else {
-          this.setState({
-            isPlacingOrder: false,
-          });
           if (res.err_msg === "get_brand_wcpay_request:cancel") {
             Setting.showMessage("error", i18next.t("product:Payment cancelled"));
           } else {
