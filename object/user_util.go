@@ -20,6 +20,8 @@ import (
 	"reflect"
 	"strings"
 
+	jsoniter "github.com/json-iterator/go"
+
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -142,6 +144,25 @@ func setUserProperty(user *User, field string, value string) {
 	}
 }
 
+func getUserProperty(user *User, field string) string {
+	if user.Properties == nil {
+		return ""
+	}
+	return user.Properties[field]
+}
+
+func getUserExtraProperty(user *User, providerType, key string) (string, error) {
+	extraJson := getUserProperty(user, fmt.Sprintf("oauth_%s_extra", providerType))
+	if extraJson == "" {
+		return "", nil
+	}
+	extra := make(map[string]string)
+	if err := jsoniter.Unmarshal([]byte(extraJson), &extra); err != nil {
+		return "", err
+	}
+	return extra[key], nil
+}
+
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
@@ -183,6 +204,27 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
 			user.Avatar = userInfo.AvatarUrl
 		}
+	}
+
+	if userInfo.Extra != nil {
+		// Save extra info as json string
+		propertyName := fmt.Sprintf("oauth_%s_extra", providerType)
+		oldExtraJson := getUserProperty(user, propertyName)
+		extra := make(map[string]string)
+		if oldExtraJson != "" {
+			if err := jsoniter.Unmarshal([]byte(oldExtraJson), &extra); err != nil {
+				return false, err
+			}
+		}
+		for k, v := range userInfo.Extra {
+			extra[k] = v
+		}
+
+		newExtraJson, err := jsoniter.Marshal(extra)
+		if err != nil {
+			return false, err
+		}
+		setUserProperty(user, propertyName, string(newExtraJson))
 	}
 
 	return UpdateUserForAllFields(user.GetId(), user)

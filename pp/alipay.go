@@ -49,20 +49,24 @@ func NewAlipayPaymentProvider(appId string, appCertificate string, appPrivateKey
 	return pp, nil
 }
 
-func (pp *AlipayPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
+func (pp *AlipayPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// pp.Client.DebugSwitch = gopay.DebugOn
 	bm := gopay.BodyMap{}
-	pp.Client.SetReturnUrl(returnUrl)
-	pp.Client.SetNotifyUrl(notifyUrl)
-	bm.Set("subject", joinAttachString([]string{productName, productDisplayName, providerName}))
-	bm.Set("out_trade_no", paymentName)
-	bm.Set("total_amount", priceFloat64ToString(price))
+	pp.Client.SetReturnUrl(r.ReturnUrl)
+	pp.Client.SetNotifyUrl(r.NotifyUrl)
+	bm.Set("subject", joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName}))
+	bm.Set("out_trade_no", r.PaymentName)
+	bm.Set("total_amount", priceFloat64ToString(r.Price))
 
 	payUrl, err := pp.Client.TradePagePay(context.Background(), bm)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
-	return payUrl, paymentName, nil
+	payResp := &PayResp{
+		PayUrl:  payUrl,
+		OrderId: r.PaymentName,
+	}
+	return payResp, nil
 }
 
 func (pp *AlipayPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
