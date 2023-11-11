@@ -18,7 +18,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-pay/gopay"
@@ -31,9 +30,8 @@ type WechatPayNotifyResponse struct {
 }
 
 type WechatPaymentProvider struct {
-	Client     *wechat.ClientV3
-	AppId      string
-	PrivateKey string
+	Client *wechat.ClientV3
+	AppId  string
 }
 
 func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, serialNo string, privateKey string) (*WechatPaymentProvider, error) {
@@ -58,9 +56,8 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 		return nil, err
 	}
 	pp := &WechatPaymentProvider{
-		Client:     clientV3.SetPlatformCert([]byte(platformCert), serialNo),
-		AppId:      appId,
-		PrivateKey: privateKey,
+		Client: clientV3.SetPlatformCert([]byte(platformCert), serialNo),
+		AppId:  appId,
 	}
 
 	return pp, nil
@@ -84,7 +81,6 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 			return nil, errors.New("failed to get the payer's openid, please retry login")
 		}
 		bm.SetBodyMap("payer", func(bm gopay.BodyMap) {
-			log.Printf("r.PayerId=%s", r.PayerId)
 			bm.Set("openid", r.PayerId) // If the account is signup via Wechat, the PayerId is the Wechat OpenId e.g.oxW9O1ZDvgreSHuBSQDiQ2F055PI
 		})
 		jsapiRsp, err := pp.Client.V3TransactionJsapi(context.Background(), bm)
@@ -95,7 +91,6 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 			return nil, errors.New(jsapiRsp.Error)
 		}
 		// use RSA256 to sign the pay request
-
 		params, err := pp.Client.PaySignOfJSAPI(pp.AppId, jsapiRsp.Response.PrepayId)
 		if err != nil {
 			return nil, err
@@ -112,10 +107,9 @@ func (pp *WechatPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 				"paySign":   params.PaySign,
 			},
 		}
-		log.Printf("payResp=%+v, jsapiRsp=%+v", payResp, jsapiRsp)
 		return payResp, nil
-		// In other case, we use Native
 	} else {
+		// In other case, we use NativeAPI
 		nativeRsp, err := pp.Client.V3TransactionNative(context.Background(), bm)
 		if err != nil {
 			return nil, err

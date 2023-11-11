@@ -281,7 +281,7 @@ class ProductBuyPage extends React.Component {
     }
 
     return (
-      <div className="login-content" style={{witdh: "100%"}}>
+      <div className="login-content">
         <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
           <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 20} : {fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
             <Descriptions.Item label={i18next.t("general:Name")} span={3}>

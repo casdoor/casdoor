@@ -161,7 +161,6 @@ func (c *ApiController) DeleteProduct() {
 // @router /buy-product [post]
 func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
-	org, _ := util.GetOwnerAndNameFromId(id)
 	host := c.Ctx.Request.Host
 	providerName := c.Input().Get("providerName")
 	paymentEnv := c.Input().Get("paymentEnv")
@@ -170,7 +169,8 @@ func (c *ApiController) BuyProduct() {
 	pricingName := c.Input().Get("pricingName")
 	planName := c.Input().Get("planName")
 	paidUserName := c.Input().Get("userName")
-	userId := util.GetId(org, paidUserName)
+	owner, _ := util.GetOwnerAndNameFromId(id)
+	userId := util.GetId(owner, paidUserName)
 	if paidUserName == "" {
 		userId = c.GetSessionUsername()
 	}
