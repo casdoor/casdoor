@@ -149,6 +149,14 @@ class LoginPage extends React.Component {
     AuthBackend.getApplicationLogin(loginParams)
       .then((res) => {
         if (res.status === "ok") {
+          if (this.state.type === "cas") {
+            AuthBackend.getAccount()
+              .then((res) => {
+                if (res.status === "ok") {
+                  Setting.goToLink(loginParams.service);
+                }
+              });
+          }
           const application = res.data;
           this.onUpdateApplication(application);
         } else {
