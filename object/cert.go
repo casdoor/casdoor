@@ -87,7 +87,7 @@ func GetGlobalCertsCount(field, value string) (int64, error) {
 	return session.Count(&Cert{})
 }
 
-func GetGlobleCerts() ([]*Cert, error) {
+func GetGlobalCerts() ([]*Cert, error) {
 	certs := []*Cert{}
 	err := ormer.Engine.Desc("created_time").Find(&certs)
 	if err != nil {
