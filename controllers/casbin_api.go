@@ -29,6 +29,7 @@ import (
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Param   resourceId    query   string  false   "resource id"
+// @Param   enforcerId   query   string  false   "enforcerId id"
 // @Success 200 {object} controllers.Response The Response object
 // @router /enforce [post]
 func (c *ApiController) Enforce() {
