@@ -51,23 +51,24 @@ type Organization struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	DisplayName        string     `xorm:"varchar(100)" json:"displayName"`
-	WebsiteUrl         string     `xorm:"varchar(100)" json:"websiteUrl"`
-	Favicon            string     `xorm:"varchar(100)" json:"favicon"`
-	PasswordType       string     `xorm:"varchar(100)" json:"passwordType"`
-	PasswordSalt       string     `xorm:"varchar(100)" json:"passwordSalt"`
-	PasswordOptions    []string   `xorm:"varchar(100)" json:"passwordOptions"`
-	CountryCodes       []string   `xorm:"varchar(200)"  json:"countryCodes"`
-	DefaultAvatar      string     `xorm:"varchar(200)" json:"defaultAvatar"`
-	DefaultApplication string     `xorm:"varchar(100)" json:"defaultApplication"`
-	Tags               []string   `xorm:"mediumtext" json:"tags"`
-	Languages          []string   `xorm:"varchar(255)" json:"languages"`
-	ThemeData          *ThemeData `xorm:"json" json:"themeData"`
-	MasterPassword     string     `xorm:"varchar(100)" json:"masterPassword"`
-	DefaultPassword    string     `xorm:"varchar(100)" json:"defaultPassword"`
-	InitScore          int        `json:"initScore"`
-	EnableSoftDeletion bool       `json:"enableSoftDeletion"`
-	IsProfilePublic    bool       `json:"isProfilePublic"`
+	DisplayName            string     `xorm:"varchar(100)" json:"displayName"`
+	WebsiteUrl             string     `xorm:"varchar(100)" json:"websiteUrl"`
+	Favicon                string     `xorm:"varchar(100)" json:"favicon"`
+	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`
+	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
+	CountryCodes           []string   `xorm:"varchar(200)"  json:"countryCodes"`
+	DefaultAvatar          string     `xorm:"varchar(200)" json:"defaultAvatar"`
+	DefaultApplication     string     `xorm:"varchar(100)" json:"defaultApplication"`
+	Tags                   []string   `xorm:"mediumtext" json:"tags"`
+	Languages              []string   `xorm:"varchar(255)" json:"languages"`
+	ThemeData              *ThemeData `xorm:"json" json:"themeData"`
+	MasterPassword         string     `xorm:"varchar(100)" json:"masterPassword"`
+	DefaultPassword        string     `xorm:"varchar(100)" json:"defaultPassword"`
+	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
+	InitScore              int        `json:"initScore"`
+	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
+	IsProfilePublic        bool       `json:"isProfilePublic"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
@@ -159,6 +160,9 @@ func GetMaskedOrganization(organization *Organization, errs ...error) (*Organiza
 	if organization.DefaultPassword != "" {
 		organization.DefaultPassword = "***"
 	}
+	if organization.MasterVerificationCode != "" {
+		organization.MasterVerificationCode = "***"
+	}
 	return organization, nil
 }
 
@@ -212,6 +216,9 @@ func UpdateOrganization(id string, organization *Organization) (bool, error) {
 	}
 	if organization.DefaultPassword == "***" {
 		session.Omit("default_password")
+	}
+	if organization.MasterVerificationCode == "***" {
+		session.Omit("master_verification_code")
 	}
 
 	affected, err := session.Update(organization)
