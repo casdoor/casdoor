@@ -492,7 +492,14 @@ class App extends Component {
       sessionStorage.setItem("from", window.location.pathname);
       return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
-      return null;
+      sessionStorage.setItem("from", window.location.pathname);
+      const organization = localStorage.getItem("loginOrganization");
+      if (organization !== "undefined" && organization && organization !== "built-in") {
+        const loginPath = `/login/${organization}`;
+        return <Redirect to={loginPath} />;
+      } else {
+        return null;
+      }
     } else {
       return component;
     }
