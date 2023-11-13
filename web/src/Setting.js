@@ -1069,6 +1069,38 @@ export function getProviderTypeOptions(category) {
   }
 }
 
+export function getCryptoAlgorithmOptions(cryptoAlgorithm) {
+  if (cryptoAlgorithm === "RS256") {
+    return (
+      [
+        {id: 1024, name: "1024"},
+        {id: 2048, name: "2048"},
+        {id: 4096, name: "4096"},
+      ]
+    );
+  } else if (cryptoAlgorithm === "HS256" || cryptoAlgorithm === "ES256") {
+    return (
+      [
+        {id: 256, name: "256"},
+      ]
+    );
+  } else if (cryptoAlgorithm === "ES384") {
+    return (
+      [
+        {id: 384, name: "384"},
+      ]
+    );
+  } else if (cryptoAlgorithm === "ES521") {
+    return (
+      [
+        {id: 521, name: "521"},
+      ]
+    );
+  } else {
+    return [];
+  }
+}
+
 export function renderLogo(application) {
   if (application === null) {
     return null;
