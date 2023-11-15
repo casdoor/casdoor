@@ -186,10 +186,47 @@ func parseSize(sizes string) []int {
 	return nil
 }
 
+var publicEmailDomains = map[string]int{
+	"gmail.com":      1,
+	"163.com":        1,
+	"qq.com":         1,
+	"yahoo.com":      1,
+	"hotmail.com":    1,
+	"outlook.com":    1,
+	"icloud.com":     1,
+	"mail.com":       1,
+	"aol.com":        1,
+	"live.com":       1,
+	"yandex.com":     1,
+	"yahoo.co.jp":    1,
+	"yahoo.co.in":    1,
+	"yahoo.co.uk":    1,
+	"me.com":         1,
+	"msn.com":        1,
+	"comcast.net":    1,
+	"sbcglobal.net":  1,
+	"verizon.net":    1,
+	"earthlink.net":  1,
+	"cox.net":        1,
+	"rediffmail.com": 1,
+	"in.com":         1,
+	"hotmail.co.uk":  1,
+	"hotmail.fr":     1,
+	"zoho.com":       1,
+	"gmx.com":        1,
+	"gmx.de":         1,
+	"gmx.net":        1,
+}
+
+func isPublicEmailDomain(domain string) bool {
+	_, exists := publicEmailDomains[domain]
+	return exists
+}
+
 func getFaviconFileBuffer(client *http.Client, email string) (*bytes.Buffer, string, error) {
 	tokens := strings.Split(email, "@")
 	domain := tokens[1]
-	if domain == "gmail.com" || domain == "163.com" || domain == "qq.com" {
+	if isPublicEmailDomain(domain) {
 		return nil, "", nil
 	}
 

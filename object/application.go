@@ -319,6 +319,9 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		if application.OrganizationObj.DefaultPassword != "" {
 			application.OrganizationObj.DefaultPassword = "***"
 		}
+		if application.OrganizationObj.MasterVerificationCode != "" {
+			application.OrganizationObj.MasterVerificationCode = "***"
+		}
 		if application.OrganizationObj.PasswordType != "" {
 			application.OrganizationObj.PasswordType = "***"
 		}
@@ -343,6 +346,34 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 		application = GetMaskedApplication(application, userId)
 	}
 	return applications
+}
+
+func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
+	if userId == "" || isUserIdGlobalAdmin(userId) {
+		return applications, nil
+	}
+
+	user, err := GetUser(userId)
+	if err != nil {
+		return nil, err
+	}
+	if user != nil && user.IsAdmin {
+		return applications, nil
+	}
+
+	res := []*Application{}
+	for _, application := range applications {
+		var allowed bool
+		allowed, err = CheckLoginPermission(userId, application)
+		if err != nil {
+			return nil, err
+		}
+
+		if allowed {
+			res = append(res, application)
+		}
+	}
+	return res, nil
 }
 
 func UpdateApplication(id string, application *Application) (bool, error) {

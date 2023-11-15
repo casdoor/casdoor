@@ -82,7 +82,12 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
 	sender := organization.DisplayName
 	title := provider.Title
+
 	code := getRandomCode(6)
+	if organization.MasterVerificationCode != "" {
+		code = organization.MasterVerificationCode
+	}
+
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := fmt.Sprintf(provider.Content, code)
 
@@ -107,6 +112,10 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 	}
 
 	code := getRandomCode(6)
+	if organization.MasterVerificationCode != "" {
+		code = organization.MasterVerificationCode
+	}
+
 	if err := SendSms(provider, code, dest); err != nil {
 		return err
 	}
@@ -156,7 +165,7 @@ func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	return &record, nil
 }
 
-func CheckVerificationCode(dest, code, lang string) *VerifyResult {
+func CheckVerificationCode(dest string, code string, lang string) *VerifyResult {
 	record, err := getVerificationRecord(dest)
 	if err != nil {
 		panic(err)

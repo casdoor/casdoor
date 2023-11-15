@@ -24,14 +24,14 @@ import (
 	"time"
 )
 
-func generateRsaKeys(bitSize int, expireInYears int, commonName string, organization string) (string, string) {
+func generateRsaKeys(bitSize int, expireInYears int, commonName string, organization string) (string, string, error) {
 	// https://stackoverflow.com/questions/64104586/use-golang-to-get-rsa-key-the-same-way-openssl-genrsa
 	// https://stackoverflow.com/questions/43822945/golang-can-i-create-x509keypair-using-rsa-key
 
 	// Generate RSA key.
 	key, err := rsa.GenerateKey(rand.Reader, bitSize)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Encode private key to PKCS#1 ASN.1 PEM.
@@ -54,9 +54,10 @@ func generateRsaKeys(bitSize int, expireInYears int, commonName string, organiza
 		},
 		BasicConstraintsValid: true,
 	}
+
 	cert, err := x509.CreateCertificate(rand.Reader, &tml, &tml, &key.PublicKey, key)
 	if err != nil {
-		panic(err)
+		return "", "", err
 	}
 
 	// Generate a pem block with the certificate
@@ -65,5 +66,5 @@ func generateRsaKeys(bitSize int, expireInYears int, commonName string, organiza
 		Bytes: cert,
 	})
 
-	return string(certPem), string(privateKeyPem)
+	return string(certPem), string(privateKeyPem), nil
 }

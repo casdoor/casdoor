@@ -87,7 +87,7 @@ func GetGlobalCertsCount(field, value string) (int64, error) {
 	return session.Count(&Cert{})
 }
 
-func GetGlobleCerts() ([]*Cert, error) {
+func GetGlobalCerts() ([]*Cert, error) {
 	certs := []*Cert{}
 	err := ormer.Engine.Desc("created_time").Find(&certs)
 	if err != nil {
@@ -163,6 +163,12 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 			return false, err
 		}
 	}
+
+	err := cert.populateContent()
+	if err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(cert)
 	if err != nil {
 		return false, err
@@ -172,10 +178,9 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 }
 
 func AddCert(cert *Cert) (bool, error) {
-	if cert.Certificate == "" || cert.PrivateKey == "" {
-		certificate, privateKey := generateRsaKeys(cert.BitSize, cert.ExpireInYears, cert.Name, cert.Owner)
-		cert.Certificate = certificate
-		cert.PrivateKey = privateKey
+	err := cert.populateContent()
+	if err != nil {
+		return false, err
 	}
 
 	affected, err := ormer.Engine.Insert(cert)
@@ -197,6 +202,20 @@ func DeleteCert(cert *Cert) (bool, error) {
 
 func (p *Cert) GetId() string {
 	return fmt.Sprintf("%s/%s", p.Owner, p.Name)
+}
+
+func (p *Cert) populateContent() error {
+	if p.Certificate == "" || p.PrivateKey == "" {
+		certificate, privateKey, err := generateRsaKeys(p.BitSize, p.ExpireInYears, p.Name, p.Owner)
+		if err != nil {
+			return err
+		}
+
+		p.Certificate = certificate
+		p.PrivateKey = privateKey
+	}
+
+	return nil
 }
 
 func getCertByApplication(application *Application) (*Cert, error) {

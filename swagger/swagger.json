@@ -2023,13 +2023,13 @@
                 }
             }
         },
-        "/api/get-globle-certs": {
+        "/api/get-global-certs": {
             "get": {
                 "tags": [
                     "Cert API"
                 ],
                 "description": "get globle certs",
-                "operationId": "ApiController.GetGlobleCerts",
+                "operationId": "ApiController.GetGlobalCerts",
                 "responses": {
                     "200": {
                         "description": "The Response object",

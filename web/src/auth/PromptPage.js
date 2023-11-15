@@ -262,7 +262,7 @@ class PromptPage extends React.Component {
 
   initSteps(user, application) {
     const steps = [];
-    if (!Setting.isPromptAnswered(user, application) && this.state.promptType === "provider") {
+    if (Setting.hasPromptPage(application)) {
       steps.push({
         content: this.renderPromptProvider(application),
         name: "provider",

@@ -46,30 +46,30 @@ func NewStripePaymentProvider(PublishableKey, SecretKey string) (*StripePaymentP
 	return pp, nil
 }
 
-func (pp *StripePaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (payUrl string, orderId string, err error) {
+func (pp *StripePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// Create a temp product
-	description := joinAttachString([]string{productName, productDisplayName, providerName})
+	description := joinAttachString([]string{r.ProductName, r.ProductDisplayName, r.ProviderName})
 	productParams := &stripe.ProductParams{
-		Name:        stripe.String(productDisplayName),
+		Name:        stripe.String(r.ProductDisplayName),
 		Description: stripe.String(description),
 		DefaultPriceData: &stripe.ProductDefaultPriceDataParams{
-			UnitAmount: stripe.Int64(priceFloat64ToInt64(price)),
-			Currency:   stripe.String(currency),
+			UnitAmount: stripe.Int64(priceFloat64ToInt64(r.Price)),
+			Currency:   stripe.String(r.Currency),
 		},
 	}
 	sProduct, err := stripeProduct.New(productParams)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 	// Create a price for an existing product
 	priceParams := &stripe.PriceParams{
-		Currency:   stripe.String(currency),
-		UnitAmount: stripe.Int64(priceFloat64ToInt64(price)),
+		Currency:   stripe.String(r.Currency),
+		UnitAmount: stripe.Int64(priceFloat64ToInt64(r.Price)),
 		Product:    stripe.String(sProduct.ID),
 	}
 	sPrice, err := stripePrice.New(priceParams)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 	// Create a Checkout Session
 	checkoutParams := &stripe.CheckoutSessionParams{
@@ -80,17 +80,21 @@ func (pp *StripePaymentProvider) Pay(providerName string, productName string, pa
 			},
 		},
 		Mode:              stripe.String(string(stripe.CheckoutSessionModePayment)),
-		SuccessURL:        stripe.String(returnUrl),
-		CancelURL:         stripe.String(returnUrl),
-		ClientReferenceID: stripe.String(paymentName),
+		SuccessURL:        stripe.String(r.ReturnUrl),
+		CancelURL:         stripe.String(r.ReturnUrl),
+		ClientReferenceID: stripe.String(r.PaymentName),
 		ExpiresAt:         stripe.Int64(time.Now().Add(30 * time.Minute).Unix()),
 	}
 	checkoutParams.AddMetadata("product_description", description)
 	sCheckout, err := stripeCheckout.New(checkoutParams)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
-	return sCheckout.URL, sCheckout.ID, nil
+	payResp := &PayResp{
+		PayUrl:  sCheckout.URL,
+		OrderId: sCheckout.ID,
+	}
+	return payResp, nil
 }
 
 func (pp *StripePaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {

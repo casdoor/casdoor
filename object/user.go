@@ -666,6 +666,8 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 		}
 	}
 
+	user.UpdatedTime = util.GetCurrentTime()
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
 		return false, err
@@ -861,7 +863,7 @@ func (user *User) GetId() string {
 }
 
 func isUserIdGlobalAdmin(userId string) bool {
-	return strings.HasPrefix(userId, "built-in/")
+	return strings.HasPrefix(userId, "built-in/") || strings.HasPrefix(userId, "app/")
 }
 
 func ExtendUserWithRolesAndPermissions(user *User) (err error) {

@@ -547,7 +547,12 @@ func (c *ApiController) Login() {
 				if user.IsForbidden {
 					c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 				}
-
+				// sync info from 3rd-party if possible
+				_, err := object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				record := object.NewRecord(c.Ctx)
