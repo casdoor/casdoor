@@ -256,7 +256,9 @@ class App extends Component {
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
-
+          if (account !== null) {
+            sessionStorage.setItem("owner", account.owner);
+          }
           this.setLanguage(account);
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
         } else {
@@ -490,7 +492,13 @@ class App extends Component {
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
-      return <Redirect to="/login" />;
+      const owner = sessionStorage.getItem("owner");
+      if (owner === null || owner === undefined || owner === "built-in") {
+        return <Redirect to="/login" />;
+      } else {
+        const link = "/login/" + owner;
+        return <Redirect to= {link} />;
+      }
     } else if (this.state.account === undefined) {
       return null;
     } else {
