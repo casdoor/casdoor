@@ -239,7 +239,7 @@ class CertListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobleCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    (Setting.isDefaultOrganizationSelected(this.props.account) ? CertBackend.getGlobalCerts(params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       : CertBackend.getCerts(Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder))
       .then((res) => {
         this.setState({

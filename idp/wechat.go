@@ -186,13 +186,22 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		id = wechatUserInfo.Openid
 	}
 
+	extra := make(map[string]string)
+	extra["wechat_unionid"] = wechatUserInfo.Openid
+	// For WeChat, different appId corresponds to different openId
+	extra[BuildWechatOpenIdKey(idp.Config.ClientID)] = wechatUserInfo.Openid
 	userInfo := UserInfo{
 		Id:          id,
 		Username:    wechatUserInfo.Nickname,
 		DisplayName: wechatUserInfo.Nickname,
 		AvatarUrl:   wechatUserInfo.Headimgurl,
+		Extra:       extra,
 	}
 	return &userInfo, nil
+}
+
+func BuildWechatOpenIdKey(appId string) string {
+	return fmt.Sprintf("wechat_openid_%s", appId)
 }
 
 func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, error) {

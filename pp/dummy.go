@@ -21,8 +21,10 @@ func NewDummyPaymentProvider() (*DummyPaymentProvider, error) {
 	return pp, nil
 }
 
-func (pp *DummyPaymentProvider) Pay(providerName string, productName string, payerName string, paymentName string, productDisplayName string, price float64, currency string, returnUrl string, notifyUrl string) (string, string, error) {
-	return returnUrl, "", nil
+func (pp *DummyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
+	return &PayResp{
+		PayUrl: r.ReturnUrl,
+	}, nil
 }
 
 func (pp *DummyPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {

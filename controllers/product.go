@@ -163,6 +163,8 @@ func (c *ApiController) BuyProduct() {
 	id := c.Input().Get("id")
 	host := c.Ctx.Request.Host
 	providerName := c.Input().Get("providerName")
+	paymentEnv := c.Input().Get("paymentEnv")
+
 	// buy `pricingName/planName` for `paidUserName`
 	pricingName := c.Input().Get("pricingName")
 	planName := c.Input().Get("planName")
@@ -187,11 +189,11 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payment, err := object.BuyProduct(id, user, providerName, pricingName, planName, host)
+	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(payment)
+	c.ResponseOk(payment, attachInfo)
 }

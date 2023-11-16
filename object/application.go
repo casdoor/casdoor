@@ -319,6 +319,9 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		if application.OrganizationObj.DefaultPassword != "" {
 			application.OrganizationObj.DefaultPassword = "***"
 		}
+		if application.OrganizationObj.MasterVerificationCode != "" {
+			application.OrganizationObj.MasterVerificationCode = "***"
+		}
 		if application.OrganizationObj.PasswordType != "" {
 			application.OrganizationObj.PasswordType = "***"
 		}
