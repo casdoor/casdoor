@@ -117,7 +117,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		e := ldap.NewSearchResultEntry(dn)
 		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue("25316"))
 		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue("25316"))
+		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/users/admin"))
 		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
+		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
 		for _, attr := range r.Attributes() {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
