@@ -18,7 +18,6 @@ import i18next from "i18next";
 import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
 import * as Provider from "./Provider";
-import {utils} from "ethers";
 
 export function renderMessage(msg) {
   if (msg !== null) {
@@ -172,7 +171,7 @@ export function getStateFromQueryParams(applicationName, providerName, method, i
   }
 
   if (!isShortState) {
-    return btoa(utils.sha256(query));
+    return btoa(query);
   } else {
     const state = providerName;
     sessionStorage.setItem(state, query);
