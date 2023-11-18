@@ -382,7 +382,7 @@ export function getAuthUrl(application, provider, method) {
   let redirectUri = `${window.location.origin}/callback`;
   const scope = authInfo[provider.type].scope;
 
-  const isShortState = provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger");
+  const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
   const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
 
