@@ -337,7 +337,7 @@ class LoginPage extends React.Component {
       const casParams = Util.getCasParameters();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
-        if (res.status === "ok") {
+        const callback = (res) => {
           let msg = "Logged in successfully. ";
           if (casParams.service === "") {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
@@ -350,6 +350,28 @@ class LoginPage extends React.Component {
             const newUrl = new URL(casParams.service);
             newUrl.searchParams.append("ticket", st);
             window.location.href = newUrl.toString();
+          }
+        };
+
+        if (res.status === "ok") {
+          if (res.data === NextMfa) {
+            this.setState({
+              getVerifyTotp: () => {
+                return (
+                  <MfaAuthVerifyForm
+                    mfaProps={res.data2}
+                    formValues={values}
+                    Params={casParams}
+                    application={this.getApplicationObj()}
+                    onFail={() => {
+                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                    }}
+                    onSuccess={(res) => callback(res)}
+                  />);
+              },
+            });
+          } else {
+            callback(res);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -396,7 +418,7 @@ class LoginPage extends React.Component {
                     <MfaAuthVerifyForm
                       mfaProps={res.data2}
                       formValues={values}
-                      oAuthParams={oAuthParams}
+                      Params={oAuthParams}
                       application={this.getApplicationObj()}
                       onFail={() => {
                         Setting.showMessage("error", i18next.t("mfa:Verification failed"));
