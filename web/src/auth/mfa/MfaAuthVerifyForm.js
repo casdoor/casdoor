@@ -34,60 +34,42 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
   const verify = ({passcode}) => {
     setLoading(true);
     const values = {...formValues, passcode, mfaType};
-    if (formValues.type === "cas") {
-      AuthBackend.loginCas(values, Params).then((res) => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      }).catch((res) => {
-        onFail(res.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    } else {
-      AuthBackend.login(values, Params).then((res) => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      }).catch((res) => {
-        onFail(res.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
+
+    const handleResponse = (res) => {
+      if (res.status === "ok") {
+        onSuccess(res);
+      } else {
+        onFail(res.msg);
+      }
+    };
+    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+
+    authFunction(values, Params).then(handleResponse).catch((res) => {
+      onFail(res.message);
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   const recover = () => {
     setLoading(true);
-    if (formValues.type === "cas") {
-      AuthBackend.loginCas({...formValues, recoveryCode}, Params).then(res => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      }).catch((res) => {
-        onFail(res.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    } else {
-      AuthBackend.login({...formValues, recoveryCode}, Params).then(res => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      }).catch((res) => {
-        onFail(res.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
+    const values = {...formValues, recoveryCode};
+
+    const handleResponse = (res) => {
+      if (res.status === "ok") {
+        onSuccess(res);
+      } else {
+        onFail(res.msg);
+      }
+    };
+
+    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+
+    authFunction(values, Params).then(handleResponse).catch((res) => {
+      onFail(res.msg);
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   if (mfaType !== RecoveryMfaType) {
