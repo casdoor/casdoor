@@ -26,7 +26,7 @@ import (
 	ldap "github.com/forestmgy/ldapserver"
 )
 
-func getNameAndOrgFromDN(DN string) (string, string, string) {
+func getNameAndOrgFromDN(DN string) (string, string, error) {
 	DNFields := strings.Split(DN, ",")
 	params := make(map[string]string, len(DNFields))
 	for _, field := range DNFields {
@@ -37,12 +37,12 @@ func getNameAndOrgFromDN(DN string) (string, string, string) {
 	}
 
 	if params["cn"] == "" {
-		return "", "", "please use Admin Name format like cn=xxx,ou=xxx,dc=example,dc=com"
+		return "", "", fmt.Errorf("please use Admin Name format like cn=xxx,ou=xxx,dc=example,dc=com")
 	}
 	if params["ou"] == "" {
-		return params["cn"], object.CasdoorOrganization, ""
+		return params["cn"], object.CasdoorOrganization, nil
 	}
-	return params["cn"], params["ou"], ""
+	return params["cn"], params["ou"], nil
 }
 
 func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
@@ -50,7 +50,11 @@ func getNameAndOrgFromFilter(baseDN, filter string) (string, string, int) {
 		return "", "", ldap.LDAPResultInvalidDNSyntax
 	}
 
-	name, org, _ := getNameAndOrgFromDN(fmt.Sprintf("cn=%s,", getUsername(filter)) + baseDN)
+	name, org, err := getNameAndOrgFromDN(fmt.Sprintf("cn=%s,", getUsername(filter)) + baseDN)
+	if err != nil {
+		panic(err)
+	}
+
 	return name, org, ldap.LDAPResultSuccess
 }
 

@@ -49,20 +49,20 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 
 	if r.AuthenticationChoice() == "simple" {
 		bindUsername, bindOrg, err := getNameAndOrgFromDN(string(r.Name()))
-		if err != "" {
-			log.Printf("Bind failed ,ErrMsg=%s", err)
+		if err != nil {
+			log.Printf("getNameAndOrgFromDN() error: %s", err.Error())
 			res.SetResultCode(ldap.LDAPResultInvalidDNSyntax)
-			res.SetDiagnosticMessage("bind failed ErrMsg: " + err)
+			res.SetDiagnosticMessage(fmt.Sprintf("getNameAndOrgFromDN() error: %s", err.Error()))
 			w.Write(res)
 			return
 		}
 
 		bindPassword := string(r.AuthenticationSimple())
 		bindUser, err := object.CheckUserPassword(bindOrg, bindUsername, bindPassword, "en")
-		if err != "" {
+		if err != nil {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
 			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
-			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err)
+			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err.Error())
 			w.Write(res)
 			return
 		}
@@ -78,7 +78,7 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		m.Client.OrgName = bindOrg
 	} else {
 		res.SetResultCode(ldap.LDAPResultAuthMethodNotSupported)
-		res.SetDiagnosticMessage("Authentication method not supported,Please use Simple Authentication")
+		res.SetDiagnosticMessage("Authentication method not supported, please use Simple Authentication")
 	}
 	w.Write(res)
 }
