@@ -113,18 +113,13 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,cn=%s,%s",user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue("25316"))
-		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue("25316"))
-		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/users/admin"))
+		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue(user.Id))
+		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue(user.Id))
+		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/users/"+user.Name))
 		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
-		e.AddAttribute(message.AttributeDescription("id"), message.AttributeValue(user.Id))
-		e.AddAttribute(message.AttributeDescription("objectClass"), message.AttributeValue("top"))
-		e.AddAttribute(message.AttributeDescription("objectClass"), message.AttributeValue("organizationalPerson"))
-		e.AddAttribute(message.AttributeDescription("objectClass"), message.AttributeValue("person"))
-		e.AddAttribute(message.AttributeDescription("objectClass"), message.AttributeValue("user"))
-		e.AddAttribute(message.AttributeDescription("objectClass"), message.AttributeValue("inetOrgPerson"))
+		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
 		for _, attr := range r.Attributes() {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
