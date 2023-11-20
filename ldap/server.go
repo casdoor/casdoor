@@ -16,9 +16,8 @@ package ldap
 
 import (
 	"fmt"
-	"log"
-
 	"hash/fnv"
+	"log"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -115,9 +114,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("uid=%s,cn=%s,%s",user.Id, user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-		uidNumberStr := fmt.Sprintf("%v",hash(user.Name))
+		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
 		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue(uidNumberStr))
 		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue(uidNumberStr))
 		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/"+user.Name))
