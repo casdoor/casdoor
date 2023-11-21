@@ -361,7 +361,7 @@ class LoginPage extends React.Component {
                   <MfaAuthVerifyForm
                     mfaProps={res.data2}
                     formValues={values}
-                    Params={casParams}
+                    authParams={casParams}
                     application={this.getApplicationObj()}
                     onFail={() => {
                       Setting.showMessage("error", i18next.t("mfa:Verification failed"));
