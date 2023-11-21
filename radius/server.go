@@ -55,15 +55,18 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	password := rfc2865.UserPassword_GetString(r.Packet)
 	organization := rfc2865.Class_GetString(r.Packet)
 	log.Printf("handleAccessRequest() username=%v, org=%v, password=%v", username, organization, password)
+
 	if organization == "" {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}
-	_, msg := object.CheckUserPassword(organization, username, password, "en")
-	if msg != "" {
+
+	_, err := object.CheckUserPassword(organization, username, password, "en")
+	if err != nil {
 		w.Write(r.Response(radius.CodeAccessReject))
 		return
 	}
+
 	w.Write(r.Response(radius.CodeAccessAccept))
 }
 
