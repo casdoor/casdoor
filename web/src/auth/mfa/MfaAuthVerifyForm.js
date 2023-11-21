@@ -24,7 +24,7 @@ import MfaVerifyTotpForm from "./MfaVerifyTotpForm";
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
 
-export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, onSuccess, onFail}) {
+export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application, onSuccess, onFail}) {
   formValues.password = "";
   formValues.username = "";
   const [loading, setLoading] = useState(false);
@@ -34,9 +34,8 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
   const verify = ({passcode}) => {
     setLoading(true);
     const values = {...formValues, passcode, mfaType};
-    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-
-    authFunction(values, Params).then((res) => {
+    const loginFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+    loginFunction(values, authParams).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
@@ -52,9 +51,8 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
   const recover = () => {
     setLoading(true);
     const values = {...formValues, recoveryCode};
-    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-
-    authFunction(values, Params).then((res) => {
+    const loginFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+    loginFunction(values, authParams).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
