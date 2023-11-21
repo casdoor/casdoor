@@ -34,17 +34,15 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
   const verify = ({passcode}) => {
     setLoading(true);
     const values = {...formValues, passcode, mfaType};
+    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
 
-    const handleResponse = (res) => {
+    authFunction(values, Params).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
         onFail(res.msg);
       }
-    };
-    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-
-    authFunction(values, Params).then(handleResponse).catch((res) => {
+    }).catch((res) => {
       onFail(res.message);
     }).finally(() => {
       setLoading(false);
@@ -54,18 +52,15 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
   const recover = () => {
     setLoading(true);
     const values = {...formValues, recoveryCode};
+    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
 
-    const handleResponse = (res) => {
+    authFunction(values, Params).then((res) => {
       if (res.status === "ok") {
         onSuccess(res);
       } else {
         onFail(res.msg);
       }
-    };
-
-    const authFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-
-    authFunction(values, Params).then(handleResponse).catch((res) => {
+    }).catch((res) => {
       onFail(res.msg);
     }).finally(() => {
       setLoading(false);
