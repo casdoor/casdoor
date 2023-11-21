@@ -368,7 +368,7 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 	allowCount := 0
 	denyCount := 0
 	for _, permission := range permissions {
-		if !permission.IsEnabled || permission.ResourceType != "Application" || !permission.isResourceHit(application.Name) {
+		if !permission.IsEnabled || permission.State != "Approved" || permission.ResourceType != "Application" || !permission.isResourceHit(application.Name) {
 			continue
 		}
 
