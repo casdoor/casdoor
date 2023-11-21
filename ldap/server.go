@@ -16,6 +16,7 @@ package ldap
 
 import (
 	"fmt"
+	"hash/fnv"
 	"log"
 
 	"github.com/casdoor/casdoor/conf"
@@ -113,10 +114,14 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
+		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
+		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue(uidNumberStr))
+		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue(uidNumberStr))
+		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/"+user.Name))
 		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
+		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
 		for _, attr := range r.Attributes() {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
@@ -127,4 +132,10 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		w.Write(e)
 	}
 	w.Write(res)
+}
+
+func hash(s string) uint32 {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return h.Sum32()
 }
