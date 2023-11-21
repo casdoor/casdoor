@@ -337,7 +337,7 @@ class LoginPage extends React.Component {
       const casParams = Util.getCasParameters();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
-        const callback = (res) => {
+        const loginHandler = (res) => {
           let msg = "Logged in successfully. ";
           if (casParams.service === "") {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
@@ -366,12 +366,12 @@ class LoginPage extends React.Component {
                     onFail={() => {
                       Setting.showMessage("error", i18next.t("mfa:Verification failed"));
                     }}
-                    onSuccess={(res) => callback(res)}
+                    onSuccess={(res) => loginHandler(res)}
                   />);
               },
             });
           } else {
-            callback(res);
+            loginHandler(res);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
