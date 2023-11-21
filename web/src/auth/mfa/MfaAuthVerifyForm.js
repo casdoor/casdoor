@@ -61,7 +61,7 @@ export function MfaAuthVerifyForm({formValues, Params, mfaProps, application, on
         onFail(res.msg);
       }
     }).catch((res) => {
-      onFail(res.msg);
+      onFail(res.message);
     }).finally(() => {
       setLoading(false);
     });
