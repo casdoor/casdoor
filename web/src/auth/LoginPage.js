@@ -383,7 +383,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          const callback = (res) => {
+          const loginHandler = (res) => {
             const responseType = values["type"];
 
             if (responseType === "login") {
@@ -418,12 +418,12 @@ class LoginPage extends React.Component {
                     <MfaAuthVerifyForm
                       mfaProps={res.data2}
                       formValues={values}
-                      Params={oAuthParams}
+                      authParams={oAuthParams}
                       application={this.getApplicationObj()}
                       onFail={() => {
                         Setting.showMessage("error", i18next.t("mfa:Verification failed"));
                       }}
-                      onSuccess={(res) => callback(res)}
+                      onSuccess={(res) => loginHandler(res)}
                     />);
                 },
               });
@@ -436,7 +436,7 @@ class LoginPage extends React.Component {
               const sub = res.data2;
               Setting.goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
             } else {
-              callback(res);
+              loginHandler(res);
             }
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
