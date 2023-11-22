@@ -122,7 +122,14 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/"+user.Name))
 		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
 		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
-		for _, attr := range r.Attributes() {
+		attrs := r.Attributes()
+		for _, attr := range attrs {
+			if string(attr) == "*" {
+				attrs = message.AttributeSelection{"displayname", "email", "mail", "mobile", "title", "userPassword"}
+				break
+			}
+		}
+		for _, attr := range attrs {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
 				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))
