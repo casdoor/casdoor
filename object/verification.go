@@ -192,32 +192,32 @@ func CheckVerificationCode(dest string, code string, lang string) *VerifyResult 
 	return &VerifyResult{VerificationSuccess, ""}
 }
 
-func DisableVerificationCode(dest string) (err error) {
+func DisableVerificationCode(dest string) error {
 	record, err := getVerificationRecord(dest)
 	if record == nil || err != nil {
-		return
+		return nil
 	}
 
 	record.IsUsed = true
 	_, err = ormer.Engine.ID(core.PK{record.Owner, record.Name}).AllCols().Update(record)
-	return
+	return err
 }
 
-func CheckSigninCode(user *User, dest, code, lang string) string {
+func CheckSigninCode(user *User, dest, code, lang string) error {
 	// check the login error times
-	if msg := checkSigninErrorTimes(user, lang); msg != "" {
-		return msg
+	err := checkSigninErrorTimes(user, lang)
+	if err != nil {
+		return err
 	}
 
 	result := CheckVerificationCode(dest, code, lang)
 	switch result.Code {
 	case VerificationSuccess:
-		resetUserSigninErrorTimes(user)
-		return ""
+		return resetUserSigninErrorTimes(user)
 	case wrongCodeError:
 		return recordSigninErrorInfo(user, lang)
 	default:
-		return result.Msg
+		return fmt.Errorf(result.Msg)
 	}
 }
 

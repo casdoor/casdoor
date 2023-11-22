@@ -396,15 +396,22 @@ func initBuiltInPermission() {
 		Name:         "permission-built-in",
 		CreatedTime:  util.GetCurrentTime(),
 		DisplayName:  "Built-in Permission",
+		Description:  "Built-in Permission",
 		Users:        []string{"built-in/*"},
+		Groups:       []string{},
 		Roles:        []string{},
 		Domains:      []string{},
 		Model:        "model-built-in",
+		Adapter:      "",
 		ResourceType: "Application",
 		Resources:    []string{"app-built-in"},
 		Actions:      []string{"Read", "Write", "Admin"},
 		Effect:       "Allow",
 		IsEnabled:    true,
+		Submitter:    "admin",
+		Approver:     "admin",
+		ApproveTime:  util.GetCurrentTime(),
+		State:        "Approved",
 	}
 	_, err = AddPermission(permission)
 	if err != nil {

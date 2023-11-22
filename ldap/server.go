@@ -16,6 +16,7 @@ package ldap
 
 import (
 	"fmt"
+	"hash/fnv"
 	"log"
 
 	"github.com/casdoor/casdoor/conf"
@@ -49,20 +50,20 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 
 	if r.AuthenticationChoice() == "simple" {
 		bindUsername, bindOrg, err := getNameAndOrgFromDN(string(r.Name()))
-		if err != "" {
-			log.Printf("Bind failed ,ErrMsg=%s", err)
+		if err != nil {
+			log.Printf("getNameAndOrgFromDN() error: %s", err.Error())
 			res.SetResultCode(ldap.LDAPResultInvalidDNSyntax)
-			res.SetDiagnosticMessage("bind failed ErrMsg: " + err)
+			res.SetDiagnosticMessage(fmt.Sprintf("getNameAndOrgFromDN() error: %s", err.Error()))
 			w.Write(res)
 			return
 		}
 
 		bindPassword := string(r.AuthenticationSimple())
 		bindUser, err := object.CheckUserPassword(bindOrg, bindUsername, bindPassword, "en")
-		if err != "" {
+		if err != nil {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
 			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
-			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err)
+			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err.Error())
 			w.Write(res)
 			return
 		}
@@ -78,7 +79,7 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		m.Client.OrgName = bindOrg
 	} else {
 		res.SetResultCode(ldap.LDAPResultAuthMethodNotSupported)
-		res.SetDiagnosticMessage("Authentication method not supported,Please use Simple Authentication")
+		res.SetDiagnosticMessage("Authentication method not supported, please use Simple Authentication")
 	}
 	w.Write(res)
 }
@@ -113,9 +114,14 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-
+		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
+		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue(uidNumberStr))
+		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue(uidNumberStr))
+		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/"+user.Name))
+		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
+		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
 		for _, attr := range r.Attributes() {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
@@ -126,4 +132,10 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		w.Write(e)
 	}
 	w.Write(res)
+}
+
+func hash(s string) uint32 {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return h.Sum32()
 }
