@@ -876,6 +876,7 @@ func (c *ApiController) HandleSamlLogin() {
 // @Tag HandleOfficialAccountEvent API
 // @Title HandleOfficialAccountEvent
 // @router /api/webhook [POST]
+// @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) HandleOfficialAccountEvent() {
 	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
@@ -906,6 +907,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 // @Tag GetWebhookEventType API
 // @Title GetWebhookEventType
 // @router /api/get-webhook-event [GET]
+// @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) GetWebhookEventType() {
 	lock.Lock()
 	defer lock.Unlock()
@@ -947,6 +949,7 @@ func (c *ApiController) GetCaptchaStatus() {
 // @Tag Callback API
 // @Description Get Login Error Counts
 // @router /api/Callback [post]
+// @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")
