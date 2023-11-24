@@ -411,7 +411,6 @@ class LoginPage extends React.Component {
           };
 
           if (res.status === "ok") {
-            localStorage.setItem("loginOrganization", values["organization"]);
             if (res.data === NextMfa) {
               this.setState({
                 getVerifyTotp: () => {
