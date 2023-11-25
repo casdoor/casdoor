@@ -24,7 +24,71 @@ import (
 	"github.com/lor00x/goldap/message"
 
 	ldap "github.com/forestmgy/ldapserver"
+
+	"github.com/xorm-io/builder"
 )
+
+type AttributeMapper func(user *object.User) message.AttributeValue
+
+type FieldRelation struct {
+	userField     string
+	notSearchable bool
+	hideOnStarOp  bool
+	fieldMapper   AttributeMapper
+}
+
+func (rel FieldRelation) GetField() (string, error) {
+	if rel.notSearchable {
+		return "", fmt.Errorf("attribute %s not supported", rel.userField)
+	}
+	return rel.userField, nil
+}
+
+func (rel FieldRelation) GetAttributeValue(user *object.User) message.AttributeValue {
+	return rel.fieldMapper(user)
+}
+
+var ldapAttributesMapping = map[string]FieldRelation{
+	"cn": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Name)
+	}},
+	"uid": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Name)
+	}},
+	"displayname": {userField: "displayName", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.DisplayName)
+	}},
+	"email": {userField: "email", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Email)
+	}},
+	"mail": {userField: "email", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Email)
+	}},
+	"mobile": {userField: "phone", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Phone)
+	}},
+	"title": {userField: "tag", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.Tag)
+	}},
+	"userPassword": {
+		userField:     "userPassword",
+		notSearchable: true,
+		fieldMapper: func(user *object.User) message.AttributeValue {
+			return message.AttributeValue(getUserPasswordWithType(user))
+		},
+	},
+}
+
+var AdditionalLdapAttributes []message.LDAPString
+
+func init() {
+	for k, v := range ldapAttributesMapping {
+		if v.hideOnStarOp {
+			continue
+		}
+		AdditionalLdapAttributes = append(AdditionalLdapAttributes, message.LDAPString(k))
+	}
+}
 
 func getNameAndOrgFromDN(DN string) (string, string, error) {
 	DNFields := strings.Split(DN, ",")
@@ -87,6 +151,92 @@ func stringInSlice(value string, list []string) bool {
 	return false
 }
 
+func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
+	switch f := filter.(type) {
+	case message.FilterAnd:
+		conditions := make([]builder.Cond, len(f))
+		for i, v := range f {
+			cond, err := buildUserFilterCondition(v)
+			if err != nil {
+				return nil, err
+			}
+			conditions[i] = cond
+		}
+		return builder.And(conditions...), nil
+	case message.FilterOr:
+		conditions := make([]builder.Cond, len(f))
+		for i, v := range f {
+			cond, err := buildUserFilterCondition(v)
+			if err != nil {
+				return nil, err
+			}
+			conditions[i] = cond
+		}
+		return builder.Or(conditions...), nil
+	case message.FilterNot:
+		cond, err := buildUserFilterCondition(f.Filter)
+		if err != nil {
+			return nil, err
+		}
+		return builder.Not{cond}, nil
+	case message.FilterEqualityMatch:
+		field, err := getUserFieldFromAttribute(string(f.AttributeDesc()))
+		if err != nil {
+			return nil, err
+		}
+		return builder.Eq{field: string(f.AssertionValue())}, nil
+	case message.FilterPresent:
+		field, err := getUserFieldFromAttribute(string(f))
+		if err != nil {
+			return nil, err
+		}
+		return builder.NotNull{field}, nil
+	case message.FilterGreaterOrEqual:
+		field, err := getUserFieldFromAttribute(string(f.AttributeDesc()))
+		if err != nil {
+			return nil, err
+		}
+		return builder.Gte{field: string(f.AssertionValue())}, nil
+	case message.FilterLessOrEqual:
+		field, err := getUserFieldFromAttribute(string(f.AttributeDesc()))
+		if err != nil {
+			return nil, err
+		}
+		return builder.Lte{field: string(f.AssertionValue())}, nil
+	case message.FilterSubstrings:
+		field, err := getUserFieldFromAttribute(string(f.Type_()))
+		if err != nil {
+			return nil, err
+		}
+		var expr string
+		for _, substring := range f.Substrings() {
+			switch s := substring.(type) {
+			case message.SubstringInitial:
+				expr += string(s) + "%"
+				continue
+			case message.SubstringAny:
+				expr += string(s) + "%"
+				continue
+			case message.SubstringFinal:
+				expr += string(s)
+				continue
+			}
+		}
+		return builder.Expr(field+" LIKE ?", expr), nil
+	default:
+		return nil, fmt.Errorf("LDAP filter operation %#v not supported", f)
+	}
+}
+
+func buildSafeCondition(filter interface{}) builder.Cond {
+	condition, err := buildUserFilterCondition(filter)
+	if err != nil {
+		log.Printf("err = %v", err.Error())
+		return nil
+	}
+	return condition
+}
+
 func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) {
 	var err error
 	r := m.GetSearchRequest()
@@ -98,15 +248,14 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 
 	if name == "*" && m.Client.IsOrgAdmin { // get all users from organization 'org'
 		if m.Client.IsGlobalAdmin && org == "*" {
-
-			filteredUsers, err = object.GetGlobalUsers()
+			filteredUsers, err = object.GetGlobalUsersWithFilter(buildSafeCondition(r.Filter()))
 			if err != nil {
 				panic(err)
 			}
 			return filteredUsers, ldap.LDAPResultSuccess
 		}
 		if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
-			filteredUsers, err = object.GetUsers(org)
+			filteredUsers, err = object.GetUsersWithFilter(org, buildSafeCondition(r.Filter()))
 			if err != nil {
 				panic(err)
 			}
@@ -148,7 +297,7 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 			return nil, ldap.LDAPResultNoSuchObject
 		}
 
-		users, err := object.GetUsersByTag(org, name)
+		users, err := object.GetUsersByTagWithFilter(org, name, buildSafeCondition(r.Filter()))
 		if err != nil {
 			panic(err)
 		}
@@ -182,24 +331,17 @@ func getUserPasswordWithType(user *object.User) string {
 }
 
 func getAttribute(attributeName string, user *object.User) message.AttributeValue {
-	switch attributeName {
-	case "cn":
-		return message.AttributeValue(user.Name)
-	case "uid":
-		return message.AttributeValue(user.Name)
-	case "displayname":
-		return message.AttributeValue(user.DisplayName)
-	case "email":
-		return message.AttributeValue(user.Email)
-	case "mail":
-		return message.AttributeValue(user.Email)
-	case "mobile":
-		return message.AttributeValue(user.Phone)
-	case "title":
-		return message.AttributeValue(user.Tag)
-	case "userPassword":
-		return message.AttributeValue(getUserPasswordWithType(user))
-	default:
+	v, ok := ldapAttributesMapping[attributeName]
+	if !ok {
 		return ""
 	}
+	return v.GetAttributeValue(user)
+}
+
+func getUserFieldFromAttribute(attributeName string) (string, error) {
+	v, ok := ldapAttributesMapping[attributeName]
+	if !ok {
+		return "", fmt.Errorf("attribute %s not supported", attributeName)
+	}
+	return v.GetField()
 }
