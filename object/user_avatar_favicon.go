@@ -240,11 +240,11 @@ func getFaviconFileBuffer(client *http.Client, email string) (*bytes.Buffer, str
 	if buffer != nil {
 		faviconUrl, err = GetFaviconUrl(buffer.String())
 		if err != nil {
-			return nil, "", err
-		}
-
-		if !strings.HasPrefix(faviconUrl, "http") {
-			faviconUrl = util.UrlJoin(htmlUrl, faviconUrl)
+			fmt.Printf("getFaviconFileBuffer() error, faviconUrl is empty, error = %s\n", err.Error())
+		} else {
+			if !strings.HasPrefix(faviconUrl, "http") {
+				faviconUrl = util.UrlJoin(htmlUrl, faviconUrl)
+			}
 		}
 	}
 
