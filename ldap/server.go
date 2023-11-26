@@ -117,15 +117,15 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
 		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
-		e.AddAttribute(message.AttributeDescription("uidNumber"), message.AttributeValue(uidNumberStr))
-		e.AddAttribute(message.AttributeDescription("gidNumber"), message.AttributeValue(uidNumberStr))
-		e.AddAttribute(message.AttributeDescription("homeDirectory"), message.AttributeValue("/home/"+user.Name))
-		e.AddAttribute(message.AttributeDescription("cn"), message.AttributeValue(user.Name))
-		e.AddAttribute(message.AttributeDescription("uid"), message.AttributeValue(user.Id))
+		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
+		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
+		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
+		e.AddAttribute("cn", message.AttributeValue(user.Name))
+		e.AddAttribute("uid", message.AttributeValue(user.Id))
 		attrs := r.Attributes()
 		for _, attr := range attrs {
 			if string(attr) == "*" {
-				attrs = message.AttributeSelection{"displayname", "email", "mail", "mobile", "title", "userPassword"}
+				attrs = AdditionalLdapAttributes
 				break
 			}
 		}
