@@ -476,16 +476,16 @@ func (c *ApiController) SetPassword() {
 	isAdmin := c.IsAdmin()
 	if isAdmin {
 		if oldPassword != "" {
-			msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-			if msg != "" {
-				c.ResponseError(msg)
+			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error())
 				return
 			}
 		}
 	} else if code == "" {
-		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		if msg != "" {
-			c.ResponseError(msg)
+		err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
 	}
@@ -518,11 +518,11 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
-	if msg == "" {
-		c.ResponseOk()
+	_, err = object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
 	} else {
-		c.ResponseError(msg)
+		c.ResponseOk()
 	}
 }
 

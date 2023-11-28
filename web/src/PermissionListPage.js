@@ -44,7 +44,7 @@ class PermissionListPage extends BaseListPage {
       submitter: this.props.account.name,
       approver: "",
       approveTime: "",
-      state: "Pending",
+      state: Setting.isLocalAdminUser(this.props.account) ? "Approved" : "Pending",
     };
   }
 

@@ -24,7 +24,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-git/go-git/v5 v5.6.0
-	github.com/go-ldap/ldap/v3 v3.3.0
+	github.com/go-ldap/ldap/v3 v3.4.6
 	github.com/go-mysql-org/go-mysql v1.7.0
 	github.com/go-pay/gopay v1.5.72
 	github.com/go-sql-driver/mysql v1.6.0
@@ -62,7 +62,7 @@ require (
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/crypto v0.12.0
+	golang.org/x/crypto v0.13.0
 	golang.org/x/net v0.14.0
 	golang.org/x/oauth2 v0.11.0
 	golang.org/x/text v0.13.0 // indirect
