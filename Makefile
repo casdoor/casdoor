@@ -114,7 +114,7 @@
 
 # Ivan
 # MODE: dev, prod
-IMG ?= casdoor-v1026
+IMG ?= casdoor-v1129
 MODE ?= dev
 
 deploy:

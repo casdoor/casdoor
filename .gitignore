@@ -31,3 +31,4 @@ commentsRouter*.go
 # ignore build result
 casdoor
 server
+/.env

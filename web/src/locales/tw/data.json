@@ -425,6 +425,8 @@
     "MetaMask plugin not detected": "未檢測到 MetaMask 插件",
     "No account?": "沒有帳號？",
     "Or sign in with another account": "或者，登入其他帳號",
+    "Or sign in with another account from original website": "若要切換帳號，請從原網站重新登入",
+    "User not logged in, please login from original website": "查無使用者資料，請從原網站重新登錄",
     "Please input your Email or Phone!": "請輸入您的電子郵件地址或手機號碼!",
     "Please input your code!": "請輸入您的驗證碼！",
     "Please input your organization name!": "請輸入組織的名字!",

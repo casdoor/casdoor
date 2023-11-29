@@ -440,6 +440,10 @@ class LoginPage extends React.Component {
   }
 
   renderForm(application) {
+    if (application.name === "ppg_web") {
+      return null;
+    }
+
     if (this.state.msg !== null) {
       return Util.renderMessage(this.state.msg);
     }
@@ -704,12 +708,21 @@ class LoginPage extends React.Component {
   }
 
   renderSignedInBox() {
+    const application = this.getApplicationObj();
+
     if (this.props.account === undefined || this.props.account === null) {
       this.sendSilentSigninData("user-not-logged-in");
-      return null;
+      if (application.name === "ppg_web") {
+        return (
+          <div style={{fontSize: 16, textAlign: "left"}}>
+            {i18next.t("login:User not logged in, please login from original website")}
+          </div>
+        );
+      } else {
+        return null;
+      }
     }
 
-    const application = this.getApplicationObj();
     if (this.props.account.owner !== application?.organization) {
       return null;
     }
@@ -728,7 +741,8 @@ class LoginPage extends React.Component {
         <br />
         <br />
         <div style={{fontSize: 16, textAlign: "left"}}>
-          {i18next.t("login:Or sign in with another account")}&nbsp;:
+          {application.name === "ppg_web" ? i18next.t("login:Or sign in with another account from original website") : i18next.t("login:Or sign in with another account") + " :"}
+          {/* {i18next.t("login:Or sign in with another account")}&nbsp;: */}
         </div>
       </div>
     );
@@ -1001,12 +1015,14 @@ class LoginPage extends React.Component {
                     Setting.renderHelmet(application)
                   }
                   {
-                    Setting.renderLogo(application)
+                    application.name !== "ppg_web" && Setting.renderLogo(application)
                   }
                   {
                     this.renderBackButton()
                   }
-                  <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+                  {
+                    application.name !== "ppg_web" && <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+                  }
                   {
                     this.renderLoginPanel(application)
                   }

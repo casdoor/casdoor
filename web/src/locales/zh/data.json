@@ -408,6 +408,8 @@
     "MetaMask plugin not detected": "未检测到 MetaMask 插件",
     "No account?": "没有账号？",
     "Or sign in with another account": "或者，登录其他账号",
+    "Or sign in with another account from original website": "若要切換账号，请從原网站重新登录",
+    "User not logged in, please login from original website": "查无使用者资料，请從原网站重新登录",
     "Please input your Email or Phone!": "请输入您的Email或手机号!",
     "Please input your code!": "请输入您的验证码！",
     "Please input your organization name!": "请输入组织的名字!",
