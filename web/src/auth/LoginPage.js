@@ -389,8 +389,6 @@ class LoginPage extends React.Component {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
-      alert(values["type"]);
-      alert(values["subType"]);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const loginHandler = (res) => {
