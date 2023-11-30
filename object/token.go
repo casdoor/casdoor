@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -51,15 +52,17 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code          string `xorm:"varchar(100) index" json:"code"`
-	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
-	ExpiresIn     int    `json:"expiresIn"`
-	Scope         string `xorm:"varchar(100)" json:"scope"`
-	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed    bool   `json:"codeIsUsed"`
-	CodeExpireIn  int64  `json:"codeExpireIn"`
+	Code             string `xorm:"varchar(100) index" json:"code"`
+	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
+	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
+	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	ExpiresIn        int    `json:"expiresIn"`
+	Scope            string `xorm:"varchar(100)" json:"scope"`
+	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed       bool   `json:"codeIsUsed"`
+	CodeExpireIn     int64  `json:"codeExpireIn"`
 }
 
 type TokenWrapper struct {
@@ -159,6 +162,24 @@ func (token *Token) GetId() string {
 	return fmt.Sprintf("%s/%s", token.Owner, token.Name)
 }
 
+func getTokenHash(input string) string {
+	hash := sha256.Sum256([]byte(input))
+	res := hex.EncodeToString(hash[:])
+	if len(res) > 64 {
+		return res[:64]
+	}
+	return res
+}
+
+func (token *Token) popularHashes() {
+	if token.AccessTokenHash == "" && token.AccessToken != "" {
+		token.AccessTokenHash = getTokenHash(token.AccessToken)
+	}
+	if token.RefreshTokenHash == "" && token.RefreshToken != "" {
+		token.RefreshTokenHash = getTokenHash(token.RefreshToken)
+	}
+}
+
 func UpdateToken(id string, token *Token) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if t, err := getToken(owner, name); err != nil {
@@ -166,6 +187,8 @@ func UpdateToken(id string, token *Token) (bool, error) {
 	} else if t == nil {
 		return false, nil
 	}
+
+	token.popularHashes()
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
@@ -176,6 +199,8 @@ func UpdateToken(id string, token *Token) (bool, error) {
 }
 
 func AddToken(token *Token) (bool, error) {
+	token.popularHashes()
+
 	affected, err := ormer.Engine.Insert(token)
 	if err != nil {
 		return false, err
@@ -194,7 +219,7 @@ func DeleteToken(token *Token) (bool, error) {
 }
 
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
-	token := Token{AccessToken: accessToken}
+	token := Token{AccessTokenHash: getTokenHash(accessToken)}
 	existed, err := ormer.Engine.Get(&token)
 	if err != nil {
 		return false, nil, nil, err
@@ -220,7 +245,7 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 
 func GetTokenByAccessToken(accessToken string) (*Token, error) {
 	// Check if the accessToken is in the database
-	token := Token{AccessToken: accessToken}
+	token := Token{AccessTokenHash: getTokenHash(accessToken)}
 	existed, err := ormer.Engine.Get(&token)
 	if err != nil {
 		return nil, err
@@ -439,7 +464,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}, nil
 	}
 	// check whether the refresh token is valid, and has not expired.
-	token := Token{RefreshToken: refreshToken}
+	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
 	existed, err := ormer.Engine.Get(&token)
 	if err != nil || !existed {
 		return &TokenError{
