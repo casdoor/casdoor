@@ -400,7 +400,15 @@ func (c *ApiController) Login() {
 			}
 
 			password := authForm.Password
-			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			if authForm.SubType == "Default" {
+				user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			} else if authForm.SubType == "ldap" {
+				user, err = object.CheckUserPasswordOnlyLdap(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage())
+			} else {
+				//password
+				user, err = object.CheckUserPasswordOnly(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			}
+
 		}
 
 		if err != nil {

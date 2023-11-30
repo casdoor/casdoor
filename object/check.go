@@ -264,6 +264,60 @@ func checkLdapUserPassword(user *User, password string, lang string) error {
 	return nil
 }
 
+func CheckUserPasswordOnlyLdap(organization string, username string, password string, lang string) (*User, error) {
+
+	user, err := GetUserByFields(organization, username)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil || user.IsDeleted {
+		return nil, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
+	}
+
+	if user.IsForbidden {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+	}
+
+	if user.Ldap == "" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:The ldap server is not configured"))
+	}
+
+	err = checkLdapUserPassword(user, password, lang)
+	if err != nil {
+		if err.Error() == "user not exist" {
+			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+		}
+		return nil, err
+	}
+	return user, nil
+}
+
+func CheckUserPasswordOnly(organization string, username string, password string, lang string, options ...bool) (*User, error) {
+	enableCaptcha := false
+	if len(options) > 0 {
+		enableCaptcha = options[0]
+	}
+	user, err := GetUserByFields(organization, username)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil || user.IsDeleted {
+		return nil, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
+	}
+
+	if user.IsForbidden {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+	}
+
+	err = CheckPassword(user, password, lang, enableCaptcha)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, error) {
 	enableCaptcha := false
 	if len(options) > 0 {

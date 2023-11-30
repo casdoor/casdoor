@@ -59,6 +59,7 @@ type Application struct {
 	EnableSamlCompress  bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10    bool            `json:"enableSamlC14n10"`
 	EnableWebAuthn      bool            `json:"enableWebAuthn"`
+	EnableLdapTab       bool            `json:"enableLdapTab"`
 	EnableLinkWithEmail bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode       string          `json:"orgChoiceMode"`
 	SamlReplyUrl        string          `xorm:"varchar(100)" json:"samlReplyUrl"`

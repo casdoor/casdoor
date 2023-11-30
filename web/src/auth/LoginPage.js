@@ -210,6 +210,9 @@ class LoginPage extends React.Component {
     if (application?.enableWebAuthn) {
       return "webAuthn";
     }
+    if (application?.enableLdapTab) {
+      return "ldap";
+    }
 
     return "password";
   }
@@ -242,6 +245,11 @@ class LoginPage extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
+    if (this.getApplicationObj()?.enableLdapTab) {
+      values["subType"] = this.state.loginMethod;
+    } else {
+      values["subType"] = "Default";
+    }
 
     if (oAuthParams?.samlRequest) {
       values["samlRequest"] = oAuthParams.samlRequest;
@@ -381,6 +389,8 @@ class LoginPage extends React.Component {
       // OAuth
       const oAuthParams = Util.getOAuthGetParameters();
       this.populateOauthValues(values);
+      alert(values["type"]);
+      alert(values["subType"]);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
           const loginHandler = (res) => {
@@ -488,7 +498,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const showForm = application.enablePassword || application.enableCodeSignin || application.enableWebAuthn;
+    const showForm = application.enablePassword || application.enableCodeSignin || application.enableWebAuthn || application.enableLdapTab;
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -832,7 +842,7 @@ class LoginPage extends React.Component {
 
   renderPasswordOrCodeInput() {
     const application = this.getApplicationObj();
-    if (this.state.loginMethod === "password") {
+    if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
           <Form.Item
@@ -875,6 +885,7 @@ class LoginPage extends React.Component {
     application.enablePassword ? items.push({label: i18next.t("general:Password"), key: "password"}) : null;
     application.enableCodeSignin ? items.push({label: i18next.t("login:Verification code"), key: "verificationCode"}) : null;
     application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
+    application.enableLdapTab ? items.push({label: i18next.t("login:LDAP"), key: "ldap"}) : null;
 
     if (items.length > 1) {
       return (
