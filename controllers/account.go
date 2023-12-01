@@ -282,17 +282,15 @@ func (c *ApiController) Logout() {
 			return
 		}
 
-		affected, application, token, err := object.ExpireTokenByAccessToken(accessToken)
+		_, application, token, err := object.ExpireTokenByAccessToken(accessToken)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		if !affected {
+		if token == nil {
 			c.ResponseError(c.T("token:Token not found, invalid accessToken"))
 			return
 		}
-
 		if application == nil {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist")), token.Application)
 			return
@@ -319,7 +317,15 @@ func (c *ApiController) Logout() {
 			return
 		} else {
 			if application.IsRedirectUriValid(redirectUri) {
-				c.Ctx.Redirect(http.StatusFound, fmt.Sprintf("%s?state=%s", strings.TrimRight(redirectUri, "/"), state))
+				redirectUrl := redirectUri
+				if state != "" {
+					if strings.Contains(redirectUri, "?") {
+						redirectUrl = fmt.Sprintf("%s&state=%s", strings.TrimSuffix(redirectUri, "/"), state)
+					} else {
+						redirectUrl = fmt.Sprintf("%s?state=%s", strings.TrimSuffix(redirectUri, "/"), state)
+					}
+				}
+				c.Ctx.Redirect(http.StatusFound, redirectUrl)
 			} else {
 				c.ResponseError(fmt.Sprintf(c.T("token:Redirect URI: %s doesn't exist in the allowed Redirect URI list"), redirectUri))
 				return
