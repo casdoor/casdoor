@@ -754,13 +754,13 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 
 // GetTokenByUser
 // Implicit flow
-func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
+func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, nonce, scope, host)
 	if err != nil {
 		return nil, err
 	}
