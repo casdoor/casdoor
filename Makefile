@@ -114,8 +114,8 @@
 
 # Ivan
 # MODE: dev, prod
-IMG ?= casdoor-v1129
-MODE ?= dev
+IMG ?= casdoor-v1202
+MODE ?= prod
 
 deploy:
 	@echo "Deploying with image: ${IMG}, mode: ${MODE}"
