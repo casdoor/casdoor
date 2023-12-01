@@ -1,0 +1,15 @@
+{
+    "owner": "admin",
+    "name": "{{.param.providerName}}",
+    "createdTime": "2023-12-01T17:29:06+08:00",
+    "displayName": "New Provider - 0k7wog",
+    "category": "OAuth",
+    "type": "GitHub",
+    "method": "Normal",
+    "clientId": "",
+    "clientSecret": "",
+    "enableSignUp": true,
+    "host": "",
+    "port": 0,
+    "providerUrl": "https://github.com/organizations/xxx/settings/applications/1234567"
+}

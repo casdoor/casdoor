@@ -1,0 +1,82 @@
+{
+    "owner": "admin",
+    "name": "{{.param.appName}}",
+    "organization": "built-in",
+    "createdTime": "2023-12-01T17:25:59+08:00",
+    "displayName": "New Application - 6xmkoj",
+    "logo": "https://cdn.casbin.org/img/casdoor-logo_1185x256.png",
+    "enablePassword": true,
+    "enableSignUp": true,
+    "enableSigninSession": false,
+    "enableCodeSignin": false,
+    "enableSamlCompress": false,
+    "providers": [
+      {
+        "name": "provider_captcha_default",
+        "canSignUp": false,
+        "canSignIn": false,
+        "canUnlink": false,
+        "prompted": false,
+        "signupGroup": "",
+        "rule": ""
+      }
+    ],
+    "signupItems": [
+      {
+        "name": "ID",
+        "visible": false,
+        "required": true,
+        "rule": "Random"
+      },
+      {
+        "name": "Username",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      },
+      {
+        "name": "Display name",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      },
+      {
+        "name": "Password",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      },
+      {
+        "name": "Confirm password",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      },
+      {
+        "name": "Email",
+        "visible": true,
+        "required": true,
+        "rule": "Normal"
+      },
+      {
+        "name": "Phone",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      },
+      {
+        "name": "Agreement",
+        "visible": true,
+        "required": true,
+        "rule": "None"
+      }
+    ],
+    "cert": "cert-built-in",
+    "redirectUris": [
+      "http://localhost:9000/callback"
+    ],
+    "tokenFormat": "JWT",
+    "expireInHours": 168,
+    "refreshExpireInHours": 168,
+    "formOffset": 2
+}

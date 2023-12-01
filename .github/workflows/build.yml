@@ -99,6 +99,13 @@ jobs:
       - name: start backend
         run: nohup go run ./main.go &
         working-directory: ./
+      - name: API testing
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST: ${{ github.event.number }}
+        run: |
+          docker build e2e -t testing
+          docker run --network host testing
       - uses: actions/setup-node@v3
         with:
           node-version: 16

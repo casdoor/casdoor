@@ -1,0 +1,9 @@
+{
+    "owner": "built-in",
+    "name": "{{.param.groupName}}",
+    "displayName": "New Group - e8tjbb",
+    "type": "Virtual",
+    "parentId": "built-in",
+    "isTopGroup": true,
+    "isEnabled": true
+}

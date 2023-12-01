@@ -1,0 +1,299 @@
+{
+    "owner": "admin",
+    "name": "{{.param.orgName}}",
+    "createdTime": "2023-12-01T17:23:03+08:00",
+    "displayName": "New Organization - fu62qt",
+    "websiteUrl": "https://door.casdoor.com",
+    "favicon": "https://cdn.casbin.org/img/favicon.png",
+    "passwordType": "plain",
+    "PasswordSalt": "",
+    "passwordOptions": [],
+    "countryCodes": [
+      "US"
+    ],
+    "defaultAvatar": "https://cdn.casbin.org/img/casbin.svg",
+    "defaultApplication": "",
+    "tags": [],
+    "languages": [
+      "en",
+      "es",
+      "fr",
+      "de",
+      "zh",
+      "id",
+      "ja",
+      "ko",
+      "ru",
+      "vi",
+      "pt",
+      "it",
+      "ms",
+      "tr",
+      "ar",
+      "he",
+      "nl",
+      "pl",
+      "fi",
+      "sv",
+      "uk",
+      "kk",
+      "fa"
+    ],
+    "masterPassword": "",
+    "defaultPassword": "",
+    "enableSoftDeletion": false,
+    "isProfilePublic": true,
+    "accountItems": [
+      {
+        "name": "Organization",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "ID",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Immutable"
+      },
+      {
+        "name": "Name",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Display name",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Avatar",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "User type",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Password",
+        "visible": true,
+        "viewRule": "Self",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Email",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Phone",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Country code",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Country/Region",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Location",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Address",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Affiliation",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Title",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "ID card type",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "ID card",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "ID card info",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Homepage",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Bio",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Tag",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Language",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Gender",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Birthday",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Education",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Score",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Karma",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Ranking",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Signup application",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "API key",
+        "label": "API key",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Groups",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Roles",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Immutable"
+      },
+      {
+        "name": "Permissions",
+        "visible": true,
+        "viewRule": "Public",
+        "modifyRule": "Immutable"
+      },
+      {
+        "name": "3rd-party logins",
+        "visible": true,
+        "viewRule": "Self",
+        "modifyRule": "Self"
+      },
+      {
+        "name": "Properties",
+        "visible": false,
+        "viewRule": "Admin",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Is online",
+        "visible": true,
+        "viewRule": "Admin",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Is admin",
+        "visible": true,
+        "viewRule": "Admin",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Is forbidden",
+        "visible": true,
+        "viewRule": "Admin",
+        "modifyRule": "Admin"
+      },
+      {
+        "name": "Is deleted",
+        "visible": true,
+        "viewRule": "Admin",
+        "modifyRule": "Admin"
+      },
+      {
+        "Name": "Multi-factor authentication",
+        "Visible": true,
+        "ViewRule": "Self",
+        "ModifyRule": "Self"
+      },
+      {
+        "Name": "WebAuthn credentials",
+        "Visible": true,
+        "ViewRule": "Self",
+        "ModifyRule": "Self"
+      },
+      {
+        "Name": "Managed accounts",
+        "Visible": true,
+        "ViewRule": "Self",
+        "ModifyRule": "Self"
+      }
+    ]
+}

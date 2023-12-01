@@ -1,0 +1,25 @@
+{
+    "owner": "built-in",
+    "name": "{{.param.permissionName}}",
+    "createdTime": "2023-12-01T17:33:00+08:00",
+    "displayName": "New Permission - 07o20v",
+    "users": [
+      "built-in/admin"
+    ],
+    "groups": [],
+    "roles": [],
+    "domains": [],
+    "resourceType": "Application",
+    "resources": [
+      "app-built-in"
+    ],
+    "actions": [
+      "Read"
+    ],
+    "effect": "Allow",
+    "isEnabled": true,
+    "submitter": "admin",
+    "approver": "",
+    "approveTime": "",
+    "state": "Approved"
+}

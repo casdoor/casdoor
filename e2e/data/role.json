@@ -1,0 +1,11 @@
+{
+    "owner": "built-in",
+    "name": "{{.param.roleName}}",
+    "createdTime": "2023-12-01T17:31:21+08:00",
+    "displayName": "New Role - rgenk4",
+    "users": [],
+    "groups": [],
+    "roles": [],
+    "domains": [],
+    "isEnabled": true
+}

@@ -1,0 +1,23 @@
+{
+    "owner": "built-in",
+    "name": "{{.param.username}}",
+    "type": "normal-user",
+    "password": "123",
+    "passwordSalt": "",
+    "displayName": "displayName",
+    "avatar": "https://cdn.casbin.org/img/casbin.svg",
+    "email": "y745ov@example.com",
+    "phone": "20289351606",
+    "countryCode": "US",
+    "address": [],
+    "groups": [],
+    "affiliation": "Example Inc.",
+    "tag": "staff",
+    "region": "",
+    "isAdmin": true,
+    "IsForbidden": false,
+    "score": 2000,
+    "isDeleted": false,
+    "properties": {},
+    "signupApplication": "app-built-in"
+}

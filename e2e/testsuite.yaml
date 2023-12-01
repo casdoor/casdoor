@@ -1,0 +1,193 @@
+#!api-testing
+# yaml-language-server: $schema=https://linuxsuren.github.io/api-testing/api-testing-schema.json
+name: casdoor
+api: |
+  {{default "http://localhost:8000" (env "SERVER")}}
+param:
+  username: "{{randAlpha 6}}"
+  groupName: "{{randAlpha 6}}"
+  orgName: "{{randAlpha 6}}"
+  appName: "{{randAlpha 6}}"
+  providerName: "{{randAlpha 6}}"
+  roleName: "{{randAlpha 6}}"
+  permissionName: "{{randAlpha 6}}"
+items:
+- name: login 
+  request:
+    api: /api/login
+    method: POST
+    body: |
+      {
+        "application": "app-built-in",
+        "organization": "built-in",
+        "username": "admin",
+        "autoSignin": true,
+        "password": "123",
+        "type": "login"
+      }
+- name: getAccount
+  request:
+    api: /api/get-account
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: addUser
+  request:
+    api: /api/add-user
+    method: POST
+    bodyFromFile: data/user.json
+- name: getUser
+  request:
+    api: /api/get-user?id=built-in/{{.param.username}}
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+      data.name: "{{.param.username}}"
+- name: updateUser
+  request:
+    api: /api/update-user?id=built-in/{{.param.username}}
+    method: POST
+    bodyFromFile: data/user.json
+- name: deleteUser
+  request:
+    api:  /api/delete-user
+    method: POST
+    bodyFromFile: data/user.json
+
+## Group
+- name: addGroup
+  request:
+    api: /api/add-group
+    method: POST
+    bodyFromFile: data/group.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updateGroup
+  request:
+    api: /api/update-group?id=built-in/{{.param.groupName}}
+    method: POST
+    bodyFromFile: data/user.json
+- name: deleteGroup
+  request:
+    api: /api/delete-group
+    method: POST
+    bodyFromFile: data/group.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+
+## Organization
+- name: addOrganization
+  request:
+    api: /api/add-organization
+    method: POST
+    bodyFromFile: data/organization.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updateOrganization
+  request:
+    api: /api/update-organization?id=built-in/{{.param.orgName}}
+    method: POST
+    bodyFromFile: data/organization.json
+- name: deleteOrganization
+  request:
+    api: /api/delete-organization
+    method: POST
+    bodyFromFile: data/organization.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+
+## Application
+- name: addApplication
+  request:
+    api: /api/add-application
+    method: POST
+    bodyFromFile: data/application.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updateApplication
+  request:
+    api: /api/update-application?id=built-in/{{.param.appName}}
+    method: POST
+    bodyFromFile: data/application.json
+- name: deleteApplication
+  request:
+    api: /api/delete-application
+    method: POST
+    bodyFromFile: data/application.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+
+## Provider
+- name: addProvider
+  request:
+    api: /api/add-provider
+    method: POST
+    bodyFromFile: data/provider.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updateProvider
+  request:
+    api: /api/update-provider?id=built-in/{{.param.providerName}}
+    method: POST
+    bodyFromFile: data/provider.json
+- name: deleteProvider
+  request:
+    api: /api/delete-provider
+    method: POST
+    bodyFromFile: data/provider.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+
+## Role
+- name: addRole
+  request:
+    api: /api/add-role
+    method: POST
+    bodyFromFile: data/role.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updateRole
+  request:
+    api: /api/update-role?id=built-in/{{.param.roleName}}
+    method: POST
+    bodyFromFile: data/role.json
+- name: deleteRole
+  request:
+    api: /api/delete-role
+    method: POST
+    bodyFromFile: data/role.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+
+## Permission
+- name: addPermission
+  request:
+    api: /api/add-permission
+    method: POST
+    bodyFromFile: data/permission.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
+- name: updatePermission
+  request:
+    api: /api/update-permission?id=built-in/{{.param.permissionName}}
+    method: POST
+    bodyFromFile: data/permission.json
+- name: deletePermission
+  request:
+    api: /api/delete-permission
+    method: POST
+    bodyFromFile: data/permission.json
+  expect:
+    bodyFieldsExpect:
+      status: "ok"
