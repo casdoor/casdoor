@@ -81,6 +81,17 @@ func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
 	return &LdapConn{Conn: conn, IsAD: isAD}, nil
 }
 
+func (l *LdapConn) Close() {
+	if l.Conn == nil {
+		return
+	}
+
+	err := l.Conn.Unbind()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 	SearchFilter := "(objectClass=*)"
 	SearchAttributes := []string{"vendorname", "vendorversion", "isGlobalCatalogReady", "forestFunctionality"}

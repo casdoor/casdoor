@@ -237,22 +237,28 @@ func checkLdapUserPassword(user *User, password string, lang string) error {
 
 		searchResult, err := conn.Conn.Search(searchReq)
 		if err != nil {
+			conn.Close()
 			return err
 		}
 
 		if len(searchResult.Entries) == 0 {
+			conn.Close()
 			continue
 		}
 		if len(searchResult.Entries) > 1 {
+			conn.Close()
 			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
 		}
 
 		hit = true
 		dn := searchResult.Entries[0].DN
-		if err := conn.Conn.Bind(dn, password); err == nil {
+		if err = conn.Conn.Bind(dn, password); err == nil {
 			ldapLoginSuccess = true
+			conn.Close()
 			break
 		}
+
+		conn.Close()
 	}
 
 	if !ldapLoginSuccess {
