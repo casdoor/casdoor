@@ -243,7 +243,13 @@ func (c *ApiController) GetAllObjects() {
 		return
 	}
 
-	c.ResponseOk(object.GetAllObjects(userId))
+	objects, err := object.GetAllObjects(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(objects)
 }
 
 func (c *ApiController) GetAllActions() {
@@ -253,7 +259,13 @@ func (c *ApiController) GetAllActions() {
 		return
 	}
 
-	c.ResponseOk(object.GetAllActions(userId))
+	actions, err := object.GetAllActions(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(actions)
 }
 
 func (c *ApiController) GetAllRoles() {
@@ -263,5 +275,11 @@ func (c *ApiController) GetAllRoles() {
 		return
 	}
 
-	c.ResponseOk(object.GetAllRoles(userId))
+	roles, err := object.GetAllRoles(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(roles)
 }

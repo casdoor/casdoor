@@ -120,7 +120,11 @@ func checkPermissionValid(permission *Permission) error {
 		return nil
 	}
 
-	groupingPolicies := getGroupingPolicies(permission)
+	groupingPolicies, err := getGroupingPolicies(permission)
+	if err != nil {
+		return err
+	}
+
 	if len(groupingPolicies) > 0 {
 		_, err = enforcer.AddGroupingPolicies(groupingPolicies)
 		if err != nil {

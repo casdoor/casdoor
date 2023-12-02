@@ -303,7 +303,7 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub roles"), i18next.t("role:Sub roles - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select disabled={!this.hasRoleDefinition(this.state.model)} virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.roles}
+            <Select disabled={!this.hasRoleDefinition(this.state.model)} placeholder={this.hasRoleDefinition(this.state.model) ? "" : "This field is disabled because the model is empty or it doesn't support RBAC (in another word, doesn't contain [role_definition])"} virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.permission.roles}
               onChange={(value => {this.updatePermissionField("roles", value);})}
               options={[
                 Setting.getOption(i18next.t("organization:All"), "*"),
@@ -323,7 +323,7 @@ class PermissionEditPage extends React.Component {
               })}
               options={[
                 Setting.getOption(i18next.t("organization:All"), "*"),
-                ...this.state.permission.domains.map((domain) => Setting.getOption(domain, domain)),
+                ...this.state.permission.domains.filter(domain => domain !== "*").map((domain) => Setting.getOption(domain, domain)),
               ]}
             />
           </Col>
