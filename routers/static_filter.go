@@ -129,7 +129,7 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	if !util.FileExist(path) {
+	if strings.Contains(path, "/../") || !util.FileExist(path) {
 		path = webBuildFolder + "/index.html"
 	}
 	if !util.FileExist(path) {
