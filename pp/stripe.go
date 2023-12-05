@@ -132,6 +132,9 @@ func (pp *StripePaymentProvider) Notify(body []byte, orderId string) (*NotifyRes
 	}
 	// Once payment is successful, the Checkout Session will contain a reference to the successful `PaymentIntent`
 	sIntent, err := stripeIntent.Get(sCheckout.PaymentIntent.ID, nil)
+	if err != nil {
+		return nil, err
+	}
 	var (
 		productName        string
 		productDisplayName string
