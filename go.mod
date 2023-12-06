@@ -9,9 +9,8 @@ require (
 	github.com/aws/aws-sdk-go v1.45.5
 	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
-	github.com/casbin/casbin v1.9.1 // indirect
 	github.com/casbin/casbin/v2 v2.77.2
-	github.com/casdoor/go-sms-sender v0.15.0
+	github.com/casdoor/go-sms-sender v0.16.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.45.0
 	github.com/casdoor/oss v1.3.0
@@ -23,6 +22,7 @@ require (
 	github.com/elimity-com/scim v0.0.0-20230426070224-941a5eac92f3
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
+	github.com/go-asn1-ber/asn1-ber v1.5.5
 	github.com/go-git/go-git/v5 v5.6.0
 	github.com/go-ldap/ldap/v3 v3.4.6
 	github.com/go-mysql-org/go-mysql v1.7.0
@@ -32,7 +32,7 @@ require (
 	github.com/go-webauthn/webauthn v0.6.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.1
-	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/json-iterator/go v1.1.12
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v1.2.21
 	github.com/lib/pq v1.10.9
@@ -65,7 +65,6 @@ require (
 	golang.org/x/crypto v0.13.0
 	golang.org/x/net v0.14.0
 	golang.org/x/oauth2 v0.11.0
-	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/api v0.138.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
