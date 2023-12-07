@@ -143,6 +143,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_msg91.ico`,
       url: "https://control.msg91.com/app/",
     },
+    "Custom HTTP SMS": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://casdoor.org/docs/provider/sms/overview",
+    },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
       url: "",
@@ -989,6 +993,8 @@ export function getProviderTypeOptions(category) {
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
         {id: "Amazon SNS", name: "Amazon SNS"},
         {id: "Azure ACS", name: "Azure ACS"},
+        {id: "Custom HTTP SMS", name: "Custom HTTP SMS"},
+        {id: "Mock SMS", name: "Mock SMS"},
         {id: "Infobip SMS", name: "Infobip SMS"},
         {id: "Tencent Cloud SMS", name: "Tencent Cloud SMS"},
         {id: "Baidu Cloud SMS", name: "Baidu Cloud SMS"},

@@ -521,6 +521,10 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("scopes", "openid profile email");
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
                 this.updateProviderField("customUserInfoUrl", "https://door.casdoor.com/api/userinfo");
+              } else if (value === "Custom HTTP SMS") {
+                this.updateProviderField("endpoint", "https://example.com/send-custom-http");
+                this.updateProviderField("method", "GET");
+                this.updateProviderField("title", "code");
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
@@ -668,6 +672,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
+          (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
           (this.state.provider.category === "Notification" && (this.state.provider.type === "Google Chat" || this.state.provider.type === "Custom HTTP")) ? null : (
               <React.Fragment>
                 {
@@ -756,7 +761,7 @@ class ProviderEditPage extends React.Component {
             </Row>
           )
         }
-        {this.state.provider.category === "Storage" ? (
+        {this.state.provider.category === "Storage" || this.state.provider.type === "Custom HTTP SMS" ? (
           <div>
             {["Local File System"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
@@ -770,7 +775,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -782,7 +787,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Local File System"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Local File System"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
@@ -794,17 +799,19 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.pathPrefix} onChange={e => {
-                  this.updateProviderField("pathPrefix", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            {["MinIO", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.pathPrefix} onChange={e => {
+                    this.updateProviderField("pathPrefix", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["Custom HTTP SMS", "MinIO", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -974,7 +981,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
-              {["Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
+              {["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -988,7 +995,7 @@ class ProviderEditPage extends React.Component {
                 </Row>
                 )
               }
-              {["Infobip SMS"].includes(this.state.provider.type) ?
+              {["Custom HTTP SMS", "Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -1000,6 +1007,39 @@ class ProviderEditPage extends React.Component {
                     }} />
                   </Col>
                 </Row>
+                )
+              }
+              {
+                !["Custom HTTP SMS"].includes(this.state.provider.type) ? null : (
+                  <React.Fragment>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={2}>
+                        {Setting.getLabel(i18next.t("general:Method"), i18next.t("provider:Method - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Select virtual={false} style={{width: "100%"}} value={this.state.provider.method} onChange={value => {
+                          this.updateProviderField("method", value);
+                        }}>
+                          {
+                            [
+                              {id: "GET", name: "GET"},
+                              {id: "POST", name: "POST"},
+                            ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
+                          }
+                        </Select>
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.title} onChange={e => {
+                          this.updateProviderField("title", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  </React.Fragment>
                 )
               }
               <Row style={{marginTop: "20px"}} >
@@ -1026,7 +1066,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={2} >
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                    disabled={!Setting.isValidPhone(this.state.provider.receiver)}
+                    disabled={!Setting.isValidPhone(this.state.provider.receiver) && (this.state.provider.type !== "Custom HTTP SMS" || this.state.provider.endpoint === "")}
                     onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
