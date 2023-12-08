@@ -374,12 +374,9 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
           </Col>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Preview")}:
-          </Col>
-          <Col>
-            {this.renderImage(this.state.user.avatar, i18next.t("user:Upload a photo"), i18next.t("user:Set new profile picture"), "avatar", false)}
-          </Col>
+          {
+            this.renderImage(this.state.user.avatar, i18next.t("user:Upload a photo"), i18next.t("user:Set new profile picture"), "avatar", false)
+          }
         </Row>
       );
     } else if (accountItem.name === "User type") {
@@ -550,9 +547,6 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {i18next.t("general:Preview")}:
-              </Col>
               {
                 [
                   {name: "ID card front", value: "idCardFront"},
@@ -975,7 +969,7 @@ class UserEditPage extends React.Component {
 
   renderImage(imgUrl, title, set, tag, disabled) {
     return (
-      <Col span={4} style={{textAlign: "center", margin: "auto"}} key={tag}>
+      <Col span={4} style={{textAlign: "center", margin: "auto", marginLeft: "20px"}} key={tag}>
         {
           imgUrl ?
             <div style={{marginBottom: "10px"}}>
@@ -986,7 +980,7 @@ class UserEditPage extends React.Component {
             :
             <Col style={{height: "78%", border: "1px dotted grey", borderRadius: 3, marginBottom: "10px"}}>
               <div style={{fontSize: 30, margin: 10}}>+</div>
-              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`Upload ${title}...`}</div>
+              <div style={{verticalAlign: "middle", marginBottom: 10}}>{`(${i18next.t("general:empty")})`}</div>
             </Col>
         }
         <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
