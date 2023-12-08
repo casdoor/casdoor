@@ -1,14 +1,18 @@
-FROM node:16.18.0 AS FRONT
+FROM --platform=$BUILDPLATFORM node:16.18.0 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 
 
-FROM golang:1.19.9 AS BACK
+FROM --platform=$BUILDPLATFORM golang:1.19.9 AS BACK
+ENV CGO_ENABLED=0
+ARG TARGETOS TARGETARCH GOPROXY
 WORKDIR /go/src/casdoor
+COPY go.mod go.sum .
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg GOPROXY=${GOPROXY} go mod download
 COPY . .
-RUN ./build.sh
-RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags="-w -s" -o server .
+RUN --mount=type=cache,target=/root/.cache/go-build --mount=type=cache,target=/go/pkg GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
