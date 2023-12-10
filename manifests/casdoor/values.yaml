@@ -108,3 +108,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# -- Optionally add extra sidecar containers.
+extraContainersEnabled: false
+extraContainers: ""
+# extraContainers: |
+#  - name: ...
+#    image: ...

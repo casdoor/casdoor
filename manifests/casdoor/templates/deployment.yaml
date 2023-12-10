@@ -59,6 +59,9 @@ spec:
           volumeMounts:
           - name: config-volume
             mountPath: /conf
+        {{ if .Values.extraContainersEnabled }}
+          {{- .Values.extraContainers | nindent 8 }}
+        {{- end }}
       volumes:
        - name: config-volume
          projected:
