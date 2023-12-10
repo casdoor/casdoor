@@ -50,7 +50,7 @@ export const CaptchaPreview = (props) => {
   };
 
   const onOk = (captchaType, captchaToken, clientSecret) => {
-    UserBackend.verifyCaptcha(captchaType, captchaToken, clientSecret).then(() => {
+    UserBackend.verifyCaptcha(owner, name, captchaType, captchaToken, clientSecret).then(() => {
       setVisible(false);
     });
   };
