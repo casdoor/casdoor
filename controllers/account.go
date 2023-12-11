@@ -479,7 +479,7 @@ func (c *ApiController) GetCaptcha() {
 				Type:          captchaProvider.Type,
 				SubType:       captchaProvider.SubType,
 				ClientId:      captchaProvider.ClientId,
-				ClientSecret:  captchaProvider.ClientSecret,
+				ClientSecret:  "***",
 				ClientId2:     captchaProvider.ClientId2,
 				ClientSecret2: captchaProvider.ClientSecret2,
 			})

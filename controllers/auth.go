@@ -387,6 +387,16 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			} else if enableCaptcha {
+				captchaProvider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+
+				if captchaProvider.Type != "Default" {
+					authForm.ClientSecret = captchaProvider.ClientSecret
+				}
+
 				var isHuman bool
 				isHuman, err = captcha.VerifyCaptchaByCaptchaType(authForm.CaptchaType, authForm.CaptchaToken, authForm.ClientSecret)
 				if err != nil {
