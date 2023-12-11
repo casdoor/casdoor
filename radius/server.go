@@ -17,15 +17,16 @@ package radius
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 	"layeh.com/radius/rfc2866"
 )
 
-// https://support.huawei.com/enterprise/zh/doc/EDOC1000178159/35071f9a#tab_3
 func StartRadiusServer() {
 	secret := conf.GetConfigString("radiusSecret")
 	server := radius.PacketServer{
@@ -74,6 +75,11 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	statusType := rfc2866.AcctStatusType_Get(r.Packet)
 	username := rfc2865.UserName_GetString(r.Packet)
 	organization := rfc2865.Class_GetString(r.Packet)
+
+	if strings.Contains(username, "/") {
+		organization, username = util.GetOwnerAndNameFromId(username)
+	}
+
 	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v", username, organization, statusType)
 	w.Write(r.Response(radius.CodeAccountingResponse))
 	var err error
