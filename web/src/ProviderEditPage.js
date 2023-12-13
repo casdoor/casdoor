@@ -197,6 +197,12 @@ class ProviderEditPage extends React.Component {
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
+    case "Storage":
+      if (provider.type === "Google Cloud Storage") {
+        return Setting.getLabel(i18next.t("provider:Service account JSON"), i18next.t("provider:Service account JSON - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
     case "Email":
       if (provider.type === "Azure ACS") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
@@ -676,6 +682,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Notification" && (this.state.provider.type === "Google Chat" || this.state.provider.type === "Custom HTTP")) ? null : (
               <React.Fragment>
                 {
+                  (this.state.provider.category === "Storage" && this.state.provider.type === "Google Cloud Storage") ||
                   (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ||
                   (this.state.provider.category === "Notification" && (this.state.provider.type === "Line" || this.state.provider.type === "Telegram" || this.state.provider.type === "Bark" || this.state.provider.type === "Discord" || this.state.provider.type === "Slack" || this.state.provider.type === "Pushbullet" || this.state.provider.type === "Pushover" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams")) ? null : (
                       <Row style={{marginTop: "20px"}} >

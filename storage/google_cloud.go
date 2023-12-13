@@ -19,13 +19,15 @@ import (
 	"github.com/casdoor/oss/googlecloud"
 )
 
-func NewGoogleCloudStorageProvider(clientId string, clientSecret string, bucket string, endpoint string) oss.StorageInterface {
-	sp, _ := googlecloud.New(&googlecloud.Config{
-		AccessID:  clientId,
-		AccessKey: clientSecret,
-		Bucket:    bucket,
-		Endpoint:  endpoint,
+func NewGoogleCloudStorageProvider(clientSecret string, bucket string, endpoint string) oss.StorageInterface {
+	sp, err := googlecloud.New(&googlecloud.Config{
+		ServiceAccountJson: clientSecret,
+		Bucket:             bucket,
+		Endpoint:           endpoint,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	return sp
 }

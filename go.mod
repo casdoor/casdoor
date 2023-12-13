@@ -13,7 +13,7 @@ require (
 	github.com/casdoor/go-sms-sender v0.17.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.45.0
-	github.com/casdoor/oss v1.3.0
+	github.com/casdoor/oss v1.4.1
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
 	github.com/casvisor/casvisor-go-sdk v1.0.3
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
@@ -31,7 +31,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-webauthn/webauthn v0.6.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/lestrrat-go/jwx v1.2.21
@@ -43,7 +43,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
 	github.com/prometheus/client_golang v1.11.1
-	github.com/prometheus/client_model v0.3.0
+	github.com/prometheus/client_model v0.4.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
@@ -62,10 +62,10 @@ require (
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/crypto v0.13.0
-	golang.org/x/net v0.14.0
-	golang.org/x/oauth2 v0.11.0
-	google.golang.org/api v0.138.0
+	golang.org/x/crypto v0.14.0
+	golang.org/x/net v0.17.0
+	golang.org/x/oauth2 v0.13.0
+	google.golang.org/api v0.150.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
 	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
