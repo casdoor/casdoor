@@ -36,7 +36,7 @@ func getDialer(provider *Provider) *gomail.Dialer {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest string, sender string) error {
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
