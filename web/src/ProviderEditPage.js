@@ -522,11 +522,11 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
                 this.updateProviderField("customUserInfoUrl", "https://door.casdoor.com/api/userinfo");
               } else if (value === "Custom HTTP SMS") {
-                this.updateProviderField("endpoint", "https://example.com/send-custom-http");
+                this.updateProviderField("endpoint", "https://example.com/send-custom-http-sms");
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "code");
               } else if (value === "Custom HTTP Email") {
-                this.updateProviderField("endpoint", "https://example.com/send-email-webhook");
+                this.updateProviderField("endpoint", "https://example.com/send-custom-http-email");
                 this.updateProviderField("method", "POST");
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
