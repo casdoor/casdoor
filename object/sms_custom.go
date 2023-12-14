@@ -15,9 +15,10 @@
 package object
 
 import (
-	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/casdoor/casdoor/proxy"
 )
@@ -41,18 +42,24 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 	phoneNumber := targetPhoneNumber[0]
 	content := param["code"]
 
-	req, err := http.NewRequest(c.method, c.endpoint, bytes.NewBufferString(content))
-	if err != nil {
-		return err
-	}
-
+	var req *http.Request
+	var err error
 	if c.method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.PostForm = map[string][]string{
-			"phoneNumber": targetPhoneNumber,
-			c.paramName:   {content},
+		formValues := url.Values{}
+		formValues.Set("phoneNumber", phoneNumber)
+		formValues.Set(c.paramName, content)
+		req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
+		if err != nil {
+			return err
 		}
+
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	} else if c.method == "GET" {
+		req, err = http.NewRequest(c.method, c.endpoint, nil)
+		if err != nil {
+			return err
+		}
+
 		q := req.URL.Query()
 		q.Add("phoneNumber", phoneNumber)
 		q.Add(c.paramName, content)

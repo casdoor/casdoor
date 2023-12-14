@@ -15,9 +15,10 @@
 package email
 
 import (
-	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/casdoor/casdoor/proxy"
 )
@@ -36,20 +37,26 @@ func NewHttpEmailProvider(endpoint string, method string) *HttpEmailProvider {
 }
 
 func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
-	req, err := http.NewRequest(c.method, c.endpoint, bytes.NewBufferString(content))
-	if err != nil {
-		return err
-	}
-
+	var req *http.Request
+	var err error
 	if c.method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.PostForm = map[string][]string{
-			"fromName":  {fromName},
-			"toAddress": {toAddress},
-			"subject":   {subject},
-			"content":   {content},
+		formValues := url.Values{}
+		formValues.Set("fromName", fromName)
+		formValues.Set("toAddress", toAddress)
+		formValues.Set("subject", subject)
+		formValues.Set("content", content)
+		req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
+		if err != nil {
+			return err
 		}
+
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	} else if c.method == "GET" {
+		req, err = http.NewRequest(c.method, c.endpoint, nil)
+		if err != nil {
+			return err
+		}
+
 		q := req.URL.Query()
 		q.Add("fromName", fromName)
 		q.Add("toAddress", toAddress)
