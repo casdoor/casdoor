@@ -22,7 +22,7 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 	if typ == "Azure ACS" {
 		return NewAzureACSEmailProvider(clientSecret, host)
 	} else if typ == "Custom HTTP Email" {
-		return NewHttpMailClient(endpoint, method)
+		return NewHttpEmailProvider(endpoint, method)
 	} else {
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl)
 	}
