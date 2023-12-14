@@ -22,20 +22,20 @@ import (
 	"github.com/casdoor/casdoor/proxy"
 )
 
-type HttpMailProvider struct {
+type HttpEmailProvider struct {
 	endpoint string
 	method   string
 }
 
-func NewHttpMailClient(endpoint string, method string) *HttpMailProvider {
-	client := &HttpMailProvider{
+func NewHttpEmailProvider(endpoint string, method string) *HttpEmailProvider {
+	client := &HttpEmailProvider{
 		endpoint: endpoint,
 		method:   method,
 	}
 	return client
 }
 
-func (c *HttpMailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
 	req, err := http.NewRequest(c.method, c.endpoint, bytes.NewBufferString(content))
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (c *HttpMailProvider) Send(fromAddress string, fromName string, toAddress s
 		q.Add("content", content)
 		req.URL.RawQuery = q.Encode()
 	} else {
-		return fmt.Errorf("HttpMailClient's Send() error, unsupported method: %s", c.method)
+		return fmt.Errorf("HttpEmailProvider's Send() error, unsupported method: %s", c.method)
 	}
 
 	httpClient := proxy.DefaultHttpClient
@@ -68,7 +68,7 @@ func (c *HttpMailProvider) Send(fromAddress string, fromName string, toAddress s
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HttpMailClient's Send() error, custom HTTP Email request failed with status: %s", resp.Status)
+		return fmt.Errorf("HttpEmailProvider's Send() error, custom HTTP Email request failed with status: %s", resp.Status)
 	}
 
 	return err
