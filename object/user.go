@@ -1021,7 +1021,10 @@ func GenerateIdForNewUser(application *Application) (string, error) {
 
 	lastUserId := -1
 	if lastUser != nil {
-		lastUserId = util.ParseInt(lastUser.Id)
+		lastUserId, err = util.ParseIntWithError(lastUser.Id)
+		if err != nil {
+			return util.GenerateId(), nil
+		}
 	}
 
 	res := strconv.Itoa(lastUserId + 1)
