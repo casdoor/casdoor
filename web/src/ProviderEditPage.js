@@ -525,6 +525,9 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("endpoint", "https://example.com/send-custom-http");
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "code");
+              } else if (value === "Custom HTTP Email") {
+                this.updateProviderField("endpoint", "https://example.com/send-email-webhook");
+                this.updateProviderField("method", "POST");
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
@@ -761,7 +764,7 @@ class ProviderEditPage extends React.Component {
             </Row>
           )
         }
-        {this.state.provider.category === "Storage" || this.state.provider.type === "Custom HTTP SMS" ? (
+        {this.state.provider.category === "Storage" || ["Custom HTTP SMS", "Custom HTTP Email"].includes(this.state.provider.type) ? (
           <div>
             {["Local File System"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
@@ -1010,7 +1013,7 @@ class ProviderEditPage extends React.Component {
                 )
               }
               {
-                !["Custom HTTP SMS"].includes(this.state.provider.type) ? null : (
+                !["Custom HTTP SMS", "Custom HTTP Email"].includes(this.state.provider.type) ? null : (
                   <React.Fragment>
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={2}>

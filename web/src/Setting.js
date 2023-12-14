@@ -169,6 +169,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_azure.png`,
       url: "https://learn.microsoft.com/zh-cn/azure/communication-services",
     },
+    "Custom HTTP Email": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://casdoor.org/docs/provider/email/overview",
+    },
   },
   Storage: {
     "Local File System": {
@@ -993,6 +997,7 @@ export function getProviderTypeOptions(category) {
         {id: "Aliyun SMS", name: "Alibaba Cloud SMS"},
         {id: "Amazon SNS", name: "Amazon SNS"},
         {id: "Azure ACS", name: "Azure ACS"},
+        {id: "Custom HTTP Email", name: "Custom HTTP Email"},
         {id: "Custom HTTP SMS", name: "Custom HTTP SMS"},
         {id: "Mock SMS", name: "Mock SMS"},
         {id: "Infobip SMS", name: "Infobip SMS"},
