@@ -92,6 +92,9 @@ p, *, *, GET, /api/get-plan, *, *
 p, *, *, GET, /api/get-subscription, *, *
 p, *, *, GET, /api/get-provider, *, *
 p, *, *, GET, /api/get-organization-names, *, *
+p, *, *, GET, /api/get-all-objects, *, *
+p, *, *, GET, /api/get-all-actions, *, *
+p, *, *, GET, /api/get-all-roles, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
