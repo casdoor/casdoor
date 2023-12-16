@@ -311,6 +311,9 @@ class ProviderEditPage extends React.Component {
       } else if (provider.type === "Infoflow") {
         text = i18next.t("provider:Agent ID");
         tooltip = i18next.t("provider:Agent ID - Tooltip");
+      } else if (provider.type === "AzureADB2C") {
+        text = i18next.t("provider:User flow");
+        tooltip = i18next.t("provider:User flow - Tooltip");
       }
     } else if (provider.category === "SMS") {
       if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
@@ -758,7 +761,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
+          this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "AzureADB2C" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :

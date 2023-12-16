@@ -85,10 +85,12 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	payload.Set("client_id", idp.Config.ClientID)
 	payload.Set("client_secret", idp.Config.ClientSecret)
 	payload.Set("redirect_uri", idp.Config.RedirectURL)
+
 	resp, err := idp.Client.PostForm(idp.Config.Endpoint.TokenURL, payload)
 	if err != nil {
 		return nil, err
 	}
+
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -97,10 +99,10 @@ func (idp *AdfsIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	pToken := &AdfsToken{}
 	err = json.Unmarshal(data, pToken)
 	if err != nil {
-		return nil, fmt.Errorf("fail to unmarshal token response: %s", err.Error())
+		return nil, err
 	}
 	if pToken.ErrMsg != "" {
-		return nil, fmt.Errorf("pToken.Errmsg = %s", pToken.ErrMsg)
+		return nil, fmt.Errorf(pToken.ErrMsg)
 	}
 
 	token := &oauth2.Token{
