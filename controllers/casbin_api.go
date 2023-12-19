@@ -214,7 +214,7 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	res := [][]bool{}
+	res := []bool{}
 
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
@@ -230,7 +230,7 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		res = append(res, enforceResult)
+		res = append(res, enforceResult...)
 	}
 
 	c.ResponseOk(res)
