@@ -216,8 +216,11 @@ func (c *ApiController) BatchEnforce() {
 
 	res := [][]bool{}
 
+	// list key model:adapter have the same order with its result in res above
+	modelAdapters := []string{}
+
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
-	for _, permissionIds := range listPermissionIdMap {
+	for k, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -231,9 +234,10 @@ func (c *ApiController) BatchEnforce() {
 		}
 
 		res = append(res, enforceResult)
+		modelAdapters = append(modelAdapters, k)
 	}
 
-	c.ResponseOk(res)
+	c.ResponseOk(res, modelAdapters)
 }
 
 func (c *ApiController) GetAllObjects() {

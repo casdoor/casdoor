@@ -448,7 +448,7 @@ func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]stri
 	m := make(map[string][]string)
 
 	for _, permission := range permissions {
-		key := permission.Model + permission.Adapter
+		key := permission.Model + ":" + permission.Adapter
 		permissionIds, ok := m[key]
 		if !ok {
 			m[key] = []string{permission.GetId()}
