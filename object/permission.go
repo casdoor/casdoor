@@ -446,9 +446,8 @@ func GetMaskedPermissions(permissions []*Permission) []*Permission {
 // as the policyFilter when the enforcer load policy).
 func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]string {
 	m := make(map[string][]string)
-
 	for _, permission := range permissions {
-		key := permission.Model + permission.Adapter
+		key := permission.GetModelAndAdapter()
 		permissionIds, ok := m[key]
 		if !ok {
 			m[key] = []string{permission.GetId()}
@@ -462,6 +461,10 @@ func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]stri
 
 func (p *Permission) GetId() string {
 	return util.GetId(p.Owner, p.Name)
+}
+
+func (p *Permission) GetModelAndAdapter() string {
+	return util.GetId(p.Model, p.Adapter)
 }
 
 func (p *Permission) isUserHit(name string) bool {
