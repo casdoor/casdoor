@@ -47,18 +47,42 @@ func resetUserSigninErrorTimes(user *User) error {
 	return err
 }
 
+func GetFailedSigninConfigByUser(user *User) (int, int, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return 0, 0, err
+	}
+	failedSigninLimit := application.FailedSigninLimit
+	failedSigninfrozenTime := application.FailedSigninfrozenTime
+
+	// 0 as an initialization value, corresponding to the default configuration parameters
+	if failedSigninLimit == 0 {
+		failedSigninLimit = DefaultFailedSigninLimit
+	}
+	if failedSigninfrozenTime == 0 {
+		failedSigninfrozenTime = DefaultFailedSigninfrozenTime
+	}
+
+	return failedSigninLimit, failedSigninfrozenTime, nil
+}
+
 func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 	enableCaptcha := false
 	if len(options) > 0 {
 		enableCaptcha = options[0]
 	}
 
+	failedSigninLimit, failedSigninfrozenTime, errSignin := GetFailedSigninConfigByUser(user)
+	if errSignin != nil {
+		return errSignin
+	}
+
 	// increase failed login count
-	if user.SigninWrongTimes < SigninWrongTimesLimit {
+	if user.SigninWrongTimes < failedSigninLimit {
 		user.SigninWrongTimes++
 	}
 
-	if user.SigninWrongTimes >= SigninWrongTimesLimit {
+	if user.SigninWrongTimes >= failedSigninLimit {
 		// record the latest failed login time
 		user.LastSigninWrongTime = time.Now().UTC().Format(time.RFC3339)
 	}
@@ -69,7 +93,7 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 		return err
 	}
 
-	leftChances := SigninWrongTimesLimit - user.SigninWrongTimes
+	leftChances := failedSigninLimit - user.SigninWrongTimes
 	if leftChances == 0 && enableCaptcha {
 		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
 	} else if leftChances >= 0 {
@@ -77,5 +101,5 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 	}
 
 	// don't show the chance error message if the user has no chance left
-	return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), int(LastSignWrongTimeDuration.Minutes()))
+	return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), failedSigninfrozenTime)
 }

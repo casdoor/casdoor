@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -199,7 +199,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    if (["expireInHours", "refreshExpireInHours", "offset"].includes(key)) {
+    if (["offset"].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -394,8 +394,8 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
-              this.updateApplicationField("expireInHours", e.target.value);
+            <InputNumber style={{width: "150px"}} value={this.state.application.expireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+              this.updateApplicationField("expireInHours", value);
             }} />
           </Col>
         </Row>
@@ -404,8 +404,28 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input style={{width: "150px"}} value={this.state.application.refreshExpireInHours} suffix="Hours" onChange={e => {
-              this.updateApplicationField("refreshExpireInHours", e.target.value);
+            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+              this.updateApplicationField("refreshExpireInHours", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1} precision={0} addonAfter="Times" onChange={value => {
+              this.updateApplicationField("failedSigninLimit", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninfrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
+              this.updateApplicationField("failedSigninfrozenTime", value);
             }} />
           </Col>
         </Row>
