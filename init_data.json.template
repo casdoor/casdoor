@@ -104,7 +104,9 @@
         }
       ],
       "redirectUris": [""],
-      "expireInHours": 168
+      "expireInHours": 168,
+      "failedSigninLimit": 5,
+      "failedSigninfrozenTime": 15
     }
   ],
   "users": [

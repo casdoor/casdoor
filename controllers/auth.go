@@ -946,8 +946,14 @@ func (c *ApiController) GetCaptchaStatus() {
 		return
 	}
 
+	failedSigninLimit, _, err := object.GetFailedSigninConfigByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var captchaEnabled bool
-	if user != nil && user.SigninWrongTimes >= object.SigninWrongTimesLimit {
+	if user != nil && user.SigninWrongTimes >= failedSigninLimit {
 		captchaEnabled = true
 	}
 	c.ResponseOk(captchaEnabled)
