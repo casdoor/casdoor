@@ -18,6 +18,7 @@ import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
+import {jwtDecode} from "jwt-decode";
 
 const {TextArea} = Input;
 
@@ -72,8 +73,20 @@ class TokenEditPage extends React.Component {
     });
   }
 
+  parseAccessToken(accessToken) {
+    try {
+      const parsedHeader = JSON.stringify(jwtDecode(accessToken, {header: true}), null, 2);
+      const parsedPayload = JSON.stringify(jwtDecode(accessToken), null, 2);
+      const res = parsedHeader + "." + parsedPayload;
+      return res;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
   renderToken() {
     const editorWidth = Setting.isMobile() ? 22 : 9;
+    const parsedResult = this.parseAccessToken(this.state.token.accessToken);
     return (
       <Card size="small" title={
         <div>
@@ -175,23 +188,23 @@ class TokenEditPage extends React.Component {
             >
               {i18next.t("token:Copy access token")}
             </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.token.accessToken} onChange={e => {
+            <TextArea autoSize={{minRows: 10, maxRows: 200}} value={this.state.token.accessToken} onChange={e => {
               this.updateTokenField("accessToken", e.target.value);
             }} />
           </Col>
           <Col span={1} />
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("token:Parsing result"), i18next.t("token:Parsing result - Tooltip"))} :
+            {Setting.getLabel(i18next.t("token:Parsed result"), i18next.t("token:Parsed result - Tooltip"))} :
           </Col>
           <Col span={editorWidth} >
-            <Button type="primary" style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.token.accessToken === ""} onClick={() => {
-              copy(this.state.token.accessToken);
+            <Button type="primary" style={{marginRight: "10px", marginBottom: "10px"}} disabled={!parsedResult.includes("\"alg\":")} onClick={() => {
+              copy(parsedResult);
               Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
-              {i18next.t("token:Copy parsing result")}
+              {i18next.t("token:Copy parsed result")}
             </Button>
-            <TextArea autoSize={{minRows: 30, maxRows: 30}} value={this.state.token.accessToken} onChange={e => {}} />
+            <TextArea autoSize={{minRows: 10, maxRows: 200}} value={parsedResult} />
           </Col>
         </Row>
       </Card>

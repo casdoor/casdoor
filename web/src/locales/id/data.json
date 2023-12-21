@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "Token akses",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "Kode otorisasi",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "Mengedit Token",
     "Expires in": "Berakhir pada",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "Token baru",
-    "Token type": "Jenis token"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "Jenis token",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "Masuk pihak ketiga",

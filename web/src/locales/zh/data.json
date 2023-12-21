@@ -760,9 +760,9 @@
     "SP ACS URL - Tooltip": "SP ACS URL - 工具提示",
     "SP Entity ID": "SP 实体 ID",
     "Scene": "场景",
-    "Scene - Tooltip": "Scene - Tooltip",
-    "Scope": "Scope",
-    "Scope - Tooltip": "Scope - 工具提示",
+    "Scene - Tooltip": "场景",
+    "Scope": "范围",
+    "Scope - Tooltip": "范围",
     "Secret access key": "秘密访问密钥",
     "Secret access key - Tooltip": "秘密访问密钥",
     "Secret key": "Secret key",
@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "访问令牌",
+    "Access token - Tooltip": "访问令牌",
     "Authorization code": "授权码",
+    "Authorization code - Tooltip": "授权码",
+    "Copy access token": "复制Access token",
+    "Copy parsed result": "复制解析结果",
     "Edit Token": "编辑令牌",
     "Expires in": "有效期",
+    "Expires in - Tooltip": "有效期",
     "New Token": "添加令牌",
-    "Token type": "令牌类型"
+    "Parsed result": "解析结果",
+    "Parsed result - Tooltip": "Access token的JWT解析结果",
+    "Token type": "令牌类型",
+    "Token type - Tooltip": "令牌类型"
   },
   "user": {
     "3rd-party logins": "第三方登录",

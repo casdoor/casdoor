@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "Mã thông báo truy cập",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "Mã xác thực",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "Chỉnh sửa mã thông báo",
     "Expires in": "Hết hạn sau",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "Tạo mã thông báo",
-    "Token type": "Loại mã thông báo"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "Loại mã thông báo",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "Đăng nhập bên thứ ba",

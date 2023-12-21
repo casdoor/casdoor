@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "アクセストークン",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "承認コード",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "編集トークン",
     "Expires in": "期限切れ",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "新しいトークン",
-    "Token type": "トークンタイプ"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "トークンタイプ",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "サードパーティログイン",

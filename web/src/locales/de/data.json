@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "Access-Token",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "Authorisierungscode",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "Edit-Token bearbeiten",
     "Expires in": "läuft ab in",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "Neuer Token",
-    "Token type": "Token-Typ"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "Token-Typ",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "Drittanbieter-Logins",

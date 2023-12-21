@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "Маркер доступа",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "Код авторизации",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "Изменить маркер",
     "Expires in": "Истекает в",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "Новый токен",
-    "Token type": "Тип токена"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "Тип токена",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "Авторизация сторонних участников",

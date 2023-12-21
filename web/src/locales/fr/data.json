@@ -959,11 +959,19 @@
   },
   "token": {
     "Access token": "Token d'accès",
+    "Access token - Tooltip": "Access token - Tooltip",
     "Authorization code": "Code d'autorisation",
+    "Authorization code - Tooltip": "Authorization code - Tooltip",
+    "Copy access token": "Copy access token",
+    "Copy parsed result": "Copy parsed result",
     "Edit Token": "Modifier le jeton",
     "Expires in": "Expire dans",
+    "Expires in - Tooltip": "Expires in - Tooltip",
     "New Token": "Nouveau jeton",
-    "Token type": "Type de jeton"
+    "Parsed result": "Parsed result",
+    "Parsed result - Tooltip": "Parsed result - Tooltip",
+    "Token type": "Type de jeton",
+    "Token type - Tooltip": "Token type - Tooltip"
   },
   "user": {
     "3rd-party logins": "Services de connexions tiers",
