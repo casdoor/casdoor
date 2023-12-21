@@ -1085,8 +1085,8 @@ github.com/casbin/casbin/v2 v2.77.2 h1:yQinn/w9x8AswiwqwtrXz93VU48R1aYTXdHEx4RI3
 github.com/casbin/casbin/v2 v2.77.2/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
 github.com/casdoor/go-reddit/v2 v2.1.0 h1:kIbfdJ7AA7H0uTQ8s0q4GGZqSS5V9wVE74RrXyD9XPs=
 github.com/casdoor/go-reddit/v2 v2.1.0/go.mod h1:eagkvwlZ4Hcsuc/uQsLHYEulz5jN65SVSwV/AIE7zsc=
-github.com/casdoor/go-sms-sender v0.17.0 h1:72vfaNt9EEFkm+nMgZLMw5MsNoiHJDV62Pp9axLCRK0=
-github.com/casdoor/go-sms-sender v0.17.0/go.mod h1:cQs7qqohMJBgIVZebOCB8ko09naG1vzFJEH59VNIscs=
+github.com/casdoor/go-sms-sender v0.18.0 h1:FBFxTnBBxkeGUCTng5TrZiglQ/5A/Gm5ciV0KrlIO18=
+github.com/casdoor/go-sms-sender v0.18.0/go.mod h1:cQs7qqohMJBgIVZebOCB8ko09naG1vzFJEH59VNIscs=
 github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR/w=
 github.com/casdoor/gomail/v2 v2.0.1/go.mod h1:VnGPslEAtpix5FjHisR/WKB1qvZDBaujbikxDe9d+2Q=
 github.com/casdoor/notify v0.45.0 h1:OlaFvcQFjGOgA4mRx07M8AH1gvb5xNo21mcqrVGlLgk=
