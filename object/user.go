@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"strconv"
 	"strings"
 
@@ -199,6 +200,7 @@ type Userinfo struct {
 	Sub           string   `json:"sub"`
 	Iss           string   `json:"iss"`
 	Aud           string   `json:"aud"`
+	PpgID         string   `json:"ppg_id"`
 	Name          string   `json:"preferred_username,omitempty"`
 	DisplayName   string   `json:"name,omitempty"`
 	Email         string   `json:"email,omitempty"`
@@ -673,6 +675,10 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 }
 
 func AddUser(user *User) (bool, error) {
+	if user.ExternalId == "" {
+		user.ExternalId = uuid.NewString()
+	}
+
 	if user.Id == "" {
 		application, err := GetApplicationByUser(user)
 		if err != nil {
@@ -817,9 +823,10 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 	_, originBackend := getOriginFromHost(host)
 
 	resp := Userinfo{
-		Sub: user.Id,
-		Iss: originBackend,
-		Aud: aud,
+		Sub:   user.Id,
+		Iss:   originBackend,
+		Aud:   aud,
+		PpgID: user.ExternalId,
 	}
 	if strings.Contains(scope, "profile") {
 		resp.Name = user.Name

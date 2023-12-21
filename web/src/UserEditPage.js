@@ -282,7 +282,8 @@ class UserEditPage extends React.Component {
     if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
       isKeysGenerated = true;
     }
-
+    // eslint-disable-next-line no-console
+    console.log(accountItem);
     if (accountItem.name === "Organization") {
       return (
         <Row style={{marginTop: "10px"}} >
