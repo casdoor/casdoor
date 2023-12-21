@@ -696,7 +696,7 @@ class ApplicationEditPage extends React.Component {
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
               copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}`);
-              Setting.showMessage("success", i18next.t("application:SAML metadata URL copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("application:Copy SAML metadata URL")}
@@ -905,7 +905,7 @@ class ApplicationEditPage extends React.Component {
                         <Space>
                           <Button icon={<CopyOutlined />} onClick={() => {
                             copy(item.code);
-                            Setting.showMessage("success", i18next.t("application:Invitation code copied to clipboard successfully"));
+                            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                           }
                           }>
                             {i18next.t("general:Copy")}
@@ -959,7 +959,7 @@ class ApplicationEditPage extends React.Component {
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signUpUrl}`);
-            Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
           >
             {i18next.t("application:Copy signup page URL")}
@@ -991,7 +991,7 @@ class ApplicationEditPage extends React.Component {
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signInUrl}`);
-            Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
           >
             {i18next.t("application:Copy signin page URL")}
@@ -1024,7 +1024,7 @@ class ApplicationEditPage extends React.Component {
       <Col span={previewGrid}>
         <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
           copy(`${window.location.origin}${promptUrl}`);
-          Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+          Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
         }}
         >
           {i18next.t("application:Copy prompt page URL")}

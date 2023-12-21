@@ -248,7 +248,7 @@ class ResourceListPage extends BaseListPage {
             <div>
               <Button onClick={() => {
                 copy(record.url);
-                Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
               }}
               >
                 {i18next.t("resource:Copy Link")}

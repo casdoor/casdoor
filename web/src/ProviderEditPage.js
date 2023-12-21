@@ -1163,7 +1163,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1179,7 +1179,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
