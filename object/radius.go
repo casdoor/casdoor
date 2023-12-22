@@ -9,7 +9,6 @@ import (
 )
 
 // https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_usr_radatt/configuration/xe-16/sec-usr-radatt-xe-16-book/sec-rad-ov-ietf-attr.html
-// https://support.huawei.com/enterprise/zh/doc/EDOC1000178159/35071f9a
 type RadiusAccounting struct {
 	Owner       string    `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string    `xorm:"varchar(100) notnull pk" json:"name"`

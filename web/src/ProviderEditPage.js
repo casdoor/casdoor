@@ -158,6 +158,12 @@ class ProviderEditPage extends React.Component {
   }
   getClientIdLabel(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Service ID identifier"), i18next.t("provider:Service ID identifier - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("signup:Username"), i18next.t("signup:Username - Tooltip"));
     case "SMS":
@@ -191,6 +197,18 @@ class ProviderEditPage extends React.Component {
 
   getClientSecretLabel(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Team ID"), i18next.t("provider:Team ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
+    case "Storage":
+      if (provider.type === "Google Cloud Storage") {
+        return Setting.getLabel(i18next.t("provider:Service account JSON"), i18next.t("provider:Service account JSON - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
+      }
     case "Email":
       if (provider.type === "Azure ACS") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
@@ -232,6 +250,12 @@ class ProviderEditPage extends React.Component {
 
   getClientId2Label(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Key ID"), i18next.t("provider:Key ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"));
     default:
@@ -247,6 +271,12 @@ class ProviderEditPage extends React.Component {
 
   getClientSecret2Label(provider) {
     switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "Apple") {
+        return Setting.getLabel(i18next.t("provider:Key text"), i18next.t("provider:Key text - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Client secret 2"), i18next.t("provider:Client secret 2 - Tooltip"));
+      }
     case "Email":
       return Setting.getLabel(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"));
     default:
@@ -287,6 +317,9 @@ class ProviderEditPage extends React.Component {
       } else if (provider.type === "Infoflow") {
         text = i18next.t("provider:Agent ID");
         tooltip = i18next.t("provider:Agent ID - Tooltip");
+      } else if (provider.type === "AzureADB2C") {
+        text = i18next.t("provider:User flow");
+        tooltip = i18next.t("provider:User flow - Tooltip");
       }
     } else if (provider.category === "SMS") {
       if (provider.type === "Twilio SMS" || provider.type === "Azure ACS") {
@@ -385,10 +418,11 @@ class ProviderEditPage extends React.Component {
 
   loadSamlConfiguration() {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(this.state.provider.metadata, "text/xml");
-    const cert = xmlDoc.getElementsByTagName("ds:X509Certificate")[0].childNodes[0].nodeValue;
-    const endpoint = xmlDoc.getElementsByTagName("md:SingleSignOnService")[0].getAttribute("Location");
-    const issuerUrl = xmlDoc.getElementsByTagName("md:EntityDescriptor")[0].getAttribute("entityID");
+    const rawXml = this.state.provider.metadata.replace("\n", "");
+    const xmlDoc = parser.parseFromString(rawXml, "text/xml");
+    const cert = xmlDoc.querySelector("X509Certificate").childNodes[0].nodeValue.replace(" ", "");
+    const endpoint = xmlDoc.querySelector("SingleSignOnService").getAttribute("Location");
+    const issuerUrl = xmlDoc.querySelector("EntityDescriptor").getAttribute("entityID");
     this.updateProviderField("idP", cert);
     this.updateProviderField("endpoint", endpoint);
     this.updateProviderField("issuerUrl", issuerUrl);
@@ -497,11 +531,18 @@ class ProviderEditPage extends React.Component {
               this.updateProviderField("type", value);
               if (value === "Local File System") {
                 this.updateProviderField("domain", Setting.getFullServerUrl());
-              } else if (value === "Custom") {
+              } else if (value === "Custom" && this.state.provider.category === "OAuth") {
                 this.updateProviderField("customAuthUrl", "https://door.casdoor.com/login/oauth/authorize");
                 this.updateProviderField("scopes", "openid profile email");
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
                 this.updateProviderField("customUserInfoUrl", "https://door.casdoor.com/api/userinfo");
+              } else if (value === "Custom HTTP SMS") {
+                this.updateProviderField("endpoint", "https://example.com/send-custom-http-sms");
+                this.updateProviderField("method", "GET");
+                this.updateProviderField("title", "code");
+              } else if (value === "Custom HTTP Email") {
+                this.updateProviderField("endpoint", "https://example.com/send-custom-http-email");
+                this.updateProviderField("method", "POST");
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
@@ -559,48 +600,54 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Custom" ? null : (
+          this.state.provider.type === "Custom" ? (
             <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customAuthUrl} onChange={e => {
-                    this.updateProviderField("customAuthUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customTokenUrl} onChange={e => {
-                    this.updateProviderField("customTokenUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.scopes} onChange={e => {
-                    this.updateProviderField("scopes", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
-                    this.updateProviderField("customUserInfoUrl", e.target.value);
-                  }} />
-                </Col>
-              </Row>
+              {
+                this.state.provider.category === "OAuth" ? (
+                  <Col>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Auth URL"), i18next.t("provider:Auth URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customAuthUrl} onChange={e => {
+                          this.updateProviderField("customAuthUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Token URL"), i18next.t("provider:Token URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customTokenUrl} onChange={e => {
+                          this.updateProviderField("customTokenUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.scopes} onChange={e => {
+                          this.updateProviderField("scopes", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:UserInfo URL"), i18next.t("provider:UserInfo URL - Tooltip"))}
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.customUserInfoUrl} onChange={e => {
+                          this.updateProviderField("customUserInfoUrl", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  </Col>
+                ) : null
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
@@ -637,15 +684,17 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
-          )
+          ) : null
         }
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
+          (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
           (this.state.provider.category === "Notification" && (this.state.provider.type === "Google Chat" || this.state.provider.type === "Custom HTTP")) ? null : (
               <React.Fragment>
                 {
+                  (this.state.provider.category === "Storage" && this.state.provider.type === "Google Cloud Storage") ||
                   (this.state.provider.category === "Email" && this.state.provider.type === "Azure ACS") ||
                   (this.state.provider.category === "Notification" && (this.state.provider.type === "Line" || this.state.provider.type === "Telegram" || this.state.provider.type === "Bark" || this.state.provider.type === "Discord" || this.state.provider.type === "Slack" || this.state.provider.type === "Pushbullet" || this.state.provider.type === "Pushover" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams")) ? null : (
                       <Row style={{marginTop: "20px"}} >
@@ -674,7 +723,7 @@ class ProviderEditPage extends React.Component {
             )
         }
         {
-          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Apple" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -718,7 +767,7 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
+          this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "AzureADB2C" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
                 {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -731,7 +780,7 @@ class ProviderEditPage extends React.Component {
             </Row>
           )
         }
-        {this.state.provider.category === "Storage" ? (
+        {this.state.provider.category === "Storage" || ["Custom HTTP SMS", "Custom HTTP Email"].includes(this.state.provider.type) ? (
           <div>
             {["Local File System"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
@@ -745,7 +794,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -757,7 +806,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Local File System"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Local File System"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Bucket"), i18next.t("provider:Bucket - Tooltip"))} :
@@ -769,17 +818,19 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <Input value={this.state.provider.pathPrefix} onChange={e => {
-                  this.updateProviderField("pathPrefix", e.target.value);
-                }} />
-              </Col>
-            </Row>
-            {["MinIO", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS"].includes(this.state.provider.type) ? null : (
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.pathPrefix} onChange={e => {
+                    this.updateProviderField("pathPrefix", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+            )}
+            {["Custom HTTP SMS", "MinIO", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -949,7 +1000,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
-              {["Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
+              {["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -963,7 +1014,7 @@ class ProviderEditPage extends React.Component {
                 </Row>
                 )
               }
-              {["Infobip SMS"].includes(this.state.provider.type) ?
+              {["Custom HTTP SMS", "Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -975,6 +1026,39 @@ class ProviderEditPage extends React.Component {
                     }} />
                   </Col>
                 </Row>
+                )
+              }
+              {
+                !["Custom HTTP SMS", "Custom HTTP Email"].includes(this.state.provider.type) ? null : (
+                  <React.Fragment>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={2}>
+                        {Setting.getLabel(i18next.t("general:Method"), i18next.t("provider:Method - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Select virtual={false} style={{width: "100%"}} value={this.state.provider.method} onChange={value => {
+                          this.updateProviderField("method", value);
+                        }}>
+                          {
+                            [
+                              {id: "GET", name: "GET"},
+                              {id: "POST", name: "POST"},
+                            ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
+                          }
+                        </Select>
+                      </Col>
+                    </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.title} onChange={e => {
+                          this.updateProviderField("title", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  </React.Fragment>
                 )
               }
               <Row style={{marginTop: "20px"}} >
@@ -1001,10 +1085,11 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={2} >
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                    disabled={!Setting.isValidPhone(this.state.provider.receiver)}
+                    disabled={!Setting.isValidPhone(this.state.provider.receiver) && (this.state.provider.type !== "Custom HTTP SMS" || this.state.provider.endpoint === "")}
                     // 馬在飛
                     // onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
-                    onClick={() => this.removeFistZeroOfPhoneNumber(Setting.getCountryCode(this.state.provider.content), this.state.provider.receiver)} >
+                    // onClick={() => this.removeFistZeroOfPhoneNumber(Setting.getCountryCode(this.state.provider.content), this.state.provider.receiver)} >
+                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
                 </Col>
@@ -1087,7 +1172,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1103,7 +1188,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1132,7 +1217,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.type === "Alipay") ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:Root Cert"), i18next.t("general:Root Cert - Tooltip"))} :
+                {Setting.getLabel(i18next.t("general:Root cert"), i18next.t("general:Root cert - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Select virtual={false} style={{width: "100%"}} value={this.state.provider.metadata} onChange={(value => {this.updateProviderField("metadata", value);})}>

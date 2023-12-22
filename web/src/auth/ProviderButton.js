@@ -35,6 +35,7 @@ import AlipayLoginButton from "./AlipayLoginButton";
 import InfoflowLoginButton from "./InfoflowLoginButton";
 import AppleLoginButton from "./AppleLoginButton";
 import AzureADLoginButton from "./AzureADLoginButton";
+import AzureADB2CLoginButton from "./AzureADB2CLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import SteamLoginButton from "./SteamLoginButton";
 import BilibiliLoginButton from "./BilibiliLoginButton";
@@ -85,6 +86,8 @@ function getSigninButton(provider) {
     return <AppleLoginButton text={text} align={"center"} />;
   } else if (provider.type === "AzureAD") {
     return <AzureADLoginButton text={text} align={"center"} />;
+  } else if (provider.type === "AzureADB2C") {
+    return <AzureADB2CLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Slack") {
     return <SlackLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Steam") {

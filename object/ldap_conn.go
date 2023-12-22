@@ -81,6 +81,17 @@ func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
 	return &LdapConn{Conn: conn, IsAD: isAD}, nil
 }
 
+func (l *LdapConn) Close() {
+	if l.Conn == nil {
+		return
+	}
+
+	err := l.Conn.Unbind()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 	SearchFilter := "(objectClass=*)"
 	SearchAttributes := []string{"vendorname", "vendorversion", "isGlobalCatalogReady", "forestFunctionality"}
@@ -305,7 +316,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				return nil, nil, err
 			}
 
-			name, err := syncUser.buildLdapUserName()
+			name, err := syncUser.buildLdapUserName(owner)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -354,10 +365,10 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
-func (ldapUser *LdapUser) buildLdapUserName() (string, error) {
+func (ldapUser *LdapUser) buildLdapUserName(owner string) (string, error) {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
-	has, err := ormer.Engine.Where("name = ? or name = ?", ldapUser.Uid, uidWithNumber).Get(&user)
+	has, err := ormer.Engine.Where("owner = ? and (name = ? or name = ?)", owner, ldapUser.Uid, uidWithNumber).Get(&user)
 	if err != nil {
 		return "", err
 	}

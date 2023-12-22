@@ -79,7 +79,7 @@ func initAPI() {
 	beego.Router("/api/get-user-count", &controllers.ApiController{}, "GET:GetUserCount")
 	beego.Router("/api/get-user", &controllers.ApiController{}, "GET:GetUser")
 	beego.Router("/api/update-user", &controllers.ApiController{}, "POST:UpdateUser")
-	beego.Router("/api/add-user-keys", &controllers.ApiController{}, "POST:AddUserkeys")
+	beego.Router("/api/add-user-keys", &controllers.ApiController{}, "POST:AddUserKeys")
 	beego.Router("/api/add-user", &controllers.ApiController{}, "POST:AddUser")
 	beego.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
 	beego.Router("/api/upload-users", &controllers.ApiController{}, "POST:UploadUsers")
@@ -204,7 +204,7 @@ func initAPI() {
 	beego.Router("/api/run-syncer", &controllers.ApiController{}, "GET:RunSyncer")
 
 	beego.Router("/api/get-certs", &controllers.ApiController{}, "GET:GetCerts")
-	beego.Router("/api/get-globle-certs", &controllers.ApiController{}, "GET:GetGlobleCerts")
+	beego.Router("/api/get-global-certs", &controllers.ApiController{}, "GET:GetGlobalCerts")
 	beego.Router("/api/get-cert", &controllers.ApiController{}, "GET:GetCert")
 	beego.Router("/api/update-cert", &controllers.ApiController{}, "POST:UpdateCert")
 	beego.Router("/api/add-cert", &controllers.ApiController{}, "POST:AddCert")

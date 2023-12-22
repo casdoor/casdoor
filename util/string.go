@@ -45,6 +45,19 @@ func ParseInt(s string) int {
 	return i
 }
 
+func ParseIntWithError(s string) (int, error) {
+	if s == "" {
+		return 0, fmt.Errorf("ParseIntWithError() error, empty string")
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return i, nil
+}
+
 func ParseFloat(s string) float64 {
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {

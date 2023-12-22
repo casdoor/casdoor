@@ -151,8 +151,16 @@ func UpdateRole(id string, role *Role) (bool, error) {
 	}
 
 	for _, permission := range permissions {
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
 		visited[permission.GetId()] = struct{}{}
 	}
 
@@ -166,10 +174,15 @@ func UpdateRole(id string, role *Role) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+
 		for _, permission := range permissions {
 			permissionId := permission.GetId()
 			if _, ok := visited[permissionId]; !ok {
-				addGroupingPolicies(permission)
+				err = addGroupingPolicies(permission)
+				if err != nil {
+					return false, err
+				}
+
 				visited[permissionId] = struct{}{}
 			}
 		}
@@ -254,14 +267,27 @@ func (role *Role) GetId() string {
 
 func getRolesByUserInternal(userId string) ([]*Role, error) {
 	roles := []*Role{}
-	err := ormer.Engine.Where("users like ?", "%"+userId+"\"%").Find(&roles)
+	user, err := GetUser(userId)
+	if err != nil {
+		return roles, err
+	}
+	if user == nil {
+		return nil, fmt.Errorf("The user: %s doesn't exist", userId)
+	}
+
+	query := ormer.Engine.Alias("r").Where("r.users like ?", fmt.Sprintf("%%%s%%", userId))
+	for _, group := range user.Groups {
+		query = query.Or("r.groups like ?", fmt.Sprintf("%%%s%%", group))
+	}
+
+	err = query.Find(&roles)
 	if err != nil {
 		return roles, err
 	}
 
 	res := []*Role{}
 	for _, role := range roles {
-		if util.InSlice(role.Users, userId) {
+		if util.InSlice(role.Users, userId) || util.HaveIntersection(role.Groups, user.Groups) {
 			res = append(res, role)
 		}
 	}

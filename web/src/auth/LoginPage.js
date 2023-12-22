@@ -99,7 +99,9 @@ class LoginPage extends React.Component {
           this.setState({enableCaptchaModal: CaptchaRule.Never});
         }
       }
+    }
 
+    if (prevProps.account !== this.props.account && this.props.account !== undefined) {
       if (this.props.account && this.props.account.owner === this.props.application?.organization) {
         const params = new URLSearchParams(this.props.location.search);
         const silentSignin = params.get("silentSignin");
@@ -335,7 +337,7 @@ class LoginPage extends React.Component {
       const casParams = Util.getCasParameters();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
-        if (res.status === "ok") {
+        const loginHandler = (res) => {
           let msg = "Logged in successfully. ";
           if (casParams.service === "") {
             // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
@@ -349,6 +351,28 @@ class LoginPage extends React.Component {
             newUrl.searchParams.append("ticket", st);
             window.location.href = newUrl.toString();
           }
+        };
+
+        if (res.status === "ok") {
+          if (res.data === NextMfa) {
+            this.setState({
+              getVerifyTotp: () => {
+                return (
+                  <MfaAuthVerifyForm
+                    mfaProps={res.data2}
+                    formValues={values}
+                    authParams={casParams}
+                    application={this.getApplicationObj()}
+                    onFail={() => {
+                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                    }}
+                    onSuccess={(res) => loginHandler(res)}
+                  />);
+              },
+            });
+          } else {
+            loginHandler(res);
+          }
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
@@ -359,7 +383,7 @@ class LoginPage extends React.Component {
       this.populateOauthValues(values);
       AuthBackend.login(values, oAuthParams)
         .then((res) => {
-          const callback = (res) => {
+          const loginHandler = (res) => {
             const responseType = values["type"];
 
             if (responseType === "login") {
@@ -394,12 +418,12 @@ class LoginPage extends React.Component {
                     <MfaAuthVerifyForm
                       mfaProps={res.data2}
                       formValues={values}
-                      oAuthParams={oAuthParams}
+                      authParams={oAuthParams}
                       application={this.getApplicationObj()}
                       onFail={() => {
                         Setting.showMessage("error", i18next.t("mfa:Verification failed"));
                       }}
-                      onSuccess={(res) => callback(res)}
+                      onSuccess={(res) => loginHandler(res)}
                     />);
                 },
               });
@@ -412,7 +436,7 @@ class LoginPage extends React.Component {
               const sub = res.data2;
               Setting.goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
             } else {
-              callback(res);
+              loginHandler(res);
             }
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
@@ -779,7 +803,11 @@ class LoginPage extends React.Component {
         const rawId = assertion.rawId;
         const sig = assertion.response.signature;
         const userHandle = assertion.response.userHandle;
-        return fetch(`${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}`, {
+        let finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}`;
+        if (values["type"] === "code") {
+          finishUrl = `${Setting.ServerUrl}/api/webauthn/signin/finish?responseType=${values["type"]}&clientId=${oAuthParams.clientId}&scope=${oAuthParams.scope}&redirectUri=${oAuthParams.redirectUri}&nonce=${oAuthParams.nonce}&state=${oAuthParams.state}&codeChallenge=${oAuthParams.codeChallenge}&challengeMethod=${oAuthParams.challengeMethod}`;
+        }
+        return fetch(finishUrl, {
           method: "POST",
           credentials: "include",
           body: JSON.stringify({

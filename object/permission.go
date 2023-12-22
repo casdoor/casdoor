@@ -49,17 +49,6 @@ type Permission struct {
 	State       string `xorm:"varchar(100)" json:"state"`
 }
 
-type PermissionRule struct {
-	Ptype string `xorm:"varchar(100) index not null default ''" json:"ptype"`
-	V0    string `xorm:"varchar(100) index not null default ''" json:"v0"`
-	V1    string `xorm:"varchar(100) index not null default ''" json:"v1"`
-	V2    string `xorm:"varchar(100) index not null default ''" json:"v2"`
-	V3    string `xorm:"varchar(100) index not null default ''" json:"v3"`
-	V4    string `xorm:"varchar(100) index not null default ''" json:"v4"`
-	V5    string `xorm:"varchar(100) index not null default ''" json:"v5"`
-	Id    string `xorm:"varchar(100) index not null default ''" json:"id"`
-}
-
 const builtInAvailableField = 5 // Casdoor built-in adapter, use V5 to filter permission, so has 5 available field
 
 func GetPermissionCount(owner, field, value string) (int64, error) {
@@ -113,11 +102,15 @@ func GetPermission(id string) (*Permission, error) {
 
 // checkPermissionValid verifies if the permission is valid
 func checkPermissionValid(permission *Permission) error {
-	enforcer := getPermissionEnforcer(permission)
+	enforcer, err := getPermissionEnforcer(permission)
+	if err != nil {
+		return err
+	}
+
 	enforcer.EnableAutoSave(false)
 
 	policies := getPolicies(permission)
-	_, err := enforcer.AddPolicies(policies)
+	_, err = enforcer.AddPolicies(policies)
 	if err != nil {
 		return err
 	}
@@ -127,9 +120,13 @@ func checkPermissionValid(permission *Permission) error {
 		return nil
 	}
 
-	groupingPolicies := getGroupingPolicies(permission)
+	groupingPolicies, err := getGroupingPolicies(permission)
+	if err != nil {
+		return err
+	}
+
 	if len(groupingPolicies) > 0 {
-		_, err := enforcer.AddGroupingPolicies(groupingPolicies)
+		_, err = enforcer.AddGroupingPolicies(groupingPolicies)
 		if err != nil {
 			return err
 		}
@@ -150,7 +147,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		return false, nil
 	}
 
-	if permission.ResourceType == "Application" {
+	if permission.ResourceType == "Application" && permission.Model != "" {
 		model, err := GetModelEx(util.GetId(owner, permission.Model))
 		if err != nil {
 			return false, err
@@ -174,8 +171,16 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		removeGroupingPolicies(oldPermission)
-		removePolicies(oldPermission)
+		err = removeGroupingPolicies(oldPermission)
+		if err != nil {
+			return false, err
+		}
+
+		err = removePolicies(oldPermission)
+		if err != nil {
+			return false, err
+		}
+
 		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
 			isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
 			if isEmpty {
@@ -185,8 +190,16 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 				}
 			}
 		}
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -199,40 +212,54 @@ func AddPermission(permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		addGroupingPolicies(permission)
-		addPolicies(permission)
+		err = addGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = addPolicies(permission)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
 }
 
-func AddPermissions(permissions []*Permission) bool {
+func AddPermissions(permissions []*Permission) (bool, error) {
 	if len(permissions) == 0 {
-		return false
+		return false, nil
 	}
 
 	affected, err := ormer.Engine.Insert(permissions)
 	if err != nil {
 		if !strings.Contains(err.Error(), "Duplicate entry") {
-			panic(err)
+			return false, err
 		}
 	}
 
 	for _, permission := range permissions {
 		// add using for loop
 		if affected != 0 {
-			addGroupingPolicies(permission)
-			addPolicies(permission)
+			err = addGroupingPolicies(permission)
+			if err != nil {
+				return false, err
+			}
+
+			err = addPolicies(permission)
+			if err != nil {
+				return false, err
+			}
 		}
 	}
-	return affected != 0
+	return affected != 0, nil
 }
 
-func AddPermissionsInBatch(permissions []*Permission) bool {
+func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
 	batchSize := conf.GetConfigBatchSize()
 
 	if len(permissions) == 0 {
-		return false
+		return false, nil
 	}
 
 	affected := false
@@ -245,12 +272,18 @@ func AddPermissionsInBatch(permissions []*Permission) bool {
 
 		tmp := permissions[start:end]
 		fmt.Printf("The syncer adds permissions: [%d - %d]\n", start, end)
-		if AddPermissions(tmp) {
+
+		b, err := AddPermissions(tmp)
+		if err != nil {
+			return false, err
+		}
+
+		if b {
 			affected = true
 		}
 	}
 
-	return affected
+	return affected, nil
 }
 
 func DeletePermission(permission *Permission) (bool, error) {
@@ -260,8 +293,16 @@ func DeletePermission(permission *Permission) (bool, error) {
 	}
 
 	if affected != 0 {
-		removeGroupingPolicies(permission)
-		removePolicies(permission)
+		err = removeGroupingPolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
+		err = removePolicies(permission)
+		if err != nil {
+			return false, err
+		}
+
 		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
 			isEmpty, _ := ormer.Engine.IsTableEmpty(permission.Adapter)
 			if isEmpty {
@@ -405,9 +446,8 @@ func GetMaskedPermissions(permissions []*Permission) []*Permission {
 // as the policyFilter when the enforcer load policy).
 func GroupPermissionsByModelAdapter(permissions []*Permission) map[string][]string {
 	m := make(map[string][]string)
-
 	for _, permission := range permissions {
-		key := permission.Model + permission.Adapter
+		key := permission.GetModelAndAdapter()
 		permissionIds, ok := m[key]
 		if !ok {
 			m[key] = []string{permission.GetId()}
@@ -423,9 +463,17 @@ func (p *Permission) GetId() string {
 	return util.GetId(p.Owner, p.Name)
 }
 
+func (p *Permission) GetModelAndAdapter() string {
+	return util.GetId(p.Model, p.Adapter)
+}
+
 func (p *Permission) isUserHit(name string) bool {
 	targetOrg, targetName := util.GetOwnerAndNameFromId(name)
 	for _, user := range p.Users {
+		if user == "*" {
+			return true
+		}
+
 		userOrg, userName := util.GetOwnerAndNameFromId(user)
 		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
 			return true
@@ -439,9 +487,14 @@ func (p *Permission) isRoleHit(userId string) bool {
 	if err != nil {
 		return false
 	}
+
 	for _, role := range p.Roles {
+		if role == "*" {
+			return true
+		}
+
 		for _, targetRole := range targetRoles {
-			if targetRole.GetId() == role {
+			if role == targetRole.GetId() {
 				return true
 			}
 		}

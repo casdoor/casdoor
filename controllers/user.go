@@ -161,7 +161,6 @@ func (c *ApiController) GetUser() {
 	}
 
 	var user *object.User
-
 	if id == "" && owner == "" {
 		switch {
 		case email != "":
@@ -176,9 +175,14 @@ func (c *ApiController) GetUser() {
 			owner = util.GetOwnerFromId(id)
 		}
 
-		organization, err := object.GetOrganization(util.GetId("admin", owner))
+		var organization *object.Organization
+		organization, err = object.GetOrganization(util.GetId("admin", owner))
 		if err != nil {
 			c.ResponseError(err.Error())
+			return
+		}
+		if organization == nil {
+			c.ResponseError(fmt.Sprintf("the organization: %s is not found", owner))
 			return
 		}
 
@@ -472,16 +476,16 @@ func (c *ApiController) SetPassword() {
 	isAdmin := c.IsAdmin()
 	if isAdmin {
 		if oldPassword != "" {
-			msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-			if msg != "" {
-				c.ResponseError(msg)
+			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error())
 				return
 			}
 		}
-	} else {
-		msg := object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		if msg != "" {
-			c.ResponseError(msg)
+	} else if code == "" {
+		err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
 	}
@@ -514,11 +518,11 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, msg := object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
-	if msg == "" {
-		c.ResponseOk()
+	_, err = object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
 	} else {
-		c.ResponseError(msg)
+		c.ResponseOk()
 	}
 }
 
@@ -572,11 +576,11 @@ func (c *ApiController) GetUserCount() {
 	c.ResponseOk(count)
 }
 
-// AddUserkeys
-// @Title AddUserkeys
+// AddUserKeys
+// @Title AddUserKeys
 // @router /add-user-keys [post]
 // @Tag User API
-func (c *ApiController) AddUserkeys() {
+func (c *ApiController) AddUserKeys() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
@@ -585,7 +589,7 @@ func (c *ApiController) AddUserkeys() {
 	}
 
 	isAdmin := c.IsAdmin()
-	affected, err := object.AddUserkeys(&user, isAdmin)
+	affected, err := object.AddUserKeys(&user, isAdmin)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

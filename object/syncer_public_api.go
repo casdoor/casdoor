@@ -59,6 +59,10 @@ func AddUserToOriginalDatabase(user *User) error {
 		return nil
 	}
 
+	if syncer.IsReadOnly {
+		return nil
+	}
+
 	updatedOUser := syncer.createOriginalUserFromUser(user)
 	_, err = syncer.addUser(updatedOUser)
 	if err != nil {
@@ -75,6 +79,10 @@ func UpdateUserToOriginalDatabase(user *User) error {
 		return err
 	}
 	if syncer == nil {
+		return nil
+	}
+
+	if syncer.IsReadOnly {
 		return nil
 	}
 

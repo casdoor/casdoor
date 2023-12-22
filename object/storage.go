@@ -112,7 +112,10 @@ func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, 
 
 	if provider.Domain == "" {
 		provider.Domain = storageProvider.GetEndpoint()
-		UpdateProvider(provider.GetId(), provider)
+		_, err := UpdateProvider(provider.GetId(), provider)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return storageProvider, nil
@@ -126,7 +129,12 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 
 	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 
-	_, err = storageProvider.Put(objectKey, fileBuffer)
+	objectKeyRefined := objectKey
+	if provider.Type == "Google Cloud Storage" {
+		objectKeyRefined = strings.TrimPrefix(objectKeyRefined, "/")
+	}
+
+	_, err = storageProvider.Put(objectKeyRefined, fileBuffer)
 	if err != nil {
 		return "", "", err
 	}

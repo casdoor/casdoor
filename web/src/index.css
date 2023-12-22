@@ -45,3 +45,12 @@ code {
 .ant-list-sm .ant-list-item {
   padding: 2px !important;
 }
+
+.ant-drawer-body {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.custom-link:hover {
+  color: rgb(64 64 64) !important;
+}

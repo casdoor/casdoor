@@ -171,10 +171,27 @@ class CertEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
               this.updateCertField("cryptoAlgorithm", value);
+              if (value === "RS256") {
+                this.updateCertField("bitSize", 2048);
+              } else if (value === "HS256" || value === "ES256") {
+                this.updateCertField("bitSize", 256);
+              } else if (value === "ES384") {
+                this.updateCertField("bitSize", 384);
+              } else if (value === "ES521") {
+                this.updateCertField("bitSize", 521);
+              } else {
+                this.updateCertField("bitSize", 0);
+              }
+              this.updateCertField("certificate", "");
+              this.updateCertField("privateKey", "");
             })}>
               {
                 [
-                  {id: "RS256", name: "RS256"},
+                  {id: "RS256", name: "RS256 (RSA + SHA256)"},
+                  {id: "HS256", name: "HS256 (HMAC + SHA256)"},
+                  {id: "ES256", name: "ES256 (ECDSA using P-256 + SHA256)"},
+                  {id: "ES384", name: "ES384 (ECDSA using P-384 + SHA256)"},
+                  {id: "ES521", name: "ES521 (ECDSA using P-521 + SHA256)"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
@@ -185,9 +202,15 @@ class CertEditPage extends React.Component {
             {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.cert.bitSize} onChange={value => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.cert.bitSize} onChange={(value => {
               this.updateCertField("bitSize", value);
-            }} />
+              this.updateCertField("certificate", "");
+              this.updateCertField("privateKey", "");
+            })}>
+              {
+                Setting.getCryptoAlgorithmOptions(this.state.cert.cryptoAlgorithm).map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -205,14 +228,14 @@ class CertEditPage extends React.Component {
             {Setting.getLabel(i18next.t("cert:Certificate"), i18next.t("cert:Certificate - Tooltip"))} :
           </Col>
           <Col span={editorWidth} >
-            <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
+            <Button style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.cert.certificate === ""} onClick={() => {
               copy(this.state.cert.certificate);
-              Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("cert:Copy certificate")}
             </Button>
-            <Button type="primary" onClick={() => {
+            <Button type="primary" disabled={this.state.cert.certificate === ""} onClick={() => {
               const blob = new Blob([this.state.cert.certificate], {type: "text/plain;charset=utf-8"});
               FileSaver.saveAs(blob, "token_jwt_key.pem");
             }}
@@ -228,14 +251,14 @@ class CertEditPage extends React.Component {
             {Setting.getLabel(i18next.t("cert:Private key"), i18next.t("cert:Private key - Tooltip"))} :
           </Col>
           <Col span={editorWidth} >
-            <Button style={{marginRight: "10px", marginBottom: "10px"}} onClick={() => {
+            <Button style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.cert.privateKey === ""} onClick={() => {
               copy(this.state.cert.privateKey);
-              Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("cert:Copy private key")}
             </Button>
-            <Button type="primary" onClick={() => {
+            <Button type="primary" disabled={this.state.cert.privateKey === ""} onClick={() => {
               const blob = new Blob([this.state.cert.privateKey], {type: "text/plain;charset=utf-8"});
               FileSaver.saveAs(blob, "token_jwt_key.key");
             }}
@@ -265,6 +288,7 @@ class CertEditPage extends React.Component {
             this.props.history.push("/certs");
           } else {
             this.props.history.push(`/certs/${this.state.cert.owner}/${this.state.cert.name}`);
+            this.getCert();
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);

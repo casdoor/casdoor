@@ -43,7 +43,6 @@ func main() {
 	object.InitFlag()
 	object.InitAdapter()
 	object.CreateTables()
-	object.DoMigration()
 
 	object.InitDb()
 	object.InitFromFile()

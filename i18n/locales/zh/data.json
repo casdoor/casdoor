@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
-    "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中"
+    "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "服务%s与%s不匹配"
@@ -33,17 +34,18 @@
     "Email is invalid": "无效邮箱",
     "Empty username.": "用户名不可为空",
     "FirstName cannot be blank": "名不可以为空",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "LDAP密码错误",
     "LastName cannot be blank": "姓不可以为空",
     "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的uid，请检查您的 LDAP 服务器",
     "Organization does not exist": "组织不存在",
-    "Password must have at least 6 characters": "新密码至少为6位",
     "Phone already exists": "该手机号已存在",
     "Phone cannot be empty": "手机号不可为空",
     "Phone number is invalid": "无效手机号",
     "Session outdated, please login again": "会话已过期，请重新登录",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "用户: %s 在LDAP服务器中未找到",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
     "Username already exists": "用户名已存在",
     "Username cannot be an email address": "用户名不可以是邮箱地址",
@@ -62,7 +64,7 @@
     "Please login first": "请先登录",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "demo模式下不允许该操作"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在"

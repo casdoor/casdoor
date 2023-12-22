@@ -158,10 +158,9 @@ func (c *ApiController) DeleteToken() {
 // @Success 401 {object} object.TokenError The Response object
 // @router api/login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
-	grantType := c.Input().Get("grant_type")
-	refreshToken := c.Input().Get("refresh_token")
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
+	grantType := c.Input().Get("grant_type")
 	code := c.Input().Get("code")
 	verifier := c.Input().Get("code_verifier")
 	scope := c.Input().Get("scope")
@@ -169,35 +168,61 @@ func (c *ApiController) GetOAuthToken() {
 	password := c.Input().Get("password")
 	tag := c.Input().Get("tag")
 	avatar := c.Input().Get("avatar")
+	refreshToken := c.Input().Get("refresh_token")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
-	if clientId == "" {
-		// If clientID is empty, try to read data from RequestBody
+
+	if len(c.Ctx.Input.RequestBody) != 0 {
+		// If clientId is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
-		if err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest); err == nil {
-			clientId = tokenRequest.ClientId
-			clientSecret = tokenRequest.ClientSecret
-			grantType = tokenRequest.GrantType
-			refreshToken = tokenRequest.RefreshToken
-			code = tokenRequest.Code
-			verifier = tokenRequest.Verifier
-			scope = tokenRequest.Scope
-			username = tokenRequest.Username
-			password = tokenRequest.Password
-			tag = tokenRequest.Tag
-			avatar = tokenRequest.Avatar
+		err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest)
+		if err == nil {
+			if clientId == "" {
+				clientId = tokenRequest.ClientId
+			}
+			if clientSecret == "" {
+				clientSecret = tokenRequest.ClientSecret
+			}
+			if grantType == "" {
+				grantType = tokenRequest.GrantType
+			}
+			if code == "" {
+				code = tokenRequest.Code
+			}
+			if verifier == "" {
+				verifier = tokenRequest.Verifier
+			}
+			if scope == "" {
+				scope = tokenRequest.Scope
+			}
+			if username == "" {
+				username = tokenRequest.Username
+			}
+			if password == "" {
+				password = tokenRequest.Password
+			}
+			if tag == "" {
+				tag = tokenRequest.Tag
+			}
+			if avatar == "" {
+				avatar = tokenRequest.Avatar
+			}
+			if refreshToken == "" {
+				refreshToken = tokenRequest.RefreshToken
+			}
 		}
 	}
+
 	host := c.Ctx.Request.Host
-	oAuthtoken, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.Data["json"] = oAuthtoken
+	c.Data["json"] = token
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }

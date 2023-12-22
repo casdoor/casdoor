@@ -23,6 +23,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
+	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )
 
@@ -117,6 +118,7 @@ type User struct {
 	Infoflow        string `xorm:"infoflow varchar(100)" json:"infoflow"`
 	Apple           string `xorm:"apple varchar(100)" json:"apple"`
 	AzureAD         string `xorm:"azuread varchar(100)" json:"azuread"`
+	AzureADB2c      string `xorm:"azureadb2c varchar(100)" json:"azureadb2c"`
 	Slack           string `xorm:"slack varchar(100)" json:"slack"`
 	Steam           string `xorm:"steam varchar(100)" json:"steam"`
 	Bilibili        string `xorm:"bilibili varchar(100)" json:"bilibili"`
@@ -233,6 +235,20 @@ func GetGlobalUsers() ([]*User, error) {
 	return users, nil
 }
 
+func GetGlobalUsersWithFilter(cond builder.Cond) ([]*User, error) {
+	users := []*User{}
+	session := ormer.Engine.Desc("created_time")
+	if cond != nil {
+		session = session.Where(cond)
+	}
+	err := session.Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
 func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
 	session := GetSessionForUser("", offset, limit, field, value, sortField, sortOrder)
@@ -268,9 +284,27 @@ func GetUsers(owner string) ([]*User, error) {
 	return users, nil
 }
 
-func GetUsersByTag(owner string, tag string) ([]*User, error) {
+func GetUsersWithFilter(owner string, cond builder.Cond) ([]*User, error) {
 	users := []*User{}
-	err := ormer.Engine.Desc("created_time").Find(&users, &User{Owner: owner, Tag: tag})
+	session := ormer.Engine.Desc("created_time")
+	if cond != nil {
+		session = session.Where(cond)
+	}
+	err := session.Find(&users, &User{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func GetUsersByTagWithFilter(owner string, tag string, cond builder.Cond) ([]*User, error) {
+	users := []*User{}
+	session := ormer.Engine.Desc("created_time")
+	if cond != nil {
+		session = session.Where(cond)
+	}
+	err := session.Find(&users, &User{Owner: owner, Tag: tag})
 	if err != nil {
 		return nil, err
 	}
@@ -563,7 +597,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, err
 	}
 	if oldUser == nil {
-		return false, nil
+		return false, fmt.Errorf("the user: %s is not found", id)
 	}
 
 	if name != user.Name {
@@ -591,7 +625,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
-			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
+			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
@@ -644,7 +678,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	}
 
 	if oldUser == nil {
-		return false, nil
+		return false, fmt.Errorf("the user: %s is not found", id)
 	}
 
 	if name != user.Name {
@@ -665,6 +699,8 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 			return false, err
 		}
 	}
+
+	user.UpdatedTime = util.GetCurrentTime()
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
 	if err != nil {
@@ -694,12 +730,15 @@ func AddUser(user *User) (bool, error) {
 	}
 
 	if user.Owner == "" || user.Name == "" {
-		return false, nil
+		return false, fmt.Errorf("the user's owner and name should not be empty")
 	}
 
-	organization, _ := GetOrganizationByUser(user)
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, err
+	}
 	if organization == nil {
-		return false, nil
+		return false, fmt.Errorf("the organization: %s is not found", user.Owner)
 	}
 
 	if organization.DefaultPassword != "" && user.Password == "123" {
@@ -710,7 +749,7 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
-	err := user.UpdateUserHash()
+	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
 	}
@@ -744,9 +783,8 @@ func AddUser(user *User) (bool, error) {
 }
 
 func AddUsers(users []*User) (bool, error) {
-	var err error
 	if len(users) == 0 {
-		return false, nil
+		return false, fmt.Errorf("no users are provided")
 	}
 
 	// organization := GetOrganizationByUser(users[0])
@@ -754,7 +792,7 @@ func AddUsers(users []*User) (bool, error) {
 		// this function is only used for syncer or batch upload, so no need to encrypt the password
 		// user.UpdateUserPassword(organization)
 
-		err = user.UpdateUserHash()
+		err := user.UpdateUserHash()
 		if err != nil {
 			return false, err
 		}
@@ -778,11 +816,11 @@ func AddUsers(users []*User) (bool, error) {
 }
 
 func AddUsersInBatch(users []*User) (bool, error) {
-	batchSize := conf.GetConfigBatchSize()
-
 	if len(users) == 0 {
-		return false, nil
+		return false, fmt.Errorf("no users are provided")
 	}
+
+	batchSize := conf.GetConfigBatchSize()
 
 	affected := false
 	for i := 0; i < len(users); i += batchSize {
@@ -856,7 +894,7 @@ func (user *User) GetId() string {
 }
 
 func isUserIdGlobalAdmin(userId string) bool {
-	return strings.HasPrefix(userId, "built-in/")
+	return strings.HasPrefix(userId, "built-in/") || strings.HasPrefix(userId, "app/")
 }
 
 func ExtendUserWithRolesAndPermissions(user *User) (err error) {
@@ -952,9 +990,9 @@ func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
 	return user.GetMfaProps(user.PreferredMfaType, masked)
 }
 
-func AddUserkeys(user *User, isAdmin bool) (bool, error) {
+func AddUserKeys(user *User, isAdmin bool) (bool, error) {
 	if user == nil {
-		return false, nil
+		return false, fmt.Errorf("the user is not found")
 	}
 
 	user.AccessKey = util.GenerateId()
@@ -991,7 +1029,10 @@ func GenerateIdForNewUser(application *Application) (string, error) {
 
 	lastUserId := -1
 	if lastUser != nil {
-		lastUserId = util.ParseInt(lastUser.Id)
+		lastUserId, err = util.ParseIntWithError(lastUser.Id)
+		if err != nil {
+			return util.GenerateId(), nil
+		}
 	}
 
 	res := strconv.Itoa(lastUserId + 1)

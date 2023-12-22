@@ -18,9 +18,11 @@ type EmailProvider interface {
 	Send(fromAddress string, fromName, toAddress string, subject string, content string) error
 }
 
-func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, disableSsl bool) EmailProvider {
+func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, disableSsl bool, endpoint string, method string) EmailProvider {
 	if typ == "Azure ACS" {
 		return NewAzureACSEmailProvider(clientSecret, host)
+	} else if typ == "Custom HTTP Email" {
+		return NewHttpEmailProvider(endpoint, method)
 	} else {
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl)
 	}

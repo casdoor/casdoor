@@ -125,6 +125,10 @@ func (enforcer *Enforcer) GetId() string {
 	return fmt.Sprintf("%s/%s", enforcer.Owner, enforcer.Name)
 }
 
+func (enforcer *Enforcer) GetModelAndAdapter() string {
+	return util.GetId(enforcer.Model, enforcer.Adapter)
+}
+
 func (enforcer *Enforcer) InitEnforcer() error {
 	if enforcer.Enforcer != nil {
 		return nil

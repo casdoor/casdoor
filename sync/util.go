@@ -15,9 +15,7 @@
 package sync
 
 import (
-	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/xorm-io/xorm"
@@ -74,21 +72,23 @@ func createEngine(dataSourceName string) (*xorm.Engine, error) {
 }
 
 func getServerId(engin *xorm.Engine) (uint32, error) {
-	res, err := engin.QueryInterface("SELECT @@server_id")
+	record, err := engin.QueryInterface("SELECT @@server_id")
 	if err != nil {
 		return 0, err
 	}
-	serverId, _ := strconv.ParseUint(fmt.Sprintf("%s", res[0]["@@server_id"]), 10, 32)
-	return uint32(serverId), nil
+
+	res := uint32(record[0]["@@server_id"].(int64))
+	return res, nil
 }
 
 func getServerUuid(engin *xorm.Engine) (string, error) {
-	res, err := engin.QueryString("show variables like 'server_uuid'")
+	record, err := engin.QueryString("show variables like 'server_uuid'")
 	if err != nil {
 		return "", err
 	}
-	serverUuid := fmt.Sprintf("%s", res[0]["Value"])
-	return serverUuid, err
+
+	res := record[0]["Value"]
+	return res, err
 }
 
 func getPkColumnNames(columnNames []string, PKColumns []int) []string {

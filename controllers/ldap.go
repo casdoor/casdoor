@@ -59,6 +59,7 @@ func (c *ApiController) GetLdapUsers() {
 		c.ResponseError(err.Error())
 		return
 	}
+	defer conn.Close()
 
 	//groupsMap, err := conn.GetLdapGroups(ldapServer.BaseDn)
 	//if err != nil {

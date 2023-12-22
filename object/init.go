@@ -178,7 +178,7 @@ func initBuiltInApplication() {
 		EnablePassword: true,
 		EnableSignUp:   true,
 		Providers: []*ProviderItem{
-			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, AlertType: "None", Rule: "None", Provider: nil},
+			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, SignupGroup: "", Rule: "None", Provider: nil},
 		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
@@ -396,15 +396,22 @@ func initBuiltInPermission() {
 		Name:         "permission-built-in",
 		CreatedTime:  util.GetCurrentTime(),
 		DisplayName:  "Built-in Permission",
+		Description:  "Built-in Permission",
 		Users:        []string{"built-in/*"},
+		Groups:       []string{},
 		Roles:        []string{},
 		Domains:      []string{},
 		Model:        "model-built-in",
+		Adapter:      "",
 		ResourceType: "Application",
 		Resources:    []string{"app-built-in"},
 		Actions:      []string{"Read", "Write", "Admin"},
 		Effect:       "Allow",
 		IsEnabled:    true,
+		Submitter:    "admin",
+		Approver:     "admin",
+		ApproveTime:  util.GetCurrentTime(),
+		State:        "Approved",
 	}
 	_, err = AddPermission(permission)
 	if err != nil {

@@ -1,5 +1,5 @@
-<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor Test</h1>
-<h3 align="center">A UI-first centralized authentication / Single-Sign-On (SSO) platform based on OAuth 2.0 / OIDC.</h3>
+<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor</h1>
+<h3 align="center">An open-source UI-first Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML, CAS, LDAP, SCIM, WebAuthn, TOTP, MFA and RADIUS</h3>
 <p align="center">
   <a href="#badge">
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
@@ -40,6 +40,20 @@
   <a href="https://discord.gg/5rPsrAzK7S">
     <img alt="Discord" src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=discord&color=5865F2">
   </a>
+</p>
+
+<p align="center">
+  <sup>Sponsored by</sup>
+  <br>
+  <a href="https://stytch.com/docs?utm_source=oss-sponsorship&utm_medium=paid_sponsorship&utm_campaign=casbin">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.casbin.org/img/stytch-white.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://cdn.casbin.org/img/stytch-charcoal.png">
+      <img src="https://cdn.casbin.org/img/stytch-charcoal.png" width="275">
+    </picture>
+  </a><br/>
+  <a href="https://stytch.com/docs?utm_source=oss-sponsorship&utm_medium=paid_sponsorship&utm_campaign=casbin"><b>Build auth with fraud prevention, faster.</b><br/> Try Stytch for API-first authentication, user & org management, multi-tenant SSO, MFA, device fingerprinting, and more.</a>
+  <br>
 </p>
 
 ## Online demo

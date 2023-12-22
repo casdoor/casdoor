@@ -17,6 +17,8 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/idp"
+
 	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
@@ -30,8 +32,8 @@ type Product struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	Image       string   `xorm:"varchar(100)" json:"image"`
-	Detail      string   `xorm:"varchar(255)" json:"detail"`
-	Description string   `xorm:"varchar(100)" json:"description"`
+	Detail      string   `xorm:"varchar(1000)" json:"detail"`
+	Description string   `xorm:"varchar(200)" json:"description"`
 	Tag         string   `xorm:"varchar(100)" json:"tag"`
 	Currency    string   `xorm:"varchar(100)" json:"currency"`
 	Price       float64  `json:"price"`
@@ -158,30 +160,28 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host string) (*Payment, error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	product, err := GetProduct(id)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if product == nil {
-		return nil, fmt.Errorf("the product: %s does not exist", id)
+		return nil, nil, fmt.Errorf("the product: %s does not exist", id)
 	}
 
 	provider, err := product.getProvider(providerName)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	pProvider, err := GetPaymentProvider(provider)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	owner := product.Owner
-	productName := product.Name
 	payerName := fmt.Sprintf("%s | %s", user.Name, user.DisplayName)
 	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
-	productDisplayName := product.DisplayName
 
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
@@ -191,26 +191,46 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		if pricingName != "" && planName != "" {
 			plan, err := GetPlan(util.GetId(owner, planName))
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			if plan == nil {
-				return nil, fmt.Errorf("the plan: %s does not exist", planName)
+				return nil, nil, fmt.Errorf("the plan: %s does not exist", planName)
 			}
 			sub := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
 			_, err = AddSubscription(sub)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
 		}
 	}
-	// Create an OrderId and get the payUrl
-	payUrl, orderId, err := pProvider.Pay(providerName, productName, payerName, paymentName, productDisplayName, product.Price, product.Currency, returnUrl, notifyUrl)
+	// Create an order
+	payReq := &pp.PayReq{
+		ProviderName:       providerName,
+		ProductName:        product.Name,
+		PayerName:          payerName,
+		PayerId:            user.Id,
+		PaymentName:        paymentName,
+		ProductDisplayName: product.DisplayName,
+		Price:              product.Price,
+		Currency:           product.Currency,
+		ReturnUrl:          returnUrl,
+		NotifyUrl:          notifyUrl,
+		PaymentEnv:         paymentEnv,
+	}
+	// custom process for WeChat & WeChat Pay
+	if provider.Type == "WeChat Pay" {
+		payReq.PayerId, err = getUserExtraProperty(user, "WeChat", idp.BuildWechatOpenIdKey(provider.ClientId2))
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	payResp, err := pProvider.Pay(payReq)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	// Create a Payment linked with Product and Order
-	payment := &Payment{
+	payment = &Payment{
 		Owner:       product.Owner,
 		Name:        paymentName,
 		CreatedTime: util.GetCurrentTime(),
@@ -219,8 +239,8 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		Provider: provider.Name,
 		Type:     provider.Type,
 
-		ProductName:        productName,
-		ProductDisplayName: productDisplayName,
+		ProductName:        product.Name,
+		ProductDisplayName: product.DisplayName,
 		Detail:             product.Detail,
 		Tag:                product.Tag,
 		Currency:           product.Currency,
@@ -228,10 +248,10 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		ReturnUrl:          product.ReturnUrl,
 
 		User:       user.Name,
-		PayUrl:     payUrl,
+		PayUrl:     payResp.PayUrl,
 		SuccessUrl: returnUrl,
 		State:      pp.PaymentStateCreated,
-		OutOrderId: orderId,
+		OutOrderId: payResp.OrderId,
 	}
 
 	if provider.Type == "Dummy" {
@@ -240,13 +260,13 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 	affected, err := AddPayment(payment)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if !affected {
-		return nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
+		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
-	return payment, err
+	return payment, payResp.AttachInfo, nil
 }
 
 func ExtendProductWithProviders(product *Product) error {

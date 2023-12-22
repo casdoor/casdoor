@@ -15,10 +15,11 @@
 package notification
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/casdoor/casdoor/proxy"
 )
@@ -39,26 +40,29 @@ func NewCustomHttpProvider(endpoint string, method string, paramName string) (*H
 }
 
 func (c *HttpNotificationClient) Send(ctx context.Context, subject string, content string) error {
+	var req *http.Request
 	var err error
-
-	httpClient := proxy.DefaultHttpClient
-
-	req, err := http.NewRequest(c.method, c.endpoint, bytes.NewBufferString(content))
-	if err != nil {
-		return err
-	}
-
 	if c.method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		req.PostForm = map[string][]string{
-			c.paramName: {content},
+		formValues := url.Values{}
+		formValues.Set(c.paramName, content)
+		req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
+		if err != nil {
+			return err
 		}
+
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	} else if c.method == "GET" {
+		req, err = http.NewRequest(c.method, c.endpoint, nil)
+		if err != nil {
+			return err
+		}
+
 		q := req.URL.Query()
 		q.Add(c.paramName, content)
 		req.URL.RawQuery = q.Encode()
 	}
 
+	httpClient := proxy.DefaultHttpClient
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return err
@@ -66,7 +70,7 @@ func (c *HttpNotificationClient) Send(ctx context.Context, subject string, conte
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("SendMessage() error, custom HTTP Notification request failed with status: %s", resp.Status)
+		return fmt.Errorf("HttpNotificationClient's SendMessage() error, custom HTTP Notification request failed with status: %s", resp.Status)
 	}
 
 	return err

@@ -271,7 +271,9 @@ func GetGroupUsers(groupId string) ([]*User, error) {
 	users := []*User{}
 	owner, _ := util.GetOwnerAndNameFromId(groupId)
 	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
-
+	if err != nil {
+		return nil, err
+	}
 	err = ormer.Engine.Where("owner = ?", owner).In("name", names).Find(&users)
 	if err != nil {
 		return nil, err
@@ -303,6 +305,9 @@ func GroupChangeTrigger(oldName, newName string) error {
 
 	groups := []*Group{}
 	err = session.Where("parent_id = ?", oldName).Find(&groups)
+	if err != nil {
+		return err
+	}
 	for _, group := range groups {
 		group.ParentId = newName
 		_, err := session.ID(core.PK{group.Owner, group.Name}).Cols("parent_id").Update(group)

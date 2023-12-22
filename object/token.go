@@ -17,6 +17,7 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -51,15 +52,17 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code          string `xorm:"varchar(100) index" json:"code"`
-	AccessToken   string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken  string `xorm:"mediumtext" json:"refreshToken"`
-	ExpiresIn     int    `json:"expiresIn"`
-	Scope         string `xorm:"varchar(100)" json:"scope"`
-	TokenType     string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed    bool   `json:"codeIsUsed"`
-	CodeExpireIn  int64  `json:"codeExpireIn"`
+	Code             string `xorm:"varchar(100) index" json:"code"`
+	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
+	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
+	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	ExpiresIn        int    `json:"expiresIn"`
+	Scope            string `xorm:"varchar(100)" json:"scope"`
+	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed       bool   `json:"codeIsUsed"`
+	CodeExpireIn     int64  `json:"codeExpireIn"`
 }
 
 type TokenWrapper struct {
@@ -141,6 +144,48 @@ func getTokenByCode(code string) (*Token, error) {
 	return nil, nil
 }
 
+func GetTokenByAccessToken(accessToken string) (*Token, error) {
+	token := Token{AccessTokenHash: getTokenHash(accessToken)}
+	existed, err := ormer.Engine.Get(&token)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		token = Token{AccessToken: accessToken}
+		existed, err = ormer.Engine.Get(&token)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !existed {
+		return nil, nil
+	}
+	return &token, nil
+}
+
+func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
+	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
+	existed, err := ormer.Engine.Get(&token)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		token = Token{RefreshToken: refreshToken}
+		existed, err = ormer.Engine.Get(&token)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if !existed {
+		return nil, nil
+	}
+	return &token, nil
+}
+
 func updateUsedByCode(token *Token) bool {
 	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used").Update(token)
 	if err != nil {
@@ -159,6 +204,24 @@ func (token *Token) GetId() string {
 	return fmt.Sprintf("%s/%s", token.Owner, token.Name)
 }
 
+func getTokenHash(input string) string {
+	hash := sha256.Sum256([]byte(input))
+	res := hex.EncodeToString(hash[:])
+	if len(res) > 64 {
+		return res[:64]
+	}
+	return res
+}
+
+func (token *Token) popularHashes() {
+	if token.AccessTokenHash == "" && token.AccessToken != "" {
+		token.AccessTokenHash = getTokenHash(token.AccessToken)
+	}
+	if token.RefreshTokenHash == "" && token.RefreshToken != "" {
+		token.RefreshTokenHash = getTokenHash(token.RefreshToken)
+	}
+}
+
 func UpdateToken(id string, token *Token) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if t, err := getToken(owner, name); err != nil {
@@ -166,6 +229,8 @@ func UpdateToken(id string, token *Token) (bool, error) {
 	} else if t == nil {
 		return false, nil
 	}
+
+	token.popularHashes()
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(token)
 	if err != nil {
@@ -176,6 +241,8 @@ func UpdateToken(id string, token *Token) (bool, error) {
 }
 
 func AddToken(token *Token) (bool, error) {
+	token.popularHashes()
+
 	affected, err := ormer.Engine.Insert(token)
 	if err != nil {
 		return false, err
@@ -194,18 +261,16 @@ func DeleteToken(token *Token) (bool, error) {
 }
 
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
-	token := Token{AccessToken: accessToken}
-	existed, err := ormer.Engine.Get(&token)
+	token, err := GetTokenByAccessToken(accessToken)
 	if err != nil {
 		return false, nil, nil, err
 	}
-
-	if !existed {
+	if token == nil {
 		return false, nil, nil, nil
 	}
 
 	token.ExpiresIn = 0
-	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(&token)
+	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
 	if err != nil {
 		return false, nil, nil, err
 	}
@@ -215,22 +280,7 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 		return false, nil, nil, err
 	}
 
-	return affected != 0, application, &token, nil
-}
-
-func GetTokenByAccessToken(accessToken string) (*Token, error) {
-	// Check if the accessToken is in the database
-	token := Token{AccessToken: accessToken}
-	existed, err := ormer.Engine.Get(&token)
-	if err != nil {
-		return nil, err
-	}
-
-	if !existed {
-		return nil, nil
-	}
-
-	return &token, nil
+	return affected != 0, application, token, nil
 }
 
 func GetTokenByTokenAndApplication(token string, application string) (*Token, error) {
@@ -432,16 +482,17 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: "client_id is invalid",
 		}, nil
 	}
+
 	if clientSecret != "" && application.ClientSecret != clientSecret {
 		return &TokenError{
 			Error:            InvalidClient,
 			ErrorDescription: "client_secret is invalid",
 		}, nil
 	}
+
 	// check whether the refresh token is valid, and has not expired.
-	token := Token{RefreshToken: refreshToken}
-	existed, err := ormer.Engine.Get(&token)
-	if err != nil || !existed {
+	token, err := GetTokenByRefreshToken(refreshToken)
+	if err != nil || token == nil {
 		return &TokenError{
 			Error:            InvalidGrant,
 			ErrorDescription: "refresh token is invalid, expired or revoked",
@@ -452,6 +503,12 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	if err != nil {
 		return nil, err
 	}
+	if cert == nil {
+		return &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("cert: %s cannot be found", application.Cert),
+		}, nil
+	}
 
 	_, err = ParseJwtToken(refreshToken, cert)
 	if err != nil {
@@ -460,6 +517,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 			ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
 		}, nil
 	}
+
 	// generate a new token
 	user, err := getUser(application.Organization, token.User)
 	if err != nil {
@@ -477,6 +535,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	if err != nil {
 		return nil, err
 	}
+
 	newAccessToken, newRefreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
 	if err != nil {
 		return &TokenError{
@@ -504,7 +563,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		return nil, err
 	}
 
-	_, err = DeleteToken(&token)
+	_, err = DeleteToken(token)
 	if err != nil {
 		return nil, err
 	}
@@ -517,7 +576,6 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		ExpiresIn:    newToken.ExpiresIn,
 		Scope:        newToken.Scope,
 	}
-
 	return tokenWrapper, nil
 }
 
@@ -621,25 +679,25 @@ func GetPasswordToken(application *Application, username string, password string
 	if err != nil {
 		return nil, nil, err
 	}
-
 	if user == nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
 			ErrorDescription: "the user does not exist",
 		}, nil
 	}
-	var msg string
+
 	if user.Ldap != "" {
-		msg = checkLdapUserPassword(user, password, "en")
+		err = checkLdapUserPassword(user, password, "en")
 	} else {
-		msg = CheckPassword(user, password, "en")
+		err = CheckPassword(user, password, "en")
 	}
-	if msg != "" {
+	if err != nil {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
-			ErrorDescription: "invalid username or password",
+			ErrorDescription: fmt.Sprintf("invalid username or password: %s", err.Error()),
 		}, nil
 	}
+
 	if user.IsForbidden {
 		return nil, &TokenError{
 			Error:            InvalidGrant,
@@ -729,13 +787,13 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 
 // GetTokenByUser
 // Implicit flow
-func GetTokenByUser(application *Application, user *User, scope string, host string) (*Token, error) {
+func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string) (*Token, error) {
 	err := ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
 		return nil, err
 	}
 
-	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", scope, host)
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, nonce, scope, host)
 	if err != nil {
 		return nil, err
 	}

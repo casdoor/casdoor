@@ -23,23 +23,49 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/idp"
+	"github.com/mitchellh/mapstructure"
+
 	"github.com/casdoor/casdoor/i18n"
 	saml2 "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
-func ParseSamlResponse(samlResponse string, provider *Provider, host string) (string, error) {
+func ParseSamlResponse(samlResponse string, provider *Provider, host string) (*idp.UserInfo, error) {
 	samlResponse, _ = url.QueryUnescape(samlResponse)
 	sp, err := buildSp(provider, samlResponse, host)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	assertionInfo, err := sp.RetrieveAssertionInfo(samlResponse)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return assertionInfo.NameID, err
+
+	userInfoMap := make(map[string]string)
+	for spAttr, idpAttr := range provider.UserMapping {
+		for _, attr := range assertionInfo.Values {
+			if attr.Name == idpAttr {
+				userInfoMap[spAttr] = attr.Values[0].Value
+			}
+		}
+	}
+	userInfoMap["id"] = assertionInfo.NameID
+
+	customUserInfo := &idp.CustomUserInfo{}
+	err = mapstructure.Decode(userInfoMap, customUserInfo)
+	if err != nil {
+		return nil, err
+	}
+	userInfo := &idp.UserInfo{
+		Id:          customUserInfo.Id,
+		Username:    customUserInfo.Username,
+		DisplayName: customUserInfo.DisplayName,
+		Email:       customUserInfo.Email,
+		AvatarUrl:   customUserInfo.AvatarUrl,
+	}
+	return userInfo, err
 }
 
 func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method string, err error) {
@@ -146,14 +172,24 @@ func getCertificateFromSamlResponse(samlResponse string, providerType string) (s
 	if err != nil {
 		return "", err
 	}
-
-	deStr := strings.Replace(string(de), "\n", "", -1)
-	tagMap := map[string]string{
-		"Aliyun IDaaS": "ds",
-		"Keycloak":     "dsig",
-	}
+	var (
+		expression string
+		deStr      = strings.Replace(string(de), "\n", "", -1)
+		tagMap     = map[string]string{
+			"Aliyun IDaaS": "ds",
+			"Keycloak":     "dsig",
+		}
+	)
 	tag := tagMap[providerType]
-	expression := fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
+	if tag == "" {
+		// <ds:X509Certificate>...</ds:X509Certificate>
+		// <dsig:X509Certificate>...</dsig:X509Certificate>
+		// <X509Certificate>...</X509Certificate>
+		// ...
+		expression = "<[^>]*:?X509Certificate>([\\s\\S]*?)<[^>]*:?X509Certificate>"
+	} else {
+		expression = fmt.Sprintf("<%s:X509Certificate>([\\s\\S]*?)</%s:X509Certificate>", tag, tag)
+	}
 	res := regexp.MustCompile(expression).FindStringSubmatch(deStr)
 	return res[1], nil
 }

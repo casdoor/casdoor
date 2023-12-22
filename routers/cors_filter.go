@@ -51,6 +51,11 @@ func CorsFilter(ctx *context.Context) {
 		return
 	}
 
+	if originHostname == "appleid.apple.com" {
+		setCorsHeaders(ctx, origin)
+		return
+	}
+
 	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
 		setCorsHeaders(ctx, origin)
 		return

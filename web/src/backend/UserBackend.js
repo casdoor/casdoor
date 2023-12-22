@@ -153,11 +153,12 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
   });
 }
 
-export function verifyCaptcha(captchaType, captchaToken, clientSecret) {
+export function verifyCaptcha(owner, name, captchaType, captchaToken, clientSecret) {
   const formData = new FormData();
   formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);
   formData.append("clientSecret", clientSecret);
+  formData.append("applicationId", `${owner}/${name}`);
   return fetch(`${Setting.ServerUrl}/api/verify-captcha`, {
     method: "POST",
     credentials: "include",

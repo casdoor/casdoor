@@ -16,6 +16,7 @@ package ldap
 
 import (
 	"fmt"
+	"hash/fnv"
 	"log"
 
 	"github.com/casdoor/casdoor/conf"
@@ -25,6 +26,11 @@ import (
 )
 
 func StartLdapServer() {
+	ldapServerPort := conf.GetConfigString("ldapServerPort")
+	if ldapServerPort == "" || ldapServerPort == "0" {
+		return
+	}
+
 	server := ldap.NewServer()
 	routes := ldap.NewRouteMux()
 
@@ -32,7 +38,7 @@ func StartLdapServer() {
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
-	err := server.ListenAndServe("0.0.0.0:" + conf.GetConfigString("ldapServerPort"))
+	err := server.ListenAndServe("0.0.0.0:" + ldapServerPort)
 	if err != nil {
 		log.Printf("StartLdapServer() failed, err = %s", err.Error())
 	}
@@ -44,20 +50,20 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 
 	if r.AuthenticationChoice() == "simple" {
 		bindUsername, bindOrg, err := getNameAndOrgFromDN(string(r.Name()))
-		if err != "" {
-			log.Printf("Bind failed ,ErrMsg=%s", err)
+		if err != nil {
+			log.Printf("getNameAndOrgFromDN() error: %s", err.Error())
 			res.SetResultCode(ldap.LDAPResultInvalidDNSyntax)
-			res.SetDiagnosticMessage("bind failed ErrMsg: " + err)
+			res.SetDiagnosticMessage(fmt.Sprintf("getNameAndOrgFromDN() error: %s", err.Error()))
 			w.Write(res)
 			return
 		}
 
 		bindPassword := string(r.AuthenticationSimple())
 		bindUser, err := object.CheckUserPassword(bindOrg, bindUsername, bindPassword, "en")
-		if err != "" {
+		if err != nil {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
 			res.SetResultCode(ldap.LDAPResultInvalidCredentials)
-			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err)
+			res.SetDiagnosticMessage("invalid credentials ErrMsg: " + err.Error())
 			w.Write(res)
 			return
 		}
@@ -73,7 +79,7 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		m.Client.OrgName = bindOrg
 	} else {
 		res.SetResultCode(ldap.LDAPResultAuthMethodNotSupported)
-		res.SetDiagnosticMessage("Authentication method not supported,Please use Simple Authentication")
+		res.SetDiagnosticMessage("Authentication method not supported, please use Simple Authentication")
 	}
 	w.Write(res)
 }
@@ -108,10 +114,22 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("cn=%s,%s", user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-
-		for _, attr := range r.Attributes() {
+		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
+		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
+		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
+		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
+		e.AddAttribute("cn", message.AttributeValue(user.Name))
+		e.AddAttribute("uid", message.AttributeValue(user.Id))
+		attrs := r.Attributes()
+		for _, attr := range attrs {
+			if string(attr) == "*" {
+				attrs = AdditionalLdapAttributes
+				break
+			}
+		}
+		for _, attr := range attrs {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
 			if string(attr) == "cn" {
 				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))
@@ -121,4 +139,10 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		w.Write(e)
 	}
 	w.Write(res)
+}
+
+func hash(s string) uint32 {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return h.Sum32()
 }
