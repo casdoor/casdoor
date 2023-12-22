@@ -470,6 +470,10 @@ func (p *Permission) GetModelAndAdapter() string {
 func (p *Permission) isUserHit(name string) bool {
 	targetOrg, targetName := util.GetOwnerAndNameFromId(name)
 	for _, user := range p.Users {
+		if user == "*" {
+			return true
+		}
+
 		userOrg, userName := util.GetOwnerAndNameFromId(user)
 		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
 			return true
@@ -483,9 +487,14 @@ func (p *Permission) isRoleHit(userId string) bool {
 	if err != nil {
 		return false
 	}
+
 	for _, role := range p.Roles {
+		if role == "*" {
+			return true
+		}
+
 		for _, targetRole := range targetRoles {
-			if targetRole.GetId() == role {
+			if role == targetRole.GetId() {
 				return true
 			}
 		}
