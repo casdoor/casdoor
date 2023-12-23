@@ -510,6 +510,7 @@ func (c *ApiController) SetPassword() {
 // @Title CheckUserPassword
 // @router /check-user-password [post]
 // @Tag User API
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) CheckUserPassword() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
@@ -580,6 +581,7 @@ func (c *ApiController) GetUserCount() {
 // @Title AddUserKeys
 // @router /add-user-keys [post]
 // @Tag User API
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) AddUserKeys() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)

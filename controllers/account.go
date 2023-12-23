@@ -238,7 +238,7 @@ func (c *ApiController) Signup() {
 // @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
 // @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout [get,post]
+// @router /logout [post]
 func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.Input().Get("id_token_hint")
@@ -454,6 +454,7 @@ func (c *ApiController) GetUserinfo2() {
 // @Tag Login API
 // @Title GetCaptcha
 // @router /api/get-captcha [get]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
 	isCurrentProvider := c.Input().Get("isCurrentProvider")
