@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
     "Unauthorized operation": "Hoạt động không được ủy quyền",
     "Unknown authentication type (not password or provider), form = %s": "Loại xác thực không xác định (không phải mật khẩu hoặc nhà cung cấp), biểu mẫu = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
@@ -33,11 +34,12 @@
     "Email is invalid": "Địa chỉ email không hợp lệ",
     "Empty username.": "Tên đăng nhập trống.",
     "FirstName cannot be blank": "Tên không được để trống",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "Tên người dùng hoặc mật khẩu Ldap không chính xác",
     "LastName cannot be blank": "Họ không thể để trống",
     "Multiple accounts with same uid, please check your ldap server": "Nhiều tài khoản với cùng một uid, vui lòng kiểm tra máy chủ ldap của bạn",
     "Organization does not exist": "Tổ chức không tồn tại",
-    "Password must have at least 6 characters": "Mật khẩu phải ít nhất 6 ký tự",
     "Phone already exists": "Điện thoại đã tồn tại",
     "Phone cannot be empty": "Điện thoại không thể để trống",
     "Phone number is invalid": "Số điện thoại không hợp lệ",

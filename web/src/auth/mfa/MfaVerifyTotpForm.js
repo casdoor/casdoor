@@ -27,18 +27,10 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
         <Col span={24}>
           <Space>
             <Input value={mfaProps.secret} />
-            <Button
-              type="primary"
-              shape="round"
-              icon={<CopyOutlined />}
-              onClick={() => {
-                copy(`${mfaProps.secret}`);
-                Setting.showMessage(
-                  "success",
-                  i18next.t("mfa:Multi-factor secret to clipboard successfully")
-                );
-              }}
-            />
+            <Button type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
+              copy(`${mfaProps.secret}`);
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+            }} />
           </Space>
         </Col>
       </React.Fragment>

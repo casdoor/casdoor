@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"
@@ -33,11 +34,12 @@
     "Email is invalid": "Email is invalid",
     "Empty username.": "Empty username.",
     "FirstName cannot be blank": "FirstName cannot be blank",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "LDAP user name or password incorrect",
     "LastName cannot be blank": "LastName cannot be blank",
     "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
     "Organization does not exist": "Organization does not exist",
-    "Password must have at least 6 characters": "Password must have at least 6 characters",
     "Phone already exists": "Phone already exists",
     "Phone cannot be empty": "Phone cannot be empty",
     "Phone number is invalid": "Phone number is invalid",

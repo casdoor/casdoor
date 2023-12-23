@@ -230,7 +230,7 @@ class CertEditPage extends React.Component {
           <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.cert.certificate === ""} onClick={() => {
               copy(this.state.cert.certificate);
-              Setting.showMessage("success", i18next.t("cert:Certificate copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("cert:Copy certificate")}
@@ -253,7 +253,7 @@ class CertEditPage extends React.Component {
           <Col span={editorWidth} >
             <Button style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.cert.privateKey === ""} onClick={() => {
               copy(this.state.cert.privateKey);
-              Setting.showMessage("success", i18next.t("cert:Private key copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("cert:Copy private key")}
