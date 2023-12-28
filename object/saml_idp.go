@@ -28,10 +28,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/RobotsAndPencils/go-saml"
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	saml "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
@@ -283,15 +283,15 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		}
 	}
 
-	var authnRequest saml.AuthnRequest
+	var authnRequest saml.AuthNRequest
 	err = xml.Unmarshal(buffer.Bytes(), &authnRequest)
 	if err != nil {
 		return "", "", method, fmt.Errorf("err: Failed to unmarshal AuthnRequest, please check the SAML request. %s", err.Error())
 	}
 
 	// verify samlRequest
-	if isValid := application.IsRedirectUriValid(authnRequest.Issuer.Url); !isValid {
-		return "", "", method, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer.Url)
+	if isValid := application.IsRedirectUriValid(authnRequest.Issuer); !isValid {
+		return "", "", method, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
 	}
 
 	// get certificate string
@@ -317,7 +317,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	_, originBackend := getOriginFromHost(host)
 	// build signedResponse
-	samlResponse, _ := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
+	samlResponse, _ := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer, authnRequest.ID, application.RedirectUris)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
 		X509Certificate: certificate,

@@ -5414,6 +5414,14 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "failedSigninLimit": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "failedSigninfrozenTime": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "forgetUrl": {
                     "type": "string"
                 },

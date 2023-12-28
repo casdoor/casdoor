@@ -22,12 +22,13 @@ import (
 
 func NewAwsS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
 	sp := s3.New(&s3.Config{
-		AccessID:  clientId,
-		AccessKey: clientSecret,
-		Region:    region,
-		Bucket:    bucket,
-		Endpoint:  endpoint,
-		ACL:       awss3.BucketCannedACLPublicRead,
+		AccessID:   clientId,
+		AccessKey:  clientSecret,
+		Region:     region,
+		Bucket:     bucket,
+		Endpoint:   endpoint,
+		S3Endpoint: endpoint,
+		ACL:        awss3.BucketCannedACLPublicRead,
 	})
 
 	return sp

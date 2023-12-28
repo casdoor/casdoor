@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -56,19 +57,22 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
-		// type transformation
-		var interfaceRequest []interface{}
-		for _, r := range request {
-			interfaceRequest = append(interfaceRequest, r)
-		}
+		res := []bool{}
+		keyRes := []string{}
 
-		res, err := enforcer.Enforce(interfaceRequest...)
+		// type transformation
+		interfaceRequest := util.StringToInterfaceArray(request)
+
+		enforceResult, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		c.ResponseOk(res)
+		res = append(res, enforceResult)
+		keyRes = append(keyRes, enforcer.GetModelAndAdapter())
+
+		c.ResponseOk(res, keyRes)
 		return
 	}
 
@@ -78,22 +82,24 @@ func (c *ApiController) Enforce() {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		res := make([]bool, 0)
-
 		if permission == nil {
-			res = append(res, false)
-		} else {
-			enforceResult, err := object.Enforce(permission, &request)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			res = append(res, enforceResult)
+			c.ResponseError(fmt.Sprintf("permission: %s doesn't exist", permissionId))
+			return
 		}
 
-		c.ResponseOk(res)
+		res := []bool{}
+		keyRes := []string{}
+
+		enforceResult, err := object.Enforce(permission, request)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
+		keyRes = append(keyRes, permission.GetModelAndAdapter())
+
+		c.ResponseOk(res, keyRes)
 		return
 	}
 
@@ -116,26 +122,27 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	res := make([]bool, 0)
-
+	res := []bool{}
+	keyRes := []string{}
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
-	for _, permissionIds := range listPermissionIdMap {
+	for key, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		enforceResult, err := object.Enforce(firstPermission, &request, permissionIds...)
+		enforceResult, err := object.Enforce(firstPermission, request, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		res = append(res, enforceResult)
+		keyRes = append(keyRes, key)
 	}
 
-	c.ResponseOk(res)
+	c.ResponseOk(res, keyRes)
 }
 
 // BatchEnforce
@@ -166,23 +173,22 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		// type transformation
-		var interfaceRequests [][]interface{}
-		for _, req := range requests {
-			var interfaceRequest []interface{}
-			for _, r := range req {
-				interfaceRequest = append(interfaceRequest, r)
-			}
-			interfaceRequests = append(interfaceRequests, interfaceRequest)
-		}
+		res := [][]bool{}
+		keyRes := []string{}
 
-		res, err := enforcer.BatchEnforce(interfaceRequests)
+		// type transformation
+		interfaceRequests := util.StringToInterfaceArray2d(requests)
+
+		enforceResult, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		c.ResponseOk(res)
+		res = append(res, enforceResult)
+		keyRes = append(keyRes, enforcer.GetModelAndAdapter())
+
+		c.ResponseOk(res, keyRes)
 		return
 	}
 
@@ -192,28 +198,24 @@ func (c *ApiController) BatchEnforce() {
 			c.ResponseError(err.Error())
 			return
 		}
-
-		res := make([][]bool, 0)
-
 		if permission == nil {
-			l := len(requests)
-			resRequest := make([]bool, l)
-			for i := 0; i < l; i++ {
-				resRequest[i] = false
-			}
-
-			res = append(res, resRequest)
-		} else {
-			enforceResult, err := object.BatchEnforce(permission, &requests)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			res = append(res, enforceResult)
+			c.ResponseError(fmt.Sprintf("permission: %s doesn't exist", permissionId))
+			return
 		}
 
-		c.ResponseOk(res)
+		res := [][]bool{}
+		keyRes := []string{}
+
+		enforceResult, err := object.BatchEnforce(permission, requests)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		res = append(res, enforceResult)
+		keyRes = append(keyRes, permission.GetModelAndAdapter())
+
+		c.ResponseOk(res, keyRes)
 		return
 	}
 
@@ -230,8 +232,8 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	res := make([][]bool, 0)
-
+	res := [][]bool{}
+	keyRes := []string{}
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
@@ -240,16 +242,17 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		enforceResult, err := object.BatchEnforce(firstPermission, &requests, permissionIds...)
+		enforceResult, err := object.BatchEnforce(firstPermission, requests, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		res = append(res, enforceResult)
+		keyRes = append(keyRes, firstPermission.GetModelAndAdapter())
 	}
 
-	c.ResponseOk(res)
+	c.ResponseOk(res, keyRes)
 }
 
 func (c *ApiController) GetAllObjects() {

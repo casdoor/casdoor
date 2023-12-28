@@ -325,6 +325,10 @@ class UserListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("tag"),
         render: (text, record, index) => {
+          if (this.state.organization?.tags?.length === 0) {
+            return text;
+          }
+
           const tagMap = {};
           this.state.organization?.tags?.map((tag, index) => {
             const tokens = tag.split("|");

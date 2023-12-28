@@ -31,8 +31,3 @@ commentsRouter*.go
 # ignore build result
 casdoor
 server
-
-# for openapi generator
-openapi
-output.txt
-openapitools.json

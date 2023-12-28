@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "Unauthorized operation": "不正操作",
     "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "サービス%sと%sは一致しません"
@@ -33,11 +34,12 @@
     "Email is invalid": "電子メールは無効です",
     "Empty username.": "空のユーザー名。",
     "FirstName cannot be blank": "ファーストネームは空白にできません",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "Ldapのユーザー名またはパスワードが間違っています",
     "LastName cannot be blank": "姓は空白にできません",
     "Multiple accounts with same uid, please check your ldap server": "同じuidを持つ複数のアカウントがあります。あなたのLDAPサーバーを確認してください",
     "Organization does not exist": "組織は存在しません",
-    "Password must have at least 6 characters": "パスワードは少なくとも6つの文字が必要です",
     "Phone already exists": "電話はすでに存在しています",
     "Phone cannot be empty": "電話は空っぽにできません",
     "Phone number is invalid": "電話番号が無効です",

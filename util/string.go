@@ -322,3 +322,23 @@ func GetUsernameFromEmail(email string) string {
 		return tokens[0]
 	}
 }
+
+func StringToInterfaceArray(array []string) []interface{} {
+	var interfaceArray []interface{}
+	for _, v := range array {
+		interfaceArray = append(interfaceArray, v)
+	}
+	return interfaceArray
+}
+
+func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
+	var interfaceArrays [][]interface{}
+	for _, req := range arrays {
+		var interfaceArray []interface{}
+		for _, r := range req {
+			interfaceArray = append(interfaceArray, r)
+		}
+		interfaceArrays = append(interfaceArrays, interfaceArray)
+	}
+	return interfaceArrays
+}

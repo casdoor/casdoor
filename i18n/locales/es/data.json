@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "El proveedor: %s no está habilitado para la aplicación",
     "Unauthorized operation": "Operación no autorizada",
     "Unknown authentication type (not password or provider), form = %s": "Tipo de autenticación desconocido (no es contraseña o proveedor), formulario = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "Los servicios %s y %s no coinciden"
@@ -33,11 +34,12 @@
     "Email is invalid": "El correo electrónico no es válido",
     "Empty username.": "Nombre de usuario vacío.",
     "FirstName cannot be blank": "El nombre no puede estar en blanco",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "Nombre de usuario o contraseña de Ldap incorrectos",
     "LastName cannot be blank": "El apellido no puede estar en blanco",
     "Multiple accounts with same uid, please check your ldap server": "Cuentas múltiples con el mismo uid, por favor revise su servidor ldap",
     "Organization does not exist": "La organización no existe",
-    "Password must have at least 6 characters": "La contraseña debe tener al menos 6 caracteres",
     "Phone already exists": "El teléfono ya existe",
     "Phone cannot be empty": "Teléfono no puede estar vacío",
     "Phone number is invalid": "El número de teléfono no es válido",

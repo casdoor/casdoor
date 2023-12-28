@@ -1163,7 +1163,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1179,7 +1179,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1208,7 +1208,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.type === "Alipay") ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:Root Cert"), i18next.t("general:Root Cert - Tooltip"))} :
+                {Setting.getLabel(i18next.t("general:Root cert"), i18next.t("general:Root cert - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Select virtual={false} style={{width: "100%"}} value={this.state.provider.metadata} onChange={(value => {this.updateProviderField("metadata", value);})}>
