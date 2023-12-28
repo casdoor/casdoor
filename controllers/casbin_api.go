@@ -25,7 +25,7 @@ import (
 // @Title Enforce
 // @Tag Enforce API
 // @Description Call Casbin Enforce API
-// @Param   body    body   object.CasbinRequest  true   "Casbin request"
+// @Param   body    body   []string  true   "Casbin request"
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Param   resourceId    query   string  false   "resource id"
@@ -42,7 +42,7 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	var request object.CasbinRequest
+	var request []string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -56,7 +56,13 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
-		res, err := enforcer.Enforce(request...)
+		// type transformation
+		var interfaceRequest []interface{}
+		for _, r := range request {
+			interfaceRequest = append(interfaceRequest, r)
+		}
+
+		res, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -73,7 +79,7 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
-		res := []bool{}
+		res := make([]bool, 0)
 
 		if permission == nil {
 			res = append(res, false)
@@ -110,7 +116,7 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	res := []bool{}
+	res := make([]bool, 0)
 
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {
@@ -136,7 +142,7 @@ func (c *ApiController) Enforce() {
 // @Title BatchEnforce
 // @Tag Enforce API
 // @Description Call Casbin BatchEnforce API
-// @Param   body    body   object.CasbinRequest  true   "array of casbin requests"
+// @Param   body    body   []string  true   "array of casbin requests"
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Success 200 {object} controllers.Response The Response object
@@ -146,7 +152,7 @@ func (c *ApiController) BatchEnforce() {
 	modelId := c.Input().Get("modelId")
 	enforcerId := c.Input().Get("enforcerId")
 
-	var requests []object.CasbinRequest
+	var requests [][]string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -160,7 +166,17 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		res, err := enforcer.BatchEnforce(requests)
+		// type transformation
+		var interfaceRequests [][]interface{}
+		for _, req := range requests {
+			var interfaceRequest []interface{}
+			for _, r := range req {
+				interfaceRequest = append(interfaceRequest, r)
+			}
+			interfaceRequests = append(interfaceRequests, interfaceRequest)
+		}
+
+		res, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -177,7 +193,7 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		res := [][]bool{}
+		res := make([][]bool, 0)
 
 		if permission == nil {
 			l := len(requests)
@@ -214,7 +230,7 @@ func (c *ApiController) BatchEnforce() {
 		return
 	}
 
-	res := [][]bool{}
+	res := make([][]bool, 0)
 
 	listPermissionIdMap := object.GroupPermissionsByModelAdapter(permissions)
 	for _, permissionIds := range listPermissionIdMap {

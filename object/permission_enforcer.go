@@ -284,24 +284,40 @@ func removeGroupingPolicies(permission *Permission) error {
 	return nil
 }
 
-type CasbinRequest = []interface{}
+// type CasbinRequest = []interface{}
 
-func Enforce(permission *Permission, request *CasbinRequest, permissionIds ...string) (bool, error) {
+func Enforce(permission *Permission, request *[]string, permissionIds ...string) (bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return false, err
 	}
 
-	return enforcer.Enforce(*request...)
+	// type transformation
+	var interfaceRequest []interface{}
+	for _, r := range *request {
+		interfaceRequest = append(interfaceRequest, r)
+	}
+	
+	return enforcer.Enforce(interfaceRequest...)
 }
 
-func BatchEnforce(permission *Permission, requests *[]CasbinRequest, permissionIds ...string) ([]bool, error) {
+func BatchEnforce(permission *Permission, requests *[][]string, permissionIds ...string) ([]bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
 
-	return enforcer.BatchEnforce(*requests)
+	// type transformation
+	var interfaceRequests [][]interface{}
+	for _, req := range *requests {
+		var interfaceRequest []interface{}
+		for _, r := range req {
+			interfaceRequest = append(interfaceRequest, r)
+		}
+		interfaceRequests = append(interfaceRequests, interfaceRequest)
+	}
+
+	return enforcer.BatchEnforce(interfaceRequests)
 }
 
 func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) ([]string, error) {

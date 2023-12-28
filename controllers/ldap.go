@@ -42,7 +42,7 @@ type LdapSyncResp struct {
 // @Tag Account API
 // @Description get ldap users
 // Param	id	string	true	"id"
-// @Success 200 {object} LdapResp The Response object
+// @Success 200 {object} controllers.LdapResp The Response object
 // @router /get-ldap-users [get]
 func (c *ApiController) GetLdapUsers() {
 	id := c.Input().Get("id")
@@ -250,7 +250,7 @@ func (c *ApiController) DeleteLdap() {
 // @Tag Account API
 // @Description sync ldap users
 // @Param	id	query	string		true	"id"
-// @Success 200 {object} LdapSyncResp The Response object
+// @Success 200 {object} controllers.LdapSyncResp The Response object
 // @router /sync-ldap-users [post]
 func (c *ApiController) SyncLdapUsers() {
 	id := c.Input().Get("id")

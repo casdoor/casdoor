@@ -525,9 +525,9 @@ paths:
           $ref: '#/definitions/controllers.EmailForm'
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/api/send-notification:
     post:
       tags:
@@ -543,9 +543,9 @@ paths:
           $ref: '#/definitions/controllers.NotificationForm'
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/api/send-sms:
     post:
       tags:
@@ -571,9 +571,9 @@ paths:
           $ref: '#/definitions/controllers.SmsForm'
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/api/verify-code:
     post:
       tags:
@@ -606,7 +606,9 @@ paths:
         description: array of casbin requests
         required: true
         schema:
-          $ref: '#/definitions/object.CasbinRequest'
+          type: array
+          items:
+            type: string
       - in: query
         name: permissionId
         description: permission id
@@ -718,7 +720,7 @@ paths:
         description: The enforcer object
         required: true
         schema:
-          $ref: '#/definitions/object.Enforce'
+          $ref: '#/definitions/object.Enforcer'
       responses:
         "200":
           description: ""
@@ -768,9 +770,9 @@ paths:
       operationId: ApiController.DeleteMfa
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/delete-model:
     post:
       tags:
@@ -1071,7 +1073,9 @@ paths:
         description: Casbin request
         required: true
         schema:
-          $ref: '#/definitions/object.CasbinRequest'
+          type: array
+          items:
+            type: string
       - in: query
         name: permissionId
         description: permission id
@@ -1172,7 +1176,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/get-application:
     get:
       tags:
@@ -1272,7 +1276,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/get-email-and-phone:
     get:
       tags:
@@ -1433,7 +1437,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LdapResp'
+            $ref: '#/definitions/controllers.LdapResp'
   /api/get-ldaps:
     get:
       tags:
@@ -2496,9 +2500,9 @@ paths:
       operationId: ApiController.MfaSetupEnable
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/mfa/setup/initiate:
     post:
       tags:
@@ -2518,9 +2522,9 @@ paths:
       operationId: ApiController.MfaSetupVerify
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/notify-payment:
     post:
       tags:
@@ -2607,9 +2611,9 @@ paths:
       operationId: ApiController.SetPreferredMfa
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/signup:
     post:
       tags:
@@ -2648,7 +2652,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LdapSyncResp'
+            $ref: '#/definitions/controllers.LdapSyncResp'
   /api/unlink:
     post:
       tags:
@@ -3219,7 +3223,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LaravelResponse'
+            $ref: '#/definitions/controllers.LaravelResponse'
   /api/userinfo:
     get:
       tags:
@@ -3351,18 +3355,6 @@ paths:
           schema:
             $ref: '#/definitions/object.TokenError'
 definitions:
-  LaravelResponse:
-    title: LaravelResponse
-    type: object
-  LdapResp:
-    title: LdapResp
-    type: object
-  LdapSyncResp:
-    title: LdapSyncResp
-    type: object
-  Response:
-    title: Response
-    type: object
   casbin.Enforcer:
     title: Enforcer
     type: object
@@ -3385,6 +3377,46 @@ definitions:
         type: string
       title:
         type: string
+  controllers.LaravelResponse:
+    title: LaravelResponse
+    type: object
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+  controllers.LdapResp:
+    title: LdapResp
+    type: object
+    properties:
+      existUuids:
+        type: array
+        items:
+          type: string
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
+  controllers.LdapSyncResp:
+    title: LdapSyncResp
+    type: object
+    properties:
+      exist:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
+      failed:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
   controllers.NotificationForm:
     title: NotificationForm
     type: object
@@ -3588,11 +3620,6 @@ definitions:
         $ref: '#/definitions/object.ThemeData'
       tokenFormat:
         type: string
-  object.CasbinRequest:
-    title: CasbinRequest
-    type: array
-    items:
-      $ref: '#/definitions/object.CasbinRequest'
   object.Cert:
     title: Cert
     type: object
@@ -3621,9 +3648,6 @@ definitions:
         type: string
       type:
         type: string
-  object.Enforce:
-    title: Enforce
-    type: object
   object.Enforcer:
     title: Enforcer
     type: object
@@ -3785,6 +3809,46 @@ definitions:
       serverName:
         type: string
       username:
+        type: string
+  object.LdapUser:
+    title: LdapUser
+    type: object
+    properties:
+      EmailAddress:
+        type: string
+      Mail:
+        type: string
+      MobileTelephoneNumber:
+        type: string
+      PostalAddress:
+        type: string
+      RegisteredAddress:
+        type: string
+      TelephoneNumber:
+        type: string
+      address:
+        type: string
+      cn:
+        type: string
+      displayName:
+        type: string
+      email:
+        type: string
+      gidNumber:
+        type: string
+      groupId:
+        type: string
+      memberOf:
+        type: string
+      mobile:
+        type: string
+      uid:
+        type: string
+      uidNumber:
+        type: string
+      userPrincipalName:
+        type: string
+      uuid:
         type: string
   object.ManagedAccount:
     title: ManagedAccount
