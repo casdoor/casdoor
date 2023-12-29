@@ -811,9 +811,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -839,9 +839,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -881,9 +881,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -935,7 +935,10 @@
                         "description": "array of casbin requests",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.CasbinRequest"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     {
@@ -1108,7 +1111,7 @@
                         "description": "The enforcer object",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.Enforce"
+                            "$ref": "#/definitions/object.Enforcer"
                         }
                     }
                 ],
@@ -1187,9 +1190,9 @@
                 "operationId": "ApiController.DeleteMfa",
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -1657,7 +1660,10 @@
                         "description": "Casbin request",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.CasbinRequest"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     {
@@ -1809,7 +1815,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -1962,7 +1968,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -2208,7 +2214,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/LdapResp"
+                            "$ref": "#/definitions/controllers.LdapResp"
                         }
                     }
                 }
@@ -3826,9 +3832,9 @@
                 "operationId": "ApiController.MfaSetupEnable",
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -3860,9 +3866,9 @@
                 "operationId": "ApiController.MfaSetupVerify",
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -3996,9 +4002,9 @@
                 "operationId": "ApiController.SetPreferredMfa",
                 "responses": {
                     "200": {
-                        "description": "object",
+                        "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/Response"
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -4057,7 +4063,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/LdapSyncResp"
+                            "$ref": "#/definitions/controllers.LdapSyncResp"
                         }
                     }
                 }
@@ -4925,7 +4931,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/LaravelResponse"
+                            "$ref": "#/definitions/controllers.LaravelResponse"
                         }
                     }
                 }
@@ -5131,22 +5137,6 @@
         }
     },
     "definitions": {
-        "LaravelResponse": {
-            "title": "LaravelResponse",
-            "type": "object"
-        },
-        "LdapResp": {
-            "title": "LdapResp",
-            "type": "object"
-        },
-        "LdapSyncResp": {
-            "title": "LdapSyncResp",
-            "type": "object"
-        },
-        "Response": {
-            "title": "Response",
-            "type": "object"
-        },
         "casbin.Enforcer": {
             "title": "Enforcer",
             "type": "object"
@@ -5176,6 +5166,66 @@
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "controllers.LaravelResponse": {
+            "title": "LaravelResponse",
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "email_verified_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.LdapResp": {
+            "title": "LdapResp",
+            "type": "object",
+            "properties": {
+                "existUuids": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "users": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.LdapUser"
+                    }
+                }
+            }
+        },
+        "controllers.LdapSyncResp": {
+            "title": "LdapSyncResp",
+            "type": "object",
+            "properties": {
+                "exist": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.LdapUser"
+                    }
+                },
+                "failed": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.LdapUser"
+                    }
                 }
             }
         },
@@ -5235,10 +5285,6 @@
                     }
                 }
             }
-        },
-        "jose.JSONWebKey": {
-            "title": "JSONWebKey",
-            "type": "object"
         },
         "model.Model": {
             "title": "Model",
@@ -5368,6 +5414,14 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "failedSigninLimit": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "failedSigninfrozenTime": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "forgetUrl": {
                     "type": "string"
                 },
@@ -5480,12 +5534,6 @@
                 }
             }
         },
-        "object.CasbinRequest": {
-            "title": "CasbinRequest",
-            "type": "array",
-            "items": {
-            }
-        },
         "object.Cert": {
             "title": "Cert",
             "type": "object",
@@ -5526,10 +5574,6 @@
                     "type": "string"
                 }
             }
-        },
-        "object.Enforce": {
-            "title": "Enforce",
-            "type": "object"
         },
         "object.Enforcer": {
             "title": "Enforcer",
@@ -5767,6 +5811,66 @@
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.LdapUser": {
+            "title": "LdapUser",
+            "type": "object",
+            "properties": {
+                "EmailAddress": {
+                    "type": "string"
+                },
+                "Mail": {
+                    "type": "string"
+                },
+                "MobileTelephoneNumber": {
+                    "type": "string"
+                },
+                "PostalAddress": {
+                    "type": "string"
+                },
+                "RegisteredAddress": {
+                    "type": "string"
+                },
+                "TelephoneNumber": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "cn": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gidNumber": {
+                    "type": "string"
+                },
+                "groupId": {
+                    "type": "string"
+                },
+                "memberOf": {
+                    "type": "string"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "uidNumber": {
+                    "type": "string"
+                },
+                "userPrincipalName": {
+                    "type": "string"
+                },
+                "uuid": {
                     "type": "string"
                 }
             }
@@ -7528,22 +7632,6 @@
                 "PaymentStateError = \"Error\""
             ],
             "example": "Paid"
-        },
-        "protocol.CredentialAssertion": {
-            "title": "CredentialAssertion",
-            "type": "object"
-        },
-        "protocol.CredentialAssertionResponse": {
-            "title": "CredentialAssertionResponse",
-            "type": "object"
-        },
-        "protocol.CredentialCreation": {
-            "title": "CredentialCreation",
-            "type": "object"
-        },
-        "protocol.CredentialCreationResponse": {
-            "title": "CredentialCreationResponse",
-            "type": "object"
         },
         "util.SystemInfo": {
             "title": "SystemInfo",

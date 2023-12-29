@@ -178,7 +178,7 @@ func (c *ApiController) DeleteOrganization() {
 // @Tag Organization API
 // @Description get default application
 // @Param   id     query    string  true        "organization id"
-// @Success 200 {object}  Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /get-default-application [get]
 func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()

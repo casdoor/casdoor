@@ -138,7 +138,7 @@ func (c *ApiController) AddEnforcer() {
 // @Title DeleteEnforcer
 // @Tag Enforcer API
 // @Description delete enforcer
-// @Param   body    body    object.Enforce  true      "The enforcer object"
+// @Param   body    body    object.Enforcer  true      "The enforcer object"
 // @Success 200 {object} object.Enforcer
 // @router /delete-enforcer [post]
 func (c *ApiController) DeleteEnforcer() {

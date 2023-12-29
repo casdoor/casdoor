@@ -56,6 +56,17 @@ type Captcha struct {
 	SubType       string `json:"subType"`
 }
 
+// this API is used by "Api URL" of Flarum's FoF Passport plugin
+// https://github.com/FriendsOfFlarum/passport
+type LaravelResponse struct {
+	Id              string `json:"id"`
+	Name            string `json:"name"`
+	Email           string `json:"email"`
+	EmailVerifiedAt string `json:"email_verified_at"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+}
+
 // Signup
 // @Tag Login API
 // @Title Signup
@@ -418,23 +429,12 @@ func (c *ApiController) GetUserinfo() {
 // @Title UserInfo2
 // @Tag Account API
 // @Description return Laravel compatible user information according to OAuth 2.0
-// @Success 200 {object} LaravelResponse The Response object
+// @Success 200 {object} controllers.LaravelResponse The Response object
 // @router /user [get]
 func (c *ApiController) GetUserinfo2() {
 	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
-	}
-
-	// this API is used by "Api URL" of Flarum's FoF Passport plugin
-	// https://github.com/FriendsOfFlarum/passport
-	type LaravelResponse struct {
-		Id              string `json:"id"`
-		Name            string `json:"name"`
-		Email           string `json:"email"`
-		EmailVerifiedAt string `json:"email_verified_at"`
-		CreatedAt       string `json:"created_at"`
-		UpdatedAt       string `json:"updated_at"`
 	}
 
 	response := LaravelResponse{

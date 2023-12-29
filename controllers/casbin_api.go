@@ -26,7 +26,7 @@ import (
 // @Title Enforce
 // @Tag Enforce API
 // @Description Call Casbin Enforce API
-// @Param   body    body   object.CasbinRequest  true   "Casbin request"
+// @Param   body    body   []string  true   "Casbin request"
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Param   resourceId    query   string  false   "resource id"
@@ -43,7 +43,7 @@ func (c *ApiController) Enforce() {
 		return
 	}
 
-	var request object.CasbinRequest
+	var request []string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -60,7 +60,10 @@ func (c *ApiController) Enforce() {
 		res := []bool{}
 		keyRes := []string{}
 
-		enforceResult, err := enforcer.Enforce(request...)
+		// type transformation
+		interfaceRequest := util.StringToInterfaceArray(request)
+
+		enforceResult, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -87,7 +90,7 @@ func (c *ApiController) Enforce() {
 		res := []bool{}
 		keyRes := []string{}
 
-		enforceResult, err := object.Enforce(permission, &request)
+		enforceResult, err := object.Enforce(permission, request)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -129,7 +132,7 @@ func (c *ApiController) Enforce() {
 			return
 		}
 
-		enforceResult, err := object.Enforce(firstPermission, &request, permissionIds...)
+		enforceResult, err := object.Enforce(firstPermission, request, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -146,7 +149,7 @@ func (c *ApiController) Enforce() {
 // @Title BatchEnforce
 // @Tag Enforce API
 // @Description Call Casbin BatchEnforce API
-// @Param   body    body   object.CasbinRequest  true   "array of casbin requests"
+// @Param   body    body   []string  true   "array of casbin requests"
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Success 200 {object} controllers.Response The Response object
@@ -156,7 +159,7 @@ func (c *ApiController) BatchEnforce() {
 	modelId := c.Input().Get("modelId")
 	enforcerId := c.Input().Get("enforcerId")
 
-	var requests []object.CasbinRequest
+	var requests [][]string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -173,7 +176,10 @@ func (c *ApiController) BatchEnforce() {
 		res := [][]bool{}
 		keyRes := []string{}
 
-		enforceResult, err := enforcer.BatchEnforce(requests)
+		// type transformation
+		interfaceRequests := util.StringToInterfaceArray2d(requests)
+
+		enforceResult, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -200,7 +206,7 @@ func (c *ApiController) BatchEnforce() {
 		res := [][]bool{}
 		keyRes := []string{}
 
-		enforceResult, err := object.BatchEnforce(permission, &requests)
+		enforceResult, err := object.BatchEnforce(permission, requests)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -236,7 +242,7 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 
-		enforceResult, err := object.BatchEnforce(firstPermission, &requests, permissionIds...)
+		enforceResult, err := object.BatchEnforce(firstPermission, requests, permissionIds...)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
