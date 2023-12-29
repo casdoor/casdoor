@@ -54,6 +54,11 @@ type NotificationForm struct {
 // @Success 200 {object} controllers.Response The Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
+	user, ok := c.RequireSignedInUser()
+	if !ok {
+		return
+	}
+
 	var emailForm EmailForm
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
@@ -108,8 +113,13 @@ func (c *ApiController) SendEmail() {
 	}
 
 	code := "123456"
+
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
-	content := fmt.Sprintf(emailForm.Content, code)
+	content := strings.Replace(provider.Content, "%s", code, 1)
+	if user != nil {
+		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+	}
+
 	for _, receiver := range emailForm.Receivers {
 		err = object.SendEmail(provider, emailForm.Title, content, receiver, emailForm.Sender)
 		if err != nil {

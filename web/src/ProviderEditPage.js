@@ -488,7 +488,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("port", 465);
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
-                this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
+                this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
                 this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
                 this.updateProviderField("type", "Twilio SMS");
@@ -975,8 +975,11 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={22} >
                   <Row style={{marginTop: "20px"}} >
-                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
-                      {i18next.t("provider:Reset to Default")}
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
+                      {i18next.t("provider:Reset to Default Text")}
+                    </Button>
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
+                      {i18next.t("provider:Reset to Default HTML")}
                     </Button>
                   </Row>
                   <Row>
@@ -994,7 +997,7 @@ class ProviderEditPage extends React.Component {
                     <Col span={1} />
                     <Col span={Setting.isMobile() ? 22 : 11}>
                       <div style={{margin: "10px"}}>
-                        <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456")}} />
+                        <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
                       </div>
                     </Col>
                   </Row>
@@ -1011,7 +1014,7 @@ class ProviderEditPage extends React.Component {
                     }} />
                 </Col>
                 {["Azure ACS"].includes(this.state.provider.type) ? null : (
-                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
                     {i18next.t("provider:Test SMTP Connection")}
                   </Button>
                 )}
