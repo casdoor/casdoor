@@ -353,5 +353,4 @@ func (a *Ormer) createTable() {
 	if err != nil {
 		panic(err)
 	}
-
 }
