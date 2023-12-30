@@ -78,7 +78,8 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 	host := ""
 	if provider.Type != "Local File System" {
 		// provider.Domain = "https://cdn.casbin.com/casdoor/"
-		host = util.GetUrlHost(provider.Domain)
+		// host = util.GetUrlHost(provider.Domain) // bug fix: image path wrong
+		host = provider.Domain
 		if !strings.HasPrefix(host, "http://") && !strings.HasPrefix(host, "https://") {
 			host = fmt.Sprintf("https://%s", host)
 		}
