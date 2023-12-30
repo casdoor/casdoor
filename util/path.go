@@ -72,7 +72,15 @@ func GetUrlPath(urlString string) string {
 }
 
 func GetUrlHost(urlString string) string {
-	u, _ := url.Parse(urlString)
+	if urlString == "" {
+		return ""
+	}
+
+	u, err := url.Parse(urlString)
+	if err != nil {
+		return err.Error()
+	}
+
 	return fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 }
 
