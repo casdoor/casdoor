@@ -31,6 +31,8 @@ import GroupListPage from "./GroupList";
 import GroupTreePage from "./GroupTreePage";
 import UserListPage from "./UserListPage";
 import UserEditPage from "./UserEditPage";
+import InvitationListPage from "./InvitationListPage";
+import InvitationEditPage from "./InvitationEditPage";
 import ApplicationListPage from "./ApplicationListPage";
 import ApplicationEditPage from "./ApplicationEditPage";
 import ProviderListPage from "./ProviderListPage";
@@ -153,7 +155,7 @@ class App extends Component {
     });
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
       this.setState({selectedMenuKey: "/home"});
-    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
+    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
       this.setState({selectedMenuKey: "/orgs"});
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/identity"});
@@ -434,6 +436,7 @@ class App extends Component {
         Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
         Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
         Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
+        Setting.getItem(<Link to="/invitations">{i18next.t("general:Invitations")}</Link>, "/invitations"),
       ]));
 
       res.push(Setting.getItem(<Link style={{color: "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
@@ -514,6 +517,8 @@ class App extends Component {
         <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
         <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
+        <Route exact path="/invitations" render={(props) => this.renderLoginIfNotLoggedIn(<InvitationListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/invitations/:organizationName/:invitationName" render={(props) => this.renderLoginIfNotLoggedIn(<InvitationEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)} />
         <Route exact path="/applications/:organizationName/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)} />

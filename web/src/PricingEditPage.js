@@ -32,7 +32,6 @@ class PricingEditPage extends React.Component {
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       pricingName: props.match.params.pricingName,
       organizations: [],
-      application: null,
       applications: [],
       pricing: null,
       plans: [],
