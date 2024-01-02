@@ -25,6 +25,7 @@ class BaseListPage extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      organizationName: this.props.match?.params.organizationName || Setting.getRequestOrganization(this.props.account),
       data: [],
       pagination: {
         current: 1,
@@ -39,6 +40,10 @@ class BaseListPage extends React.Component {
   }
 
   handleOrganizationChange = () => {
+    this.setState({
+      organizationName: this.props.match?.params.organizationName || Setting.getRequestOrganization(this.props.account),
+    });
+
     const {pagination} = this.state;
     this.fetch({pagination});
   };
