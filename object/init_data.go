@@ -136,6 +136,9 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.Providers == nil {
 			application.Providers = []*ProviderItem{}
 		}
+		if application.SigninMethods == nil {
+			application.SigninMethods = []*SigninMethod{}
+		}
 		if application.SignupItems == nil {
 			application.SignupItems = []*SignupItem{}
 		}

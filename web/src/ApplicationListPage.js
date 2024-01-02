@@ -46,6 +46,11 @@ class ApplicationListPage extends BaseListPage {
       providers: [
         {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false, signupGroup: "", rule: ""},
       ],
+      SigninMethods: [
+        {name: "Password", displayName: "Password", rule: "None"},
+        {name: "Verification code", displayName: "Verification code", rule: "All"},
+        {name: "WebAuthn", displayName: "WebAuthn", rule: "None"},
+      ],
       signupItems: [
         {name: "ID", visible: false, required: true, rule: "Random"},
         {name: "Username", visible: true, required: true, rule: "None"},
