@@ -45,6 +45,23 @@
           "alertType": "None"
         }
       ],
+      "signinMethods": [
+        {
+          "name": "Password",
+          "displayName": "Password",
+          "rule": "None",
+        },
+        {
+          "name": "Verification code",
+          "displayName": "Verification code",
+          "rule": "All",
+        },
+        {
+          "name": "WebAuthn",
+          "displayName": "WebAuthn",
+          "rule": "None",
+        },
+      ],
       "signupItems": [
         {
           "name": "ID",

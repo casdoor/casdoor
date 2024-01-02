@@ -1131,11 +1131,35 @@ export function renderLogo(application) {
   }
 }
 
+export function isPasswordEnabled(application) {
+  if (application) {
+    return application.signinMethods.filter(item => item.name === "Password").length > 0;
+  } else {
+    return false;
+  }
+}
+
+export function isCodeSigninEnabled(application) {
+  if (application) {
+    return application.signinMethods.filter(item => item.name === "Verification code").length > 0;
+  } else {
+    return false;
+  }
+}
+
+export function isWebAuthnEnabled(application) {
+  if (application) {
+    return application.signinMethods.filter(item => item.name === "WebAuthn").length > 0;
+  } else {
+    return false;
+  }
+}
+
 export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+  } else if (!isPasswordEnabled(application) && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
     url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
@@ -1191,7 +1215,7 @@ export function renderSignupLink(application, text) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
+  } else if (!isPasswordEnabled(application) && window.location.pathname.includes("/login/oauth/authorize")) {
     url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";

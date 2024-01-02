@@ -201,17 +201,31 @@ class LoginPage extends React.Component {
   }
 
   getDefaultLoginMethod(application) {
-    if (application?.enablePassword) {
-      return "password";
-    }
-    if (application?.enableCodeSignin) {
-      return "verificationCode";
-    }
-    if (application?.enableWebAuthn) {
-      return "webAuthn";
+    if (application?.signinMethods.length > 0) {
+      switch (application?.signinMethods[0].name) {
+      case "Password": return "password";
+      case "Verification code": {
+        switch (application?.signinMethods[0].rule) {
+        case "All": return "verificationCode"; // All
+        case "Email only": return "verificationCodeEmail";
+        case "Phone only": return "verificationCodePhone";
+        }
+        break;
+      }
+      case "WebAuthn": return "webAuthn";
+      }
     }
 
     return "password";
+  }
+
+  getPlaceholder() {
+    switch (this.state.loginMethod) {
+    case "verificationCode": return i18next.t("login:Email or phone");
+    case "verificationCodeEmail": return i18next.t("login:Email");
+    case "verificationCodePhone": return i18next.t("login:Phone");
+    default: return i18next.t("login:username, Email or phone");
+    }
   }
 
   onUpdateAccount(account) {
@@ -487,7 +501,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const showForm = application.enablePassword || application.enableCodeSignin || application.enableWebAuthn;
+    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application);
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -546,7 +560,13 @@ class LoginPage extends React.Component {
                 rules={[
                   {
                     required: true,
-                    message: i18next.t("login:Please input your Email or Phone!"),
+                    message: () => {
+                      switch (this.state.loginMethod) {
+                      case "verificationCodeEmail": return i18next.t("login:Please input your Email!");
+                      case "verificationCodePhone": return i18next.t("login:Please input your Phone!");
+                      default: return i18next.t("login:Please input your Email or Phone!");
+                      }
+                    },
                   },
                   {
                     validator: (_, value) => {
@@ -561,6 +581,19 @@ class LoginPage extends React.Component {
                         } else {
                           this.setState({validEmail: false});
                         }
+                      } else if (this.state.loginMethod === "verificationCodeEmail") {
+                        if (!Setting.isValidEmail(value)) {
+                          this.setState({validEmail: false});
+                          this.setState({validEmailOrPhone: false});
+                          return Promise.reject(i18next.t("login:The input is not valid Email!"));
+                        } else {
+                          this.setState({validEmail: true});
+                        }
+                      } else if (this.state.loginMethod === "verificationCodePhone") {
+                        if (!Setting.isValidPhone(value)) {
+                          this.setState({validEmailOrPhone: false});
+                          return Promise.reject(i18next.t("login:The input is not valid phone number!"));
+                        }
                       }
 
                       this.setState({validEmailOrPhone: true});
@@ -572,7 +605,7 @@ class LoginPage extends React.Component {
                 <Input
                   id="input"
                   prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder={(this.state.loginMethod === "verificationCode") ? i18next.t("login:Email or phone") : i18next.t("login:username, Email or phone")}
+                  placeholder={this.getPlaceholder()}
                   onChange={e => {
                     this.setState({
                       username: e.target.value,
@@ -842,12 +875,12 @@ class LoginPage extends React.Component {
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder={i18next.t("general:Password")}
-              disabled={!application.enablePassword}
+              disabled={!Setting.isPasswordEnabled(application)}
             />
           </Form.Item>
         </Col>
       );
-    } else if (this.state.loginMethod === "verificationCode") {
+    } else if (this.state.loginMethod?.includes("verificationCode")) {
       return (
         <Col span={24}>
           <Form.Item
@@ -871,9 +904,26 @@ class LoginPage extends React.Component {
   renderMethodChoiceBox() {
     const application = this.getApplicationObj();
     const items = [];
-    application.enablePassword ? items.push({label: i18next.t("general:Password"), key: "password"}) : null;
-    application.enableCodeSignin ? items.push({label: i18next.t("login:Verification code"), key: "verificationCode"}) : null;
-    application.enableWebAuthn ? items.push({label: i18next.t("login:WebAuthn"), key: "webAuthn"}) : null;
+
+    const generateItemKey = (name, rule) => {
+      return `${name}-${rule}`;
+    };
+
+    const itemsMap = new Map([
+      [generateItemKey("Password", "None"), {label: i18next.t("general:Password"), key: "password"}],
+      [generateItemKey("Verification code", "All"), {label: i18next.t("login:Verification code"), key: "verificationCode"}],
+      [generateItemKey("Verification code", "Email only"), {label: i18next.t("login:Verification code"), key: "verificationCodeEmail"}],
+      [generateItemKey("Verification code", "Phone only"), {label: i18next.t("login:Verification code"), key: "verificationCodePhone"}],
+      [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
+    ]);
+
+    application?.signinMethods.forEach((signinMethod) => {
+      const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
+      if (item) {
+        const label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
+        items.push({label: label, key: item.key});
+      }
+    });
 
     if (items.length > 1) {
       return (
@@ -1003,7 +1053,7 @@ class LoginPage extends React.Component {
     }
 
     const visibleOAuthProviderItems = (application.providers === null) ? [] : application.providers.filter(providerItem => this.isProviderVisible(providerItem));
-    if (this.props.preview !== "auto" && !application.enablePassword && !application.enableCodeSignin && !application.enableWebAuthn && visibleOAuthProviderItems.length === 1) {
+    if (this.props.preview !== "auto" && !Setting.isPasswordEnabled(application) && !Setting.isCodeSigninEnabled(application) && !Setting.isWebAuthnEnabled(application) && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
         <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>

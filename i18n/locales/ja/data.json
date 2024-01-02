@@ -15,6 +15,8 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "プロバイダー名：%sとユーザー名：%s（%s）のアカウントは存在しません。新しいアカウントとしてサインアップすることはできません。 ITサポートに連絡してください",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "プロバイダのアカウント：%s とユーザー名：%s (%s) は既に別のアカウント：%s (%s) にリンクされています",
     "The application: %s does not exist": "アプリケーション: %sは存在しません",
+    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
+    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "Unauthorized operation": "不正操作",
