@@ -392,7 +392,7 @@ class App extends Component {
             </div>
           </Tooltip>
           <OpenTour />
-          {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
+          {Setting.isAdminUser(this.state.account) && !Setting.isMobile() && (this.state.uri.indexOf("/trees") === -1) &&
             <OrganizationSelect
               initValue={Setting.getOrganization()}
               withAll={true}
