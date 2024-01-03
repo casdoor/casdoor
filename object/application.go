@@ -214,6 +214,11 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 		}
 	}
 
+	if len(application.SigninMethods) == 0 {
+		signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "None"}
+		application.SigninMethods = append(application.SigninMethods, signinMethod)
+	}
+
 	return
 }
 
