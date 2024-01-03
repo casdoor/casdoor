@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -28,13 +29,16 @@ import (
 	"github.com/xorm-io/builder"
 )
 
-type AttributeMapper func(user *object.User) message.AttributeValue
+type V = message.AttributeValue
+
+type AttributeMapper func(user *object.User) V
 
 type FieldRelation struct {
 	userField     string
 	notSearchable bool
 	hideOnStarOp  bool
 	fieldMapper   AttributeMapper
+	constantValue string
 }
 
 func (rel FieldRelation) GetField() (string, error) {
@@ -44,45 +48,73 @@ func (rel FieldRelation) GetField() (string, error) {
 	return rel.userField, nil
 }
 
-func (rel FieldRelation) GetAttributeValue(user *object.User) message.AttributeValue {
+func (rel FieldRelation) GetAttributeValue(user *object.User) V {
+	if rel.constantValue != "" && rel.fieldMapper == nil {
+		return V(rel.constantValue)
+	}
 	return rel.fieldMapper(user)
 }
 
-var ldapAttributesMapping = map[string]FieldRelation{
-	"cn": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Name)
+const defaultGroupName = "casdoor"
+const defaultGroupDescription = "Casdoor LDAP Users"
+const defaultGidNumberStr = "1000001"
+
+var ldapUserAttributesMapping = map[string]FieldRelation{
+	"cn": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) V {
+		return V(user.Name)
 	}},
-	"uid": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Name)
+	"uid": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) V {
+		return V(user.Name)
 	}},
-	"displayname": {userField: "displayName", fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.DisplayName)
+	"displayname": {userField: "displayName", fieldMapper: func(user *object.User) V {
+		return V(user.DisplayName)
 	}},
-	"email": {userField: "email", fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Email)
+	"email": {userField: "email", fieldMapper: func(user *object.User) V {
+		return V(user.Email)
 	}},
-	"mail": {userField: "email", fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Email)
+	"mail": {userField: "email", fieldMapper: func(user *object.User) V {
+		return V(user.Email)
 	}},
-	"mobile": {userField: "phone", fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Phone)
+	"mobile": {userField: "phone", fieldMapper: func(user *object.User) V {
+		return V(user.Phone)
 	}},
-	"title": {userField: "tag", fieldMapper: func(user *object.User) message.AttributeValue {
-		return message.AttributeValue(user.Tag)
+	"title": {userField: "title", fieldMapper: func(user *object.User) V {
+		return V(user.Title)
 	}},
 	"userPassword": {
 		userField:     "userPassword",
 		notSearchable: true,
-		fieldMapper: func(user *object.User) message.AttributeValue {
-			return message.AttributeValue(getUserPasswordWithType(user))
+		fieldMapper: func(user *object.User) V {
+			return V(getUserPasswordWithType(user))
 		},
 	},
+	"uidNumber": {notSearchable: true, fieldMapper: func(user *object.User) V {
+		return V(fmt.Sprintf("%v", hash(user.Name)))
+	}},
+	"gidNumber": {notSearchable: true, constantValue: defaultGidNumberStr},
+	"homeDirectory": {notSearchable: true, fieldMapper: func(user *object.User) V {
+		return V("/home/" + user.Name)
+	}},
+	"loginShell": {notSearchable: true, constantValue: "/sbin/nologin"},
+	"shadowLastChange": {notSearchable: true, fieldMapper: func(user *object.User) V {
+		// "this attribute specifies number of days between January 1, 1970, and the date that the password was last modified"
+		return V(fmt.Sprint(time.Now().Unix() / 86400))
+	}},
+	"shadowMin":      {notSearchable: true, constantValue: "0"},
+	"shadowMax":      {notSearchable: true, constantValue: "99999"},
+	"shadowWarning":  {notSearchable: true, constantValue: "7"},
+	"shadowExpire":   {notSearchable: true, constantValue: "1"},
+	"shadowInactive": {notSearchable: true, constantValue: "0"},
+	"shadowFlag":     {notSearchable: true, constantValue: "0"},
+	"memberOf": {notSearchable: true, fieldMapper: func(user *object.User) V {
+		return V(fmt.Sprintf("cn=%s,cn=groups,ou=%s", defaultGroupName, user.Owner))
+	}},
 }
 
 var AdditionalLdapAttributes []message.LDAPString
 
 func init() {
-	for k, v := range ldapAttributesMapping {
+	for k, v := range ldapUserAttributesMapping {
 		if v.hideOnStarOp {
 			continue
 		}
@@ -307,6 +339,29 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 	}
 }
 
+func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {
+	if m.Client.IsGlobalAdmin {
+		organizations, err := object.GetOrganizations("")
+		if err != nil {
+			panic(err)
+		}
+		return organizations, ldap.LDAPResultSuccess
+	} else if m.Client.IsOrgAdmin {
+		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
+		user, err := object.GetUser(requestUserId)
+		if err != nil {
+			panic(err)
+		}
+		organization, err := object.GetOrganizationByUser(user)
+		if err != nil {
+			panic(err)
+		}
+		return []*object.Organization{organization}, ldap.LDAPResultSuccess
+	} else {
+		return nil, ldap.LDAPResultInsufficientAccessRights
+	}
+}
+
 // get user password with hash type prefix
 // TODO not handle salt yet
 // @return {md5}5f4dcc3b5aa765d61d8327deb882cf99
@@ -330,18 +385,49 @@ func getUserPasswordWithType(user *object.User) string {
 	return fmt.Sprintf("{%s}%s", prefix, user.Password)
 }
 
-func getAttribute(attributeName string, user *object.User) message.AttributeValue {
-	v, ok := ldapAttributesMapping[attributeName]
-	if !ok {
-		return ""
-	}
-	return v.GetAttributeValue(user)
-}
-
 func getUserFieldFromAttribute(attributeName string) (string, error) {
-	v, ok := ldapAttributesMapping[attributeName]
+	v, ok := ldapUserAttributesMapping[attributeName]
 	if !ok {
 		return "", fmt.Errorf("attribute %s not supported", attributeName)
 	}
 	return v.GetField()
+}
+
+func searchFilterForEquality(filter message.Filter, desc string, values ...string) string {
+	switch f := filter.(type) {
+	case message.FilterAnd:
+		for _, child := range f {
+			if val := searchFilterForEquality(child, desc, values...); val != "" {
+				return val
+			}
+		}
+	case message.FilterOr:
+		for _, child := range f {
+			if val := searchFilterForEquality(child, desc, values...); val != "" {
+				return val
+			}
+		}
+	case message.FilterNot:
+		return searchFilterForEquality(f.Filter, desc, values...)
+	case message.FilterSubstrings:
+		// Handle FilterSubstrings case if needed
+	case message.FilterEqualityMatch:
+		if strings.EqualFold(string(f.AttributeDesc()), desc) {
+			for _, value := range values {
+				if val := string(f.AssertionValue()); val == value {
+					return val
+				}
+			}
+		}
+	case message.FilterGreaterOrEqual:
+		// Handle FilterGreaterOrEqual case if needed
+	case message.FilterLessOrEqual:
+		// Handle FilterLessOrEqual case if needed
+	case message.FilterPresent:
+		// Handle FilterPresent case if needed
+	case message.FilterApproxMatch:
+		// Handle FilterApproxMatch case if needed
+	}
+
+	return ""
 }
