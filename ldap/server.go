@@ -172,7 +172,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 			attrs := r.Attributes()
 			for _, attr := range attrs {
 				if string(attr) == "*" {
-					attrs = AdditionalLdapAttributes
+					attrs = AdditionalLdapUserAttributes
 					break
 				}
 			}
@@ -181,9 +181,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 					// unsupported: userCertificate;binary
 					continue
 				}
-				field, ok := ldapUserAttributesMapping[string(attr)]
+				field, ok := ldapUserAttributesMapping.CaseInsensitiveGet(string(attr))
 				if ok {
-					e.AddAttribute(message.AttributeDescription(attr), field.GetAttributeValue(user))
+					e.AddAttribute(message.AttributeDescription(attr), field.GetAttributeValues(user)...)
 				}
 			}
 			w.Write(e)
@@ -195,30 +195,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		e := ldap.NewSearchResultEntry(dn)
 
 		for _, attr := range r.Attributes() {
-			switch strings.ToLower(string(attr)) {
-			case "cn":
-				e.AddAttribute(message.AttributeDescription(attr), defaultGroupName)
-			case "gidnumber":
-				e.AddAttribute(message.AttributeDescription(attr), defaultGidNumberStr)
-			case "member":
-				var members []message.AttributeValue
-				for _, user := range users {
-					members = append(members, message.AttributeValue(fmt.Sprintf("uid=%s,cn=users,%s", user.Name, string(r.BaseObject()))))
-				}
-				e.AddAttribute(message.AttributeDescription(attr), members...)
-			case "memberuid":
-				var members []message.AttributeValue
-				for _, user := range users {
-					members = append(members, message.AttributeValue(user.Name))
-				}
-				e.AddAttribute(message.AttributeDescription(attr), members...)
-			case "description":
-				e.AddAttribute(message.AttributeDescription(defaultGroupDescription))
-			case "objectclass":
-				e.AddAttribute(message.AttributeDescription(attr), []message.AttributeValue{
-					"top",
-					"posixGroup",
-				}...)
+			field, ok := ldapGroupAttributesMapping.CaseInsensitiveGet(string(attr))
+			if ok {
+				e.AddAttribute(message.AttributeDescription(attr), field.GetAttributeValues(users...)...)
 			}
 		}
 		w.Write(e)

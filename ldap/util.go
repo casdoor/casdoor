@@ -31,14 +31,15 @@ import (
 
 type V = message.AttributeValue
 
-type AttributeMapper func(user *object.User) V
+type AttributeMapper func(users ...*object.User) []V
 
 type FieldRelation struct {
 	userField     string
+	ldapField     string
 	notSearchable bool
 	hideOnStarOp  bool
 	fieldMapper   AttributeMapper
-	constantValue string
+	constantValue []V
 }
 
 func (rel FieldRelation) GetField() (string, error) {
@@ -48,77 +49,166 @@ func (rel FieldRelation) GetField() (string, error) {
 	return rel.userField, nil
 }
 
-func (rel FieldRelation) GetAttributeValue(user *object.User) V {
-	if rel.constantValue != "" && rel.fieldMapper == nil {
-		return V(rel.constantValue)
+func (rel FieldRelation) GetAttributeValues(users ...*object.User) []V {
+	if rel.constantValue != nil && rel.fieldMapper == nil {
+		return rel.constantValue
 	}
-	return rel.fieldMapper(user)
+	return rel.fieldMapper(users...)
 }
 
-const defaultGroupName = "casdoor"
-const defaultGroupDescription = "Casdoor LDAP Users"
-const defaultGidNumberStr = "1000001"
+type FieldRelationMap map[string]FieldRelation
 
-var ldapUserAttributesMapping = map[string]FieldRelation{
-	"cn": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) V {
-		return V(user.Name)
+func (m FieldRelationMap) CaseInsensitiveGet(key string) (FieldRelation, bool) {
+	lowerKey := strings.ToLower(key)
+	ret, ok := m[lowerKey]
+	return ret, ok
+}
+
+const (
+	defaultGroupName        = "casdoor"
+	defaultGroupDescription = "Casdoor LDAP Users"
+	defaultGidNumberStr     = "1000001"
+)
+
+var ldapUserAttributesMapping = FieldRelationMap{
+	"cn": {ldapField: "cn", userField: "name", hideOnStarOp: true, fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Name)}
 	}},
-	"uid": {userField: "name", hideOnStarOp: true, fieldMapper: func(user *object.User) V {
-		return V(user.Name)
+	"uid": {ldapField: "uid", userField: "name", hideOnStarOp: true, fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Name)}
 	}},
-	"displayname": {userField: "displayName", fieldMapper: func(user *object.User) V {
-		return V(user.DisplayName)
+	"displayname": {ldapField: "displayName", userField: "displayName", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].DisplayName)}
 	}},
-	"email": {userField: "email", fieldMapper: func(user *object.User) V {
-		return V(user.Email)
+	"email": {ldapField: "email", userField: "email", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Email)}
 	}},
-	"mail": {userField: "email", fieldMapper: func(user *object.User) V {
-		return V(user.Email)
+	"mail": {ldapField: "mail", userField: "email", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Email)}
 	}},
-	"mobile": {userField: "phone", fieldMapper: func(user *object.User) V {
-		return V(user.Phone)
+	"mobile": {ldapField: "mobile", userField: "phone", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Phone)}
 	}},
-	"title": {userField: "title", fieldMapper: func(user *object.User) V {
-		return V(user.Title)
+	"telephonenumber": {ldapField: "telephoneNumber", userField: "phone", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Phone)}
 	}},
-	"userPassword": {
+	"postaladdress": {ldapField: "postalAddress", userField: "address", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(strings.Join(users[0].Address, " "))}
+	}},
+	"title": {ldapField: "title", userField: "title", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].Title)}
+	}},
+	"gecos": {ldapField: "gecos", userField: "displayName", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].DisplayName)}
+	}},
+	"description": {ldapField: "description", userField: "displayName", fieldMapper: func(users ...*object.User) []V {
+		return []V{V(users[0].DisplayName)}
+	}},
+	"logindisabled": {ldapField: "loginDisabled", userField: "isForbidden", fieldMapper: func(users ...*object.User) []V {
+		if users[0].IsForbidden {
+			return []V{V("1")}
+		} else {
+			return []V{V("0")}
+		}
+	}},
+	"userpassword": {
+		ldapField:     "userPassword",
 		userField:     "userPassword",
 		notSearchable: true,
-		fieldMapper: func(user *object.User) V {
-			return V(getUserPasswordWithType(user))
+		fieldMapper: func(users ...*object.User) []V {
+			return []V{V(getUserPasswordWithType(users[0]))}
 		},
 	},
-	"uidNumber": {notSearchable: true, fieldMapper: func(user *object.User) V {
-		return V(fmt.Sprintf("%v", hash(user.Name)))
+	"uidnumber": {ldapField: "uidNumber", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		return []V{V(fmt.Sprintf("%v", hash(users[0].Name)))}
 	}},
-	"gidNumber": {notSearchable: true, constantValue: defaultGidNumberStr},
-	"homeDirectory": {notSearchable: true, fieldMapper: func(user *object.User) V {
-		return V("/home/" + user.Name)
+	"gidnumber": {ldapField: "gidNumber", notSearchable: true, constantValue: []V{V(defaultGidNumberStr)}},
+	"homedirectory": {ldapField: "homeDirectory", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		return []V{V("/home/" + users[0].Name)}
 	}},
-	"loginShell": {notSearchable: true, constantValue: "/sbin/nologin"},
-	"shadowLastChange": {notSearchable: true, fieldMapper: func(user *object.User) V {
+	"loginshell": {ldapField: "loginShell", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		if users[0].IsForbidden || users[0].IsDeleted {
+			return []V{V("/sbin/nologin")}
+		} else {
+			return []V{V("/bin/bash")}
+		}
+	}},
+	"shadowlastchange": {ldapField: "shadowLastChange", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
 		// "this attribute specifies number of days between January 1, 1970, and the date that the password was last modified"
-		return V(fmt.Sprint(time.Now().Unix() / 86400))
+		updatedTime, err := time.Parse(time.RFC3339, users[0].UpdatedTime)
+		if err != nil {
+			updatedTime = time.Now()
+		}
+		return []V{V(fmt.Sprint(updatedTime.Unix() / 86400))}
 	}},
-	"shadowMin":      {notSearchable: true, constantValue: "0"},
-	"shadowMax":      {notSearchable: true, constantValue: "99999"},
-	"shadowWarning":  {notSearchable: true, constantValue: "7"},
-	"shadowExpire":   {notSearchable: true, constantValue: "1"},
-	"shadowInactive": {notSearchable: true, constantValue: "0"},
-	"shadowFlag":     {notSearchable: true, constantValue: "0"},
-	"memberOf": {notSearchable: true, fieldMapper: func(user *object.User) V {
-		return V(fmt.Sprintf("cn=%s,cn=groups,ou=%s", defaultGroupName, user.Owner))
+	"pwdchangedtime": {ldapField: "pwdChangedTime", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		updatedTime, err := time.Parse(time.RFC3339, users[0].UpdatedTime)
+		if err != nil {
+			updatedTime = time.Now()
+		}
+		return []V{V(updatedTime.UTC().Format("20060102030405Z"))}
+	}},
+	"shadowmin":     {ldapField: "shadowMin", notSearchable: true, constantValue: []V{V("0")}},
+	"shadowmax":     {ldapField: "shadowMax", notSearchable: true, constantValue: []V{V("99999")}},
+	"shadowwarning": {ldapField: "shadowWarning", notSearchable: true, constantValue: []V{V("7")}},
+	"shadowexpire": {ldapField: "shadowExpire", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		if users[0].IsForbidden {
+			return []V{V("1")}
+		} else {
+			return []V{V("-1")}
+		}
+	}},
+	"shadowinactive": {ldapField: "shadowInactive", notSearchable: true, constantValue: []V{V("0")}},
+	"shadowflag":     {ldapField: "shadowFlag", notSearchable: true, constantValue: []V{V("0")}},
+	"memberof": {ldapField: "memberOf", notSearchable: true, fieldMapper: func(users ...*object.User) []V {
+		return []V{V(fmt.Sprintf("cn=%s,cn=groups,ou=%s", defaultGroupName, users[0].Owner))}
+	}},
+	"objectclass": {ldapField: "objectClass", notSearchable: true, constantValue: []V{
+		V("top"),
+		V("posixAccount"),
+		V("shadowAccount"),
+		V("person"),
+		V("organizationalPerson"),
+		V("inetOrgPerson"),
+		V("apple-user"),
+		V("sambaSamAccount"),
+		V("sambaIdmapEntry"),
+		V("extensibleObject"),
 	}},
 }
 
-var AdditionalLdapAttributes []message.LDAPString
+var ldapGroupAttributesMapping = FieldRelationMap{
+	"cn":        {ldapField: "cn", hideOnStarOp: true, constantValue: []V{V(defaultGroupName)}},
+	"gidnumber": {ldapField: "gidNumber", hideOnStarOp: true, constantValue: []V{V(defaultGidNumberStr)}},
+	"member": {ldapField: "member", fieldMapper: func(users ...*object.User) []V {
+		var members []message.AttributeValue
+		for _, user := range users {
+			members = append(members, message.AttributeValue(fmt.Sprintf("uid=%s,cn=users,ou=%s", user.Name, user.Owner)))
+		}
+		return members
+	}},
+	"memberuid": {ldapField: "memberUid", fieldMapper: func(users ...*object.User) []V {
+		var members []message.AttributeValue
+		for _, user := range users {
+			members = append(members, message.AttributeValue(user.Name))
+		}
+		return members
+	}},
+	"description": {ldapField: "description", hideOnStarOp: true, constantValue: []V{V(defaultGroupDescription)}},
+	"objectclass": {ldapField: "objectClass", hideOnStarOp: true, constantValue: []V{
+		V("top"),
+		V("posixGroup"),
+	}},
+}
+
+var AdditionalLdapUserAttributes []message.LDAPString
 
 func init() {
-	for k, v := range ldapUserAttributesMapping {
+	for _, v := range ldapUserAttributesMapping {
 		if v.hideOnStarOp {
 			continue
 		}
-		AdditionalLdapAttributes = append(AdditionalLdapAttributes, message.LDAPString(k))
+		AdditionalLdapUserAttributes = append(AdditionalLdapUserAttributes, message.LDAPString(v.ldapField))
 	}
 }
 
@@ -386,7 +476,7 @@ func getUserPasswordWithType(user *object.User) string {
 }
 
 func getUserFieldFromAttribute(attributeName string) (string, error) {
-	v, ok := ldapUserAttributesMapping[attributeName]
+	v, ok := ldapUserAttributesMapping.CaseInsensitiveGet(attributeName)
 	if !ok {
 		return "", fmt.Errorf("attribute %s not supported", attributeName)
 	}
