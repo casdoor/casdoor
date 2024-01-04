@@ -155,16 +155,16 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	default:
 	}
 
-	users, code := GetFilteredUsers(m)
-	if code != ldap.LDAPResultSuccess {
-		res.SetResultCode(code)
-		w.Write(res)
-		return
-	}
-
 	objectClass := searchFilterForEquality(r.Filter(), "objectClass", "posixAccount", "posixGroup")
 	switch objectClass {
 	case "posixAccount":
+		users, code := GetFilteredUsers(m)
+		if code != ldap.LDAPResultSuccess {
+			res.SetResultCode(code)
+			w.Write(res)
+			return
+		}
+
 		// log.Printf("Handling posixAccount filter=%s", r.FilterString())
 		for _, user := range users {
 			dn := fmt.Sprintf("uid=%s,cn=users,%s", user.Name, string(r.BaseObject()))
@@ -191,16 +191,32 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 
 	case "posixGroup":
 		// log.Printf("Handling posixGroup filter=%s", r.FilterString())
-		dn := fmt.Sprintf("cn=%s,cn=groups,%s", defaultGroupName, string(r.BaseObject()))
-		e := ldap.NewSearchResultEntry(dn)
-
-		for _, attr := range r.Attributes() {
-			field, ok := ldapGroupAttributesMapping.CaseInsensitiveGet(string(attr))
-			if ok {
-				e.AddAttribute(message.AttributeDescription(attr), field.GetAttributeValues(users...)...)
-			}
+		groups, code := GetFilteredGroups(m)
+		if code != ldap.LDAPResultSuccess {
+			res.SetResultCode(code)
+			w.Write(res)
+			return
 		}
-		w.Write(e)
+
+		for _, group := range groups {
+			dn := fmt.Sprintf("cn=%s,cn=groups,%s", group.Name, string(r.BaseObject()))
+			e := ldap.NewSearchResultEntry(dn)
+			attrs := r.Attributes()
+			for _, attr := range attrs {
+				if string(attr) == "*" {
+					attrs = AdditionalLdapGroupAttributes
+					break
+				}
+			}
+			for _, attr := range attrs {
+				field, ok := ldapGroupAttributesMapping.CaseInsensitiveGet(string(attr))
+				if ok {
+					e.AddAttribute(message.AttributeDescription(attr), field.GetAttributeValues(group)...)
+				}
+			}
+			w.Write(e)
+		}
+
 	case "":
 		log.Printf("Unmatched search request. filter=%s", r.FilterString())
 	}
