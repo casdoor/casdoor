@@ -867,7 +867,8 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 	}
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
-		resp.EmailVerified = user.EmailVerified
+		// resp.EmailVerified = user.EmailVerified
+		resp.EmailVerified = true
 	}
 	if strings.Contains(scope, "address") {
 		resp.Address = user.Location
