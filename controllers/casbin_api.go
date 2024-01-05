@@ -30,6 +30,7 @@ import (
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
 // @Param   resourceId    query   string  false   "resource id"
+// @Param   owner    query   string  false   "owner"
 // @Success 200 {object} controllers.Response The Response object
 // @router /enforce [post]
 func (c *ApiController) Enforce() {
@@ -37,6 +38,7 @@ func (c *ApiController) Enforce() {
 	modelId := c.Input().Get("modelId")
 	resourceId := c.Input().Get("resourceId")
 	enforcerId := c.Input().Get("enforcerId")
+	owner := c.Input().Get("owner")
 
 	if len(c.Ctx.Input.RequestBody) == 0 {
 		c.ResponseError("The request body should not be empty")
@@ -117,6 +119,8 @@ func (c *ApiController) Enforce() {
 			c.ResponseError(err.Error())
 			return
 		}
+	} else if owner != "" {
+		permissions, err = object.GetPermissions(owner)
 	} else {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
@@ -152,12 +156,14 @@ func (c *ApiController) Enforce() {
 // @Param   body    body   []string  true   "array of casbin requests"
 // @Param   permissionId    query   string  false   "permission id"
 // @Param   modelId    query   string  false   "model id"
+// @Param   owner    query   string  false   "owner"
 // @Success 200 {object} controllers.Response The Response object
 // @router /batch-enforce [post]
 func (c *ApiController) BatchEnforce() {
 	permissionId := c.Input().Get("permissionId")
 	modelId := c.Input().Get("modelId")
 	enforcerId := c.Input().Get("enforcerId")
+	owner := c.Input().Get("owner")
 
 	var requests [][]string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
@@ -227,6 +233,8 @@ func (c *ApiController) BatchEnforce() {
 			c.ResponseError(err.Error())
 			return
 		}
+	} else if owner != "" {
+		permissions, err = object.GetPermissions(owner)
 	} else {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
