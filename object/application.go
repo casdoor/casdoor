@@ -664,7 +664,7 @@ func applicationChangeTrigger(oldName string, newName string) error {
 			}
 		}
 		permissions[i].Resources = permissionResoureces
-		_, err = session.Where("name=?", permissions[i].Name).Update(permissions[i])
+		_, err = session.Where("owner=?", permissions[i].Owner).Where("name=?", permissions[i].Name).Update(permissions[i])
 		if err != nil {
 			return err
 		}
