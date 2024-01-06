@@ -31,3 +31,6 @@ commentsRouter*.go
 # ignore build result
 casdoor
 server
+
+# include helm-chart
+!manifests/casdoor
