@@ -38,14 +38,22 @@ import (
 var (
 	ormer          *Ormer = nil
 	createDatabase        = true
+	configPath            = "conf/app.conf"
 )
 
 func InitFlag() {
 	createDatabase = getCreateDatabaseFlag()
+	configPath = getConfigFlag()
 }
 
 func getCreateDatabaseFlag() bool {
 	res := flag.Bool("createDatabase", false, "true if you need to create database")
+	flag.Parse()
+	return *res
+}
+
+func getConfigFlag() string {
+	res := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
 	flag.Parse()
 	return *res
 }
@@ -64,7 +72,7 @@ func InitConfig() {
 
 func InitAdapter() {
 	if conf.GetConfigString("driverName") == "" {
-		if !util.FileExist("conf/app.conf") {
+		if !util.FileExist(configPath) {
 			dir, err := os.Getwd()
 			if err != nil {
 				panic(err)
