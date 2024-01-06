@@ -57,21 +57,27 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          - name: config-volume
-            mountPath: /conf
+            - name: config-volume
+              mountPath: /conf
+            {{- if .Values.extraVolumeMounts }}
+            {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+            {{- end }}
         {{ if .Values.extraContainersEnabled }}
           {{- .Values.extraContainers | nindent 8 }}
         {{- end }}
       volumes:
-       - name: config-volume
-         projected:
-           defaultMode: 420
-           sources:
-           - configMap:
-               items:
-               - key: app.conf
-                 path: app.conf
-               name: {{ printf "%s-config" (include "casdoor.fullname" .) }}
+        - name: config-volume
+          projected:
+            defaultMode: 420
+            sources:
+              - configMap:
+                  name: {{ printf "%s-config" (include "casdoor.fullname" .) }}
+                  items:
+                    - key: app.conf
+                      path: app.conf
+        {{- if .Values.extraVolumes }}
+        {{- toYaml .Values.extraVolumes | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
