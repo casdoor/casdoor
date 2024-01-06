@@ -208,3 +208,14 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+
+      - name: Update AppVersion in Helm Chart
+        if: steps.should_push.outputs.push=='true'
+        run: |
+          sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./manifests/casdoor/Chart.yaml
+          # Commit and push the changes back to the repository
+          git config --global user.name " casbin-bot"
+          git config --global user.email " casbin-bot@github.com"
+          git add ./manifests/casdoor/Chart.yaml
+          git commit -m "chor(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
+          git push origin HEAD:master
