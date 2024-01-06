@@ -36,16 +36,12 @@ import (
 )
 
 var (
-	ormer                   *Ormer = nil
-	isCreateDatabaseDefined        = false
-	createDatabase                 = true
+	ormer          *Ormer = nil
+	createDatabase        = true
 )
 
 func InitFlag() {
-	if !isCreateDatabaseDefined {
-		isCreateDatabaseDefined = true
-		createDatabase = getCreateDatabaseFlag()
-	}
+	createDatabase = getCreateDatabaseFlag()
 }
 
 func getCreateDatabaseFlag() bool {
