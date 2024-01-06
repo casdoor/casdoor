@@ -86,6 +86,9 @@ docker-build: ## Build docker image with the manager.
 docker-push: ## Push docker image with the manager.
 	docker push ${REGISTRY}/${IMG}:${IMG_TAG}
 
+deps: ## Run dependencies for local development
+	docker compose up -d db
+
 lint-install: ## Install golangci-lint
 	@# The following installs a specific version of golangci-lint, which is appropriate for a CI server to avoid different results from build to build
 	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
