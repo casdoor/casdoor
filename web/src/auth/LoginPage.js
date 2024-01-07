@@ -468,6 +468,10 @@ class LoginPage extends React.Component {
   }
 
   renderOtherFormProvider(application) {
+    if (Setting.inIframe()) {
+      return null;
+    }
+
     for (const providerConf of application.providers) {
       if (providerConf.provider?.type === "Google" && providerConf.rule === "OneTap" && this.props.preview !== "auto") {
         return (
@@ -475,6 +479,8 @@ class LoginPage extends React.Component {
         );
       }
     }
+
+    return null;
   }
 
   renderForm(application) {
