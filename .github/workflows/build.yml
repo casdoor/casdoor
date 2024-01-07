@@ -212,7 +212,7 @@ jobs:
         with:
           repository: casdoor/casdoor-helm
           ref: 'master'
-          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+          token: ${{ secrets.GH_BOT_TOKEN }}
 
       - name: Update Helm Chart
         if: steps.should_push.outputs.push=='true'
