@@ -207,13 +207,16 @@ jobs:
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
 
+      - uses: actions/checkout@v3
+        if: steps.should_push.outputs.push=='true'
+        with:
+          repository: casdoor/casdoor-helm
+          ref: 'master'
+          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+
       - name: Update Helm Chart
         if: steps.should_push.outputs.push=='true'
         run: |
-          # Clone the chart repo
-          git clone https://github.com/casdoor/casdoor-helm
-          cd casdoor-helm
-
           # Set the appVersion of the chart to the current tag
           sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
 
