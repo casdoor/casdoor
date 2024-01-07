@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ printf "%s-config" (include "casdoor.fullname" .) }}
-  labels:
-    {{- include "casdoor.labels" . | nindent 4 }}
-data:
-  app.conf: {{ tpl .Values.config . | toYaml | nindent 4 }}
