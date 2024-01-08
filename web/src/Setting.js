@@ -1155,6 +1155,14 @@ export function isWebAuthnEnabled(application) {
   }
 }
 
+export function isLdapEnabled(application) {
+  if (application) {
+    return application.signinMethods.filter(item => item.name === "LDAP").length > 0;
+  } else {
+    return false;
+  }
+}
+
 export function getLoginLink(application) {
   let url;
   if (application === null) {

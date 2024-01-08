@@ -70,6 +70,7 @@ class SigninTable extends React.Component {
       {name: "Password", displayName: i18next.t("general:Password")},
       {name: "Verification code", displayName: i18next.t("login:Verification code")},
       {name: "WebAuthn", displayName: i18next.t("login:WebAuthn")},
+      {name: "LDAP", displayName: i18next.t("login:LDAP")},
     ];
     const columns = [
       {
@@ -91,7 +92,7 @@ class SigninTable extends React.Component {
               onChange={value => {
                 this.updateField(table, index, "name", value);
                 this.updateField(table, index, "displayName", value);
-                if (value === "Verification code") {
+                if (value === "Verification code" || value === "Password") {
                   this.updateField(table, index, "rule", "All");
                 } else {
                   this.updateField(table, index, "rule", "None");
@@ -129,6 +130,11 @@ class SigninTable extends React.Component {
               {id: "All", name: i18next.t("general:All")},
               {id: "Email only", name: i18next.t("general:Email only")},
               {id: "Phone only", name: i18next.t("general:Phone only")},
+            ];
+          } else if (record.name === "Password") {
+            options = [
+              {id: "All", name: i18next.t("general:All")},
+              {id: "Non-LDAP", name: i18next.t("general:Non-LDAP")},
             ];
           }
 

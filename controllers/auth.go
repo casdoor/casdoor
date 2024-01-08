@@ -399,8 +399,12 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
-			if !application.IsPasswordEnabled() {
+			if authForm.SigninMethod == "Password" && !application.IsPasswordEnabled() {
 				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
+				return
+			}
+			if authForm.SigninMethod == "LDAP" && !application.IsLdapEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with LDAP is not enabled for the application"))
 				return
 			}
 			var enableCaptcha bool
@@ -432,7 +436,14 @@ func (c *ApiController) Login() {
 			}
 
 			password := authForm.Password
-			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			isSigninViaLdap := authForm.SigninMethod == "LDAP"
+			var isPasswordWithLdapEnabled bool
+			if authForm.SigninMethod == "Password" {
+				isPasswordWithLdapEnabled = application.IsPasswordWithLdapEnabled()
+			} else {
+				isPasswordWithLdapEnabled = false
+			}
+			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		}
 
 		if err != nil {

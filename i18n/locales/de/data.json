@@ -15,6 +15,7 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) existiert nicht und es ist nicht erlaubt, ein neues Konto anzumelden. Bitte wenden Sie sich an Ihren IT-Support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) ist bereits mit einem anderen Konto verknüpft: %s (%s)",
     "The application: %s does not exist": "Die Anwendung: %s existiert nicht",
+    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
