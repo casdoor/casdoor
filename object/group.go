@@ -242,7 +242,8 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	session := ormer.Engine.Table(tableNamePrefix+"user").
+	prefixedUserTable := tableNamePrefix + "user"
+	session := ormer.Engine.Table(prefixedUserTable).
 		Where("owner = ?", owner).In("name", names)
 
 	if offset != -1 && limit != -1 {
@@ -250,16 +251,19 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 	}
 
 	if field != "" && value != "" {
-		session = session.And(fmt.Sprintf("user.%s like ?", util.CamelToSnakeCase(field)), "%"+value+"%")
+		session = session.And(fmt.Sprintf("%s.%s like ?", prefixedUserTable, util.CamelToSnakeCase(field)), "%"+value+"%")
 	}
 
 	if sortField == "" || sortOrder == "" {
 		sortField = "created_time"
 	}
+
+	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.SnakeString(sortField))
+
 	if sortOrder == "ascend" {
-		session = session.Asc(fmt.Sprintf("user.%s", util.SnakeString(sortField)))
+		session = session.Asc(orderQuery)
 	} else {
-		session = session.Desc(fmt.Sprintf("user.%s", util.SnakeString(sortField)))
+		session = session.Desc(orderQuery)
 	}
 
 	err = session.Find(&users)
