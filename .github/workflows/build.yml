@@ -221,7 +221,7 @@ jobs:
           sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
 
           # increase the patch version of the chart
-          currentChartVersion=$(cat ./charts/casdoor/Chart.yaml | grep version | awk '{print $2}')
+          currentChartVersion=$(cat ./charts/casdoor/Chart.yaml | grep ^version | awk '{print $2}')
           newChartVersion=$(echo $currentChartVersion | awk -F. -v OFS=. '{$NF++;print}')
           sed -i "s/version: .*/version: $newChartVersion/g" ./charts/casdoor/Chart.yaml
 
@@ -229,5 +229,5 @@ jobs:
           git config --global user.name "casbin-bot"
           git config --global user.email "casbin-bot@github.com"
           git add ./charts/casdoor/Chart.yaml
-          git commit -m "chor(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
+          git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
           git push origin HEAD:master
