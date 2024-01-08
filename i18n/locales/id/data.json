@@ -15,6 +15,7 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru, silakan hubungi dukungan IT Anda",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Akun untuk provider: %s dan username: %s (%s) sudah terhubung dengan akun lain: %s (%s)",
     "The application: %s does not exist": "Aplikasi: %s tidak ada",
+    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Metode login: login dengan kata sandi tidak diaktifkan untuk aplikasi tersebut",

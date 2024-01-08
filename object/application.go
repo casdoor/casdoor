@@ -201,7 +201,7 @@ func extendApplicationWithOrg(application *Application) (err error) {
 func extendApplicationWithSigninMethods(application *Application) (err error) {
 	if len(application.SigninMethods) == 0 {
 		if application.EnablePassword {
-			signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "None"}
+			signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "All"}
 			application.SigninMethods = append(application.SigninMethods, signinMethod)
 		}
 		if application.EnableCodeSignin {
@@ -212,10 +212,12 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 			signinMethod := &SigninMethod{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"}
 			application.SigninMethods = append(application.SigninMethods, signinMethod)
 		}
+		signinMethod := &SigninMethod{Name: "LDAP", DisplayName: "LDAP", Rule: "None"}
+		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
 	if len(application.SigninMethods) == 0 {
-		signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "None"}
+		signinMethod := &SigninMethod{Name: "Password", DisplayName: "Password", Rule: "All"}
 		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
@@ -544,6 +546,19 @@ func (application *Application) IsPasswordEnabled() bool {
 	}
 }
 
+func (application *Application) IsPasswordWithLdapEnabled() bool {
+	if len(application.SigninMethods) == 0 {
+		return application.EnablePassword
+	} else {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "Password" && signinMethod.Rule == "All" {
+				return true
+			}
+		}
+		return false
+	}
+}
+
 func (application *Application) IsCodeSigninViaEmailEnabled() bool {
 	if len(application.SigninMethods) == 0 {
 		return application.EnableCodeSignin
@@ -568,6 +583,17 @@ func (application *Application) IsCodeSigninViaSmsEnabled() bool {
 		}
 		return false
 	}
+}
+
+func (application *Application) IsLdapEnabled() bool {
+	if len(application.SigninMethods) > 0 {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "LDAP" {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func IsOriginAllowed(origin string) (bool, error) {

@@ -49,7 +49,7 @@
         {
           "name": "Password",
           "displayName": "Password",
-          "rule": "None",
+          "rule": "All",
         },
         {
           "name": "Verification code",
@@ -59,6 +59,11 @@
         {
           "name": "WebAuthn",
           "displayName": "WebAuthn",
+          "rule": "None",
+        },
+        {
+          "name": "LDAP",
+          "displayName": "LDAP",
           "rule": "None",
         },
       ],

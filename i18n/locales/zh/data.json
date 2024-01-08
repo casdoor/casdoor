@@ -15,6 +15,7 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s与用户名: %s (%s)已经与其他账户绑定: %s (%s)",
     "The application: %s does not exist": "应用%s不存在",
+    "The login method: login with LDAP is not enabled for the application": "该应用禁止采用LDAP登录方式",
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",

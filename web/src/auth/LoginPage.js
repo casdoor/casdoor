@@ -213,6 +213,7 @@ class LoginPage extends React.Component {
         break;
       }
       case "WebAuthn": return "webAuthn";
+      case "LDAP": return "ldap";
       }
     }
 
@@ -224,6 +225,7 @@ class LoginPage extends React.Component {
     case "verificationCode": return i18next.t("login:Email or phone");
     case "verificationCodeEmail": return i18next.t("login:Email");
     case "verificationCodePhone": return i18next.t("login:Phone");
+    case "ldap": return i18next.t("login:LDAP username, Email or phone");
     default: return i18next.t("login:username, Email or phone");
     }
   }
@@ -253,6 +255,15 @@ class LoginPage extends React.Component {
       values["organization"] = this.getApplicationObj().organization;
     }
 
+    if (this.state.loginMethod === "password") {
+      values["signinMethod"] = "Password";
+    } else if (this.state.loginMethod?.includes("verificationCode")) {
+      values["signinMethod"] = "Verification code";
+    } else if (this.state.loginMethod === "webAuthn") {
+      values["signinMethod"] = "WebAuthn";
+    } else if (this.state.loginMethod === "ldap") {
+      values["signinMethod"] = "LDAP";
+    }
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
@@ -329,7 +340,7 @@ class LoginPage extends React.Component {
       this.signInWithWebAuthn(username, values);
       return;
     }
-    if (this.state.loginMethod === "password") {
+    if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       if (this.state.enableCaptchaModal === CaptchaRule.Always) {
         this.setState({
           openCaptchaModal: true,
@@ -507,7 +518,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application);
+    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -570,6 +581,7 @@ class LoginPage extends React.Component {
                       switch (this.state.loginMethod) {
                       case "verificationCodeEmail": return i18next.t("login:Please input your Email!");
                       case "verificationCodePhone": return i18next.t("login:Please input your Phone!");
+                      case "ldap": return i18next.t("login:Please input your LDAP username!");
                       default: return i18next.t("login:Please input your Email or Phone!");
                       }
                     },
@@ -870,7 +882,7 @@ class LoginPage extends React.Component {
 
   renderPasswordOrCodeInput() {
     const application = this.getApplicationObj();
-    if (this.state.loginMethod === "password") {
+    if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
           <Form.Item
@@ -881,7 +893,7 @@ class LoginPage extends React.Component {
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder={i18next.t("general:Password")}
-              disabled={!Setting.isPasswordEnabled(application)}
+              disabled={this.state.loginMethod === "password" ? !Setting.isPasswordEnabled(application) : !Setting.isLdapEnabled(application)}
             />
           </Form.Item>
         </Col>
@@ -916,11 +928,13 @@ class LoginPage extends React.Component {
     };
 
     const itemsMap = new Map([
-      [generateItemKey("Password", "None"), {label: i18next.t("general:Password"), key: "password"}],
+      [generateItemKey("Password", "All"), {label: i18next.t("general:Password"), key: "password"}],
+      [generateItemKey("Password", "Non-LDAP"), {label: i18next.t("general:Password"), key: "password"}],
       [generateItemKey("Verification code", "All"), {label: i18next.t("login:Verification code"), key: "verificationCode"}],
       [generateItemKey("Verification code", "Email only"), {label: i18next.t("login:Verification code"), key: "verificationCodeEmail"}],
       [generateItemKey("Verification code", "Phone only"), {label: i18next.t("login:Verification code"), key: "verificationCodePhone"}],
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
+      [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
     ]);
 
     application?.signinMethods.forEach((signinMethod) => {
@@ -1059,7 +1073,7 @@ class LoginPage extends React.Component {
     }
 
     const visibleOAuthProviderItems = (application.providers === null) ? [] : application.providers.filter(providerItem => this.isProviderVisible(providerItem));
-    if (this.props.preview !== "auto" && !Setting.isPasswordEnabled(application) && !Setting.isCodeSigninEnabled(application) && !Setting.isWebAuthnEnabled(application) && visibleOAuthProviderItems.length === 1) {
+    if (this.props.preview !== "auto" && !Setting.isPasswordEnabled(application) && !Setting.isCodeSigninEnabled(application) && !Setting.isWebAuthnEnabled(application) && !Setting.isLdapEnabled(application) && visibleOAuthProviderItems.length === 1) {
       Setting.goToLink(Provider.getAuthUrl(application, visibleOAuthProviderItems[0].provider, "signup"));
       return (
         <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
