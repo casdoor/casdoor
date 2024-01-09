@@ -308,13 +308,23 @@ func CheckUserPassword(organization string, username string, password string, la
 		if !isSigninViaLdap && !isPasswordWithLdapEnabled {
 			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
 		}
+
+		// check the login error times
+		if !enableCaptcha {
+			err = checkSigninErrorTimes(user, lang)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		// only for LDAP users
 		err = checkLdapUserPassword(user, password, lang)
 		if err != nil {
 			if err.Error() == "user not exist" {
 				return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
 			}
-			return nil, err
+
+			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
 		}
 	} else {
 		err = CheckPassword(user, password, lang, enableCaptcha)
