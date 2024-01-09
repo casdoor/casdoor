@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "A aplicação não permite o registro de novas contas",
     "Token expire": "Expiração do Token",
     "Token expire - Tooltip": "Tempo de expiração do token de acesso",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Formato do token",
     "Token format - Tooltip": "O formato do token de acesso",
     "You are unexpected to see this prompt page": "Você não deveria ver esta página de prompt"

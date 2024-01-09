@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "L'application ne permet pas de créer un nouveau compte",
     "Token expire": "Expiration du jeton",
     "Token expire - Tooltip": "Durée avant expiration du jeton d'accès",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Format de jeton",
     "Token format - Tooltip": "Le format du jeton d'accès",
     "You are unexpected to see this prompt page": "Il n'était pas prévu que vous voyez cette page de saisie"

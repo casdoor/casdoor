@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "アプリケーションでは新しいアカウントの登録ができません",
     "Token expire": "トークンの有効期限が切れました",
     "Token expire - Tooltip": "アクセストークンの有効期限",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "トークン形式",
     "Token format - Tooltip": "アクセストークンのフォーマット",
     "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである"

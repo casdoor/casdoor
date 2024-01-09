@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "Aplikasi tidak memperbolehkan untuk mendaftar akun baru",
     "Token expire": "Token kadaluarsa",
     "Token expire - Tooltip": "Waktu kadaluwarsa token akses",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Format token",
     "Token format - Tooltip": "Format dari token akses",
     "You are unexpected to see this prompt page": "Anda tidak mengharapkan untuk melihat halaman prompt ini"

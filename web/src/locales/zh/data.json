@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "该应用不允许注册新账户",
     "Token expire": "Access Token过期",
     "Token expire - Tooltip": "Access Token过期时间",
+    "Token fields": "Token字段",
+    "Token fields - Tooltip": "Token中所包含的用户字段",
     "Token format": "Access Token格式",
     "Token format - Tooltip": "Access Token格式",
     "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"

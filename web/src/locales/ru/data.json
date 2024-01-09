@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту",
     "Token expire": "Срок действия токена истекает",
     "Token expire - Tooltip": "Время истечения токена доступа",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Формат жетона",
     "Token format - Tooltip": "Формат токена доступа",
     "You are unexpected to see this prompt page": "Вы не ожидали увидеть эту страницу-подсказку"

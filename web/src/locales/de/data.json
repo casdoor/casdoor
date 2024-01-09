@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "Die Anwendung erlaubt es nicht, ein neues Konto zu registrieren",
     "Token expire": "Token läuft ab",
     "Token expire - Tooltip": "Ablaufzeit des Access-Tokens",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Token-Format",
     "Token format - Tooltip": "Das Format des Access-Tokens",
     "You are unexpected to see this prompt page": "Sie sind unerwartet auf diese Aufforderungsseite gelangt"

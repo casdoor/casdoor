@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "이 어플리케이션은 새 계정 등록을 허용하지 않습니다",
     "Token expire": "토큰 만료",
     "Token expire - Tooltip": "액세스 토큰 만료 시간",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "토큰 형식",
     "Token format - Tooltip": "접근 토큰의 형식",
     "You are unexpected to see this prompt page": "당신은 이 프롬프트 페이지를 볼 것을 예상하지 못했습니다"

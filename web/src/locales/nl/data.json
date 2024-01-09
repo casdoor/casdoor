@@ -103,6 +103,8 @@
     "The application does not allow to sign up new account": "The application does not allow to sign up new account",
     "Token expire": "Token expire",
     "Token expire - Tooltip": "Access token expiration time",
+    "Token fields": "Token fields",
+    "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Token format",
     "Token format - Tooltip": "The format of access token",
     "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
