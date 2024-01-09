@@ -98,11 +98,7 @@ class SyncerTableColumnTable extends React.Component {
           return (
             <Select virtual={false} showSearch style={{width: "100%"}} value={text} onChange={(value => {this.updateField(table, index, "casdoorName", value);})}>
               {
-                ["Owner", "Name", "CreatedTime", "UpdatedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
-                  "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
-                  "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted", "CreatedIp",
-                  "PreferredMfaType", "TotpSecret", "SignupApplication"]
-                  .map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                Setting.getUserCommonFields().map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           );

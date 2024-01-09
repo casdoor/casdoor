@@ -386,8 +386,20 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
-              options={["JWT", "JWT-Empty"].map((item) => Setting.getOption(item, item))}
+              options={["JWT", "JWT-Empty", "JWT-Custom"].map((item) => Setting.getOption(item, item))}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Token fields"), i18next.t("application:Token fields - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
+              {
+                Setting.getUserCommonFields().map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

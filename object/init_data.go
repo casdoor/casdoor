@@ -145,11 +145,14 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.GrantTypes == nil {
 			application.GrantTypes = []string{}
 		}
+		if application.Tags == nil {
+			application.Tags = []string{}
+		}
 		if application.RedirectUris == nil {
 			application.RedirectUris = []string{}
 		}
-		if application.Tags == nil {
-			application.Tags = []string{}
+		if application.TokenFields == nil {
+			application.TokenFields = []string{}
 		}
 	}
 	for _, permission := range data.Permissions {

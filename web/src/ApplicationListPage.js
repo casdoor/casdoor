@@ -64,6 +64,7 @@ class ApplicationListPage extends BaseListPage {
       cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",
+      tokenFields: [],
       expireInHours: 24 * 7,
       refreshExpireInHours: 24 * 7,
       formOffset: 2,

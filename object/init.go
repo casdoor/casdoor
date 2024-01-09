@@ -197,6 +197,7 @@ func initBuiltInApplication() {
 		},
 		Tags:          []string{},
 		RedirectUris:  []string{},
+		TokenFields:   []string{},
 		ExpireInHours: 168,
 		FormOffset:    2,
 	}

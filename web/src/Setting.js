@@ -1450,6 +1450,13 @@ export function getFriendlyUserName(account) {
   }
 }
 
+export function getUserCommonFields() {
+  return ["Owner", "Name", "CreatedTime", "UpdatedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
+    "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
+    "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted", "CreatedIp",
+    "PreferredMfaType", "TotpSecret", "SignupApplication"];
+}
+
 export function getDefaultHtmlEmailContent() {
   return `<!DOCTYPE html>
 <html lang="en">
