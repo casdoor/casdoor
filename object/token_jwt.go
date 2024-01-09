@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -270,6 +271,34 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 	return res
 }
 
+func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
+	res := make(jwt.MapClaims)
+
+	userValue := reflect.ValueOf(claims.User).Elem()
+
+	res["iss"] = claims.RegisteredClaims.Issuer
+	res["sub"] = claims.RegisteredClaims.Subject
+	res["aud"] = claims.RegisteredClaims.Audience
+	res["exp"] = claims.RegisteredClaims.ExpiresAt
+	res["nbf"] = claims.RegisteredClaims.NotBefore
+	res["iat"] = claims.RegisteredClaims.IssuedAt
+	res["jti"] = claims.RegisteredClaims.ID
+	res["tokenType"] = claims.TokenType
+	res["nonce"] = claims.Nonce
+	res["tag"] = claims.Tag
+	res["scope"] = claims.Scope
+
+	for _, field := range tokenField {
+		userField := userValue.FieldByName(field)
+		if userField.IsValid() {
+			newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
+			res[newfield] = userField.Interface()
+		}
+	}
+
+	return res
+}
+
 func refineUser(user *User) *User {
 	user.Password = ""
 
@@ -336,7 +365,17 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsShort.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
-	} else {
+	}
+	if application.TokenFormat == "JWT-Custom" {
+		claimsCustom := getClaimsCustom(claims, application.TokenFields)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsCustom)
+		refreshClaims := getClaimsCustom(claims, application.TokenFields)
+		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
+		refreshClaims["TokenType"] = "refresh-token"
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, refreshClaims)
+	}
+	if application.TokenFormat == "JWT" {
 		claimsWithoutThirdIdp := getClaimsWithoutThirdIdp(claims)
 
 		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
