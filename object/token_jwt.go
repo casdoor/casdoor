@@ -358,23 +358,6 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	var refreshToken *jwt.Token
 
 	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
-	if application.TokenFormat == "JWT-Empty" {
-		claimsShort := getShortClaims(claims)
-
-		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
-		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
-		claimsShort.TokenType = "refresh-token"
-		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
-	}
-	if application.TokenFormat == "JWT-Custom" {
-		claimsCustom := getClaimsCustom(claims, application.TokenFields)
-
-		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsCustom)
-		refreshClaims := getClaimsCustom(claims, application.TokenFields)
-		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
-		refreshClaims["TokenType"] = "refresh-token"
-		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, refreshClaims)
-	}
 	if application.TokenFormat == "JWT" {
 		claimsWithoutThirdIdp := getClaimsWithoutThirdIdp(claims)
 
@@ -382,6 +365,23 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		claimsWithoutThirdIdp.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsWithoutThirdIdp.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsWithoutThirdIdp)
+	} else if application.TokenFormat == "JWT-Empty" {
+		claimsShort := getShortClaims(claims)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
+		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claimsShort.TokenType = "refresh-token"
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsShort)
+	} else if application.TokenFormat == "JWT-Custom" {
+		claimsCustom := getClaimsCustom(claims, application.TokenFields)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsCustom)
+		refreshClaims := getClaimsCustom(claims, application.TokenFields)
+		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
+		refreshClaims["TokenType"] = "refresh-token"
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, refreshClaims)
+	} else {
+		return "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
 	cert, err := getCertByApplication(application)
