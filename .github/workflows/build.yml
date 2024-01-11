@@ -225,9 +225,17 @@ jobs:
           newChartVersion=$(echo $currentChartVersion | awk -F. -v OFS=. '{$NF++;print}')
           sed -i "s/version: .*/version: $newChartVersion/g" ./charts/casdoor/Chart.yaml
 
+          REGISTRY=oci://registry-1.docker.io/casbin
+          cd charts/casdoor
+          helm package .
+          PKG_NAME=$(ls *.tgz)
+          helm repo index . --url $REGISTRY --merge index.yaml
+          helm push $PKG_NAME $REGISTRY
+          rm $PKG_NAME
+
           # Commit and push the changes back to the repository
           git config --global user.name "casbin-bot"
           git config --global user.email "casbin-bot@github.com"
-          git add ./charts/casdoor/Chart.yaml
+          git add Chart.yaml index.yaml
           git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
           git push origin HEAD:master
