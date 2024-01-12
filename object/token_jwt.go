@@ -275,6 +275,7 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 	res := make(jwt.MapClaims)
 
 	userValue := reflect.ValueOf(claims.User).Elem()
+	userTag := reflect.TypeOf(claims.User).Elem()
 
 	res["iss"] = claims.RegisteredClaims.Issuer
 	res["sub"] = claims.RegisteredClaims.Subject
@@ -289,10 +290,11 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 	res["scope"] = claims.Scope
 
 	for _, field := range tokenField {
-		userField := userValue.FieldByName(field)
-		if userField.IsValid() {
-			newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
-			res[newfield] = userField.Interface()
+		tokenFieldValue := userValue.FieldByName(field)
+		tokenFieldTag, found := userTag.FieldByName(field)
+		if tokenFieldValue.IsValid() && found {
+			tokenFieldName := tokenFieldTag.Tag.Get("json")
+			res[tokenFieldName] = tokenFieldValue.Interface()
 		}
 	}
 
