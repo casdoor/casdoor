@@ -5418,7 +5418,7 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "failedSigninfrozenTime": {
+                "failedSigninFrozenTime": {
                     "type": "integer",
                     "format": "int64"
                 },

@@ -29,7 +29,7 @@ import (
 
 const (
 	DefaultFailedSigninLimit      = 5
-	DefaultFailedSigninfrozenTime = 15
+	DefaultFailedSigninFrozenTime = 15
 )
 
 func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
@@ -143,7 +143,7 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 }
 
 func checkSigninErrorTimes(user *User, lang string) error {
-	failedSigninLimit, failedSigninfrozenTime, err := GetFailedSigninConfigByUser(user)
+	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
 	if err != nil {
 		return err
 	}
@@ -151,7 +151,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 	if user.SigninWrongTimes >= failedSigninLimit {
 		lastSignWrongTime, _ := time.Parse(time.RFC3339, user.LastSigninWrongTime)
 		passedTime := time.Now().UTC().Sub(lastSignWrongTime)
-		minutes := failedSigninfrozenTime - int(passedTime.Minutes())
+		minutes := failedSigninFrozenTime - int(passedTime.Minutes())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if minutes > 0 {

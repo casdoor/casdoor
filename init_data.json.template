@@ -123,7 +123,7 @@
       "redirectUris": [""],
       "expireInHours": 168,
       "failedSigninLimit": 5,
-      "failedSigninfrozenTime": 15
+      "failedSigninFrozenTime": 15
     }
   ],
   "users": [

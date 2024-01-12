@@ -100,7 +100,7 @@ type Application struct {
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
-	FailedSigninfrozenTime int `json:"failedSigninfrozenTime"`
+	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
@@ -387,8 +387,8 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	if application.FailedSigninLimit == 0 {
 		application.FailedSigninLimit = DefaultFailedSigninLimit
 	}
-	if application.FailedSigninfrozenTime == 0 {
-		application.FailedSigninfrozenTime = DefaultFailedSigninfrozenTime
+	if application.FailedSigninFrozenTime == 0 {
+		application.FailedSigninFrozenTime = DefaultFailedSigninFrozenTime
 	}
 
 	return application

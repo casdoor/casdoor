@@ -437,8 +437,8 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninfrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
-              this.updateApplicationField("failedSigninfrozenTime", value);
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
+              this.updateApplicationField("failedSigninFrozenTime", value);
             }} />
           </Col>
         </Row>
