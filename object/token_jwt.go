@@ -27,6 +27,7 @@ type Claims struct {
 	TokenType string `json:"tokenType,omitempty"`
 	Nonce     string `json:"nonce,omitempty"`
 	Tag       string `json:"tag"`
+	PpgId     string `json:"ppgId"`
 	Scope     string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
@@ -142,6 +143,7 @@ type ClaimsWithoutThirdIdp struct {
 	TokenType string `json:"tokenType,omitempty"`
 	Nonce     string `json:"nonce,omitempty"`
 	Tag       string `json:"tag"`
+	PpgId     string `json:"ppgId"`
 	Scope     string `json:"scope,omitempty"`
 	jwt.RegisteredClaims
 }
@@ -264,6 +266,7 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 		TokenType:           claims.TokenType,
 		Nonce:               claims.Nonce,
 		Tag:                 claims.Tag,
+		PpgId:               claims.PpgId,
 		Scope:               claims.Scope,
 		RegisteredClaims:    claims.RegisteredClaims,
 	}
@@ -313,6 +316,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		Nonce:     nonce,
 		// FIXME: A workaround for custom claim by reusing `tag` in user info
 		Tag:   user.Tag,
+		PpgId: user.ExternalId,
 		Scope: scope,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    originBackend,

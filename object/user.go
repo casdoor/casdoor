@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"log"
 	"strconv"
 	"strings"
 
@@ -712,7 +713,11 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 
 func AddUser(user *User) (bool, error) {
 	if user.ExternalId == "" {
-		user.ExternalId = uuid.NewString()
+		newID, err := uuid.NewV7()
+		if err != nil {
+			log.Printf("error generate uuid v7: %s", err)
+		}
+		user.ExternalId = newID.String()
 	}
 
 	if user.Id == "" {
