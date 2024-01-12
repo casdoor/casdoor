@@ -52,13 +52,13 @@ func GetFailedSigninConfigByUser(user *User) (int, int, error) {
 	if err != nil {
 		return 0, 0, err
 	}
-	failedSigninLimit := application.FailedSigninLimit
-	failedSigninfrozenTime := application.FailedSigninfrozenTime
 
-	// 0 as an initialization value, corresponding to the default configuration parameters
+	failedSigninLimit := application.FailedSigninLimit
 	if failedSigninLimit == 0 {
 		failedSigninLimit = DefaultFailedSigninLimit
 	}
+
+	failedSigninfrozenTime := application.FailedSigninfrozenTime
 	if failedSigninfrozenTime == 0 {
 		failedSigninfrozenTime = DefaultFailedSigninfrozenTime
 	}

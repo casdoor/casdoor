@@ -384,6 +384,13 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.InvitationCodes = []string{"***"}
 	}
 
+	if application.FailedSigninLimit == 0 {
+		application.FailedSigninLimit = DefaultFailedSigninLimit
+	}
+	if application.FailedSigninfrozenTime == 0 {
+		application.FailedSigninfrozenTime = DefaultFailedSigninfrozenTime
+	}
+
 	return application
 }
 

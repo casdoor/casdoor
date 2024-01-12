@@ -28,8 +28,7 @@ import (
 )
 
 const (
-	DefaultFailedSigninLimit = 5
-	// DefaultFailedSigninfrozenTime The unit of frozen time is minutes
+	DefaultFailedSigninLimit      = 5
 	DefaultFailedSigninfrozenTime = 15
 )
 
@@ -509,12 +508,11 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 					return false, err
 				}
 
-				var failedSigninLimit int
-				if application.FailedSigninLimit == 0 {
-					failedSigninLimit = 5
-				} else {
-					failedSigninLimit = application.FailedSigninLimit
+				failedSigninLimit := application.FailedSigninLimit
+				if failedSigninLimit == 0 {
+					failedSigninLimit = DefaultFailedSigninLimit
 				}
+
 				return user != nil && user.SigninWrongTimes >= failedSigninLimit, nil
 			}
 			return providerItem.Rule == "Always", nil

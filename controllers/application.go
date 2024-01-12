@@ -110,14 +110,6 @@ func (c *ApiController) GetApplication() {
 		}
 	}
 
-	// 0 as an initialization value, corresponding to the default configuration parameters
-	if application.FailedSigninLimit == 0 {
-		application.FailedSigninLimit = object.DefaultFailedSigninLimit
-	}
-	if application.FailedSigninfrozenTime == 0 {
-		application.FailedSigninfrozenTime = object.DefaultFailedSigninfrozenTime
-	}
-
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
 
