@@ -973,7 +973,7 @@ func (c *ApiController) GetWebhookEventType() {
 // @router /api/get-captcha-status [get]
 func (c *ApiController) GetCaptchaStatus() {
 	organization := c.Input().Get("organization")
-	userId := c.Input().Get("user_id")
+	userId := c.Input().Get("userId")
 	user, err := object.GetUserByFields(organization, userId)
 	if err != nil {
 		c.ResponseError(err.Error())

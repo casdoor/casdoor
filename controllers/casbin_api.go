@@ -264,10 +264,13 @@ func (c *ApiController) BatchEnforce() {
 }
 
 func (c *ApiController) GetAllObjects() {
-	userId := c.GetSessionUsername()
+	userId := c.Input().Get("userId")
 	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
-		return
+		userId = c.GetSessionUsername()
+		if userId == "" {
+			c.ResponseError(c.T("general:Please login first"))
+			return
+		}
 	}
 
 	objects, err := object.GetAllObjects(userId)
@@ -280,10 +283,13 @@ func (c *ApiController) GetAllObjects() {
 }
 
 func (c *ApiController) GetAllActions() {
-	userId := c.GetSessionUsername()
+	userId := c.Input().Get("userId")
 	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
-		return
+		userId = c.GetSessionUsername()
+		if userId == "" {
+			c.ResponseError(c.T("general:Please login first"))
+			return
+		}
 	}
 
 	actions, err := object.GetAllActions(userId)
@@ -296,10 +302,13 @@ func (c *ApiController) GetAllActions() {
 }
 
 func (c *ApiController) GetAllRoles() {
-	userId := c.GetSessionUsername()
+	userId := c.Input().Get("userId")
 	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
-		return
+		userId = c.GetSessionUsername()
+		if userId == "" {
+			c.ResponseError(c.T("general:Please login first"))
+			return
+		}
 	}
 
 	roles, err := object.GetAllRoles(userId)
