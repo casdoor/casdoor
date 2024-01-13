@@ -588,6 +588,10 @@ class LoginPage extends React.Component {
                   },
                   {
                     validator: (_, value) => {
+                      if (value === "") {
+                        return Promise.resolve();
+                      }
+
                       if (this.state.loginMethod === "verificationCode") {
                         if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
                           this.setState({validEmailOrPhone: false});

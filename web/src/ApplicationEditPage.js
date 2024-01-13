@@ -797,7 +797,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
-              <Radio.Group onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
+              <Radio.Group buttonStyle="solid" onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
                 <Radio.Button value={1}>{i18next.t("application:Left")}</Radio.Button>
                 <Radio.Button value={2}>{i18next.t("application:Center")}</Radio.Button>
                 <Radio.Button value={3}>{i18next.t("application:Right")}</Radio.Button>
