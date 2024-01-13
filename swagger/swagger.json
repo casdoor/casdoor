@@ -6761,7 +6761,7 @@
                 "name": {
                     "type": "string"
                 },
-                "nameformat": {
+                "nameFormat": {
                     "type": "string"
                 },
                 "value": {

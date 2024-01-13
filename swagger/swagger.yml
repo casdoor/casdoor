@@ -4451,7 +4451,7 @@ definitions:
     properties:
       name:
         type: string
-      nameformat:
+      nameFormat:
         type: string
       value:
         type: string
