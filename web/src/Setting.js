@@ -1131,36 +1131,28 @@ export function renderLogo(application) {
   }
 }
 
-export function isPasswordEnabled(application) {
-  if (application) {
-    return application.signinMethods.filter(item => item.name === "Password").length > 0;
+function isSigninMethodEnabled(application, signinMethod) {
+  if (application && application.signinMethods) {
+    return application.signinMethods.filter(item => item.name === signinMethod).length > 0;
   } else {
     return false;
   }
+}
+
+export function isPasswordEnabled(application) {
+  return isSigninMethodEnabled(application, "Password");
 }
 
 export function isCodeSigninEnabled(application) {
-  if (application) {
-    return application.signinMethods.filter(item => item.name === "Verification code").length > 0;
-  } else {
-    return false;
-  }
+  return isSigninMethodEnabled(application, "Verification code");
 }
 
 export function isWebAuthnEnabled(application) {
-  if (application) {
-    return application.signinMethods.filter(item => item.name === "WebAuthn").length > 0;
-  } else {
-    return false;
-  }
+  return isSigninMethodEnabled(application, "WebAuthn");
 }
 
 export function isLdapEnabled(application) {
-  if (application) {
-    return application.signinMethods.filter(item => item.name === "LDAP").length > 0;
-  } else {
-    return false;
-  }
+  return isSigninMethodEnabled(application, "LDAP");
 }
 
 export function getLoginLink(application) {
