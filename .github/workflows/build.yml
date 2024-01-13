@@ -235,7 +235,7 @@ jobs:
 
           # Commit and push the changes back to the repository
           git config --global user.name "casbin-bot"
-          git config --global user.email "casbin-bot@github.com"
+          git config --global user.email "bot@casbin.org"
           git add Chart.yaml index.yaml
           git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
           git push origin HEAD:master
