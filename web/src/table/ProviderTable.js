@@ -193,7 +193,7 @@ class ProviderTable extends React.Component {
         title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",
-        width: "100px",
+        width: "120px",
         render: (text, record, index) => {
           if (record.provider?.type === "Google") {
             if (text === "None") {
