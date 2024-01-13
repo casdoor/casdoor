@@ -37,6 +37,7 @@ type SignupItem struct {
 	Prompted    bool   `json:"prompted"`
 	Label       string `json:"label"`
 	Placeholder string `json:"placeholder"`
+	Regex       string `json:"regex"`
 	Rule        string `json:"rule"`
 }
 
