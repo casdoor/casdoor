@@ -217,13 +217,9 @@ jobs:
       - name: Update Helm Chart
         if: steps.should_push.outputs.push=='true'
         run: |
-          # Set the appVersion of the chart to the current tag
+          # Set the appVersion and version of the chart to the current tag
           sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-
-          # increase the patch version of the chart
-          currentChartVersion=$(cat ./charts/casdoor/Chart.yaml | grep ^version | awk '{print $2}')
-          newChartVersion=$(echo $currentChartVersion | awk -F. -v OFS=. '{$NF++;print}')
-          sed -i "s/version: .*/version: $newChartVersion/g" ./charts/casdoor/Chart.yaml
+          sed -i "s/version: .*/version: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
 
           REGISTRY=oci://registry-1.docker.io/casbin
           cd charts/casdoor
@@ -238,4 +234,5 @@ jobs:
           git config --global user.email "bot@casbin.org"
           git add Chart.yaml index.yaml
           git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
-          git push origin HEAD:master
+          git tag ${{steps.get-current-tag.outputs.tag }}
+          git push origin HEAD:master --follow-tags
