@@ -207,6 +207,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_google_cloud.png`,
       url: "https://cloud.google.com/storage",
     },
+    "Synology": {
+      logo: `${StaticBaseUrl}/img/social_synology.png`,
+      url: "https://www.synology.com/en-global/dsm/feature/file_sharing",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -1024,6 +1028,7 @@ export function getProviderTypeOptions(category) {
         {id: "Azure Blob", name: "Azure Blob"},
         {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
         {id: "Google Cloud Storage", name: "Google Cloud Storage"},
+        {id: "Synology", name: "Synology"},
       ]
     );
   } else if (category === "SAML") {
