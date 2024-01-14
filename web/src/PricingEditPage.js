@@ -32,7 +32,6 @@ class PricingEditPage extends React.Component {
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       pricingName: props.match.params.pricingName,
       organizations: [],
-      application: null,
       applications: [],
       pricing: null,
       plans: [],
@@ -287,7 +286,7 @@ class PricingEditPage extends React.Component {
         <Col>
           <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${pricingUrl}`);
-            Setting.showMessage("success", i18next.t("pricing:pricing page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
           >
             {i18next.t("pricing:Copy pricing page URL")}

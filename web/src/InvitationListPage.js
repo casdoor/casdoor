@@ -15,40 +15,43 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Table} from "antd";
-import {ClockCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined, MinusCircleOutlined, SyncOutlined} from "@ant-design/icons";
+import {MinusCircleOutlined, SyncOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
-import * as SubscriptionBackend from "./backend/SubscriptionBackend";
+import * as InvitationBackend from "./backend/InvitationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import copy from "copy-to-clipboard";
 
-class SubscriptionListPage extends BaseListPage {
-  newSubscription() {
+class InvitationListPage extends BaseListPage {
+  newInvitation() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
-
     return {
       owner: owner,
-      name: `sub_${randomName}`,
+      name: `invitation_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Subscription - ${randomName}`,
-      startTime: moment().format(),
-      endTime: moment().add(30, "d").format(),
-      period: "Monthly",
-      description: "",
-      user: "",
-      plan: "",
+      updatedTime: moment().format(),
+      displayName: `New Invitation - ${randomName}`,
+      code: Math.random().toString(36).slice(-10),
+      quota: 1,
+      usedCount: 0,
+      application: "",
+      username: "",
+      email: "",
+      phone: "",
+      signupGroup: "",
       state: "Active",
     };
   }
 
-  addSubscription() {
-    const newSubscription = this.newSubscription();
-    SubscriptionBackend.addSubscription(newSubscription)
+  addInvitation() {
+    const newInvitation = this.newInvitation();
+    InvitationBackend.addInvitation(newInvitation)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/subscriptions/${newSubscription.owner}/${newSubscription.name}`, mode: "add"});
+          this.props.history.push({pathname: `/invitations/${newInvitation.owner}/${newInvitation.name}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
@@ -59,8 +62,8 @@ class SubscriptionListPage extends BaseListPage {
       });
   }
 
-  deleteSubscription(i) {
-    SubscriptionBackend.deleteSubscription(this.state.data[i])
+  deleteInvitation(i) {
+    InvitationBackend.deleteInvitation(this.state.data[i])
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully deleted"));
@@ -77,7 +80,7 @@ class SubscriptionListPage extends BaseListPage {
       });
   }
 
-  renderTable(subscriptions) {
+  renderTable(invitations) {
     const columns = [
       {
         title: i18next.t("general:Name"),
@@ -89,7 +92,7 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("name"),
         render: (text, record, index) => {
           return (
-            <Link to={`/subscriptions/${record.owner}/${record.name}`}>
+            <Link to={`/invitations/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -99,7 +102,7 @@ class SubscriptionListPage extends BaseListPage {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
         key: "owner",
-        width: "120px",
+        width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("owner"),
         render: (text, record, index) => {
@@ -110,10 +113,20 @@ class SubscriptionListPage extends BaseListPage {
           );
         },
       },
+      // {
+      //   title: i18next.t("general:Created time"),
+      //   dataIndex: "createdTime",
+      //   key: "createdTime",
+      //   width: "160px",
+      //   sorter: true,
+      //   render: (text, record, index) => {
+      //     return Setting.getFormattedDate(text);
+      //   },
+      // },
       {
-        title: i18next.t("general:Created time"),
-        dataIndex: "createdTime",
-        key: "createdTime",
+        title: i18next.t("general:Updated time"),
+        dataIndex: "updatedTime",
+        key: "updatedTime",
         width: "160px",
         sorter: true,
         render: (text, record, index) => {
@@ -129,67 +142,66 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
-        title: i18next.t("subscription:Period"),
-        dataIndex: "period",
-        key: "period",
-        width: "140px",
-        ...this.getColumnSearchProps("period"),
+        title: i18next.t("invitation:Code"),
+        dataIndex: "code",
+        key: "code",
+        width: "160px",
+        sorter: true,
+        ...this.getColumnSearchProps("code"),
       },
       {
-        title: i18next.t("subscription:Start time"),
-        dataIndex: "startTime",
-        key: "startTime",
-        width: "140px",
-        ...this.getColumnSearchProps("startTime"),
+        title: i18next.t("invitation:Quota"),
+        dataIndex: "quota",
+        key: "quota",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("quota"),
       },
       {
-        title: i18next.t("subscription:End time"),
-        dataIndex: "endTime",
-        key: "endTime",
-        width: "140px",
-        ...this.getColumnSearchProps("endTime"),
+        title: i18next.t("invitation:Used count"),
+        dataIndex: "usedCount",
+        key: "usedCount",
+        width: "130px",
+        sorter: true,
+        ...this.getColumnSearchProps("usedCount"),
       },
       {
-        title: i18next.t("general:Plan"),
-        dataIndex: "plan",
-        key: "plan",
-        width: "140px",
-        ...this.getColumnSearchProps("plan"),
+        title: i18next.t("general:Application"),
+        dataIndex: "application",
+        key: "application",
+        width: "170px",
+        sorter: true,
+        ...this.getColumnSearchProps("application"),
         render: (text, record, index) => {
           return (
-            <Link to={`/plans/${record.owner}/${text}`}>
+            <Link to={`/applications/${record.owner}/${text}`}>
               {text}
             </Link>
           );
         },
       },
       {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "140px",
-        ...this.getColumnSearchProps("user"),
+        title: i18next.t("general:Email"),
+        dataIndex: "email",
+        key: "email",
+        width: "160px",
+        sorter: true,
+        ...this.getColumnSearchProps("email"),
         render: (text, record, index) => {
           return (
-            <Link to={`/users/${record.owner}/${text}`}>
+            <a href={`mailto:${text}`}>
               {text}
-            </Link>
+            </a>
           );
         },
       },
       {
-        title: i18next.t("general:Payment"),
-        dataIndex: "payment",
-        key: "payment",
-        width: "140px",
-        ...this.getColumnSearchProps("payment"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/payments/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
+        title: i18next.t("general:Phone"),
+        dataIndex: "phone",
+        key: "phone",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("phone"),
       },
       {
         title: i18next.t("general:State"),
@@ -200,16 +212,8 @@ class SubscriptionListPage extends BaseListPage {
         ...this.getColumnSearchProps("state"),
         render: (text, record, index) => {
           switch (text) {
-          case "Pending":
-            return Setting.getTag("processing", i18next.t("subscription:Pending"), <ExclamationCircleOutlined />);
           case "Active":
             return Setting.getTag("success", i18next.t("subscription:Active"), <SyncOutlined spin />);
-          case "Upcoming":
-            return Setting.getTag("warning", i18next.t("subscription:Upcoming"), <ClockCircleOutlined />);
-          case "Expired":
-            return Setting.getTag("warning", i18next.t("subscription:Expired"), <ClockCircleOutlined />);
-          case "Error":
-            return Setting.getTag("error", i18next.t("subscription:Error"), <CloseCircleOutlined />);
           case "Suspended":
             return Setting.getTag("default", i18next.t("subscription:Suspended"), <MinusCircleOutlined />);
           default:
@@ -221,15 +225,21 @@ class SubscriptionListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "230px",
+        width: "350px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/subscriptions/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => {
+                copy(`${window.location.origin}/login/${record.owner}?invitation_code=${record.code}`);
+                Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+              }}>
+                {i18next.t("application:Copy signup page URL")}
+              </Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/invitations/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deleteSubscription(index)}
+                onConfirm={() => this.deleteInvitation(index)}
               >
               </PopconfirmModal>
             </div>
@@ -247,11 +257,11 @@ class SubscriptionListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={subscriptions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "max-content"}} columns={columns} dataSource={invitations} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
-              {i18next.t("general:Subscriptions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addSubscription.bind(this)}>{i18next.t("general:Add")}</Button>
+              {i18next.t("general:Invitations")}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button type="primary" size="small" onClick={this.addInvitation.bind(this)}>{i18next.t("general:Add")}</Button>
             </div>
           )}
           loading={this.state.loading}
@@ -269,7 +279,7 @@ class SubscriptionListPage extends BaseListPage {
       value = params.type;
     }
     this.setState({loading: true});
-    SubscriptionBackend.getSubscriptions(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    InvitationBackend.getInvitations(Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account), params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,
@@ -297,4 +307,4 @@ class SubscriptionListPage extends BaseListPage {
   };
 }
 
-export default SubscriptionListPage;
+export default InvitationListPage;

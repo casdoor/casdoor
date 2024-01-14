@@ -51,9 +51,14 @@ type NotificationForm struct {
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
 // @Param   from    body   controllers.EmailForm    true         "Details of the email request"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /api/send-email [post]
 func (c *ApiController) SendEmail() {
+	user, ok := c.RequireSignedInUser()
+	if !ok {
+		return
+	}
+
 	var emailForm EmailForm
 
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
@@ -108,8 +113,13 @@ func (c *ApiController) SendEmail() {
 	}
 
 	code := "123456"
+
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
-	content := fmt.Sprintf(emailForm.Content, code)
+	content := strings.Replace(provider.Content, "%s", code, 1)
+	if user != nil {
+		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+	}
+
 	for _, receiver := range emailForm.Receivers {
 		err = object.SendEmail(provider, emailForm.Title, content, receiver, emailForm.Sender)
 		if err != nil {
@@ -128,7 +138,7 @@ func (c *ApiController) SendEmail() {
 // @Param   clientId    query    string  true        "The clientId of the application"
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
 // @Param   from    body   controllers.SmsForm    true           "Details of the sms request"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /api/send-sms [post]
 func (c *ApiController) SendSms() {
 	provider, err := c.GetProviderFromContext("SMS")
@@ -166,7 +176,7 @@ func (c *ApiController) SendSms() {
 // @Tag Service API
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   from    body   controllers.NotificationForm    true         "Details of the notification request"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /api/send-notification [post]
 func (c *ApiController) SendNotification() {
 	provider, err := c.GetProviderFromContext("Notification")

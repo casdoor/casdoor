@@ -32,6 +32,7 @@
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.0.0",
     "i18next": "^19.8.9",
+    "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.10.19",
     "moment": "^2.29.1",
     "qrcode.react": "^3.1.0",

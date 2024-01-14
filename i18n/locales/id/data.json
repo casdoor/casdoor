@@ -19,7 +19,8 @@
     "The provider: %s is not enabled for the application": "Penyedia: %s tidak diaktifkan untuk aplikasi ini",
     "Unauthorized operation": "Operasi tidak sah",
     "Unknown authentication type (not password or provider), form = %s": "Jenis otentikasi tidak diketahui (bukan kata sandi atau pemberi), formulir = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags"
+    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
     "Service %s and %s do not match": "Layanan %s dan %s tidak cocok"
@@ -33,11 +34,12 @@
     "Email is invalid": "Email tidak valid",
     "Empty username.": "Nama pengguna kosong.",
     "FirstName cannot be blank": "Nama depan tidak boleh kosong",
+    "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code is invalid": "Invitation code is invalid",
     "LDAP user name or password incorrect": "Nama pengguna atau kata sandi Ldap salah",
     "LastName cannot be blank": "Nama belakang tidak boleh kosong",
     "Multiple accounts with same uid, please check your ldap server": "Beberapa akun dengan uid yang sama, harap periksa server ldap Anda",
     "Organization does not exist": "Organisasi tidak ada",
-    "Password must have at least 6 characters": "Kata sandi harus memiliki minimal 6 karakter",
     "Phone already exists": "Telepon sudah ada",
     "Phone cannot be empty": "Telepon tidak boleh kosong",
     "Phone number is invalid": "Nomor telepon tidak valid",

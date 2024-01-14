@@ -71,7 +71,7 @@ func (c *ApiController) GetEnforcers() {
 // @Tag Enforcer API
 // @Description get enforcer
 // @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
-// @Success 200 {object} object
+// @Success 200 {object} object.Enforcer
 // @router /get-enforcer [get]
 func (c *ApiController) GetEnforcer() {
 	id := c.Input().Get("id")
@@ -99,7 +99,7 @@ func (c *ApiController) GetEnforcer() {
 // @Description update enforcer
 // @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
 // @Param   enforcer     body    object  true        "The enforcer object"
-// @Success 200 {object} object
+// @Success 200 {object} object.Enforcer
 // @router /update-enforcer [post]
 func (c *ApiController) UpdateEnforcer() {
 	id := c.Input().Get("id")
@@ -120,7 +120,7 @@ func (c *ApiController) UpdateEnforcer() {
 // @Tag Enforcer API
 // @Description add enforcer
 // @Param   enforcer     body    object  true        "The enforcer object"
-// @Success 200 {object} object
+// @Success 200 {object} object.Enforcer
 // @router /add-enforcer [post]
 func (c *ApiController) AddEnforcer() {
 	enforcer := object.Enforcer{}
@@ -138,8 +138,8 @@ func (c *ApiController) AddEnforcer() {
 // @Title DeleteEnforcer
 // @Tag Enforcer API
 // @Description delete enforcer
-// @Param   body    body    object.Enforce  true      "The enforcer object"
-// @Success 200 {object} object
+// @Param   body    body    object.Enforcer  true      "The enforcer object"
+// @Success 200 {object} object.Enforcer
 // @router /delete-enforcer [post]
 func (c *ApiController) DeleteEnforcer() {
 	var enforcer object.Enforcer

@@ -29,6 +29,14 @@ import {CaptchaPreview} from "./common/CaptchaPreview";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
 
+import {Controlled as CodeMirror} from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+
+require("codemirror/theme/material-darker.css");
+require("codemirror/mode/htmlmixed/htmlmixed");
+require("codemirror/mode/xml/xml");
+require("codemirror/mode/css/css");
+
 const {Option} = Select;
 const {TextArea} = Input;
 
@@ -480,7 +488,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("port", 465);
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
-                this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
+                this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
                 this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
                 this.updateProviderField("type", "Twilio SMS");
@@ -966,22 +974,47 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
-                    this.updateProviderField("content", e.target.value);
-                  }} />
+                  <Row style={{marginTop: "20px"}} >
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
+                      {i18next.t("provider:Reset to Default Text")}
+                    </Button>
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
+                      {i18next.t("provider:Reset to Default HTML")}
+                    </Button>
+                  </Row>
+                  <Row>
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{height: "300px", margin: "10px"}}>
+                        <CodeMirror
+                          value={this.state.provider.content}
+                          options={{mode: "htmlmixed", theme: "material-darker"}}
+                          onBeforeChange={(editor, data, value) => {
+                            this.updateProviderField("content", value);
+                          }}
+                        />
+                      </div>
+                    </Col>
+                    <Col span={1} />
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{margin: "10px"}}>
+                        <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
+                      </div>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-              <Row style={{marginTop: "20px"}} >
+              <Row style={{marginTop: "20px"}}>
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
                 </Col>
-                <Col span={4} >
-                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your email")} onChange={e => {
-                    this.updateProviderField("receiver", e.target.value);
-                  }} />
+                <Col span={4}>
+                  <Input value={this.state.provider.receiver} placeholder={i18next.t("user:Input your email")}
+                    onChange={e => {
+                      this.updateProviderField("receiver", e.target.value);
+                    }} />
                 </Col>
                 {["Azure ACS"].includes(this.state.provider.type) ? null : (
-                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
                     {i18next.t("provider:Test SMTP Connection")}
                   </Button>
                 )}
@@ -1163,7 +1196,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1179,7 +1212,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={1}>
                   <Button type="primary" onClick={() => {
                     copy(`${authConfig.serverUrl}/api/acs`);
-                    Setting.showMessage("success", i18next.t("provider:Link copied to clipboard successfully"));
+                    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
@@ -1208,7 +1241,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.type === "Alipay") ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:Root Cert"), i18next.t("general:Root Cert - Tooltip"))} :
+                {Setting.getLabel(i18next.t("general:Root cert"), i18next.t("general:Root cert - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Select virtual={false} style={{width: "100%"}} value={this.state.provider.metadata} onChange={(value => {this.updateProviderField("metadata", value);})}>

@@ -17,6 +17,10 @@ import {Button, Card, Col, Input, Row} from "antd";
 import * as TokenBackend from "./backend/TokenBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import copy from "copy-to-clipboard";
+import {jwtDecode} from "jwt-decode";
+
+const {TextArea} = Input;
 
 class TokenEditPage extends React.Component {
   constructor(props) {
@@ -69,7 +73,20 @@ class TokenEditPage extends React.Component {
     });
   }
 
+  parseAccessToken(accessToken) {
+    try {
+      const parsedHeader = JSON.stringify(jwtDecode(accessToken, {header: true}), null, 2);
+      const parsedPayload = JSON.stringify(jwtDecode(accessToken), null, 2);
+      const res = parsedHeader + "." + parsedPayload;
+      return res;
+    } catch (error) {
+      return error.message;
+    }
+  }
+
   renderToken() {
+    const editorWidth = Setting.isMobile() ? 22 : 9;
+    const parsedResult = this.parseAccessToken(this.state.token.accessToken);
     return (
       <Card size="small" title={
         <div>
@@ -81,7 +98,7 @@ class TokenEditPage extends React.Component {
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         <Row style={{marginTop: "10px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Name")}:
+            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.name} onChange={e => {
@@ -91,7 +108,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Application")}:
+            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.application} onChange={e => {
@@ -101,7 +118,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:Organization")}:
+            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input disabled={!Setting.isAdminUser(this.props.account)} value={this.state.token.organization} onChange={e => {
@@ -111,7 +128,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("general:User")}:
+            {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.user} onChange={e => {
@@ -121,7 +138,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("token:Authorization code")}:
+            {Setting.getLabel(i18next.t("token:Authorization code"), i18next.t("token:Authorization code - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.code} onChange={e => {
@@ -131,17 +148,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("token:Access token")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.token.accessToken} onChange={e => {
-              this.updateTokenField("accessToken", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("token:Expires in")}:
+            {Setting.getLabel(i18next.t("token:Expires in"), i18next.t("token:Expires in - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.expiresIn} onChange={e => {
@@ -151,7 +158,7 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("provider:Scope")}:
+            {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))}
           </Col>
           <Col span={22} >
             <Input value={this.state.token.scope} onChange={e => {
@@ -161,12 +168,43 @@ class TokenEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("token:Token type")}:
+            {Setting.getLabel(i18next.t("token:Token type"), i18next.t("token:Token type - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.token.tokenType} onChange={e => {
               this.updateTokenField("tokenType", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("token:Access token"), i18next.t("token:Access token - Tooltip"))} :
+          </Col>
+          <Col span={editorWidth} >
+            <Button type="primary" style={{marginRight: "10px", marginBottom: "10px"}} disabled={this.state.token.accessToken === ""} onClick={() => {
+              copy(this.state.token.accessToken);
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+            }}
+            >
+              {i18next.t("token:Copy access token")}
+            </Button>
+            <TextArea autoSize={{minRows: 10, maxRows: 200}} value={this.state.token.accessToken} onChange={e => {
+              this.updateTokenField("accessToken", e.target.value);
+            }} />
+          </Col>
+          <Col span={1} />
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("token:Parsed result"), i18next.t("token:Parsed result - Tooltip"))} :
+          </Col>
+          <Col span={editorWidth} >
+            <Button type="primary" style={{marginRight: "10px", marginBottom: "10px"}} disabled={!parsedResult.includes("\"alg\":")} onClick={() => {
+              copy(parsedResult);
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+            }}
+            >
+              {i18next.t("token:Copy parsed result")}
+            </Button>
+            <TextArea autoSize={{minRows: 10, maxRows: 200}} value={parsedResult} />
           </Col>
         </Row>
       </Card>

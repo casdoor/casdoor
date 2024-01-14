@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -199,7 +199,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   parseApplicationField(key, value) {
-    if (["expireInHours", "refreshExpireInHours", "offset"].includes(key)) {
+    if (["offset"].includes(key)) {
       value = Setting.myParseInt(value);
     }
     return value;
@@ -394,8 +394,8 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input style={{width: "150px"}} value={this.state.application.expireInHours} suffix="Hours" onChange={e => {
-              this.updateApplicationField("expireInHours", e.target.value);
+            <InputNumber style={{width: "150px"}} value={this.state.application.expireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+              this.updateApplicationField("expireInHours", value);
             }} />
           </Col>
         </Row>
@@ -404,8 +404,28 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input style={{width: "150px"}} value={this.state.application.refreshExpireInHours} suffix="Hours" onChange={e => {
-              this.updateApplicationField("refreshExpireInHours", e.target.value);
+            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+              this.updateApplicationField("refreshExpireInHours", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1} precision={0} addonAfter="Times" onChange={value => {
+              this.updateApplicationField("failedSigninLimit", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninfrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
+              this.updateApplicationField("failedSigninfrozenTime", value);
             }} />
           </Col>
         </Row>
@@ -676,7 +696,7 @@ class ApplicationEditPage extends React.Component {
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
               copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}`);
-              Setting.showMessage("success", i18next.t("application:SAML metadata URL copied to clipboard successfully"));
+              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
               {i18next.t("application:Copy SAML metadata URL")}
@@ -885,7 +905,7 @@ class ApplicationEditPage extends React.Component {
                         <Space>
                           <Button icon={<CopyOutlined />} onClick={() => {
                             copy(item.code);
-                            Setting.showMessage("success", i18next.t("application:Invitation code copied to clipboard successfully"));
+                            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
                           }
                           }>
                             {i18next.t("general:Copy")}
@@ -939,7 +959,7 @@ class ApplicationEditPage extends React.Component {
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signUpUrl}`);
-            Setting.showMessage("success", i18next.t("application:Signup page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
           >
             {i18next.t("application:Copy signup page URL")}
@@ -971,7 +991,7 @@ class ApplicationEditPage extends React.Component {
         <Col span={previewGrid}>
           <Button style={{marginBottom: "10px", marginTop: Setting.isMobile() ? "15px" : "0"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
             copy(`${window.location.origin}${signInUrl}`);
-            Setting.showMessage("success", i18next.t("application:Signin page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
           }}
           >
             {i18next.t("application:Copy signin page URL")}
@@ -1004,7 +1024,7 @@ class ApplicationEditPage extends React.Component {
       <Col span={previewGrid}>
         <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
           copy(`${window.location.origin}${promptUrl}`);
-          Setting.showMessage("success", i18next.t("application:Prompt page URL copied to clipboard successfully, please paste it into the incognito window or another browser"));
+          Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
         }}
         >
           {i18next.t("application:Copy prompt page URL")}

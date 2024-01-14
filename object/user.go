@@ -886,6 +886,18 @@ func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
 }
 
+func (user *User) GetFriendlyName() string {
+	if user.FirstName != "" && user.LastName != "" {
+		return fmt.Sprintf("%s, %s", user.FirstName, user.LastName)
+	} else if user.DisplayName != "" {
+		return user.DisplayName
+	} else if user.Name != "" {
+		return user.Name
+	} else {
+		return user.Id
+	}
+}
+
 func isUserIdGlobalAdmin(userId string) bool {
 	return strings.HasPrefix(userId, "built-in/") || strings.HasPrefix(userId, "app/")
 }

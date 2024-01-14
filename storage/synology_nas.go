@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2023 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +15,16 @@
 package storage
 
 import (
-	awss3 "github.com/aws/aws-sdk-go/service/s3"
 	"github.com/casdoor/oss"
-	"github.com/casdoor/oss/s3"
+	"github.com/casdoor/oss/synology"
 )
 
-func NewAwsS3StorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
-	sp := s3.New(&s3.Config{
-		AccessID:   clientId,
-		AccessKey:  clientSecret,
-		Region:     region,
-		Bucket:     bucket,
-		Endpoint:   endpoint,
-		S3Endpoint: endpoint,
-		ACL:        awss3.BucketCannedACLPublicRead,
+func NewSynologyNasStorageProvider(clientId string, clientSecret string, endpoint string, sharedFolder string) oss.StorageInterface {
+	sp := synology.New(&synology.Config{
+		AccessID:     clientId,
+		AccessKey:    clientSecret,
+		Endpoint:     endpoint,
+		SharedFolder: sharedFolder,
 	})
 
 	return sp

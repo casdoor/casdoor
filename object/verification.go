@@ -89,7 +89,10 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	}
 
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
-	content := fmt.Sprintf(provider.Content, code)
+	content := strings.Replace(provider.Content, "%s", code, 1)
+	if user != nil {
+		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+	}
 
 	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
 		return err

@@ -28,8 +28,9 @@ import (
 )
 
 const (
-	SigninWrongTimesLimit     = 5
-	LastSignWrongTimeDuration = time.Minute * 15
+	DefaultFailedSigninLimit = 5
+	// DefaultFailedSigninfrozenTime The unit of frozen time is minutes
+	DefaultFailedSigninfrozenTime = 15
 )
 
 func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
@@ -143,10 +144,15 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 }
 
 func checkSigninErrorTimes(user *User, lang string) error {
-	if user.SigninWrongTimes >= SigninWrongTimesLimit {
+	failedSigninLimit, failedSigninfrozenTime, err := GetFailedSigninConfigByUser(user)
+	if err != nil {
+		return err
+	}
+
+	if user.SigninWrongTimes >= failedSigninLimit {
 		lastSignWrongTime, _ := time.Parse(time.RFC3339, user.LastSigninWrongTime)
 		passedTime := time.Now().UTC().Sub(lastSignWrongTime)
-		minutes := int(LastSignWrongTimeDuration.Minutes() - passedTime.Minutes())
+		minutes := failedSigninfrozenTime - int(passedTime.Minutes())
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if minutes > 0 {
@@ -479,7 +485,14 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 				if err != nil {
 					return false, err
 				}
-				return user != nil && user.SigninWrongTimes >= SigninWrongTimesLimit, nil
+
+				var failedSigninLimit int
+				if application.FailedSigninLimit == 0 {
+					failedSigninLimit = 5
+				} else {
+					failedSigninLimit = application.FailedSigninLimit
+				}
+				return user != nil && user.SigninWrongTimes >= failedSigninLimit, nil
 			}
 			return providerItem.Rule == "Always", nil
 		}

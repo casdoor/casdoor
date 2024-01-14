@@ -90,6 +90,9 @@ type Application struct {
 	FormOffset           int        `json:"formOffset"`
 	FormSideHtml         string     `xorm:"mediumtext" json:"formSideHtml"`
 	FormBackgroundUrl    string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
+
+	FailedSigninLimit      int `json:"failedSigninLimit"`
+	FailedSigninfrozenTime int `json:"failedSigninfrozenTime"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {

@@ -146,7 +146,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 }
 
 // WebAuthnSigninFinish
-// @Title WebAuthnSigninBegin
+// @Title WebAuthnSigninFinish
 // @Tag Login API
 // @Description WebAuthn Login Flow 2nd stage
 // @Param   body    body   protocol.CredentialAssertionResponse  true        "authenticator assertion Response"

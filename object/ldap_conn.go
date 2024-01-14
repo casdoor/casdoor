@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
@@ -356,7 +357,8 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	var existUuids []string
 
-	err := ormer.Engine.Table("user").Where("owner = ?", owner).Cols("ldap").
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
+	err := ormer.Engine.Table(tableNamePrefix+"user").Where("owner = ?", owner).Cols("ldap").
 		In("ldap", uuids).Select("DISTINCT ldap").Find(&existUuids)
 	if err != nil {
 		return existUuids, err

@@ -222,7 +222,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param   redirectUri    query    string  true        "redirect uri"
 // @Param   scope    query    string  true        "scope"
 // @Param   state    query    string  true        "state"
-// @Success 200 {object}  Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /get-app-login [get]
 func (c *ApiController) GetApplicationLogin() {
 	clientId := c.Input().Get("clientId")
@@ -887,6 +887,7 @@ func (c *ApiController) HandleSamlLogin() {
 // @Tag HandleOfficialAccountEvent API
 // @Title HandleOfficialAccountEvent
 // @router /api/webhook [POST]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) HandleOfficialAccountEvent() {
 	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
@@ -917,6 +918,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 // @Tag GetWebhookEventType API
 // @Title GetWebhookEventType
 // @router /api/get-webhook-event [GET]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetWebhookEventType() {
 	lock.Lock()
 	defer lock.Unlock()
@@ -946,8 +948,14 @@ func (c *ApiController) GetCaptchaStatus() {
 		return
 	}
 
+	failedSigninLimit, _, err := object.GetFailedSigninConfigByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	var captchaEnabled bool
-	if user != nil && user.SigninWrongTimes >= object.SigninWrongTimesLimit {
+	if user != nil && user.SigninWrongTimes >= failedSigninLimit {
 		captchaEnabled = true
 	}
 	c.ResponseOk(captchaEnabled)
@@ -958,6 +966,7 @@ func (c *ApiController) GetCaptchaStatus() {
 // @Tag Callback API
 // @Description Get Login Error Counts
 // @router /api/Callback [post]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")
