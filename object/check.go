@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -32,89 +33,89 @@ const (
 	DefaultFailedSigninFrozenTime = 15
 )
 
-func CheckUserSignup(application *Application, organization *Organization, form *form.AuthForm, lang string) string {
+func CheckUserSignup(application *Application, organization *Organization, authForm *form.AuthForm, lang string) string {
 	if organization == nil {
 		return i18n.Translate(lang, "check:Organization does not exist")
 	}
 
 	if application.IsSignupItemVisible("Username") {
-		if len(form.Username) <= 1 {
+		if len(authForm.Username) <= 1 {
 			return i18n.Translate(lang, "check:Username must have at least 2 characters")
 		}
-		if unicode.IsDigit(rune(form.Username[0])) {
+		if unicode.IsDigit(rune(authForm.Username[0])) {
 			return i18n.Translate(lang, "check:Username cannot start with a digit")
 		}
-		if util.IsEmailValid(form.Username) {
+		if util.IsEmailValid(authForm.Username) {
 			return i18n.Translate(lang, "check:Username cannot be an email address")
 		}
-		if util.ReWhiteSpace.MatchString(form.Username) {
+		if util.ReWhiteSpace.MatchString(authForm.Username) {
 			return i18n.Translate(lang, "check:Username cannot contain white spaces")
 		}
 
-		if msg := CheckUsername(form.Username, lang); msg != "" {
+		if msg := CheckUsername(authForm.Username, lang); msg != "" {
 			return msg
 		}
 
-		if HasUserByField(organization.Name, "name", form.Username) {
+		if HasUserByField(organization.Name, "name", authForm.Username) {
 			return i18n.Translate(lang, "check:Username already exists")
 		}
-		if HasUserByField(organization.Name, "email", form.Email) {
+		if HasUserByField(organization.Name, "email", authForm.Email) {
 			return i18n.Translate(lang, "check:Email already exists")
 		}
-		if HasUserByField(organization.Name, "phone", form.Phone) {
+		if HasUserByField(organization.Name, "phone", authForm.Phone) {
 			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
 
 	if application.IsSignupItemVisible("Password") {
-		msg := CheckPasswordComplexityByOrg(organization, form.Password)
+		msg := CheckPasswordComplexityByOrg(organization, authForm.Password)
 		if msg != "" {
 			return msg
 		}
 	}
 
 	if application.IsSignupItemVisible("Email") {
-		if form.Email == "" {
+		if authForm.Email == "" {
 			if application.IsSignupItemRequired("Email") {
 				return i18n.Translate(lang, "check:Email cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "email", form.Email) {
+			if HasUserByField(organization.Name, "email", authForm.Email) {
 				return i18n.Translate(lang, "check:Email already exists")
-			} else if !util.IsEmailValid(form.Email) {
+			} else if !util.IsEmailValid(authForm.Email) {
 				return i18n.Translate(lang, "check:Email is invalid")
 			}
 		}
 	}
 
 	if application.IsSignupItemVisible("Phone") {
-		if form.Phone == "" {
+		if authForm.Phone == "" {
 			if application.IsSignupItemRequired("Phone") {
 				return i18n.Translate(lang, "check:Phone cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "phone", form.Phone) {
+			if HasUserByField(organization.Name, "phone", authForm.Phone) {
 				return i18n.Translate(lang, "check:Phone already exists")
-			} else if !util.IsPhoneAllowInRegin(form.CountryCode, organization.CountryCodes) {
+			} else if !util.IsPhoneAllowInRegin(authForm.CountryCode, organization.CountryCodes) {
 				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
-			} else if !util.IsPhoneValid(form.Phone, form.CountryCode) {
+			} else if !util.IsPhoneValid(authForm.Phone, authForm.CountryCode) {
 				return i18n.Translate(lang, "check:Phone number is invalid")
 			}
 		}
 	}
 
 	if application.IsSignupItemVisible("Display name") {
-		if application.GetSignupItemRule("Display name") == "First, last" && (form.FirstName != "" || form.LastName != "") {
-			if form.FirstName == "" {
+		if application.GetSignupItemRule("Display name") == "First, last" && (authForm.FirstName != "" || authForm.LastName != "") {
+			if authForm.FirstName == "" {
 				return i18n.Translate(lang, "check:FirstName cannot be blank")
-			} else if form.LastName == "" {
+			} else if authForm.LastName == "" {
 				return i18n.Translate(lang, "check:LastName cannot be blank")
 			}
 		} else {
-			if form.Name == "" {
+			if authForm.Name == "" {
 				return i18n.Translate(lang, "check:DisplayName cannot be blank")
 			} else if application.GetSignupItemRule("Display name") == "Real name" {
-				if !isValidRealName(form.Name) {
+				if !isValidRealName(authForm.Name) {
 					return i18n.Translate(lang, "check:DisplayName is not valid real name")
 				}
 			}
@@ -122,20 +123,41 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 	}
 
 	if application.IsSignupItemVisible("Affiliation") {
-		if form.Affiliation == "" {
+		if authForm.Affiliation == "" {
 			return i18n.Translate(lang, "check:Affiliation cannot be blank")
 		}
 	}
 
 	if len(application.InvitationCodes) > 0 {
-		if form.InvitationCode == "" {
+		if authForm.InvitationCode == "" {
 			if application.IsSignupItemRequired("Invitation code") {
 				return i18n.Translate(lang, "check:Invitation code cannot be blank")
 			}
 		} else {
-			if !util.InSlice(application.InvitationCodes, form.InvitationCode) {
+			if !util.InSlice(application.InvitationCodes, authForm.InvitationCode) {
 				return i18n.Translate(lang, "check:Invitation code is invalid")
 			}
+		}
+	}
+
+	for _, signupItem := range application.SignupItems {
+		if signupItem.Regex == "" {
+			continue
+		}
+
+		isString, value := form.GetAuthFormFieldValue(authForm, signupItem.Name)
+		if !isString {
+			continue
+		}
+
+		regexSignupItem, err := regexp.Compile(signupItem.Regex)
+		if err != nil {
+			return err.Error()
+		}
+
+		matched := regexSignupItem.MatchString(value)
+		if !matched {
+			return fmt.Sprintf(i18n.Translate(lang, "check:The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\""), value, signupItem.Name, application.Name)
 		}
 	}
 

@@ -14,6 +14,8 @@
 
 package form
 
+import "reflect"
+
 type AuthForm struct {
 	Type         string `json:"type"`
 	SigninMethod string `json:"signinMethod"`
@@ -59,4 +61,14 @@ type AuthForm struct {
 
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`
+}
+
+func GetAuthFormFieldValue(form *AuthForm, fieldName string) (bool, string) {
+	val := reflect.ValueOf(*form)
+	fieldValue := val.FieldByName(fieldName)
+
+	if fieldValue.IsValid() && fieldValue.Kind() == reflect.String {
+		return true, fieldValue.String()
+	}
+	return false, ""
 }
