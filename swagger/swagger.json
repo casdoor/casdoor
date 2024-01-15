@@ -734,7 +734,7 @@
         "/api/batch-enforce": {
             "post": {
                 "tags": [
-                    "Enforce API"
+                    "Enforcer API"
                 ],
                 "description": "Call Casbin BatchEnforce API",
                 "operationId": "ApiController.BatchEnforce",
@@ -1493,7 +1493,7 @@
         "/api/enforce": {
             "post": {
                 "tags": [
-                    "Enforce API"
+                    "Enforcer API"
                 ],
                 "description": "Call Casbin Enforce API",
                 "operationId": "ApiController.Enforce",
@@ -1826,7 +1826,7 @@
         "/api/get-dashboard": {
             "get": {
                 "tags": [
-                    "GetDashboard API"
+                    "System API"
                 ],
                 "description": "get information of dashboard",
                 "operationId": "ApiController.GetDashboard",
@@ -2696,7 +2696,7 @@
         "/api/get-prometheus-info": {
             "get": {
                 "tags": [
-                    "Prometheus API"
+                    "System API"
                 ],
                 "description": "get Prometheus Info",
                 "operationId": "ApiController.GetPrometheusInfo",
@@ -3436,7 +3436,7 @@
         "/api/get-webhook-event": {
             "get": {
                 "tags": [
-                    "GetWebhookEventType API"
+                    "System API"
                 ],
                 "operationId": "ApiController.GetWebhookEventType",
                 "responses": {
@@ -3703,6 +3703,9 @@
         },
         "/api/login/oauth/introspect": {
             "post": {
+                "tags": [
+                    "Login API"
+                ],
                 "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a",
                 "operationId": "ApiController.IntrospectToken",
                 "parameters": [
@@ -5306,7 +5309,7 @@
         "/api/webhook": {
             "post": {
                 "tags": [
-                    "HandleOfficialAccountEvent API"
+                    "System API"
                 ],
                 "operationId": "ApiController.HandleOfficialAccountEvent",
                 "responses": {

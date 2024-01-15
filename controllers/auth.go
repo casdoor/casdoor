@@ -916,7 +916,7 @@ func (c *ApiController) HandleSamlLogin() {
 }
 
 // HandleOfficialAccountEvent ...
-// @Tag HandleOfficialAccountEvent API
+// @Tag System API
 // @Title HandleOfficialAccountEvent
 // @router /webhook [POST]
 // @Success 200 {object} object.Userinfo The Response object
@@ -947,7 +947,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 }
 
 // GetWebhookEventType ...
-// @Tag GetWebhookEventType API
+// @Tag System API
 // @Title GetWebhookEventType
 // @router /get-webhook-event [GET]
 // @Success 200 {object} object.Userinfo The Response object

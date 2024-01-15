@@ -273,6 +273,7 @@ func (c *ApiController) RefreshToken() {
 
 // IntrospectToken
 // @Title IntrospectToken
+// @Tag Login API
 // @Description The introspection endpoint is an OAuth 2.0 endpoint that takes a
 // parameter representing an OAuth 2.0 token and returns a JSON document
 // representing the meta information surrounding the

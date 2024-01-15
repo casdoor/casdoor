@@ -24,7 +24,7 @@ import (
 
 // Enforce
 // @Title Enforce
-// @Tag Enforce API
+// @Tag Enforcer API
 // @Description Call Casbin Enforce API
 // @Param   body    body   []string  true   "Casbin request"
 // @Param   permissionId    query   string  false   "permission id"
@@ -151,7 +151,7 @@ func (c *ApiController) Enforce() {
 
 // BatchEnforce
 // @Title BatchEnforce
-// @Tag Enforce API
+// @Tag Enforcer API
 // @Description Call Casbin BatchEnforce API
 // @Param   body    body   []string  true   "array of casbin requests"
 // @Param   permissionId    query   string  false   "permission id"

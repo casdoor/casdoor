@@ -20,7 +20,7 @@ import (
 
 // GetPrometheusInfo
 // @Title GetPrometheusInfo
-// @Tag Prometheus API
+// @Tag System API
 // @Description get Prometheus Info
 // @Success 200 {object} object.PrometheusInfo The Response object
 // @router /get-prometheus-info [get]

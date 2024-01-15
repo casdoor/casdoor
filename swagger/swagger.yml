@@ -474,7 +474,7 @@ paths:
   /api/batch-enforce:
     post:
       tags:
-      - Enforce API
+      - Enforcer API
       description: Call Casbin BatchEnforce API
       operationId: ApiController.BatchEnforce
       parameters:
@@ -963,7 +963,7 @@ paths:
   /api/enforce:
     post:
       tags:
-      - Enforce API
+      - Enforcer API
       description: Call Casbin Enforce API
       operationId: ApiController.Enforce
       parameters:
@@ -1182,7 +1182,7 @@ paths:
   /api/get-dashboard:
     get:
       tags:
-      - GetDashboard API
+      - System API
       description: get information of dashboard
       operationId: ApiController.GetDashboard
       responses:
@@ -1751,7 +1751,7 @@ paths:
   /api/get-prometheus-info:
     get:
       tags:
-      - Prometheus API
+      - System API
       description: get Prometheus Info
       operationId: ApiController.GetPrometheusInfo
       responses:
@@ -2238,7 +2238,7 @@ paths:
   /api/get-webhook-event:
     get:
       tags:
-      - GetWebhookEventType API
+      - System API
       operationId: ApiController.GetWebhookEventType
       responses:
         "200":
@@ -2414,6 +2414,8 @@ paths:
             $ref: '#/definitions/object.TokenError'
   /api/login/oauth/introspect:
     post:
+      tags:
+      - Login API
       description: The introspection endpoint is an OAuth 2.0 endpoint that takes a
       operationId: ApiController.IntrospectToken
       parameters:
@@ -3467,7 +3469,7 @@ paths:
   /api/webhook:
     post:
       tags:
-      - HandleOfficialAccountEvent API
+      - System API
       operationId: ApiController.HandleOfficialAccountEvent
       responses:
         "200":
