@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Package routers
-// @APIVersion 1.376.1
+// @APIVersion 1.503.0
 // @Title Casdoor RESTful API
 // @Description Swagger Docs of Casdoor Backend API
 // @Contact casbin@googlegroups.com
