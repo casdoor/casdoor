@@ -24,7 +24,7 @@ var (
 	regexLowerCase = regexp.MustCompile(`[a-z]`)
 	regexUpperCase = regexp.MustCompile(`[A-Z]`)
 	regexDigit     = regexp.MustCompile(`\d`)
-	regexSpecial   = regexp.MustCompile(`[!@#$%^&*]`)
+	regexSpecial   = regexp.MustCompile("[!-/:-@[-`{-~]")
 )
 
 func isValidOption_AtLeast6(password string) string {
