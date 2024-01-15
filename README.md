@@ -69,6 +69,7 @@ https://casdoor.org
 
 - By source code: https://casdoor.org/docs/basic/server-installation
 - By Docker: https://casdoor.org/docs/basic/try-with-docker
+- By Kubernetes Helm: https://casdoor.org/docs/basic/try-with-helm
 
 ## How to connect to Casdoor?
 
