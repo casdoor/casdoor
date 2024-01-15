@@ -14,6 +14,10 @@
 
 package object
 
+import (
+	"github.com/casdoor/casdoor/util"
+)
+
 func (application *Application) GetProviderByCategory(category string) (*Provider, error) {
 	providers, err := GetProviders(application.Organization)
 	if err != nil {
@@ -54,6 +58,16 @@ func (application *Application) getSignupItem(itemName string) *SignupItem {
 	for _, signupItem := range application.SignupItems {
 		if signupItem.Name == itemName {
 			return signupItem
+		} else if signupItem.Name == "Display name" {
+			if signupItem.Rule == "First, last" && (itemName == "FirstName" || itemName == "LastName") {
+				return signupItem
+			} else if signupItem.Rule == "Real name" && itemName == "Name" {
+				return signupItem
+			} else if signupItem.Rule == "None" && itemName == "Name" {
+				return signupItem
+			}
+		} else if signupItem.Name == "Country/Region" && itemName == "Region" {
+			return signupItem
 		}
 	}
 	return nil
@@ -75,6 +89,28 @@ func (application *Application) IsSignupItemRequired(itemName string) bool {
 	}
 
 	return signupItem.Required
+}
+
+func (application *Application) IsSignupItemRegex(itemName string) (bool, string) {
+	signupItem := application.getSignupItem(itemName)
+	if signupItem == nil || signupItem.Regex == "" {
+		return false, ""
+	}
+
+	return true, signupItem.Regex
+}
+
+func (application *Application) validRegex(formItem string, itemName string) (bool, string) {
+	valid := true
+	regexNotNull, Regex := application.IsSignupItemRegex(itemName)
+	if regexNotNull {
+		var errMsg string
+		valid, errMsg = util.IsStringValidRegex(formItem, Regex)
+		if errMsg != "" {
+			return true, errMsg
+		}
+	}
+	return valid, ""
 }
 
 func (si *SignupItem) isSignupItemPrompted() bool {

@@ -16,6 +16,8 @@ package object
 
 import (
 	"fmt"
+	"log"
+	"reflect"
 	"strings"
 	"time"
 	"unicode"
@@ -135,6 +137,23 @@ func CheckUserSignup(application *Application, organization *Organization, form 
 		} else {
 			if !util.InSlice(application.InvitationCodes, form.InvitationCode) {
 				return i18n.Translate(lang, "check:Invitation code is invalid")
+			}
+		}
+	}
+
+	formType := reflect.TypeOf(form).Elem()
+
+	for i := 0; i < formType.NumField(); i++ {
+		formItemField := formType.Field(i)
+		formItemName := formItemField.Name
+		if application.IsSignupItemVisible(formItemName) {
+			formItemValue := reflect.ValueOf(form).Elem().FieldByName(formItemName).String()
+			valid, errMsg := application.validRegex(formItemValue, formItemName)
+			if errMsg != "" {
+				log.Println(errMsg)
+			}
+			if !valid {
+				return i18n.Translate(lang, fmt.Sprintf("check:%s is not allowed", formItemName))
 			}
 		}
 	}

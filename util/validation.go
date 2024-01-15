@@ -41,6 +41,14 @@ func IsEmailValid(email string) bool {
 	return err == nil
 }
 
+func IsStringValidRegex(String string, Regex string) (bool, string) {
+	regex, err := regexp.Compile(Regex)
+	if err != nil {
+		return false, err.Error()
+	}
+	return regex.MatchString(String), ""
+}
+
 func IsPhoneValid(phone string, countryCode string) bool {
 	phoneNumber, err := phonenumbers.Parse(phone, countryCode)
 	if err != nil {

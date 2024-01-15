@@ -230,7 +230,7 @@ class SignupTable extends React.Component {
         key: "regex",
         width: "200px",
         render: (text, record, index) => {
-          if (record.name.startsWith("Text ") || record.name === "Password" || record.name === "Confirm password") {
+          if (record.name.startsWith("Text ") || record.name === "Password" || record.name === "Confirm password" || record.name === "Agreement" || record.name === "Invitation code") {
             return null;
           }
 
