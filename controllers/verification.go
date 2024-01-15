@@ -272,7 +272,7 @@ func (c *ApiController) VerifyCaptcha() {
 // ResetEmailOrPhone ...
 // @Tag Account API
 // @Title ResetEmailOrPhone
-// @router /api/reset-email-or-phone [post]
+// @router /reset-email-or-phone [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) ResetEmailOrPhone() {
 	user, ok := c.RequireSignedInUser()
@@ -367,7 +367,7 @@ func (c *ApiController) ResetEmailOrPhone() {
 // VerifyCode
 // @Tag Verification API
 // @Title VerifyCode
-// @router /api/verify-code [post]
+// @router /verify-code [post]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) VerifyCode() {
 	var authForm form.AuthForm

@@ -52,7 +52,7 @@ type NotificationForm struct {
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
 // @Param   from    body   controllers.EmailForm    true         "Details of the email request"
 // @Success 200 {object} controllers.Response The Response object
-// @router /api/send-email [post]
+// @router /send-email [post]
 func (c *ApiController) SendEmail() {
 	userId, ok := c.RequireSignedIn()
 	if !ok {
@@ -148,7 +148,7 @@ func (c *ApiController) SendEmail() {
 // @Param   clientSecret    query    string  true    "The clientSecret of the application"
 // @Param   from    body   controllers.SmsForm    true           "Details of the sms request"
 // @Success 200 {object} controllers.Response The Response object
-// @router /api/send-sms [post]
+// @router /send-sms [post]
 func (c *ApiController) SendSms() {
 	provider, err := c.GetProviderFromContext("SMS")
 	if err != nil {
@@ -186,7 +186,7 @@ func (c *ApiController) SendSms() {
 // @Description This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
 // @Param   from    body   controllers.NotificationForm    true         "Details of the notification request"
 // @Success 200 {object} controllers.Response The Response object
-// @router /api/send-notification [post]
+// @router /send-notification [post]
 func (c *ApiController) SendNotification() {
 	provider, err := c.GetProviderFromContext("Notification")
 	if err != nil {

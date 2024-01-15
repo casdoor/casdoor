@@ -453,7 +453,7 @@ func (c *ApiController) GetUserinfo2() {
 // GetCaptcha ...
 // @Tag Login API
 // @Title GetCaptcha
-// @router /api/get-captcha [get]
+// @router /get-captcha [get]
 // @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
