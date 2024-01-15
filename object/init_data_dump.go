@@ -36,6 +36,11 @@ func writeInitDataToFile(filePath string) error {
 		return err
 	}
 
+	groups, err := GetGroups("")
+	if err != nil {
+		return err
+	}
+
 	certs, err := GetCerts("")
 	if err != nil {
 		return err
@@ -96,10 +101,21 @@ func writeInitDataToFile(filePath string) error {
 		return err
 	}
 
+	adapters, err := GetAdapters("")
+	if err != nil {
+		return err
+	}
+
+	enforcers, err := GetEnforcers("")
+	if err != nil {
+		return err
+	}
+
 	data := &InitData{
 		Organizations: organizations,
 		Applications:  applications,
 		Users:         users,
+		Groups:        groups,
 		Certs:         certs,
 		Providers:     providers,
 		Ldaps:         ldaps,
@@ -112,6 +128,8 @@ func writeInitDataToFile(filePath string) error {
 		Syncers:       syncers,
 		Tokens:        tokens,
 		Webhooks:      webhooks,
+		Adapters:      adapters,
+		Enforcers:     enforcers,
 	}
 
 	text := util.StructToJsonFormatted(data)

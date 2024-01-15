@@ -23,6 +23,7 @@ type InitData struct {
 	Organizations []*Organization `json:"organizations"`
 	Applications  []*Application  `json:"applications"`
 	Users         []*User         `json:"users"`
+	Groups        []*Group        `json:"groups"`
 	Certs         []*Cert         `json:"certs"`
 	Providers     []*Provider     `json:"providers"`
 	Ldaps         []*Ldap         `json:"ldaps"`
@@ -35,6 +36,8 @@ type InitData struct {
 	Syncers       []*Syncer       `json:"syncers"`
 	Tokens        []*Token        `json:"tokens"`
 	Webhooks      []*Webhook      `json:"webhooks"`
+	Adapters      []*Adapter      `json:"adapters"`
+	Enforcers     []*Enforcer     `json:"enforcers"`
 }
 
 func InitFromFile() {
@@ -57,6 +60,9 @@ func InitFromFile() {
 		}
 		for _, user := range initData.Users {
 			initDefinedUser(user)
+		}
+		for _, group := range initData.Groups {
+			initDefinedGroup(group)
 		}
 		for _, application := range initData.Applications {
 			initDefinedApplication(application)
@@ -94,6 +100,12 @@ func InitFromFile() {
 		for _, webhook := range initData.Webhooks {
 			initDefinedWebhook(webhook)
 		}
+		for _, adapter := range initData.Adapters {
+			initDefinedAdapter(adapter)
+		}
+		for _, enforcer := range initData.Enforcers {
+			initDefinedEnforcer(enforcer)
+		}
 	}
 }
 
@@ -108,6 +120,7 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Organizations: []*Organization{},
 		Applications:  []*Application{},
 		Users:         []*User{},
+		Groups:        []*Group{},
 		Certs:         []*Cert{},
 		Providers:     []*Provider{},
 		Ldaps:         []*Ldap{},
@@ -120,6 +133,8 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Syncers:       []*Syncer{},
 		Tokens:        []*Token{},
 		Webhooks:      []*Webhook{},
+		Adapters:      []*Adapter{},
+		Enforcers:     []*Enforcer{},
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
@@ -240,6 +255,21 @@ func initDefinedUser(user *User) {
 	user.Id = util.GenerateId()
 	user.Properties = make(map[string]string)
 	_, err = AddUser(user)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedGroup(group *Group) {
+	existed, err := getGroup(group.Owner, group.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	group.CreatedTime = util.GetCurrentTime()
+	_, err = AddGroup(group)
 	if err != nil {
 		panic(err)
 	}
@@ -430,6 +460,36 @@ func initDefinedWebhook(webhook *Webhook) {
 	}
 	webhook.CreatedTime = util.GetCurrentTime()
 	_, err = AddWebhook(webhook)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedAdapter(adapter *Adapter) {
+	existed, err := getAdapter(adapter.Owner, adapter.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	adapter.CreatedTime = util.GetCurrentTime()
+	_, err = AddAdapter(adapter)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedEnforcer(enforcer *Enforcer) {
+	existed, err := getEnforcer(enforcer.Owner, enforcer.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	enforcer.CreatedTime = util.GetCurrentTime()
+	_, err = AddEnforcer(enforcer)
 	if err != nil {
 		panic(err)
 	}
