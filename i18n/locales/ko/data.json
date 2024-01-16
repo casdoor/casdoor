@@ -49,7 +49,7 @@
     "Session outdated, please login again": "세션이 만료되었습니다. 다시 로그인해주세요",
     "The user is forbidden to sign in, please contact the administrator": "사용자는 로그인이 금지되어 있습니다. 관리자에게 문의하십시오",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "사용자 이름은 알파벳, 숫자, 밑줄 또는 하이픈만 포함할 수 있으며, 연속된 하이픈 또는 밑줄을 가질 수 없으며, 하이픈 또는 밑줄로 시작하거나 끝날 수 없습니다.",
+    "The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.": "사용자 이름에는 영숫자, 밑줄, 하이픈, 점만 사용할 수 있습니다. 연속된 밑줄, 하이픈 또는 점을 사용할 수 없으며 밑줄, 하이픈 또는 점으로 시작하거나 끝날 수 없습니다.",
     "Username already exists": "사용자 이름이 이미 존재합니다",
     "Username cannot be an email address": "사용자 이름은 이메일 주소가 될 수 없습니다",
     "Username cannot contain white spaces": "사용자 이름에는 공백이 포함될 수 없습니다",

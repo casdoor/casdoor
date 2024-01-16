@@ -49,7 +49,7 @@
     "Session outdated, please login again": "Session expirée, veuillez vous connecter à nouveau",
     "The user is forbidden to sign in, please contact the administrator": "L'utilisateur est interdit de se connecter, veuillez contacter l'administrateur",
     "The user: %s doesn't exist in LDAP server": "L'utilisateur %s n'existe pas sur le serveur LDAP",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Le nom d'utilisateur ne peut contenir que des caractères alphanumériques, des traits soulignés ou des tirets, ne peut pas avoir de tirets ou de traits soulignés consécutifs et ne peut pas commencer ou se terminer par un tiret ou un trait souligné.",
+    "The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.": "Le nom d'utilisateur ne peut contenir que des caractères alphanumériques, des traits de soulignement, des traits d'union ou des points. Il ne peut pas comporter de traits de soulignement, de traits d'union ou de points consécutifs, et ne peut pas commencer ou se terminer par un trait de soulignement, un trait d'union ou un point.",
     "Username already exists": "Nom d'utilisateur existe déjà",
     "Username cannot be an email address": "Nom d'utilisateur ne peut pas être une adresse e-mail",
     "Username cannot contain white spaces": "Nom d'utilisateur ne peut pas contenir d'espaces blancs",

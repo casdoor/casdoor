@@ -49,7 +49,7 @@
     "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
     "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",
+    "The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.": "ユーザー名には、英数字、アンダースコア、ハイフン、ドットのみを使用できます。連続したアンダースコア、ハイフン、またはドットを使用することはできません。また、アンダースコア、ハイフン、またはドットで開始または終了することもできません。",
     "Username already exists": "ユーザー名はすでに存在しています",
     "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",
     "Username cannot contain white spaces": "ユーザ名にはスペースを含めることはできません",

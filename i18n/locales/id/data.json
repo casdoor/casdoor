@@ -49,7 +49,7 @@
     "Session outdated, please login again": "Sesi kedaluwarsa, silakan masuk lagi",
     "The user is forbidden to sign in, please contact the administrator": "Pengguna dilarang masuk, silakan hubungi administrator",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Nama pengguna hanya bisa menggunakan karakter alfanumerik, garis bawah atau tanda hubung, tidak boleh memiliki dua tanda hubung atau garis bawah berurutan, dan tidak boleh diawali atau diakhiri dengan tanda hubung atau garis bawah.",
+    "The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.": "Nama pengguna hanya boleh berisi karakter alfanumerik, garis bawah, tanda hubung, atau titik. Tidak boleh ada garis bawah, tanda hubung, atau titik yang berurutan, dan tidak boleh diawali atau diakhiri dengan garis bawah, tanda hubung, atau titik.",
     "Username already exists": "Nama pengguna sudah ada",
     "Username cannot be an email address": "Username tidak bisa menjadi alamat email",
     "Username cannot contain white spaces": "Username tidak boleh mengandung spasi",

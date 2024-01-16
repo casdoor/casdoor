@@ -49,7 +49,7 @@
     "Session outdated, please login again": "Сессия устарела, пожалуйста, войдите снова",
     "The user is forbidden to sign in, please contact the administrator": "Пользователю запрещен вход, пожалуйста, обратитесь к администратору",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Имя пользователя может состоять только из буквенно-цифровых символов, нижних подчеркиваний или дефисов, не может содержать последовательные дефисы или подчеркивания, а также не может начинаться или заканчиваться на дефис или подчеркивание.",
+    "The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.": "Имя пользователя может содержать только буквенно-цифровые символы, символы подчеркивания, дефисы или точки. Он не может иметь последовательных подчеркиваний, дефисов или точек, а также не может начинаться или заканчиваться подчеркиванием, дефисом или точкой.",
     "Username already exists": "Имя пользователя уже существует",
     "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
     "Username cannot contain white spaces": "Имя пользователя не может содержать пробелы",

@@ -482,10 +482,8 @@ func CheckUsername(username string, lang string) string {
 		return i18n.Translate(lang, "check:Username is too long (maximum is 39 characters).")
 	}
 
-	// https://stackoverflow.com/questions/58726546/github-username-convention-using-regex
-
 	if !util.ReUserName.MatchString(username) {
-		return i18n.Translate(lang, "check:The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.")
+		return i18n.Translate(lang, "check:The username may only contain alphanumeric characters, underscores, hyphens, or dots. It cannot have consecutive underscores, hyphens, or dots, and cannot begin or end with an underscore, hyphen, or dot.")
 	}
 
 	return ""
