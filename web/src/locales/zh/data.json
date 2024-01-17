@@ -271,7 +271,7 @@
     "Non-LDAP": "禁用LDAP",
     "None": "无",
     "OAuth providers": "OAuth提供方",
-    "OK": "OK",
+    "OK": "确定",
     "Organization": "组织",
     "Organization - Tooltip": "类似于租户、用户池等概念，每个用户和应用都从属于一个组织",
     "Organizations": "组织",
