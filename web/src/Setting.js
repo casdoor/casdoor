@@ -884,7 +884,17 @@ export function getProviderLogoURL(provider) {
   if (provider.type === "Custom" && provider.customLogo) {
     return provider.customLogo;
   }
+  // ivancetus 240118
   if (provider.category === "OAuth") {
+    if (provider.type === "Google") {
+      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/google_LOGO.png";
+    }
+    if (provider.type === "Twitch") {
+      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/twitch_LOGO.png";
+    }
+    if (provider.type === "Line") {
+      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/LINE_LOGO.png";
+    }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];

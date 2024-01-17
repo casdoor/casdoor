@@ -31,5 +31,14 @@ func NewAwsS3StorageProvider(clientId string, clientSecret string, region string
 		ACL:        awss3.BucketCannedACLPublicRead,
 	})
 
+	// ivancetus 240118
+	//fmt.Println(sp.S3.Endpoint)
+	//fmt.Println(endpoint)
+	//
+	//a, err := sp.ListBuckets(&awss3.ListBucketsInput{})
+	//if err != nil {
+	//	fmt.Printf("ERROR \n%s", err)
+	//}
+	//fmt.Println(a)
 	return sp
 }
