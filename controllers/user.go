@@ -39,13 +39,13 @@ func (c *ApiController) GetGlobalUsers() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		maskedUsers, err := object.GetMaskedUsers(object.GetGlobalUsers())
+		users, err := object.GetMaskedUsers(object.GetGlobalUsers())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		c.ResponseOk(maskedUsers)
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalUserCount(field, value)
@@ -90,22 +90,22 @@ func (c *ApiController) GetUsers() {
 
 	if limit == "" || page == "" {
 		if groupName != "" {
-			maskedUsers, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
+			users, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
-			c.ResponseOk(maskedUsers)
+			c.ResponseOk(users)
 			return
 		}
 
-		maskedUsers, err := object.GetMaskedUsers(object.GetUsers(owner))
+		users, err := object.GetMaskedUsers(object.GetUsers(owner))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		c.ResponseOk(maskedUsers)
+		c.ResponseOk(users)
 	} else {
 		limit := util.ParseInt(limit)
 		count, err := object.GetUserCount(owner, field, value, groupName)
@@ -223,13 +223,13 @@ func (c *ApiController) GetUser() {
 	}
 
 	isAdminOrSelf := c.IsAdminOrSelf(user)
-	maskedUser, err := object.GetMaskedUser(user, isAdminOrSelf)
+	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(maskedUser)
+	c.ResponseOk(user)
 }
 
 // UpdateUser
@@ -541,13 +541,13 @@ func (c *ApiController) GetSortedUsers() {
 	sorter := c.Input().Get("sorter")
 	limit := util.ParseInt(c.Input().Get("limit"))
 
-	maskedUsers, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
+	users, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(maskedUsers)
+	c.ResponseOk(users)
 }
 
 // GetUserCount
