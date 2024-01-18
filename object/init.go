@@ -181,7 +181,7 @@ func initBuiltInApplication() {
 			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, SignupGroup: "", Rule: "None", Provider: nil},
 		},
 		SigninMethods: []*SigninMethod{
-			{Name: "Password", DisplayName: "Password", Rule: "None"},
+			{Name: "Password", DisplayName: "Password", Rule: "All"},
 			{Name: "Verification code", DisplayName: "Verification code", Rule: "All"},
 			{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"},
 		},
