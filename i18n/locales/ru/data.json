@@ -6,7 +6,7 @@
     "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту"
   },
   "auth": {
-    "Challenge method should be S256": "Метод испытаний должен быть S256",
+    "Challenge method should be S256": "Метод проверки должен быть S256",
     "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",
     "Failed to login in: %s": "Не удалось войти в систему: %s",
     "Invalid token": "Недействительный токен",
@@ -22,7 +22,7 @@
     "The provider: %s is not enabled for the application": "Провайдер: %s не включен для приложения",
     "Unauthorized operation": "Несанкционированная операция",
     "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "User's tag: %s is not listed in the application's tags": "Тег пользователя: %s не указан в тэгах приложения",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
@@ -48,7 +48,7 @@
     "Phone number is invalid": "Номер телефона является недействительным",
     "Session outdated, please login again": "Сессия устарела, пожалуйста, войдите снова",
     "The user is forbidden to sign in, please contact the administrator": "Пользователю запрещен вход, пожалуйста, обратитесь к администратору",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "Пользователь %s не существует на LDAP сервере",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Имя пользователя может состоять только из буквенно-цифровых символов, нижних подчеркиваний или дефисов, не может содержать последовательные дефисы или подчеркивания, а также не может начинаться или заканчиваться на дефис или подчеркивание.",
     "Username already exists": "Имя пользователя уже существует",
     "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
@@ -58,7 +58,7 @@
     "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
-    "password or code is incorrect": "password or code is incorrect",
+    "password or code is incorrect": "неправильный пароль или код",
     "password or code is incorrect, you have %d remaining chances": "Неправильный пароль или код, у вас осталось %d попыток",
     "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
   },
@@ -66,8 +66,8 @@
     "Missing parameter": "Отсутствующий параметр",
     "Please login first": "Пожалуйста, сначала войдите в систему",
     "The user: %s doesn't exist": "Пользователь %s не существует",
-    "don't support captchaProvider: ": "не поддерживайте captchaProvider:",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "don't support captchaProvider: ": "неподдерживаемый captchaProvider: ",
+    "this operation is not allowed in demo mode": "эта операция не разрешена в демо-режиме"
   },
   "ldap": {
     "Ldap server exist": "LDAP-сервер существует"
@@ -106,7 +106,7 @@
   },
   "storage": {
     "The objectKey: %s is not allowed": "Объект «objectKey: %s» не разрешен",
-    "The provider type: %s is not supported": "Тип поставщика: %s не поддерживается"
+    "The provider type: %s is not supported": "Тип провайдера: %s не поддерживается"
   },
   "token": {
     "Empty clientId or clientSecret": "Пустой идентификатор клиента или секрет клиента",
@@ -125,7 +125,7 @@
   },
   "util": {
     "No application is found for userId: %s": "Не найдено заявки для пользователя с идентификатором: %s",
-    "No provider for category: %s is found for application: %s": "Нет поставщика для категории: %s для приложения: %s",
+    "No provider for category: %s is found for application: %s": "Нет провайдера для категории: %s для приложения: %s",
     "The provider: %s is not found": "Поставщик: %s не найден"
   },
   "verification": {
