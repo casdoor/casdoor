@@ -1,18 +1,18 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "Falha ao adicionar usuário",
+    "Get init score failed, error: %w": "Obter pontuação inicial falhou, erro: %w",
+    "Please sign out first": "Por favor, saia da sessão primeiro",
+    "The application does not allow to sign up new account": "O aplicativo não permite a criação de uma nova conta"
   },
   "auth": {
-    "Challenge method should be S256": "Challenge method should be S256",
-    "Failed to create user, user information is invalid: %s": "Failed to create user, user information is invalid: %s",
-    "Failed to login in: %s": "Failed to login in: %s",
-    "Invalid token": "Invalid token",
-    "State expected: %s, but got: %s": "State expected: %s, but got: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
+    "Challenge method should be S256": "Método de desafio deve ser S256",
+    "Failed to create user, user information is invalid: %s": "Falha ao criar usuário, informação do usuário inválida: %s",
+    "Failed to login in: %s": "Falha ao entrar em: %s",
+    "Invalid token": "Token inválido",
+    "State expected: %s, but got: %s": "Estado esperado: %s, mas recebeu: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta via %%s, por favor, use outra forma de se inscrever",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta entre em contato com seu suporte de TI",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
     "The application: %s does not exist": "The application: %s does not exist",
     "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
@@ -53,12 +53,12 @@
     "Username already exists": "Username already exists",
     "Username cannot be an email address": "Username cannot be an email address",
     "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
-    "Username is too long (maximum is 39 characters).": "Username is too long (maximum is 39 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
+    "Username cannot start with a digit": "O nome de usuário não pode começar com um dígito",
+    "Username is too long (maximum is 39 characters).": "Nome de usuário é muito longo (máximo é 39 caracteres).",
+    "Username must have at least 2 characters": "Nome de usuário deve ter pelo menos 2 caracteres",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect": "password or code is incorrect",
+    "password or code is incorrect": "senha ou código incorreto",
     "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
     "unsupported password type: %s": "unsupported password type: %s"
   },
@@ -82,15 +82,15 @@
   },
   "organization": {
     "Only admin can modify the %s.": "Only admin can modify the %s.",
-    "The %s is immutable.": "The %s is immutable.",
-    "Unknown modify rule %s.": "Unknown modify rule %s."
+    "The %s is immutable.": "O %s é imutável.",
+    "Unknown modify rule %s.": "Regra de modificação %s desconhecida."
   },
   "provider": {
-    "Invalid application id": "Invalid application id",
-    "the provider: %s does not exist": "the provider: %s does not exist"
+    "Invalid application id": "Id do aplicativo inválido",
+    "the provider: %s does not exist": "o provedor: %s não existe"
   },
   "resource": {
-    "User is nil for tag: avatar": "User is nil for tag: avatar",
+    "User is nil for tag: avatar": "Usuário é nulo para tag: avatar",
     "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
   },
   "saml": {
@@ -109,19 +109,19 @@
     "The provider type: %s is not supported": "The provider type: %s is not supported"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
+    "Empty clientId or clientSecret": "ClientId ou clientSecret vazio",
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
-    "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
-    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
-    "Token not found, invalid accessToken": "Token not found, invalid accessToken"
+    "Invalid application or wrong clientSecret": "Aplicativo inválido ou clientSecret errado",
+    "Invalid client_id": "client_id inválido",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI de redirecionamento: %s não existe na lista de URI de redirecionamento permitida",
+    "Token not found, invalid accessToken": "Token não encontrado, token de acesso inválido"
   },
   "user": {
-    "Display name cannot be empty": "Display name cannot be empty",
+    "Display name cannot be empty": "Nome de exibição não pode ser vazio",
     "New password cannot contain blank space.": "New password cannot contain blank space."
   },
   "user_upload": {
-    "Failed to import users": "Failed to import users"
+    "Failed to import users": "Falha ao importar usuários"
   },
   "util": {
     "No application is found for userId: %s": "No application is found for userId: %s",

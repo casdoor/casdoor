@@ -1,11 +1,11 @@
 {
   "account": {
-    "Logout": "Logout",
-    "My Account": "My Account",
-    "Sign Up": "Sign Up"
+    "Logout": "خروج",
+    "My Account": "حساب من",
+    "Sign Up": "ثبت نام"
   },
   "adapter": {
-    "Duplicated policy rules": "Duplicated policy rules",
+    "Duplicated policy rules": "قوانین تکراری",
     "Edit Adapter": "Edit Adapter",
     "Failed to sync policies": "Failed to sync policies",
     "New Adapter": "New Adapter",
@@ -17,7 +17,7 @@
     "Use same DB - Tooltip": "Use same DB - Tooltip"
   },
   "application": {
-    "Always": "Always",
+    "Always": "هميشه",
     "Auto signin": "Auto signin",
     "Auto signin - Tooltip": "When a logged-in session exists in Casdoor, it is automatically used for application-side login",
     "Background URL": "Background URL",
