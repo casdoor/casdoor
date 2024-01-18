@@ -40,7 +40,7 @@ func (c *ApiController) GetSyncers() {
 	organization := c.Input().Get("organization")
 
 	if limit == "" || page == "" {
-		syncers, err := object.GetOrganizationSyncers(owner, organization)
+		syncers, err := object.GetMaskedSyncers(object.GetOrganizationSyncers(owner, organization))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -56,7 +56,7 @@ func (c *ApiController) GetSyncers() {
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		syncers, err := object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		syncers, err := object.GetMaskedSyncers(object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -76,7 +76,7 @@ func (c *ApiController) GetSyncers() {
 func (c *ApiController) GetSyncer() {
 	id := c.Input().Get("id")
 
-	syncer, err := object.GetSyncer(id)
+	syncer, err := object.GetMaskedSyncer(object.GetSyncer(id))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
