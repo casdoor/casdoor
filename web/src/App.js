@@ -818,7 +818,8 @@ class App extends Component {
       <React.Fragment>
         {(this.state.account === undefined || this.state.account === null) ?
           <Helmet>
-            <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} />
+            {/* <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} /> */}
+            <link rel="icon" href={"https://d2t78ey8hyqad6.cloudfront.net/resource/built-in/admin/logo_w.svg"} />
           </Helmet> :
           <Helmet>
             <title>{this.state.account.organization?.displayName}</title>
