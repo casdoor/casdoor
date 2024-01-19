@@ -109,6 +109,15 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if user == nil || user.IsDeleted {
+			c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
+			return
+		}
+
+		if user.IsForbidden {
+			c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+			return
+		}
 	}
 
 	// mfaUserSession != "", means method is MfaAuthVerification
