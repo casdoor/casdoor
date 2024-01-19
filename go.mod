@@ -35,7 +35,7 @@ require (
 	github.com/lestrrat-go/jwx v1.2.21
 	github.com/lib/pq v1.10.9
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
-	github.com/markbates/goth v1.75.2
+	github.com/markbates/goth v1.78.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
