@@ -83,7 +83,9 @@ func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AppSecret string `json:"app_secret"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret}
 	data, err := idp.postWithBody(params, idp.Config.Endpoint.TokenURL)
-
+	if err != nil {
+		return nil, err
+	}
 	appToken := &LarkAccessToken{}
 	if err = json.Unmarshal(data, appToken); err != nil || appToken.Code != 0 {
 		return nil, err
