@@ -473,6 +473,11 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	if targetUser.IsForbidden || targetUser.IsDeleted {
+		c.ResponseError(c.T("account:Failed to set password, the user is either forbidden or deleted"))
+		return
+	}
+
 	isAdmin := c.IsAdmin()
 	if isAdmin {
 		if oldPassword != "" {
