@@ -16,6 +16,7 @@ package idp
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -82,11 +83,20 @@ func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AppID     string `json:"app_id"`
 		AppSecret string `json:"app_secret"`
 	}{idp.Config.ClientID, idp.Config.ClientSecret}
+
 	data, err := idp.postWithBody(params, idp.Config.Endpoint.TokenURL)
+	if err != nil {
+		return nil, err
+	}
 
 	appToken := &LarkAccessToken{}
-	if err = json.Unmarshal(data, appToken); err != nil || appToken.Code != 0 {
+	err = json.Unmarshal(data, appToken)
+	if err != nil {
 		return nil, err
+	}
+
+	if appToken.Code != 0 {
+		return nil, fmt.Errorf("GetToken() error, appToken.Code: %d, appToken.Msg: %s", appToken.Code, appToken.Msg)
 	}
 
 	t := &oauth2.Token{
@@ -98,7 +108,6 @@ func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	raw := make(map[string]interface{})
 	raw["code"] = code
 	t = t.WithExtra(raw)
-
 	return t, nil
 }
 
@@ -159,11 +168,17 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		GrantType string `json:"grant_type"`
 		Code      string `json:"code"`
 	}{"authorization_code", token.Extra("code").(string)}
-	data, _ := json.Marshal(body)
+
+	data, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+
 	req, err := http.NewRequest("POST", "https://open.feishu.cn/open-apis/authen/v1/access_token", strings.NewReader(string(data)))
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
@@ -171,6 +186,7 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer resp.Body.Close()
 	data, err = io.ReadAll(resp.Body)
 	if err != nil {
@@ -178,7 +194,8 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	}
 
 	var larkUserInfo LarkUserInfo
-	if err = json.Unmarshal(data, &larkUserInfo); err != nil {
+	err = json.Unmarshal(data, &larkUserInfo)
+	if err != nil {
 		return nil, err
 	}
 
@@ -189,7 +206,6 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		Email:       larkUserInfo.Data.Email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
 	}
-
 	return &userInfo, nil
 }
 
@@ -198,21 +214,23 @@ func (idp *LarkIdProvider) postWithBody(body interface{}, url string) ([]byte, e
 	if err != nil {
 		return nil, err
 	}
+
 	r := strings.NewReader(string(bs))
 	resp, err := idp.Client.Post(url, "application/json;charset=UTF-8", r)
 	if err != nil {
 		return nil, err
 	}
+
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
 			return
 		}
 	}(resp.Body)
-
 	return data, nil
 }
