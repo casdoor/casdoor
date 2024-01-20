@@ -175,26 +175,6 @@ func (c *ApiController) GetUser() {
 			owner = util.GetOwnerFromId(id)
 		}
 
-		var organization *object.Organization
-		organization, err = object.GetOrganization(util.GetId("admin", owner))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		if organization == nil {
-			c.ResponseError(fmt.Sprintf("the organization: %s is not found", owner))
-			return
-		}
-
-		if !organization.IsProfilePublic {
-			requestUserId := c.GetSessionUsername()
-			hasPermission, err := object.CheckUserPermission(requestUserId, id, false, c.GetAcceptLanguage())
-			if !hasPermission {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
-
 		switch {
 		case email != "":
 			user, err = object.GetUserByEmail(owner, email)
@@ -210,6 +190,29 @@ func (c *ApiController) GetUser() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if user != nil {
+		var organization *object.Organization
+		organization, err = object.GetOrganizationByUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if organization == nil {
+			c.ResponseError(fmt.Sprintf("the organization: %s is not found", owner))
+			return
+		}
+
+		if !organization.IsProfilePublic {
+			requestUserId := c.GetSessionUsername()
+			var hasPermission bool
+			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), false, c.GetAcceptLanguage())
+			if !hasPermission {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
 	}
 
 	if user != nil {
