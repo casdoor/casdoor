@@ -282,7 +282,7 @@ const authInfo = {
     endpoint: "https://id.twitch.tv/oauth2/authorize",
   },
   Twitter: {
-    scope: "users.read",
+    scope: "users.read%20tweet.read",
     endpoint: "https://twitter.com/i/oauth2/authorize",
   },
   Typetalk: {
