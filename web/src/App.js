@@ -368,7 +368,11 @@ class App extends Component {
     if (this.state.account === undefined) {
       return null;
     } else if (this.state.account === null) {
-      return null;
+      return (
+        <React.Fragment>
+          <LanguageSelect />
+        </React.Fragment>
+      );
     } else {
       return (
         <React.Fragment>

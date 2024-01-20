@@ -991,12 +991,14 @@ class UserEditPage extends React.Component {
   renderUser() {
     return (
       <Card size="small" title={
-        <div>
-          {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
+        (this.props.account === null) ? i18next.t("user:User Profile") : (
+          <div>
+            {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+          </div>
+        )
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         {
           this.getUserOrganization()?.accountItems?.map(accountItem => {
@@ -1054,7 +1056,11 @@ class UserEditPage extends React.Component {
               if (userListUrl !== null) {
                 this.props.history.push(userListUrl);
               } else {
-                this.props.history.push("/users");
+                if (Setting.isLocalAdminUser(this.props.account)) {
+                  this.props.history.push("/users");
+                } else {
+                  this.props.history.push("/");
+                }
               }
             } else {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
@@ -1111,7 +1117,7 @@ class UserEditPage extends React.Component {
           )
         }
         {
-          this.state.user === null ? null :
+          (this.state.user === null || this.props.account === null) ? null :
             <div style={{marginTop: "20px", marginLeft: "40px"}}>
               <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
               <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
