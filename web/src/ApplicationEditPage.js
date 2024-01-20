@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, InputNumber, List, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
 import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -139,10 +139,6 @@ class ApplicationEditPage extends React.Component {
 
         if (application.tags === null || application.tags === undefined) {
           application.tags = [];
-        }
-
-        if (application.invitationCodes === null) {
-          application.invitationCodes = [];
         }
 
         this.setState({
@@ -870,52 +866,6 @@ class ApplicationEditPage extends React.Component {
                     onUpdateTable={(value) => {
                       this.updateApplicationField("signupItems", value);
                     }}
-                  />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("application:Invitation code"), i18next.t("application:Invitation code - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <List
-                    header={
-                      <Button type="primary" onClick={() => {
-                        this.updateApplicationField("invitationCodes", Setting.addRow(this.state.application.invitationCodes, Setting.getRandomName()));
-                      }
-                      }>
-                        {i18next.t("general:Add")}
-                      </Button>
-                    }
-                    dataSource={this.state.application.invitationCodes.map(code => {
-                      return {code: code};
-                    })}
-                    renderItem={(item, index) => (
-                      <List.Item key={index}>
-                        <Space>
-                          <Input value={item.code} onChange={e => {
-                            const invitationCodes = [...this.state.application.invitationCodes];
-                            invitationCodes[index] = e.target.value;
-                            this.updateApplicationField("invitationCodes", invitationCodes);
-                          }} />
-                        </Space>
-                        <Space>
-                          <Button icon={<CopyOutlined />} onClick={() => {
-                            copy(item.code);
-                            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-                          }
-                          }>
-                            {i18next.t("general:Copy")}
-                          </Button>
-                          <Button type="primary" danger onClick={() => {
-                            this.updateApplicationField("invitationCodes", this.state.application.invitationCodes.filter(code => code !== item.code));
-                          }
-                          }>
-                            {i18next.t("general:Delete")}
-                          </Button>
-                        </Space>
-                      </List.Item>
-                    )}
                   />
                 </Col>
               </Row>

@@ -128,18 +128,6 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
-	if len(application.InvitationCodes) > 0 {
-		if authForm.InvitationCode == "" {
-			if application.IsSignupItemRequired("Invitation code") {
-				return i18n.Translate(lang, "check:Invitation code cannot be blank")
-			}
-		} else {
-			if !util.InSlice(application.InvitationCodes, authForm.InvitationCode) {
-				return i18n.Translate(lang, "check:Invitation code is invalid")
-			}
-		}
-	}
-
 	for _, signupItem := range application.SignupItems {
 		if signupItem.Regex == "" {
 			continue

@@ -76,7 +76,6 @@ type Application struct {
 	OrganizationObj     *Organization   `xorm:"-" json:"organizationObj"`
 	CertPublicKey       string          `xorm:"-" json:"certPublicKey"`
 	Tags                []string        `xorm:"mediumtext" json:"tags"`
-	InvitationCodes     []string        `xorm:"varchar(200)" json:"invitationCodes"`
 	SamlAttributes      []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
@@ -390,10 +389,6 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		if application.OrganizationObj.PasswordSalt != "" {
 			application.OrganizationObj.PasswordSalt = "***"
 		}
-	}
-
-	if application.InvitationCodes != nil {
-		application.InvitationCodes = []string{"***"}
 	}
 
 	return application
