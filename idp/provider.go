@@ -119,6 +119,8 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewMetaMaskIdProvider(), nil
 	case "Web3Onboard":
 		return NewWeb3OnboardIdProvider(), nil
+	case "Twitter":
+		return NewTwitterIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	default:
 		if isGothSupport(idpInfo.Type) {
 			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
@@ -171,7 +173,6 @@ var gothList = []string{
 	"TikTok",
 	"Tumblr",
 	"Twitch",
-	"Twitter",
 	"Typetalk",
 	"Uber",
 	"VK",
