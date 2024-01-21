@@ -111,6 +111,16 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	invitation, msg := object.CheckInvitationCode(application, organization, &authForm, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+	invitationName := ""
+	if invitation != nil {
+		invitationName = invitation.Name
+	}
+
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
 		checkResult := object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if checkResult.Code != object.VerificationSuccess {
@@ -179,6 +189,8 @@ func (c *ApiController) Signup() {
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
 		Karma:             0,
+		Invitation:        invitationName,
+		InvitationCode:    authForm.InvitationCode,
 	}
 
 	if len(organization.Tags) > 0 {
@@ -211,6 +223,15 @@ func (c *ApiController) Signup() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if invitation != nil {
+		invitation.UsedCount += 1
+		_, err := object.UpdateInvitation(invitation.GetId(), invitation)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if application.HasPromptPage() && user.Type == "normal-user" {

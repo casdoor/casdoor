@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/mail"
 	"regexp"
+	"strings"
 
 	"github.com/nyaruka/phonenumbers"
 )
@@ -51,6 +52,23 @@ func IsPhoneValid(phone string, countryCode string) bool {
 
 func IsPhoneAllowInRegin(countryCode string, allowRegions []string) bool {
 	return ContainsString(allowRegions, countryCode)
+}
+
+func IsRegexp(s string) (bool, error) {
+	if _, err := regexp.Compile(s); err != nil {
+		return false, err
+	}
+	return regexp.QuoteMeta(s) != s, nil
+}
+
+func IsInvitationCodeMatch(pattern string, invitationCode string) (bool, error) {
+	if !strings.HasPrefix(pattern, "^") {
+		pattern = "^" + pattern
+	}
+	if !strings.HasSuffix(pattern, "$") {
+		pattern = pattern + "$"
+	}
+	return regexp.MatchString(pattern, invitationCode)
 }
 
 func GetE164Number(phone string, countryCode string) (string, bool) {

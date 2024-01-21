@@ -152,6 +152,38 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 	return ""
 }
 
+func CheckInvitationCode(application *Application, organization *Organization, authForm *form.AuthForm, lang string) (*Invitation, string) {
+	if authForm.InvitationCode == "" {
+		if application.IsSignupItemRequired("Invitation code") {
+			return nil, i18n.Translate(lang, "check:Invitation code cannot be blank")
+		} else {
+			return nil, ""
+		}
+	}
+
+	invitations, err := GetInvitations(organization.Name)
+	if err != nil {
+		return nil, err.Error()
+	}
+	errMsg := ""
+	for _, invitation := range invitations {
+		if invitation.Application != application.Name && invitation.Application != "All" {
+			continue
+		}
+		if isValid, msg := invitation.IsInvitationCodeValid(application, authForm.InvitationCode, authForm.Username, authForm.Email, authForm.Phone, lang); isValid {
+			return invitation, msg
+		} else if msg != "" && errMsg == "" {
+			errMsg = msg
+		}
+	}
+
+	if errMsg != "" {
+		return nil, errMsg
+	} else {
+		return nil, i18n.Translate(lang, "check:Invitation code is invalid")
+	}
+}
+
 func checkSigninErrorTimes(user *User, lang string) error {
 	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
 	if err != nil {
