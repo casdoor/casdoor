@@ -107,7 +107,7 @@ class InvitationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || isCreatedByPlan} value={this.state.invitation.owner} onChange={(value => {this.updateInvitationField("owner", value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || isCreatedByPlan} value={this.state.invitation.owner} onChange={(value => {this.updateInvitationField("owner", value); this.getApplicationsByOrganization(value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -171,8 +171,10 @@ class InvitationEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.invitation.application}
               onChange={(value => {this.updateInvitationField("application", value);})}
-              options={this.state.applications.map((application) => Setting.getOption(application.name, application.name))
-              } />
+              options={[
+                {label: "All", value: i18next.t("general:All")},
+                ...this.state.applications.map((application) => Setting.getOption(application.name, application.name)),
+              ]} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

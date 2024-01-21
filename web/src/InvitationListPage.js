@@ -37,7 +37,7 @@ class InvitationListPage extends BaseListPage {
       code: Math.random().toString(36).slice(-10),
       quota: 1,
       usedCount: 0,
-      application: "",
+      application: "All",
       username: "",
       email: "",
       phone: "",

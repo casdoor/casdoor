@@ -183,6 +183,8 @@ type User struct {
 	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation          string                `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -484,6 +486,24 @@ func GetUserByUserIdOnly(userId string) (*User, error) {
 	}
 
 	user := User{Id: userId}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetUserByInvitationCode(owner string, invitationCode string) (*User, error) {
+	if owner == "" || invitationCode == "" {
+		return nil, nil
+	}
+
+	user := User{Owner: owner, InvitationCode: invitationCode}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
