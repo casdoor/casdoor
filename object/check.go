@@ -314,7 +314,7 @@ func checkLdapUserPassword(user *User, password string, lang string) error {
 		}
 		return fmt.Errorf(i18n.Translate(lang, "check:LDAP user name or password incorrect"))
 	}
-	return nil
+	return resetUserSigninErrorTimes(user)
 }
 
 func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, error) {
