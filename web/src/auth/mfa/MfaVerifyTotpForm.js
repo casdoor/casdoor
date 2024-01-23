@@ -51,6 +51,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
           style={{marginTop: 24}}
           prefix={<UserOutlined />}
           placeholder={i18next.t("mfa:Passcode")}
+          autoComplete="off"
         />
       </Form.Item>
       <Form.Item>
