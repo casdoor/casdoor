@@ -122,6 +122,17 @@ class UserEditPage extends React.Component {
         this.setState({
           applications: res.data || [],
         });
+
+        const applications = res.data;
+        if (this.state.user) {
+          if (this.state.user.signupApplication === "" || applications.filter(application => application.name === this.state.user.signupApplication).length === 0) {
+            if (applications.length > 0) {
+              this.updateUserField("signupApplication", applications[0].name);
+            } else {
+              this.updateUserField("signupApplication", "");
+            }
+          }
+        }
       });
   }
 
