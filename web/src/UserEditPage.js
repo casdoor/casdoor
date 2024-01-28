@@ -901,11 +901,9 @@ class UserEditPage extends React.Component {
                       </Space>
                       {item.enabled ? (
                         <Space>
-                          {item.enabled ?
-                            <Tag icon={<CheckCircleOutlined />} color="success">
-                              {i18next.t("general:Enabled")}
-                            </Tag> : null
-                          }
+                          <Tag icon={<CheckCircleOutlined />} color="success">
+                            {i18next.t("general:Enabled")}
+                          </Tag>
                           {item.isPreferred ?
                             <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
                               {i18next.t("mfa:preferred")}
@@ -927,18 +925,23 @@ class UserEditPage extends React.Component {
                               {i18next.t("mfa:Set preferred")}
                             </Button>
                           }
+                          {this.isSelf() ? <Button type={"default"} onClick={() => {
+                            this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
+                          }}>
+                            {i18next.t("general:Edit")}
+                          </Button> : null}
                         </Space>
                       ) :
                         <Space>
-                          {item.mfaType !== TotpMfaType && Setting.isAdminUser(this.props.account) && window.location.href.indexOf("/users") !== -1 ?
+                          {item.mfaType !== TotpMfaType && Setting.isAdminUser(this.props.account) && !this.isSelf() ?
                             <EnableMfaModal user={this.state.user} mfaType={item.mfaType} onSuccess={() => {
                               this.getUser();
                             }} /> : null}
-                          <Button type={"default"} onClick={() => {
+                          {this.isSelf() ? <Button type={"default"} onClick={() => {
                             this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
                           }}>
                             {i18next.t("mfa:Setup")}
-                          </Button>
+                          </Button> : null}
                         </Space>}
                     </List.Item>
                   )}
