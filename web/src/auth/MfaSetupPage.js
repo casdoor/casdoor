@@ -98,7 +98,7 @@ class MfaSetupPage extends React.Component {
 
   renderMfaTypeSwitch() {
     const renderSmsLink = () => {
-      if (this.state.mfaType === SmsMfaType || this.props.account.mfaPhoneEnabled) {
+      if (this.state.mfaType === SmsMfaType) {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
@@ -112,7 +112,7 @@ class MfaSetupPage extends React.Component {
     };
 
     const renderEmailLink = () => {
-      if (this.state.mfaType === EmailMfaType || this.props.account.mfaEmailEnabled) {
+      if (this.state.mfaType === EmailMfaType) {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
@@ -126,7 +126,7 @@ class MfaSetupPage extends React.Component {
     };
 
     const renderTotpLink = () => {
-      if (this.state.mfaType === TotpMfaType || this.props.account.totpSecret !== "") {
+      if (this.state.mfaType === TotpMfaType) {
         return null;
       }
       return (<Button type={"link"} onClick={() => {
@@ -191,7 +191,9 @@ class MfaSetupPage extends React.Component {
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
             this.props.onfinish();
-            if (localStorage.getItem("mfaRedirectUrl") !== null) {
+
+            const mfaRedirectUrl = localStorage.getItem("mfaRedirectUrl");
+            if (mfaRedirectUrl !== undefined && mfaRedirectUrl !== null) {
               Setting.goToLink(localStorage.getItem("mfaRedirectUrl"));
               localStorage.removeItem("mfaRedirectUrl");
             } else {
