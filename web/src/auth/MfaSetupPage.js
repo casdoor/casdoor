@@ -191,7 +191,9 @@ class MfaSetupPage extends React.Component {
           onSuccess={() => {
             Setting.showMessage("success", i18next.t("general:Enabled successfully"));
             this.props.onfinish();
-            if (localStorage.getItem("mfaRedirectUrl") !== null) {
+
+            const mfaRedirectUrl = localStorage.getItem("mfaRedirectUrl");
+            if (mfaRedirectUrl !== undefined && mfaRedirectUrl !== null) {
               Setting.goToLink(localStorage.getItem("mfaRedirectUrl"));
               localStorage.removeItem("mfaRedirectUrl");
             } else {

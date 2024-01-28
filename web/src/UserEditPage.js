@@ -933,7 +933,7 @@ class UserEditPage extends React.Component {
                         </Space>
                       ) :
                         <Space>
-                          {item.mfaType !== TotpMfaType && Setting.isAdminUser(this.props.account) && !this.isSelf() ?
+                          {item.mfaType !== TotpMfaType && Setting.isLocalAdminUser(this.props.account) && !this.isSelf() ?
                             <EnableMfaModal user={this.state.user} mfaType={item.mfaType} onSuccess={() => {
                               this.getUser();
                             }} /> : null}
