@@ -317,7 +317,7 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
-	token, err := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
+	token, err := object.GetTokenByTokenValue(tokenValue)
 	if err != nil {
 		c.ResponseTokenError(err.Error())
 		return
