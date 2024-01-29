@@ -49,6 +49,7 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
+	DeletedTime string `xorm:"varchar(100)" json:"deletedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	ExternalId        string   `xorm:"varchar(100) index" json:"externalId"`
@@ -657,6 +658,10 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	columns = append(columns, "updated_time")
 	user.UpdatedTime = util.GetCurrentTime()
+
+	if len(user.DeletedTime) > 0 {
+		columns = append(columns, "deleted_time")
+	}
 
 	if util.ContainsString(columns, "groups") {
 		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)

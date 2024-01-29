@@ -4900,6 +4900,8 @@ definitions:
         type: string
       deezer:
         type: string
+      deletedTime:
+        type: string
       digitalocean:
         type: string
       dingtalk:

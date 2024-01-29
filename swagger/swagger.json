@@ -7446,6 +7446,9 @@
                 "displayName": {
                     "type": "string"
                 },
+                "deletedTime": {
+                    "type": "string"
+                },
                 "douyin": {
                     "type": "string"
                 },

@@ -62,6 +62,7 @@ const userTemplate = {
   "name": "admin",
   "createdTime": "2020-07-16T21:46:52+08:00",
   "updatedTime": "",
+  "deletedTime": "",
   "id": "9eb20f79-3bb5-4e74-99ac-39e3b9a171e8",
   "type": "normal-user",
   "password": "***",
