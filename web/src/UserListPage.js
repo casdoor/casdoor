@@ -173,11 +173,16 @@ class UserListPage extends BaseListPage {
   }
 
   renderUpload() {
+    const owner = (Setting.isDefaultOrganizationSelected(this.props.account) || this.props.groupName) ? this.state.organizationName : Setting.getRequestOrganization(this.props.account);
     const props = {
       name: "file",
       accept: ".xlsx",
       method: "post",
       action: `${Setting.ServerUrl}/api/upload-users`,
+      data: {
+        organization: this.props.match?.path === "/users" ? "" : owner,
+        group: this.props.groupName ? this.props.groupName : "",
+      },
       withCredentials: true,
       onChange: (info) => {
         this.uploadFile(info);
@@ -420,13 +425,14 @@ class UserListPage extends BaseListPage {
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={users} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
-            <div>
-              {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Space>
+              {i18next.t("general:Users")}
+              {this.props.groupName ? i18next.t("general:Groups") + "：" + this.props.groupName : ""}
               <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>
               {
                 this.renderUpload()
               }
-            </div>
+            </Space>
           )}
           loading={this.state.loading}
           onChange={this.handleTableChange}

@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
@@ -73,7 +74,7 @@ func parseListItem(lines *[]string, i int) []string {
 	return trimmedItems
 }
 
-func UploadUsers(owner string, path string) (bool, error) {
+func UploadUsers(owner string, path string, organizationName string, groupName string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
 	oldUserMap, err := getUserMap(owner)
@@ -81,10 +82,29 @@ func UploadUsers(owner string, path string) (bool, error) {
 		return false, err
 	}
 
+	//prehandle organizaion, group for user
+	organization, err := GetOrganizationByUser(&User{Owner: organizationName})
+	if err != nil {
+		return false, err
+	}
+	if organization == nil {
+		return false, fmt.Errorf("the organization: \"%s\" is not found", organizationName)
+	}
+
+	if groupName != "" {
+		group, err := getGroup(organizationName, groupName)
+		if err != nil {
+			return false, err
+		}
+		if group == nil {
+			return false, fmt.Errorf("the group: \"%s\" is not found", groupName)
+		}
+	}
+
 	newUsers := []*User{}
 	for index, line := range table {
 		line := line
-		if index == 0 || parseLineItem(&line, 0) == "" {
+		if index == 0 {
 			continue
 		}
 
@@ -136,6 +156,41 @@ func UploadUsers(owner string, path string) (bool, error) {
 			Properties:        map[string]string{},
 		}
 
+		// automatically add userId, create time and encrypt user's password according to organization
+		if organizationName != "" && user.Owner == "" {
+			user.Owner = organizationName
+			user.Avatar = organization.DefaultAvatar
+		}
+
+		// add group
+		if groupName != "" {
+			user.Groups = append(user.Groups, organizationName+"/"+groupName)
+		}
+
+		// proccess userId
+		if user.Id == "" {
+			id, err := GenerateIdForNewUser(nil)
+			if err != nil {
+				return false, err
+			}
+
+			user.Id = id
+		}
+
+		// add create time
+		if user.CreatedTime == "" {
+			user.CreatedTime = util.GetCurrentTime()
+		}
+
+		// proccess password
+		if organization.DefaultPassword != "" && user.Password == "" {
+			user.Password = organization.DefaultPassword
+		}
+
+		if user.PasswordType == "" || user.PasswordType == "plain" {
+			user.UpdateUserPassword(organization)
+		}
+
 		if _, ok := oldUserMap[user.GetId()]; !ok {
 			newUsers = append(newUsers, user)
 		}
@@ -145,5 +200,5 @@ func UploadUsers(owner string, path string) (bool, error) {
 		return false, nil
 	}
 
-	return AddUsersInBatch(newUsers)
+	return AddXlsxUsersInBatch(newUsers)
 }

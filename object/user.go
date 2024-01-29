@@ -796,7 +796,7 @@ func AddUser(user *User) (bool, error) {
 	return affected != 0, nil
 }
 
-func AddUsers(users []*User) (bool, error) {
+func AddUsers(users []*User, upload bool, updateGroup bool) (bool, error) {
 	if len(users) == 0 {
 		return false, fmt.Errorf("no users are provided")
 	}
@@ -813,7 +813,15 @@ func AddUsers(users []*User) (bool, error) {
 
 		user.PreHash = user.Hash
 
-		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
+		if updateGroup {
+			//update user group, for upload user from xlsx
+			_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+			if err != nil {
+				return false, err
+			}
+		}
+
+		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, upload)
 		if err != nil {
 			return false, err
 		}
@@ -846,7 +854,34 @@ func AddUsersInBatch(users []*User) (bool, error) {
 
 		tmp := users[start:end]
 		fmt.Printf("The syncer adds users: [%d - %d]\n", start, end)
-		if ok, err := AddUsers(tmp); err != nil {
+		if ok, err := AddUsers(tmp, true, false); err != nil {
+			return false, err
+		} else if ok {
+			affected = true
+		}
+	}
+
+	return affected, nil
+}
+
+func AddXlsxUsersInBatch(users []*User) (bool, error) {
+	if len(users) == 0 {
+		return false, fmt.Errorf("no users are provided")
+	}
+
+	batchSize := conf.GetConfigBatchSize()
+
+	affected := false
+	for i := 0; i < len(users); i += batchSize {
+		start := i
+		end := i + batchSize
+		if end > len(users) {
+			end = len(users)
+		}
+
+		tmp := users[start:end]
+		fmt.Printf("Adds users from xlsx: [%d - %d]\n", start, end)
+		if ok, err := AddUsers(tmp, false, true); err != nil {
 			return false, err
 		} else if ok {
 			affected = true

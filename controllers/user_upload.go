@@ -41,7 +41,11 @@ func saveFile(path string, file *multipart.File) (err error) {
 
 func (c *ApiController) UploadUsers() {
 	userId := c.GetSessionUsername()
+
 	owner, user := util.GetOwnerAndNameFromId(userId)
+
+	organization := c.Ctx.Request.FormValue("organization")
+	group := c.Ctx.Request.FormValue("group")
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
@@ -58,7 +62,7 @@ func (c *ApiController) UploadUsers() {
 		return
 	}
 
-	affected, err := object.UploadUsers(owner, path)
+	affected, err := object.UploadUsers(owner, path, organization, group)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
