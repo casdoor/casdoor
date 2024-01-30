@@ -139,6 +139,10 @@ func (c *ApiController) GetUserApplication() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), user.Owner))
+		return
+	}
 
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
