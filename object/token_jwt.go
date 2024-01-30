@@ -48,6 +48,7 @@ type UserWithoutThirdIdp struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
+	DeletedTime string `xorm:"varchar(100)" json:"deletedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
@@ -167,6 +168,7 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		Name:        user.Name,
 		CreatedTime: user.CreatedTime,
 		UpdatedTime: user.UpdatedTime,
+		DeletedTime: user.DeletedTime,
 
 		Id:                user.Id,
 		Type:              user.Type,
