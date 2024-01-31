@@ -324,9 +324,16 @@ func GetUsernameFromEmail(email string) string {
 }
 
 func StringToInterfaceArray(array []string) []interface{} {
-	var interfaceArray []interface{}
-	for _, v := range array {
-		interfaceArray = append(interfaceArray, v)
+	var (
+		interfaceArray []interface{}
+		elem           interface{}
+	)
+	for _, elem = range array {
+		jStruct, err := TryJsonToAnonymousStruct(elem.(string))
+		if err == nil {
+			elem = jStruct
+		}
+		interfaceArray = append(interfaceArray, elem)
 	}
 	return interfaceArray
 }
