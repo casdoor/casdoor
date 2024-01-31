@@ -5592,6 +5592,9 @@
                 "enableSamlCompress": {
                     "type": "boolean"
                 },
+                "enableSamlPostBinding": {
+                    "type": "boolean"
+                },
                 "enableSignUp": {
                     "type": "boolean"
                 },

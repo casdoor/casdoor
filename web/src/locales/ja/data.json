@@ -36,6 +36,8 @@
     "Enable SAML C14N10 - Tooltip": "Enable SAML C14N10 - Tooltip",
     "Enable SAML compression": "SAMLの圧縮を有効にする",
     "Enable SAML compression - Tooltip": "CasdoorをSAML IdPとして使用する場合、SAMLレスポンスメッセージを圧縮するかどうか。圧縮する: 圧縮するかどうか。圧縮しない: 圧縮しないかどうか",
+    "Enable SAML Post Binding": "SAML POST バインディングを有効にする",
+    "Enable SAML Post Binding - Tooltip": "HTTP POST バインディングは、HTML フォームの入力フィールドを使用して SAML メッセージを送信します。SP が使用する場合に有効にします。",
     "Enable side panel": "サイドパネルを有効にする",
     "Enable signin session - Tooltip": "アプリケーションから Casdoor にログイン後、Casdoor がセッションを維持しているかどうか",
     "Enable signup": "サインアップを有効にする",
