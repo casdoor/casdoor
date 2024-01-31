@@ -377,11 +377,10 @@ export function getProviderLogoWidget(provider) {
   }
 }
 
-export function getAuthUrl(application, provider, method) {
+export function getAuthUrl(application, provider, method, res) {
   if (application === null || provider === null) {
     return "";
   }
-
   let endpoint = authInfo[provider.type].endpoint;
   let redirectUri = `${window.location.origin}/callback`;
   const scope = authInfo[provider.type].scope;
@@ -415,11 +414,10 @@ export function getAuthUrl(application, provider, method) {
   } else if (provider.type === "DingTalk") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&prompt=consent&state=${state}`;
   } else if (provider.type === "WeChat") {
-    if (navigator.userAgent.includes("MicroMessenger")) {
-      return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
-    } else {
+    if (provider.clientId !== "") {
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
+    return `/callback?appid=${provider.clientId2}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}&code=${res?.data2 || ""}`;
   } else if (provider.type === "WeCom") {
     if (provider.subType === "Internal") {
       if (provider.method === "Silent") {

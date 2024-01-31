@@ -66,7 +66,10 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "QQ":
 		return NewQqIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeChat":
-		return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		if idpInfo.ClientId != "" {
+			return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		}
+		return NewWeChatOAIdProvider(idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl), nil
 	case "Facebook":
 		return NewFacebookIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "DingTalk":

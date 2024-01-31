@@ -61,6 +61,7 @@ func initAPI() {
 	beego.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
 	beego.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
 	beego.Router("/api/webhook", &controllers.ApiController{}, "POST:HandleOfficialAccountEvent")
+	beego.Router("/api/webhook", &controllers.ApiController{}, "GET:WXOfficialAccountToken")
 	beego.Router("/api/get-webhook-event", &controllers.ApiController{}, "GET:GetWebhookEventType")
 	beego.Router("/api/get-captcha-status", &controllers.ApiController{}, "GET:GetCaptchaStatus")
 	beego.Router("/api/callback", &controllers.ApiController{}, "POST:Callback")

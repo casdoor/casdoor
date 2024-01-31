@@ -53,6 +53,7 @@ p, *, *, GET, /api/user, *, *
 p, *, *, GET, /api/health, *, *
 p, *, *, POST, /api/webhook, *, *
 p, *, *, GET, /api/get-webhook-event, *, *
+p, *, *, GET, /api/webhook, *, *
 p, *, *, GET, /api/get-captcha-status, *, *
 p, *, *, *, /api/login/oauth, *, *
 p, *, *, GET, /api/get-application, *, *

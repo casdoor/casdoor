@@ -39,6 +39,7 @@ import (
 
 var (
 	wechatScanType string
+	openId         string
 	lock           sync.RWMutex
 )
 
@@ -928,9 +929,10 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	}
 
 	var data struct {
-		MsgType  string `xml:"MsgType"`
-		Event    string `xml:"Event"`
-		EventKey string `xml:"EventKey"`
+		MsgType      string `xml:"MsgType"`
+		Event        string `xml:"Event"`
+		EventKey     string `xml:"EventKey"`
+		FromUserName string `xml:"FromUserName"`
 	}
 	err = xml.Unmarshal(respBytes, &data)
 	if err != nil {
@@ -942,6 +944,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	defer lock.Unlock()
 	if data.EventKey != "" {
 		wechatScanType = data.Event
+		openId = data.FromUserName
 		c.Ctx.WriteString("")
 	}
 }
@@ -958,9 +961,24 @@ func (c *ApiController) GetWebhookEventType() {
 		Status: "ok",
 		Msg:    "",
 		Data:   wechatScanType,
+		Data2:  openId,
 	}
 	c.Data["json"] = resp
 	wechatScanType = ""
+	openId = ""
+	c.ServeJSON()
+}
+
+// WXOfficialAccountToken ...
+// @Title WXOfficialAccountToken
+// @Tag System API
+// @Description Return echostr,prove identity
+// @router /api/webhook [GET]
+// @Success 200 {object} object.Userinfo The Response object
+func (c *ApiController) WXOfficialAccountToken() {
+	s := c.Ctx.Request.FormValue("echostr")
+	echostr, _ := strconv.Atoi(s)
+	c.SetData(echostr)
 	c.ServeJSON()
 }
 

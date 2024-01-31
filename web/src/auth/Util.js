@@ -192,7 +192,7 @@ export function getEvent(application, provider) {
   getWechatMessageEvent()
     .then(res => {
       if (res.data === "SCAN" || res.data === "subscribe") {
-        Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));
+        Setting.goToLink(Provider.getAuthUrl(application, provider, "signup", res));
       }
     });
 }
