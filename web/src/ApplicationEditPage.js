@@ -188,7 +188,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getSamlMetadata(checked) {
-    ApplicationBackend.getSamlMetadata("admin", this.state.applicationName, checked ?? false)
+    ApplicationBackend.getSamlMetadata("admin", this.state.applicationName, checked)
       .then((data) => {
         this.setState({
           samlMetadata: data,
@@ -666,7 +666,7 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable SAML Post Binding"), i18next.t("application:Enable SAML Post Binding - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Enable SAML POST binding"), i18next.t("application:Enable SAML POST binding - Tooltip"))} :
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSamlPostBinding} onChange={checked => {

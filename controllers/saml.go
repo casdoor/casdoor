@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -34,9 +35,10 @@ func (c *ApiController) GetSamlMeta() {
 		return
 	}
 
-	enablePostBinding := c.Input().Get("post")
-	if enablePostBinding == "" {
-		enablePostBinding = "true"
+	enablePostBinding, err := c.GetBool("enablePostBinding", false)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	metadata, err := object.GetSamlMeta(application, host, enablePostBinding)
@@ -56,9 +58,9 @@ func (c *ApiController) HandleSamlRedirect() {
 	application := c.Ctx.Input.Param(":application")
 
 	relayState := c.Input().Get("RelayState")
-	samlResponse := c.Input().Get("SAMLRequest")
+	samlRequest := c.Input().Get("SAMLRequest")
 
-	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlResponse, host)
+	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlRequest, host)
 
-	c.Redirect(targetURL, 303)
+	c.Redirect(targetURL, http.StatusSeeOther)
 }

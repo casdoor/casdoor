@@ -198,7 +198,7 @@ type Attribute struct {
 	Values       []string `xml:"AttributeValue"`
 }
 
-func GetSamlMeta(application *Application, host string, enablePostBinding string) (*IdpEntityDescriptor, error) {
+func GetSamlMeta(application *Application, host string, enablePostBinding bool) (*IdpEntityDescriptor, error) {
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
@@ -218,7 +218,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding string
 	originFrontend, originBackend := getOriginFromHost(host)
 
 	idpLocation := ""
-	if enablePostBinding == "true" {
+	if enablePostBinding {
 		idpLocation = fmt.Sprintf("%s/api/saml/redirect/%s/%s", originBackend, application.Owner, application.Name)
 	} else {
 		idpLocation = fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name)

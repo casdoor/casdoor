@@ -90,7 +90,7 @@ export function deleteApplication(application) {
 }
 
 export function getSamlMetadata(owner, name, enablePostBinding) {
-  return fetch(`${Setting.ServerUrl}/api/saml/metadata?application=${owner}/${encodeURIComponent(name)}&post=${enablePostBinding}`, {
+  return fetch(`${Setting.ServerUrl}/api/saml/metadata?application=${owner}/${encodeURIComponent(name)}&enablePostBinding=${enablePostBinding}`, {
     method: "GET",
     credentials: "include",
     headers: {
