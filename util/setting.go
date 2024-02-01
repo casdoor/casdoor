@@ -14,10 +14,10 @@
 
 package util
 
-import "io/ioutil"
+import "os"
 
 func GetUploadXlsxPath(fileId string) string {
-	file, err := ioutil.TempFile("", fileId)
+	file, err := os.CreateTemp("", fileId)
 	if err != nil {
 		panic(err)
 	}
