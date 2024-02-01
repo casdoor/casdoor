@@ -36,8 +36,6 @@
     "Enable SAML C14N10 - Tooltip": "Enable SAML C14N10 - Tooltip",
     "Enable SAML compression": "Aktifkan kompresi SAML",
     "Enable SAML compression - Tooltip": "Apakah pesan respons SAML harus dikompres saat Casdoor digunakan sebagai SAML idp?",
-    "Enable SAML POST binding": "Aktifkan Pengikatan SAML POST",
-    "Enable SAML POST binding - Tooltip": "Pengikatan HTTP POST menggunakan kolom input dalam bentuk HTML untuk mengirim pesan SAML, Aktifkan saat SP Anda menggunakannya",
     "Enable side panel": "Aktifkan panel samping",
     "Enable signin session - Tooltip": "Apakah Casdoor mempertahankan sesi setelah login ke Casdoor dari aplikasi",
     "Enable signup": "Aktifkan pendaftaran",

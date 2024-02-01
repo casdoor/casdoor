@@ -36,8 +36,6 @@
     "Enable SAML C14N10 - Tooltip": "Enable SAML C14N10 - Tooltip",
     "Enable SAML compression": "Cho phép nén SAML",
     "Enable SAML compression - Tooltip": "Liệu có nén các thông điệp phản hồi SAML khi Casdoor được sử dụng làm SAML idp không?",
-    "Enable SAML POST binding": "Bật liên kết bài đăng SAML",
-    "Enable SAML POST binding - Tooltip": "Liên kết HTTP POST sử dụng các trường đầu vào ở dạng HTML để gửi tin nhắn SAML, Kích hoạt khi SP của bạn sử dụng nó",
     "Enable side panel": "Cho phép bên thanh phẩm",
     "Enable signin session - Tooltip": "Có phải Casdoor duy trì phiên sau khi đăng nhập vào Casdoor từ ứng dụng không?",
     "Enable signup": "Kích hoạt đăng ký",

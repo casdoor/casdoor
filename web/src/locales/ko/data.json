@@ -36,8 +36,6 @@
     "Enable SAML C14N10 - Tooltip": "Enable SAML C14N10 - Tooltip",
     "Enable SAML compression": "SAML 압축 사용 가능하게 설정하기",
     "Enable SAML compression - Tooltip": "카스도어가 SAML idp로 사용될 때 SAML 응답 메시지를 압축할 것인지 여부",
-    "Enable SAML POST binding": "SAML POST 바인딩 활성화",
-    "Enable SAML POST binding - Tooltip": "HTTP POST 바인딩은 HTML 양식의 입력 필드를 사용하여 SAML 메시지를 보냅니다. SP에서 사용할 때 활성화됩니다.",
     "Enable side panel": "측면 패널 활성화",
     "Enable signin session - Tooltip": "애플리케이션에서 Casdoor에 로그인 한 후 Casdoor가 세션을 유지하는 지 여부",
     "Enable signup": "가입 가능하게 만들기",
