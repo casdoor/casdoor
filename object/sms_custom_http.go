@@ -27,20 +27,26 @@ type HttpSmsClient struct {
 	endpoint  string
 	method    string
 	paramName string
+	template  string
 }
 
-func newHttpSmsClient(endpoint string, method string, paramName string) (*HttpSmsClient, error) {
+func newHttpSmsClient(endpoint, method, paramName, template string) (*HttpSmsClient, error) {
+	if template == "" {
+		template = "%s"
+	}
 	client := &HttpSmsClient{
 		endpoint:  endpoint,
 		method:    method,
 		paramName: paramName,
+		template:  template,
 	}
 	return client, nil
 }
 
 func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber ...string) error {
 	phoneNumber := targetPhoneNumber[0]
-	content := param["code"]
+	code := param["code"]
+	content := fmt.Sprintf(c.template, code)
 
 	var req *http.Request
 	var err error

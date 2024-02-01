@@ -1041,7 +1041,7 @@ class ProviderEditPage extends React.Component {
                 </Row>
                 )
               }
-              {["Custom HTTP SMS", "Infobip SMS"].includes(this.state.provider.type) ?
+              {["Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>

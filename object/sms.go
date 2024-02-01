@@ -27,7 +27,7 @@ func getSmsClient(provider *Provider) (sender.SmsClient, error) {
 	if provider.Type == sender.HuaweiCloud || provider.Type == sender.AzureACS {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.ProviderUrl, provider.AppId)
 	} else if provider.Type == "Custom HTTP SMS" {
-		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title)
+		client, err = newHttpSmsClient(provider.Endpoint, provider.Method, provider.Title, provider.TemplateCode)
 	} else {
 		client, err = sender.NewSmsClient(provider.Type, provider.ClientId, provider.ClientSecret, provider.SignName, provider.TemplateCode, provider.AppId)
 	}
