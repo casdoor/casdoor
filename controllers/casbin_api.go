@@ -121,6 +121,10 @@ func (c *ApiController) Enforce() {
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	} else {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return
@@ -235,6 +239,10 @@ func (c *ApiController) BatchEnforce() {
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	} else {
 		c.ResponseError(c.T("general:Missing parameter"))
 		return

@@ -119,6 +119,9 @@ func GetVersionInfo() (*VersionInfo, error) {
 	}
 
 	cIter, err := r.Log(&git.LogOptions{From: ref.Hash()})
+	if err != nil {
+		return res, err
+	}
 
 	commitOffset := 0
 	version := ""
