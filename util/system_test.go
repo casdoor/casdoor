@@ -70,6 +70,9 @@ func TestGetVersion(t *testing.T) {
 
 	testHash := plumbing.NewHash("f8bc87eb4e5ba3256424cf14aafe0549f812f1cf")
 	cIter, err := r.Log(&git.LogOptions{From: testHash})
+	if err != nil {
+		t.Log(err)
+	}
 
 	aheadCnt := 0
 	releaseVersion := ""
