@@ -912,7 +912,7 @@ func (c *ApiController) HandleSamlLogin() {
 	samlResponse = url.QueryEscape(samlResponse)
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
-	c.Redirect(targetUrl, 303)
+	c.Redirect(targetUrl, http.StatusSeeOther)
 }
 
 // HandleOfficialAccountEvent ...

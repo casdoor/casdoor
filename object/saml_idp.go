@@ -198,7 +198,7 @@ type Attribute struct {
 	Values       []string `xml:"AttributeValue"`
 }
 
-func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
+func GetSamlMeta(application *Application, host string, enablePostBinding bool) (*IdpEntityDescriptor, error) {
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
@@ -216,6 +216,13 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
 	originFrontend, originBackend := getOriginFromHost(host)
+
+	idpLocation := ""
+	if enablePostBinding {
+		idpLocation = fmt.Sprintf("%s/api/saml/redirect/%s/%s", originBackend, application.Owner, application.Name)
+	} else {
+		idpLocation = fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name)
+	}
 
 	d := IdpEntityDescriptor{
 		XMLName: xml.Name{
@@ -248,7 +255,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 			},
 			SingleSignOnService: SingleSignOnService{
 				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-				Location: fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name),
+				Location: idpLocation,
 			},
 			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
 		},
@@ -441,4 +448,9 @@ func NewSamlResponse11(user *User, requestID string, host string) *etree.Element
 	}
 
 	return samlResponse
+}
+
+func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string) string {
+	originF, _ := getOriginFromHost(host)
+	return fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
 }

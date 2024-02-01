@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/casdoor/casdoor/object"
 )
@@ -34,7 +35,13 @@ func (c *ApiController) GetSamlMeta() {
 		return
 	}
 
-	metadata, err := object.GetSamlMeta(application, host)
+	enablePostBinding, err := c.GetBool("enablePostBinding", false)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	metadata, err := object.GetSamlMeta(application, host, enablePostBinding)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -42,4 +49,18 @@ func (c *ApiController) GetSamlMeta() {
 
 	c.Data["xml"] = metadata
 	c.ServeXML()
+}
+
+func (c *ApiController) HandleSamlRedirect() {
+	host := c.Ctx.Request.Host
+
+	owner := c.Ctx.Input.Param(":owner")
+	application := c.Ctx.Input.Param(":application")
+
+	relayState := c.Input().Get("RelayState")
+	samlRequest := c.Input().Get("SAMLRequest")
+
+	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlRequest, host)
+
+	c.Redirect(targetURL, http.StatusSeeOther)
 }

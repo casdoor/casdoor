@@ -164,6 +164,10 @@ func getUrlPath(urlPath string) string {
 		return "/api/webauthn"
 	}
 
+	if strings.HasPrefix(urlPath, "/api/saml/redirect") {
+		return "/api/saml/redirect"
+	}
+
 	return urlPath
 }
 

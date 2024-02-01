@@ -116,7 +116,6 @@ class ApplicationEditPage extends React.Component {
     this.getApplication();
     this.getOrganizations();
     this.getProviders();
-    this.getSamlMetadata();
   }
 
   getApplication() {
@@ -146,6 +145,8 @@ class ApplicationEditPage extends React.Component {
         });
 
         this.getCerts(application.organization);
+
+        this.getSamlMetadata(application.enableSamlPostBinding);
       });
   }
 
@@ -186,8 +187,8 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getSamlMetadata() {
-    ApplicationBackend.getSamlMetadata("admin", this.state.applicationName)
+  getSamlMetadata(checked) {
+    ApplicationBackend.getSamlMetadata("admin", this.state.applicationName, checked)
       .then((data) => {
         this.setState({
           samlMetadata: data,
@@ -664,6 +665,17 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Enable SAML POST binding"), i18next.t("application:Enable SAML POST binding - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSamlPostBinding} onChange={checked => {
+              this.updateApplicationField("enableSamlPostBinding", checked);
+              this.getSamlMetadata(checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
           </Col>
@@ -688,7 +700,7 @@ class ApplicationEditPage extends React.Component {
             />
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}`);
+              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&post=${this.state.application.enableSamlPostBinding}`);
               Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
