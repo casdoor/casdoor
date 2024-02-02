@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "所属は空白にできません",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "表示名は空白にできません",
     "DisplayName is not valid real name": "表示名は有効な実名ではありません",
     "Email already exists": "メールは既に存在します",

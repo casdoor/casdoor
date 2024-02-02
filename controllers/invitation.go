@@ -84,6 +84,32 @@ func (c *ApiController) GetInvitation() {
 	c.ResponseOk(invitation)
 }
 
+// GetInvitationCodeInfo
+// @Title GetInvitationCodeInfo
+// @Tag Invitation API
+// @Description get invitation code information
+// @Param   code     query    string  true        "Invitation code"
+// @Success 200 {object} object.Invitation The Response object
+// @router /get-invitation-info [get]
+func (c *ApiController) GetInvitationCodeInfo() {
+	code := c.Input().Get("code")
+	applicationId := c.Input().Get("applicationId")
+
+	application, err := object.GetApplication(applicationId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	invitation, msg := object.GetInvitationByCode(code, application.Organization, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
+	c.ResponseOk(object.GetMaskedInvitation(invitation))
+}
+
 // UpdateInvitation
 // @Title UpdateInvitation
 // @Tag Invitation API
@@ -102,7 +128,7 @@ func (c *ApiController) UpdateInvitation() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateInvitation(id, &invitation))
+	c.Data["json"] = wrapActionResponse(object.UpdateInvitation(id, &invitation, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 
@@ -121,7 +147,7 @@ func (c *ApiController) AddInvitation() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddInvitation(&invitation))
+	c.Data["json"] = wrapActionResponse(object.AddInvitation(&invitation, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 

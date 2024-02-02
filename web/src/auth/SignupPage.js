@@ -29,6 +29,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
+import * as InvitationBackend from "../backend/InvitationBackend";
 
 const formItemLayout = {
   labelCol: {
@@ -93,6 +94,15 @@ class SignupPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== null) {
         this.getApplication(this.state.applicationName);
+
+        const sp = new URLSearchParams(window.location.search);
+        if (sp.has("invitationCode")) {
+          const invitationCode = sp.get("invitationCode");
+          this.setState({invitationCode: invitationCode});
+          if (invitationCode !== "") {
+            this.getInvitationCodeInfo(invitationCode, "admin/" + this.state.applicationName);
+          }
+        }
       } else if (oAuthParams !== null) {
         this.getApplicationLogin(oAuthParams);
       } else {
@@ -130,6 +140,17 @@ class SignupPage extends React.Component {
             msg: res.msg,
           });
         }
+      });
+  }
+
+  getInvitationCodeInfo(invitationCode, application) {
+    InvitationBackend.getInvitationCodeInfo(invitationCode, application)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+        this.setState({invitation: res.data});
       });
   }
 
@@ -235,7 +256,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input placeholder={signupItem.placeholder} />
+          <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.username !== ""} />
         </Form.Item>
       );
     } else if (signupItem.name === "Display name") {
@@ -363,7 +384,7 @@ class SignupPage extends React.Component {
               },
             ]}
           >
-            <Input placeholder={signupItem.placeholder} onChange={e => this.setState({email: e.target.value})} />
+            <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""} onChange={e => this.setState({email: e.target.value})} />
           </Form.Item>
           {
             signupItem.rule !== "No verification" &&
@@ -434,6 +455,7 @@ class SignupPage extends React.Component {
                 <Input
                   placeholder={signupItem.placeholder}
                   style={{width: "65%"}}
+                  disabled={this.state.invitation !== undefined && this.state.invitation.phone !== ""}
                   onChange={e => this.setState({phone: e.target.value})}
                 />
               </Form.Item>
@@ -524,7 +546,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input placeholder={signupItem.placeholder} />
+          <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation !== ""} />
         </Form.Item>
       );
     } else if (signupItem.name === "Agreement") {
@@ -553,6 +575,20 @@ class SignupPage extends React.Component {
         >
         </Result>
       );
+    }
+    if (this.state.invitation !== undefined) {
+      if (this.state.invitation.username !== "") {
+        this.form.current?.setFieldValue("username", this.state.invitation.username);
+      }
+      if (this.state.invitation.email !== "") {
+        this.form.current?.setFieldValue("email", this.state.invitation.email);
+      }
+      if (this.state.invitation.phone !== "") {
+        this.form.current?.setFieldValue("phone", this.state.invitation.phone);
+      }
+      if (this.state.invitationCode !== "") {
+        this.form.current?.setFieldValue("invitationCode", this.state.invitationCode);
+      }
     }
     return (
       <Form

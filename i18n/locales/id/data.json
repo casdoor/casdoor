@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Keterkaitan tidak boleh kosong",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Nama Pengguna tidak boleh kosong",
     "DisplayName is not valid real name": "DisplayName bukanlah nama asli yang valid",
     "Email already exists": "Email sudah ada",

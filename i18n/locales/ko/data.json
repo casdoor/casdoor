@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "소속은 비워 둘 수 없습니다",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "DisplayName는 비어 있을 수 없습니다",
     "DisplayName is not valid real name": "DisplayName는 유효한 실제 이름이 아닙니다",
     "Email already exists": "이메일이 이미 존재합니다",

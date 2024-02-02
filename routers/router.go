@@ -94,6 +94,7 @@ func initAPI() {
 
 	beego.Router("/api/get-invitations", &controllers.ApiController{}, "GET:GetInvitations")
 	beego.Router("/api/get-invitation", &controllers.ApiController{}, "GET:GetInvitation")
+	beego.Router("/api/get-invitation-info", &controllers.ApiController{}, "GET:GetInvitationCodeInfo")
 	beego.Router("/api/update-invitation", &controllers.ApiController{}, "POST:UpdateInvitation")
 	beego.Router("/api/add-invitation", &controllers.ApiController{}, "POST:AddInvitation")
 	beego.Router("/api/delete-invitation", &controllers.ApiController{}, "POST:DeleteInvitation")

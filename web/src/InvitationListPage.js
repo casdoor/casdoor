@@ -22,19 +22,20 @@ import * as InvitationBackend from "./backend/InvitationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
-import copy from "copy-to-clipboard";
 
 class InvitationListPage extends BaseListPage {
   newInvitation() {
     const randomName = Setting.getRandomName();
     const owner = Setting.getRequestOrganization(this.props.account);
+    const code = Math.random().toString(36).slice(-10);
     return {
       owner: owner,
       name: `invitation_${randomName}`,
       createdTime: moment().format(),
       updatedTime: moment().format(),
       displayName: `New Invitation - ${randomName}`,
-      code: Math.random().toString(36).slice(-10),
+      code: code,
+      defaultCode: code,
       quota: 1,
       usedCount: 0,
       application: "All",
@@ -225,17 +226,11 @@ class InvitationListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "350px",
+        width: "180px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => {
-                copy(`${window.location.origin}/login/${record.owner}?invitation_code=${record.code}`);
-                Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-              }}>
-                {i18next.t("application:Copy signup page URL")}
-              </Button>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/invitations/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}

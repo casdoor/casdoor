@@ -390,6 +390,8 @@
   "invitation": {
     "Code": "邀请码",
     "Code - Tooltip": "可以是一个单独的字符串作为邀请码，也可以是正则表达式，所有符合正则表达式的字符串都是合法的邀请码",
+    "Default code": "默认邀请码",
+    "Default code - Tooltip": "当邀请码为正则表达式时，请输入符合正则表达式规则的邀请码作为邀请链接的默认邀请码",
     "Edit Invitation": "编辑邀请码",
     "New Invitation": "新建邀请码",
     "Quota": "配额",
