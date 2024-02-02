@@ -35,10 +35,7 @@ type SmsMfa struct {
 func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
 	recoveryCode := uuid.NewString()
 
-	err := ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
-	if err != nil {
-		return nil, err
-	}
+	ctx.Output.Session(MfaRecoveryCodesSession, []string{recoveryCode})
 
 	mfaProps := MfaProps{
 		MfaType:       mfa.Config.MfaType,

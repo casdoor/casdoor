@@ -55,16 +55,10 @@ func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, er
 		return nil, err
 	}
 
-	err = ctx.Input.CruSession.Set(MfaTotpSecretSession, key.Secret())
-	if err != nil {
-		return nil, err
-	}
+	ctx.Output.Session(MfaTotpSecretSession, key.Secret())
 
 	recoveryCode := uuid.NewString()
-	err = ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
-	if err != nil {
-		return nil, err
-	}
+	ctx.Output.Session(MfaRecoveryCodesSession, []string{recoveryCode})
 
 	mfaProps := MfaProps{
 		MfaType:       mfa.Config.MfaType,

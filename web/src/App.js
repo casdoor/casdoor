@@ -735,7 +735,9 @@ class App extends Component {
                   account={this.state.account}
                   theme={this.state.themeData}
                   onLoginSuccess={(redirectUrl) => {
-                    localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                    if (redirectUrl) {
+                      localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                    }
                     this.getAccount();
                   }}
                   onUpdateAccount={(account) => this.onUpdateAccount(account)}
