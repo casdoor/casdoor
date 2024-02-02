@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
     "DisplayName is not valid real name": "DisplayName không phải là tên thật hợp lệ",
     "Email already exists": "Email đã tồn tại",

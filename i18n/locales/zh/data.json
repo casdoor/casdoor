@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "工作单位不可为空",
+    "Default code does not match the code's matching rules": "邀请码默认值和邀请码规则不匹配",
     "DisplayName cannot be blank": "显示名称不可为空",
     "DisplayName is not valid real name": "显示名称必须是真实姓名",
     "Email already exists": "该邮箱已存在",

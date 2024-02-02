@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Принадлежность не может быть пустым значением",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Имя отображения не может быть пустым",
     "DisplayName is not valid real name": "DisplayName не является действительным именем",
     "Email already exists": "Электронная почта уже существует",

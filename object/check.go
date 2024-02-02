@@ -184,6 +184,15 @@ func CheckInvitationCode(application *Application, organization *Organization, a
 	}
 }
 
+func CheckInvitationDefaultCode(code string, defaultCode string, lang string) error {
+	if matched, err := util.IsInvitationCodeMatch(code, defaultCode); err != nil {
+		return err
+	} else if !matched {
+		return fmt.Errorf(i18n.Translate(lang, "check:Default code does not match the code's matching rules"))
+	}
+	return nil
+}
+
 func checkSigninErrorTimes(user *User, lang string) error {
 	failedSigninLimit, failedSigninFrozenTime, err := GetFailedSigninConfigByUser(user)
 	if err != nil {

@@ -34,6 +34,16 @@ export function getInvitation(owner, name) {
   }).then(res => res.json());
 }
 
+export function getInvitationCodeInfo(code, applicationName) {
+  return fetch(`${Setting.ServerUrl}/api/get-invitation-info?code=${code}&applicationId=${encodeURIComponent(applicationName)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function updateInvitation(owner, name, invitation) {
   const newInvitation = Setting.deepCopy(invitation);
   return fetch(`${Setting.ServerUrl}/api/update-invitation?id=${owner}/${encodeURIComponent(name)}`, {

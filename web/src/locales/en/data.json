@@ -390,6 +390,8 @@
   "invitation": {
     "Code": "Code",
     "Code - Tooltip": "Can be a single string as an invitation code, or a regular expression. All strings matching the regular expression are valid invitation codes",
+    "Default code": "Default code",
+    "Default code - Tooltip": "When the invitation code is a regular expression, please enter the invitation code that matches the regular expression rule as the default invitation code for the invitation link",
     "Edit Invitation": "Edit Invitation",
     "New Invitation": "New Invitation",
     "Quota": "Quota",

@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Affiliation cannot be blank",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "DisplayName cannot be blank",
     "DisplayName is not valid real name": "DisplayName is not valid real name",
     "Email already exists": "Email already exists",

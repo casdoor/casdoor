@@ -30,6 +30,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Zugehörigkeit darf nicht leer sein",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Anzeigename kann nicht leer sein",
     "DisplayName is not valid real name": "DisplayName ist kein gültiger Vorname",
     "Email already exists": "E-Mail existiert bereits",

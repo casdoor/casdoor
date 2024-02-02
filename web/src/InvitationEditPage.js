@@ -19,6 +19,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import copy from "copy-to-clipboard";
 
 const {Option} = Select;
 
@@ -99,6 +100,18 @@ class InvitationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("invitation:New Invitation") : i18next.t("invitation:Edit Invitation")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          <Button style={{marginLeft: "20px"}} onClick={() => {
+            let defaultApplication;
+            if (this.state.invitation.owner === "built-in") {
+              defaultApplication = "app-built-in";
+            } else {
+              defaultApplication = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner).defaultApplication;
+            }
+            copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`);
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+          }}>
+            {i18next.t("application:Copy signup page URL")}
+          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
@@ -140,7 +153,21 @@ class InvitationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.invitation.code} onChange={e => {
+              const regex = /[^a-zA-Z0-9]/;
+              if (!regex.test(e.target.value)) {
+                this.updateInvitationField("defaultCode", e.target.value);
+              }
               this.updateInvitationField("code", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("invitation:Default code"), i18next.t("invitation:Default code - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.invitation.defaultCode} onChange={e => {
+              this.updateInvitationField("defaultCode", e.target.value);
             }} />
           </Col>
         </Row>
@@ -274,6 +301,18 @@ class InvitationEditPage extends React.Component {
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          <Button style={{marginLeft: "20px"}} size="large" onClick={() => {
+            let defaultApplication;
+            if (this.state.invitation.owner === "built-in") {
+              defaultApplication = "app-built-in";
+            } else {
+              defaultApplication = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner).defaultApplication;
+            }
+            copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`);
+            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+          }}>
+            {i18next.t("application:Copy signup page URL")}
+          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
