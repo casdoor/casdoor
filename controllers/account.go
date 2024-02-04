@@ -94,7 +94,7 @@ func (c *ApiController) Signup() {
 		return
 	}
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist")), authForm.Application)
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 		return
 	}
 
@@ -110,7 +110,7 @@ func (c *ApiController) Signup() {
 	}
 
 	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist")), authForm.Organization)
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), authForm.Organization))
 		return
 	}
 
