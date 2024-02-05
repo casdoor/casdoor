@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"sort"
@@ -96,7 +95,7 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("go in wx auth to " + code)
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -212,40 +211,49 @@ func BuildWechatOpenIdKey(appId string) string {
 	return fmt.Sprintf("wechat_openid_%s", appId)
 }
 
-func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, error) {
+func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, string, error) {
 	accessTokenUrl := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", clientId, clientSecret)
 	request, err := http.NewRequest("GET", accessTokenUrl, nil)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	client := new(http.Client)
 	resp, err := client.Do(request)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var data struct {
 		ExpireIn    int    `json:"expires_in"`
 		AccessToken string `json:"access_token"`
+		ErrCode     int    `json:"errcode"`
+		Errmsg      string `json:errmsg`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return data.AccessToken, nil
+	return data.AccessToken, data.Errmsg, nil
 }
 
-// Get random QRCode of wechat
 func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string) (string, string, error) {
-	accessToken, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+	accessToken, errMsg, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+	if err != nil {
+		return "", "", err
+	}
+
+	if errMsg != "" {
+		return "", "", fmt.Errorf("Fail to fetch WeChat QRcode: %s", errMsg)
+	}
+
 	client := new(http.Client)
 
 	weChatEndpoint := "https://api.weixin.qq.com/cgi-bin/qrcode/create"

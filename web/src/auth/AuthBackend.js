@@ -146,7 +146,7 @@ export function getWechatMessageEvent(ticket) {
 }
 
 export function getWechatQRCode(providerId) {
-  return fetch(`${Setting.ServerUrl}/api/get-wechat-qrcode?id=${providerId}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-qrcode?id=${providerId}`, {
     method: "GET",
     credentials: "include",
     headers: {

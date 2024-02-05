@@ -43,6 +43,7 @@ import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
+import * as Setting from "../Setting";
 import {getEvent} from "./Util";
 import {Modal} from "antd";
 
@@ -136,8 +137,12 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         const info = async() => {
           AuthBackend.getWechatQRCode(`${provider.owner}/${provider.name}`).then(
             async res => {
+              if (res.status !== "ok") {
+                Setting.showMessage("error", res?.msg);
+                return;
+              }
+
               const t1 = setInterval(await getEvent, 1000, application, provider, res.data2);
-              window.clearInterval(t1);
               {Modal.info({
                 title: i18next.t("provider:Please use WeChat and scan the QR code and subscribe the offical account to sign in"),
                 content: (

@@ -968,7 +968,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		c.ResponseError("empty ticket")
 		return
 	}
-	if !idp.VerifyWechatSignature(provider.Cert, nonce, timestamp, signature) {
+	if !idp.VerifyWechatSignature(provider.Content, nonce, timestamp, signature) {
 		c.ResponseError("invalid signature")
 		return
 	}
@@ -996,13 +996,6 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 func (c *ApiController) GetWebhookEventType() {
 	ticket := c.Input().Get("ticket")
 
-	resp := &Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   "",
-		Data2:  "",
-	}
-
 	lock.RLock()
 	log.Print(len(wechatCacheMap))
 	wechatMsg, ok := wechatCacheMap[ticket]
@@ -1014,21 +1007,16 @@ func (c *ApiController) GetWebhookEventType() {
 	delete(wechatCacheMap, ticket)
 	lock.Unlock()
 
-	resp.Data = "SCAN"
-	resp.Data2 = wechatMsg.IsScanned
-
-	c.Data["json"] = resp
-
-	c.ServeJSON()
+	c.ResponseOk("SCAN", wechatMsg.IsScanned)
 }
 
-// GetWechatQRCode
+// GetQRCode
 // @Tag System API
 // @Title GetWechatQRCode
-// @router /get-wechat-qrcode [GET]
+// @router /get-qrcode [GET]
 // @Param   id     query    string  true        "The id ( owner/name ) of provider"
 // @Success 200 {object} controllers.Response The Response object
-func (c *ApiController) GetWechatQRCode() {
+func (c *ApiController) GetQRCode() {
 	providerId := c.Input().Get("id")
 	provider, err := object.GetProvider(providerId)
 	if err != nil {
@@ -1040,16 +1028,8 @@ func (c *ApiController) GetWechatQRCode() {
 		c.ResponseError(err.Error())
 		return
 	}
-	resp := &Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   code,
-		Data2:  ticket,
-	}
 
-	c.Data["json"] = resp
-
-	c.ServeJSON()
+	c.ResponseOk(code, ticket)
 }
 
 // GetCaptchaStatus

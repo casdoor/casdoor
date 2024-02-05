@@ -62,7 +62,7 @@ func initAPI() {
 	beego.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
 	beego.Router("/api/saml/redirect/:owner/:application", &controllers.ApiController{}, "*:HandleSamlRedirect")
 	beego.Router("/api/webhook", &controllers.ApiController{}, "*:HandleOfficialAccountEvent")
-	beego.Router("/api/get-wechat-qrcode", &controllers.ApiController{}, "GET:GetWechatQRCode")
+	beego.Router("/api/get-qrcode", &controllers.ApiController{}, "GET:GetQRCode")
 	beego.Router("/api/get-webhook-event", &controllers.ApiController{}, "GET:GetWebhookEventType")
 	beego.Router("/api/get-captcha-status", &controllers.ApiController{}, "GET:GetCaptchaStatus")
 	beego.Router("/api/callback", &controllers.ApiController{}, "POST:Callback")
