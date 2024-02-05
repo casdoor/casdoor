@@ -985,7 +985,6 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	lock.Unlock()
 
 	c.Ctx.WriteString("")
-
 }
 
 // GetWebhookEventType ...
