@@ -188,8 +188,8 @@ export function getQueryParamsFromState(state) {
   }
 }
 
-export function getEvent(application, provider) {
-  getWechatMessageEvent()
+export function getEvent(application, provider, ticket) {
+  getWechatMessageEvent(ticket)
     .then(res => {
       if (res.data === "SCAN" || res.data === "subscribe") {
         Setting.goToLink(Provider.getAuthUrl(application, provider, "signup"));

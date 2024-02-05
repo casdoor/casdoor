@@ -758,6 +758,7 @@
     "Path prefix": "路径前缀",
     "Path prefix - Tooltip": "对象存储的Bucket路径前缀",
     "Please use WeChat and scan the QR code to sign in": "请使用微信扫描二维码登录",
+    "Please use WeChat and scan the QR code and subscribe the offical account to sign in": "请使用微信扫描二维码并关注公众号登录",
     "Port": "端口",
     "Port - Tooltip": "请确保端口号打开",
     "Private Key": "私钥",

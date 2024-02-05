@@ -756,16 +756,28 @@ class ProviderEditPage extends React.Component {
         }
         {
           this.state.provider.type !== "WeChat" ? null : (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
-              </Col>
-              <Col span={1} >
-                <Switch checked={this.state.provider.disableSsl} onChange={checked => {
-                  this.updateProviderField("disableSsl", checked);
-                }} />
-              </Col>
-            </Row>
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Token"), i18next.t("provider:Token - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.content} onChange={e => {
+                    this.updateProviderField("content", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                    this.updateProviderField("disableSsl", checked);
+                  }} />
+                </Col>
+              </Row>
+            </React.Fragment>
           )
         }
         {
