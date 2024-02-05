@@ -144,7 +144,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
 
               const t1 = setInterval(await getEvent, 1000, application, provider, res.data2);
               {Modal.info({
-                title: i18next.t("provider:Please use WeChat and scan the QR code and subscribe the offical account to sign in"),
+                title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
                 content: (
                   <div style={{marginRight: "34px"}}>
                     <img src = {"data:image/png;base64," + res.data} alt="Wechat QR code" style={{width: "100%"}} />

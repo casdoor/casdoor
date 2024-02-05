@@ -759,7 +759,7 @@ class ProviderEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Token"), i18next.t("provider:Token - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("token:Access token"), i18next.t("token:Access token - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.provider.content} onChange={e => {

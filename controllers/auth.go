@@ -20,7 +20,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -977,7 +976,6 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 	if wechatCacheMap == nil {
 		wechatCacheMap = make(map[string]idp.WechatCacheMapValue)
 	}
-	log.Print(data.Ticket)
 	wechatCacheMap[data.Ticket] = idp.WechatCacheMapValue{
 		IsScanned:    true,
 		WechatOpenId: data.FromUserName,
@@ -997,11 +995,11 @@ func (c *ApiController) GetWebhookEventType() {
 	ticket := c.Input().Get("ticket")
 
 	lock.RLock()
-	log.Print(len(wechatCacheMap))
 	wechatMsg, ok := wechatCacheMap[ticket]
 	lock.RUnlock()
 	if !ok {
 		c.ResponseError("ticket not found")
+		return
 	}
 	lock.Lock()
 	delete(wechatCacheMap, ticket)
