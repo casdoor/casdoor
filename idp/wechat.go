@@ -16,12 +16,15 @@ package idp
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 
@@ -32,6 +35,11 @@ import (
 type WeChatIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
+}
+
+type WechatCacheMapValue struct {
+	IsScanned    bool
+	WechatOpenId string
 }
 
 func NewWeChatIdProvider(clientId string, clientSecret string, redirectUrl string) *WeChatIdProvider {
@@ -203,60 +211,70 @@ func BuildWechatOpenIdKey(appId string) string {
 	return fmt.Sprintf("wechat_openid_%s", appId)
 }
 
-func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, error) {
+func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (string, string, error) {
 	accessTokenUrl := fmt.Sprintf("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", clientId, clientSecret)
 	request, err := http.NewRequest("GET", accessTokenUrl, nil)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	client := new(http.Client)
 	resp, err := client.Do(request)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var data struct {
 		ExpireIn    int    `json:"expires_in"`
 		AccessToken string `json:"access_token"`
+		ErrCode     int    `json:"errcode"`
+		Errmsg      string `json:errmsg`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return data.AccessToken, nil
+	return data.AccessToken, data.Errmsg, nil
 }
 
-func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) (string, error) {
-	accessToken, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string) (string, string, error) {
+	accessToken, errMsg, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
+	if err != nil {
+		return "", "", err
+	}
+
+	if errMsg != "" {
+		return "", "", fmt.Errorf("Fail to fetch WeChat QRcode: %s", errMsg)
+	}
+
 	client := new(http.Client)
 
 	weChatEndpoint := "https://api.weixin.qq.com/cgi-bin/qrcode/create"
 	qrCodeUrl := fmt.Sprintf("%s?access_token=%s", weChatEndpoint, accessToken)
-	params := `{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "test"}}}`
+	params := fmt.Sprintf(`{"expire_seconds": 3600, "action_name": "QR_STR_SCENE", "action_info": {"scene": {"scene_str": "%s"}}}`, providerId)
 
 	bodyData := bytes.NewReader([]byte(params))
 	requeset, err := http.NewRequest("POST", qrCodeUrl, bodyData)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	resp, err := client.Do(requeset)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	var data struct {
 		Ticket        string `json:"ticket"`
@@ -265,11 +283,26 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string) (strin
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var png []byte
 	png, err = qrcode.Encode(data.URL, qrcode.Medium, 256)
 	base64Image := base64.StdEncoding.EncodeToString(png)
-	return base64Image, nil
+	return base64Image, data.Ticket, nil
+}
+
+func VerifyWechatSignature(token string, nonce string, timestamp string, signature string) bool {
+	// verify the signature
+	tmpArr := sort.StringSlice{token, timestamp, nonce}
+	sort.Sort(tmpArr)
+
+	tmpStr := ""
+	for _, str := range tmpArr {
+		tmpStr = tmpStr + str
+	}
+
+	b := sha1.Sum([]byte(tmpStr))
+	res := hex.EncodeToString(b[:])
+	return res == signature
 }
