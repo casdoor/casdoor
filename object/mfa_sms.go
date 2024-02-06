@@ -16,6 +16,7 @@ package object
 
 import (
 	"errors"
+
 	"github.com/casdoor/casdoor/util"
 )
 
