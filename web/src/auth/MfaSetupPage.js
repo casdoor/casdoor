@@ -48,7 +48,9 @@ class MfaSetupPage extends React.Component {
   componentDidMount() {
     this.getApplication();
     if (this.state.current === 1) {
-      this.initMfaProps();
+      setTimeout(() => {
+        this.initMfaProps();
+      }, 500);
     }
   }
 
