@@ -163,7 +163,7 @@ class SigninMethodTable extends React.Component {
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button icon={<DeleteOutlined />} size="small" disabled={table.length <= 1} onClick={() => this.deleteRow(items, table, index)} />
+                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(items, table, index)} />
               </Tooltip>
             </div>
           );

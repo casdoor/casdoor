@@ -41,11 +41,7 @@ func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, erro
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Printf("downloadImage() error for url [%s]: %s\n", url, resp.Status)
-		if resp.StatusCode == 404 {
-			return nil, "", nil
-		} else {
-			return nil, "", fmt.Errorf("failed to download gravatar image: %s", resp.Status)
-		}
+		return nil, "", nil
 	}
 
 	// Get the content type and determine the file extension
