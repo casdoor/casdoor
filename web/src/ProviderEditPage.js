@@ -795,7 +795,7 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Follow-up Action"), i18next.t("provider:Follow-up Action - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:Follow-up action"), i18next.t("provider:Follow-up action - Tooltip"))} :
                 </Col>
                 <Col>
                   <Radio.Group value={this.state.provider.signName}
