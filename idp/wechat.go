@@ -26,10 +26,16 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/skip2/go-qrcode"
 	"golang.org/x/oauth2"
+)
+
+var (
+	WechatCacheMap map[string]WechatCacheMapValue
+	Lock           sync.RWMutex
 )
 
 type WeChatIdProvider struct {
@@ -38,8 +44,8 @@ type WeChatIdProvider struct {
 }
 
 type WechatCacheMapValue struct {
-	IsScanned    bool
-	WechatOpenId string
+	IsScanned     bool
+	WechatUnionId string
 }
 
 func NewWeChatIdProvider(clientId string, clientSecret string, redirectUrl string) *WeChatIdProvider {
@@ -84,6 +90,15 @@ type WechatAccessToken struct {
 // GetToken use code get access_token (*operation of getting code ought to be done in front)
 // get more detail via: https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
 func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
+	if strings.HasPrefix(code, "wechat_oa:") {
+		token := oauth2.Token{
+			AccessToken: code,
+			TokenType:   "WeChatAccessToken",
+			Expiry:      time.Time{},
+		}
+		return &token, nil
+	}
+
 	params := url.Values{}
 	params.Add("grant_type", "authorization_code")
 	params.Add("appid", idp.Config.ClientID)
@@ -164,6 +179,29 @@ type WechatUserInfo struct {
 func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	var wechatUserInfo WechatUserInfo
 	accessToken := token.AccessToken
+
+	if strings.HasPrefix(accessToken, "wechat_oa:") {
+		Lock.RLock()
+		mapValue, ok := WechatCacheMap[accessToken[10:]]
+		Lock.RUnlock()
+
+		if !ok || mapValue.WechatUnionId == "" {
+			return nil, fmt.Errorf("error ticket")
+		}
+
+		Lock.Lock()
+		delete(WechatCacheMap, accessToken[10:])
+		Lock.Unlock()
+
+		userInfo := UserInfo{
+			Id:          mapValue.WechatUnionId,
+			Username:    "wx_user_" + mapValue.WechatUnionId,
+			DisplayName: "wx_user_" + mapValue.WechatUnionId,
+			AvatarUrl:   "",
+		}
+		return &userInfo, nil
+	}
+
 	openid := token.Extra("Openid")
 
 	userInfoUrl := fmt.Sprintf("https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s", accessToken, openid)
@@ -234,7 +272,7 @@ func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (
 		ExpireIn    int    `json:"expires_in"`
 		AccessToken string `json:"access_token"`
 		ErrCode     int    `json:"errcode"`
-		Errmsg      string `json:errmsg`
+		Errmsg      string `json:"errmsg"`
 	}
 	err = json.Unmarshal(respBytes, &data)
 	if err != nil {

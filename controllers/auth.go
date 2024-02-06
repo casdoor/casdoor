@@ -24,7 +24,6 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -35,11 +34,6 @@ import (
 	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
-)
-
-var (
-	wechatCacheMap map[string]idp.WechatCacheMapValue
-	lock           sync.RWMutex
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -972,15 +966,15 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		return
 	}
 
-	lock.Lock()
-	if wechatCacheMap == nil {
-		wechatCacheMap = make(map[string]idp.WechatCacheMapValue)
+	idp.Lock.Lock()
+	if idp.WechatCacheMap == nil {
+		idp.WechatCacheMap = make(map[string]idp.WechatCacheMapValue)
 	}
-	wechatCacheMap[data.Ticket] = idp.WechatCacheMapValue{
-		IsScanned:    true,
-		WechatOpenId: data.FromUserName,
+	idp.WechatCacheMap[data.Ticket] = idp.WechatCacheMapValue{
+		IsScanned:     true,
+		WechatUnionId: data.FromUserName,
 	}
-	lock.Unlock()
+	idp.Lock.Unlock()
 
 	c.Ctx.WriteString("")
 }
@@ -994,18 +988,15 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 func (c *ApiController) GetWebhookEventType() {
 	ticket := c.Input().Get("ticket")
 
-	lock.RLock()
-	wechatMsg, ok := wechatCacheMap[ticket]
-	lock.RUnlock()
+	idp.Lock.RLock()
+	_, ok := idp.WechatCacheMap[ticket]
+	idp.Lock.RUnlock()
 	if !ok {
 		c.ResponseError("ticket not found")
 		return
 	}
-	lock.Lock()
-	delete(wechatCacheMap, ticket)
-	lock.Unlock()
 
-	c.ResponseOk("SCAN", wechatMsg.IsScanned)
+	c.ResponseOk("SCAN", ticket)
 }
 
 // GetQRCode
