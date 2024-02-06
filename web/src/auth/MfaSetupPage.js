@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Result, Row, Steps} from "antd";
+import {Button, Col, Result, Row, Spin, Steps} from "antd";
 import {withRouter} from "react-router-dom";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
@@ -42,13 +42,20 @@ class MfaSetupPage extends React.Component {
       mfaProps: null,
       mfaType: params.get("mfaType") ?? SmsMfaType,
       isPromptPage: props.isPromptPage || location.state?.from !== undefined,
+      loading: false,
     };
   }
 
   componentDidMount() {
     this.getApplication();
     if (this.state.current === 1) {
-      this.initMfaProps();
+      this.setState({
+        loading: true,
+      });
+
+      setTimeout(() => {
+        this.initMfaProps();
+      }, 200);
     }
   }
 
@@ -85,6 +92,7 @@ class MfaSetupPage extends React.Component {
       if (res.status === "ok") {
         this.setState({
           mfaProps: res.data,
+          loading: false,
         });
       } else {
         Setting.showMessage("error", i18next.t("mfa:Failed to initiate MFA"));
@@ -231,15 +239,17 @@ class MfaSetupPage extends React.Component {
               <p style={{textAlign: "center", fontSize: "16px", marginTop: "10px"}}>{i18next.t("mfa:Each time you sign in to your Account, you'll need your password and a authentication code")}</p>
             </Col>
           </Row>
-          <Steps current={this.state.current}
-            items={[
-              {title: i18next.t("mfa:Verify Password"), icon: <UserOutlined />},
-              {title: i18next.t("mfa:Verify Code"), icon: <KeyOutlined />},
-              {title: i18next.t("general:Enable"), icon: <CheckOutlined />},
-            ]}
-            style={{width: "90%", maxWidth: "500px", margin: "auto", marginTop: "50px",
-            }} >
-          </Steps>
+          <Spin spinning={this.state.loading}>
+            <Steps current={this.state.current}
+              items={[
+                {title: i18next.t("mfa:Verify Password"), icon: <UserOutlined />},
+                {title: i18next.t("mfa:Verify Code"), icon: <KeyOutlined />},
+                {title: i18next.t("general:Enable"), icon: <CheckOutlined />},
+              ]}
+              style={{width: "90%", maxWidth: "500px", margin: "auto", marginTop: "50px",
+              }} >
+            </Steps>
+          </Spin>
         </Col>
         <Col span={24} style={{display: "flex", justifyContent: "center"}}>
           <div style={{marginTop: "10px", textAlign: "center"}}>
