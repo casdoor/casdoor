@@ -116,7 +116,7 @@ func getFilteredWebhooks(webhooks []*Webhook, action string) []*Webhook {
 }
 
 func SendWebhooks(record *casvisorsdk.Record) error {
-	webhooks, err := getWebhooksByOrganization(record.Organization)
+	webhooks, err := getWebhooksByOrganization("")
 	if err != nil {
 		return err
 	}
