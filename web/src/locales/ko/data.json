@@ -673,6 +673,8 @@
   "provider": {
     "Access key": "어클세스 키",
     "Access key - Tooltip": "액세스 키",
+    "Action after scan QR code": "Action after scan QR code",
+    "Action after scan QR code - Tooltip": "If you choose \"Use WeChat Open Platform to login\", users need to login on the WeChat Open Platform after following the wechat official account.",
     "Agent ID": "에이전트 ID",
     "Agent ID - Tooltip": "에이전트 ID",
     "Api Key": "Api Key",
@@ -835,6 +837,8 @@
     "Token URL - Tooltip": "토큰 URL",
     "Type": "타입",
     "Type - Tooltip": "유형을 선택하세요",
+    "Use WeChat Media Platform to login": "Use WeChat Media Platform to login",
+    "Use WeChat Open Platform to login": "Use WeChat Open Platform to login",
     "User flow": "User flow",
     "User flow - Tooltip": "User flow - Tooltip",
     "User mapping": "User mapping",

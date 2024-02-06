@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Checkbox, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Checkbox, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -775,6 +775,19 @@ class ProviderEditPage extends React.Component {
                   <Switch checked={this.state.provider.disableSsl} onChange={checked => {
                     this.updateProviderField("disableSsl", checked);
                   }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Action after scan QR code"), i18next.t("provider:Action after scan QR code - Tooltip"))} :
+                </Col>
+                <Col>
+                  <Radio.Group value={this.state.provider.signName} disabled={!this.state.provider.disableSsl} buttonStyle="solid" onChange={e => {
+                    this.updateProviderField("signName", e.target.value);
+                  }}>
+                    <Radio.Button value="open">{i18next.t("provider:Use WeChat Open Platform to login")}</Radio.Button>
+                    <Radio.Button value="media">{i18next.t("provider:Use WeChat Media Platform to login")}</Radio.Button>
+                  </Radio.Group>
                 </Col>
               </Row>
             </React.Fragment>

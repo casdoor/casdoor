@@ -673,6 +673,8 @@
   "provider": {
     "Access key": "Clave de acceso",
     "Access key - Tooltip": "Clave de acceso",
+    "Action after scan QR code": "Action after scan QR code",
+    "Action after scan QR code - Tooltip": "If you choose \"Use WeChat Open Platform to login\", users need to login on the WeChat Open Platform after following the wechat official account.",
     "Agent ID": "Identificador de agente",
     "Agent ID - Tooltip": "Identificador de agente",
     "Api Key": "Api Key",
@@ -835,6 +837,8 @@
     "Token URL - Tooltip": "URL de token",
     "Type": "Tipo",
     "Type - Tooltip": "Seleccionar un tipo",
+    "Use WeChat Media Platform to login": "Use WeChat Media Platform to login",
+    "Use WeChat Open Platform to login": "Use WeChat Open Platform to login",
     "User flow": "User flow",
     "User flow - Tooltip": "User flow - Tooltip",
     "User mapping": "User mapping",

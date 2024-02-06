@@ -377,7 +377,7 @@ export function getProviderLogoWidget(provider) {
   }
 }
 
-export function getAuthUrl(application, provider, method) {
+export function getAuthUrl(application, provider, method, res) {
   if (application === null || provider === null) {
     return "";
   }
@@ -418,6 +418,9 @@ export function getAuthUrl(application, provider, method) {
     if (navigator.userAgent.includes("MicroMessenger")) {
       return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
     } else {
+      if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
+        return `${window.location.origin}/callback?state=${state}&code=${"wechat_oa:" + res?.data2}`;
+      }
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
   } else if (provider.type === "WeCom") {
