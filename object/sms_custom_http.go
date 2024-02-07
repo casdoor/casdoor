@@ -24,21 +24,26 @@ import (
 )
 
 type HttpSmsClient struct {
-	endpoint  string
-	method    string
-	paramName string
-	template  string
+	endpoint           string
+	method             string
+	contentParamName   string
+	recipientParamName string
+	template           string
 }
 
-func newHttpSmsClient(endpoint, method, paramName, template string) (*HttpSmsClient, error) {
+func newHttpSmsClient(endpoint, method, contentParamName, recipientParamName, template string) (*HttpSmsClient, error) {
 	if template == "" {
 		template = "%s"
 	}
+	if recipientParamName == "" {
+		recipientParamName = "phoneNumber"
+	}
 	client := &HttpSmsClient{
-		endpoint:  endpoint,
-		method:    method,
-		paramName: paramName,
-		template:  template,
+		endpoint:           endpoint,
+		method:             method,
+		contentParamName:   contentParamName,
+		recipientParamName: recipientParamName,
+		template:           template,
 	}
 	return client, nil
 }
@@ -52,8 +57,8 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 	var err error
 	if c.method == "POST" {
 		formValues := url.Values{}
-		formValues.Set("phoneNumber", phoneNumber)
-		formValues.Set(c.paramName, content)
+		formValues.Set(c.recipientParamName, phoneNumber)
+		formValues.Set(c.contentParamName, content)
 		req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
 		if err != nil {
 			return err
@@ -67,8 +72,8 @@ func (c *HttpSmsClient) SendMessage(param map[string]string, targetPhoneNumber .
 		}
 
 		q := req.URL.Query()
-		q.Add("phoneNumber", phoneNumber)
-		q.Add(c.paramName, content)
+		q.Add(c.recipientParamName, phoneNumber)
+		q.Add(c.contentParamName, content)
 		req.URL.RawQuery = q.Encode()
 	} else {
 		return fmt.Errorf("HttpSmsClient's SendMessage() error, unsupported method: %s", c.method)

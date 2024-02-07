@@ -1129,6 +1129,16 @@ class ProviderEditPage extends React.Component {
                         }} />
                       </Col>
                     </Row>
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("provider:Recipient parameter name"), i18next.t("provider:Recipient parameter name - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Input value={this.state.provider.metadata} onChange={e => {
+                          this.updateProviderField("metadata", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
                   </React.Fragment>
                 )
               }
