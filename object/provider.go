@@ -312,7 +312,6 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 	} else {
 		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}
-
 }
 
 func (p *Provider) GetId() string {
