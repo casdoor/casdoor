@@ -87,8 +87,7 @@ https://casdoor.org/docs/category/integrations
 ## How to contact?
 
 - Discord: https://discord.gg/5rPsrAzK7S
-- Forum: https://forum.casbin.com
-- Contact: https://tawk.to/chat/623352fea34c2456412b8c51/1fuc7od6e
+- Contact: https://casdoor.org/help
 
 ## Contribute
 
