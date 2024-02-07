@@ -890,6 +890,7 @@ func (c *ApiController) GetSamlLogin() {
 	authURL, method, err := object.GenerateSamlRequest(providerId, relayState, c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 	c.ResponseOk(authURL, method)
 }
@@ -900,6 +901,7 @@ func (c *ApiController) HandleSamlLogin() {
 	decode, err := base64.StdEncoding.DecodeString(relayState)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 	slice := strings.Split(string(decode), "&")
 	relayState = url.QueryEscape(relayState)

@@ -1,10 +1,12 @@
 package object
 
 import (
+	errors2 "errors"
 	"fmt"
 
-	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/errors"
+
+	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -87,7 +89,7 @@ func (e *UserGroupEnforcer) GetAllUsersByGroup(group string) ([]string, error) {
 
 	users, err := e.enforcer.GetUsersForRole(GetGroupWithPrefix(group))
 	if err != nil {
-		if err == errors.ErrNameNotFound {
+		if errors2.Is(err, errors.ErrNameNotFound) {
 			return []string{}, nil
 		}
 		return nil, err
