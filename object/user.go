@@ -793,6 +793,13 @@ func AddUser(user *User) (bool, error) {
 	}
 	user.Ranking = int(count + 1)
 
+	if user.Groups != nil && len(user.Groups) > 0 {
+		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	affected, err := ormer.Engine.Insert(user)
 	if err != nil {
 		return false, err
@@ -821,6 +828,13 @@ func AddUsers(users []*User) (bool, error) {
 		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 		if err != nil {
 			return false, err
+		}
+
+		if user.Groups != nil && len(user.Groups) > 0 {
+			_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+			if err != nil {
+				return false, err
+			}
 		}
 	}
 

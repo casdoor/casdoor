@@ -146,7 +146,8 @@
       "isForbidden": false,
       "isDeleted": false,
       "signupApplication": "",
-      "createdIp": ""
+      "createdIp": "",
+      "groups": []
     }
   ],
   "providers": [
@@ -348,6 +349,75 @@
       "organization": "",
       "owner": "",
       "url": ""
+    }
+  ],
+  "groups": [
+    {
+        "owner": "",
+        "name":"",
+        "displayName": "",
+        "manager": "",
+        "contactEmail": "",
+        "type": "",
+        "parent_id": "",
+        "isTopGroup": true,
+        "title": "",
+        "key": "",
+        "children": "",
+        "isEnabled": true
+    }
+  ],
+  "adapters": [
+    {
+        "owner": "",
+        "name": "",
+        "table": "",
+        "useSameDb": true,
+        "type": "",
+        "databaseType": "",
+        "database": "",
+        "host": "",
+        "port": 0,
+        "user": "",
+        "password": "",
+    }
+  ],
+  "enforcers": [
+    {
+        "owner": "",
+        "name": "",
+        "displayName": "",
+        "description": "",
+        "model": "",
+        "adapter": "",
+        "enforcer": ""
+    }
+  ],
+  "plans": [
+    {
+        "owner": "",
+        "name": "",
+        "displayName": "",
+        "description": "",
+        "price": 0,
+        "currency": "",
+        "period": "",
+        "product": "",
+        "paymentProviders": [],
+        "isEnabled": true,
+        "role", ""
+    }
+  ],
+  "pricings": [
+    {
+        "owner": "",
+        "name": "",
+        "displayName": "",
+        "description": "",
+        "plans": [],
+        "isEnabled": true,
+        "trialDuration": 0,
+        "application": "",
     }
   ]
 }
