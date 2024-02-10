@@ -121,6 +121,9 @@ func (idp *AdfsIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	var respKeys struct {
 		Keys []interface{} `json:"keys"`
 	}
