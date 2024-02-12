@@ -156,6 +156,10 @@ func (c *ApiController) GetUser() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if userFromUserId == nil {
+			c.ResponseOk(nil)
+			return
+		}
 
 		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
 	}
