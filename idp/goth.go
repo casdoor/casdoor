@@ -75,6 +75,7 @@ import (
 	"github.com/markbates/goth/providers/twitterv2"
 	"github.com/markbates/goth/providers/typetalk"
 	"github.com/markbates/goth/providers/uber"
+	"github.com/markbates/goth/providers/vk"
 	"github.com/markbates/goth/providers/wepay"
 	"github.com/markbates/goth/providers/xero"
 	"github.com/markbates/goth/providers/yahoo"
@@ -370,6 +371,11 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		idp = GothIdProvider{
 			Provider: uber.New(clientId, clientSecret, redirectUrl),
 			Session:  &uber.Session{},
+		}
+	case "VK":
+		idp = GothIdProvider{
+			Provider: vk.New(clientId, clientSecret, redirectUrl),
+			Session:  &vk.Session{},
 		}
 	case "Wepay":
 		idp = GothIdProvider{
