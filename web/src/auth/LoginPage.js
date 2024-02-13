@@ -656,7 +656,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Providers") {
       const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
       let rule ;
-      if (signinItem.rule === "default") {
+      if (signinItem.rule === "Default") {
         rule = showForm ? "small" : "big";
       } else {
         rule = signinItem.rule;

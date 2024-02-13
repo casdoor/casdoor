@@ -231,7 +231,7 @@ class SigninTable extends React.Component {
           let options = [];
           if (record.name === "Providers") {
             options = [
-              {id: "default", name: i18next.t("general:Default")},
+              {id: "Default", name: i18next.t("general:Default")},
               {id: "big", name: i18next.t("application:Big icon")},
               {id: "small", name: i18next.t("application:Small icon")},
             ];

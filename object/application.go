@@ -287,7 +287,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 			Visible:     true,
 			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
 			Placeholder: "",
-			Rule:        "default",
+			Rule:        "Default",
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 	}
