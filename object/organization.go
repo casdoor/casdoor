@@ -342,6 +342,11 @@ func GetDefaultApplication(id string) (*Application, error) {
 		return nil, err
 	}
 
+	err = extendApplicationWithSigninItems(defaultApplication)
+	if err != nil {
+		return nil, err
+	}
+
 	return defaultApplication, nil
 }
 
