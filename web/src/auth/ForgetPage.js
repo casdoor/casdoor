@@ -47,6 +47,7 @@ class ForgetPage extends React.Component {
 
     this.form = React.createRef();
   }
+
   componentDidMount() {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== undefined) {
@@ -153,7 +154,12 @@ class ForgetPage extends React.Component {
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword, this.state.code).then(res => {
       if (res.status === "ok") {
-        Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
+        const linkInStorage = sessionStorage.getItem("signinUrl");
+        if (linkInStorage !== null && linkInStorage !== "") {
+          Setting.goToLink(linkInStorage);
+        } else {
+          Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
+        }
       } else {
         Setting.showMessage("error", res.msg);
       }
