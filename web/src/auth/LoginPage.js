@@ -537,75 +537,77 @@ class LoginPage extends React.Component {
       ;
     } else if (signinItem.name === "Username") {
       return (
-        <Form.Item
-          name="username"
-          className="login-username"
-          rules={[
-            {
-              required: true,
-              message: () => {
-                switch (this.state.loginMethod) {
-                case "verificationCodeEmail":
-                  return i18next.t("login:Please input your Email!");
-                case "verificationCodePhone":
-                  return i18next.t("login:Please input your Phone!");
-                case "ldap":
-                  return i18next.t("login:Please input your LDAP username!");
-                default:
-                  return i18next.t("login:Please input your Email or Phone!");
-                }
-              },
-            },
-            {
-              validator: (_, value) => {
-                if (value === "") {
-                  return Promise.resolve();
-                }
-
-                if (this.state.loginMethod === "verificationCode") {
-                  if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
-                    this.setState({validEmailOrPhone: false});
-                    return Promise.reject(i18next.t("login:The input is not valid Email or phone number!"));
-                  }
-
-                  if (Setting.isValidEmail(value)) {
-                    this.setState({validEmail: true});
-                  } else {
-                    this.setState({validEmail: false});
-                  }
-                } else if (this.state.loginMethod === "verificationCodeEmail") {
-                  if (!Setting.isValidEmail(value)) {
-                    this.setState({validEmail: false});
-                    this.setState({validEmailOrPhone: false});
-                    return Promise.reject(i18next.t("login:The input is not valid Email!"));
-                  } else {
-                    this.setState({validEmail: true});
-                  }
-                } else if (this.state.loginMethod === "verificationCodePhone") {
-                  if (!Setting.isValidPhone(value)) {
-                    this.setState({validEmailOrPhone: false});
-                    return Promise.reject(i18next.t("login:The input is not valid phone number!"));
-                  }
-                }
-
-                this.setState({validEmailOrPhone: true});
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
+        <div className="login-username">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
-          <Input
-            id="input"
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder={this.getPlaceholder()}
-            onChange={e => {
-              this.setState({
-                username: e.target.value,
-              });
-            }}
-          />
-        </Form.Item>
+          <Form.Item
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: () => {
+                  switch (this.state.loginMethod) {
+                  case "verificationCodeEmail":
+                    return i18next.t("login:Please input your Email!");
+                  case "verificationCodePhone":
+                    return i18next.t("login:Please input your Phone!");
+                  case "ldap":
+                    return i18next.t("login:Please input your LDAP username!");
+                  default:
+                    return i18next.t("login:Please input your Email or Phone!");
+                  }
+                },
+              },
+              {
+                validator: (_, value) => {
+                  if (value === "") {
+                    return Promise.resolve();
+                  }
+
+                  if (this.state.loginMethod === "verificationCode") {
+                    if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
+                      this.setState({validEmailOrPhone: false});
+                      return Promise.reject(i18next.t("login:The input is not valid Email or phone number!"));
+                    }
+
+                    if (Setting.isValidEmail(value)) {
+                      this.setState({validEmail: true});
+                    } else {
+                      this.setState({validEmail: false});
+                    }
+                  } else if (this.state.loginMethod === "verificationCodeEmail") {
+                    if (!Setting.isValidEmail(value)) {
+                      this.setState({validEmail: false});
+                      this.setState({validEmailOrPhone: false});
+                      return Promise.reject(i18next.t("login:The input is not valid Email!"));
+                    } else {
+                      this.setState({validEmail: true});
+                    }
+                  } else if (this.state.loginMethod === "verificationCodePhone") {
+                    if (!Setting.isValidPhone(value)) {
+                      this.setState({validEmailOrPhone: false});
+                      return Promise.reject(i18next.t("login:The input is not valid phone number!"));
+                    }
+                  }
+
+                  this.setState({validEmailOrPhone: true});
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+
+            <Input
+              id="input"
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder={this.getPlaceholder()}
+              onChange={e => {
+                this.setState({
+                  username: e.target.value,
+                });
+              }}
+            />
+          </Form.Item>
+        </div>
       );
     } else if (signinItem.name === "Password") {
       return (
@@ -658,17 +660,19 @@ class LoginPage extends React.Component {
       }
 
       return (
-        <Form.Item>
+        <div>
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
-          {
-            application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-              return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location);
-            })
-          }
-          {
-            this.renderOtherFormProvider(application)
-          }
-        </Form.Item>
+          <Form.Item>
+            {
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
+                return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location);
+              })
+            }
+            {
+              this.renderOtherFormProvider(application)
+            }
+          </Form.Item>
+        </div>
       );
     } else if (signinItem.name.startsWith("Text ") || signinItem?.custom) {
       return (
@@ -960,35 +964,37 @@ class LoginPage extends React.Component {
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
-          <Form.Item
-            name="password"
-            className="login-password"
-            rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
-          >
-            <Input.Password
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder={i18next.t("general:Password")}
-              disabled={this.state.loginMethod === "password" ? !Setting.isPasswordEnabled(application) : !Setting.isLdapEnabled(application)}
-            />
-          </Form.Item>
+          <div className="login-password">
+            <Form.Item
+              name="password"
+              rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
+            >
+              <Input.Password
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder={i18next.t("general:Password")}
+                disabled={this.state.loginMethod === "password" ? !Setting.isPasswordEnabled(application) : !Setting.isLdapEnabled(application)}
+              />
+            </Form.Item>
+          </div>
         </Col>
       );
     } else if (this.state.loginMethod?.includes("verificationCode")) {
       return (
         <Col span={24}>
-          <Form.Item
-            name="code"
-            className="login-password"
-            rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
-          >
-            <SendCodeInput
-              disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-              method={"login"}
-              onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
-              application={application}
-            />
-          </Form.Item>
+          <div className="login-password">
+            <Form.Item
+              name="code"
+              rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+            >
+              <SendCodeInput
+                disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+                method={"login"}
+                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+                application={application}
+              />
+            </Form.Item>
+          </div>
         </Col>
       );
     } else {
