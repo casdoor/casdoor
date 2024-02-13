@@ -46,7 +46,7 @@ type SigninItem struct {
 	Label       string `json:"label"`
 	Placeholder string `json:"placeholder"`
 	Rule        string `json:"rule"`
-	Custom      bool   `json:"custom"`
+	IsCustom    bool   `json:"isCustom"`
 }
 
 type SamlItem struct {
@@ -203,7 +203,7 @@ func extendApplicationWithOrg(application *Application) (err error) {
 func extendApplicationWithSigninItems(application *Application) (err error) {
 	if len(application.SigninItems) == 0 {
 		signinItem := &SigninItem{
-			Name:        "BackButton",
+			Name:        "Back button",
 			Visible:     true,
 			Label:       "\n<style>\n  .back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n  }\n</style>\n",
 			Placeholder: "",
@@ -211,9 +211,9 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "LanguageSelect",
+			Name:        "Languages",
 			Visible:     true,
-			Label:       "\n<style>\n  .language-select {\n      top: 55px;\n      right: 5px;\n      position: absolute;\n  }\n</style>\n",
+			Label:       "\n<style>\n  .login-languages {\n      top: 55px;\n      right: 5px;\n      position: absolute;\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -227,9 +227,9 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "MethodChoice",
+			Name:        "Signin methods",
 			Visible:     true,
-			Label:       "\n<style>\n  .method-choice {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .signin-methods {\n  }\n<style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -259,7 +259,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "ForgetPassword",
+			Name:        "Forgot password?",
 			Visible:     true,
 			Label:       "\n<style>\n  .login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }\n<style>\n",
 			Placeholder: "",
@@ -267,7 +267,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "LoginButton",
+			Name:        "Login button",
 			Visible:     true,
 			Label:       "\n<style>\n  .login-button-box {\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
 			Placeholder: "",
@@ -275,7 +275,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "ThirdParty",
+			Name:        "Providers",
 			Visible:     true,
 			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
 			Placeholder: "",
@@ -283,9 +283,9 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
-			Name:        "Footer",
+			Name:        "Signup link",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-footer {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-signup-link {\n  }\n<style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}

@@ -511,7 +511,7 @@ class LoginPage extends React.Component {
           }
         </div>
       );
-    } else if (signinItem.name === "BackButton") {
+    } else if (signinItem.name === "Back button") {
       return (
         <div>
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
@@ -520,14 +520,14 @@ class LoginPage extends React.Component {
           }
         </div>
       );
-    } else if (signinItem.name === "LanguageSelect") {
+    } else if (signinItem.name === "Languages") {
       return (
-        <div className="language-select">
+        <div className="login-languages">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
           <LanguageSelect languages={application.organizationObj.languages} />
         </div>
       );
-    } else if (signinItem.name === "MethodChoice") {
+    } else if (signinItem.name === "Signin methods") {
       return (
         <div>
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
@@ -616,7 +616,7 @@ class LoginPage extends React.Component {
           {this.renderPasswordOrCodeInput()}
         </div>
       );
-    } else if (signinItem.name === "ForgetPassword") {
+    } else if (signinItem.name === "Forgot password?") {
       return (
         <div>
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
@@ -634,7 +634,7 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Agreement") {
       return AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null;
-    } else if (signinItem.name === "LoginButton") {
+    } else if (signinItem.name === "Login button") {
       return (
         <Form.Item className="login-button-box">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
@@ -653,7 +653,7 @@ class LoginPage extends React.Component {
           }
         </Form.Item>
       );
-    } else if (signinItem.name === "ThirdParty") {
+    } else if (signinItem.name === "Providers") {
       const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
       if (signinItem.rule === "None") {
         signinItem.rule = showForm ? "small" : "big";
@@ -674,13 +674,13 @@ class LoginPage extends React.Component {
           </Form.Item>
         </div>
       );
-    } else if (signinItem.name.startsWith("Text ") || signinItem?.custom) {
+    } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
         <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
       );
-    } else if (signinItem.name === "Footer") {
+    } else if (signinItem.name === "Signup link") {
       return (
-        <div style={{width: "100%", height: "30px"}} className="login-footer">
+        <div style={{width: "100%", height: "30px"}} className="login-signup-link">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
           {this.renderFooter(application)}
         </div>
@@ -1031,7 +1031,7 @@ class LoginPage extends React.Component {
     if (items.length > 1) {
       return (
         <div>
-          <Tabs className="method-choice" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} onChange={(key) => {
+          <Tabs className="signin-methods" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} onChange={(key) => {
             this.setState({loginMethod: key});
           }} centered>
           </Tabs>

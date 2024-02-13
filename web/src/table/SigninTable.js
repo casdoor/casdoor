@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2024 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class SigninTable extends React.Component {
 
   addCustomRow(table) {
     const randomName = "Text " + Date.now().toString();
-    const row = {name: Setting.getNewRowNameForTable(table, randomName), visible: true, custom: true};
+    const row = {name: Setting.getNewRowNameForTable(table, randomName), visible: true, isCustom: true};
     if (table === undefined) {
       table = [];
     }
@@ -85,26 +85,26 @@ class SigninTable extends React.Component {
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
-          if (record.custom) {
+          if (record.isCustom) {
             return <Input style={{width: "100%"}}
               value={text} onPressEnter={e => {
                 this.updateField(table, index, "name", e.target.value);
-              }} >
+              }} disabled>
             </Input>;
           }
 
           const items = [
-            {name: "MethodChoice", displayName: i18next.t("application:Signin methods")},
+            {name: "Signin methods", displayName: i18next.t("application:Signin methods")},
             {name: "Logo", displayName: i18next.t("general:Logo")},
-            {name: "BackButton", displayName: i18next.t("login:Back button")},
-            {name: "LanguageSelect", displayName: i18next.t("general:Languages")},
+            {name: "Back button", displayName: i18next.t("login:Back button")},
+            {name: "Languages", displayName: i18next.t("general:Languages")},
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "Password", displayName: i18next.t("general:Password")},
-            {name: "ThirdParty", displayName: i18next.t("general:Providers")},
+            {name: "Providers", displayName: i18next.t("general:Providers")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
-            {name: "ForgetPassword", displayName: i18next.t("login:Forgot password?")},
-            {name: "LoginButton", displayName: i18next.t("login:Login button")},
-            {name: "Footer", displayName: i18next.t("general:Footer")},
+            {name: "Forgot password?", displayName: i18next.t("login:Forgot password?")},
+            {name: "Login button", displayName: i18next.t("login:Login button")},
+            {name: "Signup link", displayName: i18next.t("general:Signup link")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -156,7 +156,7 @@ class SigninTable extends React.Component {
         key: "label",
         width: "200px",
         render: (text, record, index) => {
-          if (record.name.startsWith("Text ") || record?.custom) {
+          if (record.name.startsWith("Text ") || record?.isCustom) {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
@@ -183,7 +183,7 @@ class SigninTable extends React.Component {
         key: "label",
         width: "200px",
         render: (text, record, index) => {
-          if (!record.name.startsWith("Text ") && !record?.custom) {
+          if (!record.name.startsWith("Text ") && !record?.isCustom) {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
