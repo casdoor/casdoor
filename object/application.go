@@ -269,15 +269,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-button-box {\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
-			Placeholder: "",
-			Rule:        "None",
-		}
-		application.SigninItems = append(application.SigninItems, signinItem)
-		signinItem = &SigninItem{
-			Name:        "Providers",
-			Visible:     true,
-			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
+			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 0;\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -286,6 +278,14 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 			Name:        "Signup link",
 			Visible:     true,
 			Label:       "\n<style>\n  .login-signup-link {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Providers",
+			Visible:     true,
+			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
