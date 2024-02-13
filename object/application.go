@@ -40,6 +40,15 @@ type SignupItem struct {
 	Rule        string `json:"rule"`
 }
 
+type SigninItem struct {
+	Name        string `json:"name"`
+	Visible     bool   `json:"visible"`
+	Label       string `json:"label"`
+	Placeholder string `json:"placeholder"`
+	Rule        string `json:"rule"`
+	Custom      bool   `json:"custom"`
+}
+
 type SamlItem struct {
 	Name       string `json:"name"`
 	NameFormat string `json:"nameFormat"`
@@ -72,6 +81,7 @@ type Application struct {
 	Providers             []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SigninMethods         []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
 	SignupItems           []*SignupItem   `xorm:"varchar(2000)" json:"signupItems"`
+	SigninItems           []*SigninItem   `xorm:"mediumtext" json:"signinItems"`
 	GrantTypes            []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj       *Organization   `xorm:"-" json:"organizationObj"`
 	CertPublicKey         string          `xorm:"-" json:"certPublicKey"`
@@ -190,6 +200,100 @@ func extendApplicationWithOrg(application *Application) (err error) {
 	return
 }
 
+func extendApplicationWithSigninItems(application *Application) (err error) {
+	if len(application.SigninItems) == 0 {
+		signinItem := &SigninItem{
+			Name:        "BackButton",
+			Visible:     true,
+			Label:       "\n<style>\n  .back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n  }\n</style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "LanguageSelect",
+			Visible:     true,
+			Label:       "\n<style>\n  .language-select {\n      top: 55px;\n      right: 5px;\n      position: absolute;\n  }\n</style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Logo",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-logo-box {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "none",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "MethodChoice",
+			Visible:     true,
+			Label:       "\n<style>\n  .method-choice {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Username",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-username {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Password",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-password {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Agreement",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-agreement {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "ForgetPassword",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "LoginButton",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-button-box {\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "ThirdParty",
+			Visible:     true,
+			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
+			Name:        "Footer",
+			Visible:     true,
+			Label:       "\n<style>\n  .login-footer {\n  }\n<style>\n",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+	}
+	return
+}
+
 func extendApplicationWithSigninMethods(application *Application) (err error) {
 	if len(application.SigninMethods) == 0 {
 		if application.EnablePassword {
@@ -240,6 +344,10 @@ func getApplication(owner string, name string) (*Application, error) {
 		if err != nil {
 			return nil, err
 		}
+		err = extendApplicationWithSigninItems(&application)
+		if err != nil {
+			return nil, err
+		}
 
 		return &application, nil
 	} else {
@@ -266,6 +374,11 @@ func GetApplicationByOrganizationName(organization string) (*Application, error)
 		}
 
 		err = extendApplicationWithSigninMethods(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithSigninItems(&application)
 		if err != nil {
 			return nil, err
 		}
@@ -318,6 +431,11 @@ func GetApplicationByClientId(clientId string) (*Application, error) {
 		}
 
 		err = extendApplicationWithSigninMethods(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithSigninItems(&application)
 		if err != nil {
 			return nil, err
 		}
