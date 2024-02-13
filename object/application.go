@@ -269,7 +269,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 0;\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 5px;\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -277,7 +277,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signup link",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-signup-link {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}\n<style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}

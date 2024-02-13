@@ -680,7 +680,7 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Signup link") {
       return (
-        <div style={{width: "100%", height: "30px"}} className="login-signup-link">
+        <div style={{width: "100%"}} className="login-signup-link">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
           {this.renderFooter(application)}
         </div>
@@ -835,7 +835,7 @@ class LoginPage extends React.Component {
 
   renderFooter(application) {
     return (
-      <span style={{float: "right"}}>
+      <div>
         {
           !application.enableSignUp ? null : (
             <React.Fragment>
@@ -846,7 +846,7 @@ class LoginPage extends React.Component {
             </React.Fragment>
           )
         }
-      </span>
+      </div>
     );
   }
 
