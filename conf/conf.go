@@ -71,7 +71,10 @@ func GetConfigInt64(key string) (int64, error) {
 
 func GetConfigDataSourceName() string {
 	dataSourceName := GetConfigString("dataSourceName")
+	return ReplaceDataSourceNameByDocker(dataSourceName)
+}
 
+func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
 	if runningInDocker == "true" {
 		// https://stackoverflow.com/questions/48546124/what-is-linux-equivalent-of-host-docker-internal
@@ -81,7 +84,6 @@ func GetConfigDataSourceName() string {
 			dataSourceName = strings.ReplaceAll(dataSourceName, "localhost", "host.docker.internal")
 		}
 	}
-
 	return dataSourceName
 }
 
@@ -107,14 +109,4 @@ func GetConfigBatchSize() int {
 		res = 100
 	}
 	return res
-}
-
-func GetConfigRealDataSourceName(driverName string) string {
-	var dataSourceName string
-	if driverName != "mysql" {
-		dataSourceName = GetConfigDataSourceName()
-	} else {
-		dataSourceName = GetConfigDataSourceName() + GetConfigString("dbName")
-	}
-	return dataSourceName
 }
