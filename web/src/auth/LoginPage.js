@@ -785,7 +785,7 @@ class LoginPage extends React.Component {
               :
           </div>
           <br />
-          {application.signinItems.map(signinItem => signinItem.name === "Providers" || signinItem.name === "Footer" ? this.renderFormItem(application, signinItem) : null)}
+          {application.signinItems.map(signinItem => signinItem.name === "Providers" || signinItem.name === "Signup link" ? this.renderFormItem(application, signinItem) : null)}
         </div>
       );
     }
