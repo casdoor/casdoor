@@ -655,7 +655,7 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Providers") {
       const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
-      if (signinItem.rule === "None") {
+      if (signinItem.rule === "None" || signinItem.rule === "") {
         signinItem.rule = showForm ? "small" : "big";
       }
 
@@ -782,7 +782,9 @@ class LoginPage extends React.Component {
               :
           </div>
           <br />
-          {application.signinItems.map(signinItem => signinItem.name === "ThirdParty" || signinItem.name === "Footer" ? this.renderFormItem(application, signinItem) : null)}
+          {
+            application?.signinItems.map(signinItem => signinItem.name === "Providers" || signinItem.name === "Signup link" ? this.renderFormItem(application, signinItem) : null)
+          }
         </div>
       );
     }

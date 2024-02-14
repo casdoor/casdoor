@@ -223,7 +223,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 			Visible:     true,
 			Label:       "\n<style>\n  .login-logo-box {\n  }\n<style>\n",
 			Placeholder: "",
-			Rule:        "none",
+			Rule:        "None",
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
