@@ -195,7 +195,7 @@ class SigninTable extends React.Component {
                   />
                 </div>
               } title={i18next.t("application:CSS style")} trigger="click">
-                <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
+                <Input value={text} onChange={e => {
                   this.updateField(table, index, "label", e.target.value);
                 }} />
               </Popover>
