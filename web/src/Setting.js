@@ -1164,7 +1164,7 @@ export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!isPasswordEnabled(application) && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
+  } else if (window.location.pathname.includes("/auto-signup/oauth/authorize")) {
     url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
@@ -1174,11 +1174,6 @@ export function getLoginLink(application) {
     url = application.signinUrl;
   }
   return url;
-}
-
-export function renderLoginLink(application, text) {
-  const url = getLoginLink(application);
-  return renderLink(url, text, null);
 }
 
 export function redirectToLoginPage(application, history) {
@@ -1205,7 +1200,7 @@ function renderLink(url, text, onClick) {
     );
   } else if (url.startsWith("http")) {
     return (
-      <a target="_blank" rel="noopener noreferrer" style={{float: "right"}} href={url} onClick={() => {
+      <a style={{float: "right"}} href={url} onClick={() => {
         if (onClick !== null) {
           onClick();
         }
@@ -1220,7 +1215,7 @@ export function renderSignupLink(application, text) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!isPasswordEnabled(application) && window.location.pathname.includes("/login/oauth/authorize")) {
+  } else if (window.location.pathname.includes("/login/oauth/authorize")) {
     url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
