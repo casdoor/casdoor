@@ -110,7 +110,7 @@ func (c *ApiController) MfaSetupVerify() {
 			return
 		}
 		config.Secret = secret.(string)
-	} else if mfaType == object.EmailType || mfaType == object.SmsType {
+	} else if mfaType == object.SmsType {
 		dest := c.GetSession(MfaDestSession)
 		if dest == nil {
 			c.ResponseError("destination is missing")
@@ -123,6 +123,13 @@ func (c *ApiController) MfaSetupVerify() {
 			return
 		}
 		config.CountryCode = countryCode.(string)
+	} else if mfaType == object.EmailType {
+		dest := c.GetSession(MfaDestSession)
+		if dest == nil {
+			c.ResponseError("destination is missing")
+			return
+		}
+		config.Secret = dest.(string)
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
@@ -175,19 +182,30 @@ func (c *ApiController) MfaSetupEnable() {
 			return
 		}
 		config.Secret = secret.(string)
-	} else if mfaType == object.EmailType || mfaType == object.SmsType {
-		dest := c.GetSession(MfaDestSession)
-		if dest == nil {
-			c.ResponseError("destination is missing")
-			return
+	} else if mfaType == object.EmailType {
+		if user.Email == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
+				c.ResponseError("destination is missing")
+				return
+			}
+			user.Email = dest.(string)
 		}
-		config.Secret = dest.(string)
-		countryCode := c.GetSession(MfaCountryCodeSession)
-		if countryCode == nil {
-			c.ResponseError("country code is missing")
-			return
+	} else if mfaType == object.SmsType {
+		if user.Phone == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
+				c.ResponseError("destination is missing")
+				return
+			}
+			user.Phone = dest.(string)
+			countryCode := c.GetSession(MfaCountryCodeSession)
+			if countryCode == nil {
+				c.ResponseError("country code is missing")
+				return
+			}
+			user.CountryCode = countryCode.(string)
 		}
-		config.CountryCode = countryCode.(string)
 	}
 	recoveryCodes := c.GetSession(MfaRecoveryCodesSession)
 	if recoveryCodes == nil {

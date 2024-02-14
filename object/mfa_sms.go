@@ -52,21 +52,10 @@ func (mfa *SmsMfa) Enable(user *User) error {
 
 	if mfa.MfaType == SmsType {
 		user.MfaPhoneEnabled = true
-		columns = append(columns, "mfa_phone_enabled")
-
-		if user.Phone == "" {
-			user.Phone = mfa.Secret
-			user.CountryCode = mfa.CountryCode
-			columns = append(columns, "phone", "country_code")
-		}
+		columns = append(columns, "mfa_phone_enabled", "phone", "country_code")
 	} else if mfa.MfaType == EmailType {
 		user.MfaEmailEnabled = true
-		columns = append(columns, "mfa_email_enabled")
-
-		if user.Email == "" {
-			user.Email = mfa.Secret
-			columns = append(columns, "email")
-		}
+		columns = append(columns, "mfa_email_enabled", "email")
 	}
 
 	_, err := UpdateUser(user.GetId(), user, columns, false)
