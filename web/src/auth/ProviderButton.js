@@ -131,7 +131,7 @@ export function goToWeb3Url(application, provider, method) {
 }
 
 export function renderProviderLogo(provider, application, width, margin, size, location) {
-  if (size === "small") {
+  if (size === "Small icon") {
     if (provider.category === "OAuth") {
       if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger")) {
         const info = async() => {
