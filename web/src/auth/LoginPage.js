@@ -655,11 +655,8 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Providers") {
       const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
-      let rule ;
-      if (signinItem.rule === "Default") {
-        rule = showForm ? "Small icon" : "Big icon";
-      } else {
-        rule = signinItem.rule;
+      if (signinItem.rule === "None") {
+        signinItem.rule = showForm ? "small" : "big";
       }
 
       return (
@@ -668,7 +665,7 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, rule, this.props.location);
+                return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location);
               })
             }
             {
@@ -785,7 +782,7 @@ class LoginPage extends React.Component {
               :
           </div>
           <br />
-          {application.signinItems.map(signinItem => signinItem.name === "Providers" || signinItem.name === "Signup link" ? this.renderFormItem(application, signinItem) : null)}
+          {application.signinItems.map(signinItem => signinItem.name === "ThirdParty" || signinItem.name === "Footer" ? this.renderFormItem(application, signinItem) : null)}
         </div>
       );
     }
