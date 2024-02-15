@@ -61,6 +61,7 @@ class ApplicationListPage extends BaseListPage {
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
       ],
+      grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       cert: "cert-built-in",
       redirectUris: ["http://localhost:9000/callback"],
       tokenFormat: "JWT",

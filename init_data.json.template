@@ -120,6 +120,7 @@
             "rule": "None"
         }
       ],
+      "grantTypes": ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       "redirectUris": [""],
       "expireInHours": 168,
       "failedSigninLimit": 5,
