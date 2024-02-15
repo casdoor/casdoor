@@ -85,7 +85,7 @@ func (c *ApiController) Enforce() {
 			return
 		}
 		if permission == nil {
-			c.ResponseError(fmt.Sprintf("permission: %s doesn't exist", permissionId))
+			c.ResponseError(fmt.Sprintf(c.T("permission:The permission: \"%s\" doesn't exist"), permissionId))
 			return
 		}
 
@@ -209,7 +209,7 @@ func (c *ApiController) BatchEnforce() {
 			return
 		}
 		if permission == nil {
-			c.ResponseError(fmt.Sprintf("permission: %s doesn't exist", permissionId))
+			c.ResponseError(fmt.Sprintf(c.T("permission:The permission: \"%s\" doesn't exist"), permissionId))
 			return
 		}
 

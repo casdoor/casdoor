@@ -164,13 +164,13 @@ func (c *ApiController) SendVerificationCode() {
 			c.SetSession(MfaDestSession, vform.Dest)
 		}
 
-		provider, err := application.GetEmailProvider()
+		provider, err = application.GetEmailProvider()
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf("please add an Email provider to the \"Providers\" list for the application: %s", application.Name))
+			c.ResponseError(fmt.Sprintf(c.T("verification:please add an Email provider to the \"Providers\" list for the application: %s"), application.Name))
 			return
 		}
 
@@ -210,13 +210,13 @@ func (c *ApiController) SendVerificationCode() {
 			vform.CountryCode = mfaProps.CountryCode
 		}
 
-		provider, err := application.GetSmsProvider()
+		provider, err = application.GetSmsProvider()
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf("please add a SMS provider to the \"Providers\" list for the application: %s", application.Name))
+			c.ResponseError(fmt.Sprintf(c.T("verification:please add a SMS provider to the \"Providers\" list for the application: %s"), application.Name))
 			return
 		}
 
