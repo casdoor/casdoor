@@ -495,7 +495,7 @@ class LoginPage extends React.Component {
   }
 
   renderFormItem(application, signinItem) {
-    if (!signinItem.visible && signinItem.name !== "ForgetPassword") {
+    if (!signinItem.visible && signinItem.name !== "Forgot password?") {
       return null;
     }
 
