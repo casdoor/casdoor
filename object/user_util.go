@@ -268,6 +268,9 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 	}
 	if oldUser.DisplayName != newUser.DisplayName {
 		item := GetAccountItemByName("Display name", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.DisplayName, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Avatar != newUser.Avatar {
@@ -281,14 +284,23 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 	// The password is *** when not modified
 	if oldUser.Password != newUser.Password && newUser.Password != "***" {
 		item := GetAccountItemByName("Password", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Password, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Email != newUser.Email {
 		item := GetAccountItemByName("Email", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Email, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Phone != newUser.Phone {
 		item := GetAccountItemByName("Phone", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Phone, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.CountryCode != newUser.CountryCode {
@@ -301,6 +313,9 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 	}
 	if oldUser.Location != newUser.Location {
 		item := GetAccountItemByName("Location", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Location, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Affiliation != newUser.Affiliation {
@@ -309,14 +324,23 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 	}
 	if oldUser.Title != newUser.Title {
 		item := GetAccountItemByName("Title", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Title, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Homepage != newUser.Homepage {
 		item := GetAccountItemByName("Homepage", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Homepage, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Bio != newUser.Bio {
 		item := GetAccountItemByName("Bio", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Bio, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 	if oldUser.Tag != newUser.Tag {
@@ -325,6 +349,46 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 	}
 	if oldUser.SignupApplication != newUser.SignupApplication {
 		item := GetAccountItemByName("Signup application", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Gender != newUser.Gender {
+		item := GetAccountItemByName("Gender", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Gender, lang); !pass {
+			return pass, err
+		}
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Birthday != newUser.Birthday {
+		item := GetAccountItemByName("Birthday", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Birthday, lang); !pass {
+			return pass, err
+		}
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Education != newUser.Education {
+		item := GetAccountItemByName("Education", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.Education, lang); !pass {
+			return pass, err
+		}
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.IdCard != newUser.IdCard {
+		item := GetAccountItemByName("ID card", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.IdCard, lang); !pass {
+			return pass, err
+		}
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.IdCardType != newUser.IdCardType {
+		item := GetAccountItemByName("ID card type", organization)
+		if pass, err := CheckAccountItemRegex(item, newUser.IdCardType, lang); !pass {
+			return pass, err
+		}
 		itemsChanged = append(itemsChanged, item)
 	}
 

@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -136,6 +136,26 @@ class AccountTable extends React.Component {
           return (
             <Switch checked={text} onChange={checked => {
               this.updateField(table, index, "visible", checked);
+            }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("signup:Regex"),
+        dataIndex: "regex",
+        key: "regex",
+        width: "200px",
+        render: (text, record, index) => {
+          const regexIncludeList = ["Display name", "Password", "Email", "Phone", "Location",
+            "Title", "Homepage", "Bio", "Gender", "Birthday", "Education", "ID card",
+            "ID card type"];
+          if (!regexIncludeList.includes(record.name)) {
+            return null;
+          }
+
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "regex", e.target.value);
             }} />
           );
         },

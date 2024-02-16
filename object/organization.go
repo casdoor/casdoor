@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/casdoor/casdoor/conf"
@@ -31,6 +32,7 @@ type AccountItem struct {
 	Visible    bool   `json:"visible"`
 	ViewRule   string `json:"viewRule"`
 	ModifyRule string `json:"modifyRule"`
+	Regex      string `json:"regex"`
 }
 
 type ThemeData struct {
@@ -288,6 +290,28 @@ func CheckAccountItemModifyRule(accountItem *AccountItem, isAdmin bool, lang str
 	default:
 		return false, fmt.Sprintf(i18n.Translate(lang, "organization:Unknown modify rule %s."), accountItem.ModifyRule)
 	}
+	return true, ""
+}
+
+func CheckAccountItemRegex(accountItem *AccountItem, value string, lang string) (bool, string) {
+	if accountItem == nil {
+		return true, ""
+	}
+
+	if accountItem.Regex == "" {
+		return true, ""
+	}
+
+	regexAccountItem, err := regexp.Compile(accountItem.Regex)
+	if err != nil {
+		return false, err.Error()
+	}
+
+	matched := regexAccountItem.MatchString(value)
+	if !matched {
+		return false, fmt.Sprintf(i18n.Translate(lang, "check:The value \"%s\" for account field \"%s\" doesn't match the account item regex"), value, accountItem.Name)
+	}
+
 	return true, ""
 }
 

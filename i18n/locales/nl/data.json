@@ -19,6 +19,7 @@
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
@@ -57,6 +58,7 @@
     "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "Username already exists",
     "Username cannot be an email address": "Username cannot be an email address",
@@ -73,6 +75,7 @@
   "general": {
     "Missing parameter": "Missing parameter",
     "Please login first": "Please login first",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
@@ -92,6 +95,9 @@
     "Only admin can modify the %s.": "Only admin can modify the %s.",
     "The %s is immutable.": "The %s is immutable.",
     "Unknown modify rule %s.": "Unknown modify rule %s."
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "Invalid application id",
@@ -117,7 +123,6 @@
     "The provider type: %s is not supported": "The provider type: %s is not supported"
   },
   "token": {
-    "Empty clientId or clientSecret": "Empty clientId or clientSecret",
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
     "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
     "Invalid client_id": "Invalid client_id",
@@ -146,6 +151,8 @@
     "Unknown type": "Unknown type",
     "Wrong verification code!": "Wrong verification code!",
     "You should verify your code in %d min!": "You should verify your code in %d min!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"
   },
   "webauthn": {

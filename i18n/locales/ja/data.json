@@ -19,6 +19,7 @@
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "ログイン方法：パスワードでのログインはアプリケーションで有効になっていません",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "プロバイダー：%sはアプリケーションでは有効化されていません",
     "Unauthorized operation": "不正操作",
     "Unknown authentication type (not password or provider), form = %s": "不明な認証タイプ（パスワードまたはプロバイダーではない）フォーム=%s",
@@ -57,6 +58,7 @@
     "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "ユーザー名はすでに存在しています",
     "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",
@@ -73,6 +75,7 @@
   "general": {
     "Missing parameter": "不足しているパラメーター",
     "Please login first": "最初にログインしてください",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
@@ -92,6 +95,9 @@
     "Only admin can modify the %s.": "管理者のみが%sを変更できます。",
     "The %s is immutable.": "%sは不変です。",
     "Unknown modify rule %s.": "未知の変更ルール%s。"
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "アプリケーションIDが無効です",
@@ -117,7 +123,6 @@
     "The provider type: %s is not supported": "プロバイダータイプ：%sはサポートされていません"
   },
   "token": {
-    "Empty clientId or clientSecret": "クライアントIDまたはクライアントシークレットが空です",
     "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
     "Invalid application or wrong clientSecret": "無効なアプリケーションまたは誤ったクライアントシークレットです",
     "Invalid client_id": "client_idが無効です",
@@ -146,6 +151,8 @@
     "Unknown type": "不明なタイプ",
     "Wrong verification code!": "誤った検証コードです！",
     "You should verify your code in %d min!": "あなたは%d分であなたのコードを確認する必要があります！",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "ユーザーは存在しません。まず登録してください"
   },
   "webauthn": {
