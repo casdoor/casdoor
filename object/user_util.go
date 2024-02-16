@@ -17,10 +17,11 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"reflect"
 	"regexp"
 	"strings"
+
+	"github.com/casdoor/casdoor/i18n"
 
 	jsoniter "github.com/json-iterator/go"
 
