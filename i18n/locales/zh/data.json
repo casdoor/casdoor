@@ -19,12 +19,12 @@
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
-    "The organization: %s does not exist": "The organization: %s does not exist",
+    "The organization: %s does not exist": "组织: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s 没有激活或正在等待订阅并且应用: %s 没有默认值"
   },
   "cas": {
     "Service %s and %s do not match": "服务%s与%s不匹配"
@@ -75,7 +75,7 @@
   "general": {
     "Missing parameter": "缺少参数",
     "Please login first": "请先登录",
-    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
+    "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
     "this operation is not allowed in demo mode": "demo模式下不允许该操作"
@@ -97,7 +97,7 @@
     "Unknown modify rule %s.": "未知的修改规则: %s"
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
+    "The permission: \\\"%s\\\" doesn't exist": "权限: \\\"%s\\\" 不存在"
   },
   "provider": {
     "Invalid application id": "无效的应用ID",
@@ -151,8 +151,8 @@
     "Unknown type": "未知类型",
     "Wrong verification code!": "验证码错误!",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \\\"提供商 \\\"列表",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \\\"提供商 \\\"列表",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {

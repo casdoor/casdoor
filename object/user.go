@@ -15,7 +15,9 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -219,6 +221,23 @@ type ManagedAccount struct {
 	Username    string `xorm:"varchar(100)" json:"username"`
 	Password    string `xorm:"varchar(100)" json:"password"`
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
+}
+
+func GetUserFieldStringValue(user *User, fieldName string) (bool, string) {
+	val := reflect.ValueOf(*user)
+	fieldValue := val.FieldByName(fieldName)
+
+	if !fieldValue.IsValid() {
+		return false, ""
+	}
+
+	if fieldValue.Kind() == reflect.String {
+		return true, fieldValue.String()
+	}
+
+	marshalValue, _ := json.Marshal(fieldValue)
+
+	return true, string(marshalValue)
 }
 
 func GetGlobalUserCount(field, value string) (int64, error) {

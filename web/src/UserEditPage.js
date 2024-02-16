@@ -1025,7 +1025,7 @@ class UserEditPage extends React.Component {
                     validateTrigger="onChange"
                     rules={[
                       {
-                        pattern: new RegExp(accountItem.regex, "g"),
+                        pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
                         message: i18next.t("user:This field value doesn't match the pattern rule"),
                       },
                     ]}
