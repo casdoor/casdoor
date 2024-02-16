@@ -36,9 +36,14 @@ func (mfa *SmsMfa) SetupVerify(passCode string) error {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	if result := CheckVerificationCode(mfa.Secret, passCode, "en"); result.Code != VerificationSuccess {
+	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	if err != nil {
+		return err
+	}
+	if result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
 	}
+
 	return nil
 }
 
@@ -70,9 +75,15 @@ func (mfa *SmsMfa) Verify(passCode string) error {
 	if !util.IsEmailValid(mfa.Secret) {
 		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
-	if result := CheckVerificationCode(mfa.Secret, passCode, "en"); result.Code != VerificationSuccess {
+
+	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	if err != nil {
+		return err
+	}
+	if result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
 	}
+
 	return nil
 }
 

@@ -343,7 +343,12 @@ func (c *ApiController) ResetEmailOrPhone() {
 		}
 	}
 
-	if result := object.CheckVerificationCode(checkDest, code, c.GetAcceptLanguage()); result.Code != object.VerificationSuccess {
+	result, err := object.CheckVerificationCode(checkDest, code, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+		return
+	}
+	if result.Code != object.VerificationSuccess {
 		c.ResponseError(result.Msg)
 		return
 	}
@@ -425,16 +430,22 @@ func (c *ApiController) VerifyCode() {
 		}
 	}
 
-	if result := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage()); result.Code != object.VerificationSuccess {
+	result, err := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(c.T(err.Error()))
+		return
+	}
+	if result.Code != object.VerificationSuccess {
 		c.ResponseError(result.Msg)
 		return
 	}
+
 	err = object.DisableVerificationCode(checkDest)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.SetSession("verifiedCode", authForm.Code)
 
+	c.SetSession("verifiedCode", authForm.Code)
 	c.ResponseOk()
 }

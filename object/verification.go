@@ -66,6 +66,7 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 	if user != nil {
 		record.User = user.GetId()
 	}
+
 	has, err := ormer.Engine.Desc("created_time").Get(&record)
 	if err != nil {
 		return err
@@ -94,15 +95,18 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
 	}
 
-	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
+	err := IsAllowSend(user, remoteAddr, provider.Category)
+	if err != nil {
 		return err
 	}
 
-	if err := SendEmail(provider, title, content, dest, sender); err != nil {
+	err = SendEmail(provider, title, content, dest, sender)
+	if err != nil {
 		return err
 	}
 
-	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+	err = AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
+	if err != nil {
 		return err
 	}
 
@@ -110,7 +114,8 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 }
 
 func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	if err := IsAllowSend(user, remoteAddr, provider.Category); err != nil {
+	err := IsAllowSend(user, remoteAddr, provider.Category)
+	if err != nil {
 		return err
 	}
 
@@ -119,11 +124,13 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		code = organization.MasterVerificationCode
 	}
 
-	if err := SendSms(provider, code, dest); err != nil {
+	err = SendSms(provider, code, dest)
+	if err != nil {
 		return err
 	}
 
-	if err := AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code); err != nil {
+	err = AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
+	if err != nil {
 		return err
 	}
 
@@ -158,6 +165,7 @@ func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordT
 func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	var record VerificationRecord
 	record.Receiver = dest
+
 	has, err := ormer.Engine.Desc("time").Where("is_used = false").Get(&record)
 	if err != nil {
 		return nil, err
@@ -165,34 +173,34 @@ func getVerificationRecord(dest string) (*VerificationRecord, error) {
 	if !has {
 		return nil, nil
 	}
+
 	return &record, nil
 }
 
-func CheckVerificationCode(dest string, code string, lang string) *VerifyResult {
+func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult, error) {
 	record, err := getVerificationRecord(dest)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	if record == nil {
-		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:Code has not been sent yet!")}
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:Code has not been sent yet!")}, nil
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	now := time.Now().Unix()
 	if now-record.Time > timeout*60 {
-		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)}
+		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)}, nil
 	}
 
 	if record.Code != code {
-		return &VerifyResult{wrongCodeError, i18n.Translate(lang, "verification:Wrong verification code!")}
+		return &VerifyResult{wrongCodeError, i18n.Translate(lang, "verification:Wrong verification code!")}, nil
 	}
 
-	return &VerifyResult{VerificationSuccess, ""}
+	return &VerifyResult{VerificationSuccess, ""}, nil
 }
 
 func DisableVerificationCode(dest string) error {
@@ -213,7 +221,11 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 		return err
 	}
 
-	result := CheckVerificationCode(dest, code, lang)
+	result, err := CheckVerificationCode(dest, code, lang)
+	if err != nil {
+		return err
+	}
+
 	switch result.Code {
 	case VerificationSuccess:
 		return resetUserSigninErrorTimes(user)
