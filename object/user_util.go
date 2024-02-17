@@ -406,22 +406,26 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 			return pass, err
 		}
 
-		exist, userValue := GetUserFieldStringValue(newUser, util.SpaceToCamel(accountItem.Name))
+		exist, userValue, err := GetUserFieldStringValue(newUser, util.SpaceToCamel(accountItem.Name))
+		if err != nil {
+			return false, err.Error()
+		}
 
 		if !exist {
 			continue
 		}
 
-		if accountItem.Regex != "" {
-			regexSignupItem, err := regexp.Compile(accountItem.Regex)
-			if err != nil {
-				return false, err.Error()
-			}
+		if accountItem.Regex == "" {
+			continue
+		}
+		regexSignupItem, err := regexp.Compile(accountItem.Regex)
+		if err != nil {
+			return false, err.Error()
+		}
 
-			matched := regexSignupItem.MatchString(userValue)
-			if !matched {
-				return false, fmt.Sprintf(i18n.Translate(lang, "check:The value \"%s\" for account field \"%s\" doesn't match the account item regex"), userValue, accountItem.Name)
-			}
+		matched := regexSignupItem.MatchString(userValue)
+		if !matched {
+			return false, fmt.Sprintf(i18n.Translate(lang, "check:The value \"%s\" for account field \"%s\" doesn't match the account item regex"), userValue, accountItem.Name)
 		}
 	}
 	return true, ""

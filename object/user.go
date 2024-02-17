@@ -223,21 +223,24 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
-func GetUserFieldStringValue(user *User, fieldName string) (bool, string) {
+func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {
 	val := reflect.ValueOf(*user)
 	fieldValue := val.FieldByName(fieldName)
 
 	if !fieldValue.IsValid() {
-		return false, ""
+		return false, "", nil
 	}
 
 	if fieldValue.Kind() == reflect.String {
-		return true, fieldValue.String()
+		return true, fieldValue.String(), nil
 	}
 
-	marshalValue, _ := json.Marshal(fieldValue)
+	marshalValue, err := json.Marshal(fieldValue.Interface())
+	if err != nil {
+		return false, "", err
+	}
 
-	return true, string(marshalValue)
+	return true, string(marshalValue), nil
 }
 
 func GetGlobalUserCount(field, value string) (int64, error) {
