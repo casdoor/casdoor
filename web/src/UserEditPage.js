@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -1016,17 +1016,27 @@ class UserEditPage extends React.Component {
           </div>
         )
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        {
-          this.getUserOrganization()?.accountItems?.map(accountItem => {
-            return (
-              <React.Fragment key={accountItem.name}>
-                {
-                  this.renderAccountItem(accountItem)
-                }
-              </React.Fragment>
-            );
-          })
-        }
+        <Form>
+          {
+            this.getUserOrganization()?.accountItems?.map(accountItem => {
+              return (
+                <React.Fragment key={accountItem.name}>
+                  <Form.Item name={accountItem.name}
+                    validateTrigger="onChange"
+                    rules={[
+                      {
+                        pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
+                        message: i18next.t("user:This field value doesn't match the pattern rule"),
+                      },
+                    ]}
+                    style={{margin: 0}}>
+                    {this.renderAccountItem(accountItem)}
+                  </Form.Item>
+                </React.Fragment>
+              );
+            })
+          }
+        </Form>
       </Card>
     );
   }

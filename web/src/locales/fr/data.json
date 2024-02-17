@@ -1098,6 +1098,7 @@
     "The password must have at least 6 characters": "Le mot de passe doit contenir moins 6 caractères",
     "The password must have at least 8 characters": "Le mot de passe doit contenir moins 8 caractères",
     "The password must not contain any repeated characters": "Le mot de passe ne doit pas contenir de caractères répétés",
+    "This field value doesn't match the pattern rule": "This field value doesn't match the pattern rule",
     "Title": "Poste",
     "Title - Tooltip": "Fonction dans l'affiliation",
     "Two passwords you typed do not match.": "Le mot de passe et la confirmation du mot de passe ne correspondent pas.",

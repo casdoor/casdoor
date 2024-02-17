@@ -31,6 +31,7 @@ type AccountItem struct {
 	Visible    bool   `json:"visible"`
 	ViewRule   string `json:"viewRule"`
 	ModifyRule string `json:"modifyRule"`
+	Regex      string `json:"regex"`
 }
 
 type ThemeData struct {

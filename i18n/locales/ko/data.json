@@ -19,6 +19,7 @@
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "어플리케이션에서는 암호를 사용한 로그인 방법이 활성화되어 있지 않습니다",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "제공자 %s은(는) 응용 프로그램에서 활성화되어 있지 않습니다",
     "Unauthorized operation": "무단 조작",
     "Unknown authentication type (not password or provider), form = %s": "알 수 없는 인증 유형(암호 또는 공급자가 아님), 폼 = %s",
@@ -57,6 +58,7 @@
     "The user is forbidden to sign in, please contact the administrator": "사용자는 로그인이 금지되어 있습니다. 관리자에게 문의하십시오",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "사용자 이름은 알파벳, 숫자, 밑줄 또는 하이픈만 포함할 수 있으며, 연속된 하이픈 또는 밑줄을 가질 수 없으며, 하이픈 또는 밑줄로 시작하거나 끝날 수 없습니다.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "사용자 이름이 이미 존재합니다",
     "Username cannot be an email address": "사용자 이름은 이메일 주소가 될 수 없습니다",
@@ -73,6 +75,7 @@
   "general": {
     "Missing parameter": "누락된 매개변수",
     "Please login first": "먼저 로그인 하십시오",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "사용자 %s는 존재하지 않습니다",
     "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
@@ -92,6 +95,9 @@
     "Only admin can modify the %s.": "관리자만 %s을(를) 수정할 수 있습니다.",
     "The %s is immutable.": "%s 는 변경할 수 없습니다.",
     "Unknown modify rule %s.": "미확인 수정 규칙 %s."
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "잘못된 애플리케이션 ID입니다",
@@ -117,7 +123,6 @@
     "The provider type: %s is not supported": "제공자 유형: %s은/는 지원되지 않습니다"
   },
   "token": {
-    "Empty clientId or clientSecret": "클라이언트 ID 또는 클라이언트 비밀번호가 비어 있습니다",
     "Grant_type: %s is not supported in this application": "그랜트 유형: %s은(는) 이 어플리케이션에서 지원되지 않습니다",
     "Invalid application or wrong clientSecret": "잘못된 어플리케이션 또는 올바르지 않은 클라이언트 시크릿입니다",
     "Invalid client_id": "잘못된 클라이언트 ID입니다",
@@ -146,6 +151,8 @@
     "Unknown type": "알 수 없는 유형",
     "Wrong verification code!": "잘못된 인증 코드입니다!",
     "You should verify your code in %d min!": "당신은 %d분 안에 코드를 검증해야 합니다!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "사용자가 존재하지 않습니다. 먼저 회원 가입 해주세요"
   },
   "webauthn": {

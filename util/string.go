@@ -113,6 +113,15 @@ func SnakeToCamel(snake string) string {
 	return strings.Join(words, "")
 }
 
+func SpaceToCamel(name string) string {
+	words := strings.Split(name, " ")
+	for i := range words {
+		words[i] = strings.ToLower(words[i])
+		words[i] = strings.Title(words[i])
+	}
+	return strings.Join(words, "")
+}
+
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {

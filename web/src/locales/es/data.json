@@ -1098,6 +1098,7 @@
     "The password must have at least 6 characters": "The password must have at least 6 characters",
     "The password must have at least 8 characters": "The password must have at least 8 characters",
     "The password must not contain any repeated characters": "The password must not contain any repeated characters",
+    "This field value doesn't match the pattern rule": "This field value doesn't match the pattern rule",
     "Title": "Título",
     "Title - Tooltip": "Posición en la afiliación",
     "Two passwords you typed do not match.": "Dos contraseñas que has escrito no coinciden.",

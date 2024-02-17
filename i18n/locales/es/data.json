@@ -19,6 +19,7 @@
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "El método de inicio de sesión: inicio de sesión con contraseña no está habilitado para la aplicación",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "El proveedor: %s no está habilitado para la aplicación",
     "Unauthorized operation": "Operación no autorizada",
     "Unknown authentication type (not password or provider), form = %s": "Tipo de autenticación desconocido (no es contraseña o proveedor), formulario = %s",
@@ -57,6 +58,7 @@
     "The user is forbidden to sign in, please contact the administrator": "El usuario no está autorizado a iniciar sesión, por favor contacte al administrador",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "El nombre de usuario solo puede contener caracteres alfanuméricos, guiones bajos o guiones, no puede tener guiones o subrayados consecutivos, y no puede comenzar ni terminar con un guión o subrayado.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "El nombre de usuario ya existe",
     "Username cannot be an email address": "Nombre de usuario no puede ser una dirección de correo electrónico",
@@ -73,6 +75,7 @@
   "general": {
     "Missing parameter": "Parámetro faltante",
     "Please login first": "Por favor, inicia sesión primero",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "El usuario: %s no existe",
     "don't support captchaProvider: ": "No apoyo a captchaProvider",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
@@ -92,6 +95,9 @@
     "Only admin can modify the %s.": "Solo el administrador puede modificar los %s.",
     "The %s is immutable.": "El %s es inmutable.",
     "Unknown modify rule %s.": "Regla de modificación desconocida %s."
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "Identificación de aplicación no válida",
@@ -117,7 +123,6 @@
     "The provider type: %s is not supported": "El tipo de proveedor: %s no es compatible"
   },
   "token": {
-    "Empty clientId or clientSecret": "ClienteId o clienteSecret vacío",
     "Grant_type: %s is not supported in this application": "El tipo de subvención: %s no es compatible con esta aplicación",
     "Invalid application or wrong clientSecret": "Solicitud inválida o clientSecret incorrecto",
     "Invalid client_id": "Identificador de cliente no válido",
@@ -146,6 +151,8 @@
     "Unknown type": "Tipo desconocido",
     "Wrong verification code!": "¡Código de verificación incorrecto!",
     "You should verify your code in %d min!": "¡Deberías verificar tu código en %d minutos!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "El usuario no existe, por favor regístrese primero"
   },
   "webauthn": {

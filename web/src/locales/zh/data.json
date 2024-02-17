@@ -1098,6 +1098,7 @@
     "The password must have at least 6 characters": "密码长度必须至少为6个字符",
     "The password must have at least 8 characters": "密码长度必须至少为8个字符",
     "The password must not contain any repeated characters": "密码不得包含任何重复字符",
+    "This field value doesn't match the pattern rule": "此字段值与模式规则不匹配",
     "Title": "职务",
     "Title - Tooltip": "在工作单位担任的职务",
     "Two passwords you typed do not match.": "两次输入的密码不匹配。",
