@@ -1098,6 +1098,7 @@
     "The password must have at least 6 characters": "Şifreniz en az 6 karakterden oluşmalıdır",
     "The password must have at least 8 characters": "Şifreniz en az 8 karakterden oluşmalıdır",
     "The password must not contain any repeated characters": "Şifreniz tekrar eden karakterler içermemelidir",
+    "This field value doesn't match the pattern rule": "This field value doesn't match the pattern rule",
     "Title": "Title",
     "Title - Tooltip": "Position in the affiliation",
     "Two passwords you typed do not match.": "İki şifre birbiri ile eşleşmiyor.",
