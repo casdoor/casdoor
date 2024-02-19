@@ -1247,7 +1247,7 @@ export function renderHelmet(application) {
 
   return (
     <Helmet>
-      <title>{application.organizationObj.displayName}</title>
+      <title>{application.displayName}</title>
       <link rel="icon" href={application.organizationObj.favicon} />
     </Helmet>
   );

@@ -50,12 +50,13 @@
     "react-metamask-avatar": "^1.2.1",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",
-    "react-social-login-buttons": "^3.4.0"
+    "react-social-login-buttons": "^3.4.0",
+    "update-browserslist-db": "^1.0.13"
   },
   "scripts": {
     "check-node-version": "node -e \"if (parseInt(process.version.split('.')[0].slice(1)) < 18) { console.error('Node.js version must be >= 18'); process.exit(1); }\"",
     "start": "yarn check-node-version && cross-env PORT=7001 craco start",
-    "build": "craco build",
+    "build": "node --max-old-space-size=4096 ./node_modules/.bin/craco build",
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",

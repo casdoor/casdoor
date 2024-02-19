@@ -240,6 +240,9 @@ func (c *ApiController) Signup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [get,post]
 func (c *ApiController) Logout() {
+	// ivancetus 20240216 should user be able to see failed attempt to logout action?
+	// defaultRedirectUrl := "https://sso-web.ivancetus.com"
+
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
 	accessToken := c.Input().Get("id_token_hint")
 	redirectUri := c.Input().Get("post_logout_redirect_uri")

@@ -1,4 +1,4 @@
-FROM node:18.19.0 AS FRONT
+FROM node:20.11.0 AS FRONT
 WORKDIR /web
 COPY ./web .
 RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build

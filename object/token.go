@@ -269,8 +269,27 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 		return false, nil, nil, nil
 	}
 
-	token.ExpiresIn = 0
-	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
+	// ivan 20240216
+	// instead of just this specific token, update all tokens of that user
+	//
+	//token.ExpiresIn = 0
+	//affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
+	//if err != nil {
+	//	return false, nil, nil, err
+	//}
+
+	// case-sensitive user, failed to locate records
+	//affected, err := ormer.Engine.Where(" user = ? ", token.User).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	//if err != nil {
+	//	return false, nil, nil, err
+	//}
+
+	sql := `UPDATE "token" SET "expires_in" = ? WHERE "user" = ? AND (CAST("created_time" AS timestamptz) + ("expires_in" * INTERVAL '1 second')) > CURRENT_TIMESTAMP`
+	result, err := ormer.Engine.Exec(sql, 0, token.User)
+	if err != nil {
+		return false, nil, nil, err
+	}
+	affected, err := result.RowsAffected()
 	if err != nil {
 		return false, nil, nil, err
 	}

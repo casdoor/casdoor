@@ -1026,7 +1026,52 @@ class LoginPage extends React.Component {
         </div>
       );
     }
-
+    // ivancetus 240219 super weird workaround for apps with enableAutoSignin to not show login ui when already have a session
+    if (this.props.account === null && application.enableAutoSignin) {
+      return (
+        <React.Fragment>
+          <CustomGithubCorner />
+          <div className="login-content" style={{margin: this.props.preview ?? this.parseOffset(application.formOffset)}}>
+            {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+            {Setting.inIframe() || !Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCssMobile}} />}
+            <div className="login-panel">
+              <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
+                <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+              </div>
+              <div className="login-form">
+                <div>
+                  <div>
+                    {
+                      Setting.renderHelmet(application)
+                    }
+                    {/*  application.name !== "ppg_web" && Setting.renderLogo(application)*/}
+                    {
+                      Setting.renderLogo(application)
+                    }
+                    {
+                      this.renderBackButton()
+                    }
+                    {/*  application.name !== "ppg_web" && <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />*/}
+                    <LanguageSelect languages={application.organizationObj.languages} style={{top: "55px", right: "5px", position: "absolute"}} />
+                    {
+                      this.renderLoginPanel(application)
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    }
+    if ((this.props.account === undefined || this.props.account) && application.enableAutoSignin) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
+          <Spin size="large" tip={i18next.t("login:Signing in...")} />
+        </div>
+      );
+    }
+    //
     return (
       <React.Fragment>
         <CustomGithubCorner />
