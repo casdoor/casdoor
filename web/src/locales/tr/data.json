@@ -196,6 +196,7 @@
     "Cert - Tooltip": "The public key certificate that needs to be verified by the client SDK corresponding to this application",
     "Certs": "Certs",
     "Click to Upload": "Yüklemek için tıklayın",
+    "Client IP": "Client IP",
     "Close": "Kapat",
     "Confirm": "Onayla",
     "Copied to clipboard successfully": "Başarıyla kopyalandı",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Providers to be configured, including 3rd-party login, object storage, verification code, etc.",
     "Real name": "Gerçek isim",
     "Records": "Records",
+    "Request URI": "Request URI",
     "Resources": "Resources",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "Sistem Bilgisi",
     "There was a problem signing you in..": "Oturumunuz açılırken bir sorun oluştu..",
     "This is a read-only demo site!": "Bu site sadece görüntüleme amaçlıdır!",
+    "Timestamp": "Timestamp",
     "Tokens": "Tokens",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "admin (Shared)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Copy Link",

@@ -196,6 +196,7 @@
     "Cert - Tooltip": "このアプリケーションに対応するクライアントSDKによって検証する必要がある公開鍵証明書",
     "Certs": "証明書",
     "Click to Upload": "アップロードするにはクリックしてください",
+    "Client IP": "Client IP",
     "Close": "閉じる",
     "Confirm": "Confirm",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "設定するプロバイダーには、サードパーティのログイン、オブジェクトストレージ、検証コードなどが含まれます。",
     "Real name": "本名",
     "Records": "記録",
+    "Request URI": "Request URI",
     "Resources": "リソース",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "システム情報",
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "これは読み取り専用のデモサイトです！",
+    "Timestamp": "Timestamp",
     "Tokens": "トークン",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "管理者（共有）"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "コピー リンク",

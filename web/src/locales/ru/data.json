@@ -196,6 +196,7 @@
     "Cert - Tooltip": "Сертификат открытого ключа, который требуется проверить клиентским SDK, соответствующим этому приложению",
     "Certs": "сертификаты",
     "Click to Upload": "Нажмите, чтобы загрузить",
+    "Client IP": "Client IP",
     "Close": "Близко",
     "Confirm": "Подтвердить",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Провайдеры должны быть настроены, включая вход с помощью сторонних сервисов, объектное хранилище, код подтверждения и т.д.",
     "Real name": "Реальное имя",
     "Records": "Записи",
+    "Request URI": "Request URI",
     "Resources": "Ресурсы",
     "Role": "Роль",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "Системная информация",
     "There was a problem signing you in..": "Возникла проблема с регистрацией..",
     "This is a read-only demo site!": "Это демонстрационный сайт только для чтения!",
+    "Timestamp": "Timestamp",
     "Tokens": "Токены",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "администратор (общий)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Копировать ссылку",

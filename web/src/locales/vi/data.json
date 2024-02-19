@@ -196,6 +196,7 @@
     "Cert - Tooltip": "Chứng chỉ khóa công khai cần được xác minh bởi SDK khách hàng tương ứng với ứng dụng này",
     "Certs": "Chứng chỉ",
     "Click to Upload": "Nhấp để tải lên",
+    "Client IP": "Client IP",
     "Close": "Đóng lại",
     "Confirm": "Confirm",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Các nhà cung cấp phải được cấu hình, bao gồm đăng nhập bên thứ ba, lưu trữ đối tượng, mã xác minh, v.v.",
     "Real name": "Tên thật",
     "Records": "Hồ sơ",
+    "Request URI": "Request URI",
     "Resources": "Tài nguyên",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "Thông tin hệ thống",
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
+    "Timestamp": "Timestamp",
     "Tokens": "Mã thông báo",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "quản trị viên (Chung)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Sao chép liên kết",

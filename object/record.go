@@ -82,7 +82,12 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	if casvisorsdk.GetClient() == nil {
-		return false
+		affected, err := ormer.Engine.Insert(record)
+		if err != nil {
+			panic(err)
+		}
+
+		return affected != 0
 	}
 
 	affected, err := casvisorsdk.AddRecord(record)
@@ -91,6 +96,42 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	return affected
+}
+
+func GetRecordCount(field, value string, filterRecord *casvisorsdk.Record) (int64, error) {
+	session := GetSession("", -1, -1, field, value, "", "")
+	return session.Count(filterRecord)
+}
+
+func GetRecords() ([]*casvisorsdk.Record, error) {
+	records := []*casvisorsdk.Record{}
+	err := ormer.Engine.Desc("id").Find(&records)
+	if err != nil {
+		return records, err
+	}
+
+	return records, nil
+}
+
+func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
+	records := []*casvisorsdk.Record{}
+	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&records, filterRecord)
+	if err != nil {
+		return records, err
+	}
+
+	return records, nil
+}
+
+func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
+	records := []*casvisorsdk.Record{}
+	err := ormer.Engine.Find(&records, record)
+	if err != nil {
+		return records, err
+	}
+
+	return records, nil
 }
 
 func getFilteredWebhooks(webhooks []*Webhook, action string) []*Webhook {

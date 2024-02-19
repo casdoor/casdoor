@@ -196,6 +196,7 @@
     "Cert - Tooltip": "Sertifikat kunci publik yang perlu diverifikasi oleh SDK klien yang sesuai dengan aplikasi ini",
     "Certs": "Sertifikat",
     "Click to Upload": "Klik untuk Mengunggah",
+    "Client IP": "Client IP",
     "Close": "Tutup",
     "Confirm": "Confirm",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Penyedia harus dikonfigurasi, termasuk login pihak ketiga, penyimpanan objek, kode verifikasi, dan lain-lain.",
     "Real name": "Nama asli",
     "Records": "Catatan",
+    "Request URI": "Request URI",
     "Resources": "Sumber daya",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "Informasi Sistem",
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "Ini adalah situs demo hanya untuk dibaca saja!",
+    "Timestamp": "Timestamp",
     "Tokens": "Token-token",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "Admin (Berbagi)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Salin Tautan",

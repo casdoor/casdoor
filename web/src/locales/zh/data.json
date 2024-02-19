@@ -196,6 +196,7 @@
     "Cert - Tooltip": "该应用所对应的客户端SDK需要验证的公钥证书",
     "Certs": "证书",
     "Click to Upload": "点击上传",
+    "Client IP": "客户端IP",
     "Close": "关闭",
     "Confirm": "确认",
     "Copied to clipboard successfully": "已成功复制到剪贴板",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "需要配置的提供商，包括第三方登录、对象存储、验证码等",
     "Real name": "姓名",
     "Records": "日志",
+    "Request URI": "请求URI",
     "Resources": "资源",
     "Role": "角色",
     "Role - Tooltip": "所对应的角色",
@@ -357,6 +359,7 @@
     "System Info": "系统信息",
     "There was a problem signing you in..": "登录时遇到问题..",
     "This is a read-only demo site!": "这是一个只读演示站点！",
+    "Timestamp": "时间",
     "Tokens": "令牌",
     "Type": "类型",
     "Type - Tooltip": "类型",
@@ -857,6 +860,9 @@
     "Wallets": "钱包",
     "Wallets - Tooltip": "钱包 - 工具提示",
     "admin (Shared)": "admin（共享）"
+  },
+  "record": {
+    "Is triggered": "是否触发"
   },
   "resource": {
     "Copy Link": "复制链接",

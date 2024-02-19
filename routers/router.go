@@ -261,6 +261,10 @@ func initAPI() {
 	beego.Router("/api/login/oauth/refresh_token", &controllers.ApiController{}, "POST:RefreshToken")
 	beego.Router("/api/login/oauth/introspect", &controllers.ApiController{}, "POST:IntrospectToken")
 
+	beego.Router("/api/get-records", &controllers.ApiController{}, "GET:GetRecords")
+	beego.Router("/api/get-records-filter", &controllers.ApiController{}, "POST:GetRecordsByFilter")
+	beego.Router("/api/add-record", &controllers.ApiController{}, "POST:AddRecord")
+
 	beego.Router("/api/send-email", &controllers.ApiController{}, "POST:SendEmail")
 	beego.Router("/api/send-sms", &controllers.ApiController{}, "POST:SendSms")
 	beego.Router("/api/send-notification", &controllers.ApiController{}, "POST:SendNotification")

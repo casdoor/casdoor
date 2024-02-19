@@ -196,6 +196,7 @@
     "Cert - Tooltip": "Das Public-Key-Zertifikat, das vom Client-SDK, das mit dieser Anwendung korrespondiert, verifiziert werden muss",
     "Certs": "Zertifikate",
     "Click to Upload": "Klicken Sie zum Hochladen",
+    "Client IP": "Client IP",
     "Close": "Schließen",
     "Confirm": "Confirm",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Provider, die konfiguriert werden müssen, einschließlich Drittanbieter-Logins, Objektspeicherung, Verifizierungscode usw.",
     "Real name": "Echter Name",
     "Records": "Datensätze",
+    "Request URI": "Request URI",
     "Resources": "Ressourcen",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "Systeminformationen",
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "Dies ist eine schreibgeschützte Demo-Seite!",
+    "Timestamp": "Timestamp",
     "Tokens": "Token",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "admin (Gemeinsam)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Kopiere den Link",
