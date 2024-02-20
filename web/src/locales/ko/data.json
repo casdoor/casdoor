@@ -196,6 +196,7 @@
     "Cert - Tooltip": "이 응용 프로그램에 해당하는 클라이언트 SDK에서 확인해야 하는 공개 키 인증서",
     "Certs": "증명서",
     "Click to Upload": "클릭하여 업로드하세요",
+    "Client IP": "Client IP",
     "Close": "닫다",
     "Confirm": "Confirm",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "공급 업체는 구성되어야합니다. 3rd-party 로그인, 객체 저장소, 검증 코드 등을 포함합니다.",
     "Real name": "실명",
     "Records": "기록",
+    "Request URI": "Request URI",
     "Resources": "자원",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -357,6 +359,7 @@
     "System Info": "시스템 정보",
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "이것은 읽기 전용 데모 사이트입니다!",
+    "Timestamp": "Timestamp",
     "Tokens": "토큰",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -857,6 +860,9 @@
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
     "admin (Shared)": "관리자 (공유)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "링크 복사하기",

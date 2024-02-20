@@ -196,6 +196,7 @@
     "Cert - Tooltip": "La clé publique du certificat qui doit être vérifiée par le kit de développement client correspondant à cette application",
     "Certs": "Certificats",
     "Click to Upload": "Cliquer pour télécharger",
+    "Client IP": "Client IP",
     "Close": "Fermer",
     "Confirm": "Confirmer",
     "Copied to clipboard successfully": "Copied to clipboard successfully",
@@ -313,6 +314,7 @@
     "Providers - Tooltip": "Les fournisseurs à configurer, tels que la connexion via un service tiers, le stockage d'objets, le code de vérification, etc.",
     "Real name": "Nom complet",
     "Records": "Enregistrements",
+    "Request URI": "Request URI",
     "Resources": "Ressources",
     "Role": "Rôle",
     "Role - Tooltip": "Rôle - Infobulle",
@@ -357,6 +359,7 @@
     "System Info": "Informations système",
     "There was a problem signing you in..": "Un problème est survenu lors de votre connexion..",
     "This is a read-only demo site!": "Ceci est un site de démonstration en lecture seule !",
+    "Timestamp": "Timestamp",
     "Tokens": "Jetons",
     "Type": "Type",
     "Type - Tooltip": "Type - Infobulle",
@@ -857,6 +860,9 @@
     "Wallets": "Portefeuille",
     "Wallets - Tooltip": "Portefeuille - Infobulle",
     "admin (Shared)": "admin (Partagé)"
+  },
+  "record": {
+    "Is triggered": "Is triggered"
   },
   "resource": {
     "Copy Link": "Copier le lien",
