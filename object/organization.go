@@ -464,7 +464,9 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	record.Organization = newName
 	_, err = session.Where("organization=?", oldName).Update(record)
 	if err != nil {
-		return err
+		if err.Error() != "no columns found to be updated" {
+			return err
+		}
 	}
 
 	resource := new(Resource)

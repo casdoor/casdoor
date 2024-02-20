@@ -1021,6 +1021,10 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 	for _, permission := range permissions {
 		for j, u := range permission.Users {
+			if u == "*" {
+				continue
+			}
+
 			// u = organization/username
 			owner, name := util.GetOwnerAndNameFromId(u)
 			if name == oldName {
