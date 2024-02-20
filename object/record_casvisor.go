@@ -27,7 +27,7 @@ func getCasvisorApplication() *Application {
 	}
 
 	for _, application := range applications {
-		if strings.Contains(strings.ToLower(application.Name), "casvisor") {
+		if strings.Contains(strings.ToLower(application.Name), "casvisor-my") {
 			return application
 		}
 	}
