@@ -1164,8 +1164,8 @@ export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (window.location.pathname.includes("/signup/oauth/authorize")) {
+    url = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
@@ -1216,7 +1216,7 @@ export function renderSignupLink(application, text) {
   if (application === null) {
     url = null;
   } else if (window.location.pathname.includes("/login/oauth/authorize")) {
-    url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+    url = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
   } else {
