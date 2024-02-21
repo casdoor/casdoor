@@ -681,7 +681,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
-	user, err := getUser(application.Organization, username)
+	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
 	}
