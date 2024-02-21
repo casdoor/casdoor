@@ -168,3 +168,20 @@ func (c *ApiController) RunSyncer() {
 
 	c.ResponseOk()
 }
+
+func (c *ApiController) TestSyncerDb() {
+	var syncer object.Syncer
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	err = object.TestSyncerDb(syncer)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk()
+}

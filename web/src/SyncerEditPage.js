@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as SyncerBackend from "./backend/SyncerBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -23,6 +23,7 @@ import SyncerTableColumnTable from "./table/SyncerTableColumnTable";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
+import * as CertBackend from "./backend/CertBackend";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/javascript/javascript");
 
@@ -32,11 +33,13 @@ class SyncerEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      certs: [],
       classes: props,
       syncerName: props.match.params.syncerName,
       syncer: null,
       organizations: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      testDbLoading: false,
     };
   }
 
@@ -64,12 +67,24 @@ class SyncerEditPage extends React.Component {
       });
   }
 
+  getCerts(owner) {
+    CertBackend.getCerts(owner)
+      .then((res) => {
+        this.setState({
+          certs: res.data || [],
+        });
+      });
+  }
+
   getOrganizations() {
     OrganizationBackend.getOrganizations("admin")
       .then((res) => {
         this.setState({
           organizations: res.data || [],
         });
+        if (res.data) {
+          this.getCerts(`${res.data.owner}/${res.data.name}`);
+        }
       });
   }
 
@@ -228,7 +243,7 @@ class SyncerEditPage extends React.Component {
               });
             })}>
               {
-                ["Database", "LDAP", "Keycloak"]
+                ["Database", "Keycloak"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
@@ -317,7 +332,7 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.syncer.password} onChange={e => {
+            <Input.Password value={this.state.syncer.password} onChange={e => {
               this.updateSyncerField("password", e.target.value);
             }} />
           </Col>
@@ -332,6 +347,88 @@ class SyncerEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {
+          this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:SSH type"), i18next.t("general:SSH type - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Radio.Group value={this.state.syncer.sshType} buttonStyle="solid" onChange={e => {
+                  this.updateSyncerField("sshType", e.target.value);
+                }}>
+                  <Radio.Button value="">{i18next.t("general:None")}</Radio.Button>
+                  <Radio.Button value="password">{i18next.t("general:Password")}</Radio.Button>
+                  <Radio.Button value="cert">{i18next.t("general:Cert")}</Radio.Button>
+                </Radio.Group>
+              </Col>
+            </Row>
+          ) : null
+        }
+        {
+          this.state.syncer.sshType && this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres" ? (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("syncer:SSH host"), i18next.t("provider:Host - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input prefix={<LinkOutlined />} value={this.state.syncer.sshHost} onChange={e => {
+                    this.updateSyncerField("sshHost", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("syncer:SSH port"), i18next.t("provider:Port - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber value={this.state.syncer.sshPort} onChange={value => {
+                    this.updateSyncerField("sshPort", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("syncer:SSH user"), i18next.t("general:User - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.syncer.sshUser} onChange={e => {
+                    this.updateSyncerField("sshUser", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              {
+                this.state.syncer.sshType === "password" && (this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres") ?
+                  (
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("syncer:SSH password"), i18next.t("general:Password - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Input.Password value={this.state.syncer.sshPassword} onChange={e => {
+                          this.updateSyncerField("ssh " + "sshPassword", e.target.value);
+                        }} />
+                      </Col>
+                    </Row>
+                  ) : (
+                    <Row style={{marginTop: "20px"}} >
+                      <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                        {Setting.getLabel(i18next.t("general:SSH cert"), i18next.t("general:Cert - Tooltip"))} :
+                      </Col>
+                      <Col span={22} >
+                        <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.cert} onChange={(value => {this.updateSyncerField("cert", value);})}>
+                          {
+                            this.state?.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                          }
+                        </Select>
+                      </Col>
+                    </Row>
+                  )
+              }
+            </React.Fragment>
+          ) : null
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
@@ -341,6 +438,31 @@ class SyncerEditPage extends React.Component {
               disabled={this.state.syncer.type === "Keycloak"} onChange={e => {
                 this.updateSyncerField("table", e.target.value);
               }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
+          </Col>
+          <Col span={2} >
+            <Button type={"primary"} loading={this.state.testDbLoading} onClick={() => {
+              this.setState({testDbLoading: true});
+              SyncerBackend.testSyncerDb(this.state.syncer)
+                .then((res) => {
+                  if (res.status === "ok") {
+                    this.setState({testDbLoading: false});
+                    Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
+                  } else {
+                    this.setState({testDbLoading: false});
+                    Setting.showMessage("error", i18next.t("syncer:Failed to connect") + ": " + res.msg);
+                  }
+                })
+                .catch(error => {
+                  this.setState({testDbLoading: false});
+                  Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+                });
+            }
+            }>{i18next.t("syncer:Test DB Connection")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

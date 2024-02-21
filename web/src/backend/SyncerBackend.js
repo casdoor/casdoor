@@ -58,6 +58,18 @@ export function addSyncer(syncer) {
   }).then(res => res.json());
 }
 
+export function testSyncerDb(syncer) {
+  const newSyncer = Setting.deepCopy(syncer);
+  return fetch(`${Setting.ServerUrl}/api/test-syncer-db`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(newSyncer),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function deleteSyncer(syncer) {
   const newSyncer = Setting.deepCopy(syncer);
   return fetch(`${Setting.ServerUrl}/api/delete-syncer`, {
