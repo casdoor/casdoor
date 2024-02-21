@@ -8,12 +8,62 @@
       "favicon": "",
       "passwordType": "plain",
       "passwordSalt": "",
-      "passwordOptions": ["AtLeast6"],
-      "countryCodes": ["US", "GB", "ES", "FR", "DE", "CN", "JP", "KR", "VN", "ID", "SG", "IN", "IT", "MY", "TR", "DZ", "IL", "PH", "NL", "PL", "FI", "SE", "UA", "KZ"],
+      "passwordOptions": [
+        "AtLeast6"
+      ],
+      "countryCodes": [
+        "US",
+        "GB",
+        "ES",
+        "FR",
+        "DE",
+        "CN",
+        "JP",
+        "KR",
+        "VN",
+        "ID",
+        "SG",
+        "IN",
+        "IT",
+        "MY",
+        "TR",
+        "DZ",
+        "IL",
+        "PH",
+        "NL",
+        "PL",
+        "FI",
+        "SE",
+        "UA",
+        "KZ"
+      ],
       "defaultAvatar": "",
       "defaultApplication": "",
       "tags": [],
-      "languages": ["en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "it", "ms", "tr","ar", "he", "nl", "pl", "fi", "sv", "uk", "kk", "fa"],
+      "languages": [
+        "en",
+        "zh",
+        "es",
+        "fr",
+        "de",
+        "id",
+        "ja",
+        "ko",
+        "ru",
+        "vi",
+        "it",
+        "ms",
+        "tr",
+        "ar",
+        "he",
+        "nl",
+        "pl",
+        "fi",
+        "sv",
+        "uk",
+        "kk",
+        "fa"
+      ],
       "masterPassword": "",
       "defaultPassword": "",
       "initScore": 2000,
@@ -49,18 +99,18 @@
         {
           "name": "Password",
           "displayName": "Password",
-          "rule": "All",
+          "rule": "All"
         },
         {
           "name": "Verification code",
           "displayName": "Verification code",
-          "rule": "All",
+          "rule": "All"
         },
         {
           "name": "WebAuthn",
           "displayName": "WebAuthn",
-          "rule": "None",
-        },
+          "rule": "None"
+        }
       ],
       "signupItems": [
         {
@@ -72,56 +122,65 @@
         },
         {
           "name": "Username",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Display name",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Password",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Confirm password",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Email",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Phone",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         },
         {
           "name": "Agreement",
-            "visible": true,
-            "required": true,
-            "prompted": false,
-            "rule": "None"
+          "visible": true,
+          "required": true,
+          "prompted": false,
+          "rule": "None"
         }
       ],
-      "grantTypes": ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
-      "redirectUris": [""],
+      "grantTypes": [
+        "authorization_code",
+        "password",
+        "client_credentials",
+        "token",
+        "id_token",
+        "refresh_token"
+      ],
+      "redirectUris": [
+        ""
+      ],
       "expireInHours": 168,
       "failedSigninLimit": 5,
       "failedSigninFrozenTime": 15
@@ -354,71 +413,71 @@
   ],
   "groups": [
     {
-        "owner": "",
-        "name":"",
-        "displayName": "",
-        "manager": "",
-        "contactEmail": "",
-        "type": "",
-        "parent_id": "",
-        "isTopGroup": true,
-        "title": "",
-        "key": "",
-        "children": "",
-        "isEnabled": true
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "manager": "",
+      "contactEmail": "",
+      "type": "",
+      "parent_id": "",
+      "isTopGroup": true,
+      "title": "",
+      "key": "",
+      "children": "",
+      "isEnabled": true
     }
   ],
   "adapters": [
     {
-        "owner": "",
-        "name": "",
-        "table": "",
-        "useSameDb": true,
-        "type": "",
-        "databaseType": "",
-        "database": "",
-        "host": "",
-        "port": 0,
-        "user": "",
-        "password": "",
+      "owner": "",
+      "name": "",
+      "table": "",
+      "useSameDb": true,
+      "type": "",
+      "databaseType": "",
+      "database": "",
+      "host": "",
+      "port": 0,
+      "user": "",
+      "password": ""
     }
   ],
   "enforcers": [
     {
-        "owner": "",
-        "name": "",
-        "displayName": "",
-        "description": "",
-        "model": "",
-        "adapter": "",
-        "enforcer": ""
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "description": "",
+      "model": "",
+      "adapter": "",
+      "enforcer": ""
     }
   ],
   "plans": [
     {
-        "owner": "",
-        "name": "",
-        "displayName": "",
-        "description": "",
-        "price": 0,
-        "currency": "",
-        "period": "",
-        "product": "",
-        "paymentProviders": [],
-        "isEnabled": true,
-        "role", ""
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "description": "",
+      "price": 0,
+      "currency": "",
+      "period": "",
+      "product": "",
+      "paymentProviders": [],
+      "isEnabled": true,
+      "role": ""
     }
   ],
   "pricings": [
     {
-        "owner": "",
-        "name": "",
-        "displayName": "",
-        "description": "",
-        "plans": [],
-        "isEnabled": true,
-        "trialDuration": 0,
-        "application": "",
+      "owner": "",
+      "name": "",
+      "displayName": "",
+      "description": "",
+      "plans": [],
+      "isEnabled": true,
+      "trialDuration": 0,
+      "application": ""
     }
   ]
 }
