@@ -243,7 +243,7 @@ class SyncerEditPage extends React.Component {
               });
             })}>
               {
-                ["Database", "LDAP", "Keycloak"]
+                ["Database", "Keycloak"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
@@ -370,7 +370,7 @@ class SyncerEditPage extends React.Component {
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel("SSH " + i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("syncer:SSH host"), i18next.t("provider:Host - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input prefix={<LinkOutlined />} value={this.state.syncer.sshHost} onChange={e => {
@@ -380,7 +380,7 @@ class SyncerEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel("SSH " + i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("syncer:SSH port"), i18next.t("provider:Port - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <InputNumber value={this.state.syncer.sshPort} onChange={value => {
@@ -390,7 +390,7 @@ class SyncerEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel("SSH " + i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("syncer:SSH user"), i18next.t("general:User - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <Input value={this.state.syncer.sshUser} onChange={e => {
@@ -403,7 +403,7 @@ class SyncerEditPage extends React.Component {
                   (
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                        {Setting.getLabel("SSH " + i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
+                        {Setting.getLabel(i18next.t("syncer:SSH password"), i18next.t("general:Password - Tooltip"))} :
                       </Col>
                       <Col span={22} >
                         <Input.Password value={this.state.syncer.sshPassword} onChange={e => {
@@ -414,7 +414,7 @@ class SyncerEditPage extends React.Component {
                   ) : (
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                        {Setting.getLabel("SSH " + i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+                        {Setting.getLabel(i18next.t("general:SSH cert"), i18next.t("general:Cert - Tooltip"))} :
                       </Col>
                       <Col span={22} >
                         <Select virtual={false} style={{width: "100%"}} value={this.state.syncer.cert} onChange={(value => {this.updateSyncerField("cert", value);})}>
