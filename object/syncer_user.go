@@ -22,11 +22,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-sql-driver/mysql"
-
 	"golang.org/x/crypto/ssh"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-sql-driver/mysql"
 )
 
 type OriginalUser = User
@@ -188,7 +187,7 @@ func (syncer *Syncer) initAdapter() error {
 	}
 
 	if db != nil {
-		syncer.Ormer, err = NewAdapterFromdb(syncer.DatabaseType, dataSourceName, syncer.Database, db)
+		syncer.Ormer, err = NewAdapterFromDb(syncer.DatabaseType, dataSourceName, syncer.Database, db)
 	} else {
 		syncer.Ormer, err = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
 	}
