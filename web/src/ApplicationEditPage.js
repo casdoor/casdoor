@@ -865,6 +865,28 @@ class ApplicationEditPage extends React.Component {
             }
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Header HTML"), i18next.t("application:Header HTML - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror
+                  value={this.state.application.headerHtml}
+                  options={{mode: "htmlmixed", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("headerHtml", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Header HTML - Edit")} trigger="click">
+              <Input value={this.state.application.headerHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("headerHtml", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
         {
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >
