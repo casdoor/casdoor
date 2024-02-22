@@ -69,8 +69,8 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 	return nil, nil
 }
 
-func (application *Application) GetEmailProvider() (*Provider, error) {
-	return application.GetProviderByCategory("Email")
+func (application *Application) GetEmailProvider(method string) (*Provider, error) {
+	return application.GetProviderByCategoryAndRule("Email", method)
 }
 
 func (application *Application) GetSmsProvider(method string) (*Provider, error) {
