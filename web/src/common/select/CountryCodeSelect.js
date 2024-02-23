@@ -15,8 +15,9 @@
 import {Select} from "antd";
 import * as Setting from "../../Setting";
 import React from "react";
+import * as NoneEntrySetting from "../../NoneEntrySetting";
 
-export const CountryCodeSelect = (props) => {
+const CountryCodeSelect = (props) => {
   const {onChange, style, disabled, initValue} = props;
   const countryCodes = props.countryCodes ?? [];
   const [value, setValue] = React.useState("");
@@ -48,8 +49,10 @@ export const CountryCodeSelect = (props) => {
       filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
     >
       {
-        Setting.getCountryCodeData(countryCodes).map((country) => Setting.getCountryCodeOption(country))
+        NoneEntrySetting.getCountryCodeData(countryCodes).map((country) => Setting.getCountryCodeOption(country))
       }
     </Select>
   );
 };
+
+export default CountryCodeSelect;

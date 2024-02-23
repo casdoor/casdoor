@@ -18,6 +18,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
+import * as NoneEntrySetting from "./NoneEntrySetting";
 import * as Conf from "./Conf";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
@@ -25,6 +26,8 @@ import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
 import MfaTable from "./table/MfaTable";
+import {connect} from "react-redux";
+import {setTheme} from "./store/themeSlice";
 
 const {Option} = Select;
 
@@ -233,7 +236,7 @@ class OrganizationEditPage extends React.Component {
               filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
             >
               {
-                Setting.getCountryCodeData().map((country) => Setting.getCountryCodeOption(country))
+                NoneEntrySetting.getCountryCodeData().map((country) => Setting.getCountryCodeOption(country))
               }
             </Select>
           </Col>
@@ -441,7 +444,9 @@ class OrganizationEditPage extends React.Component {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
 
           if (this.props.account.organization.name === this.state.organizationName) {
-            this.props.onChangeTheme(Setting.getThemeData(this.state.organization));
+            // this.props.onChangeTheme(Setting.getThemeData(this.state.organization));
+            // const dispatch = useDispatch();
+            setTheme(Setting.getThemeData(this.state.organization));
           }
 
           this.setState({
@@ -495,4 +500,4 @@ class OrganizationEditPage extends React.Component {
   }
 }
 
-export default OrganizationEditPage;
+export default connect(null, {setTheme})(OrganizationEditPage);

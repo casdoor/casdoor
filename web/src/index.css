@@ -54,3 +54,7 @@ code {
 .custom-link:hover {
   color: rgb(64 64 64) !important;
 }
+
+#webpack-dev-server-client-overlay {
+  display: none !important;
+}

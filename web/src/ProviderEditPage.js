@@ -19,6 +19,7 @@ import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
+import * as NoneEntrySetting from "./NoneEntrySetting";
 import i18next from "i18next";
 import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./common/TestEmailWidget";
@@ -26,7 +27,7 @@ import * as ProviderNotification from "./common/TestNotificationWidget";
 import * as ProviderEditTestSms from "./common/TestSmsWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
-import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
+import CountryCodeSelect from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
 
 import {Controlled as CodeMirror} from "react-codemirror2";
@@ -1157,7 +1158,7 @@ class ProviderEditPage extends React.Component {
                 <Col span={2} >
                   <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
                     disabled={!Setting.isValidPhone(this.state.provider.receiver) && (this.state.provider.type !== "Custom HTTP SMS" || this.state.provider.endpoint === "")}
-                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
+                    onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + NoneEntrySetting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
                 </Col>

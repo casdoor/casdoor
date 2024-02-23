@@ -1,8 +1,9 @@
 import {UserOutlined} from "@ant-design/icons";
 import {Button, Form, Input} from "antd";
 import i18next from "i18next";
-import React, {useEffect} from "react";
-import {CountryCodeSelect} from "../../common/select/CountryCodeSelect";
+import React, {Suspense, lazy, useEffect} from "react";
+// import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
+const CountryCodeSelect = lazy(() => import("../../common/select/CountryCodeSelect"));
 import {SendCodeInput} from "../../common/SendCodeInput";
 import * as Setting from "../../Setting";
 import {EmailMfaType, SmsMfaType} from "../MfaSetupPage";
@@ -73,11 +74,13 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
                   },
                 ]}
               >
-                <CountryCodeSelect
-                  initValue={mfaProps.countryCode}
-                  style={{width: "30%"}}
-                  countryCodes={application.organizationObj.countryCodes}
-                />
+                <Suspense>
+                  <CountryCodeSelect
+                    initValue={mfaProps.countryCode}
+                    style={{width: "30%"}}
+                    countryCodes={application.organizationObj.countryCodes}
+                  />
+                </Suspense>
               </Form.Item>
             }
             <Form.Item

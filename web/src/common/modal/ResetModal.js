@@ -19,6 +19,7 @@ import * as Setting from "../../Setting";
 import * as UserBackend from "../../backend/UserBackend";
 import {SendCodeInput} from "../SendCodeInput";
 import {MailOutlined, PhoneOutlined} from "@ant-design/icons";
+import * as NoneEntrySetting from "../../NoneEntrySetting";
 
 export const ResetModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -87,7 +88,7 @@ export const ResetModal = (props) => {
           <Row style={{width: "100%", marginBottom: "20px"}}>
             <Input
               addonBefore={destType === "email" ? i18next.t("user:New Email") : i18next.t("user:New phone")}
-              prefix={destType === "email" ? <React.Fragment><MailOutlined />&nbsp;&nbsp;</React.Fragment> : (<React.Fragment><PhoneOutlined />&nbsp;&nbsp;{countryCode !== "" ? "+" : null}{Setting.getCountryCode(countryCode)}&nbsp;</React.Fragment>)}
+              prefix={destType === "email" ? <React.Fragment><MailOutlined />&nbsp;&nbsp;</React.Fragment> : (<React.Fragment><PhoneOutlined />&nbsp;&nbsp;{countryCode !== "" ? "+" : null}{NoneEntrySetting.getCountryCode(countryCode)}&nbsp;</React.Fragment>)}
               placeholder={placeholder}
               onChange={e => setDest(e.target.value)}
             />

@@ -15,6 +15,7 @@
 import React from "react";
 import * as Setting from "../../Setting";
 import {Select} from "antd";
+import * as NoneEntrySetting from "../../NoneEntrySetting";
 
 const {Option} = Select;
 
@@ -47,7 +48,7 @@ class RegionSelect extends React.Component {
         }
       >
         {
-          Setting.getCountryCodeData().map((item) => (
+          NoneEntrySetting.getCountryCodeData().map((item) => (
             <Option key={item.code} value={item.code} label={`${item.name} (${item.code})`} >
               {Setting.getCountryImage(item)}
               {`${item.name} (${item.code})`}

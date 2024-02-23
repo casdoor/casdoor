@@ -1,4 +1,6 @@
 const CracoLessPlugin = require("craco-less");
+const {BundleAnalyzerPlugin} = require("webpack-bundle-analyzer");
+const path = require("path");
 
 module.exports = {
   devServer: {
@@ -38,7 +40,7 @@ module.exports = {
       "/scim": {
         target: "http://localhost:8000",
         changeOrigin: true,
-      }
+      },
     },
   },
   plugins: [
@@ -55,23 +57,56 @@ module.exports = {
     },
   ],
   webpack: {
-    configure: {
+    configure: (webpackConfig) => {
+      if (webpackConfig.mode === "production") {
+        webpackConfig.plugins = webpackConfig.plugins.concat(
+          new BundleAnalyzerPlugin({
+            analyzerMode: "server",
+            analyzerHost: "127.0.0.1",
+            analyzerPort: 8888,
+            openAnalyzer: true, // 构建完打开浏览器
+            reportFilename: path.resolve(__dirname, "analyzer/index.html"),
+          })
+        );
+        webpackConfig.devtool = false;
+        webpackConfig.optimization = {
+          splitChunks: {
+            minSize: 30,
+            cacheGroups: {
+              default: {
+                name: "common",
+                chunks: "initial",
+                minChunks: 2,
+                priority: -20,
+              },
+              vendors: {
+                test: /[\\/]node_modules[\\/]/,
+                name: "vendor",
+                chunks: "initial",
+                priority: -10,
+                maxSize: 1000000,
+                minSize: 500000,
+              },
+            },
+          },
+        };
+      }
       // ignore webpack warnings by source-map-loader 
       // https://github.com/facebook/create-react-app/pull/11752#issuecomment-1345231546
-      ignoreWarnings: [
+      webpackConfig.ignoreWarnings = [
         function ignoreSourcemapsloaderWarnings(warning) {
           return (
             warning.module &&
-            warning.module.resource.includes('node_modules') &&
+            warning.module.resource.includes("node_modules") &&
             warning.details &&
-            warning.details.includes('source-map-loader')
-          )
+            warning.details.includes("source-map-loader")
+          );
         },
-      ],
+      ];
       // use polyfill Buffer with Webpack 5
       // https://viglucci.io/articles/how-to-polyfill-buffer-with-webpack-5
       // https://craco.js.org/docs/configuration/webpack/
-      resolve: {
+      webpackConfig.resolve = {
         fallback: {
           // "process": require.resolve('process/browser'),
           // "util": require.resolve("util/"),
@@ -81,7 +116,7 @@ module.exports = {
           // "http": require.resolve("stream-http"),
           // "https": require.resolve("https-browserify"),
           // "assert": require.resolve("assert/"),
-          "buffer": require.resolve('buffer/'),    
+          "buffer": require.resolve("buffer/"),
           "process": false,
           "util": false,
           "url": false,
@@ -94,7 +129,8 @@ module.exports = {
           "crypto": false,
           "os": false,
         },
-      }
+      };
+      return webpackConfig;
     },
-  }
+  },
 };

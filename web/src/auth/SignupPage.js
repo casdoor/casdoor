@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {Suspense, lazy} from "react";
 import {Button, Form, Input, Result} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
@@ -23,11 +23,13 @@ import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as AgreementModal from "../common/modal/AgreementModal";
 import {SendCodeInput} from "../common/SendCodeInput";
-import RegionSelect from "../common/select/RegionSelect";
+// import RegionSelect from "../common/select/RegionSelect";
+const RegionSelect = lazy(() => import("../common/select/RegionSelect"));
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
-import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
+// import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
+const CountryCodeSelect = lazy(() => import("../common/select/CountryCodeSelect"));
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as InvitationBackend from "../backend/InvitationBackend";
 
@@ -357,7 +359,9 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <RegionSelect onChange={(value) => {this.setState({region: value});}} />
+          <Suspense fallback={<div>loading</div>}>
+            <RegionSelect onChange={(value) => {this.setState({region: value});}} />
+          </Suspense>
         </Form.Item>
       );
     } else if (signupItem.name === "Email") {
@@ -421,10 +425,12 @@ class SignupPage extends React.Component {
                   },
                 ]}
               >
-                <CountryCodeSelect
-                  style={{width: "35%"}}
-                  countryCodes={this.getApplicationObj().organizationObj.countryCodes}
-                />
+                <Suspense fallback={<div>loading</div>}>
+                  <CountryCodeSelect
+                    style={{width: "35%"}}
+                    countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                  />
+                </Suspense>
               </Form.Item>
               <Form.Item
                 name="phone"
@@ -639,7 +645,8 @@ class SignupPage extends React.Component {
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
-              Setting.goToLink(linkInStorage);
+              // Setting.goToLink(linkInStorage);
+              this.props.history.push(`/login/${application.name}?orgChoiceMode=None`);
             } else {
               Setting.redirectToLoginPage(application, this.props.history);
             }

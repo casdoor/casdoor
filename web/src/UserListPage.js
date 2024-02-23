@@ -18,6 +18,7 @@ import {Button, Space, Switch, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
+import * as NoneEntrySetting from "./NoneEntrySetting";
 import * as Setting from "./Setting";
 import * as UserBackend from "./backend/UserBackend";
 import i18next from "i18next";
@@ -313,7 +314,7 @@ class UserListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("region"),
         render: (text, record, index) => {
-          return Setting.initCountries().getName(record.region, Setting.getLanguage(), {select: "official"});
+          return NoneEntrySetting.initCountries().getName(record.region, Setting.getLanguage(), {select: "official"});
         },
       },
       {

@@ -370,32 +370,32 @@ export const OtherProviderInfo = {
   },
 };
 
-export function initCountries() {
-  const countries = require("i18n-iso-countries");
-  countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
-  return countries;
-}
+// export function initCountries() {
+//   const countries = require("i18n-iso-countries");
+//   countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
+//   return countries;
+// }
 
-export function getCountryCode(country) {
-  if (phoneNumber.isSupportedCountry(country)) {
-    return phoneNumber.getCountryCallingCode(country);
-  }
-  return "";
-}
+// export function getCountryCode(country) {
+//   if (phoneNumber.isSupportedCountry(country)) {
+//     return phoneNumber.getCountryCallingCode(country);
+//   }
+//   return "";
+// }
 
-export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
-  return countryCodes?.map((countryCode) => {
-    if (phoneNumber.isSupportedCountry(countryCode)) {
-      const name = initCountries().getName(countryCode, getLanguage());
-      return {
-        code: countryCode,
-        name: name || "",
-        phone: phoneNumber.getCountryCallingCode(countryCode),
-      };
-    }
-  }).filter(item => item.name !== "")
-    .sort((a, b) => a.phone - b.phone);
-}
+// export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
+//   return countryCodes?.map((countryCode) => {
+//     if (phoneNumber.isSupportedCountry(countryCode)) {
+//       const name = initCountries().getName(countryCode, getLanguage());
+//       return {
+//         code: countryCode,
+//         name: name || "",
+//         phone: phoneNumber.getCountryCallingCode(countryCode),
+//       };
+//     }
+//   }).filter(item => item.name !== "")
+//     .sort((a, b) => a.phone - b.phone);
+// }
 
 export function getCountryCodeOption(country) {
   return (
@@ -860,7 +860,11 @@ export function getLanguage() {
 
 export function setLanguage(language) {
   localStorage.setItem("language", language);
-  i18next.changeLanguage(language);
+  i18next.changeLanguage(language).then(
+    () => {
+      window.console.log(i18next.language, i18next.getDataByLanguage("zh"));
+    }
+  );
 }
 
 export function getAcceptLanguage() {
@@ -1227,11 +1231,11 @@ export function renderSignupLink(application, text) {
     }
   }
 
-  const storeSigninUrl = () => {
-    sessionStorage.setItem("signinUrl", window.location.href);
-  };
+  // const storeSigninUrl = () => {
+  //   sessionStorage.setItem("signinUrl", window.location.href);
+  // };
 
-  return renderLink(url, text, storeSigninUrl);
+  return url;
 }
 
 export function renderForgetLink(application, text) {

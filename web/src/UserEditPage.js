@@ -34,7 +34,7 @@ import RegionSelect from "./common/select/RegionSelect";
 import WebAuthnCredentialTable from "./table/WebauthnCredentialTable";
 import ManagedAccountTable from "./table/ManagedAccountTable";
 import PropertyTable from "./table/propertyTable";
-import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
+import CountryCodeSelect from "./common/select/CountryCodeSelect";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";

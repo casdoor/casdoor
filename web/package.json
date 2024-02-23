@@ -10,6 +10,7 @@
     "@ctrl/tinycolor": "^3.5.0",
     "@emotion/react": "^11.10.5",
     "@metamask/eth-sig-util": "^6.0.0",
+    "@reduxjs/toolkit": "^2.2.1",
     "@web3-onboard/coinbase": "^2.2.5",
     "@web3-onboard/core": "^2.20.5",
     "@web3-onboard/frontier": "^2.0.4",
@@ -32,6 +33,7 @@
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.0.0",
     "i18next": "^19.8.9",
+    "i18next-resources-to-backend": "^1.2.0",
     "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.10.19",
     "moment": "^2.29.1",
@@ -48,9 +50,12 @@
     "react-highlight-words": "^0.18.0",
     "react-i18next": "^11.8.7",
     "react-metamask-avatar": "^1.2.1",
+    "react-redux": "^9.1.0",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",
-    "react-social-login-buttons": "^3.4.0"
+    "react-social-login-buttons": "^3.4.0",
+    "redux": "^5.0.1",
+    "webpack-bundle-analyzer": "^4.10.1"
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
