@@ -1,329 +1,382 @@
-import {lazy} from "react";
+import Dashboard from "../basic/Dashboard";
+import AppListPage from "../basic/AppListPage";
+import ShortcutsPage from "../basic/ShortcutsPage";
+import AccountPage from "../account/AccountPage";
+import OrganizationListPage from "../OrganizationListPage";
+import OrganizationEditPage from "../OrganizationEditPage";
+import UserListPage from "../UserListPage";
+import GroupTreePage from "../GroupTreePage";
+import GroupList from "../GroupList";
+import GroupEdit from "../GroupEdit";
+import UserEditPage from "../UserEditPage";
+import InvitationListPage from "../InvitationListPage";
+import InvitationEditPage from "../InvitationEditPage";
+import ApplicationListPage from "../ApplicationListPage";
+import ApplicationEditPage from "../ApplicationEditPage";
+import ProviderListPage from "../ProviderListPage";
+import ProviderEditPage from "../ProviderEditPage";
+import ResourceListPage from "../ResourceListPage";
+import CertListPage from "../CertListPage";
+import CertEditPage from "../CertEditPage";
+import RoleListPage from "../RoleListPage";
+import RoleEditPage from "../RoleEditPage";
+import PermissionListPage from "../PermissionListPage";
+import PermissionEditPage from "../PermissionEditPage";
+import ModelListPage from "../ModelListPage";
+import ModelEditPage from "../ModelEditPage";
+import AdapterListPage from "../AdapterListPage";
+import AdapterEditPage from "../AdapterEditPage";
+import EnforcerListPage from "../EnforcerListPage";
+import EnforcerEditPage from "../EnforcerEditPage";
+import SessionListPage from "../SessionListPage";
+import TokenListPage from "../TokenListPage";
+import TokenEditPage from "../TokenEditPage";
+import ProductListPage from "../ProductListPage";
+import ProductEditPage from "../ProductEditPage";
+import ProductBuyPage from "../ProductBuyPage";
+import RecordListPage from "../RecordListPage";
+import PaymentListPage from "../PaymentListPage";
+import PaymentEditPage from "../PaymentEditPage";
+import PaymentResultPage from "../PaymentResultPage";
+import PlanListPage from "../PlanListPage";
+import PlanEditPage from "../PlanEditPage";
+import PricingListPage from "../PricingListPage";
+import PricingEditPage from "../PricingEditPage";
+import SubscriptionListPage from "../SubscriptionListPage";
+import SubscriptionEditPage from "../SubscriptionEditPage";
+import SystemInfo from "../SystemInfo";
+import SyncerListPage from "../SyncerListPage";
+import SyncerEditPage from "../SyncerEditPage";
+import WebhookListPage from "../WebhookListPage";
+import WebhookEditPage from "../WebhookEditPage";
+import LdapEditPage from "../LdapEditPage";
+import LdapSyncPage from "../LdapSyncPage";
+import MfaSetupPage from "../auth/MfaSetupPage";
+import OidcDiscoveryPage from "../auth/OidcDiscoveryPage";
 
 const indexRouters = [
   {
     path: "/",
     exact: true,
-    component: lazy(() => import("../basic/Dashboard")),
+    component: Dashboard,
     auth: true,
-
   },
   {
     path: "/apps",
     exact: true,
-    component: lazy(() => import("../basic/AppListPage")),
+    component: AppListPage,
     auth: true,
 
   },
   {
     path: "/shortcuts",
     exact: true,
-    component: lazy(() => import("../basic/ShortcutsPage")),
+    component: ShortcutsPage,
     auth: true,
 
   },
   {
     path: "/account",
     exact: true,
-    component: lazy(() => import("../account/AccountPage")),
+    component: AccountPage,
     auth: true,
 
   },
   {
     path: "/organizations",
     exact: true,
-    component: lazy(() => import("../OrganizationListPage")),
+    component: OrganizationListPage,
     auth: true,
 
   },
   {
     path: "/organizations/:organizationName",
     exact: true,
-    component: lazy(() => import("../OrganizationEditPage")),
+    component: OrganizationEditPage,
     auth: true,
 
   },
   {
     path: "/organizations/:organizationName/users",
     exact: true,
-    component: lazy(() => import("../UserListPage")),
+    component: UserListPage,
     auth: true,
   },
   {
     path: "/trees/:organizationName",
     exact: true,
-    component: lazy(() => import("../GroupTreePage")),
+    component: GroupTreePage,
     auth: true,
   },
   {
     path: "/trees/:organizationName/:groupName",
     exact: true,
-    component: lazy(() => import("../GroupTreePage")),
+    component: GroupTreePage,
     auth: true,
   },
   {
     path: "/groups",
     exact: true,
-    component: lazy(() => import("../GroupList")),
+    component: GroupList,
     auth: true,
   },
   {
     path: "/groups/:organizationName/:groupName",
     exact: true,
-    component: lazy(() => import("../GroupEdit")),
+    component: GroupEdit,
     auth: true,
   },
   {
     path: "/users",
     exact: true,
-    component: lazy(() => import("../UserListPage")),
+    component: UserListPage,
     auth: true,
   },
   {
     path: "/users/:organizationName/:userName",
-    component: lazy(() => import("../UserEditPage")),
+    component: UserEditPage,
     auth: true,
   },
   {
     path: "/invitations",
     exact: true,
-    component: lazy(() => import("../InvitationListPage")),
+    component: InvitationListPage,
     auth: true,
   },
   {
     path: "/invitations/:organizationName/:invitationName",
-    component: lazy(() => import("../InvitationEditPage")),
+    component: InvitationEditPage,
     auth: true,
   },
   {
     path: "/applications",
     exact: true,
-    component: lazy(() => import("../ApplicationListPage")),
+    component: ApplicationListPage,
     auth: true,
   },
   {
     path: "/applications/:organizationName/:applicationName",
-    component: lazy(() => import("../ApplicationEditPage")),
+    component: ApplicationEditPage,
     auth: true,
   },
   {
     path: "/providers",
     exact: true,
-    component: lazy(() => import("../ProviderListPage")),
+    component: ProviderListPage,
     auth: true,
   },
   {
     path: "/providers/:organizationName/:providerName",
-    component: lazy(() => import("../ProviderEditPage")),
+    component: ProviderEditPage,
     auth: true,
   },
   {
     path: "/resources",
     exact: true,
-    component: lazy(() => import("../ResourceListPage")),
+    component: ResourceListPage,
     auth: true,
   },
   {
     path: "/certs",
     exact: true,
-    component: lazy(() => import("../CertListPage")),
+    component: CertListPage,
     auth: true,
   },
   {
     path: "/certs/:organizationName/:certName",
-    component: lazy(() => import("../CertEditPage")),
+    component: CertEditPage,
     auth: true,
   },
   {
     path: "/roles",
     exact: true,
-    component: lazy(() => import("../RoleListPage")),
+    component: RoleListPage,
     auth: true,
   },
   {
     path: "/roles/:organizationName/:roleName",
-    component: lazy(() => import("../RoleEditPage")),
+    component: RoleEditPage,
     auth: true,
   },
   {
     path: "/permissions",
     exact: true,
-    component: lazy(() => import("../PermissionListPage")),
+    component: PermissionListPage,
     auth: true,
   },
   {
     path: "/permissions/:organizationName/:permissionName",
-    component: lazy(() => import("../PermissionEditPage")),
+    component: PermissionEditPage,
     auth: true,
   },
   {
     path: "/models",
     exact: true,
-    component: lazy(() => import("../ModelListPage")),
+    component: ModelListPage,
     auth: true,
   },
   {
     path: "/models/:organizationName/:modelName",
-    component: lazy(() => import("../ModelEditPage")),
+    component: ModelEditPage,
     auth: true,
   },
   {
     path: "/adapters",
     exact: true,
-    component: lazy(() => import("../AdapterListPage")),
+    component: AdapterListPage,
     auth: true,
   },
   {
     path: "/adapters/:organizationName/:adapterName",
-    component: lazy(() => import("../AdapterEditPage")),
+    component: AdapterEditPage,
     auth: true,
   },
   {
     path: "/enforcers",
     exact: true,
-    component: lazy(() => import("../EnforcerListPage")),
+    component: EnforcerListPage,
     auth: true,
   },
   {
     path: "/enforcers/:organizationName/:enforcerName",
-    component: lazy(() => import("../EnforcerEditPage")),
+    component: EnforcerEditPage,
     auth: true,
   },
   {
     path: "/sessions",
     exact: true,
-    component: lazy(() => import("../SessionListPage")),
+    component: SessionListPage,
     auth: true,
   },
   {
     path: "/tokens",
     exact: true,
-    component: lazy(() => import("../TokenListPage")),
+    component: TokenListPage,
     auth: true,
   },
   {
     path: "/tokens/:tokenName",
-    component: lazy(() => import("../TokenEditPage")),
+    component: TokenEditPage,
     auth: true,
   },
   {
     path: "/products",
     exact: true,
-    component: lazy(() => import("../ProductListPage")),
+    component: ProductListPage,
     auth: true,
   },
   {
     path: "/products/:organizationName/:productName",
-    component: lazy(() => import("../ProductEditPage")),
+    component: ProductEditPage,
     auth: true,
   },
   {
     path: "/products/:organizationName/:productName/buy",
-    component: lazy(() => import("../ProductBuyPage")),
+    component: ProductBuyPage,
     auth: true,
   },
   {
     path: "/records",
-    component: lazy(() => import("../RecordListPage")),
+    component: RecordListPage,
     auth: true,
   },
   {
     path: "/payments",
     exact: true,
-    component: lazy(() => import("../PaymentListPage")),
+    component: PaymentListPage,
     auth: true,
   },
   {
     path: "/payments/:organizationName/:paymentName",
-    component: lazy(() => import("../PaymentEditPage")),
+    component: PaymentEditPage,
     auth: true,
   },
   {
     path: "/payments/:organizationName/:paymentName/result",
-    component: lazy(() => import("../PaymentResultPage")),
+    component: PaymentResultPage,
     auth: true,
   },
   {
     path: "/plans",
     exact: true,
-    component: lazy(() => import("../PlanListPage")),
+    component: PlanListPage,
     auth: true,
   },
   {
     path: "/plans/:organizationName/:planName",
-    component: lazy(() => import("../PlanEditPage")),
+    component: PlanEditPage,
     auth: true,
   },
   {
     path: "/pricings",
     exact: true,
-    component: lazy(() => import("../PricingListPage")),
+    component: PricingListPage,
     auth: true,
   },
   {
     path: "/pricings/:organizationName/:pricingName",
-    component: lazy(() => import("../PricingEditPage")),
+    component: PricingEditPage,
     auth: true,
   },
   {
     path: "/subscriptions",
     exact: true,
-    component: lazy(() => import("../SubscriptionListPage")),
+    component: SubscriptionListPage,
     auth: true,
   },
   {
     path: "/subscriptions/:organizationName/:subscriptionName",
-    component: lazy(() => import("../SubscriptionEditPage")),
+    component: SubscriptionEditPage,
     auth: true,
   },
   {
     path: "/sysinfo",
     exact: true,
-    component: lazy(() => import("../SystemInfo")),
+    component: SystemInfo,
     auth: true,
   },
   {
     path: "/syncers",
     exact: true,
-    component: lazy(() => import("../SyncerListPage")),
+    component: SyncerListPage,
     auth: true,
   },
   {
     path: "/syncers/:syncerName",
-    component: lazy(() => import("../SyncerEditPage")),
+    component: SyncerEditPage,
     auth: true,
   },
   {
     path: "/webhooks",
     exact: true,
-    component: lazy(() => import("../WebhookListPage")),
+    component: WebhookListPage,
     auth: true,
   },
   {
     path: "/webhooks/:webhookName",
-    component: lazy(() => import("../WebhookEditPage")),
+    component: WebhookEditPage,
     auth: true,
   },
   {
     path: "/ldap/:organizationName/:ldapId",
-    component: lazy(() => import("../LdapEditPage")),
+    component: LdapEditPage,
     auth: true,
   },
   {
     path: "/ldap/sync/:organizationName/:ldapId",
-    component: lazy(() => import("../LdapSyncPage")),
+    component: LdapSyncPage,
     auth: true,
   },
   {
     path: "/mfa/setup",
     exact: true,
-    component: lazy(() => import("../auth/MfaSetupPage")),
+    component: MfaSetupPage,
     auth: true,
   },
   {
     path: "/.well-known/openid-configuration",
     exact: true,
-    component: lazy(() => import("../auth/OidcDiscoveryPage")),
+    component: OidcDiscoveryPage,
   },
 ];
 

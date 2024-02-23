@@ -19,7 +19,7 @@ import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {GithubOutlined, InfoCircleFilled, ShareAltOutlined} from "@ant-design/icons";
 import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tooltip} from "antd";
-import {Route, Switch, withRouter} from "react-router-dom";
+import {Redirect, Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
 
@@ -355,6 +355,15 @@ class App extends Component {
           }
         </Layout>
       );
+    }
+
+    if (window.location.pathname === "/" && !this.props.account) {
+      if (this.props.account === null) {
+        sessionStorage.setItem("from", window.location.pathname);
+        return <Redirect to="/login" />;
+      } else if (this.props.account === undefined) {
+        return null;
+      }
     }
 
     return (

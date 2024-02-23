@@ -128,6 +128,6 @@ await i18n.use(resourcesToBackend(async(language, namespace) => {
     },
     // debug: true,
     saveMissing: true,
-  }).then(() => window.console.log(i18n.getDataByLanguage("zh")));
+  });
 
 export default i18n;
