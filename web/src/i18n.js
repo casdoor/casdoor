@@ -14,9 +14,56 @@
 
 import i18n from "i18next";
 import en from "./locales/en/data.json";
+import zh from "./locales/zh/data.json";
+import es from "./locales/es/data.json";
+import fr from "./locales/fr/data.json";
+import de from "./locales/de/data.json";
+import id from "./locales/id/data.json";
+import ja from "./locales/ja/data.json";
+import ko from "./locales/ko/data.json";
+import ru from "./locales/ru/data.json";
+import vi from "./locales/vi/data.json";
+import pt from "./locales/pt/data.json";
+import it from "./locales/it/data.json";
+import ms from "./locales/ms/data.json";
+import tr from "./locales/tr/data.json";
+import ar from "./locales/ar/data.json";
+import he from "./locales/he/data.json";
+import nl from "./locales/nl/data.json";
+import pl from "./locales/pl/data.json";
+import fi from "./locales/fi/data.json";
+import sv from "./locales/sv/data.json";
+import uk from "./locales/uk/data.json";
+import kk from "./locales/kk/data.json";
+import fa from "./locales/fa/data.json";
 import * as Conf from "./Conf";
 import {initReactI18next} from "react-i18next";
-import resourcesToBackend from "i18next-resources-to-backend";
+
+const resources = {
+  en: en,
+  zh: zh,
+  es: es,
+  fr: fr,
+  de: de,
+  id: id,
+  ja: ja,
+  ko: ko,
+  ru: ru,
+  vi: vi,
+  pt: pt,
+  it: it,
+  ms: ms,
+  tr: tr,
+  ar: ar,
+  he: he,
+  nl: nl,
+  pl: pl,
+  fi: fi,
+  sv: sv,
+  uk: uk,
+  kk: kk,
+  fa: fa,
+};
 
 function initLanguage() {
   let language = localStorage.getItem("language");
@@ -110,24 +157,18 @@ function initLanguage() {
   return language;
 }
 
-await i18n.use(resourcesToBackend(async(language, namespace) => {
-  const res = await import(`./locales/${language}/data.json`);
-  return res.default[namespace];
-}
-))
-  .use(initReactI18next)
-  .init({
-    lng: initLanguage(),
-    ns: Object.keys(en),
-    fallbackLng: Conf.DefaultLanguage,
+i18n.use(initReactI18next).init({
+  lng: initLanguage(),
 
-    keySeparator: false,
+  resources: resources,
 
-    interpolation: {
-      escapeValue: true,
-    },
-    // debug: true,
-    saveMissing: true,
-  });
+  keySeparator: false,
+
+  interpolation: {
+    escapeValue: true,
+  },
+  // debug: true,
+  saveMissing: true,
+});
 
 export default i18n;
