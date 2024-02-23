@@ -1165,7 +1165,7 @@ export function getLoginLink(application) {
   if (application === null) {
     url = null;
   } else if (window.location.pathname.includes("/signup/oauth/authorize")) {
-    url = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+    url = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
@@ -1173,7 +1173,7 @@ export function getLoginLink(application) {
   } else {
     url = application.signinUrl;
   }
-  return url;
+  return url + window.location.search;
 }
 
 export function redirectToLoginPage(application, history) {
@@ -1211,12 +1211,12 @@ function renderLink(url, text, onClick) {
   }
 }
 
-export function renderSignupLink(application, text) {
+export function renderSignupLink(application) {
   let url;
   if (application === null) {
     url = null;
   } else if (window.location.pathname.includes("/login/oauth/authorize")) {
-    url = window.location.href.replace("/login/oauth/authorize", "/signup/oauth/authorize");
+    url = window.location.pathname.replace("/login/oauth/authorize", "/signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
   } else {
@@ -1226,12 +1226,7 @@ export function renderSignupLink(application, text) {
       url = application.signupUrl;
     }
   }
-
-  const storeSigninUrl = () => {
-    sessionStorage.setItem("signinUrl", window.location.href);
-  };
-
-  return renderLink(url, text, storeSigninUrl);
+  return url + window.location.search;
 }
 
 export function renderForgetLink(application, text) {

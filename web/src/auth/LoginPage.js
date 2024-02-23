@@ -842,9 +842,9 @@ class LoginPage extends React.Component {
           !application.enableSignUp ? null : (
             <React.Fragment>
               {i18next.t("login:No account?")}&nbsp;
-              {
-                Setting.renderSignupLink(application, i18next.t("login:sign up now"))
-              }
+              <a onClick={() => {
+                this.props.history.push(Setting.renderSignupLink(application, i18next.t("login:sign up now")));
+              }}>{i18next.t("login:sign up now")}</a>
             </React.Fragment>
           )
         }
