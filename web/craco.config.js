@@ -1,6 +1,4 @@
 const CracoLessPlugin = require("craco-less");
-const {BundleAnalyzerPlugin} = require("webpack-bundle-analyzer");
-const path = require("path");
 
 module.exports = {
   devServer: {
@@ -59,15 +57,6 @@ module.exports = {
   webpack: {
     configure: (webpackConfig) => {
       if (webpackConfig.mode === "production") {
-        webpackConfig.plugins = webpackConfig.plugins.concat(
-          new BundleAnalyzerPlugin({
-            analyzerMode: "server",
-            analyzerHost: "127.0.0.1",
-            analyzerPort: 8888,
-            openAnalyzer: true, // 构建完打开浏览器
-            reportFilename: path.resolve(__dirname, "analyzer/index.html"),
-          })
-        );
         webpackConfig.devtool = false;
         webpackConfig.optimization = {
           splitChunks: {
