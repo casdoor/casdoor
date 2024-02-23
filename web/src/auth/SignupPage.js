@@ -87,8 +87,8 @@ class SignupPage extends React.Component {
   componentDidMount() {
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null) {
-      const signinUrl = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
-      sessionStorage.setItem("signinUrl", signinUrl);
+      const signinUrl = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      sessionStorage.setItem("signinUrl", signinUrl + window.location.search);
     }
 
     if (this.getApplicationObj() === undefined) {
@@ -637,7 +637,12 @@ class SignupPage extends React.Component {
           </Button>
             &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a onClick={() => {
-            Setting.redirectToLoginPage(application, this.props.history);
+            const linkInStorage = sessionStorage.getItem("signinUrl");
+            if (linkInStorage !== null && linkInStorage !== "") {
+              Setting.goToLinkSoft(this, linkInStorage);
+            } else {
+              Setting.redirectToLoginPage(application, this.props.history);
+            }
           }}>
             {i18next.t("signup:sign in now")}
           </a>

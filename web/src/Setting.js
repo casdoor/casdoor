@@ -1211,7 +1211,7 @@ function renderLink(url, text, onClick) {
   }
 }
 
-export function renderSignupLink(application) {
+export function renderSignupLink(application, text) {
   let url;
   if (application === null) {
     url = null;
@@ -1226,7 +1226,12 @@ export function renderSignupLink(application) {
       url = application.signupUrl;
     }
   }
-  return url + window.location.search;
+
+  const storeSigninUrl = () => {
+    sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
+  };
+
+  return renderLink(url, text, storeSigninUrl);
 }
 
 export function renderForgetLink(application, text) {
@@ -1244,7 +1249,7 @@ export function renderForgetLink(application, text) {
   }
 
   const storeSigninUrl = () => {
-    sessionStorage.setItem("signinUrl", window.location.href);
+    sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
   };
 
   return renderLink(url, text, storeSigninUrl);
