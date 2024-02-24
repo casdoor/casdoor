@@ -271,7 +271,6 @@ class App extends Component {
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
         } else {
           if (res.data !== "Please login first") {
-            localStorage.removeItem("themeAlgorithm");
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
         }
@@ -287,8 +286,6 @@ class App extends Component {
       expired: false,
       submitted: false,
     });
-
-    localStorage.removeItem("themeAlgorithm");
 
     AuthBackend.logout()
       .then((res) => {
@@ -513,10 +510,6 @@ class App extends Component {
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
-      localStorage.removeItem("themeAlgorithm");
-      this.setState({
-        themeAlgorithm: ["default"],
-      });
       return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
       return null;
@@ -746,44 +739,44 @@ class App extends Component {
 
   renderPage() {
     if (this.isDoorPages()) {
-      if (this.state.themeAlgorithm.includes("dark")) {
-        this.setState({
-          themeAlgorithm: ["default"],
-        }
-        );
-      }
       return (
-        <Layout id="parent-area">
-          <Content style={{display: "flex", justifyContent: "center"}}>
-            {
-              this.isEntryPages() ?
-                <EntryPage
-                  account={this.state.account}
-                  theme={this.state.themeData}
-                  onLoginSuccess={(redirectUrl) => {
-                    if (redirectUrl) {
-                      localStorage.setItem("mfaRedirectUrl", redirectUrl);
-                    }
-                    this.getAccount();
-                  }}
-                  onUpdateAccount={(account) => this.onUpdateAccount(account)}
-                  updataThemeData={this.setTheme}
-                /> :
-                <Switch>
-                  <Route exact path="/callback" component={AuthCallback} />
-                  <Route exact path="/callback/saml" component={SamlCallback} />
-                  <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                    extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-                </Switch>
-            }
-          </Content>
-          {
-            this.renderFooter()
-          }
-          {
-            this.renderAiAssistant()
-          }
-        </Layout>
+        <ConfigProvider theme={{
+          algorithm: Setting.getAlgorithm(["default"]),
+        }}>
+          <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
+            <Layout id="parent-area">
+              <Content style={{display: "flex", justifyContent: "center"}}>
+                {
+                  this.isEntryPages() ?
+                    <EntryPage
+                      account={this.state.account}
+                      theme={this.state.themeData}
+                      onLoginSuccess={(redirectUrl) => {
+                        if (redirectUrl) {
+                          localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                        }
+                        this.getAccount();
+                      }}
+                      onUpdateAccount={(account) => this.onUpdateAccount(account)}
+                      updataThemeData={this.setTheme}
+                    /> :
+                    <Switch>
+                      <Route exact path="/callback" component={AuthCallback} />
+                      <Route exact path="/callback/saml" component={SamlCallback} />
+                      <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                        extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+                    </Switch>
+                }
+              </Content>
+              {
+                this.renderFooter()
+              }
+              {
+                this.renderAiAssistant()
+              }
+            </Layout>
+          </StyleProvider>
+        </ConfigProvider>
       );
     }
 
