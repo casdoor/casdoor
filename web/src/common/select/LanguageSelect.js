@@ -56,7 +56,7 @@ class LanguageSelect extends React.Component {
     return (
       <Dropdown menu={{items: languageItems, onClick}} >
         <div className="select-box" style={{display: languageItems.length === 0 ? "none" : null, ...this.props.style}} >
-          <GlobalOutlined style={{fontSize: "24px", color: "#4d4d4d"}} />
+          <GlobalOutlined style={{fontSize: "24px"}} />
         </div>
       </Dropdown>
     );
