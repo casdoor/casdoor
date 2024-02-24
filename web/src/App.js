@@ -108,7 +108,7 @@ class App extends Component {
       account: undefined,
       uri: null,
       menuVisible: false,
-      themeAlgorithm: ["default"],
+      themeAlgorithm: localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
       requiredEnableMfa: false,
@@ -228,6 +228,13 @@ class App extends Component {
     });
 
     if (initThemeAlgorithm) {
+      if (localStorage.getItem("themeAlgorithm")) {
+        this.setState({
+          logo: this.getLogo(Setting.getAlgorithmNames(theme)),
+          themeAlgorithm: JSON.parse(localStorage.getItem("themeAlgorithm")),
+        });
+        return;
+      }
       this.setState({
         logo: this.getLogo(Setting.getAlgorithmNames(theme)),
         themeAlgorithm: Setting.getAlgorithmNames(theme),
@@ -264,6 +271,7 @@ class App extends Component {
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
         } else {
           if (res.data !== "Please login first") {
+            localStorage.removeItem("themeAlgorithm");
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
         }
@@ -279,6 +287,8 @@ class App extends Component {
       expired: false,
       submitted: false,
     });
+
+    localStorage.removeItem("themeAlgorithm");
 
     AuthBackend.logout()
       .then((res) => {
@@ -385,6 +395,7 @@ class App extends Component {
                 themeAlgorithm: nextThemeAlgorithm,
                 logo: this.getLogo(nextThemeAlgorithm),
               });
+              localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
           <Tooltip title="Click to open AI assitant">
@@ -502,6 +513,10 @@ class App extends Component {
   renderLoginIfNotLoggedIn(component) {
     if (this.state.account === null) {
       sessionStorage.setItem("from", window.location.pathname);
+      localStorage.removeItem("themeAlgorithm");
+      this.setState({
+        themeAlgorithm: ["default"],
+      });
       return <Redirect to="/login" />;
     } else if (this.state.account === undefined) {
       return null;
@@ -731,6 +746,12 @@ class App extends Component {
 
   renderPage() {
     if (this.isDoorPages()) {
+      if (this.state.themeAlgorithm.includes("dark")) {
+        this.setState({
+          themeAlgorithm: ["default"],
+        }
+        );
+      }
       return (
         <Layout id="parent-area">
           <Content style={{display: "flex", justifyContent: "center"}}>
