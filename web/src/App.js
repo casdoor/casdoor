@@ -102,19 +102,24 @@ setTwoToneColor("rgb(87,52,211)");
 class App extends Component {
   constructor(props) {
     super(props);
+    let storageThemeAlgorithm = [];
+    try {
+      storageThemeAlgorithm = localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"];
+    } catch {
+      storageThemeAlgorithm = ["default"];
+    }
     this.state = {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
       menuVisible: false,
-      themeAlgorithm: ["default"],
+      themeAlgorithm: storageThemeAlgorithm,
       themeData: Conf.ThemeDefault,
-      logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      logo: this.getLogo(storageThemeAlgorithm),
       requiredEnableMfa: false,
       isAiAssistantOpen: false,
     };
-
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
@@ -228,6 +233,19 @@ class App extends Component {
     });
 
     if (initThemeAlgorithm) {
+      if (localStorage.getItem("themeAlgorithm")) {
+        let storageThemeAlgorithm = [];
+        try {
+          storageThemeAlgorithm = JSON.parse(localStorage.getItem("themeAlgorithm"));
+        } catch {
+          storageThemeAlgorithm = ["default"];
+        }
+        this.setState({
+          logo: this.getLogo(storageThemeAlgorithm),
+          themeAlgorithm: storageThemeAlgorithm,
+        });
+        return;
+      }
       this.setState({
         logo: this.getLogo(Setting.getAlgorithmNames(theme)),
         themeAlgorithm: Setting.getAlgorithmNames(theme),
@@ -385,6 +403,7 @@ class App extends Component {
                 themeAlgorithm: nextThemeAlgorithm,
                 logo: this.getLogo(nextThemeAlgorithm),
               });
+              localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
             }} />
           <LanguageSelect languages={this.state.account.organization.languages} />
           <Tooltip title="Click to open AI assitant">
@@ -423,7 +442,7 @@ class App extends Component {
     const textColor = this.state.themeAlgorithm.includes("dark") ? "white" : "black";
     const twoToneColor = this.state.themeData.colorPrimary;
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
       Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
       Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
@@ -732,37 +751,43 @@ class App extends Component {
   renderPage() {
     if (this.isDoorPages()) {
       return (
-        <Layout id="parent-area">
-          <Content style={{display: "flex", justifyContent: "center"}}>
-            {
-              this.isEntryPages() ?
-                <EntryPage
-                  account={this.state.account}
-                  theme={this.state.themeData}
-                  onLoginSuccess={(redirectUrl) => {
-                    if (redirectUrl) {
-                      localStorage.setItem("mfaRedirectUrl", redirectUrl);
-                    }
-                    this.getAccount();
-                  }}
-                  onUpdateAccount={(account) => this.onUpdateAccount(account)}
-                  updataThemeData={this.setTheme}
-                /> :
-                <Switch>
-                  <Route exact path="/callback" component={AuthCallback} />
-                  <Route exact path="/callback/saml" component={SamlCallback} />
-                  <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                    extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-                </Switch>
-            }
-          </Content>
-          {
-            this.renderFooter()
-          }
-          {
-            this.renderAiAssistant()
-          }
-        </Layout>
+        <ConfigProvider theme={{
+          algorithm: Setting.getAlgorithm(["default"]),
+        }}>
+          <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
+            <Layout id="parent-area">
+              <Content style={{display: "flex", justifyContent: "center"}}>
+                {
+                  this.isEntryPages() ?
+                    <EntryPage
+                      account={this.state.account}
+                      theme={this.state.themeData}
+                      onLoginSuccess={(redirectUrl) => {
+                        if (redirectUrl) {
+                          localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                        }
+                        this.getAccount();
+                      }}
+                      onUpdateAccount={(account) => this.onUpdateAccount(account)}
+                      updataThemeData={this.setTheme}
+                    /> :
+                    <Switch>
+                      <Route exact path="/callback" component={AuthCallback} />
+                      <Route exact path="/callback/saml" component={SamlCallback} />
+                      <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                        extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+                    </Switch>
+                }
+              </Content>
+              {
+                this.renderFooter()
+              }
+              {
+                this.renderAiAssistant()
+              }
+            </Layout>
+          </StyleProvider>
+        </ConfigProvider>
       );
     }
 
