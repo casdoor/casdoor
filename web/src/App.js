@@ -102,19 +102,24 @@ setTwoToneColor("rgb(87,52,211)");
 class App extends Component {
   constructor(props) {
     super(props);
+    let storageThemeAlgorithm = [];
+    try {
+      storageThemeAlgorithm = localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"];
+    } catch {
+      storageThemeAlgorithm = ["default"];
+    }
     this.state = {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
       menuVisible: false,
-      themeAlgorithm: localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"],
+      themeAlgorithm: storageThemeAlgorithm,
       themeData: Conf.ThemeDefault,
-      logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      logo: this.getLogo(storageThemeAlgorithm),
       requiredEnableMfa: false,
       isAiAssistantOpen: false,
     };
-
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
@@ -229,9 +234,15 @@ class App extends Component {
 
     if (initThemeAlgorithm) {
       if (localStorage.getItem("themeAlgorithm")) {
+        let storageThemeAlgorithm = [];
+        try {
+          storageThemeAlgorithm = JSON.parse(localStorage.getItem("themeAlgorithm"));
+        } catch {
+          storageThemeAlgorithm = ["default"];
+        }
         this.setState({
-          logo: this.getLogo(Setting.getAlgorithmNames(theme)),
-          themeAlgorithm: JSON.parse(localStorage.getItem("themeAlgorithm")),
+          logo: this.getLogo(storageThemeAlgorithm),
+          themeAlgorithm: storageThemeAlgorithm,
         });
         return;
       }
@@ -431,7 +442,7 @@ class App extends Component {
     const textColor = this.state.themeAlgorithm.includes("dark") ? "white" : "black";
     const twoToneColor = this.state.themeData.colorPrimary;
 
-    res.push(Setting.getItem(<Link to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone twoToneColor={twoToneColor} />, [
+    res.push(Setting.getItem(<Link style={{color: textColor}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone twoToneColor={twoToneColor} />, [
       Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
       Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
       Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
