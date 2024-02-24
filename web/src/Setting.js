@@ -1231,7 +1231,7 @@ export function renderSignupLink(application, text) {
     sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
   };
 
-  return renderLink(url, text, storeSigninUrl);
+  return renderLink(url + window.location.search, text, storeSigninUrl);
 }
 
 export function renderForgetLink(application, text) {
