@@ -87,8 +87,8 @@ class SignupPage extends React.Component {
   componentDidMount() {
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null) {
-      const signinUrl = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
-      sessionStorage.setItem("signinUrl", signinUrl);
+      const signinUrl = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      sessionStorage.setItem("signinUrl", signinUrl + window.location.search);
     }
 
     if (this.getApplicationObj() === undefined) {
@@ -639,7 +639,7 @@ class SignupPage extends React.Component {
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
-              Setting.goToLink(linkInStorage);
+              Setting.goToLinkSoft(this, linkInStorage);
             } else {
               Setting.redirectToLoginPage(application, this.props.history);
             }

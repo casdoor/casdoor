@@ -92,7 +92,7 @@ class ResultPage extends React.Component {
                 <Button type="primary" key="login" onClick={() => {
                   const linkInStorage = sessionStorage.getItem("signinUrl");
                   if (linkInStorage !== null && linkInStorage !== "") {
-                    Setting.goToLink(linkInStorage);
+                    Setting.goToLinkSoft(this, linkInStorage);
                   } else {
                     Setting.redirectToLoginPage(application, this.props.history);
                   }
