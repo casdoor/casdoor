@@ -23,8 +23,21 @@ function CustomHead(props) {
     node.innerHTML = props.headerHtml;
 
     node.childNodes.forEach(el => {
-      el.setAttribute("app-custom-head" + suffix, "");
-      document.head.appendChild(el);
+      if (el.nodeName === "#text") {
+        return;
+      }
+      let innerNode = el;
+      innerNode.setAttribute("app-custom-head" + suffix, "");
+
+      if (innerNode.localName === "script") {
+        const scriptNode = document.createElement("script");
+        Array.from(innerNode.attributes).forEach(attr => {
+          scriptNode.setAttribute(attr.name, attr.value);
+        });
+        scriptNode.text = innerNode.textContent;
+        innerNode = scriptNode;
+      }
+      document.head.appendChild(innerNode);
     });
 
     return () => {
