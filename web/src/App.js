@@ -318,6 +318,11 @@ class App extends Component {
 
   renderPage() {
     if (this.isDoorPages()) {
+      const pathname = window.location.pathname;
+      if (pathname.startsWith("/login") && !(pathname.includes("oauth") || pathname.includes("saml"))) {
+        import("./ManagementPage");
+      }
+
       return (
         <ConfigProvider theme={{
           algorithm: Setting.getAlgorithm(["default"]),
