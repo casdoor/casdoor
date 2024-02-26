@@ -30,8 +30,7 @@ import AuthCallback from "./auth/AuthCallback";
 import SamlCallback from "./auth/SamlCallback";
 import i18next from "i18next";
 import {withTranslation} from "react-i18next";
-import {clearWeb3AuthToken} from "./auth/Web3Auth";
-
+const ManagementPage = lazy(() => import("./ManagementPage"));
 const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
@@ -52,7 +51,6 @@ class App extends Component {
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
-      menuVisible: false,
       themeAlgorithm: storageThemeAlgorithm,
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(storageThemeAlgorithm),
@@ -231,47 +229,11 @@ class App extends Component {
       });
   }
 
-  logout() {
-    this.setState({
-      expired: false,
-      submitted: false,
-    });
-
-    AuthBackend.logout()
-      .then((res) => {
-        if (res.status === "ok") {
-          const owner = this.state.account.owner;
-          this.setState({
-            account: null,
-            themeAlgorithm: ["default"],
-          });
-          clearWeb3AuthToken();
-          Setting.showMessage("success", i18next.t("application:Logged out successfully"));
-          const redirectUri = res.data2;
-          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
-            Setting.goToLink(redirectUri);
-          } else if (owner !== "built-in") {
-            Setting.goToLink(`${window.location.origin}/login/${owner}`);
-          } else {
-            Setting.goToLinkSoft(this, "/");
-          }
-        } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
-        }
-      });
-  }
-
   onUpdateAccount(account) {
     this.setState({
       account: account,
     });
   }
-
-  onClose = () => {
-    this.setState({
-      menuVisible: false,
-    });
-  };
 
   renderFooter() {
     return (
@@ -396,7 +358,6 @@ class App extends Component {
         </ConfigProvider>
       );
     }
-    const ManagementPage = lazy(() => import("./ManagementPage"));
     return (
       <React.Fragment>
         {/* { */}
@@ -405,8 +366,8 @@ class App extends Component {
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
-          <Layout id="parent-area">
-            <Suspense>
+          <Suspense>
+            <Layout id="parent-area">
               <ManagementPage
                 account={this.state.account}
                 uri={this.state.uri}
@@ -421,17 +382,9 @@ class App extends Component {
                 onfinish={() => {
                   this.setState({requiredEnableMfa: false});
                 }}
-                onClose={() => {
-                  this.onClose();
-                }}
                 openAiAssistant={() => {
                   this.setState({
                     isAiAssistantOpen: true,
-                  });
-                }}
-                showMenu={() => {
-                  this.setState({
-                    menuVisible: true,
                   });
                 }}
                 setLogoAndThemeAlgorithm={(nextThemeAlgorithm) => {
@@ -441,18 +394,21 @@ class App extends Component {
                   });
                   localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
                 }}
-                logout={() => {this.logout();}}
-                {...this.props}
+                setLogoutState={() => {
+                  this.setState({
+                    account: null,
+                    themeAlgorithm: ["default"],
+                  });
+                }}
               />
-
               {
                 this.renderFooter()
               }
               {
                 this.renderAiAssistant()
               }
-            </Suspense>
-          </Layout>
+            </Layout>
+          </Suspense>
         }
       </React.Fragment>
     );

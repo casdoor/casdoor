@@ -1,8 +1,8 @@
 import * as Setting from "./Setting";
 import {Avatar, Button, Card, Drawer, Dropdown, Menu, Result, Tooltip} from "antd";
 import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
-import {Link, Redirect, Route, Switch} from "react-router-dom";
-import React from "react";
+import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
+import React, {useState} from "react";
 import i18next from "i18next";
 import {
   AppstoreTwoTone,
@@ -74,8 +74,34 @@ import OpenTour from "./common/OpenTour";
 import OrganizationSelect from "./common/select/OrganizationSelect";
 import AccountAvatar from "./account/AccountAvatar";
 import {Content, Header} from "antd/es/layout/layout";
+import * as AuthBackend from "./auth/AuthBackend";
+import {clearWeb3AuthToken} from "./auth/Web3Auth";
 
 function ManagementPage(props) {
+
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  function logout() {
+    AuthBackend.logout()
+      .then((res) => {
+        if (res.status === "ok") {
+          const owner = props.account.owner;
+          props.setLogoutState();
+          clearWeb3AuthToken();
+          Setting.showMessage("success", i18next.t("application:Logged out successfully"));
+          const redirectUri = res.data2;
+          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
+            Setting.goToLink(redirectUri);
+          } else if (owner !== "built-in") {
+            Setting.goToLink(`${window.location.origin}/login/${owner}`);
+          } else {
+            Setting.goToLinkSoft({props}, "/");
+          }
+        } else {
+          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+        }
+      });
+  }
 
   function renderAvatar() {
     if (props.account.avatar === "") {
@@ -111,7 +137,7 @@ function ManagementPage(props) {
       } else if (e.key === "/subscription") {
         props.history.push("/subscription");
       } else if (e.key === "/logout") {
-        props.logout();
+        logout();
       }
     };
 
@@ -341,6 +367,14 @@ function ManagementPage(props) {
 
   const menuStyleRight = Setting.isAdminUser(props.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "280px";
 
+  const onClose = () => {
+    setMenuVisible(false);
+  };
+
+  const showMenu = () => {
+    setMenuVisible(true);
+  };
+
   return (
     <React.Fragment>
       <EnableMfaNotification account={props.account} />
@@ -352,22 +386,22 @@ function ManagementPage(props) {
         )}
         {props.requiredEnableMfa || (Setting.isMobile() ?
           <React.Fragment>
-            <Drawer title={i18next.t("general:Close")} placement="left" visible={props.menuVisible} onClose={props.onClose}>
+            <Drawer title={i18next.t("general:Close")} placement="left" visible={menuVisible} onClose={onClose}>
               <Menu
                 items={getMenuItems()}
                 mode={"inline"}
                 selectedKeys={[props.selectedMenuKey]}
                 style={{lineHeight: "64px"}}
-                onClick={props.onClose}
+                onClick={onClose}
               >
               </Menu>
             </Drawer>
-            <Button icon={<BarsOutlined />} onClick={props.showMenu} type="text">
+            <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
               {i18next.t("general:Menu")}
             </Button>
           </React.Fragment> :
           <Menu
-            onClick={props.onClick}
+            onClick={onClose}
             items={getMenuItems()}
             mode={"horizontal"}
             selectedKeys={[props.selectedMenuKey]}
@@ -390,4 +424,4 @@ function ManagementPage(props) {
   );
 }
 
-export default ManagementPage;
+export default withRouter(ManagementPage);
