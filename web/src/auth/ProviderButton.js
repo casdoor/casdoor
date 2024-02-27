@@ -179,7 +179,6 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </a>
       );
     } else if (provider.category === "Web3") {
-      import("./Web3Auth");
       return (
         <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
@@ -225,7 +224,6 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </div>
       );
     } else if (provider.category === "Web3") {
-      import("./Web3Auth");
       return (
         <div key={provider.displayName} className="provider-big-img">
           <a onClick={() => goToWeb3Url(application, provider, "signup")}>
