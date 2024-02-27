@@ -29,6 +29,7 @@ class OAuthWidget extends React.Component {
       classes: props,
       addressOptions: [],
       affiliationOptions: [],
+      web3AuthImported: false,
     };
   }
 
@@ -145,8 +146,11 @@ class OAuthWidget extends React.Component {
       linkButtonWidth = "160px";
     }
 
-    if (provider.category === "Web3") {
+    if (provider.category === "Web3" && this.state.web3AuthImported === false) {
       import("../auth/Web3Auth");
+      this.setState({
+        web3AuthImported: true,
+      });
     }
 
     return (
