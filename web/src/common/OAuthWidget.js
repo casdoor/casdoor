@@ -29,7 +29,6 @@ class OAuthWidget extends React.Component {
       classes: props,
       addressOptions: [],
       affiliationOptions: [],
-      web3AuthImported: false,
     };
   }
 
@@ -91,16 +90,29 @@ class OAuthWidget extends React.Component {
     return user.properties[key];
   }
 
-  async unlinkUser(providerType, linkedValue) {
+  unlinkUser(providerType, linkedValue) {
     const body = {
       providerType: providerType,
       // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
     if (providerType === "MetaMask" || providerType === "Web3Onboard") {
-      const delWeb3AuthToken = await import("../auth/Web3Auth")
-        .then(module => module.delWeb3AuthToken);
-      await delWeb3AuthToken(linkedValue);
+      import("../auth/Web3Auth")
+        .then(module => {
+          const delWeb3AuthToken = module.delWeb3AuthToken;
+          delWeb3AuthToken(linkedValue);
+          AuthBackend.unlink(body)
+            .then((res) => {
+              if (res.status === "ok") {
+                Setting.showMessage("success", "Unlinked successfully");
+
+                this.unlinked();
+              } else {
+                Setting.showMessage("error", `Failed to unlink: ${res.msg}`);
+              }
+            });
+        });
+      return;
     }
     AuthBackend.unlink(body)
       .then((res) => {

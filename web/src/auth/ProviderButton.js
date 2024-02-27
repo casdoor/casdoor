@@ -121,15 +121,19 @@ function goToSamlUrl(provider, location) {
   });
 }
 
-export async function goToWeb3Url(application, provider, method) {
+export function goToWeb3Url(application, provider, method) {
   if (provider.type === "MetaMask") {
-    const authViaMetaMask = await import("./Web3Auth")
-      .then(module => module.authViaMetaMask);
-    await authViaMetaMask(application, provider, method);
+    import("./Web3Auth")
+      .then(module => {
+        const authViaMetaMask = module.authViaMetaMask;
+        authViaMetaMask(application, provider, method);
+      });
   } else if (provider.type === "Web3Onboard") {
-    const authViaWeb3Onboard = await import("./Web3Auth")
-      .then(module => module.authViaWeb3Onboard);
-    await authViaWeb3Onboard(application, provider, method);
+    import("./Web3Auth")
+      .then(module => {
+        const authViaWeb3Onboard = module.authViaWeb3Onboard;
+        authViaWeb3Onboard(application, provider, method);
+      });
   }
 }
 
