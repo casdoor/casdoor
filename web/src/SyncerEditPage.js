@@ -454,7 +454,7 @@ class SyncerEditPage extends React.Component {
                     Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
                   } else {
                     this.setState({testDbLoading: false});
-                    Setting.showMessage("error", i18next.t("syncer:Failed to connect") + ": " + res.msg);
+                    Setting.showMessage("error", `${i18next.t("syncer:Failed to connect")}: ${res.msg}`);
                   }
                 })
                 .catch(error => {

@@ -223,7 +223,7 @@ class SignupPage extends React.Component {
             Setting.goToLinkSoft(this, this.getResultPath(application, values));
           }
         } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          Setting.showMessage("error", res.msg);
         }
       });
   }
