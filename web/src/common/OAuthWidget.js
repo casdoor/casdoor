@@ -146,13 +146,6 @@ class OAuthWidget extends React.Component {
       linkButtonWidth = "160px";
     }
 
-    if (provider.category === "Web3" && this.state.web3AuthImported === false) {
-      import("../auth/Web3Auth");
-      this.setState({
-        web3AuthImported: true,
-      });
-    }
-
     return (
       <Row key={provider.name} style={{marginTop: "20px"}} >
         <Col style={{marginTop: "5px"}} span={this.props.labelSpan}>
