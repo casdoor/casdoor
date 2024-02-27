@@ -54,7 +54,7 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 	}
 
 	for _, providerItem := range application.Providers {
-		if providerItem.Rule == method || providerItem.Rule == "all" {
+		if providerItem.Rule == method || (providerItem.Rule == "all" || providerItem.Rule == "" || providerItem.Rule == "None") {
 			if provider, ok := m[providerItem.Name]; ok {
 				return provider, nil
 			}
