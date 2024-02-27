@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {Component, Suspense, lazy} from "react";
+import React, {Component} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
@@ -30,7 +30,7 @@ import AuthCallback from "./auth/AuthCallback";
 import SamlCallback from "./auth/SamlCallback";
 import i18next from "i18next";
 import {withTranslation} from "react-i18next";
-const ManagementPage = lazy(() => import("./ManagementPage"));
+import ManagementPage from "./ManagementPage";
 const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
@@ -318,11 +318,6 @@ class App extends Component {
 
   renderPage() {
     if (this.isDoorPages()) {
-      const pathname = window.location.pathname;
-      if (pathname.startsWith("/login") && !(pathname.includes("oauth") || pathname.includes("saml"))) {
-        import("./ManagementPage");
-      }
-
       return (
         <ConfigProvider theme={{
           algorithm: Setting.getAlgorithm(["default"]),
@@ -371,49 +366,47 @@ class App extends Component {
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
-          <Suspense>
-            <Layout id="parent-area">
-              <ManagementPage
-                account={this.state.account}
-                uri={this.state.uri}
-                themeData={this.state.themeData}
-                themeAlgorithm={this.state.themeAlgorithm}
-                selectedMenuKey={this.state.selectedMenuKey}
-                requiredEnableMfa={this.state.requiredEnableMfa}
-                menuVisible={this.state.menuVisible}
-                logo={this.state.logo}
-                onChangeTheme={this.setTheme}
-                onClick = {this.onClick}
-                onfinish={() => {
-                  this.setState({requiredEnableMfa: false});
-                }}
-                openAiAssistant={() => {
-                  this.setState({
-                    isAiAssistantOpen: true,
-                  });
-                }}
-                setLogoAndThemeAlgorithm={(nextThemeAlgorithm) => {
-                  this.setState({
-                    themeAlgorithm: nextThemeAlgorithm,
-                    logo: this.getLogo(nextThemeAlgorithm),
-                  });
-                  localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
-                }}
-                setLogoutState={() => {
-                  this.setState({
-                    account: null,
-                    themeAlgorithm: ["default"],
-                  });
-                }}
-              />
-              {
-                this.renderFooter()
-              }
-              {
-                this.renderAiAssistant()
-              }
-            </Layout>
-          </Suspense>
+          <Layout id="parent-area">
+            <ManagementPage
+              account={this.state.account}
+              uri={this.state.uri}
+              themeData={this.state.themeData}
+              themeAlgorithm={this.state.themeAlgorithm}
+              selectedMenuKey={this.state.selectedMenuKey}
+              requiredEnableMfa={this.state.requiredEnableMfa}
+              menuVisible={this.state.menuVisible}
+              logo={this.state.logo}
+              onChangeTheme={this.setTheme}
+              onClick = {this.onClick}
+              onfinish={() => {
+                this.setState({requiredEnableMfa: false});
+              }}
+              openAiAssistant={() => {
+                this.setState({
+                  isAiAssistantOpen: true,
+                });
+              }}
+              setLogoAndThemeAlgorithm={(nextThemeAlgorithm) => {
+                this.setState({
+                  themeAlgorithm: nextThemeAlgorithm,
+                  logo: this.getLogo(nextThemeAlgorithm),
+                });
+                localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
+              }}
+              setLogoutState={() => {
+                this.setState({
+                  account: null,
+                  themeAlgorithm: ["default"],
+                });
+              }}
+            />
+            {
+              this.renderFooter()
+            }
+            {
+              this.renderAiAssistant()
+            }
+          </Layout>
         }
       </React.Fragment>
     );
