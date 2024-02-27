@@ -77,6 +77,12 @@ func GetUserByFields(organization string, field string) (*User, error) {
 		return user, err
 	}
 
+	// check user ID
+	user, err = GetUserByField(organization, "id", field)
+	if user != nil || err != nil {
+		return user, err
+	}
+
 	// check ID card
 	user, err = GetUserByField(organization, "id_card", field)
 	if user != nil || err != nil {
