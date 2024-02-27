@@ -17,7 +17,6 @@ import i18next from "i18next";
 import * as Provider from "./Provider";
 import {getProviderLogoURL} from "../Setting";
 import {GithubLoginButton, GoogleLoginButton} from "react-social-login-buttons";
-import {authViaMetaMask, authViaWeb3Onboard} from "./Web3Auth";
 import QqLoginButton from "./QqLoginButton";
 import FacebookLoginButton from "./FacebookLoginButton";
 import WeiboLoginButton from "./WeiboLoginButton";
@@ -122,11 +121,15 @@ function goToSamlUrl(provider, location) {
   });
 }
 
-export function goToWeb3Url(application, provider, method) {
+export async function goToWeb3Url(application, provider, method) {
   if (provider.type === "MetaMask") {
-    authViaMetaMask(application, provider, method);
+    const authViaMetaMask = await import("./Web3Auth")
+      .then(module => module.authViaMetaMask);
+    await authViaMetaMask(application, provider, method);
   } else if (provider.type === "Web3Onboard") {
-    authViaWeb3Onboard(application, provider, method);
+    const authViaWeb3Onboard = await import("./Web3Auth")
+      .then(module => module.authViaWeb3Onboard);
+    await authViaWeb3Onboard(application, provider, method);
   }
 }
 
@@ -176,6 +179,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </a>
       );
     } else if (provider.category === "Web3") {
+      import("./Web3Auth");
       return (
         <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
           <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
@@ -221,6 +225,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </div>
       );
     } else if (provider.category === "Web3") {
+      import("./Web3Auth");
       return (
         <div key={provider.displayName} className="provider-big-img">
           <a onClick={() => goToWeb3Url(application, provider, "signup")}>

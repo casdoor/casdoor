@@ -20,7 +20,6 @@ import * as Setting from "../Setting";
 import * as Provider from "../auth/Provider";
 import * as AuthBackend from "../auth/AuthBackend";
 import {goToWeb3Url} from "../auth/ProviderButton";
-import {delWeb3AuthToken} from "../auth/Web3Auth";
 import AccountAvatar from "../account/AccountAvatar";
 
 class OAuthWidget extends React.Component {
@@ -91,14 +90,16 @@ class OAuthWidget extends React.Component {
     return user.properties[key];
   }
 
-  unlinkUser(providerType, linkedValue) {
+  async unlinkUser(providerType, linkedValue) {
     const body = {
       providerType: providerType,
       // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
     if (providerType === "MetaMask" || providerType === "Web3Onboard") {
-      delWeb3AuthToken(linkedValue);
+      const delWeb3AuthToken = await import("../auth/Web3Auth")
+        .then(module => module.delWeb3AuthToken);
+      await delWeb3AuthToken(linkedValue);
     }
     AuthBackend.unlink(body)
       .then((res) => {
@@ -142,6 +143,10 @@ class OAuthWidget extends React.Component {
     let linkButtonWidth = "110px";
     if (Setting.getLanguage() === "id") {
       linkButtonWidth = "160px";
+    }
+
+    if (provider.category === "Web3") {
+      import("../auth/Web3Auth");
     }
 
     return (
