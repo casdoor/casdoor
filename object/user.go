@@ -15,7 +15,9 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"github.com/google/uuid"
 	"log"
 	"strconv"
@@ -51,11 +53,12 @@ type User struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
+	DeletedTime string `xorm:"varchar(100)" json:"deletedTime"`
 
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	ExternalId        string   `xorm:"varchar(100) index" json:"externalId"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
-	Password          string   `xorm:"varchar(100)" json:"password"`
+	Password          string   `xorm:"varchar(150)" json:"password"`
 	PasswordSalt      string   `xorm:"varchar(100)" json:"passwordSalt"`
 	PasswordType      string   `xorm:"varchar(100)" json:"passwordType"`
 	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
@@ -66,7 +69,7 @@ type User struct {
 	PermanentAvatar   string   `xorm:"varchar(500)" json:"permanentAvatar"`
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
-	Phone             string   `xorm:"varchar(20) index" json:"phone"`
+	Phone             string   `xorm:"varchar(100) index" json:"phone"`
 	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
@@ -185,6 +188,8 @@ type User struct {
 	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
+	Invitation          string                `xorm:"varchar(100) index" json:"invitation"`
+	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -219,6 +224,26 @@ type ManagedAccount struct {
 	Username    string `xorm:"varchar(100)" json:"username"`
 	Password    string `xorm:"varchar(100)" json:"password"`
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
+}
+
+func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {
+	val := reflect.ValueOf(*user)
+	fieldValue := val.FieldByName(fieldName)
+
+	if !fieldValue.IsValid() {
+		return false, "", nil
+	}
+
+	if fieldValue.Kind() == reflect.String {
+		return true, fieldValue.String(), nil
+	}
+
+	marshalValue, err := json.Marshal(fieldValue.Interface())
+	if err != nil {
+		return false, "", err
+	}
+
+	return true, string(marshalValue), nil
 }
 
 func GetGlobalUserCount(field, value string) (int64, error) {
@@ -499,6 +524,24 @@ func GetUserByUserIdOnly(userId string) (*User, error) {
 	}
 }
 
+func GetUserByInvitationCode(owner string, invitationCode string) (*User, error) {
+	if owner == "" || invitationCode == "" {
+		return nil, nil
+	}
+
+	user := User{Owner: owner, InvitationCode: invitationCode}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByAccessKey(accessKey string) (*User, error) {
 	if accessKey == "" {
 		return nil, nil
@@ -622,7 +665,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if len(columns) == 0 {
 		columns = []string{
 			"owner", "display_name", "avatar", "first_name", "last_name",
-			"location", "address", "country_code", "region", "language", "affiliation", "title", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
+			"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
@@ -640,6 +683,10 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	columns = append(columns, "updated_time")
 	user.UpdatedTime = util.GetCurrentTime()
+
+	if len(user.DeletedTime) > 0 {
+		columns = append(columns, "deleted_time")
+	}
 
 	if util.ContainsString(columns, "groups") {
 		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
@@ -711,6 +758,7 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	return affected != 0, nil
 }
 
+// ivan 240228 uuid v7
 func AddUser(user *User) (bool, error) {
 	if user.ExternalId == "" {
 		newID, err := uuid.NewV7()
@@ -779,6 +827,13 @@ func AddUser(user *User) (bool, error) {
 	}
 	user.Ranking = int(count + 1)
 
+	if user.Groups != nil && len(user.Groups) > 0 {
+		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	affected, err := ormer.Engine.Insert(user)
 	if err != nil {
 		return false, err
@@ -807,6 +862,13 @@ func AddUsers(users []*User) (bool, error) {
 		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, true)
 		if err != nil {
 			return false, err
+		}
+
+		if user.Groups != nil && len(user.Groups) > 0 {
+			_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+			if err != nil {
+				return false, err
+			}
 		}
 	}
 
@@ -865,6 +927,7 @@ func DeleteUser(user *User) (bool, error) {
 func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 	_, originBackend := getOriginFromHost(host)
 
+	// ivan 240228 ppgId
 	resp := Userinfo{
 		Sub:   user.Id,
 		Iss:   originBackend,
@@ -879,7 +942,8 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 	}
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
-		resp.EmailVerified = user.EmailVerified
+		// resp.EmailVerified = user.EmailVerified
+		resp.EmailVerified = true
 	}
 	if strings.Contains(scope, "address") {
 		resp.Address = user.Location
@@ -896,6 +960,18 @@ func LinkUserAccount(user *User, field string, value string) (bool, error) {
 
 func (user *User) GetId() string {
 	return fmt.Sprintf("%s/%s", user.Owner, user.Name)
+}
+
+func (user *User) GetFriendlyName() string {
+	if user.FirstName != "" && user.LastName != "" {
+		return fmt.Sprintf("%s, %s", user.FirstName, user.LastName)
+	} else if user.DisplayName != "" {
+		return user.DisplayName
+	} else if user.Name != "" {
+		return user.Name
+	} else {
+		return user.Id
+	}
 }
 
 func isUserIdGlobalAdmin(userId string) bool {
@@ -959,6 +1035,10 @@ func userChangeTrigger(oldName string, newName string) error {
 	}
 	for _, permission := range permissions {
 		for j, u := range permission.Users {
+			if u == "*" {
+				continue
+			}
+
 			// u = organization/username
 			owner, name := util.GetOwnerAndNameFromId(u)
 			if name == oldName {

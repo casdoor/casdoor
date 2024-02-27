@@ -225,6 +225,23 @@ class SignupTable extends React.Component {
         },
       },
       {
+        title: i18next.t("signup:Regex"),
+        dataIndex: "regex",
+        key: "regex",
+        width: "200px",
+        render: (text, record, index) => {
+          if (record.name.startsWith("Text ") || record.name === "Password" || record.name === "Confirm password") {
+            return null;
+          }
+
+          return (
+            <Input value={text} onChange={e => {
+              this.updateField(table, index, "regex", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
         title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",

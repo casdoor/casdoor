@@ -31,6 +31,7 @@ type AccountItem struct {
 	Visible    bool   `json:"visible"`
 	ViewRule   string `json:"viewRule"`
 	ModifyRule string `json:"modifyRule"`
+	Regex      string `json:"regex"`
 }
 
 type ThemeData struct {
@@ -342,6 +343,11 @@ func GetDefaultApplication(id string) (*Application, error) {
 		return nil, err
 	}
 
+	err = extendApplicationWithSigninItems(defaultApplication)
+	if err != nil {
+		return nil, err
+	}
+
 	return defaultApplication, nil
 }
 
@@ -451,6 +457,16 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	_, err = session.Where("owner=?", oldName).Update(payment)
 	if err != nil {
 		return err
+	}
+
+	record := new(Record)
+	record.Owner = newName
+	record.Organization = newName
+	_, err = session.Where("organization=?", oldName).Update(record)
+	if err != nil {
+		if err.Error() != "no columns found to be updated" {
+			return err
+		}
 	}
 
 	resource := new(Resource)

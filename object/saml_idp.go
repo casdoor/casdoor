@@ -28,10 +28,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/RobotsAndPencils/go-saml"
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	saml "github.com/russellhaering/gosaml2"
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
@@ -198,7 +198,7 @@ type Attribute struct {
 	Values       []string `xml:"AttributeValue"`
 }
 
-func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, error) {
+func GetSamlMeta(application *Application, host string, enablePostBinding bool) (*IdpEntityDescriptor, error) {
 	cert, err := getCertByApplication(application)
 	if err != nil {
 		return nil, err
@@ -216,6 +216,13 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 	certificate := base64.StdEncoding.EncodeToString(block.Bytes)
 
 	originFrontend, originBackend := getOriginFromHost(host)
+
+	idpLocation := ""
+	if enablePostBinding {
+		idpLocation = fmt.Sprintf("%s/api/saml/redirect/%s/%s", originBackend, application.Owner, application.Name)
+	} else {
+		idpLocation = fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name)
+	}
 
 	d := IdpEntityDescriptor{
 		XMLName: xml.Name{
@@ -248,7 +255,7 @@ func GetSamlMeta(application *Application, host string) (*IdpEntityDescriptor, e
 			},
 			SingleSignOnService: SingleSignOnService{
 				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-				Location: fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name),
+				Location: idpLocation,
 			},
 			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
 		},
@@ -283,15 +290,15 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		}
 	}
 
-	var authnRequest saml.AuthnRequest
+	var authnRequest saml.AuthNRequest
 	err = xml.Unmarshal(buffer.Bytes(), &authnRequest)
 	if err != nil {
 		return "", "", method, fmt.Errorf("err: Failed to unmarshal AuthnRequest, please check the SAML request. %s", err.Error())
 	}
 
 	// verify samlRequest
-	if isValid := application.IsRedirectUriValid(authnRequest.Issuer.Url); !isValid {
-		return "", "", method, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer.Url)
+	if isValid := application.IsRedirectUriValid(authnRequest.Issuer); !isValid {
+		return "", "", method, fmt.Errorf("err: Issuer URI: %s doesn't exist in the allowed Redirect URI list", authnRequest.Issuer)
 	}
 
 	// get certificate string
@@ -317,7 +324,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	_, originBackend := getOriginFromHost(host)
 	// build signedResponse
-	samlResponse, _ := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer.Url, authnRequest.ID, application.RedirectUris)
+	samlResponse, _ := NewSamlResponse(application, user, originBackend, certificate, authnRequest.AssertionConsumerServiceURL, authnRequest.Issuer, authnRequest.ID, application.RedirectUris)
 	randomKeyStore := &X509Key{
 		PrivateKey:      cert.PrivateKey,
 		X509Certificate: certificate,
@@ -441,4 +448,9 @@ func NewSamlResponse11(user *User, requestID string, host string) *etree.Element
 	}
 
 	return samlResponse
+}
+
+func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string) string {
+	originF, _ := getOriginFromHost(host)
+	return fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
 }

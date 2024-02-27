@@ -73,10 +73,12 @@ func getObject(ctx *context.Context) (string, string) {
 			}
 		}
 
-		// query == "?id=built-in/admin"
-		id := ctx.Input.Query("id")
-		if id != "" {
-			return util.GetOwnerAndNameFromIdNoCheck(id)
+		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) {
+			// query == "?id=built-in/admin"
+			id := ctx.Input.Query("id")
+			if id != "" {
+				return util.GetOwnerAndNameFromIdNoCheck(id)
+			}
 		}
 
 		owner := ctx.Input.Query("owner")
@@ -162,6 +164,10 @@ func getUrlPath(urlPath string) string {
 
 	if strings.HasPrefix(urlPath, "/api/webauthn") {
 		return "/api/webauthn"
+	}
+
+	if strings.HasPrefix(urlPath, "/api/saml/redirect") {
+		return "/api/saml/redirect"
 	}
 
 	return urlPath

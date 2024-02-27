@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Checkbox, Col, Input, InputNumber, Row, Select, Switch} from "antd";
+import {Button, Card, Checkbox, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import {LinkOutlined} from "@ant-design/icons";
 import * as ProviderBackend from "./backend/ProviderBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -28,6 +28,14 @@ import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
+
+import {Controlled as CodeMirror} from "react-codemirror2";
+import "codemirror/lib/codemirror.css";
+
+require("codemirror/theme/material-darker.css");
+require("codemirror/mode/htmlmixed/htmlmixed");
+require("codemirror/mode/xml/xml");
+require("codemirror/mode/css/css");
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -110,7 +118,23 @@ class ProviderEditPage extends React.Component {
       provider["cert"] = "";
       this.getCerts(value);
     }
+
     provider[key] = value;
+
+    if (provider["type"] === "WeChat") {
+      if (!provider["clientId"]) {
+        provider["signName"] = "media";
+        provider["disableSsl"] = true;
+      }
+      if (!provider["clientId2"]) {
+        provider["signName"] = "open";
+        provider["disableSsl"] = false;
+      }
+      if (!provider["disableSsl"]) {
+        provider["signName"] = "open";
+      }
+    }
+
     this.setState({
       provider: provider,
     });
@@ -486,7 +510,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("port", 465);
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
-                this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.");
+                this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
                 this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
                 this.updateProviderField("type", "Twilio SMS");
@@ -754,16 +778,44 @@ class ProviderEditPage extends React.Component {
         }
         {
           this.state.provider.type !== "WeChat" ? null : (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Enable QR code"), i18next.t("provider:Enable QR code - Tooltip"))} :
-              </Col>
-              <Col span={1} >
-                <Switch checked={this.state.provider.disableSsl} onChange={checked => {
-                  this.updateProviderField("disableSsl", checked);
-                }} />
-              </Col>
-            </Row>
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Use WeChat Media Platform in PC"), i18next.t("provider:Use WeChat Media Platform in PC - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
+                    this.updateProviderField("disableSsl", checked);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("token:Access token"), i18next.t("token:Access token - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.content} disabled={!this.state.provider.disableSsl || !this.state.provider.clientId2} onChange={e => {
+                    this.updateProviderField("content", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Follow-up action"), i18next.t("provider:Follow-up action - Tooltip"))} :
+                </Col>
+                <Col>
+                  <Radio.Group value={this.state.provider.signName}
+                    disabled={!this.state.provider.disableSsl || !this.state.provider.clientId || !this.state.provider.clientId2}
+                    buttonStyle="solid"
+                    onChange={e => {
+                      this.updateProviderField("signName", e.target.value);
+                    }}>
+                    <Radio.Button value="open">{i18next.t("provider:Use WeChat Open Platform to login")}</Radio.Button>
+                    <Radio.Button value="media">{i18next.t("provider:Use WeChat Media Platform to login")}</Radio.Button>
+                  </Radio.Group>
+                </Col>
+              </Row>
+            </React.Fragment>
           )
         }
         {
@@ -794,7 +846,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -830,7 +882,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "MinIO", "Google Cloud Storage", "Qiniu Cloud Kodo"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -972,22 +1024,47 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <TextArea autoSize={{minRows: 3, maxRows: 100}} value={this.state.provider.content} onChange={e => {
-                    this.updateProviderField("content", e.target.value);
-                  }} />
+                  <Row style={{marginTop: "20px"}} >
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
+                      {i18next.t("provider:Reset to Default Text")}
+                    </Button>
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
+                      {i18next.t("provider:Reset to Default HTML")}
+                    </Button>
+                  </Row>
+                  <Row>
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{height: "300px", margin: "10px"}}>
+                        <CodeMirror
+                          value={this.state.provider.content}
+                          options={{mode: "htmlmixed", theme: "material-darker"}}
+                          onBeforeChange={(editor, data, value) => {
+                            this.updateProviderField("content", value);
+                          }}
+                        />
+                      </div>
+                    </Col>
+                    <Col span={1} />
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{margin: "10px"}}>
+                        <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
+                      </div>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-              <Row style={{marginTop: "20px"}} >
+              <Row style={{marginTop: "20px"}}>
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
                 </Col>
-                <Col span={4} >
-                  <Input value={this.state.provider.receiver} placeholder = {i18next.t("user:Input your email")} onChange={e => {
-                    this.updateProviderField("receiver", e.target.value);
-                  }} />
+                <Col span={4}>
+                  <Input value={this.state.provider.receiver} placeholder={i18next.t("user:Input your email")}
+                    onChange={e => {
+                      this.updateProviderField("receiver", e.target.value);
+                    }} />
                 </Col>
                 {["Azure ACS"].includes(this.state.provider.type) ? null : (
-                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
                     {i18next.t("provider:Test SMTP Connection")}
                   </Button>
                 )}
@@ -1014,7 +1091,7 @@ class ProviderEditPage extends React.Component {
                 </Row>
                 )
               }
-              {["Custom HTTP SMS", "Infobip SMS"].includes(this.state.provider.type) ?
+              {["Infobip SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>

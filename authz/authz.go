@@ -51,7 +51,8 @@ p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, GET, /api/user, *, *
 p, *, *, GET, /api/health, *, *
-p, *, *, POST, /api/webhook, *, *
+p, *, *, *, /api/webhook, *, *
+p, *, *, GET, /api/get-qrcode, *, *
 p, *, *, GET, /api/get-webhook-event, *, *
 p, *, *, GET, /api/get-captcha-status, *, *
 p, *, *, *, /api/login/oauth, *, *
@@ -80,6 +81,7 @@ p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
+p, *, *, *, /api/saml/redirect, *, *
 p, *, *, *, /cas, *, *
 p, *, *, *, /scim, *, *
 p, *, *, *, /api/webauthn, *, *
@@ -95,6 +97,7 @@ p, *, *, GET, /api/get-organization-names, *, *
 p, *, *, GET, /api/get-all-objects, *, *
 p, *, *, GET, /api/get-all-actions, *, *
 p, *, *, GET, /api/get-all-roles, *, *
+p, *, *, GET, /api/get-invitation-info, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)
@@ -150,7 +153,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 
 func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
 	if method == "POST" {
-		if strings.HasPrefix(urlPath, "/api/login") || urlPath == "/api/logout" || urlPath == "/api/signup" || urlPath == "/api/callback" || urlPath == "/api/send-verification-code" || urlPath == "/api/send-email" || urlPath == "/api/verify-captcha" {
+		if strings.HasPrefix(urlPath, "/api/login") || urlPath == "/api/logout" || urlPath == "/api/signup" || urlPath == "/api/callback" || urlPath == "/api/send-verification-code" || urlPath == "/api/send-email" || urlPath == "/api/verify-captcha" || urlPath == "/api/verify-code" || urlPath == "/api/check-user-password" || strings.HasPrefix(urlPath, "/api/mfa/") || urlPath == "/api/webhook" || urlPath == "/api/get-qrcode" {
 			return true
 		} else if urlPath == "/api/update-user" {
 			// Allow ordinary users to update their own information

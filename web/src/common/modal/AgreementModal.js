@@ -81,6 +81,7 @@ export function renderAgreementFormItem(application, required, layout, ths) {
       name="agreement"
       key="agreement"
       valuePropName="checked"
+      className="login-agreement"
       rules={[
         {
           required: required,

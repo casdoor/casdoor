@@ -18,7 +18,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strings"
+
+	"github.com/casdoor/casdoor/i18n"
 
 	jsoniter "github.com/json-iterator/go"
 
@@ -328,6 +331,31 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if oldUser.Gender != newUser.Gender {
+		item := GetAccountItemByName("Gender", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Birthday != newUser.Birthday {
+		item := GetAccountItemByName("Birthday", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Education != newUser.Education {
+		item := GetAccountItemByName("Education", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.IdCard != newUser.IdCard {
+		item := GetAccountItemByName("ID card", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.IdCardType != newUser.IdCardType {
+		item := GetAccountItemByName("ID card type", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	oldUserPropertiesJson, _ := json.Marshal(oldUser.Properties)
 	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
 	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
@@ -372,9 +400,32 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
-	for i := range itemsChanged {
-		if pass, err := CheckAccountItemModifyRule(itemsChanged[i], isAdmin, lang); !pass {
+	for _, accountItem := range itemsChanged {
+
+		if pass, err := CheckAccountItemModifyRule(accountItem, isAdmin, lang); !pass {
 			return pass, err
+		}
+
+		exist, userValue, err := GetUserFieldStringValue(newUser, util.SpaceToCamel(accountItem.Name))
+		if err != nil {
+			return false, err.Error()
+		}
+
+		if !exist {
+			continue
+		}
+
+		if accountItem.Regex == "" {
+			continue
+		}
+		regexSignupItem, err := regexp.Compile(accountItem.Regex)
+		if err != nil {
+			return false, err.Error()
+		}
+
+		matched := regexSignupItem.MatchString(userValue)
+		if !matched {
+			return false, fmt.Sprintf(i18n.Translate(lang, "check:The value \"%s\" for account field \"%s\" doesn't match the account item regex"), userValue, accountItem.Name)
 		}
 	}
 	return true, ""

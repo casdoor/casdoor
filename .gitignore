@@ -18,7 +18,7 @@ bin/
 
 .idea/
 *.iml
-.vscode/
+.vscode/settings.json
 
 tmp/
 tmpFiles/
@@ -32,3 +32,6 @@ commentsRouter*.go
 casdoor
 server
 /.env
+
+# include helm-chart
+!manifests/casdoor

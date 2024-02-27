@@ -23,6 +23,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
+
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -30,26 +32,31 @@ import (
 	_ "github.com/denisenkom/go-mssqldb" // db = mssql
 	_ "github.com/go-sql-driver/mysql"   // db = mysql
 	_ "github.com/lib/pq"                // db = postgres
-	"github.com/xorm-io/core"
 	"github.com/xorm-io/xorm"
+	"github.com/xorm-io/xorm/core"
+	"github.com/xorm-io/xorm/names"
 	_ "modernc.org/sqlite" // db = sqlite
 )
 
 var (
-	ormer                   *Ormer = nil
-	isCreateDatabaseDefined        = false
-	createDatabase                 = true
+	ormer          *Ormer = nil
+	createDatabase        = true
+	configPath            = "conf/app.conf"
 )
 
 func InitFlag() {
-	if !isCreateDatabaseDefined {
-		isCreateDatabaseDefined = true
-		createDatabase = getCreateDatabaseFlag()
-	}
+	createDatabase = getCreateDatabaseFlag()
+	configPath = getConfigFlag()
 }
 
 func getCreateDatabaseFlag() bool {
 	res := flag.Bool("createDatabase", false, "true if you need to create database")
+	flag.Parse()
+	return *res
+}
+
+func getConfigFlag() string {
+	res := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
 	flag.Parse()
 	return *res
 }
@@ -68,7 +75,7 @@ func InitConfig() {
 
 func InitAdapter() {
 	if conf.GetConfigString("driverName") == "" {
-		if !util.FileExist("conf/app.conf") {
+		if !util.FileExist(configPath) {
 			dir, err := os.Getwd()
 			if err != nil {
 				panic(err)
@@ -92,7 +99,7 @@ func InitAdapter() {
 	}
 
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
-	tbMapper := core.NewPrefixMapper(core.SnakeMapper{}, tableNamePrefix)
+	tbMapper := names.NewPrefixMapper(names.SnakeMapper{}, tableNamePrefix)
 	ormer.Engine.SetTableMapper(tbMapper)
 }
 
@@ -112,6 +119,7 @@ type Ormer struct {
 	driverName     string
 	dataSourceName string
 	dbName         string
+	Db             *sql.DB
 	Engine         *xorm.Engine
 }
 
@@ -120,6 +128,13 @@ func finalizer(a *Ormer) {
 	err := a.Engine.Close()
 	if err != nil {
 		panic(err)
+	}
+
+	if a.Db != nil {
+		err = a.Db.Close()
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -132,6 +147,26 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer
 
 	// Open the DB, create it if not existed.
 	err := a.open()
+	if err != nil {
+		return nil, err
+	}
+
+	// Call the destructor when the object is released.
+	runtime.SetFinalizer(a, finalizer)
+
+	return a, nil
+}
+
+// NewAdapterFromdb is the constructor for Ormer.
+func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, db *sql.DB) (*Ormer, error) {
+	a := &Ormer{}
+	a.driverName = driverName
+	a.dataSourceName = dataSourceName
+	a.dbName = dbName
+	a.Db = db
+
+	// Open the DB, create it if not existed.
+	err := a.openFromDb(a.Db)
 	if err != nil {
 		return nil, err
 	}
@@ -220,6 +255,30 @@ func (a *Ormer) open() error {
 	return nil
 }
 
+func (a *Ormer) openFromDb(db *sql.DB) error {
+	dataSourceName := a.dataSourceName + a.dbName
+	if a.driverName != "mysql" {
+		dataSourceName = a.dataSourceName
+	}
+
+	xormDb := core.FromDB(db)
+
+	engine, err := xorm.NewEngineWithDB(a.driverName, dataSourceName, xormDb)
+	if err != nil {
+		return err
+	}
+
+	if a.driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
+	}
+
+	a.Engine = engine
+	return nil
+}
+
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
 	a.Engine = nil
@@ -234,12 +293,37 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Group))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(User))
 	if err != nil {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Group))
+	err = a.Engine.Sync2(new(Invitation))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Application))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Provider))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Resource))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Cert))
 	if err != nil {
 		panic(err)
 	}
@@ -269,42 +353,12 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
-	err = a.Engine.Sync2(new(Provider))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Application))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Resource))
+	err = a.Engine.Sync2(new(Session))
 	if err != nil {
 		panic(err)
 	}
 
 	err = a.Engine.Sync2(new(Token))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(VerificationRecord))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Webhook))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Syncer))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Cert))
 	if err != nil {
 		panic(err)
 	}
@@ -315,6 +369,41 @@ func (a *Ormer) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(Payment))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Plan))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Pricing))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Subscription))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Syncer))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(casvisorsdk.Record))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(Webhook))
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Engine.Sync2(new(VerificationRecord))
 	if err != nil {
 		panic(err)
 	}
@@ -330,26 +419,6 @@ func (a *Ormer) createTable() {
 	}
 
 	err = a.Engine.Sync2(new(xormadapter.CasbinRule))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Session))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Subscription))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Plan))
-	if err != nil {
-		panic(err)
-	}
-
-	err = a.Engine.Sync2(new(Pricing))
 	if err != nil {
 		panic(err)
 	}

@@ -15,7 +15,11 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) existiert nicht und es ist nicht erlaubt, ein neues Konto anzumelden. Bitte wenden Sie sich an Ihren IT-Support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) ist bereits mit einem anderen Konto verknüpft: %s (%s)",
     "The application: %s does not exist": "Die Anwendung: %s existiert nicht",
+    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
+    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
+    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "Der Anbieter: %s ist nicht für die Anwendung aktiviert",
     "Unauthorized operation": "Nicht autorisierte Operation",
     "Unknown authentication type (not password or provider), form = %s": "Unbekannter Authentifizierungstyp (nicht Passwort oder Anbieter), Formular = %s",
@@ -27,6 +31,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Zugehörigkeit darf nicht leer sein",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Anzeigename kann nicht leer sein",
     "DisplayName is not valid real name": "DisplayName ist kein gültiger Vorname",
     "Email already exists": "E-Mail existiert bereits",
@@ -35,7 +40,9 @@
     "Empty username.": "Leerer Benutzername.",
     "FirstName cannot be blank": "Vorname darf nicht leer sein",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code exhausted": "Invitation code exhausted",
     "Invitation code is invalid": "Invitation code is invalid",
+    "Invitation code suspended": "Invitation code suspended",
     "LDAP user name or password incorrect": "Ldap Benutzername oder Passwort falsch",
     "LastName cannot be blank": "Nachname darf nicht leer sein",
     "Multiple accounts with same uid, please check your ldap server": "Mehrere Konten mit derselben uid, bitte überprüfen Sie Ihren LDAP-Server",
@@ -43,10 +50,16 @@
     "Phone already exists": "Telefon existiert bereits",
     "Phone cannot be empty": "Das Telefon darf nicht leer sein",
     "Phone number is invalid": "Die Telefonnummer ist ungültig",
+    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
+    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
+    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
     "Session outdated, please login again": "Sitzung abgelaufen, bitte erneut anmelden",
+    "The invitation code has already been used": "The invitation code has already been used",
     "The user is forbidden to sign in, please contact the administrator": "Dem Benutzer ist der Zugang verboten, bitte kontaktieren Sie den Administrator",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "Benutzername existiert bereits",
     "Username cannot be an email address": "Benutzername kann keine E-Mail-Adresse sein",
     "Username cannot contain white spaces": "Benutzername darf keine Leerzeichen enthalten",
@@ -62,6 +75,7 @@
   "general": {
     "Missing parameter": "Fehlender Parameter",
     "Please login first": "Bitte zuerst einloggen",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
     "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
@@ -81,6 +95,9 @@
     "Only admin can modify the %s.": "Nur der Administrator kann das %s ändern.",
     "The %s is immutable.": "Das %s ist unveränderlich.",
     "Unknown modify rule %s.": "Unbekannte Änderungsregel %s."
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "Ungültige Anwendungs-ID",
@@ -106,7 +123,6 @@
     "The provider type: %s is not supported": "Der Anbieter-Typ %s wird nicht unterstützt"
   },
   "token": {
-    "Empty clientId or clientSecret": "Leerer clientId oder clientSecret",
     "Grant_type: %s is not supported in this application": "Grant_type: %s wird von dieser Anwendung nicht unterstützt",
     "Invalid application or wrong clientSecret": "Ungültige Anwendung oder falsches clientSecret",
     "Invalid client_id": "Ungültige client_id",
@@ -135,6 +151,8 @@
     "Unknown type": "Unbekannter Typ",
     "Wrong verification code!": "Falscher Bestätigungscode!",
     "You should verify your code in %d min!": "Du solltest deinen Code in %d Minuten verifizieren!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"
   },
   "webauthn": {

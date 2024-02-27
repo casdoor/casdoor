@@ -39,11 +39,17 @@ type Syncer struct {
 	Type         string `xorm:"varchar(100)" json:"type"`
 	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
 	SslMode      string `xorm:"varchar(100)" json:"sslMode"`
+	SshType      string `xorm:"varchar(100)" json:"sshType"`
 
 	Host             string         `xorm:"varchar(100)" json:"host"`
 	Port             int            `json:"port"`
 	User             string         `xorm:"varchar(100)" json:"user"`
-	Password         string         `xorm:"varchar(100)" json:"password"`
+	Password         string         `xorm:"varchar(150)" json:"password"`
+	SshHost          string         `xorm:"varchar(100)" json:"sshHost"`
+	SshPort          int            `json:"sshPort"`
+	SshUser          string         `xorm:"varchar(100)" json:"sshUser"`
+	SshPassword      string         `xorm:"varchar(150)" json:"sshPassword"`
+	Cert             string         `xorm:"varchar(100)" json:"cert"`
 	Database         string         `xorm:"varchar(100)" json:"database"`
 	Table            string         `xorm:"varchar(100)" json:"table"`
 	TableColumns     []*TableColumn `xorm:"mediumtext" json:"tableColumns"`
@@ -116,22 +122,35 @@ func GetSyncer(id string) (*Syncer, error) {
 	return getSyncer(owner, name)
 }
 
-func GetMaskedSyncer(syncer *Syncer) *Syncer {
+func GetMaskedSyncer(syncer *Syncer, errs ...error) (*Syncer, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
+	}
+
 	if syncer == nil {
-		return nil
+		return nil, nil
 	}
 
 	if syncer.Password != "" {
 		syncer.Password = "***"
 	}
-	return syncer
+	return syncer, nil
 }
 
-func GetMaskedSyncers(syncers []*Syncer) []*Syncer {
-	for _, syncer := range syncers {
-		syncer = GetMaskedSyncer(syncer)
+func GetMaskedSyncers(syncers []*Syncer, errs ...error) ([]*Syncer, error) {
+	if len(errs) > 0 && errs[0] != nil {
+		return nil, errs[0]
 	}
-	return syncers
+
+	var err error
+	for _, syncer := range syncers {
+		syncer, err = GetMaskedSyncer(syncer)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return syncers, nil
 }
 
 func UpdateSyncer(id string, syncer *Syncer) (bool, error) {
@@ -265,4 +284,26 @@ func RunSyncer(syncer *Syncer) error {
 	}
 
 	return syncer.syncUsers()
+}
+
+func TestSyncerDb(syncer Syncer) error {
+	oldSyncer, err := getSyncer(syncer.Owner, syncer.Name)
+	if err != nil {
+		return err
+	}
+
+	if syncer.Password == "***" {
+		syncer.Password = oldSyncer.Password
+	}
+
+	err = syncer.initAdapter()
+	if err != nil {
+		return err
+	}
+
+	err = syncer.Ormer.Engine.Ping()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -135,8 +135,18 @@ export function loginWithSaml(values, param) {
   }).then(res => res.json());
 }
 
-export function getWechatMessageEvent() {
-  return fetch(`${Setting.ServerUrl}/api/get-webhook-event`, {
+export function getWechatMessageEvent(ticket) {
+  return fetch(`${Setting.ServerUrl}/api/get-webhook-event?ticket=${ticket}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function getWechatQRCode(providerId) {
+  return fetch(`${Setting.ServerUrl}/api/get-qrcode?id=${providerId}`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -146,7 +156,7 @@ export function getWechatMessageEvent() {
 }
 
 export function getCaptchaStatus(values) {
-  return fetch(`${Setting.ServerUrl}/api/get-captcha-status?organization=${values["organization"]}&user_id=${values["username"]}`, {
+  return fetch(`${Setting.ServerUrl}/api/get-captcha-status?organization=${values["organization"]}&userId=${values["username"]}`, {
     method: "GET",
     credentials: "include",
     headers: {

@@ -24,16 +24,18 @@ import (
 )
 
 const (
-	headerOrigin       = "Origin"
-	headerAllowOrigin  = "Access-Control-Allow-Origin"
-	headerAllowMethods = "Access-Control-Allow-Methods"
-	headerAllowHeaders = "Access-Control-Allow-Headers"
+	headerOrigin           = "Origin"
+	headerAllowOrigin      = "Access-Control-Allow-Origin"
+	headerAllowMethods     = "Access-Control-Allow-Methods"
+	headerAllowHeaders     = "Access-Control-Allow-Headers"
+	headerAllowCredentials = "Access-Control-Allow-Credentials"
 )
 
 func setCorsHeaders(ctx *context.Context, origin string) {
 	ctx.Output.Header(headerAllowOrigin, origin)
 	ctx.Output.Header(headerAllowMethods, "POST, GET, OPTIONS, DELETE")
 	ctx.Output.Header(headerAllowHeaders, "Content-Type, Authorization")
+	ctx.Output.Header(headerAllowCredentials, "true")
 
 	if ctx.Input.Method() == "OPTIONS" {
 		ctx.ResponseWriter.WriteHeader(http.StatusOK)

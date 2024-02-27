@@ -284,27 +284,31 @@ func removeGroupingPolicies(permission *Permission) error {
 	return nil
 }
 
-type CasbinRequest = []interface{}
-
-func Enforce(permission *Permission, request *CasbinRequest, permissionIds ...string) (bool, error) {
+func Enforce(permission *Permission, request []string, permissionIds ...string) (bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return false, err
 	}
 
-	return enforcer.Enforce(*request...)
+	// type transformation
+	interfaceRequest := util.StringToInterfaceArray(request)
+
+	return enforcer.Enforce(interfaceRequest...)
 }
 
-func BatchEnforce(permission *Permission, requests *[]CasbinRequest, permissionIds ...string) ([]bool, error) {
+func BatchEnforce(permission *Permission, requests [][]string, permissionIds ...string) ([]bool, error) {
 	enforcer, err := getPermissionEnforcer(permission, permissionIds...)
 	if err != nil {
 		return nil, err
 	}
 
-	return enforcer.BatchEnforce(*requests)
+	// type transformation
+	interfaceRequests := util.StringToInterfaceArray2d(requests)
+
+	return enforcer.BatchEnforce(interfaceRequests)
 }
 
-func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) ([]string, error) {
+func getEnforcers(userId string) ([]*casbin.Enforcer, error) {
 	permissions, _, err := getPermissionsAndRolesByUser(userId)
 	if err != nil {
 		return nil, err
@@ -316,7 +320,8 @@ func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) ([
 	}
 
 	for _, role := range allRoles {
-		permissionsByRole, err := GetPermissionsByRole(role)
+		var permissionsByRole []*Permission
+		permissionsByRole, err = GetPermissionsByRole(role)
 		if err != nil {
 			return nil, err
 		}
@@ -324,29 +329,45 @@ func getAllValues(userId string, fn func(enforcer *casbin.Enforcer) []string) ([
 		permissions = append(permissions, permissionsByRole...)
 	}
 
-	var values []string
+	var enforcers []*casbin.Enforcer
 	for _, permission := range permissions {
-		enforcer, err := getPermissionEnforcer(permission)
+		var enforcer *casbin.Enforcer
+		enforcer, err = getPermissionEnforcer(permission)
 		if err != nil {
 			return nil, err
 		}
 
-		values = append(values, fn(enforcer)...)
+		enforcers = append(enforcers, enforcer)
 	}
-
-	return values, nil
+	return enforcers, nil
 }
 
 func GetAllObjects(userId string) ([]string, error) {
-	return getAllValues(userId, func(enforcer *casbin.Enforcer) []string {
-		return enforcer.GetAllObjects()
-	})
+	enforcers, err := getEnforcers(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	res := []string{}
+	for _, enforcer := range enforcers {
+		items := enforcer.GetAllObjects()
+		res = append(res, items...)
+	}
+	return res, nil
 }
 
 func GetAllActions(userId string) ([]string, error) {
-	return getAllValues(userId, func(enforcer *casbin.Enforcer) []string {
-		return enforcer.GetAllActions()
-	})
+	enforcers, err := getEnforcers(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	res := []string{}
+	for _, enforcer := range enforcers {
+		items := enforcer.GetAllObjects()
+		res = append(res, items...)
+	}
+	return res, nil
 }
 
 func GetAllRoles(userId string) ([]string, error) {

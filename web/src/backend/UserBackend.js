@@ -147,7 +147,7 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
       Setting.showMessage("success", i18next.t("user:Verification code sent"));
       return true;
     } else {
-      Setting.showMessage("error", i18next.t("user:" + res.msg));
+      Setting.showMessage("error", res.msg);
       return false;
     }
   });

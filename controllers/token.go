@@ -156,7 +156,7 @@ func (c *ApiController) DeleteToken() {
 // @Success 200 {object} object.TokenWrapper The Response object
 // @Success 400 {object} object.TokenError The Response object
 // @Success 401 {object} object.TokenError The Response object
-// @router api/login/oauth/access_token [post]
+// @router /login/oauth/access_token [post]
 func (c *ApiController) GetOAuthToken() {
 	clientId := c.Input().Get("client_id")
 	clientSecret := c.Input().Get("client_secret")
@@ -271,8 +271,17 @@ func (c *ApiController) RefreshToken() {
 	c.ServeJSON()
 }
 
+func (c *ApiController) ResponseTokenError(errorMsg string) {
+	c.Data["json"] = &object.TokenError{
+		Error: errorMsg,
+	}
+	c.SetTokenErrorHttpStatus()
+	c.ServeJSON()
+}
+
 // IntrospectToken
 // @Title IntrospectToken
+// @Tag Login API
 // @Description The introspection endpoint is an OAuth 2.0 endpoint that takes a
 // parameter representing an OAuth 2.0 token and returns a JSON document
 // representing the meta information surrounding the
@@ -292,40 +301,33 @@ func (c *ApiController) IntrospectToken() {
 		clientId = c.Input().Get("client_id")
 		clientSecret = c.Input().Get("client_secret")
 		if clientId == "" || clientSecret == "" {
-			c.ResponseError(c.T("token:Empty clientId or clientSecret"))
-			c.Data["json"] = &object.TokenError{
-				Error: object.InvalidRequest,
-			}
-			c.SetTokenErrorHttpStatus()
-			c.ServeJSON()
+			c.ResponseTokenError(object.InvalidRequest)
 			return
 		}
 	}
+
 	application, err := object.GetApplicationByClientId(clientId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseTokenError(err.Error())
 		return
 	}
 
 	if application == nil || application.ClientSecret != clientSecret {
-		c.ResponseError(c.T("token:Invalid application or wrong clientSecret"))
-		c.Data["json"] = &object.TokenError{
-			Error: object.InvalidClient,
-		}
-		c.SetTokenErrorHttpStatus()
-		return
-	}
-	token, err := object.GetTokenByTokenAndApplication(tokenValue, application.Name)
-	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseTokenError(c.T("token:Invalid application or wrong clientSecret"))
 		return
 	}
 
+	token, err := object.GetTokenByTokenValue(tokenValue)
+	if err != nil {
+		c.ResponseTokenError(err.Error())
+		return
+	}
 	if token == nil {
 		c.Data["json"] = &object.IntrospectionResponse{Active: false}
 		c.ServeJSON()
 		return
 	}
+
 	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
 	if err != nil || jwtToken.Valid() != nil {
 		// and token revoked case. but we not implement

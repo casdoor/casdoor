@@ -193,6 +193,26 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
+func GetTokenByTokenValue(tokenValue string) (*Token, error) {
+	token, err := GetTokenByAccessToken(tokenValue)
+	if err != nil {
+		return nil, err
+	}
+	if token != nil {
+		return token, nil
+	}
+
+	token, err = GetTokenByRefreshToken(tokenValue)
+	if err != nil {
+		return nil, err
+	}
+	if token != nil {
+		return token, nil
+	}
+
+	return nil, nil
+}
+
 func updateUsedByCode(token *Token) bool {
 	affected, err := ormer.Engine.Where("code=?", token.Code).Cols("code_is_used").Update(token)
 	if err != nil {
@@ -363,20 +383,6 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 	}
 
 	return affected != 0, application, token, nil
-}
-
-func GetTokenByTokenAndApplication(token string, application string) (*Token, error) {
-	tokenResult := Token{}
-	existed, err := ormer.Engine.Where("(refresh_token = ? or access_token = ? ) and application = ?", token, token, application).Get(&tokenResult)
-	if err != nil {
-		return nil, err
-	}
-
-	if !existed {
-		return nil, nil
-	}
-
-	return &tokenResult, nil
 }
 
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application, error) {
@@ -757,7 +763,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // GetPasswordToken
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
-	user, err := getUser(application.Organization, username)
+	user, err := GetUserByFields(application.Organization, username)
 	if err != nil {
 		return nil, nil, err
 	}

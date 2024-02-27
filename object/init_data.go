@@ -35,6 +35,11 @@ type InitData struct {
 	Syncers       []*Syncer       `json:"syncers"`
 	Tokens        []*Token        `json:"tokens"`
 	Webhooks      []*Webhook      `json:"webhooks"`
+	Groups        []*Group        `json:"groups"`
+	Adapters      []*Adapter      `json:"adapters"`
+	Enforcers     []*Enforcer     `json:"enforcers"`
+	Plans         []*Plan         `json:"plans"`
+	Pricings      []*Pricing      `json:"pricings"`
 }
 
 func InitFromFile() {
@@ -94,6 +99,21 @@ func InitFromFile() {
 		for _, webhook := range initData.Webhooks {
 			initDefinedWebhook(webhook)
 		}
+		for _, group := range initData.Groups {
+			initDefinedGroup(group)
+		}
+		for _, adapter := range initData.Adapters {
+			initDefinedAdapter(adapter)
+		}
+		for _, enforcer := range initData.Enforcers {
+			initDefinedEnforcer(enforcer)
+		}
+		for _, plan := range initData.Plans {
+			initDefinedPlan(plan)
+		}
+		for _, pricing := range initData.Pricings {
+			initDefinedPricing(pricing)
+		}
 	}
 }
 
@@ -120,6 +140,11 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Syncers:       []*Syncer{},
 		Tokens:        []*Token{},
 		Webhooks:      []*Webhook{},
+		Groups:        []*Group{},
+		Adapters:      []*Adapter{},
+		Enforcers:     []*Enforcer{},
+		Plans:         []*Plan{},
+		Pricings:      []*Pricing{},
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
@@ -136,17 +161,23 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if application.Providers == nil {
 			application.Providers = []*ProviderItem{}
 		}
+		if application.SigninMethods == nil {
+			application.SigninMethods = []*SigninMethod{}
+		}
 		if application.SignupItems == nil {
 			application.SignupItems = []*SignupItem{}
 		}
 		if application.GrantTypes == nil {
 			application.GrantTypes = []string{}
 		}
+		if application.Tags == nil {
+			application.Tags = []string{}
+		}
 		if application.RedirectUris == nil {
 			application.RedirectUris = []string{}
 		}
-		if application.Tags == nil {
-			application.Tags = []string{}
+		if application.TokenFields == nil {
+			application.TokenFields = []string{}
 		}
 	}
 	for _, permission := range data.Permissions {
@@ -184,7 +215,16 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 			webhook.Headers = []*Header{}
 		}
 	}
-
+	for _, plan := range data.Plans {
+		if plan.PaymentProviders == nil {
+			plan.PaymentProviders = []string{}
+		}
+	}
+	for _, pricing := range data.Pricings {
+		if pricing.Plans == nil {
+			pricing.Plans = []string{}
+		}
+	}
 	return data, nil
 }
 
@@ -424,6 +464,81 @@ func initDefinedWebhook(webhook *Webhook) {
 	}
 	webhook.CreatedTime = util.GetCurrentTime()
 	_, err = AddWebhook(webhook)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedGroup(group *Group) {
+	existed, err := getGroup(group.Owner, group.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	group.CreatedTime = util.GetCurrentTime()
+	_, err = AddGroup(group)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedAdapter(adapter *Adapter) {
+	existed, err := getAdapter(adapter.Owner, adapter.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	adapter.CreatedTime = util.GetCurrentTime()
+	_, err = AddAdapter(adapter)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedEnforcer(enforcer *Enforcer) {
+	existed, err := getEnforcer(enforcer.Owner, enforcer.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	enforcer.CreatedTime = util.GetCurrentTime()
+	_, err = AddEnforcer(enforcer)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedPlan(plan *Plan) {
+	existed, err := getPlan(plan.Owner, plan.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	plan.CreatedTime = util.GetCurrentTime()
+	_, err = AddPlan(plan)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedPricing(pricing *Pricing) {
+	existed, err := getPlan(pricing.Owner, pricing.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	pricing.CreatedTime = util.GetCurrentTime()
+	_, err = AddPricing(pricing)
 	if err != nil {
 		panic(err)
 	}

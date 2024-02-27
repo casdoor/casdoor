@@ -7,7 +7,7 @@ on:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest
-    if: github.repository == 'casbin/casdoor' && github.event_name == 'push'
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
     steps:
 
     - name: Checkout

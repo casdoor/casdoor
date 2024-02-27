@@ -6,7 +6,7 @@
     "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту"
   },
   "auth": {
-    "Challenge method should be S256": "Метод испытаний должен быть S256",
+    "Challenge method should be S256": "Метод проверки должен быть S256",
     "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",
     "Failed to login in: %s": "Не удалось войти в систему: %s",
     "Invalid token": "Недействительный токен",
@@ -15,11 +15,15 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Аккаунт для провайдера: %s и имя пользователя: %s (%s) не существует и не может быть зарегистрирован как новый аккаунт. Пожалуйста, обратитесь в службу поддержки IT",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Аккаунт поставщика: %s и имя пользователя: %s (%s) уже связаны с другим аккаунтом: %s (%s)",
     "The application: %s does not exist": "Приложение: %s не существует",
+    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
+    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
+    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Метод входа: вход с паролем не включен для приложения",
+    "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "Провайдер: %s не включен для приложения",
     "Unauthorized operation": "Несанкционированная операция",
     "Unknown authentication type (not password or provider), form = %s": "Неизвестный тип аутентификации (не пароль и не провайдер), форма = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
+    "User's tag: %s is not listed in the application's tags": "Тег пользователя: %s не указан в тэгах приложения",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
   },
   "cas": {
@@ -27,6 +31,7 @@
   },
   "check": {
     "Affiliation cannot be blank": "Принадлежность не может быть пустым значением",
+    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Имя отображения не может быть пустым",
     "DisplayName is not valid real name": "DisplayName не является действительным именем",
     "Email already exists": "Электронная почта уже существует",
@@ -35,7 +40,9 @@
     "Empty username.": "Пустое имя пользователя.",
     "FirstName cannot be blank": "Имя не может быть пустым",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
+    "Invitation code exhausted": "Invitation code exhausted",
     "Invitation code is invalid": "Invitation code is invalid",
+    "Invitation code suspended": "Invitation code suspended",
     "LDAP user name or password incorrect": "Неправильное имя пользователя или пароль Ldap",
     "LastName cannot be blank": "Фамилия не может быть пустой",
     "Multiple accounts with same uid, please check your ldap server": "Множественные учетные записи с тем же UID. Пожалуйста, проверьте свой сервер LDAP",
@@ -43,10 +50,16 @@
     "Phone already exists": "Телефон уже существует",
     "Phone cannot be empty": "Телефон не может быть пустым",
     "Phone number is invalid": "Номер телефона является недействительным",
+    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
+    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
+    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
     "Session outdated, please login again": "Сессия устарела, пожалуйста, войдите снова",
+    "The invitation code has already been used": "The invitation code has already been used",
     "The user is forbidden to sign in, please contact the administrator": "Пользователю запрещен вход, пожалуйста, обратитесь к администратору",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "Пользователь %s не существует на LDAP сервере",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Имя пользователя может состоять только из буквенно-цифровых символов, нижних подчеркиваний или дефисов, не может содержать последовательные дефисы или подчеркивания, а также не может начинаться или заканчиваться на дефис или подчеркивание.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "Имя пользователя уже существует",
     "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
     "Username cannot contain white spaces": "Имя пользователя не может содержать пробелы",
@@ -55,16 +68,17 @@
     "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
-    "password or code is incorrect": "password or code is incorrect",
+    "password or code is incorrect": "неправильный пароль или код",
     "password or code is incorrect, you have %d remaining chances": "Неправильный пароль или код, у вас осталось %d попыток",
     "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
   },
   "general": {
     "Missing parameter": "Отсутствующий параметр",
     "Please login first": "Пожалуйста, сначала войдите в систему",
+    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Пользователь %s не существует",
-    "don't support captchaProvider: ": "не поддерживайте captchaProvider:",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "don't support captchaProvider: ": "неподдерживаемый captchaProvider: ",
+    "this operation is not allowed in demo mode": "эта операция не разрешена в демо-режиме"
   },
   "ldap": {
     "Ldap server exist": "LDAP-сервер существует"
@@ -81,6 +95,9 @@
     "Only admin can modify the %s.": "Только администратор может изменять %s.",
     "The %s is immutable.": "%s неизменяемый.",
     "Unknown modify rule %s.": "Неизвестное изменение правила %s."
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "Неверный идентификатор приложения",
@@ -103,10 +120,9 @@
   },
   "storage": {
     "The objectKey: %s is not allowed": "Объект «objectKey: %s» не разрешен",
-    "The provider type: %s is not supported": "Тип поставщика: %s не поддерживается"
+    "The provider type: %s is not supported": "Тип провайдера: %s не поддерживается"
   },
   "token": {
-    "Empty clientId or clientSecret": "Пустой идентификатор клиента или секрет клиента",
     "Grant_type: %s is not supported in this application": "Тип предоставления: %s не поддерживается в данном приложении",
     "Invalid application or wrong clientSecret": "Недействительное приложение или неправильный clientSecret",
     "Invalid client_id": "Недействительный идентификатор клиента",
@@ -122,7 +138,7 @@
   },
   "util": {
     "No application is found for userId: %s": "Не найдено заявки для пользователя с идентификатором: %s",
-    "No provider for category: %s is found for application: %s": "Нет поставщика для категории: %s для приложения: %s",
+    "No provider for category: %s is found for application: %s": "Нет провайдера для категории: %s для приложения: %s",
     "The provider: %s is not found": "Поставщик: %s не найден"
   },
   "verification": {
@@ -135,6 +151,8 @@
     "Unknown type": "Неизвестный тип",
     "Wrong verification code!": "Неправильный код подтверждения!",
     "You should verify your code in %d min!": "Вы должны проверить свой код через %d минут!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "Пользователь не существует, пожалуйста, сначала зарегистрируйтесь"
   },
   "webauthn": {

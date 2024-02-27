@@ -70,6 +70,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
           </Button>
         }
         onSearch={() => setVisible(true)}
+        autoComplete="one-time-code"
       />
       <CaptchaModal
         owner={application.owner}

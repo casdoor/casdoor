@@ -16,7 +16,6 @@ package util
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -40,7 +39,7 @@ func GetPath(path string) string {
 func ListFiles(path string) []string {
 	res := []string{}
 
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +71,15 @@ func GetUrlPath(urlString string) string {
 }
 
 func GetUrlHost(urlString string) string {
-	u, _ := url.Parse(urlString)
+	if urlString == "" {
+		return ""
+	}
+
+	u, err := url.Parse(urlString)
+	if err != nil {
+		return err.Error()
+	}
+
 	return fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 }
 

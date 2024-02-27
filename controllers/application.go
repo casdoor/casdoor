@@ -110,14 +110,6 @@ func (c *ApiController) GetApplication() {
 		}
 	}
 
-	// 0 as an initialization value, corresponding to the default configuration parameters
-	if application.FailedSigninLimit == 0 {
-		application.FailedSigninLimit = object.DefaultFailedSigninLimit
-	}
-	if application.FailedSigninfrozenTime == 0 {
-		application.FailedSigninfrozenTime = object.DefaultFailedSigninfrozenTime
-	}
-
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
 
@@ -145,6 +137,10 @@ func (c *ApiController) GetUserApplication() {
 	application, err := object.GetApplicationByUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), user.Owner))
 		return
 	}
 

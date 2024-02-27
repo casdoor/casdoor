@@ -2,7 +2,7 @@ swagger: "2.0"
 info:
   title: Casdoor RESTful API
   description: Swagger Docs of Casdoor Backend API
-  version: 1.376.1
+  version: 1.503.0
   contact:
     email: casbin@googlegroups.com
 basePath: /
@@ -31,6 +31,17 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.OidcDiscovery'
+  /api/Callback:
+    post:
+      tags:
+      - Callback API
+      description: Get Login Error Counts
+      operationId: ApiController.Callback
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/add-adapter:
     post:
       tags:
@@ -102,7 +113,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/object'
+            $ref: '#/definitions/object.Enforcer'
   /api/add-group:
     post:
       tags:
@@ -116,6 +127,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-invitation:
+    post:
+      tags:
+      - Invitation API
+      description: add invitation
+      operationId: ApiController.AddInvitation
+      parameters:
+      - in: body
+        name: body
+        description: The details of the invitation
+        required: true
+        schema:
+          $ref: '#/definitions/object.Invitation'
       responses:
         "200":
           description: The Response object
@@ -283,24 +312,6 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/add-record:
-    post:
-      tags:
-      - Record API
-      description: add a record
-      operationId: ApiController.AddRecord
-      parameters:
-      - in: body
-        name: body
-        description: The details of the record
-        required: true
-        schema:
-          $ref: '#/definitions/object.Record'
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
   /api/add-resource:
     post:
       tags:
@@ -436,7 +447,12 @@ paths:
     post:
       tags:
       - User API
-      operationId: ApiController.AddUserkeys
+      operationId: ApiController.AddUserKeys
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/add-webhook:
     post:
       tags:
@@ -455,108 +471,10 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/api/get-captcha:
-    get:
-      tags:
-      - Login API
-      operationId: ApiController.GetCaptcha
-  /api/api/get-captcha-status:
-    get:
-      tags:
-      - Token API
-      description: Get Login Error Counts
-      operationId: ApiController.GetCaptchaStatus
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of user
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
-  /api/api/get-webhook-event:
-    get:
-      tags:
-      - GetWebhookEventType API
-      operationId: ApiController.GetWebhookEventType
-  /api/api/reset-email-or-phone:
-    post:
-      tags:
-      - Account API
-      operationId: ApiController.ResetEmailOrPhone
-  /api/api/send-email:
-    post:
-      tags:
-      - Service API
-      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-      operationId: ApiController.SendEmail
-      parameters:
-      - in: query
-        name: clientId
-        description: The clientId of the application
-        required: true
-        type: string
-      - in: query
-        name: clientSecret
-        description: The clientSecret of the application
-        required: true
-        type: string
-      - in: body
-        name: from
-        description: Details of the email request
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.EmailForm'
-      responses:
-        "200":
-          description: object
-          schema:
-            $ref: '#/definitions/Response'
-  /api/api/send-sms:
-    post:
-      tags:
-      - Service API
-      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-      operationId: ApiController.SendSms
-      parameters:
-      - in: query
-        name: clientId
-        description: The clientId of the application
-        required: true
-        type: string
-      - in: query
-        name: clientSecret
-        description: The clientSecret of the application
-        required: true
-        type: string
-      - in: body
-        name: from
-        description: Details of the sms request
-        required: true
-        schema:
-          $ref: '#/definitions/controllers.SmsForm'
-      responses:
-        "200":
-          description: object
-          schema:
-            $ref: '#/definitions/Response'
-  /api/api/verify-code:
-    post:
-      tags:
-      - Verification API
-      operationId: ApiController.VerifyCode
-  /api/api/webhook:
-    post:
-      tags:
-      - HandleOfficialAccountEvent API
-      operationId: ApiController.HandleOfficialAccountEvent
   /api/batch-enforce:
     post:
       tags:
-      - Enforce API
+      - Enforcer API
       description: Call Casbin BatchEnforce API
       operationId: ApiController.BatchEnforce
       parameters:
@@ -565,7 +483,9 @@ paths:
         description: array of casbin requests
         required: true
         schema:
-          $ref: '#/definitions/object.CasbinRequest'
+          type: array
+          items:
+            type: string
       - in: query
         name: permissionId
         description: permission id
@@ -573,6 +493,10 @@ paths:
       - in: query
         name: modelId
         description: model id
+        type: string
+      - in: query
+        name: owner
+        description: owner
         type: string
       responses:
         "200":
@@ -606,6 +530,11 @@ paths:
       tags:
       - User API
       operationId: ApiController.CheckUserPassword
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/delete-adapter:
     post:
       tags:
@@ -672,12 +601,12 @@ paths:
         description: The enforcer object
         required: true
         schema:
-          $ref: '#/definitions/object.Enforce'
+          $ref: '#/definitions/object.Enforcer'
       responses:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/object'
+            $ref: '#/definitions/object.Enforcer'
   /api/delete-group:
     post:
       tags:
@@ -691,6 +620,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/delete-invitation:
+    post:
+      tags:
+      - Invitation API
+      description: delete invitation
+      operationId: ApiController.DeleteInvitation
+      parameters:
+      - in: body
+        name: body
+        description: The details of the invitation
+        required: true
+        schema:
+          $ref: '#/definitions/object.Invitation'
       responses:
         "200":
           description: The Response object
@@ -722,9 +669,9 @@ paths:
       operationId: ApiController.DeleteMfa
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/delete-model:
     post:
       tags:
@@ -1016,7 +963,7 @@ paths:
   /api/enforce:
     post:
       tags:
-      - Enforce API
+      - Enforcer API
       description: Call Casbin Enforce API
       operationId: ApiController.Enforce
       parameters:
@@ -1025,7 +972,9 @@ paths:
         description: Casbin request
         required: true
         schema:
-          $ref: '#/definitions/object.CasbinRequest'
+          type: array
+          items:
+            type: string
       - in: query
         name: permissionId
         description: permission id
@@ -1037,6 +986,10 @@ paths:
       - in: query
         name: resourceId
         description: resource id
+        type: string
+      - in: query
+        name: owner
+        description: owner
         type: string
       responses:
         "200":
@@ -1126,7 +1079,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/get-application:
     get:
       tags:
@@ -1163,6 +1116,33 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Application'
+  /api/get-captcha:
+    get:
+      tags:
+      - Login API
+      operationId: ApiController.GetCaptcha
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
+  /api/get-captcha-status:
+    get:
+      tags:
+      - Token API
+      description: Get Login Error Counts
+      operationId: ApiController.GetCaptchaStatus
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/get-cert:
     get:
       tags:
@@ -1202,7 +1182,7 @@ paths:
   /api/get-dashboard:
     get:
       tags:
-      - GetDashboard API
+      - System API
       description: get information of dashboard
       operationId: ApiController.GetDashboard
       responses:
@@ -1226,7 +1206,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/get-email-and-phone:
     get:
       tags:
@@ -1265,7 +1245,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/object'
+            $ref: '#/definitions/object.Enforcer'
   /api/get-enforcers:
     get:
       tags:
@@ -1285,6 +1265,19 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Enforcer'
+  /api/get-global-certs:
+    get:
+      tags:
+      - Cert API
+      description: get globle certs
+      operationId: ApiController.GetGlobalCerts
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Cert'
   /api/get-global-providers:
     get:
       tags:
@@ -1311,19 +1304,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.User'
-  /api/get-global-certs:
-    get:
-      tags:
-      - Cert API
-      description: get globle certs
-      operationId: ApiController.GetGlobalCerts
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/object.Cert'
   /api/get-group:
     get:
       tags:
@@ -1360,6 +1340,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Group'
+  /api/get-invitation:
+    get:
+      tags:
+      - Invitation API
+      description: get invitation
+      operationId: ApiController.GetInvitation
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the invitation
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Invitation'
+  /api/get-invitations:
+    get:
+      tags:
+      - Invitation API
+      description: get invitations
+      operationId: ApiController.GetInvitations
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of invitations
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Invitation'
   /api/get-ldap:
     get:
       tags:
@@ -1387,7 +1403,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LdapResp'
+            $ref: '#/definitions/controllers.LdapResp'
   /api/get-ldaps:
     get:
       tags:
@@ -1735,7 +1751,7 @@ paths:
   /api/get-prometheus-info:
     get:
       tags:
-      - Prometheus API
+      - System API
       description: get Prometheus Info
       operationId: ApiController.GetPrometheusInfo
       responses:
@@ -1779,47 +1795,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Provider'
-  /api/get-records:
-    get:
-      tags:
-      - Record API
-      description: get all records
-      operationId: ApiController.GetRecords
-      parameters:
-      - in: query
-        name: pageSize
-        description: The size of each page
-        required: true
-        type: string
-      - in: query
-        name: p
-        description: The number of the page
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/object.Record'
-  /api/get-records-filter:
-    post:
-      tags:
-      - Record API
-      description: get records by filter
-      operationId: ApiController.GetRecordsByFilter
-      parameters:
-      - in: body
-        name: filter
-        description: filter Record message
-        required: true
-        schema:
-          type: string
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/object.Record'
   /api/get-resource:
     get:
       tags:
@@ -2260,6 +2235,16 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Webhook'
+  /api/get-webhook-event:
+    get:
+      tags:
+      - System API
+      operationId: ApiController.GetWebhookEventType
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/get-webhooks:
     get:
       tags:
@@ -2429,6 +2414,8 @@ paths:
             $ref: '#/definitions/object.TokenError'
   /api/login/oauth/introspect:
     post:
+      tags:
+      - Login API
       description: The introspection endpoint is an OAuth 2.0 endpoint that takes a
       operationId: ApiController.IntrospectToken
       parameters:
@@ -2500,29 +2487,6 @@ paths:
           schema:
             $ref: '#/definitions/object.TokenError'
   /api/logout:
-    get:
-      tags:
-      - Login API
-      description: logout the current user
-      operationId: ApiController.Logout
-      parameters:
-      - in: query
-        name: id_token_hint
-        description: id_token_hint
-        type: string
-      - in: query
-        name: post_logout_redirect_uri
-        description: post_logout_redirect_uri
-        type: string
-      - in: query
-        name: state
-        description: state
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
     post:
       tags:
       - Login API
@@ -2554,9 +2518,9 @@ paths:
       operationId: ApiController.MfaSetupEnable
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/mfa/setup/initiate:
     post:
       tags:
@@ -2576,9 +2540,9 @@ paths:
       operationId: ApiController.MfaSetupVerify
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/notify-payment:
     post:
       tags:
@@ -2597,6 +2561,16 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/reset-email-or-phone:
+    post:
+      tags:
+      - Account API
+      operationId: ApiController.ResetEmailOrPhone
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/run-syncer:
     get:
       tags:
@@ -2615,11 +2589,90 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/send-email:
+    post:
+      tags:
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
+      operationId: ApiController.SendEmail
+      parameters:
+      - in: query
+        name: clientId
+        description: The clientId of the application
+        required: true
+        type: string
+      - in: query
+        name: clientSecret
+        description: The clientSecret of the application
+        required: true
+        type: string
+      - in: body
+        name: from
+        description: Details of the email request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.EmailForm'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/send-notification:
+    post:
+      tags:
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
+      operationId: ApiController.SendNotification
+      parameters:
+      - in: body
+        name: from
+        description: Details of the notification request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.NotificationForm'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/send-sms:
+    post:
+      tags:
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
+      operationId: ApiController.SendSms
+      parameters:
+      - in: query
+        name: clientId
+        description: The clientId of the application
+        required: true
+        type: string
+      - in: query
+        name: clientSecret
+        description: The clientSecret of the application
+        required: true
+        type: string
+      - in: body
+        name: from
+        description: Details of the sms request
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.SmsForm'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/send-verification-code:
     post:
       tags:
       - Verification API
       operationId: ApiController.SendVerificationCode
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/set-password:
     post:
       tags:
@@ -2660,9 +2713,9 @@ paths:
       operationId: ApiController.SetPreferredMfa
       responses:
         "200":
-          description: object
+          description: The Response object
           schema:
-            $ref: '#/definitions/Response'
+            $ref: '#/definitions/controllers.Response'
   /api/signup:
     post:
       tags:
@@ -2701,11 +2754,17 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LdapSyncResp'
+            $ref: '#/definitions/controllers.LdapSyncResp'
   /api/unlink:
     post:
       tags:
       - Login API
+      operationId: ApiController.Unlink
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
   /api/update-adapter:
     post:
       tags:
@@ -2797,7 +2856,7 @@ paths:
         "200":
           description: ""
           schema:
-            $ref: '#/definitions/object'
+            $ref: '#/definitions/object.Enforcer'
   /api/update-group:
     post:
       tags:
@@ -2816,6 +2875,29 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Group'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/update-invitation:
+    post:
+      tags:
+      - Invitation API
+      description: update invitation
+      operationId: ApiController.UpdateInvitation
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the invitation
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the invitation
+        required: true
+        schema:
+          $ref: '#/definitions/object.Invitation'
       responses:
         "200":
           description: The Response object
@@ -3266,7 +3348,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/LaravelResponse'
+            $ref: '#/definitions/controllers.LaravelResponse'
   /api/userinfo:
     get:
       tags:
@@ -3283,6 +3365,38 @@ paths:
       tags:
       - Verification API
       operationId: ApiController.VerifyCaptcha
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
+  /api/verify-code:
+    post:
+      tags:
+      - Verification API
+      operationId: ApiController.VerifyCode
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
+  /api/verify-invitation:
+    get:
+      tags:
+      - Invitation API
+      description: verify invitation
+      operationId: ApiController.VerifyInvitation
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the invitation
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/webauthn/signin/begin:
     get:
       tags:
@@ -3310,7 +3424,7 @@ paths:
       tags:
       - Login API
       description: WebAuthn Login Flow 2nd stage
-      operationId: ApiController.WebAuthnSigninBegin
+      operationId: ApiController.WebAuthnSigninFinish
       parameters:
       - in: body
         name: body
@@ -3352,25 +3466,17 @@ paths:
           description: '"The Response object"'
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/webhook:
+    post:
+      tags:
+      - System API
+      operationId: ApiController.HandleOfficialAccountEvent
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Userinfo'
 definitions:
-  1183.0xc000639290.false:
-    title: "false"
-    type: object
-  1217.0xc0006392c0.false:
-    title: "false"
-    type: object
-  LaravelResponse:
-    title: LaravelResponse
-    type: object
-  LdapResp:
-    title: LdapResp
-    type: object
-  LdapSyncResp:
-    title: LdapSyncResp
-    type: object
-  Response:
-    title: Response
-    type: object
   casbin.Enforcer:
     title: Enforcer
     type: object
@@ -3393,14 +3499,64 @@ definitions:
         type: string
       title:
         type: string
+  controllers.LaravelResponse:
+    title: LaravelResponse
+    type: object
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+  controllers.LdapResp:
+    title: LdapResp
+    type: object
+    properties:
+      existUuids:
+        type: array
+        items:
+          type: string
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
+  controllers.LdapSyncResp:
+    title: LdapSyncResp
+    type: object
+    properties:
+      exist:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
+      failed:
+        type: array
+        items:
+          $ref: '#/definitions/object.LdapUser'
+  controllers.NotificationForm:
+    title: NotificationForm
+    type: object
+    properties:
+      content:
+        type: string
   controllers.Response:
     title: Response
     type: object
     properties:
       data:
-        $ref: '#/definitions/1183.0xc000639290.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       data2:
-        $ref: '#/definitions/1217.0xc0006392c0.false'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       msg:
         type: string
       name:
@@ -3429,9 +3585,6 @@ definitions:
     type: object
   object:
     title: object
-    type: object
-  object.&{197049 0xc000a2cd50 false}:
-    title: '&{197049 0xc000a2cd50 false}'
     type: object
   object.AccountItem:
     title: AccountItem
@@ -3468,10 +3621,10 @@ definitions:
         format: int64
       table:
         type: string
-      tableNamePrefix:
-        type: string
       type:
         type: string
+      useSameDb:
+        type: boolean
       user:
         type: string
   object.Application:
@@ -3481,6 +3634,8 @@ definitions:
       affiliationUrl:
         type: string
       cert:
+        type: string
+      certPublicKey:
         type: string
       clientId:
         type: string
@@ -3500,6 +3655,8 @@ definitions:
         type: boolean
       enablePassword:
         type: boolean
+      enableSamlC14n10:
+        type: boolean
       enableSamlCompress:
         type: boolean
       enableSignUp:
@@ -3509,6 +3666,12 @@ definitions:
       enableWebAuthn:
         type: boolean
       expireInHours:
+        type: integer
+        format: int64
+      failedSigninFrozenTime:
+        type: integer
+        format: int64
+      failedSigninLimit:
         type: integer
         format: int64
       forgetUrl:
@@ -3530,6 +3693,10 @@ definitions:
           type: string
       homepageUrl:
         type: string
+      invitationCodes:
+        type: array
+        items:
+          type: string
       logo:
         type: string
       name:
@@ -3553,10 +3720,18 @@ definitions:
       refreshExpireInHours:
         type: integer
         format: int64
+      samlAttributes:
+        type: array
+        items:
+          $ref: '#/definitions/object.SamlItem'
       samlReplyUrl:
         type: string
       signinHtml:
         type: string
+      signinMethods:
+        type: array
+        items:
+          $ref: '#/definitions/object.SigninMethod'
       signinUrl:
         type: string
       signupHtml:
@@ -3575,21 +3750,16 @@ definitions:
         type: string
       themeData:
         $ref: '#/definitions/object.ThemeData'
+      tokenFields:
+        type: array
+        items:
+          type: string
       tokenFormat:
         type: string
-  object.CasbinRequest:
-    title: CasbinRequest
-    type: array
-    items:
-      $ref: '#/definitions/object.&{197049 0xc000a2cd50 false}'
   object.Cert:
     title: Cert
     type: object
     properties:
-      authorityPublicKey:
-        type: string
-      authorityRootPublicKey:
-        type: string
       bitSize:
         type: integer
         format: int64
@@ -3614,9 +3784,6 @@ definitions:
         type: string
       type:
         type: string
-  object.Enforce:
-    title: Enforce
-    type: object
   object.Enforcer:
     title: Enforcer
     type: object
@@ -3743,6 +3910,40 @@ definitions:
         type: string
       username:
         type: string
+  object.Invitation:
+    title: Invitation
+    type: object
+    properties:
+      application:
+        type: string
+      code:
+        type: string
+      createdTime:
+        type: string
+      displayName:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      phone:
+        type: string
+      quota:
+        type: integer
+        format: int64
+      signupGroup:
+        type: string
+      state:
+        type: string
+      updatedTime:
+        type: string
+      usedCount:
+        type: integer
+        format: int64
+      username:
+        type: string
   object.Ldap:
     title: Ldap
     type: object
@@ -3778,6 +3979,46 @@ definitions:
       serverName:
         type: string
       username:
+        type: string
+  object.LdapUser:
+    title: LdapUser
+    type: object
+    properties:
+      EmailAddress:
+        type: string
+      Mail:
+        type: string
+      MobileTelephoneNumber:
+        type: string
+      PostalAddress:
+        type: string
+      RegisteredAddress:
+        type: string
+      TelephoneNumber:
+        type: string
+      address:
+        type: string
+      cn:
+        type: string
+      displayName:
+        type: string
+      email:
+        type: string
+      gidNumber:
+        type: string
+      groupId:
+        type: string
+      memberOf:
+        type: string
+      mobile:
+        type: string
+      uid:
+        type: string
+      uidNumber:
+        type: string
+      userPrincipalName:
+        type: string
+      uuid:
         type: string
   object.ManagedAccount:
     title: ManagedAccount
@@ -3905,6 +4146,8 @@ definitions:
         type: string
       defaultAvatar:
         type: string
+      defaultPassword:
+        type: string
       displayName:
         type: string
       enableSoftDeletion:
@@ -3921,6 +4164,8 @@ definitions:
         items:
           type: string
       masterPassword:
+        type: string
+      masterVerificationCode:
         type: string
       mfaItems:
         type: array
@@ -4011,6 +4256,8 @@ definitions:
         type: string
       state:
         $ref: '#/definitions/pp.PaymentState'
+      successUrl:
+        type: string
       tag:
         type: string
       type:
@@ -4043,6 +4290,10 @@ definitions:
           type: string
       effect:
         type: string
+      groups:
+        type: array
+        items:
+          type: string
       isEnabled:
         type: boolean
       model:
@@ -4091,12 +4342,17 @@ definitions:
           type: string
       owner:
         type: string
-      pricePerMonth:
+      paymentProviders:
+        type: array
+        items:
+          type: string
+      period:
+        type: string
+      price:
         type: number
         format: double
-      pricePerYear:
-        type: number
-        format: double
+      product:
+        type: string
       role:
         type: string
   object.Pricing:
@@ -4104,10 +4360,6 @@ definitions:
     type: object
     properties:
       application:
-        type: string
-      approveTime:
-        type: string
-      approver:
         type: string
       createdTime:
         type: string
@@ -4125,10 +4377,6 @@ definitions:
         type: array
         items:
           type: string
-      state:
-        type: string
-      submitter:
-        type: string
       trialDuration:
         type: integer
         format: int64
@@ -4278,8 +4526,6 @@ definitions:
     title: ProviderItem
     type: object
     properties:
-      alertType:
-        type: string
       canSignIn:
         type: boolean
       canSignUp:
@@ -4296,36 +4542,7 @@ definitions:
         $ref: '#/definitions/object.Provider'
       rule:
         type: string
-  object.Record:
-    title: Record
-    type: object
-    properties:
-      action:
-        type: string
-      clientIp:
-        type: string
-      createdTime:
-        type: string
-      extendedUser:
-        $ref: '#/definitions/object.User'
-      id:
-        type: integer
-        format: int64
-      isTriggered:
-        type: boolean
-      method:
-        type: string
-      name:
-        type: string
-      object:
-        type: string
-      organization:
-        type: string
-      owner:
-        type: string
-      requestUri:
-        type: string
-      user:
+      signupGroup:
         type: string
   object.Resource:
     title: Resource
@@ -4374,6 +4591,10 @@ definitions:
         type: array
         items:
           type: string
+      groups:
+        type: array
+        items:
+          type: string
       isEnabled:
         type: boolean
       name:
@@ -4388,14 +4609,40 @@ definitions:
         type: array
         items:
           type: string
-  object.SignupItem:
-    title: SignupItem
+  object.SamlItem:
+    title: SamlItem
     type: object
     properties:
       name:
         type: string
+      nameFormat:
+        type: string
+      value:
+        type: string
+  object.SigninMethod:
+    title: SigninMethod
+    type: object
+    properties:
+      displayName:
+        type: string
+      name:
+        type: string
+      rule:
+        type: string
+  object.SignupItem:
+    title: SignupItem
+    type: object
+    properties:
+      label:
+        type: string
+      name:
+        type: string
+      placeholder:
+        type: string
       prompted:
         type: boolean
+      regex:
+        type: string
       required:
         type: boolean
       rule:
@@ -4406,39 +4653,45 @@ definitions:
     title: Subscription
     type: object
     properties:
-      approveTime:
-        type: string
-      approver:
-        type: string
       createdTime:
         type: string
       description:
         type: string
       displayName:
         type: string
-      duration:
-        type: integer
-        format: int64
-      endDate:
+      endTime:
         type: string
         format: datetime
-      isEnabled:
-        type: boolean
       name:
         type: string
       owner:
         type: string
+      payment:
+        type: string
+      period:
+        type: string
       plan:
         type: string
-      startDate:
+      pricing:
+        type: string
+      startTime:
         type: string
         format: datetime
       state:
-        type: string
-      submitter:
-        type: string
+        $ref: '#/definitions/object.SubscriptionState'
       user:
         type: string
+  object.SubscriptionState:
+    title: SubscriptionState
+    type: string
+    enum:
+    - SubStatePending = "Pending"
+    - SubStateError = "Error"
+    - SubStateSuspended = "Suspended"
+    - SubStateActive = "Active"
+    - SubStateUpcoming = "Upcoming"
+    - SubStateExpired = "Expired"
+    example: Pending
   object.Syncer:
     title: Syncer
     type: object
@@ -4472,6 +4725,8 @@ definitions:
       port:
         type: integer
         format: int64
+      sslMode:
+        type: string
       syncInterval:
         type: integer
         format: int64
@@ -4524,6 +4779,8 @@ definitions:
     properties:
       accessToken:
         type: string
+      accessTokenHash:
+        type: string
       application:
         type: string
       code:
@@ -4547,6 +4804,8 @@ definitions:
       owner:
         type: string
       refreshToken:
+        type: string
+      refreshTokenHash:
         type: string
       scope:
         type: string
@@ -4609,6 +4868,8 @@ definitions:
         type: string
       azuread:
         type: string
+      azureadb2c:
+        type: string
       baidu:
         type: string
       battlenet:
@@ -4639,6 +4900,8 @@ definitions:
         type: string
       deezer:
         type: string
+      deletedTime:
+        type: string
       digitalocean:
         type: string
       dingtalk:
@@ -4658,6 +4921,8 @@ definitions:
       emailVerified:
         type: boolean
       eveonline:
+        type: string
+      externalId:
         type: string
       facebook:
         type: string
@@ -4894,6 +5159,8 @@ definitions:
         type: string
       email:
         type: string
+      email_verified:
+        type: boolean
       groups:
         type: array
         items:

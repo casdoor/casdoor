@@ -16,28 +16,24 @@ package object
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
-	"github.com/beego/beego/context"
-	"github.com/google/uuid"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
 
 const (
-	MfaTotpSecretSession   = "mfa_totp_secret"
 	MfaTotpPeriodInSeconds = 30
 )
 
 type TotpMfa struct {
-	Config     *MfaProps
+	*MfaProps
 	period     uint
 	secretSize uint
 	digits     otp.Digits
 }
 
-func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
+func (mfa *TotpMfa) Initiate(userId string) (*MfaProps, error) {
 	//issuer := beego.AppConfig.String("appname")
 	//if issuer == "" {
 	//	issuer = "casdoor"
@@ -55,33 +51,16 @@ func (mfa *TotpMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, er
 		return nil, err
 	}
 
-	err = ctx.Input.CruSession.Set(MfaTotpSecretSession, key.Secret())
-	if err != nil {
-		return nil, err
-	}
-
-	recoveryCode := uuid.NewString()
-	err = ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
-	if err != nil {
-		return nil, err
-	}
-
 	mfaProps := MfaProps{
-		MfaType:       mfa.Config.MfaType,
-		RecoveryCodes: []string{recoveryCode},
-		Secret:        key.Secret(),
-		URL:           key.URL(),
+		MfaType: mfa.MfaType,
+		Secret:  key.Secret(),
+		URL:     key.URL(),
 	}
 	return &mfaProps, nil
 }
 
-func (mfa *TotpMfa) SetupVerify(ctx *context.Context, passcode string) error {
-	secret := ctx.Input.CruSession.Get(MfaTotpSecretSession)
-	if secret == nil {
-		return errors.New("totp secret is missing")
-	}
-
-	result, err := totp.ValidateCustom(passcode, secret.(string), time.Now().UTC(), totp.ValidateOpts{
+func (mfa *TotpMfa) SetupVerify(passcode string) error {
+	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
 		Period:    MfaTotpPeriodInSeconds,
 		Skew:      1,
 		Digits:    otp.DigitsSix,
@@ -98,22 +77,13 @@ func (mfa *TotpMfa) SetupVerify(ctx *context.Context, passcode string) error {
 	}
 }
 
-func (mfa *TotpMfa) Enable(ctx *context.Context, user *User) error {
-	recoveryCodes := ctx.Input.CruSession.Get(MfaRecoveryCodesSession).([]string)
-	if len(recoveryCodes) == 0 {
-		return fmt.Errorf("recovery codes is missing")
-	}
-	secret := ctx.Input.CruSession.Get(MfaTotpSecretSession).(string)
-	if secret == "" {
-		return fmt.Errorf("totp secret is missing")
-	}
-
+func (mfa *TotpMfa) Enable(user *User) error {
 	columns := []string{"recovery_codes", "preferred_mfa_type", "totp_secret"}
 
-	user.RecoveryCodes = append(user.RecoveryCodes, recoveryCodes...)
-	user.TotpSecret = secret
+	user.RecoveryCodes = append(user.RecoveryCodes, mfa.RecoveryCodes...)
+	user.TotpSecret = mfa.Secret
 	if user.PreferredMfaType == "" {
-		user.PreferredMfaType = mfa.Config.MfaType
+		user.PreferredMfaType = mfa.MfaType
 	}
 
 	_, err := updateUser(user.GetId(), user, columns)
@@ -121,14 +91,11 @@ func (mfa *TotpMfa) Enable(ctx *context.Context, user *User) error {
 		return err
 	}
 
-	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
-	ctx.Input.CruSession.Delete(MfaTotpSecretSession)
-
 	return nil
 }
 
 func (mfa *TotpMfa) Verify(passcode string) error {
-	result, err := totp.ValidateCustom(passcode, mfa.Config.Secret, time.Now().UTC(), totp.ValidateOpts{
+	result, err := totp.ValidateCustom(passcode, mfa.Secret, time.Now().UTC(), totp.ValidateOpts{
 		Period:    MfaTotpPeriodInSeconds,
 		Skew:      1,
 		Digits:    otp.DigitsSix,
@@ -153,7 +120,7 @@ func NewTotpMfaUtil(config *MfaProps) *TotpMfa {
 	}
 
 	return &TotpMfa{
-		Config:     config,
+		MfaProps:   config,
 		period:     MfaTotpPeriodInSeconds,
 		secretSize: 20,
 		digits:     otp.DigitsSix,

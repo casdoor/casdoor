@@ -30,7 +30,6 @@ class UserListPage extends BaseListPage {
     super(props);
     this.state = {
       ...this.state,
-      organizationName: this.props.organizationName ?? this.props.match?.params.organizationName ?? this.props.account.owner,
       organization: null,
     };
   }
@@ -62,7 +61,7 @@ class UserListPage extends BaseListPage {
 
   newUser() {
     const randomName = Setting.getRandomName();
-    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? this.state.organizationName : Setting.getRequestOrganization(this.props.account);
+    const owner = (Setting.isDefaultOrganizationSelected(this.props.account) || this.props.groupName) ? this.state.organizationName : Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
       name: `user_${randomName}`,
@@ -71,7 +70,7 @@ class UserListPage extends BaseListPage {
       password: "123",
       passwordSalt: "",
       displayName: `New User - ${randomName}`,
-      avatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
+      avatar: this.state.organization.defaultAvatar ?? `${Setting.StaticBaseUrl}/img/casbin.svg`,
       email: `${randomName}@example.com`,
       phone: Setting.getRandomNumber(),
       countryCode: this.state.organization.countryCodes?.length > 0 ? this.state.organization.countryCodes[0] : "",
@@ -85,7 +84,7 @@ class UserListPage extends BaseListPage {
       score: this.state.organization.initScore,
       isDeleted: false,
       properties: {},
-      signupApplication: "app-built-in",
+      signupApplication: this.state.organization.defaultApplication,
     };
   }
 

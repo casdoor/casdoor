@@ -71,7 +71,7 @@ export function getThemeData(organization, application) {
 }
 
 export function getAlgorithm(themeAlgorithmNames) {
-  return themeAlgorithmNames.map((algorithmName) => {
+  return themeAlgorithmNames.sort().reverse().map((algorithmName) => {
     if (algorithmName === "dark") {
       return theme.darkAlgorithm;
     }
@@ -209,6 +209,10 @@ export const OtherProviderInfo = {
     "Google Cloud Storage": {
       logo: `${StaticBaseUrl}/img/social_google_cloud.png`,
       url: "https://cloud.google.com/storage",
+    },
+    "Synology": {
+      logo: `${StaticBaseUrl}/img/social_synology.png`,
+      url: "https://www.synology.com/en-global/dsm/feature/file_sharing",
     },
   },
   SAML: {
@@ -1037,6 +1041,7 @@ export function getProviderTypeOptions(category) {
         {id: "Azure Blob", name: "Azure Blob"},
         {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
         {id: "Google Cloud Storage", name: "Google Cloud Storage"},
+        {id: "Synology", name: "Synology"},
       ]
     );
   } else if (category === "SAML") {
@@ -1144,12 +1149,36 @@ export function renderLogo(application) {
   }
 }
 
+function isSigninMethodEnabled(application, signinMethod) {
+  if (application && application.signinMethods) {
+    return application.signinMethods.filter(item => item.name === signinMethod).length > 0;
+  } else {
+    return false;
+  }
+}
+
+export function isPasswordEnabled(application) {
+  return isSigninMethodEnabled(application, "Password");
+}
+
+export function isCodeSigninEnabled(application) {
+  return isSigninMethodEnabled(application, "Verification code");
+}
+
+export function isWebAuthnEnabled(application) {
+  return isSigninMethodEnabled(application, "WebAuthn");
+}
+
+export function isLdapEnabled(application) {
+  return isSigninMethodEnabled(application, "LDAP");
+}
+
 export function getLoginLink(application) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/auto-signup/oauth/authorize")) {
-    url = window.location.href.replace("/auto-signup/oauth/authorize", "/login/oauth/authorize");
+  } else if (window.location.pathname.includes("/signup/oauth/authorize")) {
+    url = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/login";
   } else if (application.signinUrl === "") {
@@ -1157,12 +1186,7 @@ export function getLoginLink(application) {
   } else {
     url = application.signinUrl;
   }
-  return url;
-}
-
-export function renderLoginLink(application, text) {
-  const url = getLoginLink(application);
-  return renderLink(url, text, null);
+  return url + window.location.search;
 }
 
 export function redirectToLoginPage(application, history) {
@@ -1189,7 +1213,7 @@ function renderLink(url, text, onClick) {
     );
   } else if (url.startsWith("http")) {
     return (
-      <a target="_blank" rel="noopener noreferrer" style={{float: "right"}} href={url} onClick={() => {
+      <a style={{float: "right"}} href={url} onClick={() => {
         if (onClick !== null) {
           onClick();
         }
@@ -1204,8 +1228,8 @@ export function renderSignupLink(application, text) {
   let url;
   if (application === null) {
     url = null;
-  } else if (!application.enablePassword && window.location.pathname.includes("/login/oauth/authorize")) {
-    url = window.location.href.replace("/login/oauth/authorize", "/auto-signup/oauth/authorize");
+  } else if (window.location.pathname.includes("/login/oauth/authorize")) {
+    url = window.location.pathname.replace("/login/oauth/authorize", "/signup/oauth/authorize");
   } else if (authConfig.appName === application.name) {
     url = "/signup";
   } else {
@@ -1217,10 +1241,10 @@ export function renderSignupLink(application, text) {
   }
 
   const storeSigninUrl = () => {
-    sessionStorage.setItem("signinUrl", window.location.href);
+    sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
   };
 
-  return renderLink(url, text, storeSigninUrl);
+  return renderLink(url + window.location.search, text, storeSigninUrl);
 }
 
 export function renderForgetLink(application, text) {
@@ -1237,7 +1261,11 @@ export function renderForgetLink(application, text) {
     }
   }
 
-  return renderLink(url, text, null);
+  const storeSigninUrl = () => {
+    sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
+  };
+
+  return renderLink(url, text, storeSigninUrl);
 }
 
 export function renderHelmet(application) {
@@ -1417,4 +1445,61 @@ export function getCurrencySymbol(currency) {
   } else {
     return currency;
   }
+}
+
+export function getFriendlyUserName(account) {
+  if (account.firstName !== "" && account.lastName !== "") {
+    return `${account.firstName}, ${account.lastName}`;
+  } else if (account.displayName !== "") {
+    return account.displayName;
+  } else if (account.name !== "") {
+    return account.name;
+  } else {
+    return account.id;
+  }
+}
+
+export function getUserCommonFields() {
+  return ["Owner", "Name", "CreatedTime", "UpdatedTime", "DeletedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
+    "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
+    "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted", "CreatedIp",
+    "PreferredMfaType", "TotpSecret", "SignupApplication"];
+}
+
+export function getDefaultHtmlEmailContent() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verification Code Email</title>
+<style>
+    body { font-family: Arial, sans-serif; }
+    .email-container { width: 600px; margin: 0 auto; }
+    .header { text-align: center; }
+    .code { font-size: 24px; margin: 20px 0; text-align: center; }
+    .footer { font-size: 12px; text-align: center; margin-top: 50px; }
+    .footer a { color: #000; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="email-container">
+  <div class="header">
+        <h3>Casbin Organization</h3>
+        <img src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
+    </div>
+    <p><strong>%{user.friendlyName}</strong>, here is your verification code</p>
+    <p>Use this code for your transaction. It's valid for 5 minutes</p>
+    <div class="code">
+        %s
+    </div>
+    <p>Thanks</p>
+    <p>Casbin Team</p>
+    <hr>
+    <div class="footer">
+        <p>Casdoor is a brand operated by Casbin organization. For more info please refer to <a href="https://casdoor.org">https://casdoor.org</a></p>
+    </div>
+</div>
+</body>
+</html>`;
 }

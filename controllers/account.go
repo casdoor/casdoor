@@ -56,6 +56,17 @@ type Captcha struct {
 	SubType       string `json:"subType"`
 }
 
+// this API is used by "Api URL" of Flarum's FoF Passport plugin
+// https://github.com/FriendsOfFlarum/passport
+type LaravelResponse struct {
+	Id              string `json:"id"`
+	Name            string `json:"name"`
+	Email           string `json:"email"`
+	EmailVerifiedAt string `json:"email_verified_at"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+}
+
 // Signup
 // @Tag Login API
 // @Title Signup
@@ -82,6 +93,10 @@ func (c *ApiController) Signup() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+		return
+	}
 
 	if !application.EnableSignUp {
 		c.ResponseError(c.T("account:The application does not allow to sign up new account"))
@@ -94,14 +109,34 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), authForm.Organization))
+		return
+	}
+
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
 
+	invitation, msg := object.CheckInvitationCode(application, organization, &authForm, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+	invitationName := ""
+	if invitation != nil {
+		invitationName = invitation.Name
+	}
+
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
-		checkResult := object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
+		var checkResult *object.VerifyResult
+		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(c.T(err.Error()))
+			return
+		}
 		if checkResult.Code != object.VerificationSuccess {
 			c.ResponseError(checkResult.Msg)
 			return
@@ -111,7 +146,13 @@ func (c *ApiController) Signup() {
 	var checkPhone string
 	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && authForm.Phone != "" {
 		checkPhone, _ = util.GetE164Number(authForm.Phone, authForm.CountryCode)
-		checkResult := object.CheckVerificationCode(checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
+
+		var checkResult *object.VerifyResult
+		checkResult, err = object.CheckVerificationCode(checkPhone, authForm.PhoneCode, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(c.T(err.Error()))
+			return
+		}
 		if checkResult.Code != object.VerificationSuccess {
 			c.ResponseError(checkResult.Msg)
 			return
@@ -168,6 +209,8 @@ func (c *ApiController) Signup() {
 		SignupApplication: application.Name,
 		Properties:        map[string]string{},
 		Karma:             0,
+		Invitation:        invitationName,
+		InvitationCode:    authForm.InvitationCode,
 	}
 
 	if len(organization.Tags) > 0 {
@@ -200,6 +243,15 @@ func (c *ApiController) Signup() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if invitation != nil {
+		invitation.UsedCount += 1
+		_, err := object.UpdateInvitation(invitation.GetId(), invitation, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if application.HasPromptPage() && user.Type == "normal-user" {
@@ -238,7 +290,7 @@ func (c *ApiController) Signup() {
 // @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
 // @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout [get,post]
+// @router /logout [post]
 func (c *ApiController) Logout() {
 	// ivancetus 20240216 should user be able to see failed attempt to logout action?
 	// defaultRedirectUrl := "https://sso-web.ivancetus.com"
@@ -421,23 +473,12 @@ func (c *ApiController) GetUserinfo() {
 // @Title UserInfo2
 // @Tag Account API
 // @Description return Laravel compatible user information according to OAuth 2.0
-// @Success 200 {object} LaravelResponse The Response object
+// @Success 200 {object} controllers.LaravelResponse The Response object
 // @router /user [get]
 func (c *ApiController) GetUserinfo2() {
 	user, ok := c.RequireSignedInUser()
 	if !ok {
 		return
-	}
-
-	// this API is used by "Api URL" of Flarum's FoF Passport plugin
-	// https://github.com/FriendsOfFlarum/passport
-	type LaravelResponse struct {
-		Id              string `json:"id"`
-		Name            string `json:"name"`
-		Email           string `json:"email"`
-		EmailVerifiedAt string `json:"email_verified_at"`
-		CreatedAt       string `json:"created_at"`
-		UpdatedAt       string `json:"updated_at"`
 	}
 
 	response := LaravelResponse{
@@ -456,7 +497,8 @@ func (c *ApiController) GetUserinfo2() {
 // GetCaptcha ...
 // @Tag Login API
 // @Title GetCaptcha
-// @router /api/get-captcha [get]
+// @router /get-captcha [get]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) GetCaptcha() {
 	applicationId := c.Input().Get("applicationId")
 	isCurrentProvider := c.Input().Get("isCurrentProvider")

@@ -38,12 +38,38 @@ func (application *Application) GetProviderByCategory(category string) (*Provide
 	return nil, nil
 }
 
-func (application *Application) GetEmailProvider() (*Provider, error) {
-	return application.GetProviderByCategory("Email")
+func (application *Application) GetProviderByCategoryAndRule(category string, method string) (*Provider, error) {
+	providers, err := GetProviders(application.Organization)
+	if err != nil {
+		return nil, err
+	}
+
+	m := map[string]*Provider{}
+	for _, provider := range providers {
+		if provider.Category != category {
+			continue
+		}
+
+		m[provider.Name] = provider
+	}
+
+	for _, providerItem := range application.Providers {
+		if providerItem.Rule == method || (providerItem.Rule == "all" || providerItem.Rule == "" || providerItem.Rule == "None") {
+			if provider, ok := m[providerItem.Name]; ok {
+				return provider, nil
+			}
+		}
+	}
+
+	return nil, nil
 }
 
-func (application *Application) GetSmsProvider() (*Provider, error) {
-	return application.GetProviderByCategory("SMS")
+func (application *Application) GetEmailProvider(method string) (*Provider, error) {
+	return application.GetProviderByCategoryAndRule("Email", method)
+}
+
+func (application *Application) GetSmsProvider(method string) (*Provider, error) {
+	return application.GetProviderByCategoryAndRule("SMS", method)
 }
 
 func (application *Application) GetStorageProvider() (*Provider, error) {

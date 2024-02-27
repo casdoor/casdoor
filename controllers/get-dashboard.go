@@ -18,7 +18,7 @@ import "github.com/casdoor/casdoor/object"
 
 // GetDashboard
 // @Title GetDashboard
-// @Tag GetDashboard API
+// @Tag System API
 // @Description get information of dashboard
 // @Success 200 {object} controllers.Response The Response object
 // @router /get-dashboard [get]

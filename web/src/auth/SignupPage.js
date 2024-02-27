@@ -29,6 +29,7 @@ import LanguageSelect from "../common/select/LanguageSelect";
 import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
+import * as InvitationBackend from "../backend/InvitationBackend";
 
 const formItemLayout = {
   labelCol: {
@@ -86,13 +87,22 @@ class SignupPage extends React.Component {
   componentDidMount() {
     const oAuthParams = Util.getOAuthGetParameters();
     if (oAuthParams !== null) {
-      const signinUrl = window.location.href.replace("/signup/oauth/authorize", "/login/oauth/authorize");
-      sessionStorage.setItem("signinUrl", signinUrl);
+      const signinUrl = window.location.pathname.replace("/signup/oauth/authorize", "/login/oauth/authorize");
+      sessionStorage.setItem("signinUrl", signinUrl + window.location.search);
     }
 
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== null) {
         this.getApplication(this.state.applicationName);
+
+        const sp = new URLSearchParams(window.location.search);
+        if (sp.has("invitationCode")) {
+          const invitationCode = sp.get("invitationCode");
+          this.setState({invitationCode: invitationCode});
+          if (invitationCode !== "") {
+            this.getInvitationCodeInfo(invitationCode, "admin/" + this.state.applicationName);
+          }
+        }
       } else if (oAuthParams !== null) {
         this.getApplicationLogin(oAuthParams);
       } else {
@@ -130,6 +140,17 @@ class SignupPage extends React.Component {
             msg: res.msg,
           });
         }
+      });
+  }
+
+  getInvitationCodeInfo(invitationCode, application) {
+    InvitationBackend.getInvitationCodeInfo(invitationCode, application)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+        this.setState({invitation: res.data});
       });
   }
 
@@ -202,7 +223,7 @@ class SignupPage extends React.Component {
             Setting.goToLinkSoft(this, this.getResultPath(application, values));
           }
         } else {
-          Setting.showMessage("error", i18next.t(`signup:${res.msg}`));
+          Setting.showMessage("error", res.msg);
         }
       });
   }
@@ -235,7 +256,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input placeholder={signupItem.placeholder} />
+          <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.username !== ""} />
         </Form.Item>
       );
     } else if (signupItem.name === "Display name") {
@@ -363,7 +384,7 @@ class SignupPage extends React.Component {
               },
             ]}
           >
-            <Input placeholder={signupItem.placeholder} onChange={e => this.setState({email: e.target.value})} />
+            <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""} onChange={e => this.setState({email: e.target.value})} />
           </Form.Item>
           {
             signupItem.rule !== "No verification" &&
@@ -434,6 +455,7 @@ class SignupPage extends React.Component {
                 <Input
                   placeholder={signupItem.placeholder}
                   style={{width: "65%"}}
+                  disabled={this.state.invitation !== undefined && this.state.invitation.phone !== ""}
                   onChange={e => this.setState({phone: e.target.value})}
                 />
               </Form.Item>
@@ -524,7 +546,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input placeholder={signupItem.placeholder} />
+          <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation !== ""} />
         </Form.Item>
       );
     } else if (signupItem.name === "Agreement") {
@@ -553,6 +575,20 @@ class SignupPage extends React.Component {
         >
         </Result>
       );
+    }
+    if (this.state.invitation !== undefined) {
+      if (this.state.invitation.username !== "") {
+        this.form.current?.setFieldValue("username", this.state.invitation.username);
+      }
+      if (this.state.invitation.email !== "") {
+        this.form.current?.setFieldValue("email", this.state.invitation.email);
+      }
+      if (this.state.invitation.phone !== "") {
+        this.form.current?.setFieldValue("phone", this.state.invitation.phone);
+      }
+      if (this.state.invitationCode !== "") {
+        this.form.current?.setFieldValue("invitationCode", this.state.invitationCode);
+      }
     }
     return (
       <Form
@@ -603,7 +639,7 @@ class SignupPage extends React.Component {
           <a onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
-              Setting.goToLink(linkInStorage);
+              Setting.goToLinkSoft(this, linkInStorage);
             } else {
               Setting.redirectToLoginPage(application, this.props.history);
             }

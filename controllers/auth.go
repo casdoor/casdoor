@@ -19,12 +19,11 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -35,11 +34,6 @@ import (
 	"github.com/casdoor/casdoor/util"
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
-)
-
-var (
-	wechatScanType string
-	lock           sync.RWMutex
 )
 
 func codeToResponse(code *object.Code) *Response {
@@ -222,7 +216,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param   redirectUri    query    string  true        "redirect uri"
 // @Param   scope    query    string  true        "scope"
 // @Param   state    query    string  true        "state"
-// @Success 200 {object}  Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /get-app-login [get]
 func (c *ApiController) GetApplicationLogin() {
 	clientId := c.Input().Get("clientId")
@@ -342,7 +336,28 @@ func (c *ApiController) Login() {
 				return
 			}
 
+			var application *object.Application
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
+			if application == nil {
+				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				return
+			}
+
 			verificationCodeType := object.GetVerifyType(authForm.Username)
+			if verificationCodeType == object.VerifyTypeEmail && !application.IsCodeSigninViaEmailEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with email is not enabled for the application"))
+				return
+			}
+			if verificationCodeType == object.VerifyTypePhone && !application.IsCodeSigninViaSmsEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with SMS is not enabled for the application"))
+				return
+			}
+
 			var checkDest string
 			if verificationCodeType == object.VerifyTypePhone {
 				authForm.CountryCode = user.GetCountryCode(authForm.CountryCode)
@@ -378,8 +393,12 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
-			if !application.EnablePassword {
+			if authForm.SigninMethod == "Password" && !application.IsPasswordEnabled() {
 				c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
+				return
+			}
+			if authForm.SigninMethod == "LDAP" && !application.IsLdapEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with LDAP is not enabled for the application"))
 				return
 			}
 			var enableCaptcha bool
@@ -411,7 +430,14 @@ func (c *ApiController) Login() {
 			}
 
 			password := authForm.Password
-			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha)
+			isSigninViaLdap := authForm.SigninMethod == "LDAP"
+			var isPasswordWithLdapEnabled bool
+			if authForm.SigninMethod == "Password" {
+				isPasswordWithLdapEnabled = application.IsPasswordWithLdapEnabled()
+			} else {
+				isPasswordWithLdapEnabled = false
+			}
+			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		}
 
 		if err != nil {
@@ -864,6 +890,7 @@ func (c *ApiController) GetSamlLogin() {
 	authURL, method, err := object.GenerateSamlRequest(providerId, relayState, c.Ctx.Request.Host, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 	c.ResponseOk(authURL, method)
 }
@@ -874,60 +901,126 @@ func (c *ApiController) HandleSamlLogin() {
 	decode, err := base64.StdEncoding.DecodeString(relayState)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 	slice := strings.Split(string(decode), "&")
 	relayState = url.QueryEscape(relayState)
 	samlResponse = url.QueryEscape(samlResponse)
 	targetUrl := fmt.Sprintf("%s?relayState=%s&samlResponse=%s",
 		slice[4], relayState, samlResponse)
-	c.Redirect(targetUrl, 303)
+	c.Redirect(targetUrl, http.StatusSeeOther)
 }
 
 // HandleOfficialAccountEvent ...
-// @Tag HandleOfficialAccountEvent API
+// @Tag System API
 // @Title HandleOfficialAccountEvent
-// @router /api/webhook [POST]
+// @router /webhook [POST]
+// @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) HandleOfficialAccountEvent() {
-	respBytes, err := ioutil.ReadAll(c.Ctx.Request.Body)
+	if c.Ctx.Request.Method == "GET" {
+		s := c.Ctx.Request.FormValue("echostr")
+		echostr, _ := strconv.Atoi(s)
+		c.SetData(echostr)
+		c.ServeJSON()
+		return
+	}
+	respBytes, err := io.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
+	signature := c.Input().Get("signature")
+	timestamp := c.Input().Get("timestamp")
+	nonce := c.Input().Get("nonce")
 	var data struct {
-		MsgType  string `xml:"MsgType"`
-		Event    string `xml:"Event"`
-		EventKey string `xml:"EventKey"`
+		MsgType      string `xml:"MsgType"`
+		Event        string `xml:"Event"`
+		EventKey     string `xml:"EventKey"`
+		FromUserName string `xml:"FromUserName"`
+		Ticket       string `xml:"Ticket"`
 	}
 	err = xml.Unmarshal(respBytes, &data)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	lock.Lock()
-	defer lock.Unlock()
-	if data.EventKey != "" {
-		wechatScanType = data.Event
+	if strings.ToUpper(data.Event) != "SCAN" && strings.ToUpper(data.Event) != "SUBSCRIBE" {
 		c.Ctx.WriteString("")
+		return
 	}
+	if data.Ticket == "" {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	providerId := data.EventKey
+	provider, err := object.GetProvider(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if data.Ticket == "" {
+		c.ResponseError("empty ticket")
+		return
+	}
+	if !idp.VerifyWechatSignature(provider.Content, nonce, timestamp, signature) {
+		c.ResponseError("invalid signature")
+		return
+	}
+
+	idp.Lock.Lock()
+	if idp.WechatCacheMap == nil {
+		idp.WechatCacheMap = make(map[string]idp.WechatCacheMapValue)
+	}
+	idp.WechatCacheMap[data.Ticket] = idp.WechatCacheMapValue{
+		IsScanned:     true,
+		WechatUnionId: data.FromUserName,
+	}
+	idp.Lock.Unlock()
+
+	c.Ctx.WriteString("")
 }
 
 // GetWebhookEventType ...
-// @Tag GetWebhookEventType API
+// @Tag System API
 // @Title GetWebhookEventType
-// @router /api/get-webhook-event [GET]
+// @router /get-webhook-event [GET]
+// @Param   ticket     query    string  true        "The eventId of QRCode"
+// @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) GetWebhookEventType() {
-	lock.Lock()
-	defer lock.Unlock()
-	resp := &Response{
-		Status: "ok",
-		Msg:    "",
-		Data:   wechatScanType,
+	ticket := c.Input().Get("ticket")
+
+	idp.Lock.RLock()
+	_, ok := idp.WechatCacheMap[ticket]
+	idp.Lock.RUnlock()
+	if !ok {
+		c.ResponseError("ticket not found")
+		return
 	}
-	c.Data["json"] = resp
-	wechatScanType = ""
-	c.ServeJSON()
+
+	c.ResponseOk("SCAN", ticket)
+}
+
+// GetQRCode
+// @Tag System API
+// @Title GetWechatQRCode
+// @router /get-qrcode [GET]
+// @Param   id     query    string  true        "The id ( owner/name ) of provider"
+// @Success 200 {object} controllers.Response The Response object
+func (c *ApiController) GetQRCode() {
+	providerId := c.Input().Get("id")
+	provider, err := object.GetProvider(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(code, ticket)
 }
 
 // GetCaptchaStatus
@@ -936,26 +1029,30 @@ func (c *ApiController) GetWebhookEventType() {
 // @Description Get Login Error Counts
 // @Param   id     query    string  true        "The id ( owner/name ) of user"
 // @Success 200 {object} controllers.Response The Response object
-// @router /api/get-captcha-status [get]
+// @router /get-captcha-status [get]
 func (c *ApiController) GetCaptchaStatus() {
 	organization := c.Input().Get("organization")
-	userId := c.Input().Get("user_id")
+	userId := c.Input().Get("userId")
 	user, err := object.GetUserByFields(organization, userId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	failedSigninLimit, _, err := object.GetFailedSigninConfigByUser(user)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	captchaEnabled := false
+	if user != nil {
+		var failedSigninLimit int
+		failedSigninLimit, _, err = object.GetFailedSigninConfigByUser(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if user.SigninWrongTimes >= failedSigninLimit {
+			captchaEnabled = true
+		}
 	}
 
-	var captchaEnabled bool
-	if user != nil && user.SigninWrongTimes >= failedSigninLimit {
-		captchaEnabled = true
-	}
 	c.ResponseOk(captchaEnabled)
 }
 
@@ -963,7 +1060,8 @@ func (c *ApiController) GetCaptchaStatus() {
 // @Title Callback
 // @Tag Callback API
 // @Description Get Login Error Counts
-// @router /api/Callback [post]
+// @router /Callback [post]
+// @Success 200 {object} object.Userinfo The Response object
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")

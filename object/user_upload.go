@@ -134,6 +134,7 @@ func UploadUsers(owner string, path string) (bool, error) {
 			LastSigninIp:      parseLineItem(&line, 38),
 			Ldap:              "",
 			Properties:        map[string]string{},
+			DeletedTime:       parseLineItem(&line, 39),
 		}
 
 		if _, ok := oldUserMap[user.GetId()]; !ok {

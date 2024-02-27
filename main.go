@@ -45,12 +45,12 @@ func main() {
 	object.CreateTables()
 
 	object.InitDb()
-	object.InitFromFile()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
 	authz.InitApi()
 	object.InitUserManager()
+	object.InitFromFile()
 	object.InitCasvisorConfig()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })

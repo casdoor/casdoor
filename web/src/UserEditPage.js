@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -27,6 +27,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import PasswordModal from "./common/modal/PasswordModal";
 import ResetModal from "./common/modal/ResetModal";
 import AffiliationSelect from "./common/select/AffiliationSelect";
+import moment from "moment";
 import OAuthWidget from "./common/OAuthWidget";
 import SamlWidget from "./common/SamlWidget";
 import RegionSelect from "./common/select/RegionSelect";
@@ -122,6 +123,17 @@ class UserEditPage extends React.Component {
         this.setState({
           applications: res.data || [],
         });
+
+        const applications = res.data;
+        if (this.state.user) {
+          if (this.state.user.signupApplication === "" || applications.filter(application => application.name === this.state.user.signupApplication).length === 0) {
+            if (applications.length > 0) {
+              this.updateUserField("signupApplication", applications[0].name);
+            } else {
+              this.updateUserField("signupApplication", "");
+            }
+          }
+        }
       });
   }
 
@@ -892,6 +904,7 @@ class UserEditPage extends React.Component {
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch checked={this.state.user.isDeleted} onChange={checked => {
               this.updateUserField("isDeleted", checked);
+              this.updateUserField("deletedTime", checked ? moment().format() : "");
             }} />
           </Col>
         </Row>
@@ -924,11 +937,9 @@ class UserEditPage extends React.Component {
                       </Space>
                       {item.enabled ? (
                         <Space>
-                          {item.enabled ?
-                            <Tag icon={<CheckCircleOutlined />} color="success">
-                              {i18next.t("general:Enabled")}
-                            </Tag> : null
-                          }
+                          <Tag icon={<CheckCircleOutlined />} color="success">
+                            {i18next.t("general:Enabled")}
+                          </Tag>
                           {item.isPreferred ?
                             <Tag icon={<CheckCircleOutlined />} color="blue" style={{marginRight: 20}} >
                               {i18next.t("mfa:preferred")}
@@ -950,18 +961,23 @@ class UserEditPage extends React.Component {
                               {i18next.t("mfa:Set preferred")}
                             </Button>
                           }
+                          {this.isSelf() ? <Button type={"default"} onClick={() => {
+                            this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
+                          }}>
+                            {i18next.t("general:Edit")}
+                          </Button> : null}
                         </Space>
                       ) :
                         <Space>
-                          {item.mfaType !== TotpMfaType && Setting.isAdminUser(this.props.account) && window.location.href.indexOf("/users") !== -1 ?
+                          {item.mfaType !== TotpMfaType && Setting.isLocalAdminUser(this.props.account) && !this.isSelf() ?
                             <EnableMfaModal user={this.state.user} mfaType={item.mfaType} onSuccess={() => {
                               this.getUser();
                             }} /> : null}
-                          <Button type={"default"} onClick={() => {
+                          {this.isSelf() ? <Button type={"default"} onClick={() => {
                             this.props.history.push(`/mfa/setup?mfaType=${item.mfaType}`);
                           }}>
                             {i18next.t("mfa:Setup")}
-                          </Button>
+                          </Button> : null}
                         </Space>}
                     </List.Item>
                   )}
@@ -1027,24 +1043,36 @@ class UserEditPage extends React.Component {
   renderUser() {
     return (
       <Card size="small" title={
-        <div>
-          {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
+        (this.props.account === null) ? i18next.t("user:User Profile") : (
+          <div>
+            {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+          </div>
+        )
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        {
-          this.getUserOrganization()?.accountItems?.map(accountItem => {
-            return (
-              <React.Fragment key={accountItem.name}>
-                {
-                  this.renderAccountItem(accountItem)
-                }
-              </React.Fragment>
-            );
-          })
-        }
+        <Form>
+          {
+            this.getUserOrganization()?.accountItems?.map(accountItem => {
+              return (
+                <React.Fragment key={accountItem.name}>
+                  <Form.Item name={accountItem.name}
+                    validateTrigger="onChange"
+                    rules={[
+                      {
+                        pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
+                        message: i18next.t("user:This field value doesn't match the pattern rule"),
+                      },
+                    ]}
+                    style={{margin: 0}}>
+                    {this.renderAccountItem(accountItem)}
+                  </Form.Item>
+                </React.Fragment>
+              );
+            })
+          }
+        </Form>
       </Card>
     );
   }
@@ -1095,7 +1123,11 @@ class UserEditPage extends React.Component {
               if (userListUrl !== null) {
                 this.props.history.push(userListUrl);
               } else {
-                this.props.history.push("/users");
+                if (Setting.isLocalAdminUser(this.props.account)) {
+                  this.props.history.push("/users");
+                } else {
+                  this.props.history.push("/");
+                }
               }
             } else if (isAdmin) {
               this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
@@ -1148,7 +1180,7 @@ class UserEditPage extends React.Component {
           )
         }
         {
-          this.state.user === null ? null :
+          (this.state.user === null || this.props.account === null) ? null :
             <div style={{marginTop: "20px", marginLeft: "40px"}}>
               <Button size="large" onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
               <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>

@@ -41,13 +41,12 @@ func (c *ApiController) GetOrganizations() {
 
 	isGlobalAdmin := c.IsGlobalAdmin()
 	if limit == "" || page == "" {
-		var maskedOrganizations []*object.Organization
+		var organizations []*object.Organization
 		var err error
-
 		if isGlobalAdmin {
-			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
+			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner))
 		} else {
-			maskedOrganizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+			organizations, err = object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 		}
 
 		if err != nil {
@@ -55,15 +54,15 @@ func (c *ApiController) GetOrganizations() {
 			return
 		}
 
-		c.ResponseOk(maskedOrganizations)
+		c.ResponseOk(organizations)
 	} else {
 		if !isGlobalAdmin {
-			maskedOrganizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
+			organizations, err := object.GetMaskedOrganizations(object.GetOrganizations(owner, c.getCurrentUser().Owner))
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
-			c.ResponseOk(maskedOrganizations)
+			c.ResponseOk(organizations)
 		} else {
 			limit := util.ParseInt(limit)
 			count, err := object.GetOrganizationCount(owner, field, value)
@@ -93,13 +92,13 @@ func (c *ApiController) GetOrganizations() {
 // @router /get-organization [get]
 func (c *ApiController) GetOrganization() {
 	id := c.Input().Get("id")
-	maskedOrganization, err := object.GetMaskedOrganization(object.GetOrganization(id))
+	organization, err := object.GetMaskedOrganization(object.GetOrganization(id))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(maskedOrganization)
+	c.ResponseOk(organization)
 }
 
 // UpdateOrganization ...
@@ -178,7 +177,7 @@ func (c *ApiController) DeleteOrganization() {
 // @Tag Organization API
 // @Description get default application
 // @Param   id     query    string  true        "organization id"
-// @Success 200 {object}  Response The Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /get-default-application [get]
 func (c *ApiController) GetDefaultApplication() {
 	userId := c.GetSessionUsername()
@@ -190,8 +189,8 @@ func (c *ApiController) GetDefaultApplication() {
 		return
 	}
 
-	maskedApplication := object.GetMaskedApplication(application, userId)
-	c.ResponseOk(maskedApplication)
+	application = object.GetMaskedApplication(application, userId)
+	c.ResponseOk(application)
 }
 
 // GetOrganizationNames ...

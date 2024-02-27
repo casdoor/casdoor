@@ -19,6 +19,14 @@ import (
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/google/uuid"
+)
+
+const (
+	MfaRecoveryCodesSession = "mfa_recovery_codes"
+	MfaCountryCodeSession   = "mfa_country_code"
+	MfaDestSession          = "mfa_dest"
+	MfaTotpSecretSession    = "mfa_totp_secret"
 )
 
 // MfaSetupInitiate
@@ -57,11 +65,19 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
-	mfaProps, err := MfaUtil.Initiate(c.Ctx, user.GetId())
+	mfaProps, err := MfaUtil.Initiate(user.GetId())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	recoveryCode := uuid.NewString()
+	c.SetSession(MfaRecoveryCodesSession, recoveryCode)
+	if mfaType == object.TotpType {
+		c.SetSession(MfaTotpSecretSession, mfaProps.Secret)
+	}
+
+	mfaProps.RecoveryCodes = []string{recoveryCode}
 
 	resp := mfaProps
 	c.ResponseOk(resp)
@@ -73,7 +89,7 @@ func (c *ApiController) MfaSetupInitiate() {
 // @Description setup verify totp
 // @param	secret		form	string	true	"MFA secret"
 // @param	passcode	form 	string 	true	"MFA passcode"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/verify [post]
 func (c *ApiController) MfaSetupVerify() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
@@ -83,13 +99,46 @@ func (c *ApiController) MfaSetupVerify() {
 		c.ResponseError("missing auth type or passcode")
 		return
 	}
-	mfaUtil := object.GetMfaUtil(mfaType, nil)
+
+	config := &object.MfaProps{
+		MfaType: mfaType,
+	}
+	if mfaType == object.TotpType {
+		secret := c.GetSession(MfaTotpSecretSession)
+		if secret == nil {
+			c.ResponseError("totp secret is missing")
+			return
+		}
+		config.Secret = secret.(string)
+	} else if mfaType == object.SmsType {
+		dest := c.GetSession(MfaDestSession)
+		if dest == nil {
+			c.ResponseError("destination is missing")
+			return
+		}
+		config.Secret = dest.(string)
+		countryCode := c.GetSession(MfaCountryCodeSession)
+		if countryCode == nil {
+			c.ResponseError("country code is missing")
+			return
+		}
+		config.CountryCode = countryCode.(string)
+	} else if mfaType == object.EmailType {
+		dest := c.GetSession(MfaDestSession)
+		if dest == nil {
+			c.ResponseError("destination is missing")
+			return
+		}
+		config.Secret = dest.(string)
+	}
+
+	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
 		c.ResponseError("Invalid multi-factor authentication type")
 		return
 	}
 
-	err := mfaUtil.SetupVerify(c.Ctx, passcode)
+	err := mfaUtil.SetupVerify(passcode)
 	if err != nil {
 		c.ResponseError(err.Error())
 	} else {
@@ -104,7 +153,7 @@ func (c *ApiController) MfaSetupVerify() {
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
 // @param type	form	string	true	"MFA auth type"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/enable [post]
 func (c *ApiController) MfaSetupEnable() {
 	owner := c.Ctx.Request.Form.Get("owner")
@@ -122,16 +171,67 @@ func (c *ApiController) MfaSetupEnable() {
 		return
 	}
 
-	mfaUtil := object.GetMfaUtil(mfaType, nil)
+	config := &object.MfaProps{
+		MfaType: mfaType,
+	}
+
+	if mfaType == object.TotpType {
+		secret := c.GetSession(MfaTotpSecretSession)
+		if secret == nil {
+			c.ResponseError("totp secret is missing")
+			return
+		}
+		config.Secret = secret.(string)
+	} else if mfaType == object.EmailType {
+		if user.Email == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
+				c.ResponseError("destination is missing")
+				return
+			}
+			user.Email = dest.(string)
+		}
+	} else if mfaType == object.SmsType {
+		if user.Phone == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
+				c.ResponseError("destination is missing")
+				return
+			}
+			user.Phone = dest.(string)
+			countryCode := c.GetSession(MfaCountryCodeSession)
+			if countryCode == nil {
+				c.ResponseError("country code is missing")
+				return
+			}
+			user.CountryCode = countryCode.(string)
+		}
+	}
+	recoveryCodes := c.GetSession(MfaRecoveryCodesSession)
+	if recoveryCodes == nil {
+		c.ResponseError("recovery codes is missing")
+		return
+	}
+	config.RecoveryCodes = []string{recoveryCodes.(string)}
+
+	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
 		c.ResponseError("Invalid multi-factor authentication type")
 		return
 	}
 
-	err = mfaUtil.Enable(c.Ctx, user)
+	err = mfaUtil.Enable(user)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	c.DelSession(MfaRecoveryCodesSession)
+	if mfaType == object.TotpType {
+		c.DelSession(MfaTotpSecretSession)
+	} else {
+		c.DelSession(MfaCountryCodeSession)
+		c.DelSession(MfaDestSession)
 	}
 
 	c.ResponseOk(http.StatusText(http.StatusOK))
@@ -143,7 +243,7 @@ func (c *ApiController) MfaSetupEnable() {
 // @Description: Delete MFA
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /delete-mfa/ [post]
 func (c *ApiController) DeleteMfa() {
 	owner := c.Ctx.Request.Form.Get("owner")
@@ -176,7 +276,7 @@ func (c *ApiController) DeleteMfa() {
 // @param owner	form	string	true	"owner of user"
 // @param name	form	string	true	"name of user"
 // @param id	form	string	true	"id of user's MFA props"
-// @Success 200 {object}  Response object
+// @Success 200 {object} controllers.Response The Response object
 // @router /set-preferred-mfa [post]
 func (c *ApiController) SetPreferredMfa() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")

@@ -15,18 +15,23 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s与用户名: %s (%s)已经与其他账户绑定: %s (%s)",
     "The application: %s does not exist": "应用%s不存在",
+    "The login method: login with LDAP is not enabled for the application": "该应用禁止采用LDAP登录方式",
+    "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
+    "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
+    "The organization: %s does not exist": "组织: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s 没有激活或正在等待订阅并且应用: %s 没有默认值"
   },
   "cas": {
     "Service %s and %s do not match": "服务%s与%s不匹配"
   },
   "check": {
     "Affiliation cannot be blank": "工作单位不可为空",
+    "Default code does not match the code's matching rules": "邀请码默认值和邀请码规则不匹配",
     "DisplayName cannot be blank": "显示名称不可为空",
     "DisplayName is not valid real name": "显示名称必须是真实姓名",
     "Email already exists": "该邮箱已存在",
@@ -34,8 +39,10 @@
     "Email is invalid": "无效邮箱",
     "Empty username.": "用户名不可为空",
     "FirstName cannot be blank": "名不可以为空",
-    "Invitation code cannot be blank": "Invitation code cannot be blank",
-    "Invitation code is invalid": "Invitation code is invalid",
+    "Invitation code cannot be blank": "邀请码不能为空",
+    "Invitation code exhausted": "邀请码使用次数已耗尽",
+    "Invitation code is invalid": "邀请码无效",
+    "Invitation code suspended": "邀请码已被禁止使用",
     "LDAP user name or password incorrect": "LDAP密码错误",
     "LastName cannot be blank": "姓不可以为空",
     "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的uid，请检查您的 LDAP 服务器",
@@ -43,10 +50,16 @@
     "Phone already exists": "该手机号已存在",
     "Phone cannot be empty": "手机号不可为空",
     "Phone number is invalid": "无效手机号",
+    "Please register using the email corresponding to the invitation code": "请使用邀请码关联的邮箱注册",
+    "Please register using the phone  corresponding to the invitation code": "请使用邀请码关联的手机号注册",
+    "Please register using the username corresponding to the invitation code": "请使用邀请码关联的用户名注册",
     "Session outdated, please login again": "会话已过期，请重新登录",
+    "The invitation code has already been used": "邀请码已被使用",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
     "The user: %s doesn't exist in LDAP server": "用户: %s 在LDAP服务器中未找到",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "值 \\\"%s\\\"在账户信息字段\\\"%s\\\" 中与应用的账户项正则表达式不匹配",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "值\\\"%s\\\"在注册字段\\\"%s\\\"中与应用\\\"%s\\\"的注册项正则表达式不匹配",
     "Username already exists": "用户名已存在",
     "Username cannot be an email address": "用户名不可以是邮箱地址",
     "Username cannot contain white spaces": "用户名禁止包含空格",
@@ -62,6 +75,7 @@
   "general": {
     "Missing parameter": "缺少参数",
     "Please login first": "请先登录",
+    "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
     "this operation is not allowed in demo mode": "demo模式下不允许该操作"
@@ -81,6 +95,9 @@
     "Only admin can modify the %s.": "仅允许管理员可以修改%s",
     "The %s is immutable.": "%s 是不可变的",
     "Unknown modify rule %s.": "未知的修改规则: %s"
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "权限: \\\"%s\\\" 不存在"
   },
   "provider": {
     "Invalid application id": "无效的应用ID",
@@ -106,7 +123,6 @@
     "The provider type: %s is not supported": "不支持的提供商类型: %s"
   },
   "token": {
-    "Empty clientId or clientSecret": "clientId或clientSecret为空",
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
     "Invalid client_id": "无效的ClientId",
@@ -135,6 +151,8 @@
     "Unknown type": "未知类型",
     "Wrong verification code!": "验证码错误!",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \\\"提供商 \\\"列表",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \\\"提供商 \\\"列表",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {

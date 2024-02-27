@@ -93,6 +93,8 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.CreatedTime = value
 	case "UpdatedTime":
 		user.UpdatedTime = value
+	case "DeletedTime":
+		user.DeletedTime = value
 	case "Id":
 		user.Id = value
 	case "Type":
@@ -266,6 +268,7 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["Name"] = user.Name
 	m["CreatedTime"] = user.CreatedTime
 	m["UpdatedTime"] = user.UpdatedTime
+	m["DeletedTime"] = user.DeletedTime
 	m["Id"] = user.Id
 	m["Type"] = user.Type
 	m["Password"] = user.Password

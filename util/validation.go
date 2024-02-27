@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"net/mail"
 	"regexp"
+	"strings"
 
 	"github.com/nyaruka/phonenumbers"
 )
@@ -33,7 +34,7 @@ func init() {
 	rePhone, _ = regexp.Compile(`(\d{3})\d*(\d{4})`)
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
 	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
-	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+((?:-[a-zA-Z0-9]+)|(?:_[a-zA-Z0-9]+))*$")
+	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*$")
 }
 
 func IsEmailValid(email string) bool {
@@ -51,6 +52,23 @@ func IsPhoneValid(phone string, countryCode string) bool {
 
 func IsPhoneAllowInRegin(countryCode string, allowRegions []string) bool {
 	return ContainsString(allowRegions, countryCode)
+}
+
+func IsRegexp(s string) (bool, error) {
+	if _, err := regexp.Compile(s); err != nil {
+		return false, err
+	}
+	return regexp.QuoteMeta(s) != s, nil
+}
+
+func IsInvitationCodeMatch(pattern string, invitationCode string) (bool, error) {
+	if !strings.HasPrefix(pattern, "^") {
+		pattern = "^" + pattern
+	}
+	if !strings.HasSuffix(pattern, "$") {
+		pattern = pattern + "$"
+	}
+	return regexp.MatchString(pattern, invitationCode)
 }
 
 func GetE164Number(phone string, countryCode string) (string, bool) {

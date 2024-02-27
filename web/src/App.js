@@ -12,65 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {Component} from "react";
+import React, {Component, Suspense, lazy} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
-import Dashboard from "./basic/Dashboard";
-import ShortcutsPage from "./basic/ShortcutsPage";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {AppstoreTwoTone, BarsOutlined, DeploymentUnitOutlined, DollarTwoTone, DownOutlined, GithubOutlined, HomeTwoTone, InfoCircleFilled, LockTwoTone, LogoutOutlined, SafetyCertificateTwoTone, SettingOutlined, SettingTwoTone, ShareAltOutlined, WalletTwoTone} from "@ant-design/icons";
-import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result, Tooltip} from "antd";
-import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
-import OrganizationListPage from "./OrganizationListPage";
-import OrganizationEditPage from "./OrganizationEditPage";
-import UserListPage from "./UserListPage";
-import UserEditPage from "./UserEditPage";
-import RoleListPage from "./RoleListPage";
-import RoleEditPage from "./RoleEditPage";
-import PermissionListPage from "./PermissionListPage";
-import PermissionEditPage from "./PermissionEditPage";
-import EnforcerEditPage from "./EnforcerEditPage";
-import EnforcerListPage from "./EnforcerListPage";
-import GroupTreePage from "./GroupTreePage";
-import GroupEditPage from "./GroupEdit";
-import GroupListPage from "./GroupList";
-import ProviderListPage from "./ProviderListPage";
-import ProviderEditPage from "./ProviderEditPage";
-import ApplicationListPage from "./ApplicationListPage";
-import ApplicationEditPage from "./ApplicationEditPage";
-import ResourceListPage from "./ResourceListPage";
-import LdapEditPage from "./LdapEditPage";
-import LdapSyncPage from "./LdapSyncPage";
-import TokenListPage from "./TokenListPage";
-import TokenEditPage from "./TokenEditPage";
-import WebhookListPage from "./WebhookListPage";
-import WebhookEditPage from "./WebhookEditPage";
-import SyncerListPage from "./SyncerListPage";
-import SyncerEditPage from "./SyncerEditPage";
-import CertListPage from "./CertListPage";
-import CertEditPage from "./CertEditPage";
-import SubscriptionListPage from "./SubscriptionListPage";
-import SubscriptionEditPage from "./SubscriptionEditPage";
-import PricingListPage from "./PricingListPage";
-import PricingEditPage from "./PricingEditPage";
-import PlanListPage from "./PlanListPage";
-import PlanEditPage from "./PlanEditPage";
-import ProductListPage from "./ProductListPage";
-import ProductEditPage from "./ProductEditPage";
-import ProductBuyPage from "./ProductBuyPage";
-import PaymentListPage from "./PaymentListPage";
-import PaymentEditPage from "./PaymentEditPage";
-import PaymentResultPage from "./PaymentResultPage";
-import ModelListPage from "./ModelListPage";
-import ModelEditPage from "./ModelEditPage";
-import AdapterListPage from "./AdapterListPage";
-import AdapterEditPage from "./AdapterEditPage";
-import SessionListPage from "./SessionListPage";
-import MfaSetupPage from "./auth/MfaSetupPage";
-import SystemInfo from "./SystemInfo";
-import AccountPage from "./account/AccountPage";
-import AppListPage from "./basic/AppListPage";
+import {GithubOutlined, InfoCircleFilled, ShareAltOutlined} from "@ant-design/icons";
+import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tooltip} from "antd";
+import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
 
@@ -78,19 +27,11 @@ import * as Auth from "./auth/Auth";
 import EntryPage from "./EntryPage";
 import * as AuthBackend from "./auth/AuthBackend";
 import AuthCallback from "./auth/AuthCallback";
-import OdicDiscoveryPage from "./auth/OidcDiscoveryPage";
 import SamlCallback from "./auth/SamlCallback";
 import i18next from "i18next";
 import {withTranslation} from "react-i18next";
-import EnableMfaNotification from "./common/notifaction/EnableMfaNotification";
-import LanguageSelect from "./common/select/LanguageSelect";
-import ThemeSelect from "./common/select/ThemeSelect";
-import OrganizationSelect from "./common/select/OrganizationSelect";
-import {clearWeb3AuthToken} from "./auth/Web3Auth";
-import AccountAvatar from "./account/AccountAvatar";
-import OpenTour from "./common/OpenTour";
-
-const {Header, Footer, Content} = Layout;
+const ManagementPage = lazy(() => import("./ManagementPage"));
+const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
 
@@ -99,19 +40,23 @@ setTwoToneColor("rgb(87,52,211)");
 class App extends Component {
   constructor(props) {
     super(props);
+    let storageThemeAlgorithm = [];
+    try {
+      storageThemeAlgorithm = localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"];
+    } catch {
+      storageThemeAlgorithm = ["default"];
+    }
     this.state = {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
       uri: null,
-      menuVisible: false,
-      themeAlgorithm: ["default"],
+      themeAlgorithm: storageThemeAlgorithm,
       themeData: Conf.ThemeDefault,
-      logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      logo: this.getLogo(storageThemeAlgorithm),
       requiredEnableMfa: false,
       isAiAssistantOpen: false,
     };
-
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
       serverUrl: Setting.ServerUrl,
@@ -153,7 +98,7 @@ class App extends Component {
     });
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
       this.setState({selectedMenuKey: "/home"});
-    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/users") || uri.includes("/groups")) {
+    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
       this.setState({selectedMenuKey: "/orgs"});
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/identity"});
@@ -204,6 +149,7 @@ class App extends Component {
     return "";
   }
 
+  // ivan 240228
   getLogo(themes) {
     if (themes.includes("dark")) {
       // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
@@ -227,6 +173,19 @@ class App extends Component {
     });
 
     if (initThemeAlgorithm) {
+      if (localStorage.getItem("themeAlgorithm")) {
+        let storageThemeAlgorithm = [];
+        try {
+          storageThemeAlgorithm = JSON.parse(localStorage.getItem("themeAlgorithm"));
+        } catch {
+          storageThemeAlgorithm = ["default"];
+        }
+        this.setState({
+          logo: this.getLogo(storageThemeAlgorithm),
+          themeAlgorithm: storageThemeAlgorithm,
+        });
+        return;
+      }
       this.setState({
         logo: this.getLogo(Setting.getAlgorithmNames(theme)),
         themeAlgorithm: Setting.getAlgorithmNames(theme),
@@ -273,382 +232,13 @@ class App extends Component {
       });
   }
 
-  logout() {
-    this.setState({
-      expired: false,
-      submitted: false,
-    });
-
-    AuthBackend.logout()
-      .then((res) => {
-        if (res.status === "ok") {
-          const owner = this.state.account.owner;
-          this.setState({
-            account: null,
-            themeAlgorithm: ["default"],
-          });
-          clearWeb3AuthToken();
-          Setting.showMessage("success", i18next.t("application:Logged out successfully"));
-          const redirectUri = res.data2;
-          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
-            Setting.goToLink(redirectUri);
-          } else if (owner !== "built-in") {
-            Setting.goToLink(`${window.location.origin}/login/${owner}`);
-          } else {
-            Setting.goToLinkSoft(this, "/");
-          }
-        } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
-        }
-      });
-  }
-
   onUpdateAccount(account) {
     this.setState({
       account: account,
     });
   }
 
-  renderAvatar() {
-    if (this.state.account.avatar === "") {
-      return (
-        <Avatar style={{backgroundColor: Setting.getAvatarColor(this.state.account.name), verticalAlign: "middle"}} size="large">
-          {Setting.getShortName(this.state.account.name)}
-        </Avatar>
-      );
-    } else {
-      return (
-        <Avatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size="large"
-          icon={<AccountAvatar src={this.state.account.avatar} style={{verticalAlign: "middle"}} size={40} />}
-        >
-          {Setting.getShortName(this.state.account.name)}
-        </Avatar>
-      );
-    }
-  }
-
-  renderRightDropdown() {
-    const items = [];
-    if (this.state.requiredEnableMfa === false) {
-      items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
-        "/account"
-      ));
-    }
-    items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
-      "/logout"));
-
-    const onClick = (e) => {
-      if (e.key === "/account") {
-        this.props.history.push("/account");
-      } else if (e.key === "/subscription") {
-        this.props.history.push("/subscription");
-      } else if (e.key === "/logout") {
-        this.logout();
-      }
-    };
-
-    return (
-      <Dropdown key="/rightDropDown" menu={{items, onClick}} >
-        <div className="rightDropDown">
-          {
-            this.renderAvatar()
-          }
-          &nbsp;
-          &nbsp;
-          {Setting.isMobile() ? null : Setting.getShortText(Setting.getNameAtLeast(this.state.account.displayName), 30)} &nbsp; <DownOutlined />
-          &nbsp;
-          &nbsp;
-          &nbsp;
-        </div>
-      </Dropdown>
-    );
-  }
-
-  renderAccountMenu() {
-    if (this.state.account === undefined) {
-      return null;
-    } else if (this.state.account === null) {
-      return null;
-    } else {
-      return (
-        <React.Fragment>
-          {this.renderRightDropdown()}
-          <ThemeSelect
-            themeAlgorithm={this.state.themeAlgorithm}
-            onChange={(nextThemeAlgorithm) => {
-              this.setState({
-                themeAlgorithm: nextThemeAlgorithm,
-                logo: this.getLogo(nextThemeAlgorithm),
-              });
-            }} />
-          <LanguageSelect languages={this.state.account.organization.languages} />
-          <Tooltip title="Click to open AI assitant">
-            <div className="select-box" onClick={() => {
-              this.setState({
-                isAiAssistantOpen: true,
-              });
-            }}>
-              <DeploymentUnitOutlined style={{fontSize: "24px", color: "rgb(77,77,77)"}} />
-            </div>
-          </Tooltip>
-          <OpenTour />
-          {Setting.isAdminUser(this.state.account) && !Setting.isMobile() &&
-            <OrganizationSelect
-              initValue={Setting.getOrganization()}
-              withAll={true}
-              style={{marginRight: "20px", width: "180px", display: "flex"}}
-              onChange={(value) => {
-                Setting.setOrganization(value);
-              }}
-              className="select-box"
-            />
-          }
-        </React.Fragment>
-      );
-    }
-  }
-
-  getMenuItems() {
-    const res = [];
-
-    if (this.state.account === null || this.state.account === undefined) {
-      return [];
-    }
-
-    res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/">{i18next.t("general:Home")}</Link>, "/home", <HomeTwoTone />, [
-      Setting.getItem(<Link to="/">{i18next.t("general:Dashboard")}</Link>, "/"),
-      Setting.getItem(<Link to="/shortcuts">{i18next.t("general:Shortcuts")}</Link>, "/shortcuts"),
-      Setting.getItem(<Link to="/apps">{i18next.t("general:Apps")}</Link>, "/apps"),
-    ].filter(item => {
-      return Setting.isLocalAdminUser(this.state.account);
-    })));
-
-    if (Setting.isLocalAdminUser(this.state.account)) {
-      if (Conf.ShowGithubCorner) {
-        res.push(Setting.getItem(<a href={"https://casdoor.com"}>
-          <span style={{fontWeight: "bold", backgroundColor: "rgba(87,52,211,0.4)", marginTop: "12px", paddingLeft: "5px", paddingRight: "5px", display: "flex", alignItems: "center", height: "40px", borderRadius: "5px"}}>
-            🚀 SaaS Hosting 🔥
-          </span>
-        </a>, "#"));
-      }
-
-      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/organizations">{i18next.t("general:User Management")}</Link>, "/orgs", <AppstoreTwoTone />, [
-        Setting.getItem(<Link to="/organizations">{i18next.t("general:Organizations")}</Link>, "/organizations"),
-        Setting.getItem(<Link to="/groups">{i18next.t("general:Groups")}</Link>, "/groups"),
-        Setting.getItem(<Link to="/users">{i18next.t("general:Users")}</Link>, "/users"),
-      ]));
-
-      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/applications">{i18next.t("general:Identity")}</Link>, "/identity", <LockTwoTone />, [
-        Setting.getItem(<Link to="/applications">{i18next.t("general:Applications")}</Link>, "/applications"),
-        Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>, "/providers"),
-        Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>, "/resources"),
-        Setting.getItem(<Link to="/certs">{i18next.t("general:Certs")}</Link>, "/certs"),
-      ]));
-
-      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/roles">{i18next.t("general:Authorization")}</Link>, "/auth", <SafetyCertificateTwoTone />, [
-        Setting.getItem(<Link to="/roles">{i18next.t("general:Roles")}</Link>, "/roles"),
-        Setting.getItem(<Link to="/permissions">{i18next.t("general:Permissions")}</Link>, "/permissions"),
-        Setting.getItem(<Link to="/models">{i18next.t("general:Models")}</Link>, "/models"),
-        Setting.getItem(<Link to="/adapters">{i18next.t("general:Adapters")}</Link>, "/adapters"),
-        Setting.getItem(<Link to="/enforcers">{i18next.t("general:Enforcers")}</Link>, "/enforcers"),
-      ].filter(item => {
-        if (!Setting.isLocalAdminUser(this.state.account) && ["/models", "/adapters", "/enforcers"].includes(item.key)) {
-          return false;
-        } else {
-          return true;
-        }
-      })));
-
-      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/sessions">{i18next.t("general:Logging & Auditing")}</Link>, "/logs", <WalletTwoTone />, [
-        Setting.getItem(<Link to="/sessions">{i18next.t("general:Sessions")}</Link>, "/sessions"),
-        Setting.getItem(<a target="_blank" rel="noreferrer" href={Conf.CasvisorUrl}>{i18next.t("general:Records")}</a>, "/records"),
-        Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
-      ]));
-
-      res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone />, [
-        Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
-        Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
-        Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
-        Setting.getItem(<Link to="/pricings">{i18next.t("general:Pricings")}</Link>, "/pricings"),
-        Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>, "/subscriptions"),
-      ]));
-
-      if (Setting.isAdminUser(this.state.account)) {
-        res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/sysinfo">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
-          Setting.getItem(<Link to="/sysinfo">{i18next.t("general:System Info")}</Link>, "/sysinfo"),
-          Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
-          Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks"),
-          Setting.getItem(<a target="_blank" rel="noreferrer" href={Setting.isLocalhost() ? `${Setting.ServerUrl}/swagger` : "/swagger"}>{i18next.t("general:Swagger")}</a>, "/swagger")]));
-      } else {
-        res.push(Setting.getItem(<Link style={{color: this.state.themeAlgorithm.includes("dark") ? "white" : "black"}} to="/syncers">{i18next.t("general:Admin")}</Link>, "/admin", <SettingTwoTone />, [
-          Setting.getItem(<Link to="/syncers">{i18next.t("general:Syncers")}</Link>, "/syncers"),
-          Setting.getItem(<Link to="/webhooks">{i18next.t("general:Webhooks")}</Link>, "/webhooks")]));
-      }
-    }
-
-    return res;
-  }
-
-  renderLoginIfNotLoggedIn(component) {
-    if (this.state.account === null) {
-      sessionStorage.setItem("from", window.location.pathname + window.location.search);
-      if (window.location.search !== "") {
-        return <Redirect to="/login/PPG" />;
-      }
-      return <Redirect to="/login" />;
-    } else if (this.state.account === undefined) {
-      return null;
-    } else {
-      return component;
-    }
-  }
-
-  renderRouter() {
-    return (
-      <Switch>
-        <Route exact path="/" render={(props) => this.renderLoginIfNotLoggedIn(<Dashboard account={this.state.account} {...props} />)} />
-        <Route exact path="/apps" render={(props) => this.renderLoginIfNotLoggedIn(<AppListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/shortcuts" render={(props) => this.renderLoginIfNotLoggedIn(<ShortcutsPage account={this.state.account} {...props} />)} />
-        <Route exact path="/account" render={(props) => this.renderLoginIfNotLoggedIn(<AccountPage account={this.state.account} {...props} />)} />
-        <Route exact path="/organizations" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/organizations/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<OrganizationEditPage account={this.state.account} onChangeTheme={this.setTheme} {...props} />)} />
-        <Route exact path="/organizations/:organizationName/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/trees/:organizationName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
-        <Route exact path="/trees/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupTreePage account={this.state.account} {...props} />)} />
-        <Route exact path="/groups" render={(props) => this.renderLoginIfNotLoggedIn(<GroupListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/groups/:organizationName/:groupName" render={(props) => this.renderLoginIfNotLoggedIn(<GroupEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/users" render={(props) => this.renderLoginIfNotLoggedIn(<UserListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/users/:organizationName/:userName" render={(props) => <UserEditPage account={this.state.account} {...props} />} />
-        <Route exact path="/roles" render={(props) => this.renderLoginIfNotLoggedIn(<RoleListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/roles/:organizationName/:roleName" render={(props) => this.renderLoginIfNotLoggedIn(<RoleEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/permissions" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/permissions/:organizationName/:permissionName" render={(props) => this.renderLoginIfNotLoggedIn(<PermissionEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/models" render={(props) => this.renderLoginIfNotLoggedIn(<ModelListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/models/:organizationName/:modelName" render={(props) => this.renderLoginIfNotLoggedIn(<ModelEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/enforcers" render={(props) => this.renderLoginIfNotLoggedIn(<EnforcerListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/enforcers/:organizationName/:enforcerName" render={(props) => this.renderLoginIfNotLoggedIn(<EnforcerEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/adapters" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/adapters/:organizationName/:adapterName" render={(props) => this.renderLoginIfNotLoggedIn(<AdapterEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/providers" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/providers/:organizationName/:providerName" render={(props) => this.renderLoginIfNotLoggedIn(<ProviderEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/applications" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/applications/:organizationName/:applicationName" render={(props) => this.renderLoginIfNotLoggedIn(<ApplicationEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/resources" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceListPage account={this.state.account} {...props} />)} />
-        {/* <Route exact path="/resources/:resourceName" render={(props) => this.renderLoginIfNotLoggedIn(<ResourceEditPage account={this.state.account} {...props} />)}/>*/}
-        <Route exact path="/ldap/:organizationName/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/ldap/sync/:organizationName/:ldapId" render={(props) => this.renderLoginIfNotLoggedIn(<LdapSyncPage account={this.state.account} {...props} />)} />
-        <Route exact path="/tokens" render={(props) => this.renderLoginIfNotLoggedIn(<TokenListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/sessions" render={(props) => this.renderLoginIfNotLoggedIn(<SessionListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/tokens/:tokenName" render={(props) => this.renderLoginIfNotLoggedIn(<TokenEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/webhooks" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/webhooks/:webhookName" render={(props) => this.renderLoginIfNotLoggedIn(<WebhookEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/syncers" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/certs/:organizationName/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/plans" render={(props) => this.renderLoginIfNotLoggedIn(<PlanListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/plans/:organizationName/:planName" render={(props) => this.renderLoginIfNotLoggedIn(<PlanEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/pricings" render={(props) => this.renderLoginIfNotLoggedIn(<PricingListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/pricings/:organizationName/:pricingName" render={(props) => this.renderLoginIfNotLoggedIn(<PricingEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/subscriptions" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/subscriptions/:organizationName/:subscriptionName" render={(props) => this.renderLoginIfNotLoggedIn(<SubscriptionEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/products/:organizationName/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/products/:organizationName/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
-        <Route exact path="/payments" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentListPage account={this.state.account} {...props} />)} />
-        <Route exact path="/payments/:organizationName/:paymentName" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentEditPage account={this.state.account} {...props} />)} />
-        <Route exact path="/payments/:organizationName/:paymentName/result" render={(props) => this.renderLoginIfNotLoggedIn(<PaymentResultPage account={this.state.account} {...props} />)} />
-        <Route exact path="/mfa/setup" render={(props) => this.renderLoginIfNotLoggedIn(<MfaSetupPage account={this.state.account} onfinish={() => this.setState({requiredEnableMfa: false})} {...props} />)} />
-        <Route exact path="/.well-known/openid-configuration" render={(props) => <OdicDiscoveryPage />} />
-        <Route exact path="/sysinfo" render={(props) => this.renderLoginIfNotLoggedIn(<SystemInfo account={this.state.account} {...props} />)} />
-        <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-          extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-      </Switch>
-    );
-  }
-
-  onClose = () => {
-    this.setState({
-      menuVisible: false,
-    });
-  };
-
-  showMenu = () => {
-    this.setState({
-      menuVisible: true,
-    });
-  };
-
-  isWithoutCard() {
-    return Setting.isMobile() || window.location.pathname.startsWith("/trees");
-  }
-
-  renderContent() {
-    const onClick = ({key}) => {
-      if (key !== "/swagger" && key !== "/records") {
-        if (this.state.requiredEnableMfa) {
-          Setting.showMessage("info", "Please enable MFA first!");
-        } else {
-          this.props.history.push(key);
-        }
-      }
-    };
-    const menuStyleRight = Setting.isAdminUser(this.state.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "280px";
-    return (
-      <Layout id="parent-area">
-        <EnableMfaNotification account={this.state.account} />
-        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}} >
-          {Setting.isMobile() ? null : (
-            <Link to={"/"}>
-              <div className="logo" style={{background: `url(${this.state.logo})`}} />
-            </Link>
-          )}
-          {this.state.requiredEnableMfa || (Setting.isMobile() ?
-            <React.Fragment>
-              <Drawer title={i18next.t("general:Close")} placement="left" visible={this.state.menuVisible} onClose={this.onClose}>
-                <Menu
-                  items={this.getMenuItems()}
-                  mode={"inline"}
-                  selectedKeys={[this.state.selectedMenuKey]}
-                  style={{lineHeight: "64px"}}
-                  onClick={this.onClose}
-                >
-                </Menu>
-              </Drawer>
-              <Button icon={<BarsOutlined />} onClick={this.showMenu} type="text">
-                {i18next.t("general:Menu")}
-              </Button>
-            </React.Fragment> :
-            <Menu
-              onClick={onClick}
-              items={this.getMenuItems()}
-              mode={"horizontal"}
-              selectedKeys={[this.state.selectedMenuKey]}
-              style={{position: "absolute", left: "145px", right: menuStyleRight}}
-            />
-          )}
-          {
-            this.renderAccountMenu()
-          }
-        </Header>
-        <Content style={{display: "flex", flexDirection: "column"}} >
-          {this.isWithoutCard() ?
-            this.renderRouter() :
-            <Card className="content-warp-card">
-              {this.renderRouter()}
-            </Card>
-          }
-        </Content>
-        {
-          this.renderFooter()
-        }
-        {
-          this.renderAiAssistant()
-        }
-      </Layout>
-    );
-  }
-
+  // ivan 240228 custom footer
   renderFooter() {
     return (
       <React.Fragment>
@@ -732,47 +322,63 @@ class App extends Component {
         window.location.pathname.startsWith("/prompt") ||
         window.location.pathname.startsWith("/result") ||
         window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/auto-signup") ||
         window.location.pathname.startsWith("/select-plan") ||
         window.location.pathname.startsWith("/buy-plan") ||
         window.location.pathname.startsWith("/qrcode") ;
   }
 
+  onClick = ({key}) => {
+    if (key !== "/swagger" && key !== "/records") {
+      if (this.state.requiredEnableMfa) {
+        Setting.showMessage("info", "Please enable MFA first!");
+      } else {
+        this.props.history.push(key);
+      }
+    }
+  };
+
   renderPage() {
     if (this.isDoorPages()) {
       return (
-        <Layout id="parent-area">
-          <Content style={{display: "flex", justifyContent: "center"}}>
-            {
-              this.isEntryPages() ?
-                <EntryPage
-                  account={this.state.account}
-                  theme={this.state.themeData}
-                  onLoginSuccess={(redirectUrl) => {
-                    localStorage.setItem("mfaRedirectUrl", redirectUrl);
-                    this.getAccount();
-                  }}
-                  onUpdateAccount={(account) => this.onUpdateAccount(account)}
-                  updataThemeData={this.setTheme}
-                /> :
-                <Switch>
-                  <Route exact path="/callback" component={AuthCallback} />
-                  <Route exact path="/callback/saml" component={SamlCallback} />
-                  <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
-                    extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
-                </Switch>
-            }
-          </Content>
-          {
-            this.renderFooter()
-          }
-          {
-            this.renderAiAssistant()
-          }
-        </Layout>
+        <ConfigProvider theme={{
+          algorithm: Setting.getAlgorithm(["default"]),
+        }}>
+          <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
+            <Layout id="parent-area">
+              <Content style={{display: "flex", justifyContent: "center"}}>
+                {
+                  this.isEntryPages() ?
+                    <EntryPage
+                      account={this.state.account}
+                      theme={this.state.themeData}
+                      onLoginSuccess={(redirectUrl) => {
+                        if (redirectUrl) {
+                          localStorage.setItem("mfaRedirectUrl", redirectUrl);
+                        }
+                        this.getAccount();
+                      }}
+                      onUpdateAccount={(account) => this.onUpdateAccount(account)}
+                      updataThemeData={this.setTheme}
+                    /> :
+                    <Switch>
+                      <Route exact path="/callback" component={AuthCallback} />
+                      <Route exact path="/callback/saml" component={SamlCallback} />
+                      <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
+                        extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
+                    </Switch>
+                }
+              </Content>
+              {
+                this.renderFooter()
+              }
+              {
+                this.renderAiAssistant()
+              }
+            </Layout>
+          </StyleProvider>
+        </ConfigProvider>
       );
     }
-
     return (
       <React.Fragment>
         {/* { */}
@@ -781,7 +387,49 @@ class App extends Component {
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
-          this.renderContent()
+          <Suspense fallback={<div>loading</div>}>
+            <Layout id="parent-area">
+              <ManagementPage
+                account={this.state.account}
+                uri={this.state.uri}
+                themeData={this.state.themeData}
+                themeAlgorithm={this.state.themeAlgorithm}
+                selectedMenuKey={this.state.selectedMenuKey}
+                requiredEnableMfa={this.state.requiredEnableMfa}
+                menuVisible={this.state.menuVisible}
+                logo={this.state.logo}
+                onChangeTheme={this.setTheme}
+                onClick = {this.onClick}
+                onfinish={() => {
+                  this.setState({requiredEnableMfa: false});
+                }}
+                openAiAssistant={() => {
+                  this.setState({
+                    isAiAssistantOpen: true,
+                  });
+                }}
+                setLogoAndThemeAlgorithm={(nextThemeAlgorithm) => {
+                  this.setState({
+                    themeAlgorithm: nextThemeAlgorithm,
+                    logo: this.getLogo(nextThemeAlgorithm),
+                  });
+                  localStorage.setItem("themeAlgorithm", JSON.stringify(nextThemeAlgorithm));
+                }}
+                setLogoutState={() => {
+                  this.setState({
+                    account: null,
+                    themeAlgorithm: ["default"],
+                  });
+                }}
+              />
+              {
+                this.renderFooter()
+              }
+              {
+                this.renderAiAssistant()
+              }
+            </Layout>
+          </Suspense>
         }
       </React.Fragment>
     );
@@ -818,6 +466,7 @@ class App extends Component {
       <React.Fragment>
         {(this.state.account === undefined || this.state.account === null) ?
           <Helmet>
+            {/* ivan 240228 */}
             {/* <link rel="icon" href={"https://cdn.casdoor.com/static/favicon.png"} /> */}
             <link rel="icon" href={"https://d2t78ey8hyqad6.cloudfront.net/resource/built-in/admin/logo_w.svg"} />
           </Helmet> :

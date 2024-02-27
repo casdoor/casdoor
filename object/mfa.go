@@ -18,11 +18,7 @@ import (
 	"fmt"
 
 	"github.com/casdoor/casdoor/util"
-
-	"github.com/beego/beego/context"
 )
-
-const MfaRecoveryCodesSession = "mfa_recovery_codes"
 
 type MfaProps struct {
 	Enabled       bool     `json:"enabled"`
@@ -35,9 +31,9 @@ type MfaProps struct {
 }
 
 type MfaInterface interface {
-	Initiate(ctx *context.Context, userId string) (*MfaProps, error)
-	SetupVerify(ctx *context.Context, passcode string) error
-	Enable(ctx *context.Context, user *User) error
+	Initiate(userId string) (*MfaProps, error)
+	SetupVerify(passcode string) error
+	Enable(user *User) error
 	Verify(passcode string) error
 }
 

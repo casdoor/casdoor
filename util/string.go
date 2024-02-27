@@ -113,6 +113,15 @@ func SnakeToCamel(snake string) string {
 	return strings.Join(words, "")
 }
 
+func SpaceToCamel(name string) string {
+	words := strings.Split(name, " ")
+	for i := range words {
+		words[i] = strings.ToLower(words[i])
+		words[i] = strings.Title(words[i])
+	}
+	return strings.Join(words, "")
+}
+
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {
@@ -321,4 +330,31 @@ func GetUsernameFromEmail(email string) string {
 	} else {
 		return tokens[0]
 	}
+}
+
+func StringToInterfaceArray(array []string) []interface{} {
+	var (
+		interfaceArray []interface{}
+		elem           interface{}
+	)
+	for _, elem = range array {
+		jStruct, err := TryJsonToAnonymousStruct(elem.(string))
+		if err == nil {
+			elem = jStruct
+		}
+		interfaceArray = append(interfaceArray, elem)
+	}
+	return interfaceArray
+}
+
+func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
+	var interfaceArrays [][]interface{}
+	for _, req := range arrays {
+		var interfaceArray []interface{}
+		for _, r := range req {
+			interfaceArray = append(interfaceArray, r)
+		}
+		interfaceArrays = append(interfaceArrays, interfaceArray)
+	}
+	return interfaceArrays
 }

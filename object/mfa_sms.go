@@ -16,90 +16,51 @@ package object
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/util"
-	"github.com/google/uuid"
-)
-
-const (
-	MfaCountryCodeSession = "mfa_country_code"
-	MfaDestSession        = "mfa_dest"
 )
 
 type SmsMfa struct {
-	Config *MfaProps
+	*MfaProps
 }
 
-func (mfa *SmsMfa) Initiate(ctx *context.Context, userId string) (*MfaProps, error) {
-	recoveryCode := uuid.NewString()
-
-	err := ctx.Input.CruSession.Set(MfaRecoveryCodesSession, []string{recoveryCode})
-	if err != nil {
-		return nil, err
-	}
-
+func (mfa *SmsMfa) Initiate(userId string) (*MfaProps, error) {
 	mfaProps := MfaProps{
-		MfaType:       mfa.Config.MfaType,
-		RecoveryCodes: []string{recoveryCode},
+		MfaType: mfa.MfaType,
 	}
 	return &mfaProps, nil
 }
 
-func (mfa *SmsMfa) SetupVerify(ctx *context.Context, passCode string) error {
-	destSession := ctx.Input.CruSession.Get(MfaDestSession)
-	if destSession == nil {
-		return errors.New("dest session is missing")
-	}
-	dest := destSession.(string)
-
-	if !util.IsEmailValid(dest) {
-		countryCodeSession := ctx.Input.CruSession.Get(MfaCountryCodeSession)
-		if countryCodeSession == nil {
-			return errors.New("country code is missing")
-		}
-		countryCode := countryCodeSession.(string)
-
-		dest, _ = util.GetE164Number(dest, countryCode)
+func (mfa *SmsMfa) SetupVerify(passCode string) error {
+	if !util.IsEmailValid(mfa.Secret) {
+		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
-	if result := CheckVerificationCode(dest, passCode, "en"); result.Code != VerificationSuccess {
+	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	if err != nil {
+		return err
+	}
+	if result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
 	}
+
 	return nil
 }
 
-func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
-	recoveryCodes := ctx.Input.CruSession.Get(MfaRecoveryCodesSession).([]string)
-	if len(recoveryCodes) == 0 {
-		return fmt.Errorf("recovery codes is missing")
-	}
-
+func (mfa *SmsMfa) Enable(user *User) error {
 	columns := []string{"recovery_codes", "preferred_mfa_type"}
 
-	user.RecoveryCodes = append(user.RecoveryCodes, recoveryCodes...)
+	user.RecoveryCodes = append(user.RecoveryCodes, mfa.RecoveryCodes...)
 	if user.PreferredMfaType == "" {
-		user.PreferredMfaType = mfa.Config.MfaType
+		user.PreferredMfaType = mfa.MfaType
 	}
 
-	if mfa.Config.MfaType == SmsType {
+	if mfa.MfaType == SmsType {
 		user.MfaPhoneEnabled = true
-		columns = append(columns, "mfa_phone_enabled")
-
-		if user.Phone == "" {
-			user.Phone = ctx.Input.CruSession.Get(MfaDestSession).(string)
-			user.CountryCode = ctx.Input.CruSession.Get(MfaCountryCodeSession).(string)
-			columns = append(columns, "phone", "country_code")
-		}
-	} else if mfa.Config.MfaType == EmailType {
+		columns = append(columns, "mfa_phone_enabled", "phone", "country_code")
+	} else if mfa.MfaType == EmailType {
 		user.MfaEmailEnabled = true
-		columns = append(columns, "mfa_email_enabled")
-
-		if user.Email == "" {
-			user.Email = ctx.Input.CruSession.Get(MfaDestSession).(string)
-			columns = append(columns, "email")
-		}
+		columns = append(columns, "mfa_email_enabled", "email")
 	}
 
 	_, err := UpdateUser(user.GetId(), user, columns, false)
@@ -107,20 +68,22 @@ func (mfa *SmsMfa) Enable(ctx *context.Context, user *User) error {
 		return err
 	}
 
-	ctx.Input.CruSession.Delete(MfaRecoveryCodesSession)
-	ctx.Input.CruSession.Delete(MfaDestSession)
-	ctx.Input.CruSession.Delete(MfaCountryCodeSession)
-
 	return nil
 }
 
 func (mfa *SmsMfa) Verify(passCode string) error {
-	if !util.IsEmailValid(mfa.Config.Secret) {
-		mfa.Config.Secret, _ = util.GetE164Number(mfa.Config.Secret, mfa.Config.CountryCode)
+	if !util.IsEmailValid(mfa.Secret) {
+		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
-	if result := CheckVerificationCode(mfa.Config.Secret, passCode, "en"); result.Code != VerificationSuccess {
+
+	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
+	if err != nil {
+		return err
+	}
+	if result.Code != VerificationSuccess {
 		return errors.New(result.Msg)
 	}
+
 	return nil
 }
 
@@ -131,7 +94,7 @@ func NewSmsMfaUtil(config *MfaProps) *SmsMfa {
 		}
 	}
 	return &SmsMfa{
-		Config: config,
+		config,
 	}
 }
 
@@ -142,6 +105,6 @@ func NewEmailMfaUtil(config *MfaProps) *SmsMfa {
 		}
 	}
 	return &SmsMfa{
-		Config: config,
+		config,
 	}
 }

@@ -180,6 +180,11 @@ func initBuiltInApplication() {
 		Providers: []*ProviderItem{
 			{Name: "provider_captcha_default", CanSignUp: false, CanSignIn: false, CanUnlink: false, Prompted: false, SignupGroup: "", Rule: "None", Provider: nil},
 		},
+		SigninMethods: []*SigninMethod{
+			{Name: "Password", DisplayName: "Password", Rule: "All"},
+			{Name: "Verification code", DisplayName: "Verification code", Rule: "All"},
+			{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"},
+		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},
 			{Name: "Username", Visible: true, Required: true, Prompted: false, Rule: "None"},
@@ -192,6 +197,7 @@ func initBuiltInApplication() {
 		},
 		Tags:          []string{},
 		RedirectUris:  []string{},
+		TokenFields:   []string{},
 		ExpireInHours: 168,
 		FormOffset:    2,
 	}

@@ -37,7 +37,7 @@ function isValidOption_Aa123(password) {
 }
 
 function isValidOption_SpecialChar(password) {
-  const regex = /^(?=.*[!@#$%^&*]).+$/;
+  const regex = /^(?=.*[!-/:-@[-`{-~]).+$/;
   if (!regex.test(password)) {
     return i18next.t("user:The password must contain at least one special character");
   }
