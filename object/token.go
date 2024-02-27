@@ -15,10 +15,17 @@
 package object
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/conf"
+	"io"
+	"log"
+	"net/http"
+	"os"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -260,6 +267,58 @@ func DeleteToken(token *Token) (bool, error) {
 	return affected != 0, nil
 }
 
+func NotifySsoWebApi(token string) error {
+	// ivan 240226, api call to notify logout event
+	var ssoweb string
+	var casKey string
+	var casId string
+	ssoweb = os.Getenv("SSOWEB_API")
+	if ssoweb == "" {
+		ssoweb = conf.GetConfigString("SSOWEB_API")
+	}
+	casKey = os.Getenv("CASDOOR_KEY")
+	if casKey == "" {
+		casKey = conf.GetConfigString("CASDOOR_KEY")
+	}
+	casId = os.Getenv("CASDOOR_ID")
+	if casId == "" {
+		casId = conf.GetConfigString("CASDOOR_ID")
+	}
+
+	url := ssoweb + "/pb.hooks.v1.HookService/ExpireToken"
+	payloadBytes, err := json.Marshal(struct {
+		Token string `json:"token"`
+	}{
+		Token: token,
+	})
+	if err != nil {
+		return err
+	}
+	payloadBody := bytes.NewReader(payloadBytes)
+	req, err := http.NewRequest("POST", url, payloadBody)
+	req.Header.Add("ApiKey", casKey)
+	req.Header.Add("AppId", casId)
+	req.Header.Add("Content-Type", "application/json")
+	client := &http.Client{
+		Timeout: time.Second * 30,
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		bodyString := string(bodyBytes)
+		log.Println("Response Status:", resp.StatusCode)
+		log.Println("Response Body:", bodyString)
+		return err
+	}
+	return nil
+}
+
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
 	token, err := GetTokenByAccessToken(accessToken)
 	if err != nil {
@@ -269,14 +328,16 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 		return false, nil, nil, nil
 	}
 
-	// ivan 20240216
-	// instead of just this specific token, update all tokens of that user
-	//
-	//token.ExpiresIn = 0
-	//affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
-	//if err != nil {
-	//	return false, nil, nil, err
-	//}
+	token.ExpiresIn = 0
+	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Cols("expires_in").Update(token)
+	if err != nil {
+		return false, nil, nil, err
+	}
+
+	err = NotifySsoWebApi(token.AccessToken)
+	if err != nil {
+		log.Println("Send logout notify failed:", err)
+	}
 
 	// case-sensitive user, failed to locate records
 	//affected, err := ormer.Engine.Where(" user = ? ", token.User).Cols("expires_in").Update(&Token{ExpiresIn: 0})
@@ -284,15 +345,17 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 	//	return false, nil, nil, err
 	//}
 
-	sql := `UPDATE "token" SET "expires_in" = ? WHERE "user" = ? AND (CAST("created_time" AS timestamptz) + ("expires_in" * INTERVAL '1 second')) > CURRENT_TIMESTAMP`
-	result, err := ormer.Engine.Exec(sql, 0, token.User)
-	if err != nil {
-		return false, nil, nil, err
-	}
-	affected, err := result.RowsAffected()
-	if err != nil {
-		return false, nil, nil, err
-	}
+	//// ivan 20240216
+	//// instead of just this specific token, update all tokens of that user
+	//sql := `UPDATE "token" SET "expires_in" = ? WHERE "user" = ? AND (CAST("created_time" AS timestamptz) + ("expires_in" * INTERVAL '1 second')) > CURRENT_TIMESTAMP`
+	//result, err := ormer.Engine.Exec(sql, 0, token.User)
+	//if err != nil {
+	//	return false, nil, nil, err
+	//}
+	//affected, err := result.RowsAffected()
+	//if err != nil {
+	//	return false, nil, nil, err
+	//}
 
 	application, err := getApplication(token.Owner, token.Application)
 	if err != nil {
