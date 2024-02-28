@@ -350,7 +350,9 @@ class UserEditPage extends React.Component {
             {Setting.getLabel("ID", i18next.t("general:ID - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.id} disabled={disabled} />
+            <Input value={this.state.user.id} disabled={disabled} onChange={e => {
+              this.updateUserField("id", e.target.value);
+            }} />
           </Col>
         </Row>
       );
