@@ -86,6 +86,8 @@ type User struct {
 	Score             int      `json:"score"`
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
+	Balance           float64  `json:"balance"`
+	Currency          string   `xorm:"varchar(100)" json:"currency"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
