@@ -35,3 +35,5 @@ server
 
 # include helm-chart
 !manifests/casdoor
+/deployments/
+/.env.prod

@@ -143,6 +143,9 @@ func getKeys(ctx *context.Context) (string, string) {
 }
 
 func willLog(subOwner string, subName string, method string, urlPath string, objOwner string, objName string) bool {
+	if urlPath == "/api/health" {
+		return false
+	}
 	if subOwner == "anonymous" && subName == "anonymous" && method == "GET" && (urlPath == "/api/get-account" || urlPath == "/api/get-app-login") && objOwner == "" && objName == "" {
 		return false
 	}

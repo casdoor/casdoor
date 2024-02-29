@@ -292,9 +292,9 @@ func NotifySsoWebApi(token string) error {
 	var ssoweb string
 	var casKey string
 	var casId string
-	ssoweb = os.Getenv("SSOWEB_API")
+	ssoweb = os.Getenv("SSO_API")
 	if ssoweb == "" {
-		ssoweb = conf.GetConfigString("SSOWEB_API")
+		ssoweb = conf.GetConfigString("SSO_API")
 	}
 	casKey = os.Getenv("CASDOOR_KEY")
 	if casKey == "" {
