@@ -367,6 +367,7 @@
     "This is a read-only demo site!": "¡Este es un sitio de demostración solo de lectura!",
     "Timestamp": "Timestamp",
     "Tokens": "Tokens",
+    "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
     "URL": "Dirección URL",
@@ -1030,6 +1031,13 @@
     "Parsed result - Tooltip": "Parsed result - Tooltip",
     "Token type": "Tipo de token",
     "Token type - Tooltip": "Token type - Tooltip"
+  },
+  "transaction": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "The amount of traded products",
+    "Edit Transaction": "Edit Transaction",
+    "New Transaction": "New Transaction",
+    "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {
     "3rd-party logins": "Inicio de sesión de terceros",

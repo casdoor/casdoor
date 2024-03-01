@@ -90,6 +90,8 @@ import AccountAvatar from "./account/AccountAvatar";
 import {Content, Header} from "antd/es/layout/layout";
 import * as AuthBackend from "./auth/AuthBackend";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
+import TransactionListPage from "./TransactionListPage";
+import TransactionEditPage from "./TransactionEditPage";
 
 function ManagementPage(props) {
 
@@ -279,6 +281,7 @@ function ManagementPage(props) {
         Setting.getItem(<Link to="/plans">{i18next.t("general:Plans")}</Link>, "/plans"),
         Setting.getItem(<Link to="/pricings">{i18next.t("general:Pricings")}</Link>, "/pricings"),
         Setting.getItem(<Link to="/subscriptions">{i18next.t("general:Subscriptions")}</Link>, "/subscriptions"),
+        Setting.getItem(<Link to="/transactions">{i18next.t("general:Transactions")}</Link>, "/transactions"),
       ]));
 
       if (Setting.isAdminUser(props.account)) {
@@ -365,6 +368,8 @@ function ManagementPage(props) {
         <Route exact path="/sysinfo" render={(props) => renderLoginIfNotLoggedIn(<SystemInfo account={account} {...props} />)} />
         <Route exact path="/syncers" render={(props) => renderLoginIfNotLoggedIn(<SyncerListPage account={account} {...props} />)} />
         <Route exact path="/syncers/:syncerName" render={(props) => renderLoginIfNotLoggedIn(<SyncerEditPage account={account} {...props} />)} />
+        <Route exact path="/transactions" render={(props) => renderLoginIfNotLoggedIn(<TransactionListPage account={account} {...props} />)} />
+        <Route exact path="/transactions/:organizationName/:transactionName" render={(props) => renderLoginIfNotLoggedIn(<TransactionEditPage account={account} {...props} />)} />
         <Route exact path="/webhooks" render={(props) => renderLoginIfNotLoggedIn(<WebhookListPage account={account} {...props} />)} />
         <Route exact path="/webhooks/:webhookName" render={(props) => renderLoginIfNotLoggedIn(<WebhookEditPage account={account} {...props} />)} />
         <Route exact path="/ldap/:organizationName/:ldapId" render={(props) => renderLoginIfNotLoggedIn(<LdapEditPage account={account} {...props} />)} />
