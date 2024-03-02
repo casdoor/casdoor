@@ -388,6 +388,11 @@ func (a *Ormer) createTable() {
 		panic(err)
 	}
 
+	err = a.Engine.Sync2(new(Transaction))
+	if err != nil {
+		panic(err)
+	}
+
 	err = a.Engine.Sync2(new(Syncer))
 	if err != nil {
 		panic(err)

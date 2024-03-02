@@ -367,6 +367,7 @@
     "This is a read-only demo site!": "이것은 읽기 전용 데모 사이트입니다!",
     "Timestamp": "Timestamp",
     "Tokens": "토큰",
+    "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
@@ -1030,6 +1031,13 @@
     "Parsed result - Tooltip": "Parsed result - Tooltip",
     "Token type": "토큰 유형",
     "Token type - Tooltip": "Token type - Tooltip"
+  },
+  "transaction": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "The amount of traded products",
+    "Edit Transaction": "Edit Transaction",
+    "New Transaction": "New Transaction",
+    "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {
     "3rd-party logins": "제3자 로그인",

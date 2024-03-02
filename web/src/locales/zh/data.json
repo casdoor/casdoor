@@ -367,6 +367,7 @@
     "This is a read-only demo site!": "这是一个只读演示站点！",
     "Timestamp": "时间",
     "Tokens": "令牌",
+    "Transactions": "交易",
     "Type": "类型",
     "Type - Tooltip": "类型",
     "URL": "链接",
@@ -1030,6 +1031,13 @@
     "Parsed result - Tooltip": "Access token的JWT解析结果",
     "Token type": "令牌类型",
     "Token type - Tooltip": "令牌类型"
+  },
+  "transaction": {
+    "Amount": "数量",
+    "Amount - Tooltip": "交易产品的数量",
+    "Edit Transaction": "编辑交易",
+    "New Transaction": "添加交易",
+    "Tag - Tooltip": "交易的标签"
   },
   "user": {
     "3rd-party logins": "第三方登录",

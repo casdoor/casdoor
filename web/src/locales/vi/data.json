@@ -367,6 +367,7 @@
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
     "Timestamp": "Timestamp",
     "Tokens": "Mã thông báo",
+    "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
     "URL": "URL",
@@ -1030,6 +1031,13 @@
     "Parsed result - Tooltip": "Parsed result - Tooltip",
     "Token type": "Loại mã thông báo",
     "Token type - Tooltip": "Token type - Tooltip"
+  },
+  "transaction": {
+    "Amount": "Amount",
+    "Amount - Tooltip": "The amount of traded products",
+    "Edit Transaction": "Edit Transaction",
+    "New Transaction": "New Transaction",
+    "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {
     "3rd-party logins": "Đăng nhập bên thứ ba",
