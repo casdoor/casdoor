@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -515,8 +516,12 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
-func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
-	if userId == "" || isUserIdGlobalAdmin(userId) {
+func GetAllowedApplications(applications []*Application, userId string, lang string) ([]*Application, error) {
+	if userId == "" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if isUserIdGlobalAdmin(userId) {
 		return applications, nil
 	}
 
@@ -524,7 +529,11 @@ func GetAllowedApplications(applications []*Application, userId string) ([]*Appl
 	if err != nil {
 		return nil, err
 	}
-	if user != nil && user.IsAdmin {
+	if user == nil {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if user.IsAdmin {
 		return applications, nil
 	}
 
