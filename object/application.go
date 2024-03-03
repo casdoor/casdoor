@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -479,26 +480,47 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		}
 	}
 
-	if application.ClientSecret != "" {
-		application.ClientSecret = "***"
+	application.ClientSecret = "***"
+	application.Cert = "***"
+	application.EnablePassword = false
+	application.EnableSigninSession = false
+	application.EnableCodeSignin = false
+	application.EnableSamlCompress = false
+	application.EnableSamlC14n10 = false
+	application.EnableSamlPostBinding = false
+	application.EnableWebAuthn = false
+	application.EnableLinkWithEmail = false
+	application.SamlReplyUrl = "***"
+
+	providerItems := []*ProviderItem{}
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3") {
+			providerItems = append(providerItems, providerItem)
+		}
 	}
+	application.Providers = providerItems
+
+	application.GrantTypes = nil
+	application.Tags = nil
+	application.RedirectUris = nil
+	application.TokenFormat = "***"
+	application.TokenFields = nil
+	application.ExpireInHours = -1
+	application.RefreshExpireInHours = -1
+	application.FailedSigninLimit = -1
+	application.FailedSigninFrozenTime = -1
 
 	if application.OrganizationObj != nil {
-		if application.OrganizationObj.MasterPassword != "" {
-			application.OrganizationObj.MasterPassword = "***"
-		}
-		if application.OrganizationObj.DefaultPassword != "" {
-			application.OrganizationObj.DefaultPassword = "***"
-		}
-		if application.OrganizationObj.MasterVerificationCode != "" {
-			application.OrganizationObj.MasterVerificationCode = "***"
-		}
-		if application.OrganizationObj.PasswordType != "" {
-			application.OrganizationObj.PasswordType = "***"
-		}
-		if application.OrganizationObj.PasswordSalt != "" {
-			application.OrganizationObj.PasswordSalt = "***"
-		}
+		application.OrganizationObj.MasterPassword = "***"
+		application.OrganizationObj.DefaultPassword = "***"
+		application.OrganizationObj.MasterVerificationCode = "***"
+		application.OrganizationObj.PasswordType = "***"
+		application.OrganizationObj.PasswordSalt = "***"
+		application.OrganizationObj.InitScore = -1
+		application.OrganizationObj.EnableSoftDeletion = false
+		application.OrganizationObj.IsProfilePublic = false
+		application.OrganizationObj.MfaItems = nil
+		application.OrganizationObj.AccountItems = nil
 	}
 
 	return application
@@ -515,8 +537,12 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
-func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
-	if userId == "" || isUserIdGlobalAdmin(userId) {
+func GetAllowedApplications(applications []*Application, userId string, lang string) ([]*Application, error) {
+	if userId == "" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if isUserIdGlobalAdmin(userId) {
 		return applications, nil
 	}
 
@@ -524,7 +550,11 @@ func GetAllowedApplications(applications []*Application, userId string) ([]*Appl
 	if err != nil {
 		return nil, err
 	}
-	if user != nil && user.IsAdmin {
+	if user == nil {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if user.IsAdmin {
 		return applications, nil
 	}
 

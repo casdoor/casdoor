@@ -177,7 +177,7 @@ func (c *ApiController) GetOrganizationApplications() {
 			return
 		}
 
-		applications, err = object.GetAllowedApplications(applications, userId)
+		applications, err = object.GetAllowedApplications(applications, userId, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -194,13 +194,19 @@ func (c *ApiController) GetOrganizationApplications() {
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		application, err := object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		applications, err := object.GetPaginationOrganizationApplications(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
-		applications := object.GetMaskedApplications(application, userId)
+		applications, err = object.GetAllowedApplications(applications, userId, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		applications = object.GetMaskedApplications(applications, userId)
 		c.ResponseOk(applications, paginator.Nums())
 	}
 }
