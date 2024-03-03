@@ -19,8 +19,8 @@ import (
 	"github.com/casdoor/oss/qiniu"
 )
 
-func NewQiniuCloudKodoStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
-	sp := qiniu.New(&qiniu.Config{
+func NewQiniuCloudKodoStorageProvider(clientId string, clientSecret string, region string, bucket string, endpoint string) (oss.StorageInterface, error) {
+	sp, err := qiniu.New(&qiniu.Config{
 		AccessID:  clientId,
 		AccessKey: clientSecret,
 		Region:    region,
@@ -28,5 +28,5 @@ func NewQiniuCloudKodoStorageProvider(clientId string, clientSecret string, regi
 		Endpoint:  endpoint,
 	})
 
-	return sp
+	return sp, err
 }

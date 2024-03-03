@@ -16,27 +16,27 @@ package storage
 
 import "github.com/casdoor/oss"
 
-func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) oss.StorageInterface {
+func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) (oss.StorageInterface, error) {
 	switch providerType {
 	case "Local File System":
-		return NewLocalFileSystemStorageProvider()
+		return NewLocalFileSystemStorageProvider(), nil
 	case "AWS S3":
-		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "MinIO":
-		return NewMinIOS3StorageProvider(clientId, clientSecret, "_", bucket, endpoint)
+		return NewMinIOS3StorageProvider(clientId, clientSecret, "_", bucket, endpoint), nil
 	case "Aliyun OSS":
-		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "Tencent Cloud COS":
-		return NewTencentCloudCosStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewTencentCloudCosStorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "Azure Blob":
-		return NewAzureBlobStorageProvider(clientId, clientSecret, region, bucket, endpoint)
+		return NewAzureBlobStorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "Qiniu Cloud Kodo":
 		return NewQiniuCloudKodoStorageProvider(clientId, clientSecret, region, bucket, endpoint)
 	case "Google Cloud Storage":
-		return NewGoogleCloudStorageProvider(clientSecret, bucket, endpoint)
+		return NewGoogleCloudStorageProvider(clientSecret, bucket, endpoint), nil
 	case "Synology":
-		return NewSynologyNasStorageProvider(clientId, clientSecret, endpoint)
+		return NewSynologyNasStorageProvider(clientId, clientSecret, endpoint), nil
 	}
 
-	return nil
+	return nil, nil
 }
