@@ -143,13 +143,13 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_msg91.ico`,
       url: "https://control.msg91.com/app/",
     },
-    "Custom HTTP SMS": {
-      logo: `${StaticBaseUrl}/img/social_default.png`,
-      url: "https://casdoor.org/docs/provider/sms/overview",
-    },
     "OSON SMS": {
       logo: "https://osonsms.com/images/osonsms-logo.svg",
       url: "https://osonsms.com/",
+    },
+    "Custom HTTP SMS": {
+      logo: `${StaticBaseUrl}/img/social_default.png`,
+      url: "https://casdoor.org/docs/provider/sms/overview",
     },
     "Mock SMS": {
       logo: `${StaticBaseUrl}/img/social_default.png`,
