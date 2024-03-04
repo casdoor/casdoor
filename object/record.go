@@ -134,11 +134,17 @@ func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error
 	return records, nil
 }
 
-func getFilteredWebhooks(webhooks []*Webhook, action string) []*Webhook {
+func getFilteredWebhooks(webhooks []*Webhook, organization string, action string) []*Webhook {
 	res := []*Webhook{}
 	for _, webhook := range webhooks {
 		if !webhook.IsEnabled {
 			continue
+		}
+
+		if webhook.SingleOrgOnly {
+			if webhook.Organization != organization {
+				continue
+			}
 		}
 
 		matched := false
@@ -163,7 +169,7 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 	}
 
 	errs := []error{}
-	webhooks = getFilteredWebhooks(webhooks, record.Action)
+	webhooks = getFilteredWebhooks(webhooks, record.Organization, record.Action)
 	for _, webhook := range webhooks {
 		var user *User
 		if webhook.IsUserExtended {

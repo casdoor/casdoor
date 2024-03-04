@@ -39,6 +39,7 @@ type Webhook struct {
 	Headers        []*Header `xorm:"mediumtext" json:"headers"`
 	Events         []string  `xorm:"varchar(1000)" json:"events"`
 	IsUserExtended bool      `json:"isUserExtended"`
+	SingleOrgOnly  bool      `json:"singleOrgOnly"`
 	IsEnabled      bool      `json:"isEnabled"`
 }
 
