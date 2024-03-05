@@ -14,9 +14,11 @@
 
 import {useEffect} from "react";
 
+let customHeadLoaded = false;
+
 function CustomHead(props) {
   useEffect(() => {
-    if (!sessionStorage.getItem("customHead")) {
+    if (!customHeadLoaded) {
       const suffix = new Date().getTime().toString();
 
       if (!props.headerHtml) {return;}
@@ -40,7 +42,7 @@ function CustomHead(props) {
         }
         document.head.appendChild(innerNode);
       });
-      sessionStorage.setItem("customHead", "true");
+      customHeadLoaded = true;
     }
   });
 }
