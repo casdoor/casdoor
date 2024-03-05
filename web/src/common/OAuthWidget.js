@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Row} from "antd";
+import {Button, Col, Modal, Row} from "antd";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
@@ -21,6 +21,7 @@ import * as Provider from "../auth/Provider";
 import * as AuthBackend from "../auth/AuthBackend";
 import {goToWeb3Url} from "../auth/ProviderButton";
 import AccountAvatar from "../account/AccountAvatar";
+import {getEvent} from "../auth/Util";
 
 class OAuthWidget extends React.Component {
   constructor(props) {
@@ -197,9 +198,39 @@ class OAuthWidget extends React.Component {
               provider.category === "Web3" ? (
                 <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id} onClick={() => goToWeb3Url(application, provider, "link")}>{i18next.t("user:Link")}</Button>
               ) : (
-                <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
-                  <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
-                </a>
+                provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger") ? (
+                  <a key={provider.displayName}>
+                    <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id} onClick={
+                      async() => {
+                        AuthBackend.getWechatQRCode(`${provider.owner}/${provider.name}`).then(
+                          async res => {
+                            if (res.status !== "ok") {
+                              Setting.showMessage("error", res?.msg);
+                              return;
+                            }
+
+                            const t1 = setInterval(await getEvent, 1000, application, provider, res.data2, "link");
+                            {Modal.info({
+                              title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
+                              content: (
+                                <div style={{marginRight: "34px"}}>
+                                  <img src = {"data:image/png;base64," + res.data} alt="Wechat QR code" style={{width: "100%"}} />
+                                </div>
+                              ),
+                              onOk() {
+                                window.clearInterval(t1);
+                              },
+                            });}
+                          }
+                        );
+                      }
+                    }>{i18next.t("user:Link")}</Button>
+                  </a>
+                ) : (
+                  <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
+                    <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
+                  </a>
+                )
               )
             ) : (
               <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>

@@ -188,12 +188,12 @@ export function getQueryParamsFromState(state) {
   }
 }
 
-export function getEvent(application, provider, ticket) {
+export function getEvent(application, provider, ticket, method) {
   getWechatMessageEvent(ticket)
     .then(res => {
       if (res.data === "SCAN" || res.data === "subscribe") {
         const code = res?.data2;
-        Setting.goToLink(Provider.getAuthUrl(application, provider, "signup", code));
+        Setting.goToLink(Provider.getAuthUrl(application, provider, method ?? "signup", code));
       }
     });
 }

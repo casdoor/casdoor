@@ -149,7 +149,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
                 return;
               }
 
-              const t1 = setInterval(await getEvent, 1000, application, provider, res.data2);
+              const t1 = setInterval(await getEvent, 1000, application, provider, res.data2, "signup");
               {Modal.info({
                 title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
                 content: (
