@@ -707,6 +707,15 @@ export function goToLinkSoft(ths, link) {
   ths.props.history.push(link);
 }
 
+export function goToLinkSoftOrJumpSelf(ths, link) {
+  if (link.startsWith("http")) {
+    goToLink(link);
+    return;
+  }
+
+  ths.props.history.push(link);
+}
+
 export function showMessage(type, text) {
   if (type === "success") {
     message.success(text);
