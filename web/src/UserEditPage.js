@@ -64,7 +64,9 @@ class UserEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getUser();
-    this.getOrganizations();
+    if (Setting.isLocalAdminUser(this.props.account)) {
+      this.getOrganizations();
+    }
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
@@ -1001,7 +1003,7 @@ class UserEditPage extends React.Component {
               <div style={{verticalAlign: "middle", marginBottom: 10}}>{`(${i18next.t("general:empty")})`}</div>
             </Col>
         }
-        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
+        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.getUserOrganization()} />
       </Col>
     );
   }

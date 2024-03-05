@@ -469,14 +469,24 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.FailedSigninFrozenTime = DefaultFailedSigninFrozenTime
 	}
 
+	isOrgUser := false
 	if userId != "" {
 		if isUserIdGlobalAdmin(userId) {
 			return application
 		}
 
-		user, _ := GetUser(userId)
-		if user != nil && user.IsApplicationAdmin(application) {
-			return application
+		user, err := GetUser(userId)
+		if err != nil {
+			panic(err)
+		}
+		if user != nil {
+			if user.IsApplicationAdmin(application) {
+				return application
+			}
+
+			if user.Owner == application.Organization {
+				isOrgUser = true
+			}
 		}
 	}
 
@@ -519,8 +529,11 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.OrganizationObj.InitScore = -1
 		application.OrganizationObj.EnableSoftDeletion = false
 		application.OrganizationObj.IsProfilePublic = false
-		application.OrganizationObj.MfaItems = nil
-		application.OrganizationObj.AccountItems = nil
+
+		if !isOrgUser {
+			application.OrganizationObj.MfaItems = nil
+			application.OrganizationObj.AccountItems = nil
+		}
 	}
 
 	return application
