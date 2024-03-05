@@ -42,9 +42,7 @@ import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
-import * as Setting from "../Setting";
-import {getEvent} from "./Util";
-import {Modal} from "antd";
+import {WechatOfficialAccountModal} from "./Util";
 
 function getSigninButton(provider) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName !== "" ? provider.displayName : provider.type);
@@ -141,32 +139,11 @@ export function renderProviderLogo(provider, application, width, margin, size, l
   if (size === "small") {
     if (provider.category === "OAuth") {
       if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger")) {
-        const info = async() => {
-          AuthBackend.getWechatQRCode(`${provider.owner}/${provider.name}`).then(
-            async res => {
-              if (res.status !== "ok") {
-                Setting.showMessage("error", res?.msg);
-                return;
-              }
-
-              const t1 = setInterval(await getEvent, 1000, application, provider, res.data2);
-              {Modal.info({
-                title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
-                content: (
-                  <div style={{marginRight: "34px"}}>
-                    <img src = {"data:image/png;base64," + res.data} alt="Wechat QR code" style={{width: "100%"}} />
-                  </div>
-                ),
-                onOk() {
-                  window.clearInterval(t1);
-                },
-              });}
-            }
-          );
-        };
         return (
           <a key={provider.displayName} >
-            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} onClick={info} />
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} onClick={() => {
+              WechatOfficialAccountModal(application, provider, "signup");
+            }} />
           </a>
         );
       } else {
