@@ -891,13 +891,13 @@ export function getProviderLogoURL(provider) {
   // ivancetus 240118
   if (provider.category === "OAuth") {
     if (provider.type === "Google") {
-      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/google_LOGO.png";
+      return "https://d8fl1l41zwned.cloudfront.net/resource/built-in/admin/google_LOGO.png";
     }
     if (provider.type === "Twitch") {
-      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/twitch_LOGO.png";
+      return "https://d8fl1l41zwned.cloudfront.net/resource/built-in/admin/twitch_LOGO.png";
     }
     if (provider.type === "Line") {
-      return "https://d3016b1lz582ue.cloudfront.net/resource/built-in/admin/LINE_LOGO.png";
+      return "https://d8fl1l41zwned.cloudfront.net/resource/built-in/admin/LINE_LOGO.png";
     }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {

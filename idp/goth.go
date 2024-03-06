@@ -463,6 +463,15 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	gothUser, err := idp.Provider.FetchUser(idp.Session)
+	// ivan 240306
+	// line can't get user email from access token, need ID token for exchange, which would require
+	// a small refactor of goth package (need to fork)
+	//jsonBytes, err := json.MarshalIndent(gothUser, "", "    ")
+	//if err == nil {
+	//	log.Println(string(jsonBytes))
+	//} else {
+	//	log.Println(err)
+	//}
 	if err != nil {
 		return nil, err
 	}
@@ -483,7 +492,13 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 		if gothUser.FirstName != "" && gothUser.LastName != "" {
 			user.Username = getName(gothUser.FirstName, gothUser.LastName)
 		} else {
-			user.Username = gothUser.NickName
+			// ivan 240306
+			// line nickname is not unique
+			if provider == "line" {
+				user.Username = gothUser.UserID
+			} else {
+				user.Username = gothUser.NickName
+			}
 		}
 	}
 	if user.DisplayName == "" {
