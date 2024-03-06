@@ -251,21 +251,7 @@ class UserEditPage extends React.Component {
   };
 
   renderAccountItem(accountItem) {
-    if (!accountItem.visible) {
-      return null;
-    }
-
     const isAdmin = Setting.isLocalAdminUser(this.props.account);
-
-    if (accountItem.viewRule === "Self") {
-      if (!this.isSelfOrAdmin()) {
-        return null;
-      }
-    } else if (accountItem.viewRule === "Admin") {
-      if (!isAdmin) {
-        return null;
-      }
-    }
 
     let disabled = false;
     if (accountItem.modifyRule === "Self") {
@@ -1023,6 +1009,21 @@ class UserEditPage extends React.Component {
         <Form>
           {
             this.getUserOrganization()?.accountItems?.map(accountItem => {
+              if (!accountItem.visible) {
+                return null;
+              }
+
+              const isAdmin = Setting.isLocalAdminUser(this.props.account);
+
+              if (accountItem.viewRule === "Self") {
+                if (!this.isSelfOrAdmin()) {
+                  return null;
+                }
+              } else if (accountItem.viewRule === "Admin") {
+                if (!isAdmin) {
+                  return null;
+                }
+              }
               return (
                 <React.Fragment key={accountItem.name}>
                   <Form.Item name={accountItem.name}
