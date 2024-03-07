@@ -18,7 +18,7 @@ import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {GithubOutlined, InfoCircleFilled, ShareAltOutlined} from "@ant-design/icons";
-import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Spin, Tooltip} from "antd";
+import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tooltip} from "antd";
 import {Route, Switch, withRouter} from "react-router-dom";
 import CustomGithubCorner from "./common/CustomGithubCorner";
 import * as Conf from "./Conf";
@@ -366,10 +366,7 @@ class App extends Component {
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
-          <Suspense fallback={
-            <div className="loginBackground" style={{height: "100vh"}}>
-              <Spin size="large" spinning={true} tip={i18next.t("login:Loading")} style={{margin: "0 auto"}} />
-            </div>}>
+          <Suspense fallback={null}>
             <Layout id="parent-area">
               <ManagementPage
                 account={this.state.account}
