@@ -117,6 +117,8 @@
 
 # ------------- casdoor -----------------
 
+# $ git merge upstream/master
+
 AWS_REGION = ap-northeast-1
 ECR_URL = 421930302278.dkr.ecr.ap-northeast-1.amazonaws.com
 ECR_NAME = login
