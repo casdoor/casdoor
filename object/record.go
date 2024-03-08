@@ -47,6 +47,12 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		object = string(ctx.Input.RequestBody)
 	}
 
+	language := ctx.Request.Header.Get("Accept-Language")
+	if len(language) > 2 {
+		language = language[0:2]
+	}
+	languageCode := conf.GetLanguage(language)
+
 	record := casvisorsdk.Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
@@ -55,6 +61,7 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Method:      ctx.Request.Method,
 		RequestUri:  requestUri,
 		Action:      action,
+		Language:    languageCode,
 		Object:      object,
 		IsTriggered: false,
 	}
