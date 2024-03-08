@@ -52,12 +52,12 @@ func (c *ApiController) GetResources() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
-	userObj, ok := c.RequireSignedInUser()
+	isOrgAdmin, ok := c.IsOrgAdmin()
 	if !ok {
 		return
 	}
 
-	if userObj != nil && userObj.IsAdmin {
+	if isOrgAdmin {
 		user = ""
 	}
 
