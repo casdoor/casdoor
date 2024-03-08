@@ -34,6 +34,7 @@ const ManagementPage = lazy(() => import("./ManagementPage"));
 const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
 
 setTwoToneColor("rgb(87,52,211)");
 
@@ -56,6 +57,7 @@ class App extends Component {
       logo: this.getLogo(storageThemeAlgorithm),
       requiredEnableMfa: false,
       isAiAssistantOpen: false,
+      application: undefined,
     };
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
@@ -67,6 +69,7 @@ class App extends Component {
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
+    this.getApplication();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -190,6 +193,24 @@ class App extends Component {
     }
   };
 
+  getApplication() {
+    const applicationName = localStorage.getItem("applicationName");
+    if (!applicationName) {
+      return;
+    }
+    ApplicationBackend.getApplication("admin", applicationName)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.setState({
+          application: res.data,
+        });
+      });
+  }
+
   getAccount() {
     const params = new URLSearchParams(this.props.location.search);
 
@@ -245,11 +266,17 @@ class App extends Component {
           }
         }>
           {
-            Conf.CustomFooter !== null ? Conf.CustomFooter : (
+            this.state.application?.footerHtml && this.state.application.footerHtml !== "" ?
               <React.Fragment>
-                Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                <div dangerouslySetInnerHTML={{__html: this.state.application.footerHtml}} />
               </React.Fragment>
-            )
+              : (
+                Conf.CustomFooter !== null ? Conf.CustomFooter : (
+                  <React.Fragment>
+                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                  </React.Fragment>
+                )
+              )
           }
         </Footer>
       </React.Fragment>
@@ -330,6 +357,11 @@ class App extends Component {
                     <EntryPage
                       account={this.state.account}
                       theme={this.state.themeData}
+                      updateApplication={(application) => {
+                        this.setState({
+                          application: application,
+                        });
+                      }}
                       onLoginSuccess={(redirectUrl) => {
                         if (redirectUrl) {
                           localStorage.setItem("mfaRedirectUrl", redirectUrl);
