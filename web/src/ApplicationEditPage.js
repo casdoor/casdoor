@@ -887,6 +887,38 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Footer HTML"), i18next.t("application:Footer HTML - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror
+                  value={this.state.application.footerHtml}
+                  options={{mode: "htmlmixed", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("footerHtml", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Footer HTML - Edit")} trigger="click">
+              <Input value={this.state.application.footerHtml} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("footerHtml", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          </Col>
+          <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getDefaultFooterContent())} >
+            {i18next.t("provider:Reset to Default HTML")}
+          </Button>
+          <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getEmptyFooterContent())} >
+            {i18next.t("application:Reset to Empty")}
+          </Button>
+        </Row>
         {
           <React.Fragment>
             <Row style={{marginTop: "20px"}} >
