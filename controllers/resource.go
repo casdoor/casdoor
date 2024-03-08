@@ -52,6 +52,15 @@ func (c *ApiController) GetResources() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
+	userObj, ok := c.RequireSignedInUser()
+	if !ok {
+		return
+	}
+
+	if userObj != nil && userObj.IsAdmin {
+		user = ""
+	}
+
 	if sortField == "Direct" {
 		provider, err := c.GetProviderFromContext("Storage")
 		if err != nil {
