@@ -17,7 +17,6 @@ package routers
 import (
 	"fmt"
 	"net"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -36,7 +35,7 @@ type Response struct {
 }
 
 func responseError(ctx *context.Context, error string, data ...interface{}) {
-	ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
+	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 
 	resp := Response{Status: "error", Msg: error}
 	switch len(data) {
