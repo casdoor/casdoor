@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
+import {DeleteOutlined, DownOutlined, LinkOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
@@ -99,13 +99,26 @@ class ManagedAccountTable extends React.Component {
         },
       },
       {
+        title: i18next.t("general:Signin URL"),
+        dataIndex: "signinUrl",
+        key: "signinUrl",
+        // width: "420px",
+        render: (text, record, index) => {
+          return (
+            <Input prefix={<LinkOutlined />} value={text} onChange={e => {
+              this.updateField(table, index, "signinUrl", e.target.value);
+            }} />
+          );
+        },
+      },
+      {
         title: i18next.t("signup:Username"),
         dataIndex: "username",
         key: "username",
-        width: "420px",
+        width: "200px",
         render: (text, record, index) => {
           return (
-            <Input defaultValue={text} onChange={e => {
+            <Input value={text} onChange={e => {
               this.updateField(table, index, "username", e.target.value);
             }} />
           );
@@ -115,10 +128,10 @@ class ManagedAccountTable extends React.Component {
         title: i18next.t("general:Password"),
         dataIndex: "password",
         key: "password",
-        width: "420px",
+        width: "200px",
         render: (text, record, index) => {
           return (
-            <Input defaultValue={text} onChange={e => {
+            <Input.Password value={text} onChange={e => {
               this.updateField(table, index, "password", e.target.value);
             }} />
           );
