@@ -176,7 +176,7 @@ class CertEditPage extends React.Component {
                 this.updateCertField("bitSize", 256);
               } else if (value === "ES384") {
                 this.updateCertField("bitSize", 384);
-              } else if (value === "ES521") {
+              } else if (value === "ES512") {
                 this.updateCertField("bitSize", 521);
               } else {
                 this.updateCertField("bitSize", 2048);
