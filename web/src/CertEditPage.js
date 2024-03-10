@@ -171,9 +171,13 @@ class CertEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
               this.updateCertField("cryptoAlgorithm", value);
-              if (value === "RS256") {
+              if (value === "RS256" || value === "PS256") {
                 this.updateCertField("bitSize", 2048);
-              } else if (value === "HS256" || value === "ES256") {
+              } else if (value === "RS384" || value === "PS384") {
+                this.updateCertField("bitSize", 2048);
+              } else if (value === "RS512" || value === "PS512") {
+                this.updateCertField("bitSize", 2048);
+              } else if (value === "ES256") {
                 this.updateCertField("bitSize", 256);
               } else if (value === "ES384") {
                 this.updateCertField("bitSize", 384);
@@ -188,10 +192,14 @@ class CertEditPage extends React.Component {
               {
                 [
                   {id: "RS256", name: "RS256 (RSA + SHA256)"},
-                  {id: "HS256", name: "HS256 (HMAC + SHA256)"},
+                  {id: "RS384", name: "RS384 (RSA + SHA384)"},
+                  {id: "RS512", name: "RS512 (RSA + SHA512)"},
                   {id: "ES256", name: "ES256 (ECDSA using P-256 + SHA256)"},
-                  {id: "ES384", name: "ES384 (ECDSA using P-384 + SHA256)"},
-                  {id: "ES521", name: "ES521 (ECDSA using P-521 + SHA256)"},
+                  {id: "ES384", name: "ES384 (ECDSA using P-384 + SHA384)"},
+                  {id: "ES512", name: "ES512 (ECDSA using P-521 + SHA512)"},
+                  {id: "PS256", name: "PS256 (RSASSA-PSS using SHA256 and MGF1 with SHA256)"},
+                  {id: "PS384", name: "PS384 (RSASSA-PSS using SHA384 and MGF1 with SHA384)"},
+                  {id: "PS512", name: "PS512 (RSASSA-PSS using SHA512 and MGF1 with SHA512)"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
