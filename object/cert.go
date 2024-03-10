@@ -228,7 +228,7 @@ func (p *Cert) populateContent() error {
 	if sigAlgorithm == "RS" {
 		certificate, privateKey, err = generateRsaKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
 	} else if sigAlgorithm == "ES" {
-		certificate, privateKey, err = generateEsKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+		certificate, privateKey, err = generateEsKeys(shaSize, p.ExpireInYears, p.Name, p.Owner)
 	} else if sigAlgorithm == "PS" {
 		certificate, privateKey, err = generateRsaPssKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
 	} else {

@@ -172,14 +172,12 @@ class CertEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
               this.updateCertField("cryptoAlgorithm", value);
 
-              if (value === "ES256") {
-                this.updateCertField("bitSize", 256);
-              } else if (value === "ES384") {
-                this.updateCertField("bitSize", 384);
-              } else if (value === "ES512") {
-                this.updateCertField("bitSize", 521);
+              if (value.startsWith("ES")) {
+                this.updateCertField("bitSize", 0);
               } else {
-                this.updateCertField("bitSize", 2048);
+                if (this.state.cert.bitSize !== 1024 && this.state.cert.bitSize !== 2048 && this.state.cert.bitSize !== 4096) {
+                  this.updateCertField("bitSize", 2048);
+                }
               }
 
               this.updateCertField("certificate", "");
@@ -201,22 +199,26 @@ class CertEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.cert.bitSize} onChange={(value => {
-              this.updateCertField("bitSize", value);
-              this.updateCertField("certificate", "");
-              this.updateCertField("privateKey", "");
-            })}>
-              {
-                Setting.getCryptoAlgorithmOptions(this.state.cert.cryptoAlgorithm).map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
+        {
+          this.state.cert.cryptoAlgorithm.startsWith("ES") ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.cert.bitSize} onChange={(value => {
+                  this.updateCertField("bitSize", value);
+                  this.updateCertField("certificate", "");
+                  this.updateCertField("privateKey", "");
+                })}>
+                  {
+                    Setting.getCryptoAlgorithmOptions(this.state.cert.cryptoAlgorithm).map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          )
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Expire in years"), i18next.t("cert:Expire in years - Tooltip"))} :

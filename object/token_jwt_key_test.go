@@ -37,7 +37,7 @@ func TestGenerateRsaKeys(t *testing.T) {
 
 func TestGenerateEsKeys(t *testing.T) {
 	fileId := "token_jwt_key"
-	certificate, privateKey, err := generateEsKeys(4096, 256, 20, "Casdoor Cert", "Casdoor Organization")
+	certificate, privateKey, err := generateEsKeys(256, 20, "Casdoor Cert", "Casdoor Organization")
 	if err != nil {
 		panic(err)
 	}

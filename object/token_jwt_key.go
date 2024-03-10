@@ -83,7 +83,7 @@ func generateRsaKeys(bitSize int, shaSize int, expireInYears int, commonName str
 	return string(certPem), string(privateKeyPem), nil
 }
 
-func generateEsKeys(bitSize int, shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
+func generateEsKeys(shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
 	var curve elliptic.Curve
 	switch shaSize {
 	case 256:
