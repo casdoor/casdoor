@@ -216,6 +216,8 @@ type Userinfo struct {
 	Address       string   `json:"address,omitempty"`
 	Phone         string   `json:"phone,omitempty"`
 	Groups        []string `json:"groups,omitempty"`
+	Roles         []string `json:"roles,omitempty"`
+	Permissions   []string `json:"permissions,omitempty"`
 }
 
 type ManagedAccount struct {
@@ -914,7 +916,7 @@ func DeleteUser(user *User) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
+func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {
 	_, originBackend := getOriginFromHost(host)
 
 	resp := Userinfo{
@@ -922,24 +924,44 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 		Iss: originBackend,
 		Aud: aud,
 	}
+
 	if strings.Contains(scope, "profile") {
 		resp.Name = user.Name
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
 		resp.Groups = user.Groups
+
+		err := ExtendUserWithRolesAndPermissions(user)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Roles = []string{}
+		for _, role := range user.Roles {
+			resp.Roles = append(resp.Roles, role.Name)
+		}
+
+		resp.Permissions = []string{}
+		for _, permission := range user.Permissions {
+			resp.Permissions = append(resp.Permissions, permission.Name)
+		}
 	}
+
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
 		// resp.EmailVerified = user.EmailVerified
 		resp.EmailVerified = true
 	}
+
 	if strings.Contains(scope, "address") {
 		resp.Address = user.Location
 	}
+
 	if strings.Contains(scope, "phone") {
 		resp.Phone = user.Phone
 	}
-	return &resp
+
+	return &resp, nil
 }
 
 func LinkUserAccount(user *User, field string, value string) (bool, error) {

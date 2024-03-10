@@ -459,7 +459,12 @@ func (c *ApiController) GetUserinfo() {
 
 	scope, aud := c.GetSessionOidc()
 	host := c.Ctx.Request.Host
-	userInfo := object.GetUserInfo(user, scope, aud, host)
+
+	userInfo, err := object.GetUserInfo(user, scope, aud, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.Data["json"] = userInfo
 	c.ServeJSON()
