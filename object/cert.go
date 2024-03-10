@@ -214,6 +214,10 @@ func (p *Cert) populateContent() error {
 		return err
 	}
 
+	if p.CryptoAlgorithm == "RSA" {
+		p.CryptoAlgorithm = "RS256"
+	}
+
 	sigAlgorithm := p.CryptoAlgorithm[:2]
 	shaSize, err := util.ParseIntWithError(p.CryptoAlgorithm[2:])
 	if err != nil {
