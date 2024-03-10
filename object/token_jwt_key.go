@@ -27,7 +27,7 @@ import (
 	"time"
 )
 
-func generateRsaKeys(bitSize int, algorithmType int, expireInYears int, commonName string, organization string) (string, string, error) {
+func generateRsaKeys(bitSize int, shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
 	// https://stackoverflow.com/questions/64104586/use-golang-to-get-rsa-key-the-same-way-openssl-genrsa
 	// https://stackoverflow.com/questions/43822945/golang-can-i-create-x509keypair-using-rsa-key
 
@@ -58,7 +58,7 @@ func generateRsaKeys(bitSize int, algorithmType int, expireInYears int, commonNa
 		BasicConstraintsValid: true,
 	}
 
-	switch algorithmType {
+	switch shaSize {
 	case 256:
 		tml.SignatureAlgorithm = x509.SHA256WithRSA
 	case 384:
@@ -66,7 +66,7 @@ func generateRsaKeys(bitSize int, algorithmType int, expireInYears int, commonNa
 	case 512:
 		tml.SignatureAlgorithm = x509.SHA512WithRSA
 	default:
-		return "", "", fmt.Errorf("unsupported algorithm type")
+		return "", "", fmt.Errorf("generateRsaKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	cert, err := x509.CreateCertificate(rand.Reader, &tml, &tml, &key.PublicKey, key)
@@ -83,9 +83,9 @@ func generateRsaKeys(bitSize int, algorithmType int, expireInYears int, commonNa
 	return string(certPem), string(privateKeyPem), nil
 }
 
-func generateEsKeys(bitSize int, algorithmType int, expireInYears int, commonName string, organization string) (string, string, error) {
+func generateEsKeys(bitSize int, shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
 	var curve elliptic.Curve
-	switch algorithmType {
+	switch shaSize {
 	case 256:
 		curve = elliptic.P256()
 	case 384:
@@ -93,7 +93,7 @@ func generateEsKeys(bitSize int, algorithmType int, expireInYears int, commonNam
 	case 512:
 		curve = elliptic.P521() // ES512(P521,SHA512)
 	default:
-		return "", "", fmt.Errorf("unsupported algorithm type")
+		return "", "", fmt.Errorf("generateEsKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	// Generate ECDSA key pair.
@@ -139,7 +139,7 @@ func generateEsKeys(bitSize int, algorithmType int, expireInYears int, commonNam
 	return string(certPem), string(privateKeyPem), nil
 }
 
-func generateRsaPssKeys(bitSize int, algorithmType int, expireInYears int, commonName string, organization string) (string, string, error) {
+func generateRsaPssKeys(bitSize int, shaSize int, expireInYears int, commonName string, organization string) (string, string, error) {
 	// Generate RSA key.
 	key, err := rsa.GenerateKey(rand.Reader, bitSize)
 	if err != nil {
@@ -173,7 +173,7 @@ func generateRsaPssKeys(bitSize int, algorithmType int, expireInYears int, commo
 	}
 
 	// Set the signature algorithm based on the hash function
-	switch algorithmType {
+	switch shaSize {
 	case 256:
 		tml.SignatureAlgorithm = x509.SHA256WithRSAPSS
 	case 384:
@@ -181,7 +181,7 @@ func generateRsaPssKeys(bitSize int, algorithmType int, expireInYears int, commo
 	case 512:
 		tml.SignatureAlgorithm = x509.SHA512WithRSAPSS
 	default:
-		return "", "", fmt.Errorf("unsupported algorithm type")
+		return "", "", fmt.Errorf("generateRsaPssKeys() error, unsupported SHA size: %d", shaSize)
 	}
 
 	cert, err := x509.CreateCertificate(rand.Reader, &tml, &tml, &key.PublicKey, key)

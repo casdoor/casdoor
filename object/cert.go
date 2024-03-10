@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -206,26 +205,37 @@ func (p *Cert) GetId() string {
 }
 
 func (p *Cert) populateContent() error {
-	if p.Certificate == "" || p.PrivateKey == "" {
-		var err error
-		var certificate, privateKey string
-		if strings.HasPrefix(p.CryptoAlgorithm, "RS") {
-			certificate, privateKey, err = generateRsaKeys(p.BitSize, util.ParseInt(p.CryptoAlgorithm[2:]), p.ExpireInYears, p.Name, p.Owner)
-		} else if strings.HasPrefix(p.CryptoAlgorithm, "ES") {
-			certificate, privateKey, err = generateEsKeys(p.BitSize, util.ParseInt(p.CryptoAlgorithm[2:]), p.ExpireInYears, p.Name, p.Owner)
-		} else if strings.HasPrefix(p.CryptoAlgorithm, "PS") {
-			certificate, privateKey, err = generateRsaPssKeys(p.BitSize, util.ParseInt(p.CryptoAlgorithm[2:]), p.ExpireInYears, p.Name, p.Owner)
-		} else {
-			err = fmt.Errorf("Crypto algorithm %s is not found", p.CryptoAlgorithm)
-		}
-		if err != nil {
-			return err
-		}
-
-		p.Certificate = certificate
-		p.PrivateKey = privateKey
+	if p.Certificate != "" && p.PrivateKey != "" {
+		return nil
 	}
 
+	if len(p.CryptoAlgorithm) < 3 {
+		err := fmt.Errorf("populateContent() error, unsupported crypto algorithm: %s", p.CryptoAlgorithm)
+		return err
+	}
+
+	sigAlgorithm := p.CryptoAlgorithm[:2]
+	shaSize, err := util.ParseIntWithError(p.CryptoAlgorithm[2:])
+	if err != nil {
+		return err
+	}
+
+	var certificate, privateKey string
+	if sigAlgorithm == "RS" {
+		certificate, privateKey, err = generateRsaKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else if sigAlgorithm == "ES" {
+		certificate, privateKey, err = generateEsKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else if sigAlgorithm == "PS" {
+		certificate, privateKey, err = generateRsaPssKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else {
+		err = fmt.Errorf("populateContent() error, unsupported signature algorithm: %s", sigAlgorithm)
+	}
+	if err != nil {
+		return err
+	}
+
+	p.Certificate = certificate
+	p.PrivateKey = privateKey
 	return nil
 }
 

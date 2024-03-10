@@ -171,21 +171,17 @@ class CertEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
               this.updateCertField("cryptoAlgorithm", value);
-              if (value === "RS256" || value === "PS256") {
-                this.updateCertField("bitSize", 2048);
-              } else if (value === "RS384" || value === "PS384") {
-                this.updateCertField("bitSize", 2048);
-              } else if (value === "RS512" || value === "PS512") {
-                this.updateCertField("bitSize", 2048);
-              } else if (value === "ES256") {
+
+              if (value === "ES256") {
                 this.updateCertField("bitSize", 256);
               } else if (value === "ES384") {
                 this.updateCertField("bitSize", 384);
               } else if (value === "ES521") {
                 this.updateCertField("bitSize", 521);
               } else {
-                this.updateCertField("bitSize", 0);
+                this.updateCertField("bitSize", 2048);
               }
+
               this.updateCertField("certificate", "");
               this.updateCertField("privateKey", "");
             })}>
