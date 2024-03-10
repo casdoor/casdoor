@@ -529,11 +529,12 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.OrganizationObj.PasswordSalt = "***"
 		application.OrganizationObj.InitScore = -1
 		application.OrganizationObj.EnableSoftDeletion = false
-		application.OrganizationObj.IsProfilePublic = false
 
 		if !isOrgUser {
 			application.OrganizationObj.MfaItems = nil
-			application.OrganizationObj.AccountItems = nil
+			if !application.OrganizationObj.IsProfilePublic {
+				application.OrganizationObj.AccountItems = nil
+			}
 		}
 	}
 

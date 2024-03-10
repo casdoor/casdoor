@@ -201,6 +201,10 @@ class UserEditPage extends React.Component {
   }
 
   updateUserField(key, value) {
+    if (this.props.account === null) {
+      return;
+    }
+
     value = this.parseUserField(key, value);
 
     const user = this.state.user;
@@ -989,7 +993,11 @@ class UserEditPage extends React.Component {
               <div style={{verticalAlign: "middle", marginBottom: 10}}>{`(${i18next.t("general:empty")})`}</div>
             </Col>
         }
-        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.getUserOrganization()} />
+        {
+          (this.props.account === null) ? null : (
+            <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.getUserOrganization()} />
+          )
+        }
       </Col>
     );
   }
