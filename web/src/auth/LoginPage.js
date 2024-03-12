@@ -1117,7 +1117,7 @@ class LoginPage extends React.Component {
     };
 
     return (
-      <div style={{height: 300, width: 300}}>
+      <div style={{height: 300}}>
         {renderChoiceBox()}
       </div>
     );
@@ -1188,11 +1188,9 @@ class LoginPage extends React.Component {
             </div>
             <div className="login-form">
               <div>
-                <div>
-                  {
-                    this.renderLoginPanel(application)
-                  }
-                </div>
+                {
+                  this.renderLoginPanel(application)
+                }
               </div>
             </div>
           </div>
