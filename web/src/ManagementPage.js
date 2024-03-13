@@ -223,12 +223,12 @@ function ManagementPage(props) {
     let textColor = "black";
     const twoToneColor = props.themeData.colorPrimary;
 
-    let logo = "";
+    let logo = props.account.organization.logoLight ? props.account.organization.logoLight : Setting.getLogo(props.themeAlgorithm);
     if (props.themeAlgorithm.includes("dark")) {
-      logo = props.account.organization.logoDark;
+      if (props.account.organization.logoDark) {
+        logo = props.account.organization.logoDark;
+      }
       textColor = "white";
-    } else {
-      logo = props.account.organization.logoLight;
     }
 
     !Setting.isMobile() ? res.push({
