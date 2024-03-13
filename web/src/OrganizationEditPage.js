@@ -143,7 +143,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:LogoLight"), i18next.t("general:LogoLight - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Logo light"), i18next.t("general:Logo light - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
@@ -170,7 +170,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:LogoDark"), i18next.t("general:LogoDark - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Logo dark"), i18next.t("general:Logo dark - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
