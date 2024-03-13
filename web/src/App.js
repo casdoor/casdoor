@@ -153,11 +153,7 @@ class App extends Component {
   }
 
   getLogo(themes) {
-    if (themes.includes("dark")) {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
-    } else {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
-    }
+    return Setting.getLogo(themes);
   }
 
   setLanguage(account) {

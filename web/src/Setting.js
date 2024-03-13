@@ -89,6 +89,14 @@ export function getAlgorithmNames(themeData) {
   return algorithms;
 }
 
+export function getLogo(themes) {
+  if (themes.includes("dark")) {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+  } else {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  }
+}
+
 export const OtherProviderInfo = {
   SMS: {
     "Aliyun SMS": {
