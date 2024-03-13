@@ -179,7 +179,7 @@ type IdpSSODescriptor struct {
 }
 
 type NameIDFormat struct {
-	//XMLName xml.Name
+	// XMLName xml.Name
 	Value string `xml:",innerxml"`
 }
 
@@ -190,7 +190,7 @@ type SingleSignOnService struct {
 }
 
 type Attribute struct {
-	//XMLName      xml.Name
+	// XMLName      xml.Name
 	Name         string   `xml:"Name,attr"`
 	NameFormat   string   `xml:"NameFormat,attr"`
 	FriendlyName string   `xml:"FriendlyName,attr"`
