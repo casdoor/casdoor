@@ -160,9 +160,9 @@ class OrganizationEditPage extends React.Component {
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={23} >
+              <Col span={23} style={{background: "white"}}>
                 <a target="_blank" rel="noreferrer" href={this.state.organization.logoLight}>
-                  <img src={this.state.organization.logoLight} alt={this.state.organization.logoLight} height={90} style={{marginBottom: "20px"}} />
+                  <img src={this.state.organization.logoLight ? this.state.organization.logoLight : Setting.getLogo([""])} alt={this.state.organization.logoLight} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
@@ -187,9 +187,9 @@ class OrganizationEditPage extends React.Component {
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={23} >
+              <Col span={23} style={{background: "#141414"}}>
                 <a target="_blank" rel="noreferrer" href={this.state.organization.logoDark}>
-                  <img src={this.state.organization.logoDark} alt={this.state.organization.logoDark} height={90} style={{marginBottom: "20px"}} />
+                  <img src={this.state.organization.logoDark ? this.state.organization.logoDark : Setting.getLogo(["dark"])} alt={this.state.organization.logoDark} height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
