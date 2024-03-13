@@ -179,8 +179,8 @@ type IdpSSODescriptor struct {
 }
 
 type NameIDFormat struct {
-	XMLName xml.Name
-	Value   string `xml:",innerxml"`
+	//XMLName xml.Name
+	Value string `xml:",innerxml"`
 }
 
 type SingleSignOnService struct {
@@ -190,7 +190,7 @@ type SingleSignOnService struct {
 }
 
 type Attribute struct {
-	XMLName      xml.Name
+	//XMLName      xml.Name
 	Name         string   `xml:"Name,attr"`
 	NameFormat   string   `xml:"NameFormat,attr"`
 	FriendlyName string   `xml:"FriendlyName,attr"`
@@ -223,7 +223,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	} else {
 		idpLocation = fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name)
 	}
-
+	fmt.Println(idpLocation)
 	d := IdpEntityDescriptor{
 		XMLName: xml.Name{
 			Local: "md:EntityDescriptor",
@@ -260,7 +260,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
 		},
 	}
-
+	fmt.Println(&d)
 	return &d, nil
 }
 
