@@ -521,6 +521,15 @@ class LoginPage extends React.Component {
         </div>
       );
     } else if (signinItem.name === "Languages") {
+      const languages = application.organizationObj.languages;
+      if (languages.length <= 1) {
+        const language = (languages.length === 1) ? languages[0] : "en";
+        if (Setting.getLanguage() !== language) {
+          Setting.setLanguage(language);
+        }
+        return null;
+      }
+
       return (
         <div className="login-languages">
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
@@ -1108,7 +1117,7 @@ class LoginPage extends React.Component {
     };
 
     return (
-      <div style={{height: 300, width: 300}}>
+      <div style={{height: 300}}>
         {renderChoiceBox()}
       </div>
     );
@@ -1179,11 +1188,9 @@ class LoginPage extends React.Component {
             </div>
             <div className="login-form">
               <div>
-                <div>
-                  {
-                    this.renderLoginPanel(application)
-                  }
-                </div>
+                {
+                  this.renderLoginPanel(application)
+                }
               </div>
             </div>
           </div>

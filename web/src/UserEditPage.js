@@ -64,7 +64,9 @@ class UserEditPage extends React.Component {
 
   UNSAFE_componentWillMount() {
     this.getUser();
-    this.getOrganizations();
+    if (Setting.isLocalAdminUser(this.props.account)) {
+      this.getOrganizations();
+    }
     this.getApplicationsByOrganization(this.state.organizationName);
     this.getUserApplication();
     this.setReturnUrl();
@@ -199,6 +201,10 @@ class UserEditPage extends React.Component {
   }
 
   updateUserField(key, value) {
+    if (this.props.account === null) {
+      return;
+    }
+
     value = this.parseUserField(key, value);
 
     const user = this.state.user;
@@ -249,21 +255,7 @@ class UserEditPage extends React.Component {
   };
 
   renderAccountItem(accountItem) {
-    if (!accountItem.visible) {
-      return null;
-    }
-
     const isAdmin = Setting.isLocalAdminUser(this.props.account);
-
-    if (accountItem.viewRule === "Self") {
-      if (!this.isSelfOrAdmin()) {
-        return null;
-      }
-    } else if (accountItem.viewRule === "Admin") {
-      if (!isAdmin) {
-        return null;
-      }
-    }
 
     let disabled = false;
     if (accountItem.modifyRule === "Self") {
@@ -1001,7 +993,11 @@ class UserEditPage extends React.Component {
               <div style={{verticalAlign: "middle", marginBottom: 10}}>{`(${i18next.t("general:empty")})`}</div>
             </Col>
         }
-        <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.state.organizations.find(organization => organization.name === this.state.organizationName)} />
+        {
+          (this.props.account === null) ? null : (
+            <CropperDivModal disabled={disabled} tag={tag} setTitle={set} buttonText={`${title}...`} title={title} user={this.state.user} organization={this.getUserOrganization()} />
+          )
+        }
       </Col>
     );
   }
@@ -1011,7 +1007,7 @@ class UserEditPage extends React.Component {
       <Card size="small" title={
         (this.props.account === null) ? i18next.t("user:User Profile") : (
           <div>
-            {this.state.mode === "add" ? i18next.t("user:New User") : i18next.t("user:Edit User")}&nbsp;&nbsp;&nbsp;&nbsp;
+            {this.state.mode === "add" ? i18next.t("user:New User") : (this.isSelf() ? i18next.t("account:My Account") : i18next.t("user:Edit User"))}&nbsp;&nbsp;&nbsp;&nbsp;
             <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
             <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
             {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
@@ -1021,6 +1017,21 @@ class UserEditPage extends React.Component {
         <Form>
           {
             this.getUserOrganization()?.accountItems?.map(accountItem => {
+              if (!accountItem.visible) {
+                return null;
+              }
+
+              const isAdmin = Setting.isLocalAdminUser(this.props.account);
+
+              if (accountItem.viewRule === "Self") {
+                if (!this.isSelfOrAdmin()) {
+                  return null;
+                }
+              } else if (accountItem.viewRule === "Admin") {
+                if (!isAdmin) {
+                  return null;
+                }
+              }
               return (
                 <React.Fragment key={accountItem.name}>
                   <Form.Item name={accountItem.name}
@@ -1091,7 +1102,9 @@ class UserEditPage extends React.Component {
                 }
               }
             } else {
-              this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+              if (location.pathname !== "/account") {
+                this.props.history.push(`/users/${this.state.user.owner}/${this.state.user.name}`);
+              }
             }
           } else {
             if (exitAfterSave) {

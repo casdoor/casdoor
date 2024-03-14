@@ -60,7 +60,6 @@ func (c *ApiController) SendEmail() {
 	}
 
 	var emailForm EmailForm
-
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailForm)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -87,7 +86,7 @@ func (c *ApiController) SendEmail() {
 
 	// when receiver is the reserved keyword: "TestSmtpServer", it means to test the SMTP server instead of sending a real Email
 	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
-		err := object.DailSmtpServer(provider)
+		err = object.DailSmtpServer(provider)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -112,20 +111,23 @@ func (c *ApiController) SendEmail() {
 		return
 	}
 
-	code := "123456"
+	content := emailForm.Content
+	if content == "" {
+		code := "123456"
 
-	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
-	content := strings.Replace(provider.Content, "%s", code, 1)
-	if !strings.HasPrefix(userId, "app/") {
-		var user *object.User
-		user, err = object.GetUser(userId)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+		// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
+		content = strings.Replace(provider.Content, "%s", code, 1)
+		if !strings.HasPrefix(userId, "app/") {
+			var user *object.User
+			user, err = object.GetUser(userId)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 
-		if user != nil {
-			content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+			if user != nil {
+				content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+			}
 		}
 	}
 

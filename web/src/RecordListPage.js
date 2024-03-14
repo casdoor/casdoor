@@ -139,9 +139,17 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Request URI"),
         dataIndex: "requestUri",
         key: "requestUri",
-        // width: '300px',
+        // width: "300px",
         sorter: true,
         ...this.getColumnSearchProps("requestUri"),
+      },
+      {
+        title: i18next.t("user:Language"),
+        dataIndex: "language",
+        key: "language",
+        width: "90px",
+        sorter: true,
+        ...this.getColumnSearchProps("language"),
       },
       {
         title: i18next.t("general:Action"),

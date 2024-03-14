@@ -156,7 +156,7 @@ class ForgetPage extends React.Component {
       if (res.status === "ok") {
         const linkInStorage = sessionStorage.getItem("signinUrl");
         if (linkInStorage !== null && linkInStorage !== "") {
-          Setting.goToLinkSoft(linkInStorage);
+          Setting.goToLinkSoft(this, linkInStorage);
         } else {
           Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
         }

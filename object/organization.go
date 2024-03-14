@@ -54,6 +54,8 @@ type Organization struct {
 
 	DisplayName            string     `xorm:"varchar(100)" json:"displayName"`
 	WebsiteUrl             string     `xorm:"varchar(100)" json:"websiteUrl"`
+	Logo                   string     `xorm:"varchar(200)" json:"logo"`
+	LogoDark               string     `xorm:"varchar(200)" json:"logoDark"`
 	Favicon                string     `xorm:"varchar(100)" json:"favicon"`
 	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
 	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`

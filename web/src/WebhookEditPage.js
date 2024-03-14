@@ -311,6 +311,16 @@ class WebhookEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("webhook:Single org only"), i18next.t("webhook:Single org only - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.webhook.singleOrgOnly} onChange={checked => {
+              this.updateWebhookField("singleOrgOnly", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >

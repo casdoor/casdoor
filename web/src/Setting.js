@@ -89,6 +89,14 @@ export function getAlgorithmNames(themeData) {
   return algorithms;
 }
 
+export function getLogo(themes) {
+  if (themes.includes("dark")) {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+  } else {
+    return `${StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+  }
+}
+
 export const OtherProviderInfo = {
   SMS: {
     "Aliyun SMS": {
@@ -707,6 +715,15 @@ export function goToLinkSoft(ths, link) {
   ths.props.history.push(link);
 }
 
+export function goToLinkSoftOrJumpSelf(ths, link) {
+  if (link.startsWith("http")) {
+    goToLink(link);
+    return;
+  }
+
+  ths.props.history.push(link);
+}
+
 export function showMessage(type, text) {
   if (type === "success") {
     message.success(text);
@@ -1092,7 +1109,9 @@ export function getProviderTypeOptions(category) {
 }
 
 export function getCryptoAlgorithmOptions(cryptoAlgorithm) {
-  if (cryptoAlgorithm === "RS256") {
+  if (cryptoAlgorithm.startsWith("ES")) {
+    return [];
+  } else {
     return (
       [
         {id: 1024, name: "1024"},
@@ -1100,26 +1119,6 @@ export function getCryptoAlgorithmOptions(cryptoAlgorithm) {
         {id: 4096, name: "4096"},
       ]
     );
-  } else if (cryptoAlgorithm === "HS256" || cryptoAlgorithm === "ES256") {
-    return (
-      [
-        {id: 256, name: "256"},
-      ]
-    );
-  } else if (cryptoAlgorithm === "ES384") {
-    return (
-      [
-        {id: 384, name: "384"},
-      ]
-    );
-  } else if (cryptoAlgorithm === "ES521") {
-    return (
-      [
-        {id: 521, name: "521"},
-      ]
-    );
-  } else {
-    return [];
   }
 }
 
@@ -1456,6 +1455,19 @@ export function getUserCommonFields() {
     "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",
     "Language", "Gender", "Birthday", "Education", "Score", "Ranking", "IsDefaultAvatar", "IsOnline", "IsAdmin", "IsForbidden", "IsDeleted", "CreatedIp",
     "PreferredMfaType", "TotpSecret", "SignupApplication"];
+}
+
+export function getDefaultFooterContent() {
+  return "Powered by <a target=\"_blank\" href=\"https://casdoor.org\" rel=\"noreferrer\"><img style=\"padding-bottom: 3px\" height=\"20\" alt=\"Casdoor\" src=\"https://cdn.casbin.org/img/casdoor-logo_1185x256.png\"/></a>";
+}
+
+export function getEmptyFooterContent() {
+  return `<style>
+    #footer {
+        display: none;
+    }
+<style>
+  `;
 }
 
 export function getDefaultHtmlEmailContent() {

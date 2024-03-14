@@ -171,48 +171,54 @@ class CertEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.cert.cryptoAlgorithm} onChange={(value => {
               this.updateCertField("cryptoAlgorithm", value);
-              if (value === "RS256") {
-                this.updateCertField("bitSize", 2048);
-              } else if (value === "HS256" || value === "ES256") {
-                this.updateCertField("bitSize", 256);
-              } else if (value === "ES384") {
-                this.updateCertField("bitSize", 384);
-              } else if (value === "ES521") {
-                this.updateCertField("bitSize", 521);
-              } else {
+
+              if (value.startsWith("ES")) {
                 this.updateCertField("bitSize", 0);
+              } else {
+                if (this.state.cert.bitSize !== 1024 && this.state.cert.bitSize !== 2048 && this.state.cert.bitSize !== 4096) {
+                  this.updateCertField("bitSize", 2048);
+                }
               }
+
               this.updateCertField("certificate", "");
               this.updateCertField("privateKey", "");
             })}>
               {
                 [
                   {id: "RS256", name: "RS256 (RSA + SHA256)"},
-                  {id: "HS256", name: "HS256 (HMAC + SHA256)"},
+                  {id: "RS384", name: "RS384 (RSA + SHA384)"},
+                  {id: "RS512", name: "RS512 (RSA + SHA512)"},
                   {id: "ES256", name: "ES256 (ECDSA using P-256 + SHA256)"},
-                  {id: "ES384", name: "ES384 (ECDSA using P-384 + SHA256)"},
-                  {id: "ES521", name: "ES521 (ECDSA using P-521 + SHA256)"},
+                  {id: "ES384", name: "ES384 (ECDSA using P-384 + SHA384)"},
+                  {id: "ES512", name: "ES512 (ECDSA using P-521 + SHA512)"},
+                  {id: "PS256", name: "PS256 (RSASSA-PSS using SHA256 and MGF1 with SHA256)"},
+                  {id: "PS384", name: "PS384 (RSASSA-PSS using SHA384 and MGF1 with SHA384)"},
+                  {id: "PS512", name: "PS512 (RSASSA-PSS using SHA512 and MGF1 with SHA512)"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.cert.bitSize} onChange={(value => {
-              this.updateCertField("bitSize", value);
-              this.updateCertField("certificate", "");
-              this.updateCertField("privateKey", "");
-            })}>
-              {
-                Setting.getCryptoAlgorithmOptions(this.state.cert.cryptoAlgorithm).map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
+        {
+          this.state.cert.cryptoAlgorithm.startsWith("ES") ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("cert:Bit size"), i18next.t("cert:Bit size - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Select virtual={false} style={{width: "100%"}} value={this.state.cert.bitSize} onChange={(value => {
+                  this.updateCertField("bitSize", value);
+                  this.updateCertField("certificate", "");
+                  this.updateCertField("privateKey", "");
+                })}>
+                  {
+                    Setting.getCryptoAlgorithmOptions(this.state.cert.cryptoAlgorithm).map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                  }
+                </Select>
+              </Col>
+            </Row>
+          )
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("cert:Expire in years"), i18next.t("cert:Expire in years - Tooltip"))} :

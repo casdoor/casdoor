@@ -205,16 +205,41 @@ func (p *Cert) GetId() string {
 }
 
 func (p *Cert) populateContent() error {
-	if p.Certificate == "" || p.PrivateKey == "" {
-		certificate, privateKey, err := generateRsaKeys(p.BitSize, p.ExpireInYears, p.Name, p.Owner)
-		if err != nil {
-			return err
-		}
-
-		p.Certificate = certificate
-		p.PrivateKey = privateKey
+	if p.Certificate != "" && p.PrivateKey != "" {
+		return nil
 	}
 
+	if len(p.CryptoAlgorithm) < 3 {
+		err := fmt.Errorf("populateContent() error, unsupported crypto algorithm: %s", p.CryptoAlgorithm)
+		return err
+	}
+
+	if p.CryptoAlgorithm == "RSA" {
+		p.CryptoAlgorithm = "RS256"
+	}
+
+	sigAlgorithm := p.CryptoAlgorithm[:2]
+	shaSize, err := util.ParseIntWithError(p.CryptoAlgorithm[2:])
+	if err != nil {
+		return err
+	}
+
+	var certificate, privateKey string
+	if sigAlgorithm == "RS" {
+		certificate, privateKey, err = generateRsaKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else if sigAlgorithm == "ES" {
+		certificate, privateKey, err = generateEsKeys(shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else if sigAlgorithm == "PS" {
+		certificate, privateKey, err = generateRsaPssKeys(p.BitSize, shaSize, p.ExpireInYears, p.Name, p.Owner)
+	} else {
+		err = fmt.Errorf("populateContent() error, unsupported signature algorithm: %s", sigAlgorithm)
+	}
+	if err != nil {
+		return err
+	}
+
+	p.Certificate = certificate
+	p.PrivateKey = privateKey
 	return nil
 }
 
