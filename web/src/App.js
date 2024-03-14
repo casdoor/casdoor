@@ -34,6 +34,7 @@ const ManagementPage = lazy(() => import("./ManagementPage"));
 const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
+import * as ApplicationBackend from "./backend/ApplicationBackend";
 
 setTwoToneColor("rgb(87,52,211)");
 
@@ -56,6 +57,7 @@ class App extends Component {
       logo: this.getLogo(storageThemeAlgorithm),
       requiredEnableMfa: false,
       isAiAssistantOpen: false,
+      application: undefined,
     };
     Setting.initServerUrl();
     Auth.initAuthWithConfig({
@@ -67,6 +69,7 @@ class App extends Component {
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
+    this.getApplication();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -149,15 +152,10 @@ class App extends Component {
     return "";
   }
 
-  // ivan 240228
+  // ivan TODO
+  // return https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png
   getLogo(themes) {
-    if (themes.includes("dark")) {
-      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
-      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
-    } else {
-      // return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
-      return "https://storage.googleapis.com/vc3_member/static/img/casdoor-logo_1185x256.png";
-    }
+    return Setting.getLogo(themes);
   }
 
   setLanguage(account) {
@@ -192,6 +190,24 @@ class App extends Component {
       });
     }
   };
+
+  getApplication() {
+    const applicationName = localStorage.getItem("applicationName");
+    if (!applicationName) {
+      return;
+    }
+    ApplicationBackend.getApplication("admin", applicationName)
+      .then((res) => {
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.setState({
+          application: res.data,
+        });
+      });
+  }
 
   getAccount() {
     const params = new URLSearchParams(this.props.location.search);
@@ -249,28 +265,34 @@ class App extends Component {
           }
         }>
           {
-            Conf.CustomFooter !== null ? Conf.CustomFooter : (
+            this.state.application?.footerHtml && this.state.application.footerHtml !== "" ?
               <React.Fragment>
-                <div style={
-                  {
-                    display: "flex", flexDirection: "column",
-                  }
-                }>
-                  <span style={{display: "flex", gap: 4, justifyContent: "center"}}>
-                    <span><a target="_blank" href="https://privacy-policy.ppg.live" rel="noreferrer" style={{
-                      color: "#000",
-                    }}>隱私權</a></span>
-                    <span>|</span>
-                    <span><a target="_blank" href="https://terms-of-use.ppg.live" rel="noreferrer" style={{
-                      color: "#000",
-                    }}>服務條款</a></span>
-                  </span>
-                  <span>
-                    Copyright &copy; {new Date().getFullYear()} - VC3 Networks Groups.
-                  </span>
-                </div>
+                <div dangerouslySetInnerHTML={{__html: this.state.application.footerHtml}} />
               </React.Fragment>
-            )
+              : (
+                Conf.CustomFooter !== null ? Conf.CustomFooter : (
+                  <React.Fragment>
+                    <div style={
+                      {
+                        display: "flex", flexDirection: "column",
+                      }
+                    }>
+                      <span style={{display: "flex", gap: 4, justifyContent: "center"}}>
+                        <span><a target="_blank" href="https://privacy-policy.ppg.live" rel="noreferrer" style={{
+                          color: "#000",
+                        }}>隱私權</a></span>
+                        <span>|</span>
+                        <span><a target="_blank" href="https://terms-of-use.ppg.live" rel="noreferrer" style={{
+                          color: "#000",
+                        }}>服務條款</a></span>
+                      </span>
+                      <span>
+                        Copyright &copy; {new Date().getFullYear()} - VC3 Networks Groups.
+                      </span>
+                    </div>
+                  </React.Fragment>
+                )
+              )
           }
         </Footer>
       </React.Fragment>
@@ -351,6 +373,11 @@ class App extends Component {
                     <EntryPage
                       account={this.state.account}
                       theme={this.state.themeData}
+                      updateApplication={(application) => {
+                        this.setState({
+                          application: application,
+                        });
+                      }}
                       onLoginSuccess={(redirectUrl) => {
                         if (redirectUrl) {
                           localStorage.setItem("mfaRedirectUrl", redirectUrl);
@@ -387,7 +414,7 @@ class App extends Component {
         <FloatButton.BackTop />
         <CustomGithubCorner />
         {
-          <Suspense fallback={<div>loading</div>}>
+          <Suspense fallback={null}>
             <Layout id="parent-area">
               <ManagementPage
                 account={this.state.account}
