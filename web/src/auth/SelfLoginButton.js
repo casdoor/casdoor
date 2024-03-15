@@ -24,10 +24,23 @@ class SelfLoginButton extends React.Component {
   }
 
   getAccountShowName() {
-    let {name, displayName} = this.props.account;
+    let {line, name, displayName} = this.props.account;
     if (displayName !== "") {
       name += " (" + displayName + ")";
     }
+
+    if (name.length > 20) {
+      name = displayName;
+    }
+    // ivan line login will use a very long unique ID string as name, thus use displayName here instead
+    if (line !== "") {
+      name = displayName;
+    }
+
+    if (name.length > 20) {
+      name = name.substring(0, 20) + "...";
+    }
+
     return name;
   }
 
@@ -35,7 +48,10 @@ class SelfLoginButton extends React.Component {
     const config = {
       icon: this.generateIcon(),
       iconFormat: name => `fa fa-${name}`,
-      style: {background: "#ffffff", color: "#000000"},
+      style: {
+        background: "#ffffff", color: "#000000",
+        maxWidth: "300px",
+      },
       activeStyle: {background: "#eff0ee"},
     };
 
