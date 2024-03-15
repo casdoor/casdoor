@@ -42,11 +42,21 @@ const Dashboard = (props) => {
     }
   }, [props.account]);
 
+  const getOrganizationName = () => {
+    let organization = localStorage.getItem("organization") === "All" ? "" : localStorage.getItem("organization");
+    if (!Setting.isAdminUser(props.account) && Setting.isLocalAdminUser(props.account)) {
+      organization = props.account.owner;
+    }
+    return organization;
+  };
+
   React.useEffect(() => {
     if (!Setting.isLocalAdminUser(props.account)) {
       return;
     }
-    DashboardBackend.getDashboard(props.account.owner).then((res) => {
+
+    const organization = getOrganizationName();
+    DashboardBackend.getDashboard(organization).then((res) => {
       if (res.status === "ok") {
         setDashboardData(res.data);
       } else {
@@ -64,9 +74,8 @@ const Dashboard = (props) => {
       return;
     }
 
-    const newOrganization = localStorage.getItem("organization") === "All" ? "" : localStorage.getItem("organization");
-
-    DashboardBackend.getDashboard(newOrganization).then((res) => {
+    const organization = getOrganizationName();
+    DashboardBackend.getDashboard(organization).then((res) => {
       if (res.status === "ok") {
         setDashboardData(res.data);
       } else {
