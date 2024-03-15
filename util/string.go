@@ -264,6 +264,10 @@ func GetMaskedEmail(email string) string {
 		return ""
 	}
 
+	if !strings.Contains(email, "@") {
+		return maskString(email)
+	}
+
 	tokens := strings.Split(email, "@")
 	username := maskString(tokens[0])
 	domain := tokens[1]

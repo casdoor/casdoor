@@ -9,12 +9,12 @@ require (
 	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
-	github.com/casdoor/go-sms-sender v0.19.0
+	github.com/casdoor/go-sms-sender v0.20.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.45.0
-	github.com/casdoor/oss v1.5.0
+	github.com/casdoor/oss v1.6.0
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
-	github.com/casvisor/casvisor-go-sdk v1.0.3
+	github.com/casvisor/casvisor-go-sdk v1.1.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect

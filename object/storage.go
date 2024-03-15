@@ -109,14 +109,17 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, error) {
 	endpoint := getProviderEndpoint(provider)
-	storageProvider := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
+	storageProvider, err := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
+	if err != nil {
+		return nil, err
+	}
 	if storageProvider == nil {
 		return nil, fmt.Errorf(i18n.Translate(lang, "storage:The provider type: %s is not supported"), provider.Type)
 	}
 
 	if provider.Domain == "" {
 		provider.Domain = storageProvider.GetEndpoint()
-		_, err := UpdateProvider(provider.GetId(), provider)
+		_, err = UpdateProvider(provider.GetId(), provider)
 		if err != nil {
 			return nil, err
 		}

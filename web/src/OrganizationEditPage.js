@@ -56,6 +56,7 @@ class OrganizationEditPage extends React.Component {
             this.props.history.push("/404");
             return;
           }
+          organization["enableDarkLogo"] = !!organization["logoDark"];
 
           this.setState({
             organization: organization,
@@ -141,6 +142,78 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Enable dark logo"), i18next.t("general:Enable dark logo - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Switch checked={this.state.organization.enableDarkLogo} onChange={e => {
+              this.updateOrganizationField("enableDarkLogo", e);
+              if (!e) {
+                this.updateOrganizationField("logoDark", "");
+              }
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+              </Col>
+              <Col span={23} >
+                <Input prefix={<LinkOutlined />} value={this.state.organization.logo} onChange={e => {
+                  this.updateOrganizationField("logo", e.target.value);
+                }} />
+              </Col>
+            </Row>
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                {i18next.t("general:Preview")}:
+              </Col>
+              <Col span={23}>
+                <a target="_blank" rel="noreferrer" href={this.state.organization.logo}>
+                  <img src={this.state.organization.logo ? this.state.organization.logo : Setting.getLogo([""])} alt={this.state.organization.logo} height={90} style={{background: "white", marginBottom: "20px"}} />
+                </a>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        {
+          !this.state.organization.enableDarkLogo ? null : (<Row style={{marginTop: "20px"}}>
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("general:Logo dark"), i18next.t("general:Logo dark - Tooltip"))} :
+            </Col>
+            <Col span={22}>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                  {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+                </Col>
+                <Col span={23}>
+                  <Input prefix={<LinkOutlined />} value={this.state.organization.logoDark} onChange={e => {
+                    this.updateOrganizationField("logoDark", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+                  {i18next.t("general:Preview")}:
+                </Col>
+                <Col span={23}>
+                  <a target="_blank" rel="noreferrer" href={this.state.organization.logoDark}>
+                    <img
+                      src={this.state.organization.logoDark ? this.state.organization.logoDark : Setting.getLogo(["dark"])}
+                      alt={this.state.organization.logoDark} height={90}
+                      style={{background: "#141414", marginBottom: "20px"}} />
+                  </a>
+                </Col>
+              </Row>
+            </Col>
+          </Row>)
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :

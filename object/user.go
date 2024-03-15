@@ -17,9 +17,9 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
 	"github.com/google/uuid"
 	"log"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -88,6 +88,8 @@ type User struct {
 	Score             int      `json:"score"`
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
+	Balance           float64  `json:"balance"`
+	Currency          string   `xorm:"varchar(100)" json:"currency"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`
 	IsAdmin           bool     `json:"isAdmin"`
@@ -217,6 +219,8 @@ type Userinfo struct {
 	Address       string   `json:"address,omitempty"`
 	Phone         string   `json:"phone,omitempty"`
 	Groups        []string `json:"groups,omitempty"`
+	Roles         []string `json:"roles,omitempty"`
+	Permissions   []string `json:"permissions,omitempty"`
 }
 
 type ManagedAccount struct {
@@ -678,7 +682,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "email", "phone", "country_code", "type")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type")
 	}
 
 	columns = append(columns, "updated_time")
@@ -924,7 +928,7 @@ func DeleteUser(user *User) (bool, error) {
 	return affected != 0, nil
 }
 
-func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
+func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {
 	_, originBackend := getOriginFromHost(host)
 
 	// ivan 240228 ppgId
@@ -934,24 +938,44 @@ func GetUserInfo(user *User, scope string, aud string, host string) *Userinfo {
 		Aud:   aud,
 		PpgID: user.ExternalId,
 	}
+
 	if strings.Contains(scope, "profile") {
 		resp.Name = user.Name
 		resp.DisplayName = user.DisplayName
 		resp.Avatar = user.Avatar
 		resp.Groups = user.Groups
+
+		err := ExtendUserWithRolesAndPermissions(user)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Roles = []string{}
+		for _, role := range user.Roles {
+			resp.Roles = append(resp.Roles, role.Name)
+		}
+
+		resp.Permissions = []string{}
+		for _, permission := range user.Permissions {
+			resp.Permissions = append(resp.Permissions, permission.Name)
+		}
 	}
+
 	if strings.Contains(scope, "email") {
 		resp.Email = user.Email
 		// resp.EmailVerified = user.EmailVerified
 		resp.EmailVerified = true
 	}
+
 	if strings.Contains(scope, "address") {
 		resp.Address = user.Location
 	}
+
 	if strings.Contains(scope, "phone") {
 		resp.Phone = user.Phone
 	}
-	return &resp
+
+	return &resp, nil
 }
 
 func LinkUserAccount(user *User, field string, value string) (bool, error) {

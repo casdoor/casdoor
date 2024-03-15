@@ -178,7 +178,7 @@ class SigninTable extends React.Component {
         },
       },
       {
-        title: i18next.t("application:Form CSS"),
+        title: i18next.t("application:Custom CSS"),
         dataIndex: "label",
         key: "label",
         width: "200px",

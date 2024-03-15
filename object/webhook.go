@@ -33,12 +33,13 @@ type Webhook struct {
 
 	Organization string `xorm:"varchar(100) index" json:"organization"`
 
-	Url            string    `xorm:"varchar(100)" json:"url"`
+	Url            string    `xorm:"varchar(200)" json:"url"`
 	Method         string    `xorm:"varchar(100)" json:"method"`
 	ContentType    string    `xorm:"varchar(100)" json:"contentType"`
 	Headers        []*Header `xorm:"mediumtext" json:"headers"`
 	Events         []string  `xorm:"varchar(1000)" json:"events"`
 	IsUserExtended bool      `json:"isUserExtended"`
+	SingleOrgOnly  bool      `json:"singleOrgOnly"`
 	IsEnabled      bool      `json:"isEnabled"`
 }
 

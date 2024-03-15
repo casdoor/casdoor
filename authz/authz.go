@@ -161,6 +161,11 @@ func isAllowedInDemoMode(subOwner string, subName string, method string, urlPath
 				return true
 			}
 			return false
+		} else if urlPath == "/api/upload-resource" {
+			if subOwner == "app" && subName == "app-casibase" {
+				return true
+			}
+			return false
 		} else {
 			return false
 		}

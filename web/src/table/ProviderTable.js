@@ -76,6 +76,11 @@ class ProviderTable extends React.Component {
                 this.updateField(table, index, "name", value);
                 const provider = Setting.getArrayItem(this.props.providers, "name", value);
                 this.updateField(table, index, "provider", provider);
+
+                // If the provider is email or SMS, set the rule to "all" instead of the default "None"
+                if (provider.category === "Email" || provider.category === "SMS") {
+                  this.updateField(table, index, "rule", "all");
+                }
               }} >
               {
                 Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)

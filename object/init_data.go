@@ -17,29 +17,35 @@ package object
 import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
+	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
 type InitData struct {
-	Organizations []*Organization `json:"organizations"`
-	Applications  []*Application  `json:"applications"`
-	Users         []*User         `json:"users"`
-	Certs         []*Cert         `json:"certs"`
-	Providers     []*Provider     `json:"providers"`
-	Ldaps         []*Ldap         `json:"ldaps"`
-	Models        []*Model        `json:"models"`
-	Permissions   []*Permission   `json:"permissions"`
-	Payments      []*Payment      `json:"payments"`
-	Products      []*Product      `json:"products"`
-	Resources     []*Resource     `json:"resources"`
-	Roles         []*Role         `json:"roles"`
-	Syncers       []*Syncer       `json:"syncers"`
-	Tokens        []*Token        `json:"tokens"`
-	Webhooks      []*Webhook      `json:"webhooks"`
-	Groups        []*Group        `json:"groups"`
-	Adapters      []*Adapter      `json:"adapters"`
-	Enforcers     []*Enforcer     `json:"enforcers"`
-	Plans         []*Plan         `json:"plans"`
-	Pricings      []*Pricing      `json:"pricings"`
+	Organizations []*Organization       `json:"organizations"`
+	Applications  []*Application        `json:"applications"`
+	Users         []*User               `json:"users"`
+	Certs         []*Cert               `json:"certs"`
+	Providers     []*Provider           `json:"providers"`
+	Ldaps         []*Ldap               `json:"ldaps"`
+	Models        []*Model              `json:"models"`
+	Permissions   []*Permission         `json:"permissions"`
+	Payments      []*Payment            `json:"payments"`
+	Products      []*Product            `json:"products"`
+	Resources     []*Resource           `json:"resources"`
+	Roles         []*Role               `json:"roles"`
+	Syncers       []*Syncer             `json:"syncers"`
+	Tokens        []*Token              `json:"tokens"`
+	Webhooks      []*Webhook            `json:"webhooks"`
+	Groups        []*Group              `json:"groups"`
+	Adapters      []*Adapter            `json:"adapters"`
+	Enforcers     []*Enforcer           `json:"enforcers"`
+	Plans         []*Plan               `json:"plans"`
+	Pricings      []*Pricing            `json:"pricings"`
+	Invitations   []*Invitation         `json:"invitations"`
+	Records       []*casvisorsdk.Record `json:"records"`
+	Sessions      []*Session            `json:"sessions"`
+	Subscriptions []*Subscription       `json:"subscriptions"`
+	Transactions  []*Transaction        `json:"transactions"`
 }
 
 func InitFromFile() {
@@ -114,6 +120,21 @@ func InitFromFile() {
 		for _, pricing := range initData.Pricings {
 			initDefinedPricing(pricing)
 		}
+		for _, invitation := range initData.Invitations {
+			initDefinedInvitation(invitation)
+		}
+		for _, record := range initData.Records {
+			initDefinedRecord(record)
+		}
+		for _, session := range initData.Sessions {
+			initDefinedSession(session)
+		}
+		for _, subscription := range initData.Subscriptions {
+			initDefinedSubscription(subscription)
+		}
+		for _, transaction := range initData.Transactions {
+			initDefinedTransaction(transaction)
+		}
 	}
 }
 
@@ -145,6 +166,11 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Enforcers:     []*Enforcer{},
 		Plans:         []*Plan{},
 		Pricings:      []*Pricing{},
+		Invitations:   []*Invitation{},
+		Records:       []*casvisorsdk.Record{},
+		Sessions:      []*Session{},
+		Subscriptions: []*Subscription{},
+		Transactions:  []*Transaction{},
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
@@ -223,6 +249,11 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 	for _, pricing := range data.Pricings {
 		if pricing.Plans == nil {
 			pricing.Plans = []string{}
+		}
+	}
+	for _, session := range data.Sessions {
+		if session.SessionId == nil {
+			session.SessionId = []string{}
 		}
 	}
 	return data, nil
@@ -539,6 +570,64 @@ func initDefinedPricing(pricing *Pricing) {
 	}
 	pricing.CreatedTime = util.GetCurrentTime()
 	_, err = AddPricing(pricing)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedInvitation(invitation *Invitation) {
+	existed, err := getInvitation(invitation.Owner, invitation.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	invitation.CreatedTime = util.GetCurrentTime()
+	_, err = AddInvitation(invitation, "en")
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedRecord(record *casvisorsdk.Record) {
+	record.CreatedTime = util.GetCurrentTime()
+	_ = AddRecord(record)
+}
+
+func initDefinedSession(session *Session) {
+	session.CreatedTime = util.GetCurrentTime()
+	_, err := AddSession(session)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedSubscription(subscription *Subscription) {
+	existed, err := getSubscription(subscription.Owner, subscription.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	subscription.CreatedTime = util.GetCurrentTime()
+	_, err = AddSubscription(subscription)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func initDefinedTransaction(transaction *Transaction) {
+	existed, err := getTransaction(transaction.Owner, transaction.Name)
+	if err != nil {
+		panic(err)
+	}
+	if existed != nil {
+		return
+	}
+	transaction.CreatedTime = util.GetCurrentTime()
+	_, err = AddTransaction(transaction)
 	if err != nil {
 		panic(err)
 	}

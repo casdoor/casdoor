@@ -20,8 +20,8 @@ import * as Setting from "../Setting";
 import * as Provider from "../auth/Provider";
 import * as AuthBackend from "../auth/AuthBackend";
 import {goToWeb3Url} from "../auth/ProviderButton";
-import {delWeb3AuthToken} from "../auth/Web3Auth";
 import AccountAvatar from "../account/AccountAvatar";
+import {WechatOfficialAccountModal} from "../auth/Util";
 
 class OAuthWidget extends React.Component {
   constructor(props) {
@@ -98,7 +98,22 @@ class OAuthWidget extends React.Component {
       user: this.props.user,
     };
     if (providerType === "MetaMask" || providerType === "Web3Onboard") {
-      delWeb3AuthToken(linkedValue);
+      import("../auth/Web3Auth")
+        .then(module => {
+          const delWeb3AuthToken = module.delWeb3AuthToken;
+          delWeb3AuthToken(linkedValue);
+          AuthBackend.unlink(body)
+            .then((res) => {
+              if (res.status === "ok") {
+                Setting.showMessage("success", "Unlinked successfully");
+
+                this.unlinked();
+              } else {
+                Setting.showMessage("error", `Failed to unlink: ${res.msg}`);
+              }
+            });
+        });
+      return;
     }
     AuthBackend.unlink(body)
       .then((res) => {
@@ -183,9 +198,19 @@ class OAuthWidget extends React.Component {
               provider.category === "Web3" ? (
                 <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id} onClick={() => goToWeb3Url(application, provider, "link")}>{i18next.t("user:Link")}</Button>
               ) : (
-                <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
-                  <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
-                </a>
+                provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger") ? (
+                  <a key={provider.displayName}>
+                    <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id} onClick={
+                      () => {
+                        WechatOfficialAccountModal(application, provider, "link");
+                      }
+                    }>{i18next.t("user:Link")}</Button>
+                  </a>
+                ) : (
+                  <a key={provider.displayName} href={user.id !== account.id ? null : Provider.getAuthUrl(application, provider, "link")}>
+                    <Button style={{marginLeft: "20px", width: linkButtonWidth}} type="primary" disabled={user.id !== account.id}>{i18next.t("user:Link")}</Button>
+                  </a>
+                )
               )
             ) : (
               <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>
