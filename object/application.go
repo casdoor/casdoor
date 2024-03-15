@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -104,6 +105,7 @@ type Application struct {
 	SignupHtml           string     `xorm:"mediumtext" json:"signupHtml"`
 	SigninHtml           string     `xorm:"mediumtext" json:"signinHtml"`
 	ThemeData            *ThemeData `xorm:"json" json:"themeData"`
+	FooterHtml           string     `xorm:"mediumtext" json:"footerHtml"`
 	FormCss              string     `xorm:"text" json:"formCss"`
 	FormCssMobile        string     `xorm:"text" json:"formCssMobile"`
 	FormOffset           int        `json:"formOffset"`
@@ -222,7 +224,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Logo",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-logo-box {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-logo-box {\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -230,7 +232,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signin methods",
 			Visible:     true,
-			Label:       "\n<style>\n  .signin-methods {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .signin-methods {\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -238,7 +240,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Username",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-username {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-username {\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -246,7 +248,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Password",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-password {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-password {\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -254,7 +256,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Agreement",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-agreement {\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-agreement {\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -262,7 +264,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Forgot password?",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -270,7 +272,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 5px;\n  }\n  .login-button {\n    width: 100%;\n  }\n<style>\n",
+			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 5px;\n  }\n  .login-button {\n    width: 100%;\n  }\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -278,7 +280,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signup link",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}\n<style>\n",
+			Label:       "\n<style>\n  .login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -468,36 +470,71 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 		application.FailedSigninFrozenTime = DefaultFailedSigninFrozenTime
 	}
 
+	isOrgUser := false
 	if userId != "" {
 		if isUserIdGlobalAdmin(userId) {
 			return application
 		}
 
-		user, _ := GetUser(userId)
-		if user != nil && user.IsApplicationAdmin(application) {
-			return application
+		user, err := GetUser(userId)
+		if err != nil {
+			panic(err)
+		}
+		if user != nil {
+			if user.IsApplicationAdmin(application) {
+				return application
+			}
+
+			if user.Owner == application.Organization {
+				isOrgUser = true
+			}
 		}
 	}
 
-	if application.ClientSecret != "" {
-		application.ClientSecret = "***"
+	application.ClientSecret = "***"
+	application.Cert = "***"
+	application.EnablePassword = false
+	application.EnableSigninSession = false
+	application.EnableCodeSignin = false
+	application.EnableSamlCompress = false
+	application.EnableSamlC14n10 = false
+	application.EnableSamlPostBinding = false
+	application.EnableWebAuthn = false
+	application.EnableLinkWithEmail = false
+	application.SamlReplyUrl = "***"
+
+	providerItems := []*ProviderItem{}
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3") {
+			providerItems = append(providerItems, providerItem)
+		}
 	}
+	application.Providers = providerItems
+
+	application.GrantTypes = nil
+	application.Tags = nil
+	application.RedirectUris = nil
+	application.TokenFormat = "***"
+	application.TokenFields = nil
+	application.ExpireInHours = -1
+	application.RefreshExpireInHours = -1
+	application.FailedSigninLimit = -1
+	application.FailedSigninFrozenTime = -1
 
 	if application.OrganizationObj != nil {
-		if application.OrganizationObj.MasterPassword != "" {
-			application.OrganizationObj.MasterPassword = "***"
-		}
-		if application.OrganizationObj.DefaultPassword != "" {
-			application.OrganizationObj.DefaultPassword = "***"
-		}
-		if application.OrganizationObj.MasterVerificationCode != "" {
-			application.OrganizationObj.MasterVerificationCode = "***"
-		}
-		if application.OrganizationObj.PasswordType != "" {
-			application.OrganizationObj.PasswordType = "***"
-		}
-		if application.OrganizationObj.PasswordSalt != "" {
-			application.OrganizationObj.PasswordSalt = "***"
+		application.OrganizationObj.MasterPassword = "***"
+		application.OrganizationObj.DefaultPassword = "***"
+		application.OrganizationObj.MasterVerificationCode = "***"
+		application.OrganizationObj.PasswordType = "***"
+		application.OrganizationObj.PasswordSalt = "***"
+		application.OrganizationObj.InitScore = -1
+		application.OrganizationObj.EnableSoftDeletion = false
+
+		if !isOrgUser {
+			application.OrganizationObj.MfaItems = nil
+			if !application.OrganizationObj.IsProfilePublic {
+				application.OrganizationObj.AccountItems = nil
+			}
 		}
 	}
 
@@ -515,8 +552,12 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 	return applications
 }
 
-func GetAllowedApplications(applications []*Application, userId string) ([]*Application, error) {
-	if userId == "" || isUserIdGlobalAdmin(userId) {
+func GetAllowedApplications(applications []*Application, userId string, lang string) ([]*Application, error) {
+	if userId == "" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if isUserIdGlobalAdmin(userId) {
 		return applications, nil
 	}
 
@@ -524,7 +565,11 @@ func GetAllowedApplications(applications []*Application, userId string) ([]*Appl
 	if err != nil {
 		return nil, err
 	}
-	if user != nil && user.IsAdmin {
+	if user == nil {
+		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	}
+
+	if user.IsAdmin {
 		return applications, nil
 	}
 
@@ -639,7 +684,7 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
-	redirectUris := append([]string{"http://localhost:", "https://localhost:", "http://127.0.0.1:", "http://casdoor-app"}, application.RedirectUris...)
+	redirectUris := append([]string{"http://localhost:", "https://localhost:", "http://127.0.0.1:", "http://casdoor-app", ".chromiumapp.org"}, application.RedirectUris...)
 	for _, targetUri := range redirectUris {
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
