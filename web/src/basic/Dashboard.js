@@ -32,6 +32,11 @@ const Dashboard = (props) => {
   }, []);
 
   React.useEffect(() => {
+    window.addEventListener("storageOrganizationChanged", handleOrganizationChange);
+    return () => window.removeEventListener("storageOrganizationChanged", handleOrganizationChange);
+  }, [props.owner]);
+
+  React.useEffect(() => {
     if (!Setting.isLocalAdminUser(props.account)) {
       props.history.push("/apps");
     }
@@ -52,6 +57,22 @@ const Dashboard = (props) => {
 
   const handleTourChange = () => {
     setIsTourVisible(TourConfig.getTourVisible());
+  };
+
+  const handleOrganizationChange = () => {
+    if (!Setting.isLocalAdminUser(props.account)) {
+      return;
+    }
+
+    const newOrganization = localStorage.getItem("organization") === "All" ? "" : localStorage.getItem("organization");
+
+    DashboardBackend.getDashboard(newOrganization).then((res) => {
+      if (res.status === "ok") {
+        setDashboardData(res.data);
+      } else {
+        Setting.showMessage("error", res.msg);
+      }
+    });
   };
 
   const setIsTourToLocal = () => {

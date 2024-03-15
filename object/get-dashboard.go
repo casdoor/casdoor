@@ -78,7 +78,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 
 	go func() {
 		defer wg.Done()
-
+		
 		if err := ormer.Engine.Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
 			panic(err)
 		}
