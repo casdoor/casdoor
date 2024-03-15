@@ -7,6 +7,9 @@ RUN yarn install --frozen-lockfile --network-timeout 1000000 && yarn run build
 FROM golang:1.20.12 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
+# for windows bash to work, line-ending problems
+RUN apt-get update && apt-get install -y dos2unix
+RUN dos2unix build.sh && chmod +x build.sh
 RUN ./build.sh
 RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
 

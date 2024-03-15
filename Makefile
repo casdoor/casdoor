@@ -139,5 +139,5 @@ deploy:
 	@docker tag ${IMG}:latest ${ECR_URL}/${IMG}:${TAG}
 	@docker push ${ECR_URL}/${IMG}:${TAG}
 	@cp ./deployments/${MODE}/deployment.template.yaml ./deployments/${MODE}/deployment.yaml
-	@sed -i '' "s|<ECR_URL>|${ECR_URL}|g; s|<IMG>|${IMG}|g; s|<TAG>|${TAG}|g; " ./deployments/${MODE}/deployment.yaml
+	@sed "s|<ECR_URL>|${ECR_URL}|g; s|<IMG>|${IMG}|g; s|<TAG>|${TAG}|g;" ./deployments/${MODE}/deployment.yaml > temp.yaml && mv temp.yaml ./deployments/${MODE}/deployment.yaml
 	@kubectl apply -f ./deployments/${MODE}/deployment.yaml
