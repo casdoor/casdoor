@@ -40,6 +40,7 @@ import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as MfaBackend from "./backend/MfaBackend";
 import AccountAvatar from "./account/AccountAvatar";
+import FaceIdTable from "./table/FaceIdTable";
 
 const {Option} = Select;
 
@@ -59,6 +60,7 @@ class UserEditPage extends React.Component {
       loading: true,
       returnUrl: null,
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
+      openFaceRecognitionModal: false,
     };
   }
 
@@ -970,6 +972,21 @@ class UserEditPage extends React.Component {
               table={this.state.user.managedAccounts}
               onUpdateTable={(table) => {this.updateUserField("managedAccounts", table);}}
               applications={this.state.applications}
+            />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Face ID") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Face ids"), i18next.t("user:Face ids"))} :
+          </Col>
+          <Col span={22} >
+            <FaceIdTable
+              title={i18next.t("user:Face ids")}
+              table={this.state.user.faceIds}
+              onUpdateTable={(table) => {this.updateUserField("faceIds", table);}}
             />
           </Col>
         </Row>

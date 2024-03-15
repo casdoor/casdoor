@@ -757,6 +757,17 @@ func (application *Application) IsLdapEnabled() bool {
 	return false
 }
 
+func (application *Application) IsFaceIdEnabled() bool {
+	if len(application.SigninMethods) > 0 {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "Face ID" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func IsOriginAllowed(origin string) (bool, error) {
 	applications, err := GetApplications("")
 	if err != nil {

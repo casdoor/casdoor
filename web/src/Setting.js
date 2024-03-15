@@ -1164,6 +1164,10 @@ export function isLdapEnabled(application) {
   return isSigninMethodEnabled(application, "LDAP");
 }
 
+export function isFaceIdEnabled(application) {
+  return isSigninMethodEnabled(application, "Face ID");
+}
+
 export function getLoginLink(application) {
   let url;
   if (application === null) {
