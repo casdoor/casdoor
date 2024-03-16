@@ -137,21 +137,24 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
-func GetTokenByTokenValue(tokenValue string) (*Token, error) {
-	token, err := GetTokenByAccessToken(tokenValue)
-	if err != nil {
-		return nil, err
-	}
-	if token != nil {
-		return token, nil
-	}
-
-	token, err = GetTokenByRefreshToken(tokenValue)
-	if err != nil {
-		return nil, err
-	}
-	if token != nil {
-		return token, nil
+func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
+	switch tokenTypeHint {
+	case "access_token":
+		token, err := GetTokenByAccessToken(tokenValue)
+		if err != nil {
+			return nil, err
+		}
+		if token != nil {
+			return token, nil
+		}
+	case "refresh_token":
+		token, err := GetTokenByRefreshToken(tokenValue)
+		if err != nil {
+			return nil, err
+		}
+		if token != nil {
+			return token, nil
+		}
 	}
 
 	return nil, nil
