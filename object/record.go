@@ -63,6 +63,7 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
+		Response:    "",
 		IsTriggered: false,
 	}
 	return &record
