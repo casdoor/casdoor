@@ -54,7 +54,7 @@ type VerificationRecord struct {
 	Type       string `xorm:"varchar(10)"`
 	User       string `xorm:"varchar(100) notnull"`
 	Provider   string `xorm:"varchar(100) notnull"`
-	Receiver   string `xorm:"varchar(100) notnull"`
+	Receiver   string `xorm:"varchar(100) index notnull"`
 	Code       string `xorm:"varchar(10) notnull"`
 	Time       int64  `xorm:"notnull"`
 	IsUsed     bool
@@ -184,7 +184,7 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 		return nil, err
 	}
 	if record == nil {
-		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:Code has not been sent yet!")}, nil
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has not been sent yet, or has already been used!")}, nil
 	}
 
 	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
