@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {Suspense, lazy} from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
@@ -36,6 +36,7 @@ import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
+const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class LoginPage extends React.Component {
       validEmail: false,
       enableCaptchaModal: CaptchaRule.Never,
       openCaptchaModal: false,
+      openFaceRecognitionModal: false,
       verifyCaptcha: undefined,
       samlResponse: "",
       relayState: "",
@@ -214,6 +216,7 @@ class LoginPage extends React.Component {
       }
       case "WebAuthn": return "webAuthn";
       case "LDAP": return "ldap";
+      case "Face ID": return "faceId";
       }
     }
 
@@ -263,6 +266,8 @@ class LoginPage extends React.Component {
       values["signinMethod"] = "WebAuthn";
     } else if (this.state.loginMethod === "ldap") {
       values["signinMethod"] = "LDAP";
+    } else if (this.state.loginMethod === "faceId") {
+      values["signinMethod"] = "Face ID";
     }
     const oAuthParams = Util.getOAuthGetParameters();
 
@@ -338,6 +343,13 @@ class LoginPage extends React.Component {
       }
 
       this.signInWithWebAuthn(username, values);
+      return;
+    }
+    if (this.state.loginMethod === "faceId") {
+      this.setState({
+        openFaceRecognitionModal: true,
+        values: values,
+      });
       return;
     }
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -658,6 +670,25 @@ class LoginPage extends React.Component {
             }
           </Button>
           {
+            this.state.loginMethod === "faceId" ?
+              <Suspense fallback={null}>
+                <FaceRecognitionModal
+                  visible={this.state.openFaceRecognitionModal}
+                  onOk={(faceId) => {
+                    const values = this.state.values;
+                    values["faceId"] = faceId;
+
+                    this.login(values);
+                    this.setState({openFaceRecognitionModal: false});
+                  }}
+                  onCancel={() => this.setState({openFaceRecognitionModal: false})}
+                />
+              </Suspense>
+              :
+              <>
+              </>
+          }
+          {
             this.renderCaptchaModal(application)
           }
         </Form.Item>
@@ -721,7 +752,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
+    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -1029,6 +1060,7 @@ class LoginPage extends React.Component {
       [generateItemKey("Verification code", "Phone only"), {label: i18next.t("login:Verification code"), key: "verificationCodePhone"}],
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
+      [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {

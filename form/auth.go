@@ -61,6 +61,8 @@ type AuthForm struct {
 
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`
+
+	FaceId []float64 `json:"faceId"`
 }
 
 func GetAuthFormFieldValue(form *AuthForm, fieldName string) (bool, string) {

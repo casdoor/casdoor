@@ -505,7 +505,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	providerItems := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3") {
+		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3" || providerItem.Provider.Category == "Captcha") {
 			providerItems = append(providerItems, providerItem)
 		}
 	}
@@ -750,6 +750,17 @@ func (application *Application) IsLdapEnabled() bool {
 	if len(application.SigninMethods) > 0 {
 		for _, signinMethod := range application.SigninMethods {
 			if signinMethod.Name == "LDAP" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (application *Application) IsFaceIdEnabled() bool {
+	if len(application.SigninMethods) > 0 {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "Face ID" {
 				return true
 			}
 		}

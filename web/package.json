@@ -29,6 +29,7 @@
     "craco-less": "^2.0.0",
     "echarts": "^5.4.3",
     "ethers": "5.6.9",
+    "face-api.js": "^0.22.2",
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.0.0",
     "i18next": "^19.8.9",
@@ -50,7 +51,8 @@
     "react-metamask-avatar": "^1.2.1",
     "react-router-dom": "^5.3.3",
     "react-scripts": "5.0.1",
-    "react-social-login-buttons": "^3.4.0"
+    "react-social-login-buttons": "^3.4.0",
+    "react-webcam": "^7.2.0"
   },
   "scripts": {
     "start": "cross-env PORT=7001 craco start",

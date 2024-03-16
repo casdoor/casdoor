@@ -28,6 +28,10 @@ type Dashboard struct {
 }
 
 func GetDashboard(owner string) (*Dashboard, error) {
+	if owner == "All" {
+		owner = ""
+	}
+
 	dashboard := &Dashboard{
 		OrganizationCounts: make([]int, 31),
 		UserCounts:         make([]int, 31),
@@ -36,14 +40,13 @@ func GetDashboard(owner string) (*Dashboard, error) {
 		SubscriptionCounts: make([]int, 31),
 	}
 
-	var wg sync.WaitGroup
-
 	organizations := []Organization{}
 	users := []User{}
 	providers := []Provider{}
 	applications := []Application{}
 	subscriptions := []Subscription{}
 
+	var wg sync.WaitGroup
 	wg.Add(5)
 	go func() {
 		defer wg.Done()
