@@ -129,6 +129,7 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	}
 
 	if !user.IsAdmin {
+		c.ResponseError(c.T("general:this operation requires administrator to perform"))
 		return "", false
 	}
 
