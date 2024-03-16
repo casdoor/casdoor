@@ -66,10 +66,18 @@ func getObject(ctx *context.Context) (string, string) {
 	path := ctx.Request.URL.Path
 
 	if method == http.MethodGet {
-		if ctx.Request.URL.Path == "/api/get-policies" && ctx.Input.Query("id") == "/" {
-			adapterId := ctx.Input.Query("adapterId")
-			if adapterId != "" {
-				return util.GetOwnerAndNameFromIdNoCheck(adapterId)
+		if ctx.Request.URL.Path == "/api/get-policies" {
+			if ctx.Input.Query("id") == "/" {
+				adapterId := ctx.Input.Query("adapterId")
+				if adapterId != "" {
+					return util.GetOwnerAndNameFromIdNoCheck(adapterId)
+				}
+			} else {
+				// query == "?id=built-in/admin"
+				id := ctx.Input.Query("id")
+				if id != "" {
+					return util.GetOwnerAndNameFromIdNoCheck(id)
+				}
 			}
 		}
 

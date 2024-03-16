@@ -127,6 +127,12 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	if user.Owner == "built-in" {
 		return "", true
 	}
+
+	if !user.IsAdmin {
+		c.ResponseError(c.T("general:this operation requires administrator to perform"))
+		return "", false
+	}
+
 	return user.Owner, true
 }
 

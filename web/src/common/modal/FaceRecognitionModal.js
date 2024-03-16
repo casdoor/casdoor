@@ -14,17 +14,18 @@
 
 import * as faceapi from "face-api.js";
 import React, {useState} from "react";
-import Webcam from "react-webcam";
 import {Button, Modal, Progress, Spin, message} from "antd";
 import i18next from "i18next";
 
 const FaceRecognitionModal = (props) => {
   const {visible, onOk, onCancel} = props;
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
+  const [isCameraCaptured, setIsCameraCaptured] = useState(false);
 
-  const webcamRef = React.useRef();
+  const videoRef = React.useRef();
   const canvasRef = React.useRef();
   const detection = React.useRef(null);
+  const mediaStreamRef = React.useRef(null);
   const [percent, setPercent] = useState(0);
 
   React.useEffect(() => {
@@ -51,26 +52,58 @@ const FaceRecognitionModal = (props) => {
   React.useEffect(() => {
     if (visible) {
       setPercent(0);
-      if (modelsLoaded && webcamRef.current?.video) {
-        handleStreamVideo(null);
+      if (modelsLoaded) {
+        navigator.mediaDevices
+          .getUserMedia({video: {facingMode: "user"}})
+          .then((stream) => {
+            mediaStreamRef.current = stream;
+            setIsCameraCaptured(true);
+          }).catch((error) => {
+            handleCameraError(error);
+          });
       }
     } else {
       clearInterval(detection.current);
       detection.current = null;
+      setIsCameraCaptured(false);
     }
     return () => {
       clearInterval(detection.current);
       detection.current = null;
+      setIsCameraCaptured(false);
     };
-  }, [visible]);
+  }, [visible, modelsLoaded]);
 
-  const handleStreamVideo = (e) => {
+  React.useEffect(() => {
+    if (isCameraCaptured) {
+      let count = 0;
+      const interval = setInterval(() => {
+        count++;
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStreamRef.current;
+          videoRef.current.play();
+          clearInterval(interval);
+        }
+        if (count >= 30) {
+          clearInterval(interval);
+          onCancel();
+        }
+      }, 100);
+    } else {
+      mediaStreamRef.current?.getTracks().forEach(track => track.stop());
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    }
+  }, [isCameraCaptured]);
+
+  const handleStreamVideo = () => {
     let count = 0;
     let goodCount = 0;
     if (!detection.current) {
       detection.current = setInterval(async() => {
-        if (modelsLoaded && webcamRef.current?.video && visible) {
-          const faces = await faceapi.detectAllFaces(webcamRef.current.video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+        if (modelsLoaded && videoRef.current && visible) {
+          const faces = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
 
           count++;
           if (count % 50 === 0) {
@@ -99,11 +132,19 @@ const FaceRecognitionModal = (props) => {
   };
 
   const handleCameraError = (error) => {
-    // https://github.com/mozmorris/react-webcam/issues/272
-    if (error.message.includes("device not found")) {
-      message.error(i18next.t("login:You need to have a camera device to login with Face ID"));
-    } else {
-      message.error(error.message);
+    onCancel();
+    if (error instanceof DOMException) {
+      if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+        message.error(i18next.t("login:Please ensure that you have a camera device for facial recognition"));
+      } else if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        message.error(i18next.t("login:Please provide permission to access the camera"));
+      } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
+        message.error(i18next.t("login:The camera is currently in use by another webpage"));
+      } else if (error.name === "TypeError") {
+        message.error(i18next.t("login:Please load the webpage using HTTPS, otherwise the camera cannot be accessed"));
+      } else {
+        message.error(error.message);
+      }
     }
   };
 
@@ -112,7 +153,8 @@ const FaceRecognitionModal = (props) => {
       <Modal
         closable={false}
         maskClosable={false}
-        open={visible}
+        destroyOnClose={true}
+        open={visible && isCameraCaptured}
         title={i18next.t("login:Face Recognition")}
         width={350}
         footer={[
@@ -126,11 +168,9 @@ const FaceRecognitionModal = (props) => {
           {
             modelsLoaded ?
               <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
-                <Webcam
-                  ref={webcamRef}
-                  videoConstraints={{facingMode: "user"}}
-                  onUserMedia={handleStreamVideo}
-                  onUserMediaError={handleCameraError}
+                <video
+                  ref={videoRef}
+                  onPlay={handleStreamVideo}
                   style={{
                     borderRadius: "50%",
                     height: "220px",
@@ -138,7 +178,7 @@ const FaceRecognitionModal = (props) => {
                     width: "220px",
                     objectFit: "cover",
                   }}
-                ></Webcam>
+                ></video>
                 <div style={{
                   position: "absolute",
                   width: "240px",
