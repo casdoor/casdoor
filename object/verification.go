@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"strings"
 	"time"
@@ -234,6 +235,28 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 	default:
 		return fmt.Errorf(result.Msg)
 	}
+}
+
+func CheckFaceId(user *User, faceId []float64, lang string) error {
+	if len(user.FaceIds) == 0 {
+		return fmt.Errorf(i18n.Translate(lang, "check:Face data does not exist, cannot log in"))
+	}
+
+	for _, userFaceId := range user.FaceIds {
+		if faceId == nil || len(userFaceId.FaceIdData) != len(faceId) {
+			continue
+		}
+		var sumOfSquares float64
+		for i := 0; i < len(userFaceId.FaceIdData); i++ {
+			diff := userFaceId.FaceIdData[i] - faceId[i]
+			sumOfSquares += diff * diff
+		}
+		if math.Sqrt(sumOfSquares) < 0.25 {
+			return nil
+		}
+	}
+
+	return fmt.Errorf(i18n.Translate(lang, "check:Face data mismatch"))
 }
 
 func GetVerifyType(username string) (verificationCodeType string) {

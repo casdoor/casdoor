@@ -327,7 +327,38 @@ func (c *ApiController) Login() {
 		}
 
 		var user *object.User
-		if authForm.Password == "" {
+		if authForm.SigninMethod == "Face ID" {
+			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			} else if user == nil {
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				return
+			}
+
+			var application *object.Application
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
+			if application == nil {
+				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				return
+			}
+
+			if !application.IsFaceIdEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with face is not enabled for the application"))
+				return
+			}
+
+			if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
+		} else if authForm.Password == "" {
 			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
