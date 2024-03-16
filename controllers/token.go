@@ -317,7 +317,8 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
-	token, err := object.GetTokenByTokenValue(tokenValue)
+	tokenTypeHint := c.Input().Get("token_type_hint")
+	token, err := object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
 	if err != nil {
 		c.ResponseTokenError(err.Error())
 		return
