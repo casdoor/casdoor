@@ -98,8 +98,13 @@ const FaceRecognitionModal = (props) => {
     }
   };
 
-  const handleCameraError = () => {
-    message.error(i18next.t("login:There was a problem accessing the WEBCAM. Grant permission and reload the page."));
+  const handleCameraError = (error) => {
+    // https://github.com/mozmorris/react-webcam/issues/272
+    if (error.message.includes("device not found")) {
+      message.error(i18next.t("login:You need to have a camera device to login with Face ID"));
+    } else {
+      message.error(error.message);
+    }
   };
 
   return (
