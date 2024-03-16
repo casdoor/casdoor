@@ -85,6 +85,11 @@ func (c *ApiController) GetRecords() {
 // @Success 200 {object} object.Record The Response object
 // @router /get-records-filter [post]
 func (c *ApiController) GetRecordsByFilter() {
+	_, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	body := string(c.Ctx.Input.RequestBody)
 
 	record := &casvisorsdk.Record{}
