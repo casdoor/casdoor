@@ -198,6 +198,7 @@ func initBuiltInApplication() {
 		},
 		Tags:          []string{},
 		RedirectUris:  []string{},
+		TokenFormat:   "JWT",
 		TokenFields:   []string{},
 		ExpireInHours: 168,
 		FormOffset:    2,
