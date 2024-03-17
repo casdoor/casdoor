@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Yönlendiriliyor, lütfen bekleyiniz.",
     "Sign In": "Oturum aç",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Sign in with WebAuthn",
     "Sign in with {type}": "{type} ile giriş yap",
     "Signing in...": "Signing in...",

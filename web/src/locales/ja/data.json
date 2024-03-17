@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "リダイレクト中、お待ちください。",
     "Sign In": "サインイン",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "WebAuthnでサインインしてください",
     "Sign in with {type}": "{type}でサインインしてください",
     "Signing in...": "サインイン中...",

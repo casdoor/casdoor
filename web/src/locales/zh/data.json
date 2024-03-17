@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "请输入要登录的组织",
     "Redirecting, please wait.": "正在跳转, 请稍等.",
     "Sign In": "登录",
+    "Sign in with Face ID": "人脸登录",
     "Sign in with WebAuthn": "WebAuthn登录",
     "Sign in with {type}": "{type}登录",
     "Signing in...": "正在登录...",
