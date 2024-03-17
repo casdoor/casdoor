@@ -1066,7 +1066,12 @@ class LoginPage extends React.Component {
     application?.signinMethods?.forEach((signinMethod) => {
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
       if (item) {
-        const label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
+        let label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
+
+        if (application?.signinMethods?.length >= 4 && label === "Verification code") {
+          label = "Code";
+        }
+
         items.push({label: label, key: item.key});
       }
     });

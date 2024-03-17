@@ -184,6 +184,7 @@ func initBuiltInApplication() {
 			{Name: "Password", DisplayName: "Password", Rule: "All"},
 			{Name: "Verification code", DisplayName: "Verification code", Rule: "All"},
 			{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"},
+			{Name: "Face ID", DisplayName: "Face ID", Rule: "None"},
 		},
 		SignupItems: []*SignupItem{
 			{Name: "ID", Visible: false, Required: true, Prompted: false, Rule: "Random"},

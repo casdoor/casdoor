@@ -110,6 +110,11 @@
           "name": "WebAuthn",
           "displayName": "WebAuthn",
           "rule": "None"
+        },
+        {
+          "name": "Face ID",
+          "displayName": "Face ID",
+          "rule": "None"
         }
       ],
       "signupItems": [
