@@ -732,9 +732,8 @@ func GetTokenForExtension(user *User, host string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if application == nil {
-		return nil, fmt.Errorf("application for user %s found", user.Id)
+		return nil, fmt.Errorf("the application for user %s is not found", user.Id)
 	}
 
 	token, err := GetTokenByUser(application, user, "profile", "", host)
