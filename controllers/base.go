@@ -122,15 +122,13 @@ func (c *ApiController) GetSessionUsername() string {
 	return user.(string)
 }
 
-func (c *ApiController) GetSessionToken() *object.Token {
-	tokenValue := c.GetSession("token")
-	var token *object.Token
-	var ok bool
-	if token, ok = tokenValue.(*object.Token); !ok {
-		token = nil
+func (c *ApiController) GetSessionToken() string {
+	accessToken := c.GetSession("accessToken")
+	if accessToken == nil {
+		return ""
 	}
 
-	return token
+	return accessToken.(string)
 }
 
 func (c *ApiController) GetSessionApplication() *object.Application {
@@ -153,7 +151,7 @@ func (c *ApiController) ClearUserSession() {
 }
 
 func (c *ApiController) ClearTokenSession() {
-	c.SetSessionToken(nil)
+	c.SetSessionToken("")
 }
 
 func (c *ApiController) GetSessionOidc() (string, string) {
@@ -182,8 +180,8 @@ func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
 }
 
-func (c *ApiController) SetSessionToken(token *object.Token) {
-	c.SetSession("token", token)
+func (c *ApiController) SetSessionToken(accessToken string) {
+	c.SetSession("accessToken", accessToken)
 }
 
 // GetSessionData ...

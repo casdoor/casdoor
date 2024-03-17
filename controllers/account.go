@@ -435,16 +435,16 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
-	token := c.GetSessionToken()
-	if token == nil {
-		token, err = object.GetTokenForExtension(user, c.Ctx.Request.Host)
+	accessToken := c.GetSessionToken()
+	if accessToken == "" {
+		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		c.SetSessionToken(token)
+		c.SetSessionToken(accessToken)
 	}
-	u.AccessToken = token.AccessToken
+	u.AccessToken = accessToken
 
 	resp := Response{
 		Status: "ok",
