@@ -359,6 +359,10 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 	var token *jwt.Token
 	var refreshToken *jwt.Token
 
+	if application.TokenFormat == "" {
+		application.TokenFormat = "JWT"
+	}
+
 	// the JWT token length in "JWT-Empty" mode will be very short, as User object only has two properties: owner and name
 	if application.TokenFormat == "JWT" {
 		claimsWithoutThirdIdp := getClaimsWithoutThirdIdp(claims)
