@@ -980,11 +980,11 @@ class UserEditPage extends React.Component {
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:Face ids"), i18next.t("user:Face ids"))} :
+            {Setting.getLabel(i18next.t("user:Face IDs"), i18next.t("user:Face IDs"))} :
           </Col>
           <Col span={22} >
             <FaceIdTable
-              title={i18next.t("user:Face ids")}
+              title={i18next.t("user:Face IDs")}
               table={this.state.user.faceIds}
               onUpdateTable={(table) => {this.updateUserField("faceIds", table);}}
             />
