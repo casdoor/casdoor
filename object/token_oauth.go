@@ -726,3 +726,19 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 	}
 	return token, nil, nil
 }
+
+func GetTokenForExtension(user *User, host string) (*Token, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return nil, err
+	}
+	if application == nil {
+		return nil, fmt.Errorf("the application for user %s is not found", user.Id)
+	}
+
+	token, err := GetTokenByUser(application, user, "profile", "", host)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}

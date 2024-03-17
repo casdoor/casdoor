@@ -307,6 +307,7 @@ func (c *ApiController) Logout() {
 		}
 
 		c.ClearUserSession()
+		c.ClearTokenSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
 		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
@@ -353,6 +354,7 @@ func (c *ApiController) Logout() {
 		}
 
 		c.ClearUserSession()
+		c.ClearTokenSession()
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
@@ -432,6 +434,17 @@ func (c *ApiController) GetAccount() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	token := c.GetSessionToken()
+	if token == nil {
+		token, err = object.GetTokenForExtension(user, c.Ctx.Request.Host)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.SetSessionToken(token)
+	}
+	u.AccessToken = token.AccessToken
 
 	resp := Response{
 		Status: "ok",

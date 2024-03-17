@@ -98,6 +98,7 @@ type User struct {
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
+	AccessToken       string   `xorm:"mediumtext" json:"accessToken"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`

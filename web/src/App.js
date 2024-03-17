@@ -51,6 +51,7 @@ class App extends Component {
       classes: props,
       selectedMenuKey: 0,
       account: undefined,
+      accessToken: undefined,
       uri: null,
       themeAlgorithm: storageThemeAlgorithm,
       themeData: Conf.ThemeDefault,
@@ -228,9 +229,11 @@ class App extends Component {
     AuthBackend.getAccount(query)
       .then((res) => {
         let account = null;
+        let accessToken = null;
         if (res.status === "ok") {
           account = res.data;
           account.organization = res.data2;
+          accessToken = res.data.accessToken;
 
           this.setLanguage(account);
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
@@ -242,6 +245,7 @@ class App extends Component {
 
         this.setState({
           account: account,
+          accessToken: accessToken,
         });
       });
   }
@@ -256,6 +260,7 @@ class App extends Component {
     return (
       <React.Fragment>
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
+        {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorAccessToken" value={this.state.accessToken} />}
         <Footer id="footer" style={
           {
             textAlign: "center",

@@ -45,6 +45,7 @@ func InitDb() {
 	}
 
 	initWebAuthn()
+	initToken()
 }
 
 func getBuiltInAccountItems() []*AccountItem {
@@ -307,6 +308,10 @@ func initBuiltInProvider() {
 
 func initWebAuthn() {
 	gob.Register(webauthn.SessionData{})
+}
+
+func initToken() {
+	gob.Register(&Token{})
 }
 
 func initBuiltInUserModel() {
