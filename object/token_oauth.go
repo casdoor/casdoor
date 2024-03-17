@@ -715,7 +715,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		Code:         session.SessionKey, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * 60,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        "",
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
