@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "리디렉팅 중입니다. 잠시 기다려주세요.",
     "Sign In": "로그인",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "WebAuthn으로 로그인하세요",
     "Sign in with {type}": "{type}로 로그인하세요",
     "Signing in...": "로그인 중...",

@@ -346,10 +346,28 @@ class LoginPage extends React.Component {
       return;
     }
     if (this.state.loginMethod === "faceId") {
-      this.setState({
-        openFaceRecognitionModal: true,
-        values: values,
-      });
+      let username = this.state.username;
+      if (username === null || username === "") {
+        username = values["username"];
+      }
+      const application = this.getApplicationObj();
+      fetch(`${Setting.ServerUrl}/api/faceid-signin-begin?owner=${application.organization}&name=${username}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Accept-Language": Setting.getAcceptLanguage(),
+        },
+      }).then(res => res.json())
+        .then((res) => {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+          this.setState({
+            openFaceRecognitionModal: true,
+            values: values,
+          });
+        });
       return;
     }
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -666,7 +684,8 @@ class LoginPage extends React.Component {
           >
             {
               this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
-                i18next.t("login:Sign In")
+                this.state.loginMethod === "faceId" ? i18next.t("login:Sign in with Face ID") :
+                  i18next.t("login:Sign In")
             }
           </Button>
           {

@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Đang chuyển hướng, vui lòng đợi.",
     "Sign In": "Đăng nhập",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Đăng nhập với WebAuthn",
     "Sign in with {type}": "Đăng nhập bằng {type}",
     "Signing in...": "Đăng nhập...",

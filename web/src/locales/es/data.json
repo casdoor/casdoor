@@ -494,6 +494,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Redirigiendo, por favor espera.",
     "Sign In": "Iniciar sesión",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Iniciar sesión con WebAuthn",
     "Sign in with {type}": "Inicia sesión con {tipo}",
     "Signing in...": "Iniciando sesión...",
