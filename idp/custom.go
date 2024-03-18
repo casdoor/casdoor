@@ -98,11 +98,19 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
+	requiredFields := []string{"id", "username", "displayName"}
+	for _, field := range requiredFields {
+		_, ok := idp.UserMapping[field]
+		if !ok {
+			return nil, fmt.Errorf("cannot find %s in userMapping, please check your configuration in custom provider", field)
+		}
+	}
+
 	// map user info
 	for k, v := range idp.UserMapping {
 		_, ok := dataMap[v]
 		if !ok {
-			return nil, fmt.Errorf("cannot find %s in user from castom provider", v)
+			return nil, fmt.Errorf("cannot find %s in user from custom provider", v)
 		}
 		dataMap[k] = dataMap[v]
 	}
