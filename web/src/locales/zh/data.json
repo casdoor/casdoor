@@ -392,6 +392,7 @@
     "User type - Tooltip": "用户所属的标签，默认为\"normal-user\"",
     "Users": "用户",
     "Users under all organizations": "所有组织里的用户",
+    "Verifications": "验证",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "只能选择一个实体组",
     "empty": "无",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "接收测试邮件的Email邮箱",
     "Test SMTP Connection": "测试SMTP连接",
     "Third-party": "第三方",
+    "This field is required": "此字段是必需的",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "自定义OAuth的Token URL",
     "Type": "类型",
@@ -889,7 +891,8 @@
     "admin (Shared)": "admin（共享）"
   },
   "record": {
-    "Is triggered": "是否触发"
+    "Is triggered": "是否触发",
+    "Object": "实体"
   },
   "resource": {
     "Copy Link": "复制链接",
@@ -1159,6 +1162,10 @@
     "Verification code sent": "验证码已发送",
     "WebAuthn credentials": "WebAuthn凭据",
     "input password": "输入密码"
+  },
+  "verification": {
+    "Receiver": "接受者",
+    "Time": "时间"
   },
   "webhook": {
     "Content type": "内容类型",

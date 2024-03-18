@@ -392,6 +392,7 @@
     "User type - Tooltip": "Các thẻ mà người dùng thuộc vào, mặc định là \"người dùng bình thường\"",
     "Users": "Người dùng",
     "Users under all organizations": "Người dùng trong tất cả các tổ chức",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "trống",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "Địa chỉ email để nhận thư kiểm tra",
     "Test SMTP Connection": "Kiểm tra kết nối SMTP",
     "Third-party": "Bên thứ ba",
+    "This field is required": "This field is required",
     "Token URL": "Đường dẫn mã thông báo",
     "Token URL - Tooltip": "Địa chỉ của mã thông báo",
     "Type": "Kiểu",
@@ -889,7 +891,8 @@
     "admin (Shared)": "quản trị viên (Chung)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "Sao chép liên kết",
@@ -1159,6 +1162,10 @@
     "Verification code sent": "Mã xác minh đã được gửi",
     "WebAuthn credentials": "Chứng chỉ WebAuthn",
     "input password": "Nhập mật khẩu"
+  },
+  "verification": {
+    "Receiver": "Receiver",
+    "Time": "Time"
   },
   "webhook": {
     "Content type": "Loại nội dung",

@@ -392,6 +392,7 @@
     "User type - Tooltip": "사용자가 속한 태그는 기본적으로 \"보통 사용자\"로 설정됩니다",
     "Users": "사용자",
     "Users under all organizations": "모든 조직의 사용자",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "빈",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "테스트 메일을 받을 이메일 주소",
     "Test SMTP Connection": "테스트 SMTP 연결",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "토큰 URL",
     "Token URL - Tooltip": "토큰 URL",
     "Type": "타입",
@@ -889,7 +891,8 @@
     "admin (Shared)": "관리자 (공유)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "링크 복사하기",
@@ -1159,6 +1162,10 @@
     "Verification code sent": "인증 코드가 전송되었습니다",
     "WebAuthn credentials": "웹 인증 자격증명",
     "input password": "비밀번호를 입력해주세요"
+  },
+  "verification": {
+    "Receiver": "Receiver",
+    "Time": "Time"
   },
   "webhook": {
     "Content type": "콘텐츠 유형",

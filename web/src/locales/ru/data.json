@@ -392,6 +392,7 @@
     "User type - Tooltip": "Теги, к которым принадлежит пользователь, по умолчанию \"обычный пользователь\"",
     "Users": "Пользователи",
     "Users under all organizations": "Пользователи всех организаций",
+    "Verifications": "Verifications",
     "Webhooks": "Вебхуки",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "пустые",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "Адрес электронной почты для получения тестовых писем",
     "Test SMTP Connection": "Тестирование соединения SMTP",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "Токен URL (URL-адрес маркера)",
     "Token URL - Tooltip": "Токен URL",
     "Type": "Тип",
@@ -889,7 +891,8 @@
     "admin (Shared)": "администратор (общий)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "Копировать ссылку",
@@ -1159,6 +1162,10 @@
     "Verification code sent": "Код подтверждения отправлен",
     "WebAuthn credentials": "WebAuthn удостоверения",
     "input password": "введите пароль"
+  },
+  "verification": {
+    "Receiver": "Receiver",
+    "Time": "Time"
   },
   "webhook": {
     "Content type": "Тип содержания",

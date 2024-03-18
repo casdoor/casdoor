@@ -392,6 +392,7 @@
     "User type - Tooltip": "ユーザーが属するタグは、デフォルトでは「通常ユーザー」となります",
     "Users": "ユーザー",
     "Users under all organizations": "すべての組織のユーザー",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "空",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "テストメールを受け取るためのメールアドレス",
     "Test SMTP Connection": "SMTP接続をテストする",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "トークンのURL",
     "Token URL - Tooltip": "トークンURL",
     "Type": "タイプ",
@@ -889,7 +891,8 @@
     "admin (Shared)": "管理者（共有）"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "コピー リンク",
@@ -1159,6 +1162,10 @@
     "Verification code sent": "確認コードを送信しました",
     "WebAuthn credentials": "WebAuthnの資格情報",
     "input password": "パスワードを入力してください"
+  },
+  "verification": {
+    "Receiver": "Receiver",
+    "Time": "Time"
   },
   "webhook": {
     "Content type": "コンテンツタイプ",

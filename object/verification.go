@@ -50,13 +50,13 @@ type VerificationRecord struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	RemoteAddr string `xorm:"varchar(100)"`
-	Type       string `xorm:"varchar(10)"`
-	User       string `xorm:"varchar(100) notnull"`
-	Provider   string `xorm:"varchar(100) notnull"`
-	Receiver   string `xorm:"varchar(100) index notnull"`
-	Code       string `xorm:"varchar(10) notnull"`
-	Time       int64  `xorm:"notnull"`
+	RemoteAddr string `xorm:"varchar(100)" json:"remoteAddr"`
+	Type       string `xorm:"varchar(10)" json:"type"`
+	User       string `xorm:"varchar(100) notnull" json:"user"`
+	Provider   string `xorm:"varchar(100) notnull" json:"provider"`
+	Receiver   string `xorm:"varchar(100) index notnull" json:"receiver"`
+	Code       string `xorm:"varchar(10) notnull" json:"code"`
+	Time       int64  `xorm:"notnull" json:"time"`
 	IsUsed     bool
 }
 
@@ -277,4 +277,63 @@ func getRandomCode(length int) string {
 		result = append(result, stdNums[r.Intn(len(stdNums))])
 	}
 	return string(result)
+}
+
+func GetVerificationCount(owner, field, value string) (int64, error) {
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	return session.Count(&VerificationRecord{Owner: owner})
+}
+
+func GetVerifications(owner string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	err := ormer.Engine.Desc("created_time").Find(&verifications, &VerificationRecord{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func GetUserVerifications(owner, user string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	err := ormer.Engine.Desc("created_time").Find(&verifications, &VerificationRecord{Owner: owner, User: user})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func GetPaginationVerifications(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&verifications, &VerificationRecord{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func getVerification(owner string, name string) (*VerificationRecord, error) {
+	if owner == "" || name == "" {
+		return nil, nil
+	}
+
+	verification := VerificationRecord{Owner: owner, Name: name}
+	existed, err := ormer.Engine.Get(&verification)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &verification, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetVerification(id string) (*VerificationRecord, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	return getVerification(owner, name)
 }
