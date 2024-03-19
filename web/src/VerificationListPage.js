@@ -111,7 +111,7 @@ class VerificationListPage extends BaseListPage {
         width: "160px",
         sorter: true,
         render: (text, record, index) => {
-          return Setting.getFormattedDate(text);
+          return Setting.getFormattedDate(text * 1000);
         },
       },
       {
