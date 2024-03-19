@@ -392,6 +392,7 @@
     "User type - Tooltip": "Tag yang dimiliki oleh pengguna, defaultnya adalah \"normal-user\"",
     "Users": "Pengguna-pengguna",
     "Users under all organizations": "Pengguna di bawah semua organisasi",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "kosong",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "Alamat email untuk menerima email percobaan",
     "Test SMTP Connection": "Tes Koneksi SMTP",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "Token URL: Tautan Token",
     "Token URL - Tooltip": "Token URL: URL Token",
     "Type": "Jenis",
@@ -889,7 +891,8 @@
     "admin (Shared)": "Admin (Berbagi)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "Salin Tautan",
@@ -1159,6 +1162,9 @@
     "Verification code sent": "Kode verifikasi telah dikirim",
     "WebAuthn credentials": "Kredensial WebAuthn",
     "input password": "masukkan kata sandi"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Jenis konten",

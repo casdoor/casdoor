@@ -392,6 +392,7 @@
     "User type - Tooltip": "Tags that the user belongs to, defaulting to \"normal-user\"",
     "Users": "Users",
     "Users under all organizations": "Users under all organizations",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "empty",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "Email address to receive test mails",
     "Test SMTP Connection": "Test SMTP Connection",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Token URL",
     "Type": "Type",
@@ -889,7 +891,8 @@
     "admin (Shared)": "admin (Shared)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "Copy Link",
@@ -1159,6 +1162,9 @@
     "Verification code sent": "Verification code sent",
     "WebAuthn credentials": "WebAuthn credentials",
     "input password": "input password"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Content type",

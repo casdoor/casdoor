@@ -392,6 +392,7 @@
     "User type - Tooltip": "Étiquettes associées au compte, avec une valeur par défaut \"normal-user\"",
     "Users": "Comptes",
     "Users under all organizations": "Comptes sous toutes les organisations",
+    "Verifications": "Verifications",
     "Webhooks": "Crochets web",
     "You can only select one physical group": "Vous ne pouvez sélectionner qu'un seul groupe physique",
     "empty": "vide",
@@ -870,6 +871,7 @@
     "Test Email - Tooltip": "Adresse e-mail pour recevoir des courriels de test",
     "Test SMTP Connection": "Test de connexion SMTP",
     "Third-party": "Tierce partie",
+    "This field is required": "This field is required",
     "Token URL": "URL de jeton",
     "Token URL - Tooltip": "URL de jeton",
     "Type": "Type de texte",
@@ -889,7 +891,8 @@
     "admin (Shared)": "admin (Partagé)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object"
   },
   "resource": {
     "Copy Link": "Copier le lien",
@@ -1159,6 +1162,9 @@
     "Verification code sent": "Code de vérification envoyé",
     "WebAuthn credentials": "Identifiants WebAuthn",
     "input password": "saisir le mot de passe"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Type de contenu",
