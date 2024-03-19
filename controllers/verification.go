@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
-
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"

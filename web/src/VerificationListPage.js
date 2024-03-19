@@ -105,7 +105,7 @@ class VerificationListPage extends BaseListPage {
         ...this.getColumnSearchProps("code"),
       },
       {
-        title: i18next.t("verification:Time"),
+        title: i18next.t("general:Timestamp"),
         dataIndex: "time",
         key: "time",
         width: "160px",

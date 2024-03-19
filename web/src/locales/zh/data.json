@@ -1164,8 +1164,7 @@
     "input password": "输入密码"
   },
   "verification": {
-    "Receiver": "接受者",
-    "Time": "时间"
+    "Receiver": "接收者"
   },
   "webhook": {
     "Content type": "内容类型",

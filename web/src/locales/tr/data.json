@@ -1164,8 +1164,7 @@
     "input password": "şifreyi girin"
   },
   "verification": {
-    "Receiver": "Receiver",
-    "Time": "Time"
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Content type",

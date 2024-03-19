@@ -1164,8 +1164,7 @@
     "input password": "비밀번호를 입력해주세요"
   },
   "verification": {
-    "Receiver": "Receiver",
-    "Time": "Time"
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "콘텐츠 유형",

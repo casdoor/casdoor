@@ -1164,8 +1164,7 @@
     "input password": "パスワードを入力してください"
   },
   "verification": {
-    "Receiver": "Receiver",
-    "Time": "Time"
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "コンテンツタイプ",

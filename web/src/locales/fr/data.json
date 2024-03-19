@@ -1164,8 +1164,7 @@
     "input password": "saisir le mot de passe"
   },
   "verification": {
-    "Receiver": "Receiver",
-    "Time": "Time"
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Type de contenu",

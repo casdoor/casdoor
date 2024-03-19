@@ -1164,8 +1164,7 @@
     "input password": "введите пароль"
   },
   "verification": {
-    "Receiver": "Receiver",
-    "Time": "Time"
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Тип содержания",
