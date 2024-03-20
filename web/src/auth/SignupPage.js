@@ -30,6 +30,7 @@ import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as InvitationBackend from "../backend/InvitationBackend";
+import {CaptchaModal} from "../common/modal/CaptchaModal";
 
 const formItemLayout = {
   labelCol: {
@@ -79,6 +80,7 @@ class SignupPage extends React.Component {
       region: "",
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
+      openCaptchaModal: false,
     };
 
     this.form = React.createRef();
@@ -195,6 +197,34 @@ class SignupPage extends React.Component {
   }
 
   onFinish(values) {
+    const application = this.getApplicationObj();
+    const provider = this.getCaptchaProvider(application);
+    if (provider !== null) { // If the captcha provider is not set, then ignore the captcha verification.
+      // check if application have email or phone verification.
+      const verCode = application.signupItems.some(signupItem => {
+        if (signupItem.name === "Email" && signupItem.rule !== "No verification" && (signupItem.required || values.email)) {
+          return true;
+        }
+        if (signupItem.name === "Phone" && signupItem.rule !== "No verification" && (signupItem.required || values.phone)) {
+          return true;
+        }
+        return false;
+      });
+
+      if (!verCode) {
+        // show captcha
+        this.setState({
+          openCaptchaModal: true,
+          values: values,
+        });
+        return;
+      }
+    }
+
+    this.signup(values);
+  }
+
+  signup(values) {
     const application = this.getApplicationObj();
 
     const params = new URLSearchParams(window.location.search);
@@ -648,12 +678,69 @@ class SignupPage extends React.Component {
           </a>
         </Form.Item>
         {
+          this.renderCaptchaModal(application)
+        }
+        {
           application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
             return ProviderButton.renderProviderLogo(providerItem.provider, application, 30, 5, "small", this.props.location);
           })
         }
       </Form>
     );
+  }
+
+  getCaptchaProvider(application) {
+    const captchaProviderItems = this.getCaptchaProviderItems(application);
+    if (!captchaProviderItems) {
+      return null;
+    }
+    const alwaysProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Always");
+    const dynamicProviderItems = captchaProviderItems.filter(providerItem => providerItem.rule === "Dynamic");
+    if (alwaysProviderItems.length === 0 && dynamicProviderItems.length === 0) {
+      return null;
+    }
+    return alwaysProviderItems.length > 0
+      ? alwaysProviderItems[0].provider
+      : dynamicProviderItems[0].provider;
+  }
+
+  renderCaptchaModal(application) {
+    const provider = this.getCaptchaProvider(application);
+    if (provider === null) {
+      return null;
+    }
+    return <CaptchaModal
+      owner={provider.owner}
+      name={provider.name}
+      visible={this.state.openCaptchaModal}
+      onOk={(captchaType, captchaToken, clientSecret) => {
+        const values = this.state.values;
+        values["captchaType"] = captchaType;
+        values["captchaToken"] = captchaToken;
+        values["clientSecret"] = clientSecret;
+
+        this.signup(values);
+        this.setState({openCaptchaModal: false});
+      }}
+      onCancel={() => this.setState({openCaptchaModal: false})}
+      isCurrentProvider={true}
+    />;
+  }
+
+  getCaptchaProviderItems(application) {
+    const providers = application?.providers;
+
+    if (providers === undefined || providers === null) {
+      return null;
+    }
+
+    return providers.filter(providerItem => {
+      if (providerItem.provider === undefined || providerItem.provider === null) {
+        return false;
+      }
+
+      return providerItem.provider.category === "Captcha";
+    });
   }
 
   render() {

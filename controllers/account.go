@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/captcha"
 	"net/http"
 	"strings"
 
@@ -130,6 +131,7 @@ func (c *ApiController) Signup() {
 		invitationName = invitation.Name
 	}
 
+	needCheckCaptcha := true
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
 		var checkResult *object.VerifyResult
 		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
@@ -141,6 +143,7 @@ func (c *ApiController) Signup() {
 			c.ResponseError(checkResult.Msg)
 			return
 		}
+		needCheckCaptcha = false
 	}
 
 	var checkPhone string
@@ -156,6 +159,40 @@ func (c *ApiController) Signup() {
 		if checkResult.Code != object.VerificationSuccess {
 			c.ResponseError(checkResult.Msg)
 			return
+		}
+		needCheckCaptcha = false
+	}
+
+	// If email or phone verification code checks are not available, then a captcha verification is required.
+	if needCheckCaptcha {
+		provider, err := object.GetCaptchaProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		// If the captcha provider is not set, then ignore the captcha verification.
+		if provider != nil {
+			if authForm.CaptchaType != provider.Type {
+				c.ResponseError(c.T("verification:Turing test failed."))
+				return
+			}
+
+			if provider.Type != "Default" {
+				authForm.ClientSecret = provider.ClientSecret
+			}
+
+			if authForm.CaptchaType != "none" {
+				if captchaProvider := captcha.GetCaptchaProvider(authForm.CaptchaType); captchaProvider == nil {
+					c.ResponseError(c.T("general:don't support captchaProvider: ") + authForm.CaptchaType)
+					return
+				} else if isHuman, err := captchaProvider.VerifyCaptcha(authForm.CaptchaToken, authForm.ClientSecret); err != nil {
+					c.ResponseError(err.Error())
+					return
+				} else if !isHuman {
+					c.ResponseError(c.T("verification:Turing test failed."))
+					return
+				}
+			}
 		}
 	}
 
