@@ -35,7 +35,7 @@ require (
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/lib/pq v1.10.9
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
-	github.com/markbates/goth v1.78.0
+	github.com/markbates/goth v1.79.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
@@ -61,7 +61,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.21.0
 	golang.org/x/net v0.21.0
-	golang.org/x/oauth2 v0.13.0
+	golang.org/x/oauth2 v0.17.0
 	google.golang.org/api v0.150.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
