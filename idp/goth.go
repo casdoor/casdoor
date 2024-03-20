@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
-
+	
 	"github.com/casdoor/casdoor/util"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/amazon"
@@ -102,8 +102,8 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		if !strings.Contains(redirectUrl, "/api/callback") {
 			redirectUrl = strings.Replace(redirectUrl, "/callback", "/api/callback", 1)
 		}
-
-		iat := time.Now().Unix()
+		
+		iat := time.Now().UTC().Unix()
 		exp := iat + 60*60
 		sp := apple.SecretParams{
 			ClientId:        clientId,
@@ -117,7 +117,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		if err != nil {
 			return nil, err
 		}
-
+		
 		idp = GothIdProvider{
 			Provider: apple.New(clientId, *secret, redirectUrl, nil),
 			Session:  &apple.Session{},
@@ -127,7 +127,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		if hostUrl != "" {
 			domain = hostUrl
 		}
-
+		
 		idp = GothIdProvider{
 			Provider: azureadv2.New(clientId, clientSecret, redirectUrl, azureadv2.ProviderOptions{Tenant: azureadv2.TenantType(domain)}),
 			Session:  &azureadv2.Session{},
@@ -410,7 +410,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 	default:
 		return nil, fmt.Errorf("OAuth Goth provider type: %s is not supported", providerType)
 	}
-
+	
 	return &idp, nil
 }
 
@@ -447,7 +447,7 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	
 	// Get ExpiresAt's value
 	valueOfExpire := reflect.ValueOf(idp.Session).Elem().FieldByName("ExpiresAt")
 	if valueOfExpire.IsValid() {
@@ -457,7 +457,7 @@ func (idp *GothIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		AccessToken: accessToken,
 		Expiry:      expireAt,
 	}
-
+	
 	return &token, nil
 }
 
