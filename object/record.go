@@ -23,6 +23,7 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
+	"github.com/siddontang/go-log/log"
 )
 
 var logPostOnly bool
@@ -33,6 +34,11 @@ func init() {
 
 type Record struct {
 	casvisorsdk.Record
+}
+
+type Response struct {
+	Status string `json:"status"`
+	Msg    string `json:"msg"`
 }
 
 func NewRecord(ctx *context.Context) *casvisorsdk.Record {
@@ -48,7 +54,16 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		object = string(ctx.Input.RequestBody)
 	}
 
-	outputBytes, _ := json.Marshal(ctx.Input.Data()["json"])
+	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
+	if err != nil {
+		log.Error(err)
+	}
+
+	var resp Response
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		log.Error(err)
+	}
 
 	language := ctx.Request.Header.Get("Accept-Language")
 	if len(language) > 2 {
@@ -66,7 +81,7 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
-		Response:    string(outputBytes),
+		Response:    fmt.Sprintf("{status:\"%s\", msg:\"%s\"}", resp.Status, resp.Msg),
 		IsTriggered: false,
 	}
 	return &record
