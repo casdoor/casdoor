@@ -508,7 +508,12 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record := object.NewRecord(c.Ctx)
+			record, err := object.NewRecord(c.Ctx)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
 			record.Organization = application.Organization
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })
@@ -632,7 +637,11 @@ func (c *ApiController) Login() {
 				}
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record := object.NewRecord(c.Ctx)
+				record, err := object.NewRecord(c.Ctx)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
@@ -768,12 +777,20 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record := object.NewRecord(c.Ctx)
+				record, err := object.NewRecord(c.Ctx)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 				record.Organization = application.Organization
 				record.User = user.Name
 				util.SafeGoroutine(func() { object.AddRecord(record) })
 
-				record2 := object.NewRecord(c.Ctx)
+				record2, err := object.NewRecord(c.Ctx)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 				record2.Action = "signup"
 				record2.Organization = application.Organization
 				record2.User = user.Name
@@ -879,7 +896,11 @@ func (c *ApiController) Login() {
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
-		record := object.NewRecord(c.Ctx)
+		record, err := object.NewRecord(c.Ctx)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 		record.Organization = application.Organization
 		record.User = user.Name
 		util.SafeGoroutine(func() { object.AddRecord(record) })
@@ -901,7 +922,11 @@ func (c *ApiController) Login() {
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record := object.NewRecord(c.Ctx)
+			record, err := object.NewRecord(c.Ctx)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 			record.Organization = application.Organization
 			record.User = user.Name
 			util.SafeGoroutine(func() { object.AddRecord(record) })

@@ -23,7 +23,6 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
-	"github.com/siddontang/go-log/log"
 )
 
 var logPostOnly bool
@@ -41,7 +40,7 @@ type Response struct {
 	Msg    string `json:"msg"`
 }
 
-func NewRecord(ctx *context.Context) *casvisorsdk.Record {
+func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
@@ -56,13 +55,13 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 
 	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
 	if err != nil {
-		log.Error(err)
+		return nil, err
 	}
 
 	var resp Response
 	err = json.Unmarshal(respBytes, &resp)
 	if err != nil {
-		log.Error(err)
+		return nil, err
 	}
 
 	language := ctx.Request.Header.Get("Accept-Language")
@@ -84,7 +83,7 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Response:    fmt.Sprintf("{status:\"%s\", msg:\"%s\"}", resp.Status, resp.Msg),
 		IsTriggered: false,
 	}
-	return &record
+	return &record, nil
 }
 
 func AddRecord(record *casvisorsdk.Record) bool {

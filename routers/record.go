@@ -69,7 +69,10 @@ func AfterRecordMessage(ctx *context.Context) {
 	if ctx.Request.URL.Path == "/api/login" || ctx.Request.URL.Path == "/api/signup" {
 		return
 	}
-	record := object.NewRecord(ctx)
+	record, err := object.NewRecord(ctx)
+	if err != nil {
+		return
+	}
 
 	userId := ctx.Input.Params()["recordUserId"]
 	if userId != "" {

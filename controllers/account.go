@@ -271,7 +271,12 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	record := object.NewRecord(c.Ctx)
+	record, err := object.NewRecord(c.Ctx)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	record.Organization = application.Organization
 	record.User = user.Name
 	util.SafeGoroutine(func() { object.AddRecord(record) })
