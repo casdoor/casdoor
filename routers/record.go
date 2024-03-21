@@ -66,9 +66,6 @@ func RecordMessage(ctx *context.Context) {
 }
 
 func AfterRecordMessage(ctx *context.Context) {
-	if ctx.Request.URL.Path == "/api/login" || ctx.Request.URL.Path == "/api/signup" {
-		return
-	}
 	record, err := object.NewRecord(ctx)
 	if err != nil {
 		return
@@ -78,5 +75,15 @@ func AfterRecordMessage(ctx *context.Context) {
 	if userId != "" {
 		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
-	util.SafeGoroutine(func() { object.AddRecord(record) })
+
+	recordSignup := ctx.Input.Params()["recordSignup"]
+	if recordSignup == "true" {
+		record2 := *record
+		record2.Action = "signup"
+		util.SafeGoroutine(func() { object.AddRecord(&record2) })
+	}
+
+	util.SafeGoroutine(func() {
+		object.AddRecord(record)
+	})
 }

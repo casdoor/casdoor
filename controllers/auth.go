@@ -508,15 +508,7 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record, err := object.NewRecord(c.Ctx)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			record.Organization = application.Organization
-			record.User = user.Name
-			util.SafeGoroutine(func() { object.AddRecord(record) })
+			c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
 		}
 	} else if authForm.Provider != "" {
 		var application *object.Application
@@ -637,14 +629,7 @@ func (c *ApiController) Login() {
 				}
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record, err := object.NewRecord(c.Ctx)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-				record.Organization = application.Organization
-				record.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record) })
+				c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
@@ -777,24 +762,8 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record, err := object.NewRecord(c.Ctx)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-				record.Organization = application.Organization
-				record.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record) })
-
-				record2, err := object.NewRecord(c.Ctx)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-				record2.Action = "signup"
-				record2.Organization = application.Organization
-				record2.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record2) })
+				c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+				c.Ctx.Input.SetParam("recordSignup", "true")
 			} else if provider.Category == "SAML" {
 				// TODO: since we get the user info from SAML response, we can try to create the user
 				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
@@ -896,14 +865,7 @@ func (c *ApiController) Login() {
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
-		record, err := object.NewRecord(c.Ctx)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		record.Organization = application.Organization
-		record.User = user.Name
-		util.SafeGoroutine(func() { object.AddRecord(record) })
+		c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
 	} else {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
@@ -922,14 +884,7 @@ func (c *ApiController) Login() {
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record, err := object.NewRecord(c.Ctx)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-			record.Organization = application.Organization
-			record.User = user.Name
-			util.SafeGoroutine(func() { object.AddRecord(record) })
+			c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
 		} else {
 			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return
