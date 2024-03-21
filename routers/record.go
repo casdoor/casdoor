@@ -60,12 +60,20 @@ func RecordMessage(ctx *context.Context) {
 		return
 	}
 
+	userId := getUser(ctx)
+
+	ctx.Input.SetParam("recordUserId", userId)
+}
+
+func AfterRecordMessage(ctx *context.Context) {
+	if ctx.Request.URL.Path == "/api/login" || ctx.Request.URL.Path == "/api/signup" {
+		return
+	}
 	record := object.NewRecord(ctx)
 
-	userId := getUser(ctx)
+	userId := ctx.Input.Params()["recordUserId"]
 	if userId != "" {
 		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
-
 	util.SafeGoroutine(func() { object.AddRecord(record) })
 }

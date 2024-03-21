@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -47,6 +48,8 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		object = string(ctx.Input.RequestBody)
 	}
 
+	outputBytes, _ := json.Marshal(ctx.Input.Data()["json"])
+
 	language := ctx.Request.Header.Get("Accept-Language")
 	if len(language) > 2 {
 		language = language[0:2]
@@ -63,7 +66,7 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
-		Response:    "",
+		Response:    string(outputBytes),
 		IsTriggered: false,
 	}
 	return &record
