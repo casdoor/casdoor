@@ -212,17 +212,18 @@ func ApiFilter(ctx *context.Context) {
 	}
 
 	if !isAllowed {
+		denyRequest(ctx)
 		record, err := object.NewRecord(ctx)
 		if err != nil {
 			return
 		}
 
 		record.Organization = subOwner
-		record.User = subName
+		record.User = subName // auth:Unauthorized operation
+		record.Response = fmt.Sprintf("{status:\"error\", msg:\"%s\"}", T(ctx, "auth:Unauthorized operation"))
 
 		util.SafeGoroutine(func() {
 			object.AddRecord(record)
 		})
-		denyRequest(ctx)
 	}
 }

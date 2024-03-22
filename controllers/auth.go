@@ -508,7 +508,7 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		}
 	} else if authForm.Provider != "" {
 		var application *object.Application
@@ -629,7 +629,7 @@ func (c *ApiController) Login() {
 				}
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
@@ -762,7 +762,7 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 				c.Ctx.Input.SetParam("recordSignup", "true")
 			} else if provider.Category == "SAML" {
 				// TODO: since we get the user info from SAML response, we can try to create the user
@@ -865,7 +865,7 @@ func (c *ApiController) Login() {
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
-		c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+		c.Ctx.Input.SetParam("recordUserId", user.GetId())
 	} else {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
@@ -884,7 +884,7 @@ func (c *ApiController) Login() {
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		} else {
 			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return
