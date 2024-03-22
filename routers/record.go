@@ -60,12 +60,30 @@ func RecordMessage(ctx *context.Context) {
 		return
 	}
 
-	record := object.NewRecord(ctx)
-
 	userId := getUser(ctx)
+
+	ctx.Input.SetParam("recordUserId", userId)
+}
+
+func AfterRecordMessage(ctx *context.Context) {
+	record, err := object.NewRecord(ctx)
+	if err != nil {
+		return
+	}
+
+	userId := ctx.Input.Params()["recordUserId"]
 	if userId != "" {
 		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
 	}
 
-	util.SafeGoroutine(func() { object.AddRecord(record) })
+	recordSignup := ctx.Input.Params()["recordSignup"]
+	if recordSignup == "true" {
+		record2 := *record
+		record2.Action = "signup"
+		util.SafeGoroutine(func() { object.AddRecord(&record2) })
+	}
+
+	util.SafeGoroutine(func() {
+		object.AddRecord(record)
+	})
 }

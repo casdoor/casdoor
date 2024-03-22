@@ -20,6 +20,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casdoor/casdoor/object"
+
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/util"
@@ -211,5 +213,17 @@ func ApiFilter(ctx *context.Context) {
 
 	if !isAllowed {
 		denyRequest(ctx)
+		record, err := object.NewRecord(ctx)
+		if err != nil {
+			return
+		}
+
+		record.Organization = subOwner
+		record.User = subName // auth:Unauthorized operation
+		record.Response = fmt.Sprintf("{status:\"error\", msg:\"%s\"}", T(ctx, "auth:Unauthorized operation"))
+
+		util.SafeGoroutine(func() {
+			object.AddRecord(record)
+		})
 	}
 }
