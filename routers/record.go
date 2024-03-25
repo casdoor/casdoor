@@ -15,6 +15,8 @@
 package routers
 
 import (
+	"fmt"
+
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -68,6 +70,7 @@ func RecordMessage(ctx *context.Context) {
 func AfterRecordMessage(ctx *context.Context) {
 	record, err := object.NewRecord(ctx)
 	if err != nil {
+		fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
 		return
 	}
 
@@ -79,7 +82,22 @@ func AfterRecordMessage(ctx *context.Context) {
 	recordSignup := ctx.Input.Params()["recordSignup"]
 	if recordSignup == "true" {
 		record2 := *record
-		record2.Action = "signup"
+		record2.Action = "new-user"
+
+		var user *object.User
+		user, err = object.GetUser(userId)
+		if err != nil {
+			fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
+			return
+		}
+		if user == nil {
+			err = fmt.Errorf("the user: %s is not found", userId)
+			fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
+			return
+		}
+
+		record.Object = util.StructToJson(user)
+
 		util.SafeGoroutine(func() { object.AddRecord(&record2) })
 	}
 

@@ -273,7 +273,8 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	c.Ctx.Input.SetParam("recordUserId", fmt.Sprintf("%s/%s", application.Organization, user.Name))
+	c.Ctx.Input.SetParam("recordUserId", user.GetId())
+	c.Ctx.Input.SetParam("recordSignup", "true")
 
 	userId := user.GetId()
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
