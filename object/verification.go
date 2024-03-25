@@ -92,9 +92,12 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
+
+	var userString = "Hi"
 	if user != nil {
-		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+		userString = user.GetFriendlyName()
 	}
+	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
 	err := IsAllowSend(user, remoteAddr, provider.Category)
 	if err != nil {
