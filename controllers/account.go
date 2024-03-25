@@ -44,6 +44,8 @@ type Response struct {
 }
 
 type Captcha struct {
+	Owner         string `json:"owner"`
+	Name          string `json:"name"`
 	Type          string `json:"type"`
 	AppKey        string `json:"appKey"`
 	Scene         string `json:"scene"`
@@ -529,10 +531,12 @@ func (c *ApiController) GetCaptcha() {
 				return
 			}
 
-			c.ResponseOk(Captcha{Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
+			c.ResponseOk(Captcha{Owner: captchaProvider.Owner, Name: captchaProvider.Name, Type: captchaProvider.Type, CaptchaId: id, CaptchaImage: img})
 			return
 		} else if captchaProvider.Type != "" {
 			c.ResponseOk(Captcha{
+				Owner:         captchaProvider.Owner,
+				Name:          captchaProvider.Name,
 				Type:          captchaProvider.Type,
 				SubType:       captchaProvider.SubType,
 				ClientId:      captchaProvider.ClientId,
