@@ -125,7 +125,7 @@ func (c *ApiController) SendEmail() {
 				return
 			}
 
-			var userString = "Hi"
+			userString := "Hi"
 			if user != nil {
 				userString = user.GetFriendlyName()
 			}

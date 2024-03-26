@@ -93,7 +93,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
 
-	var userString = "Hi"
+	userString := "Hi"
 	if user != nil {
 		userString = user.GetFriendlyName()
 	}
