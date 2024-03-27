@@ -187,7 +187,7 @@ class RecordListPage extends BaseListPage {
         sorter: true,
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
+          if (!["signup", "login", "logout", "update-user", "new-user"].includes(record.action)) {
             return null;
           }
 

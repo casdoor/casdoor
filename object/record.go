@@ -165,6 +165,25 @@ func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error
 	return records, nil
 }
 
+func CopyRecord(record *casvisorsdk.Record) *casvisorsdk.Record {
+	res := &casvisorsdk.Record{
+		Owner:        record.Owner,
+		Name:         record.Name,
+		CreatedTime:  record.CreatedTime,
+		Organization: record.Organization,
+		ClientIp:     record.ClientIp,
+		User:         record.User,
+		Method:       record.Method,
+		RequestUri:   record.RequestUri,
+		Action:       record.Action,
+		Language:     record.Language,
+		Object:       record.Object,
+		Response:     record.Response,
+		IsTriggered:  record.IsTriggered,
+	}
+	return res
+}
+
 func getFilteredWebhooks(webhooks []*Webhook, organization string, action string) []*Webhook {
 	res := []*Webhook{}
 	for _, webhook := range webhooks {
