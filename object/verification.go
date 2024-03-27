@@ -190,14 +190,17 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has not been sent yet, or has already been used!")}, nil
 	}
 
-	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
+	timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
 		return nil, err
 	}
 
 	now := time.Now().Unix()
-	if now-record.Time > timeout*60 {
-		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)}, nil
+	if now-record.Time > timeoutInMinutes*60*10 {
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has not been sent yet!")}, nil
+	}
+	if now-record.Time > timeoutInMinutes*60 {
+		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeoutInMinutes)}, nil
 	}
 
 	if record.Code != code {
