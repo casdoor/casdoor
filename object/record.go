@@ -140,6 +140,12 @@ func GetRecords() ([]*casvisorsdk.Record, error) {
 
 func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
 	records := []*casvisorsdk.Record{}
+
+	if sortField == "" || sortOrder == "" {
+		sortField = "id"
+		sortOrder = "descend"
+	}
+
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&records, filterRecord)
 	if err != nil {
