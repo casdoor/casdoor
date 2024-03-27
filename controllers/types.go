@@ -21,6 +21,7 @@ type TokenRequest struct {
 	Code         string `json:"code"`
 	Verifier     string `json:"code_verifier"`
 	Scope        string `json:"scope"`
+	Nonce        string `json:"nonce"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
 	Tag          string `json:"tag"`
