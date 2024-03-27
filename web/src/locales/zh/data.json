@@ -392,6 +392,7 @@
     "User type - Tooltip": "用户所属的标签，默认为\"normal-user\"",
     "Users": "用户",
     "Users under all organizations": "所有组织里的用户",
+    "Verifications": "验证",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "只能选择一个实体组",
     "empty": "无",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "请输入要登录的组织",
     "Redirecting, please wait.": "正在跳转, 请稍等.",
     "Sign In": "登录",
+    "Sign in with Face ID": "人脸登录",
     "Sign in with WebAuthn": "WebAuthn登录",
     "Sign in with {type}": "{type}登录",
     "Signing in...": "正在登录...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "接收测试邮件的Email邮箱",
     "Test SMTP Connection": "测试SMTP连接",
     "Third-party": "第三方",
+    "This field is required": "此字段是必需的",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "自定义OAuth的Token URL",
     "Type": "类型",
@@ -888,7 +891,9 @@
     "admin (Shared)": "admin（共享）"
   },
   "record": {
-    "Is triggered": "是否触发"
+    "Is triggered": "是否触发",
+    "Object": "实体",
+    "Response": "响应"
   },
   "resource": {
     "Copy Link": "复制链接",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "邮箱或手机号重置成功",
     "Empty input!": "输入为空！",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "性别",
     "Gender - Tooltip": "性别 - Tooltip",
     "Homepage": "个人主页",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "验证码已发送",
     "WebAuthn credentials": "WebAuthn凭据",
     "input password": "输入密码"
+  },
+  "verification": {
+    "Receiver": "接收者"
   },
   "webhook": {
     "Content type": "内容类型",

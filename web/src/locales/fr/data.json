@@ -392,6 +392,7 @@
     "User type - Tooltip": "Étiquettes associées au compte, avec une valeur par défaut \"normal-user\"",
     "Users": "Comptes",
     "Users under all organizations": "Comptes sous toutes les organisations",
+    "Verifications": "Verifications",
     "Webhooks": "Crochets web",
     "You can only select one physical group": "Vous ne pouvez sélectionner qu'un seul groupe physique",
     "empty": "vide",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "Veuillez entrer une organisation pour vous connecter",
     "Redirecting, please wait.": "Redirection en cours, veuillez patienter.",
     "Sign In": "Se connecter",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Connectez-vous avec WebAuthn",
     "Sign in with {type}": "Connectez-vous avec {type}",
     "Signing in...": "Connexion en cours...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "Adresse e-mail pour recevoir des courriels de test",
     "Test SMTP Connection": "Test de connexion SMTP",
     "Third-party": "Tierce partie",
+    "This field is required": "This field is required",
     "Token URL": "URL de jeton",
     "Token URL - Tooltip": "URL de jeton",
     "Type": "Type de texte",
@@ -888,7 +891,9 @@
     "admin (Shared)": "admin (Partagé)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object",
+    "Response": "Response"
   },
   "resource": {
     "Copy Link": "Copier le lien",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "E-mail ou téléphone réinitialisé avec succès",
     "Empty input!": "Champ vide !",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "Genre",
     "Gender - Tooltip": "Genre - Infobulle",
     "Homepage": "Site web",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "Code de vérification envoyé",
     "WebAuthn credentials": "Identifiants WebAuthn",
     "input password": "saisir le mot de passe"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Type de contenu",

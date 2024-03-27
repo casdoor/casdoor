@@ -34,8 +34,8 @@ import OrganizationListPage from "./OrganizationListPage";
 import OrganizationEditPage from "./OrganizationEditPage";
 import UserListPage from "./UserListPage";
 import GroupTreePage from "./GroupTreePage";
-import GroupListPage from "./GroupList";
-import GroupEditPage from "./GroupEdit";
+import GroupListPage from "./GroupListPage";
+import GroupEditPage from "./GroupEditPage";
 import UserEditPage from "./UserEditPage";
 import InvitationListPage from "./InvitationListPage";
 import InvitationEditPage from "./InvitationEditPage";
@@ -92,6 +92,7 @@ import * as AuthBackend from "./auth/AuthBackend";
 import {clearWeb3AuthToken} from "./auth/Web3Auth";
 import TransactionListPage from "./TransactionListPage";
 import TransactionEditPage from "./TransactionEditPage";
+import VerificationListPage from "./VerificationListPage";
 
 function ManagementPage(props) {
 
@@ -293,6 +294,7 @@ function ManagementPage(props) {
         Conf.CasvisorUrl ? Setting.getItem(<a target="_blank" rel="noreferrer" href={Conf.CasvisorUrl}>{i18next.t("general:Records")}</a>, "/records")
           : Setting.getItem(<Link to="/records">{i18next.t("general:Records")}</Link>, "/records"),
         Setting.getItem(<Link to="/tokens">{i18next.t("general:Tokens")}</Link>, "/tokens"),
+        Setting.getItem(<Link to="/verifications">{i18next.t("general:Verifications")}</Link>, "/verifications"),
       ]));
 
       res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone twoToneColor={twoToneColor} />, [
@@ -360,6 +362,7 @@ function ManagementPage(props) {
         <Route exact path="/resources" render={(props) => renderLoginIfNotLoggedIn(<ResourceListPage account={account} {...props} />)} />
         <Route exact path="/certs" render={(props) => renderLoginIfNotLoggedIn(<CertListPage account={account} {...props} />)} />
         <Route exact path="/certs/:organizationName/:certName" render={(props) => renderLoginIfNotLoggedIn(<CertEditPage account={account} {...props} />)} />
+        <Route exact path="/verifications" render={(props) => renderLoginIfNotLoggedIn(<VerificationListPage account={account} {...props} />)} />
         <Route exact path="/roles" render={(props) => renderLoginIfNotLoggedIn(<RoleListPage account={account} {...props} />)} />
         <Route exact path="/roles/:organizationName/:roleName" render={(props) => renderLoginIfNotLoggedIn(<RoleEditPage account={account} {...props} />)} />
         <Route exact path="/permissions" render={(props) => renderLoginIfNotLoggedIn(<PermissionListPage account={account} {...props} />)} />

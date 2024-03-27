@@ -311,6 +311,9 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 			signinMethod := &SigninMethod{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"}
 			application.SigninMethods = append(application.SigninMethods, signinMethod)
 		}
+
+		signinMethod := &SigninMethod{Name: "Face ID", DisplayName: "Face ID", Rule: "None"}
+		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
 	if len(application.SigninMethods) == 0 {

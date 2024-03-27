@@ -40,6 +40,14 @@ require("codemirror/mode/css/css");
 const {Option} = Select;
 const {TextArea} = Input;
 
+const defaultUserMapping = {
+  id: "id",
+  username: "username",
+  displayName: "displayName",
+  email: "email",
+  avatarUrl: "avatarUrl",
+};
+
 class ProviderEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -70,7 +78,7 @@ class ProviderEditPage extends React.Component {
 
         if (res.status === "ok") {
           const provider = res.data;
-          provider.userMapping = provider.userMapping || {};
+          provider.userMapping = provider.userMapping || defaultUserMapping;
           this.setState({
             provider: provider,
           });
@@ -141,8 +149,16 @@ class ProviderEditPage extends React.Component {
   }
 
   updateUserMappingField(key, value) {
+    const requiredKeys = ["id", "username", "displayName"];
     const provider = this.state.provider;
+
+    if (value === "" && requiredKeys.includes(key)) {
+      Setting.showMessage("error", i18next.t("provider:This field is required"));
+      return;
+    }
+
     provider.userMapping[key] = value;
+
     this.setState({
       provider: provider,
     });

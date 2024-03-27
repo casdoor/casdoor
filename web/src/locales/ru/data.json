@@ -392,6 +392,7 @@
     "User type - Tooltip": "Теги, к которым принадлежит пользователь, по умолчанию \"обычный пользователь\"",
     "Users": "Пользователи",
     "Users under all organizations": "Пользователи всех организаций",
+    "Verifications": "Verifications",
     "Webhooks": "Вебхуки",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "пустые",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Перенаправление, пожалуйста, подождите.",
     "Sign In": "Войти",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Войти с помощью WebAuthn",
     "Sign in with {type}": "Войти с помощью {type}",
     "Signing in...": "Вход в систему...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "Адрес электронной почты для получения тестовых писем",
     "Test SMTP Connection": "Тестирование соединения SMTP",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "Токен URL (URL-адрес маркера)",
     "Token URL - Tooltip": "Токен URL",
     "Type": "Тип",
@@ -888,7 +891,9 @@
     "admin (Shared)": "администратор (общий)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object",
+    "Response": "Response"
   },
   "resource": {
     "Copy Link": "Копировать ссылку",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "Электронная почта / номер телефона успешно сброшены",
     "Empty input!": "Пустой ввод!",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "Gender",
     "Gender - Tooltip": "Gender - Tooltip",
     "Homepage": "Главная страница пользователя",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "Код подтверждения отправлен",
     "WebAuthn credentials": "WebAuthn удостоверения",
     "input password": "введите пароль"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Тип содержания",

@@ -392,6 +392,7 @@
     "User type - Tooltip": "사용자가 속한 태그는 기본적으로 \"보통 사용자\"로 설정됩니다",
     "Users": "사용자",
     "Users under all organizations": "모든 조직의 사용자",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "빈",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "리디렉팅 중입니다. 잠시 기다려주세요.",
     "Sign In": "로그인",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "WebAuthn으로 로그인하세요",
     "Sign in with {type}": "{type}로 로그인하세요",
     "Signing in...": "로그인 중...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "테스트 메일을 받을 이메일 주소",
     "Test SMTP Connection": "테스트 SMTP 연결",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "토큰 URL",
     "Token URL - Tooltip": "토큰 URL",
     "Type": "타입",
@@ -888,7 +891,9 @@
     "admin (Shared)": "관리자 (공유)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object",
+    "Response": "Response"
   },
   "resource": {
     "Copy Link": "링크 복사하기",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "이메일/전화 초기화가 성공적으로 완료되었습니다",
     "Empty input!": "빈 입력!",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "Gender",
     "Gender - Tooltip": "Gender - Tooltip",
     "Homepage": "사용자의 홈페이지",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "인증 코드가 전송되었습니다",
     "WebAuthn credentials": "웹 인증 자격증명",
     "input password": "비밀번호를 입력해주세요"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "콘텐츠 유형",

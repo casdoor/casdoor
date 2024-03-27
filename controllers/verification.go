@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
@@ -34,6 +35,90 @@ const (
 	MfaSetupVerification = "mfaSetup"
 	MfaAuthVerification  = "mfaAuth"
 )
+
+// GetVerifications
+// @Title GetVerifications
+// @Tag Verification API
+// @Description get payments
+// @Param   owner     query    string  true        "The owner of payments"
+// @Success 200 {array} object.Verification The Response object
+// @router /get-payments [get]
+func (c *ApiController) GetVerifications() {
+	owner := c.Input().Get("owner")
+	limit := c.Input().Get("pageSize")
+	page := c.Input().Get("p")
+	field := c.Input().Get("field")
+	value := c.Input().Get("value")
+	sortField := c.Input().Get("sortField")
+	sortOrder := c.Input().Get("sortOrder")
+
+	if limit == "" || page == "" {
+		payments, err := object.GetVerifications(owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(payments)
+	} else {
+		limit := util.ParseInt(limit)
+		count, err := object.GetVerificationCount(owner, field, value)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		payments, err := object.GetPaginationVerifications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(payments, paginator.Nums())
+	}
+}
+
+// GetUserVerifications
+// @Title GetUserVerifications
+// @Tag Verification API
+// @Description get payments for a user
+// @Param   owner     query    string  true        "The owner of payments"
+// @Param   organization    query   string  true   "The organization of the user"
+// @Param   user    query   string  true           "The username of the user"
+// @Success 200 {array} object.Verification The Response object
+// @router /get-user-payments [get]
+func (c *ApiController) GetUserVerifications() {
+	owner := c.Input().Get("owner")
+	user := c.Input().Get("user")
+
+	payments, err := object.GetUserVerifications(owner, user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(payments)
+}
+
+// GetVerification
+// @Title GetVerification
+// @Tag Verification API
+// @Description get payment
+// @Param   id     query    string  true        "The id ( owner/name ) of the payment"
+// @Success 200 {object} object.Verification The Response object
+// @router /get-payment [get]
+func (c *ApiController) GetVerification() {
+	id := c.Input().Get("id")
+
+	payment, err := object.GetVerification(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(payment)
+}
 
 // SendVerificationCode ...
 // @Title SendVerificationCode

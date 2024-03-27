@@ -50,13 +50,13 @@ type VerificationRecord struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	RemoteAddr string `xorm:"varchar(100)"`
-	Type       string `xorm:"varchar(10)"`
-	User       string `xorm:"varchar(100) notnull"`
-	Provider   string `xorm:"varchar(100) notnull"`
-	Receiver   string `xorm:"varchar(100) index notnull"`
-	Code       string `xorm:"varchar(10) notnull"`
-	Time       int64  `xorm:"notnull"`
+	RemoteAddr string `xorm:"varchar(100)" json:"remoteAddr"`
+	Type       string `xorm:"varchar(10)" json:"type"`
+	User       string `xorm:"varchar(100) notnull" json:"user"`
+	Provider   string `xorm:"varchar(100) notnull" json:"provider"`
+	Receiver   string `xorm:"varchar(100) index notnull" json:"receiver"`
+	Code       string `xorm:"varchar(10) notnull" json:"code"`
+	Time       int64  `xorm:"notnull" json:"time"`
 	IsUsed     bool
 }
 
@@ -92,9 +92,12 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
+
+	userString := "Hi"
 	if user != nil {
-		content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+		userString = user.GetFriendlyName()
 	}
+	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
 	err := IsAllowSend(user, remoteAddr, provider.Category)
 	if err != nil {
@@ -187,14 +190,17 @@ func CheckVerificationCode(dest string, code string, lang string) (*VerifyResult
 		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has not been sent yet, or has already been used!")}, nil
 	}
 
-	timeout, err := conf.GetConfigInt64("verificationCodeTimeout")
+	timeoutInMinutes, err := conf.GetConfigInt64("verificationCodeTimeout")
 	if err != nil {
 		return nil, err
 	}
 
 	now := time.Now().Unix()
-	if now-record.Time > timeout*60 {
-		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeout)}, nil
+	if now-record.Time > timeoutInMinutes*60*10 {
+		return &VerifyResult{noRecordError, i18n.Translate(lang, "verification:The verification code has not been sent yet!")}, nil
+	}
+	if now-record.Time > timeoutInMinutes*60 {
+		return &VerifyResult{timeoutError, fmt.Sprintf(i18n.Translate(lang, "verification:You should verify your code in %d min!"), timeoutInMinutes)}, nil
 	}
 
 	if record.Code != code {
@@ -277,4 +283,63 @@ func getRandomCode(length int) string {
 		result = append(result, stdNums[r.Intn(len(stdNums))])
 	}
 	return string(result)
+}
+
+func GetVerificationCount(owner, field, value string) (int64, error) {
+	session := GetSession(owner, -1, -1, field, value, "", "")
+	return session.Count(&VerificationRecord{Owner: owner})
+}
+
+func GetVerifications(owner string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	err := ormer.Engine.Desc("created_time").Find(&verifications, &VerificationRecord{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func GetUserVerifications(owner, user string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	err := ormer.Engine.Desc("created_time").Find(&verifications, &VerificationRecord{Owner: owner, User: user})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func GetPaginationVerifications(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*VerificationRecord, error) {
+	verifications := []*VerificationRecord{}
+	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
+	err := session.Find(&verifications, &VerificationRecord{Owner: owner})
+	if err != nil {
+		return nil, err
+	}
+
+	return verifications, nil
+}
+
+func getVerification(owner string, name string) (*VerificationRecord, error) {
+	if owner == "" || name == "" {
+		return nil, nil
+	}
+
+	verification := VerificationRecord{Owner: owner, Name: name}
+	existed, err := ormer.Engine.Get(&verification)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &verification, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetVerification(id string) (*VerificationRecord, error) {
+	owner, name := util.GetOwnerAndNameFromId(id)
+	return getVerification(owner, name)
 }

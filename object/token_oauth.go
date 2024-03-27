@@ -715,7 +715,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		Code:         session.SessionKey, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * 60,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        "",
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -725,4 +725,21 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		return nil, nil, err
 	}
 	return token, nil, nil
+}
+
+func GetAccessTokenByUser(user *User, host string) (string, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return "", err
+	}
+	if application == nil {
+		return "", fmt.Errorf("the application for user %s is not found", user.Id)
+	}
+
+	token, err := GetTokenByUser(application, user, "profile", "", host)
+	if err != nil {
+		return "", err
+	}
+
+	return token.AccessToken, nil
 }

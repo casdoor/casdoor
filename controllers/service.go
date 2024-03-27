@@ -125,9 +125,11 @@ func (c *ApiController) SendEmail() {
 				return
 			}
 
+			userString := "Hi"
 			if user != nil {
-				content = strings.Replace(content, "%{user.friendlyName}", user.GetFriendlyName(), 1)
+				userString = user.GetFriendlyName()
 			}
+			content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 		}
 	}
 

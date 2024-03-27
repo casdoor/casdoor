@@ -456,6 +456,10 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableSigninSession} onChange={checked => {
+              if (!checked) {
+                this.updateApplicationField("enableAutoSignin", false);
+              }
+
               this.updateApplicationField("enableSigninSession", checked);
             }} />
           </Col>
@@ -466,6 +470,11 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={1} >
             <Switch checked={this.state.application.enableAutoSignin} onChange={checked => {
+              if (!this.state.application.enableSigninSession && checked) {
+                Setting.showMessage("error", i18next.t("application:Please enable \"Signin session\" first before enabling \"Auto signin\""));
+                return;
+              }
+
               this.updateApplicationField("enableAutoSignin", checked);
             }} />
           </Col>

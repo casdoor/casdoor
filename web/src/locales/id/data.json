@@ -392,6 +392,7 @@
     "User type - Tooltip": "Tag yang dimiliki oleh pengguna, defaultnya adalah \"normal-user\"",
     "Users": "Pengguna-pengguna",
     "Users under all organizations": "Pengguna di bawah semua organisasi",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "kosong",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Mengalihkan, harap tunggu.",
     "Sign In": "Masuk",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Masuk dengan WebAuthn",
     "Sign in with {type}": "Masuk dengan {type}",
     "Signing in...": "Masuk...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "Alamat email untuk menerima email percobaan",
     "Test SMTP Connection": "Tes Koneksi SMTP",
     "Third-party": "Third-party",
+    "This field is required": "This field is required",
     "Token URL": "Token URL: Tautan Token",
     "Token URL - Tooltip": "Token URL: URL Token",
     "Type": "Jenis",
@@ -888,7 +891,9 @@
     "admin (Shared)": "Admin (Berbagi)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object",
+    "Response": "Response"
   },
   "resource": {
     "Copy Link": "Salin Tautan",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "Email/telepon berhasil diatur ulang",
     "Empty input!": "Masukan kosong!",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "Gender",
     "Gender - Tooltip": "Gender - Tooltip",
     "Homepage": "Homepage",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "Kode verifikasi telah dikirim",
     "WebAuthn credentials": "Kredensial WebAuthn",
     "input password": "masukkan kata sandi"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Jenis konten",

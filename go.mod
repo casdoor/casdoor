@@ -22,7 +22,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/forestmgy/ldapserver v1.1.0
 	github.com/go-asn1-ber/asn1-ber v1.5.5
-	github.com/go-git/go-git/v5 v5.6.0
+	github.com/go-git/go-git/v5 v5.11.0
 	github.com/go-ldap/ldap/v3 v3.4.6
 	github.com/go-mysql-org/go-mysql v1.7.0
 	github.com/go-pay/gopay v1.5.72
@@ -32,10 +32,10 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.4.0
 	github.com/json-iterator/go v1.1.12
-	github.com/lestrrat-go/jwx v1.2.21
+	github.com/lestrrat-go/jwx v1.2.29
 	github.com/lib/pq v1.10.9
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
-	github.com/markbates/goth v1.78.0
+	github.com/markbates/goth v1.79.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
@@ -49,7 +49,7 @@ require (
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/stripe/stripe-go/v74 v74.29.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
@@ -59,9 +59,9 @@ require (
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
-	golang.org/x/crypto v0.19.0
-	golang.org/x/net v0.17.0
-	golang.org/x/oauth2 v0.13.0
+	golang.org/x/crypto v0.21.0
+	golang.org/x/net v0.21.0
+	golang.org/x/oauth2 v0.17.0
 	google.golang.org/api v0.150.0
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0

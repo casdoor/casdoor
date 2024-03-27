@@ -392,6 +392,7 @@
     "User type - Tooltip": "Tags às quais o usuário pertence, com valor padrão de \"usuário-normal\"",
     "Users": "Usuários",
     "Users under all organizations": "Usuários em todas as organizações",
+    "Verifications": "Verifications",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "empty": "vazio",
@@ -494,6 +495,7 @@
     "Please type an organization to sign in": "Please type an organization to sign in",
     "Redirecting, please wait.": "Redirecionando, por favor aguarde.",
     "Sign In": "Entrar",
+    "Sign in with Face ID": "Sign in with Face ID",
     "Sign in with WebAuthn": "Entrar com WebAuthn",
     "Sign in with {type}": "Entrar com {type}",
     "Signing in...": "Entrando...",
@@ -869,6 +871,7 @@
     "Test Email - Tooltip": "Endereço de e-mail para receber e-mails de teste",
     "Test SMTP Connection": "Testar Conexão SMTP",
     "Third-party": "Terceiros",
+    "This field is required": "This field is required",
     "Token URL": "URL do Token",
     "Token URL - Tooltip": "URL do Token",
     "Type": "Tipo",
@@ -888,7 +891,9 @@
     "admin (Shared)": "admin (Compartilhado)"
   },
   "record": {
-    "Is triggered": "Is triggered"
+    "Is triggered": "Is triggered",
+    "Object": "Object",
+    "Response": "Response"
   },
   "resource": {
     "Copy Link": "Copiar Link",
@@ -1081,7 +1086,7 @@
     "Email/phone reset successfully": "Redefinição de e-mail/telefone com sucesso",
     "Empty input!": "Entrada vazia!",
     "Face ID": "Face ID",
-    "Face ids": "Face ids",
+    "Face IDs": "Face IDs",
     "Gender": "Gênero",
     "Gender - Tooltip": "Gênero - Tooltip",
     "Homepage": "Página inicial",
@@ -1158,6 +1163,9 @@
     "Verification code sent": "Código de verificação enviado",
     "WebAuthn credentials": "Credenciais WebAuthn",
     "input password": "Digite a senha"
+  },
+  "verification": {
+    "Receiver": "Receiver"
   },
   "webhook": {
     "Content type": "Tipo de conteúdo",
