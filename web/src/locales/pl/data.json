@@ -1,18 +1,18 @@
 {
   "account": {
-    "Logout": "Logout",
-    "My Account": "My Account",
-    "Sign Up": "Sign Up"
+    "Logout": "Wyloguj się",
+    "My Account": "Moje Konto",
+    "Sign Up": "Zarejestruj się"
   },
   "adapter": {
-    "Duplicated policy rules": "Duplicated policy rules",
-    "Edit Adapter": "Edit Adapter",
-    "Failed to sync policies": "Failed to sync policies",
-    "New Adapter": "New Adapter",
-    "Policies": "Policies",
-    "Policies - Tooltip": "Casbin policy rules",
-    "Rule type": "Rule type",
-    "Sync policies successfully": "Sync policies successfully",
+    "Duplicated policy rules": "Zduplikowane zasady polityki",
+    "Edit Adapter": "Edytuj adapter",
+    "Failed to sync policies": "Nie udało się zsynchronizować reguł",
+    "New Adapter": "Nowy adapter",
+    "Policies": "Reguły",
+    "Policies - Tooltip": "Zasady polityki Casbin",
+    "Rule type": "Typ reguły",
+    "Sync policies successfully": "Pomyślna synchronizacja zasad",
     "Use same DB": "Use same DB",
     "Use same DB - Tooltip": "Use same DB - Tooltip"
   },
