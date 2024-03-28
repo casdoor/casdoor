@@ -41,6 +41,7 @@ setTwoToneColor("rgb(87,52,211)");
 class App extends Component {
   constructor(props) {
     super(props);
+    this.setThemeAlgorithm();
     let storageThemeAlgorithm = [];
     try {
       storageThemeAlgorithm = localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"];
@@ -155,6 +156,15 @@ class App extends Component {
 
   getLogo(themes) {
     return Setting.getLogo(themes);
+  }
+
+  setThemeAlgorithm() {
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const themeType = url.searchParams.get("theme");
+    if (themeType === "dark" || themeType === "default") {
+      localStorage.setItem("themeAlgorithm", JSON.stringify([themeType]));
+    }
   }
 
   setLanguage(account) {
@@ -405,7 +415,7 @@ class App extends Component {
                 account={this.state.account}
                 uri={this.state.uri}
                 themeData={this.state.themeData}
-                themeAlgorithm={this.state.themeAlgorithm}
+                themeAlgorithm={this.state.themeAlgorithm} // theme
                 selectedMenuKey={this.state.selectedMenuKey}
                 requiredEnableMfa={this.state.requiredEnableMfa}
                 menuVisible={this.state.menuVisible}
@@ -491,7 +501,7 @@ class App extends Component {
             colorInfo: this.state.themeData.colorPrimary,
             borderRadius: this.state.themeData.borderRadius,
           },
-          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
+          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm), // theme
         }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             {
