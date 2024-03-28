@@ -189,7 +189,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -220,6 +220,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+	case "token", "id_token": // Implicit Grant
+		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 		if err != nil {
@@ -579,6 +581,33 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		return nil, nil, err
 	}
 
+	return token, nil, nil
+}
+
+// GetImplicitToken
+// Implicit flow
+func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	user, err := GetUserByFields(application.Organization, username)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user == nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user does not exist",
+		}, nil
+	}
+	if user.IsForbidden {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
+		}, nil
+	}
+
+	token, err := GetTokenByUser(application, user, scope, nonce, host)
+	if err != nil {
+		return nil, nil, err
+	}
 	return token, nil, nil
 }
 
