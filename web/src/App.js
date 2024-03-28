@@ -415,7 +415,7 @@ class App extends Component {
                 account={this.state.account}
                 uri={this.state.uri}
                 themeData={this.state.themeData}
-                themeAlgorithm={this.state.themeAlgorithm} // theme
+                themeAlgorithm={this.state.themeAlgorithm}
                 selectedMenuKey={this.state.selectedMenuKey}
                 requiredEnableMfa={this.state.requiredEnableMfa}
                 menuVisible={this.state.menuVisible}
@@ -501,7 +501,7 @@ class App extends Component {
             colorInfo: this.state.themeData.colorPrimary,
             borderRadius: this.state.themeData.borderRadius,
           },
-          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm), // theme
+          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             {
