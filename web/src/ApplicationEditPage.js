@@ -102,6 +102,7 @@ class ApplicationEditPage extends React.Component {
       owner: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       applicationName: props.match.params.applicationName,
       application: null,
+      public: false,
       organizations: [],
       certs: [],
       providers: [],
@@ -260,6 +261,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.application.displayName} onChange={e => {
               this.updateApplicationField("displayName", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Public"), i18next.t("application:Public - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.public} onChange={checked => {
+              this.updateApplicationField("public", checked);
             }} />
           </Col>
         </Row>

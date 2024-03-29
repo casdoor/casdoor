@@ -171,6 +171,11 @@ func (c *ApiController) GetOAuthToken() {
 	avatar := c.Input().Get("avatar")
 	refreshToken := c.Input().Get("refresh_token")
 
+	// If you are using a public application, you will have to add the
+	// organization identifier to the request body, through which
+	// authorization is required
+	organization := c.Input().Get("organization")
+
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
@@ -216,11 +221,14 @@ func (c *ApiController) GetOAuthToken() {
 			if refreshToken == "" {
 				refreshToken = tokenRequest.RefreshToken
 			}
+			if organization == "" {
+				organization = tokenRequest.Organization
+			}
 		}
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage(), organization)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

@@ -18,6 +18,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -189,21 +190,27 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string, organization string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
 	}
 
 	if application == nil {
-		return &TokenError{
-			Error:            InvalidClient,
-			ErrorDescription: "client_id is invalid",
-		}, nil
+		application, err = GetDefaultApplication(organization)
+		if err != nil {
+			return &TokenError{
+				Error:            InvalidClient,
+				ErrorDescription: "client_id is invalid",
+			}, nil
+		}
+	}
+
+	if application.Public {
+		application.Organization = strings.Split(organization, "/")[1]
 	}
 
 	// Check if grantType is allowed in the current application
-
 	if !IsGrantTypeValid(grantType, application.GrantTypes) && tag == "" {
 		return &TokenError{
 			Error:            UnsupportedGrantType,
