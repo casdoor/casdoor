@@ -58,6 +58,7 @@ type SamlItem struct {
 
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Public      bool   `json:"public"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
@@ -142,6 +143,15 @@ func GetOrganizationApplications(owner string, organization string) ([]*Applicat
 	if err != nil {
 		return applications, err
 	}
+
+	publicApplications := []*Application{}
+	// Getting public apps
+	err = ormer.Engine.Where("public = true").Find(&publicApplications)
+	if err != nil {
+		return applications, err
+	}
+
+	applications = append(applications, publicApplications...)
 
 	return applications, nil
 }
