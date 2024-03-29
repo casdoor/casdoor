@@ -10,6 +10,7 @@
     "@ctrl/tinycolor": "^3.5.0",
     "@emotion/react": "^11.10.5",
     "@metamask/eth-sig-util": "^6.0.0",
+    "@metamask/sdk-react": "^0.18.0",
     "@web3-onboard/coinbase": "^2.2.5",
     "@web3-onboard/core": "^2.20.5",
     "@web3-onboard/frontier": "^2.0.4",
