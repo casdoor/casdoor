@@ -43,8 +43,6 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {WechatOfficialAccountModal} from "./Util";
-import {MetaMaskProvider} from "@metamask/sdk-react";
-import MetaMaskLoginButton from "./MetaMaskLoginButton";
 
 function getSigninButton(provider) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName !== "" ? provider.displayName : provider.type);
@@ -162,36 +160,11 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </a>
       );
     } else if (provider.category === "Web3") {
-      if (provider.type === "MetaMask") {
-        return (
-          <MetaMaskProvider
-            debug={false}
-            sdkOptions={{
-              communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
-              checkInstallationImmediately: false, // This will automatically connect to MetaMask on page load
-              dappMetadata: {
-                name: "Casdoor",
-                url: window.location.protocol + "//" + window.location.host,
-              },
-            }}
-          >
-            <MetaMaskLoginButton
-              application={application}
-              web3Provider={provider}
-              method={"signup"}
-              width={width}
-              margin={margin}
-            />
-          </MetaMaskProvider>
-        );
-      } else {
-        return (
-          <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
-            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName}
-              className="provider-img" style={{margin: margin}} />
-          </a>
-        );
-      }
+      return (
+        <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
+        </a>
+      );
     }
   } else if (provider.type === "Custom") {
     // style definition

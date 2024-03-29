@@ -15,42 +15,14 @@
 package idp
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/ethereum/go-ethereum/crypto"
 
 	"golang.org/x/oauth2"
 )
-
-type EIP712Message struct {
-	Domain struct {
-		ChainId string `json:"chainId"`
-		Name    string `json:"name"`
-		Version string `json:"version"`
-	} `json:"domain"`
-	Message struct {
-		Prompt   string `json:"prompt"`
-		Nonce    string `json:"nonce"`
-		CreateAt string `json:"createAt"`
-	} `json:"message"`
-	PrimaryType string `json:"primaryType"`
-	Types       struct {
-		EIP712Domain []struct {
-			Name string `json:"name"`
-			Type string `json:"type"`
-		} `json:"EIP712Domain"`
-		AuthRequest []struct {
-			Name string `json:"name"`
-			Type string `json:"type"`
-		} `json:"AuthRequest"`
-	} `json:"types"`
-}
 
 type MetaMaskIdProvider struct {
 	Client *http.Client
@@ -70,15 +42,6 @@ func (idp *MetaMaskIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	if err := json.Unmarshal([]byte(code), &web3AuthToken); err != nil {
 		return nil, err
 	}
-	valid, err := VerifySignature(web3AuthToken.Address, web3AuthToken.TypedData, web3AuthToken.Signature)
-	if err != nil {
-		return nil, err
-	}
-
-	if !valid {
-		return nil, fmt.Errorf("invalid signature")
-	}
-
 	token := &oauth2.Token{
 		AccessToken: web3AuthToken.Signature,
 		TokenType:   "Bearer",
@@ -104,44 +67,4 @@ func (idp *MetaMaskIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		AvatarUrl:   fmt.Sprintf("metamask:%v", web3AuthToken.Address),
 	}
 	return userInfo, nil
-}
-
-func VerifySignature(userAddress string, originalMessage string, signatureHex string) (bool, error) {
-	var eip712Mes EIP712Message
-	err := json.Unmarshal([]byte(originalMessage), &eip712Mes)
-	if err != nil {
-		return false, fmt.Errorf("invalid signature (Error parsing JSON)")
-	}
-
-	createAtTime, err := time.Parse("2006/1/2 15:04:05", eip712Mes.Message.CreateAt)
-	currentTime := time.Now()
-	if createAtTime.Before(currentTime.Add(-1*time.Minute)) && createAtTime.After(currentTime) {
-		return false, fmt.Errorf("invalid signature (signature does not meet time requirements)")
-	}
-
-	if !strings.HasPrefix(signatureHex, "0x") {
-		signatureHex = "0x" + signatureHex
-	}
-
-	signatureBytes, err := hex.DecodeString(signatureHex[2:])
-	if err != nil {
-		return false, err
-	}
-
-	if signatureBytes[64] != 27 && signatureBytes[64] != 28 {
-		return false, fmt.Errorf("invalid signature (incorrect recovery id)")
-	}
-	signatureBytes[64] -= 27
-
-	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len([]byte(originalMessage)), []byte(originalMessage))
-	hash := crypto.Keccak256Hash([]byte(msg))
-
-	pubKey, err := crypto.SigToPub(hash.Bytes(), signatureBytes)
-	if err != nil {
-		return false, err
-	}
-
-	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
-
-	return strings.EqualFold(recoveredAddr.Hex(), userAddress), nil
 }
