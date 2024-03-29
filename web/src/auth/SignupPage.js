@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Result} from "antd";
+import {Button, Form, Input, Radio, Result, Row} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -71,6 +71,7 @@ class SignupPage extends React.Component {
       applicationName: (props.applicationName ?? props.match?.params?.applicationName) ?? null,
       email: "",
       phone: "",
+      emailOrPhoneMode: "",
       countryCode: "",
       emailCode: "",
       phoneCode: "",
@@ -360,130 +361,176 @@ class SignupPage extends React.Component {
           <RegionSelect onChange={(value) => {this.setState({region: value});}} />
         </Form.Item>
       );
-    } else if (signupItem.name === "Email") {
-      return (
-        <React.Fragment>
-          <Form.Item
-            name="email"
-            label={signupItem.label ? signupItem.label : i18next.t("general:Email")}
-            rules={[
-              {
-                required: required,
-                message: i18next.t("signup:Please input your Email!"),
-              },
-              {
-                validator: (_, value) => {
-                  if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
-                    this.setState({validEmail: false});
-                    return Promise.reject(i18next.t("signup:The input is not valid Email!"));
-                  }
-
-                  this.setState({validEmail: true});
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""} onChange={e => this.setState({email: e.target.value})} />
-          </Form.Item>
-          {
-            signupItem.rule !== "No verification" &&
+    } else if (signupItem.name === "Email" || signupItem.name === "Phone" || signupItem.name === "Email or Phone" || signupItem.name === "Phone or Email") {
+      const renderEmailItem = () => {
+        return (
+          <React.Fragment>
             <Form.Item
-              name="emailCode"
-              label={signupItem.label ? signupItem.label : i18next.t("code:Email code")}
-              rules={[{
-                required: required,
-                message: i18next.t("code:Please input your verification code!"),
-              }]}
-            >
-              <SendCodeInput
-                disabled={!this.state.validEmail}
-                method={"signup"}
-                onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
-                application={application}
-              />
-            </Form.Item>
-          }
-        </React.Fragment>
-      );
-    } else if (signupItem.name === "Phone") {
-      return (
-        <React.Fragment>
-          <Form.Item label={signupItem.label ? signupItem.label : i18next.t("general:Phone")} required={required}>
-            <Input.Group compact>
-              <Form.Item
-                name="countryCode"
-                noStyle
-                rules={[
-                  {
-                    required: required,
-                    message: i18next.t("signup:Please select your country code!"),
-                  },
-                ]}
-              >
-                <CountryCodeSelect
-                  style={{width: "35%"}}
-                  countryCodes={this.getApplicationObj().organizationObj.countryCodes}
-                />
-              </Form.Item>
-              <Form.Item
-                name="phone"
-                dependencies={["countryCode"]}
-                noStyle
-                rules={[
-                  {
-                    required: required,
-                    message: i18next.t("signup:Please input your phone number!"),
-                  },
-                  ({getFieldValue}) => ({
-                    validator: (_, value) => {
-                      if (!required && !value) {
-                        return Promise.resolve();
-                      }
-
-                      if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
-                        this.setState({validPhone: false});
-                        return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-                      }
-
-                      this.setState({validPhone: true});
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Input
-                  placeholder={signupItem.placeholder}
-                  style={{width: "65%"}}
-                  disabled={this.state.invitation !== undefined && this.state.invitation.phone !== ""}
-                  onChange={e => this.setState({phone: e.target.value})}
-                />
-              </Form.Item>
-            </Input.Group>
-          </Form.Item>
-          {
-            signupItem.rule !== "No verification" &&
-            <Form.Item
-              name="phoneCode"
-              label={signupItem.label ? signupItem.label : i18next.t("code:Phone code")}
+              name="email"
+              label={signupItem.label ? signupItem.label : i18next.t("general:Email")}
               rules={[
                 {
                   required: required,
-                  message: i18next.t("code:Please input your phone verification code!"),
+                  message: i18next.t("signup:Please input your Email!"),
+                },
+                {
+                  validator: (_, value) => {
+                    if (this.state.email !== "" && !Setting.isValidEmail(this.state.email)) {
+                      this.setState({validEmail: false});
+                      return Promise.reject(i18next.t("signup:The input is not valid Email!"));
+                    }
+
+                    this.setState({validEmail: true});
+                    return Promise.resolve();
+                  },
                 },
               ]}
             >
-              <SendCodeInput
-                disabled={!this.state.validPhone}
-                method={"signup"}
-                onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
-                application={application}
-                countryCode={this.form.current?.getFieldValue("countryCode")}
-              />
+              <Input placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""} onChange={e => this.setState({email: e.target.value})} />
             </Form.Item>
-          }
-        </React.Fragment>
-      );
+            {
+              signupItem.rule !== "No verification" &&
+              <Form.Item
+                name="emailCode"
+                label={signupItem.label ? signupItem.label : i18next.t("code:Email code")}
+                rules={[{
+                  required: required,
+                  message: i18next.t("code:Please input your verification code!"),
+                }]}
+              >
+                <SendCodeInput
+                  disabled={!this.state.validEmail}
+                  method={"signup"}
+                  onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
+                  application={application}
+                />
+              </Form.Item>
+            }
+          </React.Fragment>
+        );
+      };
+
+      const renderPhoneItem = () => {
+        return (
+          <React.Fragment>
+            <Form.Item label={signupItem.label ? signupItem.label : i18next.t("general:Phone")} required={required}>
+              <Input.Group compact>
+                <Form.Item
+                  name="countryCode"
+                  noStyle
+                  rules={[
+                    {
+                      required: required,
+                      message: i18next.t("signup:Please select your country code!"),
+                    },
+                  ]}
+                >
+                  <CountryCodeSelect
+                    style={{width: "35%"}}
+                    countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="phone"
+                  dependencies={["countryCode"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: required,
+                      message: i18next.t("signup:Please input your phone number!"),
+                    },
+                    ({getFieldValue}) => ({
+                      validator: (_, value) => {
+                        if (!required && !value) {
+                          return Promise.resolve();
+                        }
+
+                        if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                          this.setState({validPhone: false});
+                          return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                        }
+
+                        this.setState({validPhone: true});
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <Input
+                    placeholder={signupItem.placeholder}
+                    style={{width: "65%"}}
+                    disabled={this.state.invitation !== undefined && this.state.invitation.phone !== ""}
+                    onChange={e => this.setState({phone: e.target.value})}
+                  />
+                </Form.Item>
+              </Input.Group>
+            </Form.Item>
+            {
+              signupItem.rule !== "No verification" &&
+              <Form.Item
+                name="phoneCode"
+                label={signupItem.label ? signupItem.label : i18next.t("code:Phone code")}
+                rules={[
+                  {
+                    required: required,
+                    message: i18next.t("code:Please input your phone verification code!"),
+                  },
+                ]}
+              >
+                <SendCodeInput
+                  disabled={!this.state.validPhone}
+                  method={"signup"}
+                  onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+                  application={application}
+                  countryCode={this.form.current?.getFieldValue("countryCode")}
+                />
+              </Form.Item>
+            }
+          </React.Fragment>
+        );
+      };
+
+      if (signupItem.name === "Email") {
+        return renderEmailItem();
+      } else if (signupItem.name === "Phone") {
+        return renderPhoneItem();
+      } else if (signupItem.name === "Email or Phone" || signupItem.name === "Phone or Email") {
+        let emailOrPhoneMode = this.state.emailOrPhoneMode;
+        if (emailOrPhoneMode === "") {
+          emailOrPhoneMode = signupItem.name === "Email or Phone" ? "Email" : "Phone";
+        }
+
+        return (
+          <React.Fragment>
+            <Row style={{marginTop: "30px", marginBottom: "20px"}} >
+              <Radio.Group style={{width: "400px"}} buttonStyle="solid" onChange={e => {
+                this.setState({
+                  emailOrPhoneMode: e.target.value,
+                });
+              }} value={emailOrPhoneMode}>
+                {
+                  signupItem.name === "Email or Phone" ? (
+                    <React.Fragment>
+                      <Radio.Button value={"Email"}>{i18next.t("general:Email")}</Radio.Button>
+                      <Radio.Button value={"Phone"}>{i18next.t("general:Phone")}</Radio.Button>
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      <Radio.Button value={"Phone"}>{i18next.t("general:Phone")}</Radio.Button>
+                      <Radio.Button value={"Email"}>{i18next.t("general:Email")}</Radio.Button>
+                    </React.Fragment>
+                  )
+                }
+              </Radio.Group>
+            </Row>
+            {
+              emailOrPhoneMode === "Email" ? renderEmailItem() : renderPhoneItem()
+            }
+          </React.Fragment>
+        );
+      } else {
+        return null;
+      }
     } else if (signupItem.name === "Password") {
       return (
         <Form.Item

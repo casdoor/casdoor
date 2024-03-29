@@ -41,6 +41,7 @@ setTwoToneColor("rgb(87,52,211)");
 class App extends Component {
   constructor(props) {
     super(props);
+    this.setThemeAlgorithm();
     let storageThemeAlgorithm = [];
     try {
       storageThemeAlgorithm = localStorage.getItem("themeAlgorithm") ? JSON.parse(localStorage.getItem("themeAlgorithm")) : ["default"];
@@ -155,6 +156,15 @@ class App extends Component {
 
   getLogo(themes) {
     return Setting.getLogo(themes);
+  }
+
+  setThemeAlgorithm() {
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const themeType = url.searchParams.get("theme");
+    if (themeType === "dark" || themeType === "default") {
+      localStorage.setItem("themeAlgorithm", JSON.stringify([themeType]));
+    }
   }
 
   setLanguage(account) {

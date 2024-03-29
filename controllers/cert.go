@@ -68,7 +68,7 @@ func (c *ApiController) GetCerts() {
 // GetGlobalCerts
 // @Title GetGlobalCerts
 // @Tag Cert API
-// @Description get globle certs
+// @Description get global certs
 // @Success 200 {array} object.Cert The Response object
 // @router /get-global-certs [get]
 func (c *ApiController) GetGlobalCerts() {
