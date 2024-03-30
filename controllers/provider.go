@@ -159,6 +159,16 @@ func (c *ApiController) UpdateProvider() {
 		return
 	}
 
+	isGlobalAdmin, user := c.isGlobalAdmin()
+
+	if provider.Owner == "admin" && !isGlobalAdmin {
+		c.ResponseError("no permission")
+		return
+	} else if !isGlobalAdmin && user.Owner != provider.Owner {
+		c.ResponseError("no permission")
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateProvider(id, &provider))
 	c.ServeJSON()
 }
@@ -189,6 +199,16 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
+	isGlobalAdmin, user := c.isGlobalAdmin()
+
+	if provider.Owner == "admin" && !isGlobalAdmin {
+		c.ResponseError("no permission")
+		return
+	} else if !isGlobalAdmin && user.Owner != provider.Owner {
+		c.ResponseError("no permission")
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddProvider(&provider))
 	c.ServeJSON()
 }
@@ -205,6 +225,16 @@ func (c *ApiController) DeleteProvider() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	isGlobalAdmin, user := c.isGlobalAdmin()
+
+	if provider.Owner == "admin" && !isGlobalAdmin {
+		c.ResponseError("no permission")
+		return
+	} else if !isGlobalAdmin && user.Owner != provider.Owner {
+		c.ResponseError("no permission")
 		return
 	}
 
