@@ -455,6 +455,8 @@ class ForgetPage extends React.Component {
       this.setState({
         current: this.state.current - 1,
       });
+    } else if (this.props.history.length > 1) {
+      this.props.history.goBack();
     } else {
       Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
     }
@@ -472,65 +474,69 @@ class ForgetPage extends React.Component {
     return (
       <React.Fragment>
         <CustomGithubCorner />
-        <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
-          <Button type="text" style={{marginTop: "10px"}} size={"large"} onClick={() => {this.stepBack();}}>
-            <ArrowLeftOutlined style={{fontSize: "24px"}} />
-          </Button>
+        <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : "10px", boxShadow: Setting.isMobile() ? "none" : null}}>
           <Row>
-            <Col span={24} style={{justifyContent: "center"}}>
-              <Row>
-                <Col span={24}>
-                  <div style={{marginTop: "50px", marginBottom: "10px", textAlign: "center"}}>
-                    {
-                      Setting.renderHelmet(application)
-                    }
-                    {
-                      Setting.renderLogo(application)
-                    }
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24}>
-                  <div style={{textAlign: "center", fontSize: "28px"}}>
-                    {i18next.t("forget:Retrieve password")}
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24}>
-                  <Steps
-                    current={this.state.current}
-                    items={[
+            <Button type="text" style={{marginTop: "10px", marginLeft: "10px"}} size={"large"} onClick={() => {this.stepBack();}}>
+              <ArrowLeftOutlined style={{fontSize: "24px"}} />
+            </Button>
+          </Row>
+          <Row style={{paddingLeft: "80px", paddingRight: "80px", paddingBottom: "80px"}}>
+            <Row>
+              <Col span={24} style={{justifyContent: "center"}}>
+                <Row>
+                  <Col span={24}>
+                    <div style={{marginTop: "50px", marginBottom: "10px", textAlign: "center"}}>
                       {
-                        title: i18next.t("forget:Account"),
-                        icon: <UserOutlined />,
-                      },
+                        Setting.renderHelmet(application)
+                      }
                       {
-                        title: i18next.t("forget:Verify"),
-                        icon: <SolutionOutlined />,
-                      },
-                      {
-                        title: i18next.t("forget:Reset"),
-                        icon: <KeyOutlined />,
-                      },
-                    ]}
-                    style={{
-                      width: "90%",
-                      maxWidth: "500px",
-                      margin: "auto",
-                      marginTop: "80px",
-                    }}
-                  >
-                  </Steps>
-                </Col>
-              </Row>
-            </Col>
-            <Col span={24} style={{display: "flex", justifyContent: "center"}}>
-              <div style={{marginTop: "40px", textAlign: "center"}}>
-                {this.renderForm(application)}
-              </div>
-            </Col>
+                        Setting.renderLogo(application)
+                      }
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <div style={{textAlign: "center", fontSize: "28px"}}>
+                      {i18next.t("forget:Retrieve password")}
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <Steps
+                      current={this.state.current}
+                      items={[
+                        {
+                          title: i18next.t("forget:Account"),
+                          icon: <UserOutlined />,
+                        },
+                        {
+                          title: i18next.t("forget:Verify"),
+                          icon: <SolutionOutlined />,
+                        },
+                        {
+                          title: i18next.t("forget:Reset"),
+                          icon: <KeyOutlined />,
+                        },
+                      ]}
+                      style={{
+                        width: "90%",
+                        maxWidth: "500px",
+                        margin: "auto",
+                        marginTop: "80px",
+                      }}
+                    >
+                    </Steps>
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={24} style={{display: "flex", justifyContent: "center"}}>
+                <div style={{marginTop: "40px", textAlign: "center"}}>
+                  {this.renderForm(application)}
+                </div>
+              </Col>
+            </Row>
           </Row>
         </div>
       </React.Fragment>
