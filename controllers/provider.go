@@ -141,6 +141,20 @@ func (c *ApiController) GetProvider() {
 	c.ResponseOk(object.GetMaskedProvider(provider, isMaskEnabled))
 }
 
+func (c *ApiController) requireProviderPermission(provider *object.Provider) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	if provider.Owner == "admin" || user.Owner != provider.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	return true
+}
+
 // UpdateProvider
 // @Title UpdateProvider
 // @Tag Provider API
@@ -159,13 +173,8 @@ func (c *ApiController) UpdateProvider() {
 		return
 	}
 
-	isGlobalAdmin, user := c.isGlobalAdmin()
-
-	if provider.Owner == "admin" && !isGlobalAdmin {
-		c.ResponseError("no permission")
-		return
-	} else if !isGlobalAdmin && user.Owner != provider.Owner {
-		c.ResponseError("no permission")
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
@@ -194,18 +203,14 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	if err := checkQuotaForProvider(int(count)); err != nil {
+	err = checkQuotaForProvider(int(count))
+	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	isGlobalAdmin, user := c.isGlobalAdmin()
-
-	if provider.Owner == "admin" && !isGlobalAdmin {
-		c.ResponseError("no permission")
-		return
-	} else if !isGlobalAdmin && user.Owner != provider.Owner {
-		c.ResponseError("no permission")
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
@@ -228,13 +233,8 @@ func (c *ApiController) DeleteProvider() {
 		return
 	}
 
-	isGlobalAdmin, user := c.isGlobalAdmin()
-
-	if provider.Owner == "admin" && !isGlobalAdmin {
-		c.ResponseError("no permission")
-		return
-	} else if !isGlobalAdmin && user.Owner != provider.Owner {
-		c.ResponseError("no permission")
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
