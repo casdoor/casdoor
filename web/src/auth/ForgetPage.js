@@ -21,7 +21,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as UserBackend from "../backend/UserBackend";
-import {ArrowLeftOutlined,CheckCircleOutlined,KeyOutlined,LockOutlined,SolutionOutlined,UserOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {withRouter} from "react-router-dom";
 import * as PasswordChecker from "../common/PasswordChecker";
