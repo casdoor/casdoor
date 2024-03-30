@@ -455,8 +455,10 @@ class ForgetPage extends React.Component {
       this.setState({
         current: this.state.current - 1,
       });
-    } else {
+    } else if (this.props.history.length > 1) {
       this.props.history.goBack();
+    } else {
+      Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
     }
   }
 
