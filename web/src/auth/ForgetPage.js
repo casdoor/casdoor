@@ -21,14 +21,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as UserBackend from "../backend/UserBackend";
-import {
-  ArrowLeftOutlined,
-  CheckCircleOutlined,
-  KeyOutlined,
-  LockOutlined,
-  SolutionOutlined,
-  UserOutlined
-} from "@ant-design/icons";
+import {ArrowLeftOutlined,CheckCircleOutlined,KeyOutlined,LockOutlined,SolutionOutlined,UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {withRouter} from "react-router-dom";
 import * as PasswordChecker from "../common/PasswordChecker";
@@ -482,7 +475,7 @@ class ForgetPage extends React.Component {
             <Col span={24} style={{justifyContent: "center"}}>
               <Row>
                 <Col span={24}>
-                  <div style={{marginTop: "50px", marginBottom: "10px", textAlign: "center"}}>
+                  <div style={{marginTop: "80px", marginBottom: "10px", textAlign: "center"}}>
                     {
                       Setting.renderHelmet(application)
                     }
