@@ -141,6 +141,20 @@ func (c *ApiController) GetProvider() {
 	c.ResponseOk(object.GetMaskedProvider(provider, isMaskEnabled))
 }
 
+func (c *ApiController) requireProviderPermission(provider *object.Provider) bool {
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if isGlobalAdmin {
+		return true
+	}
+
+	if provider.Owner == "admin" || user.Owner != provider.Owner {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return false
+	}
+
+	return true
+}
+
 // UpdateProvider
 // @Title UpdateProvider
 // @Tag Provider API
@@ -156,6 +170,11 @@ func (c *ApiController) UpdateProvider() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
@@ -184,8 +203,14 @@ func (c *ApiController) AddProvider() {
 		return
 	}
 
-	if err := checkQuotaForProvider(int(count)); err != nil {
+	err = checkQuotaForProvider(int(count))
+	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
@@ -205,6 +230,11 @@ func (c *ApiController) DeleteProvider() {
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
 		return
 	}
 
