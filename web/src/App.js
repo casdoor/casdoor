@@ -374,6 +374,7 @@ class App extends Component {
                         });
                       }}
                       onLoginSuccess={(redirectUrl) => {
+                        window.google?.accounts?.id?.cancel();
                         if (redirectUrl) {
                           localStorage.setItem("mfaRedirectUrl", redirectUrl);
                         }
