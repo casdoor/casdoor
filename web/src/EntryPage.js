@@ -45,6 +45,7 @@ class EntryPage extends React.Component {
 
   renderHomeIfLoggedIn(component) {
     if (this.props.account !== null && this.props.account !== undefined) {
+      window.google?.accounts?.id?.cancel();
       return <Redirect to={{pathname: "/", state: {from: "/login"}}} />;
     } else {
       return component;
