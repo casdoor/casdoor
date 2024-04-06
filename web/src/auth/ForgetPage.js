@@ -21,7 +21,7 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 import {SendCodeInput} from "../common/SendCodeInput";
 import * as UserBackend from "../backend/UserBackend";
-import {CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, CheckCircleOutlined, KeyOutlined, LockOutlined, SolutionOutlined, UserOutlined} from "@ant-design/icons";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {withRouter} from "react-router-dom";
 import * as PasswordChecker from "../common/PasswordChecker";
@@ -443,6 +443,18 @@ class ForgetPage extends React.Component {
     );
   }
 
+  stepBack() {
+    if (this.state.current > 0) {
+      this.setState({
+        current: this.state.current - 1,
+      });
+    } else if (this.props.history.length > 1) {
+      this.props.history.goBack();
+    } else {
+      Setting.redirectToLoginPage(this.getApplicationObj(), this.props.history);
+    }
+  }
+
   render() {
     const application = this.getApplicationObj();
     if (application === undefined) {
@@ -456,6 +468,9 @@ class ForgetPage extends React.Component {
       <React.Fragment>
         <CustomGithubCorner />
         <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
+          <Button type="text" style={{position: "relative", left: Setting.isMobile() ? "10px" : "-90px", top: 0}} size={"large"} onClick={() => {this.stepBack();}}>
+            <ArrowLeftOutlined style={{fontSize: "24px"}} />
+          </Button>
           <Row>
             <Col span={24} style={{justifyContent: "center"}}>
               <Row>
