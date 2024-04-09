@@ -182,7 +182,7 @@ export const OtherProviderInfo = {
       url: "https://learn.microsoft.com/zh-cn/azure/communication-services",
     },
     "SendGrid": {
-      logo: `${StaticBaseUrl}/img/sendgrid.png`,
+      logo: `${StaticBaseUrl}/img/email_sendgrid.png`,
       url: "https://sendgrid.com/",
     },
     "Custom HTTP Email": {
