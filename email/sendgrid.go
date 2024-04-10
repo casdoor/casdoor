@@ -15,12 +15,24 @@
 package email
 
 import (
+	"encoding/json"
+	"fmt"
+	"strings"
+
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
 type SendgridEmailProvider struct {
 	ApiKey string
+}
+
+type SendgridResponseBody struct {
+	Errors []struct {
+		Message string      `json:"message"`
+		Field   interface{} `json:"field"`
+		Help    interface{} `json:"help"`
+	} `json:"errors"`
 }
 
 func NewSendgridEmailProvider(apiKey string) *SendgridEmailProvider {
@@ -32,6 +44,25 @@ func (s *SendgridEmailProvider) Send(fromAddress string, fromName, toAddress str
 	to := mail.NewEmail("", toAddress)
 	message := mail.NewSingleEmail(from, subject, to, "", content)
 	client := sendgrid.NewSendClient(s.ApiKey)
-	_, err := client.Send(message)
-	return err
+	response, err := client.Send(message)
+	if err != nil {
+		return err
+	}
+
+	if response.StatusCode >= 300 {
+		var responseBody SendgridResponseBody
+		err = json.Unmarshal([]byte(response.Body), &responseBody)
+		if err != nil {
+			return err
+		}
+
+		messages := []string{}
+		for _, sendgridError := range responseBody.Errors {
+			messages = append(messages, sendgridError.Message)
+		}
+
+		return fmt.Errorf("SendGrid status code: %d, error message: %s", response.StatusCode, strings.Join(messages, " | "))
+	}
+
+	return nil
 }

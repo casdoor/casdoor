@@ -111,6 +111,26 @@ class VerificationListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Client IP"),
+        dataIndex: "remoteAddr",
+        key: "remoteAddr",
+        width: "100px",
+        sorter: true,
+        ...this.getColumnSearchProps("remoteAddr"),
+        render: (text, record, index) => {
+          let clientIp = text;
+          if (clientIp.endsWith(": ")) {
+            clientIp = clientIp.slice(0, -2);
+          }
+
+          return (
+            <a target="_blank" rel="noreferrer" href={`https://db-ip.com/${clientIp}`}>
+              {clientIp}
+            </a>
+          );
+        },
+      },
+      {
         title: i18next.t("verification:Receiver"),
         dataIndex: "receiver",
         key: "receiver",
