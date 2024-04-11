@@ -111,46 +111,44 @@ func newEmail(fromAddress string, toAddress string, subject string, content stri
 			Subject: subject,
 			HTML:    content,
 		},
-		Importance: importanceNormal,
+		Importance:  importanceNormal,
+		Attachments: []Attachment{},
 	}
 }
 
-func (a *AzureACSEmailProvider) sendEmail(e *Email) error {
-	postBody, err := json.Marshal(e)
-	if err != nil {
-		return fmt.Errorf("email JSON marshall failed: %s", err)
-	}
+func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+	email := newEmail(fromAddress, toAddress, subject, content)
 
-	bodyBuffer := bytes.NewBuffer(postBody)
+	postBody, err := json.Marshal(email)
+	if err != nil {
+		return err
+	}
 
 	endpoint := strings.TrimSuffix(a.Endpoint, "/")
 	url := fmt.Sprintf("%s/emails:send?api-version=2023-03-31", endpoint)
+
+	bodyBuffer := bytes.NewBuffer(postBody)
 	req, err := http.NewRequest("POST", url, bodyBuffer)
 	if err != nil {
-		return fmt.Errorf("error creating AzureACS API request: %s", err)
+		return err
 	}
 
-	// Sign the request using the AzureACS access key and HMAC-SHA256
 	err = signRequestHMAC(a.AccessKey, req)
 	if err != nil {
-		return fmt.Errorf("error signing AzureACS API request: %s", err)
+		return err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-
-	// Some important header
 	req.Header.Set("repeatability-request-id", uuid.New().String())
 	req.Header.Set("repeatability-first-sent", time.Now().UTC().Format(http.TimeFormat))
 
-	// Send request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("error sending AzureACS API request: %s", err)
+		return err
 	}
 	defer resp.Body.Close()
 
-	// Response error Handling
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusUnauthorized {
 		commError := ErrorResponse{}
 
@@ -159,11 +157,11 @@ func (a *AzureACSEmailProvider) sendEmail(e *Email) error {
 			return err
 		}
 
-		return fmt.Errorf("error sending email: %s", commError.Error.Message)
+		return fmt.Errorf("status code: %d, error message: %s", resp.StatusCode, commError.Error.Message)
 	}
 
 	if resp.StatusCode != http.StatusAccepted {
-		return fmt.Errorf("error sending email: status: %d", resp.StatusCode)
+		return fmt.Errorf("status code: %d", resp.StatusCode)
 	}
 
 	return nil
@@ -220,10 +218,4 @@ func GetHmac(content string, key []byte) string {
 	hmac.Write([]byte(content))
 
 	return base64.StdEncoding.EncodeToString(hmac.Sum(nil))
-}
-
-func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
-	e := newEmail(fromAddress, toAddress, subject, content)
-
-	return a.sendEmail(e)
 }
