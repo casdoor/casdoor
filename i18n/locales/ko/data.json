@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "사용자 %s는 존재하지 않습니다",
     "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "LDAP 서버가 존재합니다"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "제공자: %s를 찾을 수 없습니다"
   },
   "verification": {
-    "Code has not been sent yet!": "코드는 아직 전송되지 않았습니다!",
     "Invalid captcha provider.": "잘못된 captcha 제공자입니다.",
     "Phone number is invalid in your region %s": "전화 번호가 당신의 지역 %s에서 유효하지 않습니다",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "튜링 테스트 실패.",
     "Unable to get the email modify rule.": "이메일 수정 규칙을 가져올 수 없습니다.",
     "Unable to get the phone modify rule.": "전화 수정 규칙을 가져올 수 없습니다.",

@@ -576,10 +576,11 @@ class LoginPage extends React.Component {
       ;
     } else if (signinItem.name === "Username") {
       return (
-        <div className="login-username">
+        <div>
           <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
           <Form.Item
             name="username"
+            className="login-username"
             rules={[
               {
                 required: true,
@@ -637,6 +638,7 @@ class LoginPage extends React.Component {
 
             <Input
               id="input"
+              className="login-username-input"
               prefix={<UserOutlined className="site-form-item-icon" />}
               placeholder={this.getPlaceholder()}
               onChange={e => {
@@ -1025,12 +1027,14 @@ class LoginPage extends React.Component {
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
-          <div className="login-password">
+          <div>
             <Form.Item
               name="password"
+              className="login-password"
               rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
             >
               <Input.Password
+                className="login-password-input"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder={i18next.t("general:Password")}

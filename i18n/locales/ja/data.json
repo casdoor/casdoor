@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "LDAPサーバーは存在します"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "プロバイダー：%sが見つかりません"
   },
   "verification": {
-    "Code has not been sent yet!": "まだコードが送信されていません！",
     "Invalid captcha provider.": "無効なCAPTCHAプロバイダー。",
     "Phone number is invalid in your region %s": "電話番号はあなたの地域で無効です %s",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "チューリングテストは失敗しました。",
     "Unable to get the email modify rule.": "電子メール変更規則を取得できません。",
     "Unable to get the phone modify rule.": "電話の変更ルールを取得できません。",

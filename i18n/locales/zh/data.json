@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
-    "this operation is not allowed in demo mode": "demo模式下不允许该操作"
+    "this operation is not allowed in demo mode": "demo模式下不允许该操作",
+    "this operation requires administrator to perform": "只有管理员才能进行此操作"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "未找到提供商: %s"
   },
   "verification": {
-    "Code has not been sent yet!": "验证码还未发送",
     "Invalid captcha provider.": "非法的验证码提供商",
     "Phone number is invalid in your region %s": "您所在地区的电话号码无效 %s",
+    "The verification code has not been sent yet!": "验证码未发送！",
+    "The verification code has not been sent yet, or has already been used!": "验证码未发送或已被使用！",
     "Turing test failed.": "验证码还未发送",
     "Unable to get the email modify rule.": "无法获取邮箱修改规则",
     "Unable to get the phone modify rule.": "无法获取手机号修改规则",

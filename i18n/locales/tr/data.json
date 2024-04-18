@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "Ldap server exist"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "The provider: %s is not found"
   },
   "verification": {
-    "Code has not been sent yet!": "Code has not been sent yet!",
     "Invalid captcha provider.": "Invalid captcha provider.",
     "Phone number is invalid in your region %s": "Telefon numaranızın bulunduğu bölgeye hizmet veremiyoruz",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",

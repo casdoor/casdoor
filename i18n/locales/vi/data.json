@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "Máy chủ LDAP tồn tại"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "Nhà cung cấp: %s không được tìm thấy"
   },
   "verification": {
-    "Code has not been sent yet!": "Mã chưa được gửi đến!",
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Kiểm định Turing thất bại.",
     "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
     "Unable to get the phone modify rule.": "Không thể thay đổi quy tắc trên điện thoại.",
