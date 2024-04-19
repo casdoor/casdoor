@@ -35,7 +35,7 @@ type SignupItem struct {
 	Visible     bool   `json:"visible"`
 	Required    bool   `json:"required"`
 	Prompted    bool   `json:"prompted"`
-	CssStyle    string `json:"cssStyle"`
+	CustomCss   string `json:"customCss"`
 	Label       string `json:"label"`
 	Placeholder string `json:"placeholder"`
 	Regex       string `json:"regex"`
@@ -241,7 +241,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Username",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-username {\n  }\n</style>\n",
+			Label:       "\n<style>\n  .login-username {\n  }\n .login-username-input{}\n</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -249,7 +249,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Password",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-password {\n  }\n</style>\n",
+			Label:       "\n<style>\n  .login-password {\n  }\n .login-password-input{}</style>\n",
 			Placeholder: "",
 			Rule:        "None",
 		}

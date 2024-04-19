@@ -65,7 +65,7 @@ class SignupTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None", cssStyle: ""};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None", customCss: ""};
     if (table === undefined) {
       table = [];
     }
@@ -234,8 +234,8 @@ class SignupTable extends React.Component {
       },
       {
         title: i18next.t("application:Custom CSS"),
-        dataIndex: "cssStyle",
-        key: "cssStyle",
+        dataIndex: "customCss",
+        key: "customCss",
         width: "200px",
         render: (text, record, index) => {
           return (
@@ -244,13 +244,13 @@ class SignupTable extends React.Component {
                 <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
                   options={{mode: "htmlmixed", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
-                    this.updateField(table, index, "cssStyle", value);
+                    this.updateField(table, index, "customCss", value);
                   }}
                 />
               </div>
             } title={i18next.t("application:CSS style")} trigger="click">
               <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
-                this.updateField(table, index, "cssStyle", e.target.value);
+                this.updateField(table, index, "customCss", e.target.value);
               }} />
             </Popover>
           );

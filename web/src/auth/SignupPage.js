@@ -730,7 +730,7 @@ class SignupPage extends React.Component {
           application.signupItems?.map((signupItem, idx) => {
             return (
               <div key={idx}>
-                <div dangerouslySetInnerHTML={{__html: signupItem.cssStyle}} />
+                <div dangerouslySetInnerHTML={{__html: signupItem.customCss}} />
                 {this.renderFormItem(application, signupItem)}
               </div>
             );
@@ -754,7 +754,7 @@ class SignupPage extends React.Component {
     });
     if (!existSignupButton) {
       application.signupItems?.push({
-        cssStyle: "",
+        customCss: "",
         label: "",
         name: "Signup button",
         placeholder: "",
@@ -764,7 +764,7 @@ class SignupPage extends React.Component {
 
     if (!existProviders) {
       application.signupItems?.push({
-        cssStyle: "<style>\n.provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n </style>",
+        customCss: "<style>\n.provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n </style>",
         label: "",
         name: "Providers",
         placeholder: "",
