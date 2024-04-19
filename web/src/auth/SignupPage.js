@@ -644,13 +644,10 @@ class SignupPage extends React.Component {
         signupItem.rule = showForm ? "small" : "big";
       }
       return (
-        <Form.Item {...tailFormItemLayout}>
-          {
-            application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-              return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location);
-            })
-          }
-        </Form.Item>
+
+        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
+          return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location);
+        })
 
       );
     }
@@ -730,7 +727,7 @@ class SignupPage extends React.Component {
           application.signupItems?.map((signupItem, idx) => {
             return (
               <div key={idx}>
-                <div dangerouslySetInnerHTML={{__html: signupItem.customCss}} />
+                <div dangerouslySetInnerHTML={{__html: ("<style>" + signupItem.customCss + "</style>")}} />
                 {this.renderFormItem(application, signupItem)}
               </div>
             );
@@ -747,10 +744,8 @@ class SignupPage extends React.Component {
     }
 
     let existSignupButton = false;
-    let existProviders = false;
     application.signupItems?.map(item => {
       item.name === "Signup button" ? existSignupButton = true : null;
-      item.name === "Providers" ? existProviders = true : null;
     });
     if (!existSignupButton) {
       application.signupItems?.push({
@@ -758,17 +753,6 @@ class SignupPage extends React.Component {
         label: "",
         name: "Signup button",
         placeholder: "",
-        visible: true,
-      });
-    }
-
-    if (!existProviders) {
-      application.signupItems?.push({
-        customCss: "<style>\n.provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n </style>",
-        label: "",
-        name: "Providers",
-        placeholder: "",
-        rule: "None",
         visible: true,
       });
     }

@@ -61,6 +61,8 @@ class ApplicationListPage extends BaseListPage {
         {name: "Email", visible: true, required: true, rule: "Normal"},
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
+        {name: "Signup button", visible: true, required: true, rule: "None"},
+        {name: "Providers", visible: true, required: true, rule: "None"},
       ],
       grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       cert: "cert-built-in",

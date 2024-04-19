@@ -187,15 +187,15 @@ class SigninTable extends React.Component {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
-                  <CodeMirror value={text}
-                    options={{mode: "htmlmixed", theme: "material-darker"}}
+                  <CodeMirror value={text?.replaceAll("<style>", "").replaceAll("</style>", "")}
+                    options={{mode: "css", theme: "material-darker"}}
                     onBeforeChange={(editor, data, value) => {
                       this.updateField(table, index, "label", value);
                     }}
                   />
                 </div>
               } title={i18next.t("application:CSS style")} trigger="click">
-                <Input value={text} onChange={e => {
+                <Input value={text?.replaceAll("<style>", "").replaceAll("</style>", "")} onChange={e => {
                   this.updateField(table, index, "label", e.target.value);
                 }} />
               </Popover>
