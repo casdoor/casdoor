@@ -70,6 +70,7 @@ func (sp LocalFileSystemProvider) Put(path string, reader io.Reader) (*oss.Objec
 
 	dst, err := os.Create(filepath.Clean(fullPath))
 	if err == nil {
+		defer dst.Close()
 		if seeker, ok := reader.(io.ReadSeeker); ok {
 			seeker.Seek(0, 0)
 		}
