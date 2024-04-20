@@ -27,7 +27,7 @@ require("codemirror/mode/htmlmixed/htmlmixed");
 const EmailCss = ".signup-email{}\n.signup-email-input{}\n.signup-email-code{}\n.signup-email-code-input{}\n";
 const PhoneCss = ".signup-phone{}\n.signup-phone-input{}\n.phone-code{}\n.signup-phone-code-input{}";
 
-const SignupTableDefaultCssMap = {
+export const SignupTableDefaultCssMap = {
   "Username": ".signup-username {}\n.signup-username-input {}",
   "Display name": ".signup-first-name {}\n.signup-first-name-input{}\n.signup-last-name{}\n.signup-last-name-input{}\n.signup-name{}\n.signup-name-input{}",
   "Affiliation": ".signup-affiliation{}\n.signup-affiliation-input{}",
@@ -42,7 +42,7 @@ const SignupTableDefaultCssMap = {
   "Invitation code": ".signup-invitation-code{}\n.signup-invitation-code-input{}",
   "Agreement": ".login-agreement{}",
   "Signup button": ".signup-button{}\n.signup-link{}",
-  "Providers": "\n.provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n ",
+  "Providers": ".provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n ",
 };
 
 const {Option} = Select;

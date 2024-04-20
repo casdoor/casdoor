@@ -22,6 +22,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import {SignupTableDefaultCssMap} from "./table/SignupTable";
 
 class ApplicationListPage extends BaseListPage {
   constructor(props) {
@@ -62,7 +63,7 @@ class ApplicationListPage extends BaseListPage {
         {name: "Phone", visible: true, required: true, rule: "None"},
         {name: "Agreement", visible: true, required: true, rule: "None"},
         {name: "Signup button", visible: true, required: true, rule: "None"},
-        {name: "Providers", visible: true, required: true, rule: "None"},
+        {name: "Providers", visible: true, required: true, rule: "None", customCss: SignupTableDefaultCssMap["Providers"]},
       ],
       grantTypes: ["authorization_code", "password", "client_credentials", "token", "id_token", "refresh_token"],
       cert: "cert-built-in",

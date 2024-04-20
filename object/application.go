@@ -209,7 +209,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem := &SigninItem{
 			Name:        "Back button",
 			Visible:     true,
-			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n  }",
+			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -217,7 +217,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Languages",
 			Visible:     true,
-			Label:       ".login-languages {\n      top: 55px;\n      right: 5px;\n      position: absolute;\n  }",
+			Label:       ".login-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -225,7 +225,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Logo",
 			Visible:     true,
-			Label:       ".login-logo-box {\n  }",
+			Label:       ".login-logo-box {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -233,7 +233,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signin methods",
 			Visible:     true,
-			Label:       ".signin-methods {\n  }",
+			Label:       ".signin-methods {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -241,7 +241,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Username",
 			Visible:     true,
-			Label:       ".login-username {\n  }\n .login-username-input{}",
+			Label:       ".login-username {}\n.login-username-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -249,7 +249,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Password",
 			Visible:     true,
-			Label:       ".login-password {\n  }\n .login-password-input{}",
+			Label:       ".login-password {}\n.login-password-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -257,7 +257,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Agreement",
 			Visible:     true,
-			Label:       ".login-agreement {\n  }",
+			Label:       ".login-agreement {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -265,7 +265,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Forgot password?",
 			Visible:     true,
-			Label:       ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }",
+			Label:       ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -273,7 +273,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       ".login-button-box {\n    margin-bottom: 5px;\n  }\n  .login-button {\n    width: 100%;\n  }",
+			Label:       ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -289,7 +289,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Providers",
 			Visible:     true,
-			Label:       ".provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }",
+			Label:       ".provider-img {\n      width: 30px;\n      margin: 5px;\n}\n.provider-big-img {\n      margin-bottom: 10px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
