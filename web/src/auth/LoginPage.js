@@ -532,7 +532,7 @@ class LoginPage extends React.Component {
     if (signinItem.name === "Logo") {
       return (
         <div className="login-logo-box">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             Setting.renderHelmet(application)
           }
@@ -544,7 +544,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Back button") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             this.renderBackButton()
           }
@@ -562,14 +562,14 @@ class LoginPage extends React.Component {
 
       return (
         <div className="login-languages">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <LanguageSelect languages={application.organizationObj.languages} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderMethodChoiceBox()}
         </div>
       )
@@ -577,7 +577,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Username") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item
             name="username"
             className="login-username"
@@ -653,14 +653,14 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Password") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderPasswordOrCodeInput()}
         </div>
       );
     } else if (signinItem.name === "Forgot password?") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <div className="login-forget-password">
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}}>
@@ -678,7 +678,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Login button") {
       return (
         <Form.Item className="login-button-box">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
             type="primary"
             htmlType="submit"
@@ -722,7 +722,7 @@ class LoginPage extends React.Component {
 
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
@@ -742,7 +742,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Signup link") {
       return (
         <div style={{width: "100%"}} className="login-signup-link">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderFooter(application)}
         </div>
       );
