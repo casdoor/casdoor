@@ -261,16 +261,20 @@ func (c *ApiController) Signup() {
 		c.SetSessionUsername(user.GetId())
 	}
 
-	err = object.DisableVerificationCode(authForm.Email)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if authForm.Email != "" {
+		err = object.DisableVerificationCode(authForm.Email)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
-	err = object.DisableVerificationCode(checkPhone)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if checkPhone != "" {
+		err = object.DisableVerificationCode(checkPhone)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.Ctx.Input.SetParam("recordUserId", user.GetId())

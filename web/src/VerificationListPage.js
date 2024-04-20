@@ -19,7 +19,7 @@ import * as VerificationBackend from "./backend/VerificationBackend";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import React from "react";
-import {Table} from "antd";
+import {Switch, Table} from "antd";
 
 class VerificationListPage extends BaseListPage {
   newVerification() {
@@ -145,6 +145,18 @@ class VerificationListPage extends BaseListPage {
         width: "150px",
         sorter: true,
         ...this.getColumnSearchProps("code"),
+      },
+      {
+        title: i18next.t("verification:Is used"),
+        dataIndex: "isUsed",
+        key: "isUsed",
+        width: "90px",
+        sorter: true,
+        render: (text, record, index) => {
+          return (
+            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+          );
+        },
       },
     ];
 
