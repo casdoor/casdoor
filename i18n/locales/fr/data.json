@@ -81,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
     "don't support captchaProvider: ": "ne prend pas en charge captchaProvider: ",
-    "this operation is not allowed in demo mode": "cette opération n’est pas autorisée en mode démo"
+    "this operation is not allowed in demo mode": "cette opération n’est pas autorisée en mode démo",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "Le serveur LDAP existe"
@@ -145,9 +146,10 @@
     "The provider: %s is not found": "Le fournisseur : %s n'a pas été trouvé"
   },
   "verification": {
-    "Code has not been sent yet!": "Le code n'a pas encore été envoyé !",
     "Invalid captcha provider.": "Fournisseur de captcha invalide.",
     "Phone number is invalid in your region %s": "Le numéro de téléphone n'est pas valide dans votre région %s",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Le test de Turing a échoué.",
     "Unable to get the email modify rule.": "Incapable d'obtenir la règle de modification de courriel.",
     "Unable to get the phone modify rule.": "Impossible d'obtenir la règle de modification de téléphone.",

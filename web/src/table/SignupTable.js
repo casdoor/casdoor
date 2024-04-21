@@ -24,6 +24,27 @@ import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 require("codemirror/mode/htmlmixed/htmlmixed");
 
+const EmailCss = ".signup-email{}\n.signup-email-input{}\n.signup-email-code{}\n.signup-email-code-input{}\n";
+const PhoneCss = ".signup-phone{}\n.signup-phone-input{}\n.phone-code{}\n.signup-phone-code-input{}";
+
+export const SignupTableDefaultCssMap = {
+  "Username": ".signup-username {}\n.signup-username-input {}",
+  "Display name": ".signup-first-name {}\n.signup-first-name-input{}\n.signup-last-name{}\n.signup-last-name-input{}\n.signup-name{}\n.signup-name-input{}",
+  "Affiliation": ".signup-affiliation{}\n.signup-affiliation-input{}",
+  "Country/Region": ".signup-country-region{}\n.signup-region-select{}",
+  "ID card": ".signup-idcard{}\n.signup-idcard-input{}",
+  "Password": ".signup-password{}\n.signup-password-input{}",
+  "Confirm password": ".signup-confirm{}",
+  "Email": EmailCss,
+  "Phone": PhoneCss,
+  "Email or Phone": EmailCss + PhoneCss,
+  "Phone or Email": EmailCss + PhoneCss,
+  "Invitation code": ".signup-invitation-code{}\n.signup-invitation-code-input{}",
+  "Agreement": ".login-agreement{}",
+  "Signup button": ".signup-button{}\n.signup-link{}",
+  "Providers": ".provider-img {\n width: 30px;\n margin: 5px;\n }\n .provider-big-img {\n margin-bottom: 10px;\n }\n ",
+};
+
 const {Option} = Select;
 
 class SignupTable extends React.Component {
@@ -44,7 +65,7 @@ class SignupTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None"};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None", customCss: ""};
     if (table === undefined) {
       table = [];
     }
@@ -89,6 +110,8 @@ class SignupTable extends React.Component {
             {name: "Phone or Email", displayName: i18next.t("general:Phone or Email")},
             {name: "Invitation code", displayName: i18next.t("application:Invitation code")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
+            {name: "Signup button", displayName: i18next.t("signup:Signup button")},
+            {name: "Providers", displayName: i18next.t("general:Providers")},
             {name: "Text 1", displayName: i18next.t("signup:Text 1")},
             {name: "Text 2", displayName: i18next.t("signup:Text 2")},
             {name: "Text 3", displayName: i18next.t("signup:Text 3")},
@@ -109,6 +132,7 @@ class SignupTable extends React.Component {
               value={getItemDisplayName(text)}
               onChange={value => {
                 this.updateField(table, index, "name", value);
+                this.updateField(table, index, "customCss", SignupTableDefaultCssMap[value]);
               }} >
               {
                 Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
@@ -121,7 +145,7 @@ class SignupTable extends React.Component {
         title: i18next.t("organization:Visible"),
         dataIndex: "visible",
         key: "visible",
-        width: "120px",
+        width: "80px",
         render: (text, record, index) => {
           if (record.name === "ID") {
             return null;
@@ -143,9 +167,9 @@ class SignupTable extends React.Component {
         title: i18next.t("provider:Required"),
         dataIndex: "required",
         key: "required",
-        width: "120px",
+        width: "80px",
         render: (text, record, index) => {
-          if (!record.visible) {
+          if (!record.visible || ["Signup button", "Providers"].includes(record.name)) {
             return null;
           }
 
@@ -160,9 +184,9 @@ class SignupTable extends React.Component {
         title: i18next.t("provider:Prompted"),
         dataIndex: "prompted",
         key: "prompted",
-        width: "120px",
+        width: "80px",
         render: (text, record, index) => {
-          if (record.name === "ID") {
+          if (["ID", "Signup button", "Providers"].includes(record.name)) {
             return null;
           }
 
@@ -181,7 +205,7 @@ class SignupTable extends React.Component {
         title: i18next.t("signup:Label"),
         dataIndex: "label",
         key: "label",
-        width: "200px",
+        width: "150px",
         render: (text, record, index) => {
           if (record.name.startsWith("Text ")) {
             return (
@@ -210,6 +234,30 @@ class SignupTable extends React.Component {
         },
       },
       {
+        title: i18next.t("application:Custom CSS"),
+        dataIndex: "customCss",
+        key: "customCss",
+        width: "180px",
+        render: (text, record, index) => {
+          return (
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}}>
+                <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:CSS style")} trigger="click">
+              <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
+                this.updateField(table, index, "customCss", e.target.value ? e.target.value : SignupTableDefaultCssMap[record.name]);
+              }} />
+            </Popover>
+          );
+        },
+      },
+      {
         title: i18next.t("signup:Placeholder"),
         dataIndex: "placeholder",
         key: "placeholder",
@@ -230,9 +278,9 @@ class SignupTable extends React.Component {
         title: i18next.t("signup:Regex"),
         dataIndex: "regex",
         key: "regex",
-        width: "200px",
+        width: "180px",
         render: (text, record, index) => {
-          if (record.name.startsWith("Text ") || record.name === "Password" || record.name === "Confirm password") {
+          if (record.name.startsWith("Text ") || ["Password", "Confirm password", "Signup button", "Provider"].includes(record.name)) {
             return null;
           }
 
@@ -277,6 +325,11 @@ class SignupTable extends React.Component {
               {id: "Signin", name: i18next.t("application:Signin")},
               {id: "Signin (Default True)", name: i18next.t("application:Signin (Default True)")},
             ];
+          } else if (record.name === "Providers") {
+            options = [
+              {id: "big", name: i18next.t("application:Big icon")},
+              {id: "small", name: i18next.t("application:Small icon")},
+            ];
           }
 
           if (options.length === 0) {
@@ -304,7 +357,7 @@ class SignupTable extends React.Component {
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
+                <Button disabled={record.name === "Signup button"} icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
           );
