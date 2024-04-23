@@ -405,8 +405,8 @@ func GetApplicationByUser(user *User) (*Application, error) {
 }
 
 func GetApplicationByUserId(userId string) (application *Application, err error) {
-	owner, name := util.GetOwnerAndNameFromId(userId)
-	if owner == "app" {
+	_, name := util.GetOwnerAndNameFromId(userId)
+	if IsAppUser(userId) {
 		application, err = getApplication("admin", name)
 		return
 	}

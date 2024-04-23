@@ -464,3 +464,10 @@ func (user *User) IsAdminUser() bool {
 
 	return user.IsAdmin || user.IsGlobalAdmin()
 }
+
+func IsAppUser(userId string) bool {
+	if strings.HasPrefix(userId, "app/") {
+		return true
+	}
+	return false
+}

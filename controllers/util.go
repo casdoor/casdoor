@@ -96,7 +96,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 		return nil, false
 	}
 
-	if strings.HasPrefix(userId, "app/") {
+	if object.IsAppUser(userId) {
 		tmpUserId := c.Input().Get("userId")
 		if tmpUserId != "" {
 			userId = tmpUserId
@@ -142,7 +142,7 @@ func (c *ApiController) IsOrgAdmin() (bool, bool) {
 		return false, true
 	}
 
-	if strings.HasPrefix(userId, "app/") {
+	if object.IsAppUser(userId) {
 		return true, true
 	}
 

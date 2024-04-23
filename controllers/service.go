@@ -120,7 +120,7 @@ func (c *ApiController) SendEmail() {
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content = strings.Replace(content, "%s", code, 1)
 	userString := "Hi"
-	if !strings.HasPrefix(userId, "app/") {
+	if !object.IsAppUser(userId) {
 		var user *object.User
 		user, err = object.GetUser(userId)
 		if err != nil {

@@ -73,7 +73,7 @@ func (c *ApiController) IsAdminOrSelf(user2 *object.User) bool {
 
 func (c *ApiController) isGlobalAdmin() (bool, *object.User) {
 	username := c.GetSessionUsername()
-	if strings.HasPrefix(username, "app/") {
+	if object.IsAppUser(username) {
 		// e.g., "app/app-casnode"
 		return true, nil
 	}
