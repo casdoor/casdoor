@@ -543,7 +543,7 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Back button") {
       return (
-        <div>
+        <div className="back-button">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             this.renderBackButton()
@@ -1199,8 +1199,7 @@ class LoginPage extends React.Component {
   renderBackButton() {
     if (this.state.orgChoiceMode === "None" || this.props.preview === "auto") {
       return (
-        <Button type="text" size="large" icon={<ArrowLeftOutlined />}
-          className="back-button"
+        <Button className="back-inner-button" type="text" size="large" icon={<ArrowLeftOutlined />}
           onClick={() => history.back()}>
         </Button>
       );
