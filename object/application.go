@@ -209,7 +209,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem := &SigninItem{
 			Name:        "Back button",
 			Visible:     true,
-			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}",
+			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}\n.back-inner-button{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
