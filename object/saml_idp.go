@@ -25,9 +25,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"html/template"
 	"io"
 	"time"
 
+	"github.com/beego/beego/logs"
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
@@ -104,10 +106,35 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
 	for _, item := range application.SamlAttributes {
-		role := attributes.CreateElement("saml:Attribute")
-		role.CreateAttr("Name", item.Name)
-		role.CreateAttr("NameFormat", item.NameFormat)
-		role.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
+		text := item.Value
+
+		// try use go-template to render it
+		tmpl, err := template.New(item.Name).Parse(item.Value)
+		if err != nil {
+			logs.Warning("failed to parse template on saml attribute %s: %v", item.Name, err)
+		} else {
+			var buf bytes.Buffer
+			err = tmpl.Execute(&buf, map[string]interface{}{
+				"application": application,
+				"user":        user,
+				"host":        host,
+				"certificate": certificate,
+				"destination": destination,
+				"iss":         iss,
+				"requestId":   requestId,
+				"redirectUri": redirectUri,
+			})
+			if err != nil {
+				logs.Warning("failed to execute template on saml attribute %s: %v", item.Name, err)
+			} else {
+				text = buf.String()
+			}
+		}
+
+		customAttr := attributes.CreateElement("saml:Attribute")
+		customAttr.CreateAttr("Name", item.Name)
+		customAttr.CreateAttr("NameFormat", item.NameFormat)
+		customAttr.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(text)
 	}
 
 	roles := attributes.CreateElement("saml:Attribute")
