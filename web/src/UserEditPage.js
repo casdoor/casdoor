@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -40,6 +40,7 @@ import {DeleteMfa} from "./backend/MfaBackend";
 import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as MfaBackend from "./backend/MfaBackend";
 import AccountAvatar from "./account/AccountAvatar";
+import FaceIdTable from "./table/FaceIdTable";
 
 const {Option} = Select;
 
@@ -59,6 +60,7 @@ class UserEditPage extends React.Component {
       loading: true,
       returnUrl: null,
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
+      openFaceRecognitionModal: false,
     };
   }
 
@@ -408,7 +410,17 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} />
+            {
+              (this.state.user.name === this.state.userName) ? (
+                <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={disabled} />
+              ) : (
+                <Tooltip placement={"topLeft"} title={i18next.t("user:You have changed the username, please save your change first before modifying the password")}>
+                  <span>
+                    <PasswordModal user={this.state.user} userName={this.state.userName} organization={this.getUserOrganization()} account={this.props.account} disabled={true} />
+                  </span>
+                </Tooltip>
+              )
+            }
           </Col>
         </Row>
       );
@@ -993,23 +1005,36 @@ class UserEditPage extends React.Component {
         </Row>
       );
     } else if (accountItem.name === "Managed accounts") {
-      if (isAdmin) {
-        return (
-          <Row style={{marginTop: "20px"}} >
-            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-              {Setting.getLabel(i18next.t("user:Managed accounts"), i18next.t("user:Managed accounts"))} :
-            </Col>
-            <Col span={22} >
-              <ManagedAccountTable
-                title={i18next.t("user:Managed accounts")}
-                table={this.state.user.managedAccounts}
-                onUpdateTable={(table) => {this.updateUserField("managedAccounts", table);}}
-                applications={this.state.applications}
-              />
-            </Col>
-          </Row>
-        );
-      }
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Managed accounts"), i18next.t("user:Managed accounts"))} :
+          </Col>
+          <Col span={22} >
+            <ManagedAccountTable
+              title={i18next.t("user:Managed accounts")}
+              table={this.state.user.managedAccounts}
+              onUpdateTable={(table) => {this.updateUserField("managedAccounts", table);}}
+              applications={this.state.applications}
+            />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Face ID") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Face IDs"), i18next.t("user:Face IDs"))} :
+          </Col>
+          <Col span={22} >
+            <FaceIdTable
+              title={i18next.t("user:Face IDs")}
+              table={this.state.user.faceIds}
+              onUpdateTable={(table) => {this.updateUserField("faceIds", table);}}
+            />
+          </Col>
+        </Row>
+      );
     }
   }
 

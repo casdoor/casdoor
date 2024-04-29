@@ -387,6 +387,11 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if newUser.FaceIds != nil {
+		item := GetAccountItemByName("Face ID", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := GetAccountItemByName("Is admin", organization)
 		itemsChanged = append(itemsChanged, item)
@@ -458,4 +463,11 @@ func (user *User) IsAdminUser() bool {
 	}
 
 	return user.IsAdmin || user.IsGlobalAdmin()
+}
+
+func IsAppUser(userId string) bool {
+	if strings.HasPrefix(userId, "app/") {
+		return true
+	}
+	return false
 }

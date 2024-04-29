@@ -100,6 +100,7 @@ type User struct {
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
+	AccessToken       string   `xorm:"mediumtext" json:"accessToken"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`
@@ -192,6 +193,7 @@ type User struct {
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 	Invitation          string                `xorm:"varchar(100) index" json:"invitation"`
 	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`
+	FaceIds             []*FaceId             `json:"faceIds"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
@@ -228,6 +230,11 @@ type ManagedAccount struct {
 	Username    string `xorm:"varchar(100)" json:"username"`
 	Password    string `xorm:"varchar(100)" json:"password"`
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
+}
+
+type FaceId struct {
+	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
+	FaceIdData []float64 `json:"faceIdData"`
 }
 
 func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {
@@ -670,8 +677,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = []string{
 			"owner", "display_name", "avatar", "first_name", "last_name",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
-			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts",
-			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret",
+			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts", "face_ids",
+			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
@@ -838,6 +845,11 @@ func AddUser(user *User) (bool, error) {
 		}
 	}
 
+	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
+	if isUsernameLowered {
+		user.Name = strings.ToLower(user.Name)
+	}
+
 	affected, err := ormer.Engine.Insert(user)
 	if err != nil {
 		return false, err
@@ -850,6 +862,8 @@ func AddUsers(users []*User) (bool, error) {
 	if len(users) == 0 {
 		return false, fmt.Errorf("no users are provided")
 	}
+
+	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
 
 	// organization := GetOrganizationByUser(users[0])
 	for _, user := range users {
@@ -873,6 +887,10 @@ func AddUsers(users []*User) (bool, error) {
 			if err != nil {
 				return false, err
 			}
+		}
+
+		if isUsernameLowered {
+			user.Name = strings.ToLower(user.Name)
 		}
 	}
 
@@ -999,7 +1017,7 @@ func (user *User) GetFriendlyName() string {
 }
 
 func isUserIdGlobalAdmin(userId string) bool {
-	return strings.HasPrefix(userId, "built-in/") || strings.HasPrefix(userId, "app/")
+	return strings.HasPrefix(userId, "built-in/") || IsAppUser(userId)
 }
 
 func ExtendUserWithRolesAndPermissions(user *User) (err error) {

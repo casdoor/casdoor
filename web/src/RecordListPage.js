@@ -65,7 +65,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Client IP"),
         dataIndex: "clientIp",
         key: "clientIp",
-        width: "150px",
+        width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("clientIp"),
         render: (text, record, index) => {
@@ -80,7 +80,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:Timestamp"),
         dataIndex: "createdTime",
         key: "createdTime",
-        width: "180px",
+        width: "150px",
         sorter: true,
         render: (text, record, index) => {
           return Setting.getFormattedDate(text);
@@ -105,7 +105,7 @@ class RecordListPage extends BaseListPage {
         title: i18next.t("general:User"),
         dataIndex: "user",
         key: "user",
-        width: "120px",
+        width: "100px",
         sorter: true,
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
@@ -152,6 +152,22 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps("language"),
       },
       {
+        title: i18next.t("record:Response"),
+        dataIndex: "response",
+        key: "response",
+        width: "90px",
+        sorter: true,
+        ...this.getColumnSearchProps("response"),
+      },
+      {
+        title: i18next.t("record:Object"),
+        dataIndex: "object",
+        key: "object",
+        width: "90px",
+        sorter: true,
+        ...this.getColumnSearchProps("object"),
+      },
+      {
         title: i18next.t("general:Action"),
         dataIndex: "action",
         key: "action",
@@ -171,7 +187,7 @@ class RecordListPage extends BaseListPage {
         sorter: true,
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
-          if (!["signup", "login", "logout", "update-user"].includes(record.action)) {
+          if (!["signup", "login", "logout", "update-user", "new-user"].includes(record.action)) {
             return null;
           }
 

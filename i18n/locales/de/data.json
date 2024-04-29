@@ -18,6 +18,7 @@
     "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
     "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
     "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
+    "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
     "The organization: %s does not exist": "The organization: %s does not exist",
     "The provider: %s is not enabled for the application": "Der Anbieter: %s ist nicht für die Anwendung aktiviert",
@@ -38,6 +39,8 @@
     "Email cannot be empty": "E-Mail darf nicht leer sein",
     "Email is invalid": "E-Mail ist ungültig",
     "Empty username.": "Leerer Benutzername.",
+    "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
+    "Face data mismatch": "Face data mismatch",
     "FirstName cannot be blank": "Vorname darf nicht leer sein",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
     "Invitation code exhausted": "Invitation code exhausted",
@@ -78,7 +81,8 @@
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
     "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode"
+    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
+    "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
     "Ldap server exist": "Es gibt einen LDAP-Server"
@@ -142,9 +146,10 @@
     "The provider: %s is not found": "Der Anbieter: %s wurde nicht gefunden"
   },
   "verification": {
-    "Code has not been sent yet!": "Der Code wurde noch nicht versendet!",
     "Invalid captcha provider.": "Ungültiger Captcha-Anbieter.",
     "Phone number is invalid in your region %s": "Die Telefonnummer ist in Ihrer Region %s ungültig",
+    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
+    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Turing-Test fehlgeschlagen.",
     "Unable to get the email modify rule.": "Nicht in der Lage, die E-Mail-Änderungsregel zu erhalten.",
     "Unable to get the phone modify rule.": "Nicht in der Lage, die Telefon-Änderungsregel zu erhalten.",

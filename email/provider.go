@@ -23,6 +23,8 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 		return NewAzureACSEmailProvider(clientSecret, host)
 	} else if typ == "Custom HTTP Email" {
 		return NewHttpEmailProvider(endpoint, method)
+	} else if typ == "SendGrid" {
+		return NewSendgridEmailProvider(clientSecret)
 	} else {
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl)
 	}

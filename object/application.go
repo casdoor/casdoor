@@ -35,6 +35,7 @@ type SignupItem struct {
 	Visible     bool   `json:"visible"`
 	Required    bool   `json:"required"`
 	Prompted    bool   `json:"prompted"`
+	CustomCss   string `json:"customCss"`
 	Label       string `json:"label"`
 	Placeholder string `json:"placeholder"`
 	Regex       string `json:"regex"`
@@ -208,7 +209,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem := &SigninItem{
 			Name:        "Back button",
 			Visible:     true,
-			Label:       "\n<style>\n  .back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n  }\n</style>\n",
+			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}\n.back-inner-button{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -216,7 +217,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Languages",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-languages {\n      top: 55px;\n      right: 5px;\n      position: absolute;\n  }\n</style>\n",
+			Label:       ".login-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -224,7 +225,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Logo",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-logo-box {\n  }\n</style>\n",
+			Label:       ".login-logo-box {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -232,7 +233,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signin methods",
 			Visible:     true,
-			Label:       "\n<style>\n  .signin-methods {\n  }\n</style>\n",
+			Label:       ".signin-methods {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -240,7 +241,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Username",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-username {\n  }\n</style>\n",
+			Label:       ".login-username {}\n.login-username-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -248,7 +249,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Password",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-password {\n  }\n</style>\n",
+			Label:       ".login-password {}\n.login-password-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -256,7 +257,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Agreement",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-agreement {\n  }\n</style>\n",
+			Label:       ".login-agreement {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -264,7 +265,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Forgot password?",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n  }\n</style>\n",
+			Label:       ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -272,7 +273,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-button-box {\n    margin-bottom: 5px;\n  }\n  .login-button {\n    width: 100%;\n  }\n</style>\n",
+			Label:       ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -280,7 +281,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signup link",
 			Visible:     true,
-			Label:       "\n<style>\n  .login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}\n</style>\n",
+			Label:       ".login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -288,7 +289,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Providers",
 			Visible:     true,
-			Label:       "\n<style>\n  .provider-img {\n      width: 30px;\n      margin: 5px;\n  }\n  .provider-big-img {\n      margin-bottom: 10px;\n  }\n</style>\n",
+			Label:       ".provider-img {\n      width: 30px;\n      margin: 5px;\n}\n.provider-big-img {\n      margin-bottom: 10px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -311,6 +312,9 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 			signinMethod := &SigninMethod{Name: "WebAuthn", DisplayName: "WebAuthn", Rule: "None"}
 			application.SigninMethods = append(application.SigninMethods, signinMethod)
 		}
+
+		signinMethod := &SigninMethod{Name: "Face ID", DisplayName: "Face ID", Rule: "None"}
+		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
 	if len(application.SigninMethods) == 0 {
@@ -401,8 +405,8 @@ func GetApplicationByUser(user *User) (*Application, error) {
 }
 
 func GetApplicationByUserId(userId string) (application *Application, err error) {
-	owner, name := util.GetOwnerAndNameFromId(userId)
-	if owner == "app" {
+	_, name := util.GetOwnerAndNameFromId(userId)
+	if IsAppUser(userId) {
 		application, err = getApplication("admin", name)
 		return
 	}
@@ -505,7 +509,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	providerItems := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3") {
+		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3" || providerItem.Provider.Category == "Captcha") {
 			providerItems = append(providerItems, providerItem)
 		}
 	}
@@ -750,6 +754,17 @@ func (application *Application) IsLdapEnabled() bool {
 	if len(application.SigninMethods) > 0 {
 		for _, signinMethod := range application.SigninMethods {
 			if signinMethod.Name == "LDAP" {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (application *Application) IsFaceIdEnabled() bool {
+	if len(application.SigninMethods) > 0 {
+		for _, signinMethod := range application.SigninMethods {
+			if signinMethod.Name == "Face ID" {
 				return true
 			}
 		}

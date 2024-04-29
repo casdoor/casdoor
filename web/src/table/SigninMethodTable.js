@@ -71,6 +71,7 @@ class SigninMethodTable extends React.Component {
       {name: "Verification code", displayName: i18next.t("login:Verification code")},
       {name: "WebAuthn", displayName: i18next.t("login:WebAuthn")},
       {name: "LDAP", displayName: i18next.t("login:LDAP")},
+      {name: "Face ID", displayName: i18next.t("login:Face ID")},
     ];
     const columns = [
       {
@@ -163,7 +164,7 @@ class SigninMethodTable extends React.Component {
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1} icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
               </Tooltip>
               <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
-                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(items, table, index)} />
+                <Button disabled={table.length <= 1} icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(items, table, index)} />
               </Tooltip>
             </div>
           );

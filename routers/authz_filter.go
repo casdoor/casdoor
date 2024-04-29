@@ -20,6 +20,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casdoor/casdoor/object"
+
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/util"
@@ -66,10 +68,18 @@ func getObject(ctx *context.Context) (string, string) {
 	path := ctx.Request.URL.Path
 
 	if method == http.MethodGet {
-		if ctx.Request.URL.Path == "/api/get-policies" && ctx.Input.Query("id") == "/" {
-			adapterId := ctx.Input.Query("adapterId")
-			if adapterId != "" {
-				return util.GetOwnerAndNameFromIdNoCheck(adapterId)
+		if ctx.Request.URL.Path == "/api/get-policies" {
+			if ctx.Input.Query("id") == "/" {
+				adapterId := ctx.Input.Query("adapterId")
+				if adapterId != "" {
+					return util.GetOwnerAndNameFromIdNoCheck(adapterId)
+				}
+			} else {
+				// query == "?id=built-in/admin"
+				id := ctx.Input.Query("id")
+				if id != "" {
+					return util.GetOwnerAndNameFromIdNoCheck(id)
+				}
 			}
 		}
 
@@ -206,5 +216,17 @@ func ApiFilter(ctx *context.Context) {
 
 	if !isAllowed {
 		denyRequest(ctx)
+		record, err := object.NewRecord(ctx)
+		if err != nil {
+			return
+		}
+
+		record.Organization = subOwner
+		record.User = subName // auth:Unauthorized operation
+		record.Response = fmt.Sprintf("{status:\"error\", msg:\"%s\"}", T(ctx, "auth:Unauthorized operation"))
+
+		util.SafeGoroutine(func() {
+			object.AddRecord(record)
+		})
 	}
 }

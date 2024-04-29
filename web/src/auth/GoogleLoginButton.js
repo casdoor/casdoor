@@ -52,7 +52,7 @@ export function GoogleOneTapLoginVirtualButton(prop) {
       redirectUri = `${redirectUri}?state=${state}&code=${encodeURIComponent(code)}`;
       Setting.goToLink(redirectUri);
     },
-    disableCancelOnUnmount: true,
+    disableCancelOnUnmount: false,
   });
 
 }

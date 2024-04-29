@@ -18,6 +18,7 @@
     "The login method: login with LDAP is not enabled for the application": "该应用禁止采用LDAP登录方式",
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
+    "The login method: login with face is not enabled for the application": "该应用禁止采用人脸登录",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
     "The organization: %s does not exist": "组织: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
@@ -38,6 +39,8 @@
     "Email cannot be empty": "邮箱不可为空",
     "Email is invalid": "无效邮箱",
     "Empty username.": "用户名不可为空",
+    "Face data does not exist, cannot log in": "未录入人脸数据，无法登录",
+    "Face data mismatch": "人脸不匹配",
     "FirstName cannot be blank": "名不可以为空",
     "Invitation code cannot be blank": "邀请码不能为空",
     "Invitation code exhausted": "邀请码使用次数已耗尽",
@@ -78,7 +81,8 @@
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
-    "this operation is not allowed in demo mode": "demo模式下不允许该操作"
+    "this operation is not allowed in demo mode": "demo模式下不允许该操作",
+    "this operation requires administrator to perform": "只有管理员才能进行此操作"
   },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在"
@@ -142,9 +146,10 @@
     "The provider: %s is not found": "未找到提供商: %s"
   },
   "verification": {
-    "Code has not been sent yet!": "验证码还未发送",
     "Invalid captcha provider.": "非法的验证码提供商",
     "Phone number is invalid in your region %s": "您所在地区的电话号码无效 %s",
+    "The verification code has not been sent yet!": "验证码未发送！",
+    "The verification code has not been sent yet, or has already been used!": "验证码未发送或已被使用！",
     "Turing test failed.": "验证码还未发送",
     "Unable to get the email modify rule.": "无法获取邮箱修改规则",
     "Unable to get the phone modify rule.": "无法获取手机号修改规则",

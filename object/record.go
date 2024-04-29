@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -34,7 +35,12 @@ type Record struct {
 	casvisorsdk.Record
 }
 
-func NewRecord(ctx *context.Context) *casvisorsdk.Record {
+type Response struct {
+	Status string `json:"status"`
+	Msg    string `json:"msg"`
+}
+
+func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
@@ -45,6 +51,17 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 	object := ""
 	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
 		object = string(ctx.Input.RequestBody)
+	}
+
+	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
+	if err != nil {
+		return nil, err
+	}
+
+	var resp Response
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		return nil, err
 	}
 
 	language := ctx.Request.Header.Get("Accept-Language")
@@ -63,9 +80,10 @@ func NewRecord(ctx *context.Context) *casvisorsdk.Record {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
+		Response:    fmt.Sprintf("{status:\"%s\", msg:\"%s\"}", resp.Status, resp.Msg),
 		IsTriggered: false,
 	}
-	return &record
+	return &record, nil
 }
 
 func AddRecord(record *casvisorsdk.Record) bool {
@@ -122,6 +140,12 @@ func GetRecords() ([]*casvisorsdk.Record, error) {
 
 func GetPaginationRecords(offset, limit int, field, value, sortField, sortOrder string, filterRecord *casvisorsdk.Record) ([]*casvisorsdk.Record, error) {
 	records := []*casvisorsdk.Record{}
+
+	if sortField == "" || sortOrder == "" {
+		sortField = "id"
+		sortOrder = "descend"
+	}
+
 	session := GetSession("", offset, limit, field, value, sortField, sortOrder)
 	err := session.Find(&records, filterRecord)
 	if err != nil {
@@ -139,6 +163,25 @@ func GetRecordsByField(record *casvisorsdk.Record) ([]*casvisorsdk.Record, error
 	}
 
 	return records, nil
+}
+
+func CopyRecord(record *casvisorsdk.Record) *casvisorsdk.Record {
+	res := &casvisorsdk.Record{
+		Owner:        record.Owner,
+		Name:         record.Name,
+		CreatedTime:  record.CreatedTime,
+		Organization: record.Organization,
+		ClientIp:     record.ClientIp,
+		User:         record.User,
+		Method:       record.Method,
+		RequestUri:   record.RequestUri,
+		Action:       record.Action,
+		Language:     record.Language,
+		Object:       record.Object,
+		Response:     record.Response,
+		IsTriggered:  record.IsTriggered,
+	}
+	return res
 }
 
 func getFilteredWebhooks(webhooks []*Webhook, organization string, action string) []*Webhook {

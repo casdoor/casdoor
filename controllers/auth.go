@@ -327,7 +327,38 @@ func (c *ApiController) Login() {
 		}
 
 		var user *object.User
-		if authForm.Password == "" {
+		if authForm.SigninMethod == "Face ID" {
+			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			} else if user == nil {
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				return
+			}
+
+			var application *object.Application
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
+			if application == nil {
+				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+				return
+			}
+
+			if !application.IsFaceIdEnabled() {
+				c.ResponseError(c.T("auth:The login method: login with face is not enabled for the application"))
+				return
+			}
+
+			if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+
+		} else if authForm.Password == "" {
 			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
@@ -477,10 +508,7 @@ func (c *ApiController) Login() {
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record := object.NewRecord(c.Ctx)
-			record.Organization = application.Organization
-			record.User = user.Name
-			util.SafeGoroutine(func() { object.AddRecord(record) })
+			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		}
 	} else if authForm.Provider != "" {
 		var application *object.Application
@@ -601,10 +629,7 @@ func (c *ApiController) Login() {
 				}
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record := object.NewRecord(c.Ctx)
-				record.Organization = application.Organization
-				record.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record) })
+				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
@@ -737,16 +762,8 @@ func (c *ApiController) Login() {
 
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
-				record := object.NewRecord(c.Ctx)
-				record.Organization = application.Organization
-				record.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record) })
-
-				record2 := object.NewRecord(c.Ctx)
-				record2.Action = "signup"
-				record2.Organization = application.Organization
-				record2.User = user.Name
-				util.SafeGoroutine(func() { object.AddRecord(record2) })
+				c.Ctx.Input.SetParam("recordUserId", user.GetId())
+				c.Ctx.Input.SetParam("recordSignup", "true")
 			} else if provider.Category == "SAML" {
 				// TODO: since we get the user info from SAML response, we can try to create the user
 				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
@@ -848,10 +865,7 @@ func (c *ApiController) Login() {
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
-		record := object.NewRecord(c.Ctx)
-		record.Organization = application.Organization
-		record.User = user.Name
-		util.SafeGoroutine(func() { object.AddRecord(record) })
+		c.Ctx.Input.SetParam("recordUserId", user.GetId())
 	} else {
 		if c.GetSessionUsername() != "" {
 			// user already signed in to Casdoor, so let the user click the avatar button to do the quick sign-in
@@ -870,10 +884,7 @@ func (c *ApiController) Login() {
 			user := c.getCurrentUser()
 			resp = c.HandleLoggedIn(application, user, &authForm)
 
-			record := object.NewRecord(c.Ctx)
-			record.Organization = application.Organization
-			record.User = user.Name
-			util.SafeGoroutine(func() { object.AddRecord(record) })
+			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		} else {
 			c.ResponseError(fmt.Sprintf(c.T("auth:Unknown authentication type (not password or provider), form = %s"), util.StructToJson(authForm)))
 			return

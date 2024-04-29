@@ -261,7 +261,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 
 	ok, _, service, userId := GetCasTokenByTicket(ticket)
 	if !ok {
-		return "", "", fmt.Errorf("ticket %s found", ticket)
+		return "", "", fmt.Errorf("the CAS token for ticket %s is not found", ticket)
 	}
 
 	user, err := GetUser(userId)
@@ -270,7 +270,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	}
 
 	if user == nil {
-		return "", "", fmt.Errorf("user %s found", userId)
+		return "", "", fmt.Errorf("the user %s is not found", userId)
 	}
 
 	application, err := GetApplicationByUser(user)
@@ -279,7 +279,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	}
 
 	if application == nil {
-		return "", "", fmt.Errorf("application for user %s found", userId)
+		return "", "", fmt.Errorf("the application for user %s is not found", userId)
 	}
 
 	samlResponse, err := NewSamlResponse11(user, request.RequestID, host)

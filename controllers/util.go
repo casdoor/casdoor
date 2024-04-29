@@ -96,7 +96,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 		return nil, false
 	}
 
-	if strings.HasPrefix(userId, "app/") {
+	if object.IsAppUser(userId) {
 		tmpUserId := c.Input().Get("userId")
 		if tmpUserId != "" {
 			userId = tmpUserId
@@ -127,6 +127,12 @@ func (c *ApiController) RequireAdmin() (string, bool) {
 	if user.Owner == "built-in" {
 		return "", true
 	}
+
+	if !user.IsAdmin {
+		c.ResponseError(c.T("general:this operation requires administrator to perform"))
+		return "", false
+	}
+
 	return user.Owner, true
 }
 
@@ -136,7 +142,7 @@ func (c *ApiController) IsOrgAdmin() (bool, bool) {
 		return false, true
 	}
 
-	if strings.HasPrefix(userId, "app/") {
+	if object.IsAppUser(userId) {
 		return true, true
 	}
 

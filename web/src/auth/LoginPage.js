@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from "react";
+import React, {Suspense, lazy} from "react";
 import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
@@ -36,6 +36,7 @@ import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
+const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class LoginPage extends React.Component {
       validEmail: false,
       enableCaptchaModal: CaptchaRule.Never,
       openCaptchaModal: false,
+      openFaceRecognitionModal: false,
       verifyCaptcha: undefined,
       samlResponse: "",
       relayState: "",
@@ -214,6 +216,7 @@ class LoginPage extends React.Component {
       }
       case "WebAuthn": return "webAuthn";
       case "LDAP": return "ldap";
+      case "Face ID": return "faceId";
       }
     }
 
@@ -263,6 +266,8 @@ class LoginPage extends React.Component {
       values["signinMethod"] = "WebAuthn";
     } else if (this.state.loginMethod === "ldap") {
       values["signinMethod"] = "LDAP";
+    } else if (this.state.loginMethod === "faceId") {
+      values["signinMethod"] = "Face ID";
     }
     const oAuthParams = Util.getOAuthGetParameters();
 
@@ -338,6 +343,31 @@ class LoginPage extends React.Component {
       }
 
       this.signInWithWebAuthn(username, values);
+      return;
+    }
+    if (this.state.loginMethod === "faceId") {
+      let username = this.state.username;
+      if (username === null || username === "") {
+        username = values["username"];
+      }
+      const application = this.getApplicationObj();
+      fetch(`${Setting.ServerUrl}/api/faceid-signin-begin?owner=${application.organization}&name=${username}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Accept-Language": Setting.getAcceptLanguage(),
+        },
+      }).then(res => res.json())
+        .then((res) => {
+          if (res.status === "error") {
+            Setting.showMessage("error", res.msg);
+            return;
+          }
+          this.setState({
+            openFaceRecognitionModal: true,
+            values: values,
+          });
+        });
       return;
     }
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -502,7 +532,7 @@ class LoginPage extends React.Component {
     if (signinItem.name === "Logo") {
       return (
         <div className="login-logo-box">
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             Setting.renderHelmet(application)
           }
@@ -513,8 +543,8 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Back button") {
       return (
-        <div>
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+        <div className="back-button">
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             this.renderBackButton()
           }
@@ -532,24 +562,25 @@ class LoginPage extends React.Component {
 
       return (
         <div className="login-languages">
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <LanguageSelect languages={application.organizationObj.languages} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderMethodChoiceBox()}
         </div>
       )
       ;
     } else if (signinItem.name === "Username") {
       return (
-        <div className="login-username">
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+        <div>
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item
             name="username"
+            className="login-username"
             rules={[
               {
                 required: true,
@@ -607,6 +638,7 @@ class LoginPage extends React.Component {
 
             <Input
               id="input"
+              className="login-username-input"
               prefix={<UserOutlined className="site-form-item-icon" />}
               placeholder={this.getPlaceholder()}
               onChange={e => {
@@ -621,14 +653,14 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Password") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderPasswordOrCodeInput()}
         </div>
       );
     } else if (signinItem.name === "Forgot password?") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <div className="login-forget-password">
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}}>
@@ -646,7 +678,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Login button") {
       return (
         <Form.Item className="login-button-box">
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
             type="primary"
             htmlType="submit"
@@ -654,9 +686,29 @@ class LoginPage extends React.Component {
           >
             {
               this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
-                i18next.t("login:Sign In")
+                this.state.loginMethod === "faceId" ? i18next.t("login:Sign in with Face ID") :
+                  i18next.t("login:Sign In")
             }
           </Button>
+          {
+            this.state.loginMethod === "faceId" ?
+              <Suspense fallback={null}>
+                <FaceRecognitionModal
+                  visible={this.state.openFaceRecognitionModal}
+                  onOk={(faceId) => {
+                    const values = this.state.values;
+                    values["faceId"] = faceId;
+
+                    this.login(values);
+                    this.setState({openFaceRecognitionModal: false});
+                  }}
+                  onCancel={() => this.setState({openFaceRecognitionModal: false})}
+                />
+              </Suspense>
+              :
+              <>
+              </>
+          }
           {
             this.renderCaptchaModal(application)
           }
@@ -670,7 +722,7 @@ class LoginPage extends React.Component {
 
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
@@ -690,7 +742,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Signup link") {
       return (
         <div style={{width: "100%"}} className="login-signup-link">
-          <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderFooter(application)}
         </div>
       );
@@ -721,7 +773,7 @@ class LoginPage extends React.Component {
       );
     }
 
-    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application);
+    const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -975,12 +1027,14 @@ class LoginPage extends React.Component {
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
-          <div className="login-password">
+          <div>
             <Form.Item
               name="password"
+              className="login-password"
               rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
             >
               <Input.Password
+                className="login-password-input"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder={i18next.t("general:Password")}
@@ -1029,12 +1083,18 @@ class LoginPage extends React.Component {
       [generateItemKey("Verification code", "Phone only"), {label: i18next.t("login:Verification code"), key: "verificationCodePhone"}],
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
+      [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
       if (item) {
-        const label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
+        let label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
+
+        if (application?.signinMethods?.length >= 4 && label === "Verification code") {
+          label = "Code";
+        }
+
         items.push({label: label, key: item.key});
       }
     });
@@ -1117,7 +1177,7 @@ class LoginPage extends React.Component {
     };
 
     return (
-      <div style={{height: 300}}>
+      <div style={{height: 300, minWidth: 320}}>
         {renderChoiceBox()}
       </div>
     );
@@ -1139,8 +1199,7 @@ class LoginPage extends React.Component {
   renderBackButton() {
     if (this.state.orgChoiceMode === "None" || this.props.preview === "auto") {
       return (
-        <Button type="text" size="large" icon={<ArrowLeftOutlined />}
-          className="back-button"
+        <Button className="back-inner-button" type="text" size="large" icon={<ArrowLeftOutlined />}
           onClick={() => history.back()}>
         </Button>
       );

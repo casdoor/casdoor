@@ -172,23 +172,23 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     const customAStyle = {display: "block", height: "55px", color: "#000"};
     const customButtonStyle = {display: "flex", alignItems: "center", width: "calc(100% - 10px)", height: "50px", margin: "5px", padding: "0 10px", backgroundColor: "transparent", boxShadow: "0px 1px 3px rgba(0,0,0,0.5)", border: "0px", borderRadius: "3px", cursor: "pointer"};
     const customImgStyle = {justfyContent: "space-between"};
-    const customSpanStyle = {textAlign: "center", lineHeight: "50px", width: "100%", fontSize: "19px"};
+    const customSpanStyle = {textAlign: "center", width: "100%", fontSize: "19px"};
     if (provider.category === "OAuth") {
       return (
         <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")} style={customAStyle}>
-          <button style={customButtonStyle}>
+          <div style={customButtonStyle}>
             <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={customImgStyle} />
             <span style={customSpanStyle}>{text}</span>
-          </button>
+          </div>
         </a>
       );
     } else if (provider.category === "SAML") {
       return (
         <a key={provider.displayName} onClick={() => goToSamlUrl(provider, location)} style={customAStyle}>
-          <button style={customButtonStyle}>
+          <div style={customButtonStyle}>
             <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={customImgStyle} />
             <span style={customSpanStyle}>{text}</span>
-          </button>
+          </div>
         </a>
       );
     }

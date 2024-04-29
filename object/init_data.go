@@ -303,7 +303,9 @@ func initDefinedUser(user *User) {
 	}
 	user.CreatedTime = util.GetCurrentTime()
 	user.Id = util.GenerateId()
-	user.Properties = make(map[string]string)
+	if user.Properties == nil {
+		user.Properties = make(map[string]string)
+	}
 	_, err = AddUser(user)
 	if err != nil {
 		panic(err)

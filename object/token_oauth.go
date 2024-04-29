@@ -288,7 +288,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}, nil
 }
 
-func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
+func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {
 		return nil, err
@@ -319,6 +319,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		token, tokenError, err = GetPasswordToken(application, username, password, scope, host)
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
+	case "token", "id_token": // Implicit Grant
+		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 		if err != nil {
@@ -681,6 +683,33 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 	return token, nil, nil
 }
 
+// GetImplicitToken
+// Implicit flow
+func GetImplicitToken(application *Application, username string, scope string, nonce string, host string) (*Token, *TokenError, error) {
+	user, err := GetUserByFields(application.Organization, username)
+	if err != nil {
+		return nil, nil, err
+	}
+	if user == nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user does not exist",
+		}, nil
+	}
+	if user.IsForbidden {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: "the user is forbidden to sign in, please contact the administrator",
+		}, nil
+	}
+
+	token, err := GetTokenByUser(application, user, scope, nonce, host)
+	if err != nil {
+		return nil, nil, err
+	}
+	return token, nil, nil
+}
+
 // GetTokenByUser
 // Implicit flow
 func GetTokenByUser(application *Application, user *User, scope string, nonce string, host string) (*Token, error) {
@@ -814,7 +843,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		Code:         session.SessionKey, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
-		ExpiresIn:    application.ExpireInHours * 60,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        "",
 		TokenType:    "Bearer",
 		CodeIsUsed:   true,
@@ -824,4 +853,21 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		return nil, nil, err
 	}
 	return token, nil, nil
+}
+
+func GetAccessTokenByUser(user *User, host string) (string, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return "", err
+	}
+	if application == nil {
+		return "", fmt.Errorf("the application for user %s is not found", user.Id)
+	}
+
+	token, err := GetTokenByUser(application, user, "profile", "", host)
+	if err != nil {
+		return "", err
+	}
+
+	return token.AccessToken, nil
 }

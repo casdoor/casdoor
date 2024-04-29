@@ -410,7 +410,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 	}
 
 	hasPermission := false
-	if strings.HasPrefix(requestUserId, "app/") {
+	if IsAppUser(requestUserId) {
 		hasPermission = true
 	} else {
 		requestUser, err := GetUser(requestUserId)
