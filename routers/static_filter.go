@@ -59,7 +59,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	scope := ctx.Input.Query("scope")
 	state := ctx.Input.Query("state")
 	nonce := ""
-	codeChallenge := ""
+	codeChallenge := ctx.Input.Query("code_challenge")
 	if clientId == "" || responseType != "code" || redirectUri == "" {
 		return "", nil
 	}
