@@ -295,7 +295,7 @@ func (c *ApiController) SendVerificationCode() {
 			vform.CountryCode = mfaProps.CountryCode
 		}
 
-		provider, err = application.GetSmsProvider(vform.Method)
+		provider, err = application.GetSmsProvider(vform.Method, vform.CountryCode)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
