@@ -13,8 +13,11 @@
 // limitations under the License.
 
 import {Select} from "antd";
+import i18next from "i18next";
 import * as Setting from "../../Setting";
 import React from "react";
+
+const {Option} = Select;
 
 export const CountryCodeSelect = (props) => {
   const {onChange, style, disabled, initValue} = props;
@@ -47,6 +50,13 @@ export const CountryCodeSelect = (props) => {
       onChange={handleOnChange}
       filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
     >
+      {
+        props.hasDefault ? (<Option key={"all"} value={"all"} label={i18next.t("organization:All")} text={"organization:All"} >
+          <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
+            {i18next.t("organization:All")}
+          </div>
+        </Option>) : null
+      }
       {
         Setting.getCountryCodeData(countryCodes).map((country) => Setting.getCountryCodeOption(country))
       }

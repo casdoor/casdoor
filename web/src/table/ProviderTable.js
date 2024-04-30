@@ -15,6 +15,7 @@
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
+import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import * as Provider from "../auth/Provider";
@@ -27,6 +28,11 @@ class ProviderTable extends React.Component {
     this.state = {
       classes: props,
     };
+  }
+
+  getUserOrganization() {
+    window.console.log(this.props.application?.organizationObj);
+    return this.props.application?.organizationObj;
   }
 
   updateTable(table) {
@@ -107,6 +113,29 @@ class ProviderTable extends React.Component {
         render: (text, record, index) => {
           const provider = Setting.getArrayItem(this.props.providers, "name", record.name);
           return Provider.getProviderLogoWidget(provider);
+        },
+      },
+      {
+        title: i18next.t("user:Country/Region"),
+        dataIndex: "countryCode",
+        key: "countryCode",
+        width: "80px",
+        render: (text, record, index) => {
+          if (record.provider?.category !== "SMS") {
+            return null;
+          }
+
+          return (
+            <CountryCodeSelect
+              style={{width: "100%"}}
+              hasDefault={true}
+              initValue={text ? text : "all"}
+              onChange={(value) => {
+                this.updateField(table, index, "countryCode", value);
+              }}
+              countryCodes={this.getUserOrganization()?.countryCodes}
+            />
+          );
         },
       },
       {
