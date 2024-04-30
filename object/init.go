@@ -409,7 +409,7 @@ func initBuiltInPermission() {
 		Groups:       []string{},
 		Roles:        []string{},
 		Domains:      []string{},
-		Model:        "model-built-in",
+		Model:        "user-model-built-in",
 		Adapter:      "",
 		ResourceType: "Application",
 		Resources:    []string{"app-built-in"},
