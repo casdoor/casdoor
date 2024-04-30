@@ -31,7 +31,6 @@ class ProviderTable extends React.Component {
   }
 
   getUserOrganization() {
-    window.console.log(this.props.application?.organizationObj);
     return this.props.application?.organizationObj;
   }
 
@@ -129,7 +128,8 @@ class ProviderTable extends React.Component {
             <CountryCodeSelect
               style={{width: "100%"}}
               hasDefault={true}
-              initValue={text ? text : "all"}
+              mode={"multiple"}
+              initValue={text ? text : ["all"]}
               onChange={(value) => {
                 this.updateField(table, index, "countryCode", value);
               }}

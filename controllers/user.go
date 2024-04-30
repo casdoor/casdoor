@@ -183,7 +183,7 @@ func (c *ApiController) GetUser() {
 		case email != "":
 			user, err = object.GetUserByEmail(owner, email)
 		case phone != "":
-			user, err = object.GetUserByPhone(owner, phone)
+			user, err = object.GetUserByPhone(owner, phone, "")
 		case userId != "":
 			user = userFromUserId
 		default:

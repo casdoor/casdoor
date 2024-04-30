@@ -20,7 +20,7 @@ import React from "react";
 const {Option} = Select;
 
 export const CountryCodeSelect = (props) => {
-  const {onChange, style, disabled, initValue} = props;
+  const {onChange, style, disabled, initValue, mode} = props;
   const countryCodes = props.countryCodes ?? [];
   const [value, setValue] = React.useState("");
 
@@ -45,6 +45,7 @@ export const CountryCodeSelect = (props) => {
       style={style}
       disabled={disabled}
       value={value}
+      mode={mode}
       dropdownMatchSelectWidth={false}
       optionLabelProp={"label"}
       onChange={handleOnChange}

@@ -17,6 +17,7 @@ import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
+import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
 import * as AuthBackend from "./AuthBackend";
@@ -61,6 +62,8 @@ class LoginPage extends React.Component {
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
+      enableCountryCode: false,
+      countryCode: "US",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -576,79 +579,115 @@ class LoginPage extends React.Component {
       ;
     } else if (signinItem.name === "Username") {
       return (
-        <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          <Form.Item
-            name="username"
-            className="login-username"
-            rules={[
-              {
-                required: true,
-                message: () => {
-                  switch (this.state.loginMethod) {
-                  case "verificationCodeEmail":
-                    return i18next.t("login:Please input your Email!");
-                  case "verificationCodePhone":
-                    return i18next.t("login:Please input your Phone!");
-                  case "ldap":
-                    return i18next.t("login:Please input your LDAP username!");
-                  default:
-                    return i18next.t("login:Please input your Email or Phone!");
-                  }
+        <Form.Item className="login-username">
+          <div
+            dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <Input.Group compact>
+            {
+              ["verificationCode", "verificationCodeEmail", "verificationCodePhone"].includes(this.state.loginMethod) && this.state.enableCountryCode ? (
+                <Form.Item
+                  name="countryCode"
+                  noStyle>
+                  <CountryCodeSelect
+                    style={{width: "30%"}}
+                    countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                    onChange={(value) => {
+                      this.setState({
+                        countryCode: value,
+                      });
+                    }}
+                  />
+                </Form.Item>) : null
+            }
+            <Form.Item
+              name="username"
+              noStyle
+              rules={[
+                {
+                  required: true,
+                  message: () => {
+                    switch (this.state.loginMethod) {
+                    case "verificationCodeEmail":
+                      return i18next.t("login:Please input your Email!");
+                    case "verificationCodePhone":
+                      return i18next.t("login:Please input your Phone!");
+                    case "ldap":
+                      return i18next.t("login:Please input your LDAP username!");
+                    default:
+                      return i18next.t("login:Please input your Email or Phone!");
+                    }
+                  },
                 },
-              },
-              {
-                validator: (_, value) => {
-                  if (value === "") {
+                {
+                  validator: (_, value) => {
+                    if (value === "") {
+                      return Promise.resolve();
+                    }
+
+                    if (this.state.loginMethod === "verificationCode") {
+                      if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
+                        this.setState({validEmailOrPhone: false});
+                        return Promise.reject(i18next.t("login:The input is not valid Email or phone number!"));
+                      }
+
+                      if (Setting.isValidEmail(value)) {
+                        this.setState({validEmail: true});
+                      } else {
+                        this.setState({validEmail: false});
+                      }
+                    } else if (this.state.loginMethod === "verificationCodeEmail") {
+                      if (!Setting.isValidEmail(value)) {
+                        this.setState({validEmail: false});
+                        this.setState({validEmailOrPhone: false});
+                        return Promise.reject(i18next.t("login:The input is not valid Email!"));
+                      } else {
+                        this.setState({validEmail: true});
+                      }
+                    } else if (this.state.loginMethod === "verificationCodePhone") {
+                      if (!Setting.isValidPhone(value)) {
+                        this.setState({validEmailOrPhone: false});
+                        return Promise.reject(i18next.t("login:The input is not valid phone number!"));
+                      }
+                    }
+
+                    this.setState({validEmailOrPhone: true});
                     return Promise.resolve();
-                  }
-
-                  if (this.state.loginMethod === "verificationCode") {
-                    if (!Setting.isValidEmail(value) && !Setting.isValidPhone(value)) {
-                      this.setState({validEmailOrPhone: false});
-                      return Promise.reject(i18next.t("login:The input is not valid Email or phone number!"));
-                    }
-
-                    if (Setting.isValidEmail(value)) {
-                      this.setState({validEmail: true});
-                    } else {
-                      this.setState({validEmail: false});
-                    }
-                  } else if (this.state.loginMethod === "verificationCodeEmail") {
-                    if (!Setting.isValidEmail(value)) {
-                      this.setState({validEmail: false});
-                      this.setState({validEmailOrPhone: false});
-                      return Promise.reject(i18next.t("login:The input is not valid Email!"));
-                    } else {
-                      this.setState({validEmail: true});
-                    }
-                  } else if (this.state.loginMethod === "verificationCodePhone") {
-                    if (!Setting.isValidPhone(value)) {
-                      this.setState({validEmailOrPhone: false});
-                      return Promise.reject(i18next.t("login:The input is not valid phone number!"));
-                    }
-                  }
-
-                  this.setState({validEmailOrPhone: true});
-                  return Promise.resolve();
+                  },
                 },
-              },
-            ]}
-          >
+              ]}
+            >
+              <Input
+                id="input"
+                className="login-username-input"
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                style={{textAlign: "left", width: ["verificationCode", "verificationCodeEmail", "verificationCodePhone"].includes(this.state.loginMethod) && this.state.enableCountryCode ? "70%" : "100%"}}
+                placeholder={this.getPlaceholder()}
+                onChange={e => {
+                  if (["verificationCode", "verificationCodeEmail", "verificationCodePhone"].includes(this.state.loginMethod)) {
+                    const reg = /^[0-9]*$/;
+                    if (!reg.test(e.target.value) || e.target.value.indexOf("@") !== -1 || !e.target.value) {
+                      this.setState({
+                        enableCountryCode: false,
+                      });
+                    } else {
+                      this.setState({
+                        enableCountryCode: true,
+                      });
+                    }
+                  } else {
+                    this.setState({
+                      enableCountryCode: false,
+                    });
+                  }
+                  this.setState({
+                    username: e.target.value,
+                  });
+                }}
+              />
+            </Form.Item>
 
-            <Input
-              id="input"
-              className="login-username-input"
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={this.getPlaceholder()}
-              onChange={e => {
-                this.setState({
-                  username: e.target.value,
-                });
-              }}
-            />
-          </Form.Item>
-        </div>
+          </Input.Group>
+        </Form.Item>
       );
     } else if (signinItem.name === "Password") {
       return (
@@ -1056,6 +1095,7 @@ class LoginPage extends React.Component {
                 disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
                 method={"login"}
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+                countryCode={this.state.countryCode}
                 application={application}
               />
             </Form.Item>

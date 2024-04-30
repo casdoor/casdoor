@@ -359,7 +359,7 @@ func (c *ApiController) Login() {
 			}
 
 		} else if authForm.Password == "" {
-			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
+			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username, authForm.CountryCode); err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {

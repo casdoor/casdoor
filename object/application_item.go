@@ -54,8 +54,15 @@ func (application *Application) GetProviderByCategoryAndRule(category string, me
 	}
 
 	for _, providerItem := range application.Providers {
-		if (providerItem.Rule == method || (providerItem.Rule == "all" || providerItem.Rule == "" || providerItem.Rule == "None")) &&
-			(providerItem.CountryCode == countryCode || providerItem.CountryCode == "all" || providerItem.CountryCode == "") {
+		includeCode := false
+		if providerItem.CountryCode != nil {
+			for _, item := range providerItem.CountryCode {
+				if item == countryCode || item == "all" || item == "" {
+					includeCode = true
+				}
+			}
+		}
+		if (providerItem.Rule == method || (providerItem.Rule == "all" || providerItem.Rule == "" || providerItem.Rule == "None")) && includeCode {
 			if provider, ok := m[providerItem.Name]; ok {
 				return provider, nil
 			}

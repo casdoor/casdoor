@@ -460,12 +460,15 @@ func GetUserByEmailOnly(email string) (*User, error) {
 	}
 }
 
-func GetUserByPhone(owner string, phone string) (*User, error) {
+func GetUserByPhone(owner string, phone string, countryCode string) (*User, error) {
 	if owner == "" || phone == "" {
 		return nil, nil
 	}
 
 	user := User{Owner: owner, Phone: phone}
+	if countryCode != "" {
+		user.CountryCode = countryCode
+	}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err

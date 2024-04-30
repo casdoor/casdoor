@@ -266,7 +266,7 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = user.Phone
 			}
 
-			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
+			if user, err = object.GetUserByPhone(organization.Name, vform.Dest, vform.CountryCode); err != nil {
 				c.ResponseError(err.Error())
 				return
 			} else if user == nil {

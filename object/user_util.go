@@ -56,7 +56,7 @@ func HasUserByField(organizationName string, field string, value string) bool {
 	return user != nil
 }
 
-func GetUserByFields(organization string, field string) (*User, error) {
+func GetUserByFields(organization string, field string, extraField ...string) (*User, error) {
 	// check username
 	user, err := GetUserByField(organization, "name", field)
 	if err != nil || user != nil {
@@ -72,9 +72,16 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	}
 
 	// check phone
-	user, err = GetUserByField(organization, "phone", field)
-	if user != nil || err != nil {
-		return user, err
+	if len(extraField) == 0 {
+		user, err = GetUserByField(organization, "phone", field)
+		if user != nil || err != nil {
+			return user, err
+		}
+	} else {
+		user, err = GetUserByPhone(organization, field, extraField[0])
+		if user != nil || err != nil {
+			return user, err
+		}
 	}
 
 	// check user ID
