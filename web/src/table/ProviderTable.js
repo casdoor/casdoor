@@ -129,7 +129,7 @@ class ProviderTable extends React.Component {
               style={{width: "100%"}}
               hasDefault={true}
               mode={"multiple"}
-              initValue={text ? text : ["all"]}
+              initValue={text ? text : ["All"]}
               onChange={(value) => {
                 this.updateField(table, index, "countryCode", value);
               }}
