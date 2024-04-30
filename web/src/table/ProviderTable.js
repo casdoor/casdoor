@@ -118,7 +118,7 @@ class ProviderTable extends React.Component {
         title: i18next.t("user:Country/Region"),
         dataIndex: "countryCode",
         key: "countryCode",
-        width: "80px",
+        width: "140px",
         render: (text, record, index) => {
           if (record.provider?.category !== "SMS") {
             return null;
@@ -227,7 +227,7 @@ class ProviderTable extends React.Component {
         title: i18next.t("application:Rule"),
         dataIndex: "rule",
         key: "rule",
-        width: "120px",
+        width: "160px",
         render: (text, record, index) => {
           if (record.provider?.type === "Google") {
             if (text === "None") {
