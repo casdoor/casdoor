@@ -72,8 +72,7 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	}
 
 	// check phone
-
-	user, err = GetUserByPhone(organization, field)
+	user, err = GetUserByField(organization, "phone", field)
 	if user != nil || err != nil {
 		return user, err
 	}
