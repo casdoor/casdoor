@@ -39,11 +39,11 @@ func (application *Application) GetProviderByCategory(category string) (*Provide
 }
 
 func isProviderItemCountryCodeMatched(providerItem *ProviderItem, countryCode string) bool {
-	if len(providerItem.CountryCode) == 0 {
+	if len(providerItem.CountryCodes) == 0 {
 		return true
 	}
 
-	for _, countryCode2 := range providerItem.CountryCode {
+	for _, countryCode2 := range providerItem.CountryCodes {
 		if countryCode2 == "" || countryCode2 == "All" || countryCode2 == "all" || countryCode2 == countryCode {
 			return true
 		}
