@@ -84,7 +84,7 @@ class ProviderTable extends React.Component {
 
                 // If the provider is email or SMS, set the rule to "all" instead of the default "None"
                 if (provider.category === "Email" || provider.category === "SMS") {
-                  this.updateField(table, index, "rule", "all");
+                  this.updateField(table, index, "rule", "All");
                 }
               }} >
               {
@@ -259,12 +259,12 @@ class ProviderTable extends React.Component {
             );
           } else if (record.provider?.category === "SMS" || record.provider?.category === "Email") {
             if (text === "None") {
-              text = "all";
+              text = "All";
             }
             return (
               <Select virtual={false} style={{width: "100%"}}
                 value={text}
-                defaultValue="all"
+                defaultValue="All"
                 onChange={value => {
                   this.updateField(table, index, "rule", value);
                 }}>
