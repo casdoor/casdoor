@@ -41,7 +41,7 @@ class ProductEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getProduct();
     this.getOrganizations();
-    this.getPaymentProviders();
+    this.getPaymentProviders(this.state.organizationName);
   }
 
   getProduct() {
@@ -67,8 +67,8 @@ class ProductEditPage extends React.Component {
       });
   }
 
-  getPaymentProviders() {
-    ProviderBackend.getProviders(this.props.account.owner)
+  getPaymentProviders(organizationName) {
+    ProviderBackend.getProviders(organizationName)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
