@@ -116,8 +116,8 @@ class ProviderTable extends React.Component {
       },
       {
         title: i18next.t("user:Country/Region"),
-        dataIndex: "countryCode",
-        key: "countryCode",
+        dataIndex: "countryCodes",
+        key: "countryCodes",
         width: "140px",
         render: (text, record, index) => {
           if (record.provider?.category !== "SMS") {
@@ -131,7 +131,7 @@ class ProviderTable extends React.Component {
               mode={"multiple"}
               initValue={text ? text : ["All"]}
               onChange={(value) => {
-                this.updateField(table, index, "countryCode", value);
+                this.updateField(table, index, "countryCodes", value);
               }}
               countryCodes={this.getUserOrganization()?.countryCodes}
             />
