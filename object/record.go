@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -51,6 +52,8 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	object := ""
 	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
 		object = string(ctx.Input.RequestBody)
+		passwordRegex := regexp.MustCompile("\"password\":\".+\"")
+		object = passwordRegex.ReplaceAllString(object, "\"password\":\"***\"")
 	}
 
 	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
@@ -98,6 +101,9 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	record.Owner = record.Organization
+
+	passwordRegex := regexp.MustCompile("\"password\":\".+\"")
+	record.Object = passwordRegex.ReplaceAllString(record.Object, "\"password\":\"***\"")
 
 	errWebhook := SendWebhooks(record)
 	if errWebhook == nil {
