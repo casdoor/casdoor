@@ -26,8 +26,10 @@ import (
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
-var logPostOnly bool
-var passwordRegex *regexp.Regexp
+var (
+	logPostOnly   bool
+	passwordRegex *regexp.Regexp
+)
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
