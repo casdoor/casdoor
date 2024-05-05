@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -25,10 +26,14 @@ import (
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
-var logPostOnly bool
+var (
+	logPostOnly   bool
+	passwordRegex *regexp.Regexp
+)
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
+	passwordRegex = regexp.MustCompile("\"password\":\".+\"")
 }
 
 type Record struct {
@@ -38,6 +43,10 @@ type Record struct {
 type Response struct {
 	Status string `json:"status"`
 	Msg    string `json:"msg"`
+}
+
+func maskPassword(recordString string) string {
+	return passwordRegex.ReplaceAllString(recordString, "\"password\":\"***\"")
 }
 
 func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
@@ -51,6 +60,7 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	object := ""
 	if ctx.Input.RequestBody != nil && len(ctx.Input.RequestBody) != 0 {
 		object = string(ctx.Input.RequestBody)
+		object = maskPassword(object)
 	}
 
 	respBytes, err := json.Marshal(ctx.Input.Data()["json"])
@@ -98,6 +108,8 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	record.Owner = record.Organization
+
+	record.Object = maskPassword(record.Object)
 
 	errWebhook := SendWebhooks(record)
 	if errWebhook == nil {
