@@ -9,7 +9,7 @@ require (
 	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
-	github.com/casdoor/go-sms-sender v0.20.0
+	github.com/casdoor/go-sms-sender v0.22.0
 	github.com/casdoor/gomail/v2 v2.0.1
 	github.com/casdoor/notify v0.45.0
 	github.com/casdoor/oss v1.6.0
@@ -45,7 +45,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
 	github.com/russellhaering/goxmldsig v1.2.0
-	github.com/sendgrid/sendgrid-go v3.14.0+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.14.0+incompatible
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/siddontang/go-log v0.0.0-20190221022429-1e957dd83bed

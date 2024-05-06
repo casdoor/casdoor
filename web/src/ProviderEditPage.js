@@ -209,6 +209,8 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Public key"), i18next.t("provider:Public key - Tooltip"));
       } else if (provider.type === "Msg91 SMS" || provider.type === "Infobip SMS" || provider.type === "OSON SMS") {
         return Setting.getLabel(i18next.t("provider:Sender Id"), i18next.t("provider:Sender Id - Tooltip"));
+      } else if (provider.type === "SendCloud SMS") {
+        return "SMS_USER";
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"));
       }
@@ -260,6 +262,8 @@ class ProviderEditPage extends React.Component {
         return Setting.getLabel(i18next.t("provider:Auth Key"), i18next.t("provider:Auth Key - Tooltip"));
       } else if (provider.type === "Infobip SMS") {
         return Setting.getLabel(i18next.t("provider:Api Key"), i18next.t("provider:Api Key - Tooltip"));
+      } else if (provider.type === "SendCloud SMS") {
+        return "SMS_KEY";
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
       }
@@ -1089,7 +1093,7 @@ class ProviderEditPage extends React.Component {
             </React.Fragment>
           ) : this.state.provider.category === "SMS" ? (
             <React.Fragment>
-              {["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS"].includes(this.state.provider.type) ?
+              {["Custom HTTP SMS", "Twilio SMS", "Amazon SNS", "Azure ACS", "Msg91 SMS", "Infobip SMS", "SendCloud SMS"].includes(this.state.provider.type) ?
                 null :
                 (<Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
