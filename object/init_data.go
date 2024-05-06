@@ -266,7 +266,7 @@ func initDefinedOrganization(organization *Organization) {
 	}
 
 	if existed != nil {
-		affected, err := DeleteOrganization(organization)
+		affected, err := deleteOrganization(organization)
 		if err != nil {
 			panic(err)
 		}
@@ -290,7 +290,7 @@ func initDefinedApplication(application *Application) {
 	}
 
 	if existed != nil {
-		affected, err := DeleteApplication(application)
+		affected, err := deleteApplication(application)
 		if err != nil {
 			panic(err)
 		}

@@ -670,17 +670,21 @@ func AddApplication(application *Application) (bool, error) {
 	return affected != 0, nil
 }
 
-func DeleteApplication(application *Application) (bool, error) {
-	if application.Name == "app-built-in" {
-		return false, nil
-	}
-
+func deleteApplication(application *Application) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
+}
+
+func DeleteApplication(application *Application) (bool, error) {
+	if application.Name == "app-built-in" {
+		return false, nil
+	}
+
+	return deleteApplication(application)
 }
 
 func (application *Application) GetId() string {

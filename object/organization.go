@@ -241,17 +241,21 @@ func AddOrganization(organization *Organization) (bool, error) {
 	return affected != 0, nil
 }
 
-func DeleteOrganization(organization *Organization) (bool, error) {
-	if organization.Name == "built-in" {
-		return false, nil
-	}
-
+func deleteOrganization(organization *Organization) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{organization.Owner, organization.Name}).Delete(&Organization{})
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
+}
+
+func DeleteOrganization(organization *Organization) (bool, error) {
+	if organization.Name == "built-in" {
+		return false, nil
+	}
+
+	return deleteOrganization(organization)
 }
 
 func GetOrganizationByUser(user *User) (*Organization, error) {
