@@ -133,7 +133,7 @@ func AddPlan(plan *Plan) (bool, error) {
 }
 
 func DeletePlan(plan *Plan) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{plan.Owner, plan.Name}).Delete(plan)
+	affected, err := ormer.Engine.ID(core.PK{plan.Owner, plan.Name}).Delete(Plan{})
 	if err != nil {
 		return false, err
 	}
