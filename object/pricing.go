@@ -140,7 +140,7 @@ func AddPricing(pricing *Pricing) (bool, error) {
 }
 
 func DeletePricing(pricing *Pricing) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{pricing.Owner, pricing.Name}).Delete(pricing)
+	affected, err := ormer.Engine.ID(core.PK{pricing.Owner, pricing.Name}).Delete(Pricing{})
 	if err != nil {
 		return false, err
 	}

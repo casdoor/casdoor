@@ -666,7 +666,7 @@ func initDefinedPlan(plan *Plan) {
 			panic(err)
 		}
 		if !affected {
-			panic("Fail to delete enforcer")
+			panic("Fail to delete plan")
 		}
 	}
 	plan.CreatedTime = util.GetCurrentTime()
@@ -677,7 +677,7 @@ func initDefinedPlan(plan *Plan) {
 }
 
 func initDefinedPricing(pricing *Pricing) {
-	existed, err := getPlan(pricing.Owner, pricing.Name)
+	existed, err := getPricing(pricing.Owner, pricing.Name)
 	if err != nil {
 		panic(err)
 	}
@@ -719,6 +719,7 @@ func initDefinedInvitation(invitation *Invitation) {
 }
 
 func initDefinedRecord(record *casvisorsdk.Record) {
+	record.Id = 0
 	record.CreatedTime = util.GetCurrentTime()
 	_ = AddRecord(record)
 }
