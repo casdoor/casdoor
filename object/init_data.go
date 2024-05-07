@@ -311,7 +311,7 @@ func initDefinedUser(user *User) {
 		panic(err)
 	}
 	if existed != nil {
-		affected, err := DeleteUser(user)
+		affected, err := deleteUser(user)
 		if err != nil {
 			panic(err)
 		}
@@ -423,7 +423,7 @@ func initDefinedPermission(permission *Permission) {
 	}
 
 	if existed != nil {
-		affected, err := DeletePermission(permission)
+		affected, err := deletePermission(permission)
 		if err != nil {
 			panic(err)
 		}
@@ -511,7 +511,7 @@ func initDefinedRole(role *Role) {
 	}
 
 	if existed != nil {
-		affected, err := DeleteRole(role)
+		affected, err := deleteRole(role)
 		if err != nil {
 			panic(err)
 		}
@@ -598,7 +598,7 @@ func initDefinedGroup(group *Group) {
 		panic(err)
 	}
 	if existed != nil {
-		affected, err := DeleteGroup(group)
+		affected, err := deleteGroup(group)
 		if err != nil {
 			panic(err)
 		}
