@@ -262,12 +262,7 @@ func DeleteRole(role *Role) (bool, error) {
 		}
 	}
 
-	affected, err := ormer.Engine.ID(core.PK{role.Owner, role.Name}).Delete(&Role{})
-	if err != nil {
-		return false, err
-	}
-
-	return affected != 0, nil
+	return deleteRole(role)
 }
 
 func (role *Role) GetId() string {

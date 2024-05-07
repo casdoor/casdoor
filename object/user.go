@@ -935,12 +935,7 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	affected, err := ormer.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
-	if err != nil {
-		return false, err
-	}
-
-	return affected != 0, nil
+	return deleteUser(user)
 }
 
 func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {

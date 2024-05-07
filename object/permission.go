@@ -296,12 +296,12 @@ func deletePermission(permission *Permission) (bool, error) {
 }
 
 func DeletePermission(permission *Permission) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{permission.Owner, permission.Name}).Delete(&Permission{})
+	affected, err := deletePermission(permission)
 	if err != nil {
 		return false, err
 	}
 
-	if affected != 0 {
+	if affected {
 		err = removeGroupingPolicies(permission)
 		if err != nil {
 			return false, err
@@ -323,7 +323,7 @@ func DeletePermission(permission *Permission) (bool, error) {
 		}
 	}
 
-	return affected != 0, nil
+	return affected, nil
 }
 
 func getPermissionsByUser(userId string) ([]*Permission, error) {
