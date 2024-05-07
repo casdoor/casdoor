@@ -286,6 +286,15 @@ func AddPermissionsInBatch(permissions []*Permission) (bool, error) {
 	return affected, nil
 }
 
+func deletePermission(permission *Permission) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{permission.Owner, permission.Name}).Delete(&Permission{})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
 func DeletePermission(permission *Permission) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{permission.Owner, permission.Name}).Delete(&Permission{})
 	if err != nil {

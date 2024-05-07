@@ -919,6 +919,15 @@ func AddUsersInBatch(users []*User) (bool, error) {
 	return affected, nil
 }
 
+func deleteUser(user *User) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{user.Owner, user.Name}).Delete(&User{})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
 func DeleteUser(user *User) (bool, error) {
 	// Forced offline the user first
 	_, err := DeleteSession(util.GetSessionId(user.Owner, user.Name, CasdoorApplication))

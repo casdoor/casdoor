@@ -154,6 +154,15 @@ func AddGroups(groups []*Group) (bool, error) {
 	return affected != 0, nil
 }
 
+func deleteGroup(group *Group) (bool, error) {
+	affected, err := ormer.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
 func DeleteGroup(group *Group) (bool, error) {
 	_, err := ormer.Engine.Get(group)
 	if err != nil {
