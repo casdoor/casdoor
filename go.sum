@@ -1003,6 +1003,8 @@ github.com/apache/arrow/go/v10 v10.0.1/go.mod h1:YvhnlEePVnBS4+0z3fhPfUy7W1Ikj0I
 github.com/apache/arrow/go/v11 v11.0.0/go.mod h1:Eg5OsL5H+e299f7u5ssuXsuHQVEGC4xei5aX110hRiI=
 github.com/apache/arrow/go/v12 v12.0.0/go.mod h1:d+tV/eHZZ7Dz7RPrFKtPK02tpr+c9/PEd/zm8mDS9Vg=
 github.com/apache/thrift v0.16.0/go.mod h1:PHK3hniurgQaNMZYaCLEqXKsYK8upmhPbmdP2FXSqgU=
+github.com/apistd/uni-go-sdk v0.0.2 h1:7kqETCOz/rz8AQU55XGzxDFGoFeMgeZL5fGwvxKBZrc=
+github.com/apistd/uni-go-sdk v0.0.2/go.mod h1:eIqYos4IbHgE/rB75r05ypNLahooEMJCrbjXq322b74=
 github.com/appleboy/go-fcm v0.1.5/go.mod h1:MSxZ4LqGRsnywOjnlXJXMqbjZrG4vf+0oHitfC9HRH0=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
@@ -1083,8 +1085,8 @@ github.com/casbin/casbin/v2 v2.77.2 h1:yQinn/w9x8AswiwqwtrXz93VU48R1aYTXdHEx4RI3
 github.com/casbin/casbin/v2 v2.77.2/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
 github.com/casdoor/go-reddit/v2 v2.1.0 h1:kIbfdJ7AA7H0uTQ8s0q4GGZqSS5V9wVE74RrXyD9XPs=
 github.com/casdoor/go-reddit/v2 v2.1.0/go.mod h1:eagkvwlZ4Hcsuc/uQsLHYEulz5jN65SVSwV/AIE7zsc=
-github.com/casdoor/go-sms-sender v0.22.0 h1:K4vj6IZgSESNvs8HchI5CIowvXHNpm7rXOV9QnCTZL4=
-github.com/casdoor/go-sms-sender v0.22.0/go.mod h1:cQs7qqohMJBgIVZebOCB8ko09naG1vzFJEH59VNIscs=
+github.com/casdoor/go-sms-sender v0.23.0 h1:N8+By4JNwyilEcx7cp0QGOepafefM88VwV+o3UEFZio=
+github.com/casdoor/go-sms-sender v0.23.0/go.mod h1:bOm4H8/YfJmEHjBatEVQFOnAf0OOn1B0Wi5B7zDhws0=
 github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR/w=
 github.com/casdoor/gomail/v2 v2.0.1/go.mod h1:VnGPslEAtpix5FjHisR/WKB1qvZDBaujbikxDe9d+2Q=
 github.com/casdoor/notify v0.45.0 h1:OlaFvcQFjGOgA4mRx07M8AH1gvb5xNo21mcqrVGlLgk=
