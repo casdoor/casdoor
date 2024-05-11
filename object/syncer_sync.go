@@ -142,9 +142,11 @@ func (syncer *Syncer) syncUsers() error {
 		}
 	}
 
-	_, err = AddUsersInBatch(newUsers)
-	if err != nil {
-		return err
+	if len(newUsers) != 0 {
+		_, err = AddUsersInBatch(newUsers)
+		if err != nil {
+			return err
+		}
 	}
 
 	if !syncer.IsReadOnly {
