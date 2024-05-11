@@ -15,6 +15,7 @@
 package object
 
 import (
+	"io"
 	"net/http"
 	"strings"
 
@@ -22,7 +23,7 @@ import (
 	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 )
 
-func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *User) error {
+func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *User) (int, string, error) {
 	client := &http.Client{}
 
 	type RecordEx struct {
@@ -38,7 +39,7 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 
 	req, err := http.NewRequest(webhook.Method, webhook.Url, body)
 	if err != nil {
-		return err
+		return 0, "", err
 	}
 
 	req.Header.Set("Content-Type", webhook.ContentType)
@@ -47,6 +48,38 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 		req.Header.Set(header.Name, header.Value)
 	}
 
-	_, err = client.Do(req)
-	return err
+	resp, err := client.Do(req)
+	if resp != nil {
+		defer resp.Body.Close()
+		var respBody []byte
+
+		isChunked := false
+		for _, val := range resp.TransferEncoding {
+			if val == "chunked" {
+				isChunked = true
+			}
+		}
+
+		if resp.ContentLength > 0 {
+			respBody = make([]byte, resp.ContentLength)
+			_, err = resp.Body.Read(respBody)
+		} else if isChunked {
+			data := make([]byte, 8)
+			for {
+				readN, err := resp.Body.Read(data)
+				if readN > 0 {
+					respBody = append(respBody, data...)
+				}
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					panic(err)
+				}
+			}
+		}
+
+		return resp.StatusCode, string(respBody), err
+	}
+	return 0, "", err
 }

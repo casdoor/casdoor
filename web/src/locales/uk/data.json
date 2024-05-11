@@ -80,6 +80,7 @@
     "Only signup": "Тільки реєстрація",
     "Org choice mode": "Режим вибору організації",
     "Org choice mode - Tooltip": "Режим вибору організації – підказка",
+    "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"",
     "Please input your application!": "Будь ласка, введіть свою заявку!",
     "Please input your organization!": "Будь ласка, введіть вашу організацію!",
     "Please select a HTML file": "Виберіть файл HTML",
@@ -229,6 +230,7 @@
     "Email": "Електронна пошта",
     "Email - Tooltip": "Дійсна електронна пошта",
     "Email only": "Лише електронна пошта",
+    "Email or Phone": "Email or Phone",
     "Enable": "Увімкнути",
     "Enable dark logo": "Увімкнути темний логотип",
     "Enable dark logo - Tooltip": "Увімкнути темний логотип",
@@ -311,6 +313,7 @@
     "Phone": "Телефон",
     "Phone - Tooltip": "Номер телефону",
     "Phone only": "Тільки телефон",
+    "Phone or Email": "Phone or Email",
     "Plan": "План",
     "Plan - Tooltip": "План – підказка",
     "Plans": "Плани",
@@ -391,6 +394,7 @@
     "User type": "Тип користувача",
     "User type - Tooltip": "Теги, до яких належить користувач, за умовчанням \"звичайний користувач\"",
     "Users": "Користувачі",
+    "Users - Tooltip": "Users - Tooltip",
     "Users under all organizations": "Користувачі в усіх організаціях",
     "Verifications": "Перевірки",
     "Webhooks": "Веб-хуки",
@@ -473,7 +477,6 @@
     "LDAP username, Email or phone": "Ім’я користувача LDAP, електронна пошта або телефон",
     "Loading": "Завантаження",
     "Logging out...": "Вихід...",
-    "Login button": "Кнопка входу",
     "MetaMask plugin not detected": "Плагін MetaMask не виявлено",
     "Model loading failure": "Помилка завантаження моделі",
     "No account?": "Немає облікового запису?",
@@ -498,6 +501,7 @@
     "Sign in with Face ID": "Увійдіть за допомогою Face ID",
     "Sign in with WebAuthn": "Увійдіть за допомогою WebAuthn",
     "Sign in with {type}": "Увійдіть за допомогою {type}",
+    "Signin button": "Signin button",
     "Signing in...": "Вхід...",
     "Successfully logged in with WebAuthn credentials": "Успішно ввійшли за допомогою облікових даних WebAuthn",
     "The camera is currently in use by another webpage": "Камера зараз використовується іншою веб-сторінкою",
@@ -893,7 +897,8 @@
   "record": {
     "Is triggered": "Спрацьовує",
     "Object": "Об'єкт",
-    "Response": "Відповідь"
+    "Response": "Відповідь",
+    "Status code": "Status code"
   },
   "resource": {
     "Copy Link": "Копіювати посилання",
@@ -941,6 +946,7 @@
     "Please select your country code!": "Виберіть код країни!",
     "Please select your country/region!": "Виберіть свою країну/регіон!",
     "Regex": "Регулярний вираз",
+    "Signup button": "Signup button",
     "Terms of Use": "Умови використання",
     "Terms of Use - Tooltip": "Умови використання, з якими користувачі повинні ознайомитися та погодитися під час реєстрації",
     "Text 1": "Текст 1",
@@ -1162,9 +1168,11 @@
     "Values": "Цінності",
     "Verification code sent": "Код підтвердження надіслано",
     "WebAuthn credentials": "Облікові дані WebAuthn",
+    "You have changed the username, please save your change first before modifying the password": "You have changed the username, please save your change first before modifying the password",
     "input password": "введіть пароль"
   },
   "verification": {
+    "Is used": "Is used",
     "Receiver": "Приймач"
   },
   "webhook": {

@@ -90,6 +90,7 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 		Action:      action,
 		Language:    languageCode,
 		Object:      object,
+		StatusCode:  200,
 		Response:    fmt.Sprintf("{status:\"%s\", msg:\"%s\"}", resp.Status, resp.Msg),
 		IsTriggered: false,
 	}
@@ -108,7 +109,6 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	record.Owner = record.Organization
-
 	record.Object = maskPassword(record.Object)
 
 	errWebhook := SendWebhooks(record)
@@ -248,10 +248,40 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 			}
 		}
 
-		err = sendWebhook(webhook, record, user)
+		statusCode, respBody, err := sendWebhook(webhook, record, user)
+
+		if len(respBody) > 300 {
+			respBody = respBody[0:300]
+		}
+
+		webhookRecord := &casvisorsdk.Record{
+			Owner:        record.Owner,
+			Name:         record.Name,
+			Organization: record.Organization,
+			User:         record.User,
+
+			Method:      webhook.Method,
+			Action:      "send-webhook",
+			RequestUri:  webhook.Url,
+			StatusCode:  statusCode,
+			Response:    respBody,
+			Language:    record.Language,
+			IsTriggered: false,
+		}
+
 		if err != nil {
+			webhookRecord.Response = err.Error()
 			errs = append(errs, err)
-			continue
+		}
+
+		if err != nil || statusCode != 200 {
+			affected, insertError := ormer.Engine.Insert(webhookRecord)
+			if affected == 0 {
+				fmt.Printf("AddRecord() error")
+			}
+			if insertError != nil {
+				fmt.Printf("AddRecord() error: %s", insertError.Error())
+			}
 		}
 	}
 

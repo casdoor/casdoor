@@ -897,7 +897,8 @@
   "record": {
     "Is triggered": "是否触发",
     "Object": "实体",
-    "Response": "响应"
+    "Response": "响应",
+    "Status code": "状态码"
   },
   "resource": {
     "Copy Link": "复制链接",
@@ -1171,6 +1172,7 @@
     "input password": "输入密码"
   },
   "verification": {
+    "Is used": "已使用",
     "Receiver": "接收者"
   },
   "webhook": {
