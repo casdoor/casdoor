@@ -152,6 +152,14 @@ class RecordListPage extends BaseListPage {
         ...this.getColumnSearchProps("language"),
       },
       {
+        title: i18next.t("record:Status code"),
+        dataIndex: "statusCode",
+        key: "statusCode",
+        width: "90px",
+        sorter: true,
+        ...this.getColumnSearchProps("statusCode"),
+      },
+      {
         title: i18next.t("record:Response"),
         dataIndex: "response",
         key: "response",
