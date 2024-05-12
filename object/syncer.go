@@ -155,7 +155,8 @@ func GetMaskedSyncers(syncers []*Syncer, errs ...error) ([]*Syncer, error) {
 
 func UpdateSyncer(id string, syncer *Syncer) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if s, err := getSyncer(owner, name); err != nil {
+	s, err := getSyncer(owner, name)
+	if err != nil {
 		return false, err
 	} else if s == nil {
 		return false, nil
@@ -163,7 +164,7 @@ func UpdateSyncer(id string, syncer *Syncer) (bool, error) {
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if syncer.Password == "***" {
-		session.Omit("password")
+		syncer.Password = s.Password
 	}
 	affected, err := session.Update(syncer)
 	if err != nil {
