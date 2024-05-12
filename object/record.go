@@ -97,6 +97,11 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	return &record, nil
 }
 
+func addRecord(record *casvisorsdk.Record) (int64, error) {
+	affected, err := ormer.Engine.Insert(record)
+	return affected, err
+}
+
 func AddRecord(record *casvisorsdk.Record) bool {
 	if logPostOnly {
 		if record.Method == "GET" {
@@ -119,7 +124,7 @@ func AddRecord(record *casvisorsdk.Record) bool {
 	}
 
 	if casvisorsdk.GetClient() == nil {
-		affected, err := ormer.Engine.Insert(record)
+		affected, err := addRecord(record)
 		if err != nil {
 			panic(err)
 		}
@@ -224,6 +229,40 @@ func getFilteredWebhooks(webhooks []*Webhook, organization string, action string
 	return res
 }
 
+func addWebhookRecord(webhook *Webhook, record *casvisorsdk.Record, statusCode int, respBody string, sendError error) error {
+	if statusCode == 200 {
+		return nil
+	}
+
+	if len(respBody) > 300 {
+		respBody = respBody[0:300]
+	}
+
+	webhookRecord := &casvisorsdk.Record{
+		Owner:        record.Owner,
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Organization: record.Organization,
+		User:         record.User,
+
+		Method:      webhook.Method,
+		Action:      "send-webhook",
+		RequestUri:  webhook.Url,
+		StatusCode:  statusCode,
+		Response:    respBody,
+		Language:    record.Language,
+		IsTriggered: false,
+	}
+
+	if sendError != nil {
+		webhookRecord.Response = sendError.Error()
+	}
+
+	_, err := addRecord(webhookRecord)
+
+	return err
+}
+
 func SendWebhooks(record *casvisorsdk.Record) error {
 	webhooks, err := getWebhooksByOrganization("")
 	if err != nil {
@@ -250,39 +289,15 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 
 		statusCode, respBody, err := sendWebhook(webhook, record, user)
 
-		if len(respBody) > 300 {
-			respBody = respBody[0:300]
-		}
-
-		webhookRecord := &casvisorsdk.Record{
-			Owner:        record.Owner,
-			Name:         record.Name,
-			Organization: record.Organization,
-			User:         record.User,
-
-			Method:      webhook.Method,
-			Action:      "send-webhook",
-			RequestUri:  webhook.Url,
-			StatusCode:  statusCode,
-			Response:    respBody,
-			Language:    record.Language,
-			IsTriggered: false,
-		}
-
 		if err != nil {
-			webhookRecord.Response = err.Error()
 			errs = append(errs, err)
 		}
 
-		if err != nil || statusCode != 200 {
-			affected, insertError := ormer.Engine.Insert(webhookRecord)
-			if affected == 0 {
-				fmt.Printf("AddRecord() error")
-			}
-			if insertError != nil {
-				fmt.Printf("AddRecord() error: %s", insertError.Error())
-			}
+		err = addWebhookRecord(webhook, record, statusCode, respBody, err)
+		if err != nil {
+			errs = append(errs, err)
 		}
+
 	}
 
 	if len(errs) > 0 {
