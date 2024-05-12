@@ -288,7 +288,6 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 		}
 
 		statusCode, respBody, err := sendWebhook(webhook, record, user)
-
 		if err != nil {
 			errs = append(errs, err)
 		}
