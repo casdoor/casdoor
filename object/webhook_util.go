@@ -49,10 +49,11 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 	}
 
 	resp, err := client.Do(req)
-	if resp != nil {
-		defer resp.Body.Close()
-		bodyBytes, err := io.ReadAll(resp.Body)
-		return resp.StatusCode, string(bodyBytes), err
+	if err != nil {
+		return 0, "", err
 	}
-	return 0, "", err
+
+	defer resp.Body.Close()
+	bodyBytes, err := io.ReadAll(resp.Body)
+	return resp.StatusCode, string(bodyBytes), err
 }
