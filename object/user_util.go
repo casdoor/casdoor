@@ -17,7 +17,6 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-
 	"reflect"
 	"regexp"
 	"strings"
