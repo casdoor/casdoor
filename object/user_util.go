@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/conf"
 	"reflect"
 	"regexp"
 	"strings"
@@ -57,6 +58,13 @@ func HasUserByField(organizationName string, field string, value string) bool {
 }
 
 func GetUserByFields(organization string, field string) (*User, error) {
+	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
+	if isUsernameLowered {
+		field = strings.ToLower(field)
+	}
+
+	field = strings.TrimSpace(field)
+
 	// check username
 	user, err := GetUserByField(organization, "name", field)
 	if err != nil || user != nil {

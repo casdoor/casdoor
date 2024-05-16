@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -291,6 +292,11 @@ func (c *ApiController) UpdateUser() {
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return
+	}
+
+	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
+	if isUsernameLowered {
+		user.Name = strings.ToLower(user.Name)
 	}
 
 	isAdmin := c.IsAdmin()
