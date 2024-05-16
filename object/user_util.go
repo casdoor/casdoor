@@ -17,17 +17,17 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/casdoor/casdoor/conf"
+
 	"reflect"
 	"regexp"
 	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
 
-	jsoniter "github.com/json-iterator/go"
-
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
 )
 
