@@ -877,6 +877,7 @@ func AddUsers(users []*User) (bool, error) {
 			}
 		}
 
+		user.Name = strings.TrimSpace(user.Name)
 		if isUsernameLowered {
 			user.Name = strings.ToLower(user.Name)
 		}

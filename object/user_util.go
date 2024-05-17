@@ -21,12 +21,11 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
-
-	jsoniter "github.com/json-iterator/go"
-
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
 )
 
@@ -57,6 +56,13 @@ func HasUserByField(organizationName string, field string, value string) bool {
 }
 
 func GetUserByFields(organization string, field string) (*User, error) {
+	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
+	if isUsernameLowered {
+		field = strings.ToLower(field)
+	}
+
+	field = strings.TrimSpace(field)
+
 	// check username
 	user, err := GetUserByField(organization, "name", field)
 	if err != nil || user != nil {
