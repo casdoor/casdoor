@@ -46,6 +46,7 @@ type SigninItem struct {
 	Name        string `json:"name"`
 	Visible     bool   `json:"visible"`
 	Label       string `json:"label"`
+	CustomCss   string `json:"customCss"`
 	Placeholder string `json:"placeholder"`
 	Rule        string `json:"rule"`
 	IsCustom    bool   `json:"isCustom"`
@@ -209,7 +210,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem := &SigninItem{
 			Name:        "Back button",
 			Visible:     true,
-			Label:       ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}\n.back-inner-button{}",
+			CustomCss:   ".back-button {\n      top: 65px;\n      left: 15px;\n      position: absolute;\n}\n.back-inner-button{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -217,7 +218,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Languages",
 			Visible:     true,
-			Label:       ".login-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}",
+			CustomCss:   ".login-languages {\n    top: 55px;\n    right: 5px;\n    position: absolute;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -225,7 +226,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Logo",
 			Visible:     true,
-			Label:       ".login-logo-box {}",
+			CustomCss:   ".login-logo-box {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -233,7 +234,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signin methods",
 			Visible:     true,
-			Label:       ".signin-methods {}",
+			CustomCss:   ".signin-methods {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -241,7 +242,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Username",
 			Visible:     true,
-			Label:       ".login-username {}\n.login-username-input{}",
+			CustomCss:   ".login-username {}\n.login-username-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -249,7 +250,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Password",
 			Visible:     true,
-			Label:       ".login-password {}\n.login-password-input{}",
+			CustomCss:   ".login-password {}\n.login-password-input{}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -257,7 +258,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Agreement",
 			Visible:     true,
-			Label:       ".login-agreement {}",
+			CustomCss:   ".login-agreement {}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -265,7 +266,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Forgot password?",
 			Visible:     true,
-			Label:       ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
+			CustomCss:   ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -273,7 +274,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Login button",
 			Visible:     true,
-			Label:       ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",
+			CustomCss:   ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -281,7 +282,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Signup link",
 			Visible:     true,
-			Label:       ".login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}",
+			CustomCss:   ".login-signup-link {\n    margin-bottom: 24px;\n    display: flex;\n    justify-content: end;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
@@ -289,11 +290,17 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		signinItem = &SigninItem{
 			Name:        "Providers",
 			Visible:     true,
-			Label:       ".provider-img {\n      width: 30px;\n      margin: 5px;\n}\n.provider-big-img {\n      margin-bottom: 10px;\n}",
+			CustomCss:   ".provider-img {\n      width: 30px;\n      margin: 5px;\n}\n.provider-big-img {\n      margin-bottom: 10px;\n}",
 			Placeholder: "",
 			Rule:        "None",
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
+	}
+	for idx, item := range application.SigninItems {
+		if item.Label != "" && item.CustomCss == "" {
+			application.SigninItems[idx].CustomCss = item.Label
+			application.SigninItems[idx].Label = ""
+		}
 	}
 	return
 }

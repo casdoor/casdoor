@@ -532,7 +532,7 @@ class LoginPage extends React.Component {
     if (signinItem.name === "Logo") {
       return (
         <div className="login-logo-box">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             Setting.renderHelmet(application)
           }
@@ -544,7 +544,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Back button") {
       return (
         <div className="back-button">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             this.renderBackButton()
           }
@@ -562,14 +562,14 @@ class LoginPage extends React.Component {
 
       return (
         <div className="login-languages">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <LanguageSelect languages={application.organizationObj.languages} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderMethodChoiceBox()}
         </div>
       )
@@ -577,10 +577,11 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Username") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item
             name="username"
             className="login-username"
+            label={signinItem.label ? signinItem.label : null}
             rules={[
               {
                 required: true,
@@ -653,14 +654,14 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Password") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          {this.renderPasswordOrCodeInput()}
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          {this.renderPasswordOrCodeInput(signinItem)}
         </div>
       );
     } else if (signinItem.name === "Forgot password?") {
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <div className="login-forget-password">
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
               <Checkbox style={{float: "left"}}>
@@ -668,7 +669,7 @@ class LoginPage extends React.Component {
               </Checkbox>
             </Form.Item>
             {
-              signinItem.visible ? Setting.renderForgetLink(application, i18next.t("login:Forgot password?")) : null
+              signinItem.visible ? Setting.renderForgetLink(application, signinItem.label ? signinItem.label : i18next.t("login:Forgot password?")) : null
             }
           </div>
         </div>
@@ -678,7 +679,7 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Login button") {
       return (
         <Form.Item className="login-button-box">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
             type="primary"
             htmlType="submit"
@@ -687,7 +688,7 @@ class LoginPage extends React.Component {
             {
               this.state.loginMethod === "webAuthn" ? i18next.t("login:Sign in with WebAuthn") :
                 this.state.loginMethod === "faceId" ? i18next.t("login:Sign in with Face ID") :
-                  i18next.t("login:Sign In")
+                  signinItem.label ? signinItem.label : i18next.t("login:Sign In")
             }
           </Button>
           {
@@ -722,7 +723,7 @@ class LoginPage extends React.Component {
 
       return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
@@ -737,13 +738,13 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
-        <div dangerouslySetInnerHTML={{__html: signinItem.label}} />
+        <div dangerouslySetInnerHTML={{__html: signinItem.customCss}} />
       );
     } else if (signinItem.name === "Signup link") {
       return (
         <div style={{width: "100%"}} className="login-signup-link">
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.label?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          {this.renderFooter(application)}
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          {this.renderFooter(application, signinItem)}
         </div>
       );
     }
@@ -896,17 +897,20 @@ class LoginPage extends React.Component {
     />;
   }
 
-  renderFooter(application) {
+  renderFooter(application, signinItem) {
     return (
       <div>
         {
           !application.enableSignUp ? null : (
-            <React.Fragment>
-              {i18next.t("login:No account?")}&nbsp;
-              {
-                Setting.renderSignupLink(application, i18next.t("login:sign up now"))
-              }
-            </React.Fragment>
+            signinItem.label ? Setting.renderSignupLink(application, signinItem.label) :
+              (
+                <React.Fragment>
+                  {i18next.t("login:No account?")}
+                  {
+                    Setting.renderSignupLink(application, i18next.t("login:sign up now"))
+                  }
+                </React.Fragment>
+              )
           )
         }
       </div>
@@ -1022,7 +1026,7 @@ class LoginPage extends React.Component {
       });
   }
 
-  renderPasswordOrCodeInput() {
+  renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
@@ -1031,6 +1035,7 @@ class LoginPage extends React.Component {
             <Form.Item
               name="password"
               className="login-password"
+              label={signinItem.label ? signinItem.label : null}
               rules={[{required: true, message: i18next.t("login:Please input your password!")}]}
             >
               <Input.Password
