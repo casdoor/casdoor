@@ -134,7 +134,7 @@ class SigninTable extends React.Component {
               value={getItemDisplayName(text)}
               onChange={value => {
                 this.updateField(table, index, "name", value);
-                this.updateField(table, index, "label", SigninTableDefaultCssMap[value]);
+                this.updateField(table, index, "customCss", SigninTableDefaultCssMap[value]);
               }} >
               {
                 Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
@@ -166,7 +166,7 @@ class SigninTable extends React.Component {
         },
       },
       {
-        title: i18next.t("signup:Label HTML"),
+        title: i18next.t("signup:Label"),
         dataIndex: "label",
         key: "label",
         width: "200px",
@@ -188,14 +188,18 @@ class SigninTable extends React.Component {
                 }} />
               </Popover>
             );
+          } else if (["Username", "Password", "Signup link", "Forgot password?", "Login button"].includes(record.name)) {
+            return <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
+              this.updateField(table, index, "label", e.target.value);
+            }} />;
           }
           return null;
         },
       },
       {
         title: i18next.t("application:Custom CSS"),
-        dataIndex: "label",
-        key: "label",
+        dataIndex: "customCss",
+        key: "customCss",
         width: "200px",
         render: (text, record, index) => {
           if (!record.name.startsWith("Text ") && !record?.isCustom) {
@@ -205,13 +209,13 @@ class SigninTable extends React.Component {
                   <CodeMirror value={text?.replaceAll("<style>", "").replaceAll("</style>", "")}
                     options={{mode: "css", theme: "material-darker"}}
                     onBeforeChange={(editor, data, value) => {
-                      this.updateField(table, index, "label", value);
+                      this.updateField(table, index, "customCss", value);
                     }}
                   />
                 </div>
               } title={i18next.t("application:CSS style")} trigger="click">
                 <Input value={text?.replaceAll("<style>", "").replaceAll("</style>", "")} onChange={e => {
-                  this.updateField(table, index, "label", e.target.value);
+                  this.updateField(table, index, "customCss", e.target.value);
                 }} />
               </Popover>
             );
