@@ -393,7 +393,7 @@ class SignupPage extends React.Component {
                       const reg = new RegExp(signupItem.regex);
                       if (!reg.test(this.state.email)) {
                         this.setState({validEmail: false});
-                        return Promise.reject(i18next.t("signup:The input is not valid Email!"));
+                        return Promise.reject(i18next.t("signup:The input Email doesn't match the signup item regex!"));
                       }
                     }
 
