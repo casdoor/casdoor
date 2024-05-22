@@ -384,8 +384,7 @@ export function getAuthUrl(application, provider, method, code) {
 
   let endpoint = authInfo[provider.type].endpoint;
   let redirectUri = `${window.location.origin}/callback`;
-  const scope = authInfo[provider.type].scope;
-
+  let scope = authInfo[provider.type].scope;
   const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
   const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
@@ -396,6 +395,8 @@ export function getAuthUrl(application, provider, method, code) {
     }
   } else if (provider.type === "Apple") {
     redirectUri = `${window.location.origin}/api/callback`;
+  } else if (provider.type === "Google" && provider.disableSsl) {
+    scope += "+https://www.googleapis.com/auth/user.phonenumbers.read";
   }
 
   if (provider.type === "Google" || provider.type === "GitHub" || provider.type === "QQ" || provider.type === "Facebook"

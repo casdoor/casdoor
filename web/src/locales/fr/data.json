@@ -778,6 +778,8 @@
     "From address - Tooltip": "L'adresse e-mail affichée comme expéditeur dans les e-mails envoyés",
     "From name": "Nom de l'expéditeur",
     "From name - Tooltip": "Le nom affiché comme expéditeur dans les e-mails envoyés",
+    "Get phone number": "Get phone number",
+    "Get phone number - Tooltip": "If sync phone number is enabled, you should enable google people api first and add scope https://www.googleapis.com/auth/user.phonenumbers.read",
     "Host": "Hôte",
     "Host - Tooltip": "Nom d'hôte",
     "IdP": "IdP (Identité Fournisseur)",
