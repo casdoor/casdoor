@@ -778,6 +778,8 @@
     "From address - Tooltip": "邮件里发件人的邮箱地址",
     "From name": "发件人名称",
     "From name - Tooltip": "邮件里发件人的显示名称",
+    "Get phone number": "获取手机号码",
+    "Get phone number - Tooltip": "如果启用获取手机号码，你需要先启用peopleApi并添加范围https://www.googleapis.com/auth/user.phonenumbers.read",
     "Host": "主机",
     "Host - Tooltip": "主机名",
     "IdP": "身份提供商",

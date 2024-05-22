@@ -778,6 +778,8 @@
     "From address - Tooltip": "L'adresse e-mail affichée comme expéditeur dans les e-mails envoyés",
     "From name": "Nom de l'expéditeur",
     "From name - Tooltip": "Le nom affiché comme expéditeur dans les e-mails envoyés",
+    "Get phone number": "Get phone number",
+    "Get phone number - Tooltip": "Get phone number - Tooltip",
     "Host": "Hôte",
     "Host - Tooltip": "Nom d'hôte",
     "IdP": "IdP (Identité Fournisseur)",

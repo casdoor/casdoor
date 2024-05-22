@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/nyaruka/phonenumbers"
 	"golang.org/x/oauth2"
 )
 
@@ -130,6 +131,23 @@ type GoogleUserInfo struct {
 	Locale        string `json:"locale"`
 }
 
+type GooglePeopleApiPhoneNumberMetaData struct {
+	Primary bool `json:"primary"`
+}
+
+type GooglePeopleApiPhoneNumber struct {
+	CanonicalForm string                             `json:"canonicalForm"`
+	MetaData      GooglePeopleApiPhoneNumberMetaData `json:"metadata"`
+	Value         string                             `json:"value"`
+	Type          string                             `json:"type"`
+}
+
+type GooglePeopleApiResult struct {
+	PhoneNumbers []GooglePeopleApiPhoneNumber `json:"phoneNumbers"`
+	Etag         string                       `json:"etag"`
+	ResourceName string                       `json:"resourceName"`
+}
+
 func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if strings.HasPrefix(token.AccessToken, GoogleIdTokenKey) {
 		googleIdToken, ok := token.Extra(GoogleIdTokenKey).(GoogleIdToken)
@@ -167,12 +185,49 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, errors.New("google email is empty")
 	}
 
+	url = fmt.Sprintf("https://people.googleapis.com/v1/people/me?personFields=phoneNumbers&access_token=%s", token.AccessToken)
+	resp, err = idp.Client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var googlePeopleResult GooglePeopleApiResult
+	err = json.Unmarshal(body, &googlePeopleResult)
+	if err != nil {
+		return nil, err
+	}
+
+	var phoneNumber string
+	var countryCode string
+	if len(googlePeopleResult.PhoneNumbers) != 0 {
+		for _, phoneData := range googlePeopleResult.PhoneNumbers {
+			if phoneData.MetaData.Primary {
+				phoneNumber = phoneData.CanonicalForm
+				break
+			}
+		}
+		phoneNumberParsed, err := phonenumbers.Parse(phoneNumber, "")
+		if err != nil {
+			return nil, err
+		}
+		countryCode = phonenumbers.GetRegionCodeForNumber(phoneNumberParsed)
+		phoneNumber = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
+	}
+
 	userInfo := UserInfo{
 		Id:          googleUserInfo.Id,
 		Username:    googleUserInfo.Email,
 		DisplayName: googleUserInfo.Name,
 		Email:       googleUserInfo.Email,
 		AvatarUrl:   googleUserInfo.Picture,
+		Phone:       phoneNumber,
+		CountryCode: countryCode,
 	}
 	return &userInfo, nil
 }
