@@ -779,7 +779,7 @@
     "From name": "Nome do remetente",
     "From name - Tooltip": "Nome do remetente",
     "Get phone number": "Get phone number",
-    "Get phone number - Tooltip": "Get phone number - Tooltip",
+    "Get phone number - Tooltip": "If sync phone number is enabled, you should enable google people api first and add scope https://www.googleapis.com/auth/user.phonenumbers.read",
     "Host": "Host",
     "Host - Tooltip": "Nome do host",
     "IdP": "IdP",
