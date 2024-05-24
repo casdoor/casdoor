@@ -40,6 +40,7 @@ type Provider struct {
 	ClientSecret      string            `xorm:"varchar(3000)" json:"clientSecret"`
 	ClientId2         string            `xorm:"varchar(100)" json:"clientId2"`
 	ClientSecret2     string            `xorm:"varchar(500)" json:"clientSecret2"`
+	UserIdType        string            `xorm:"varchar(100)" json:"userIdType"`
 	Cert              string            `xorm:"varchar(100)" json:"cert"`
 	CustomAuthUrl     string            `xorm:"varchar(200)" json:"customAuthUrl"`
 	CustomTokenUrl    string            `xorm:"varchar(200)" json:"customTokenUrl"`
@@ -186,6 +187,16 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 	providers := application.Providers
 	for _, provider := range providers {
 		if provider.Provider.Type == "WeChatMiniProgram" {
+			return provider.Provider
+		}
+	}
+	return nil
+}
+
+func GetLarkMiniProgramProvider(application *Application) *Provider {
+	providers := application.Providers
+	for _, provider := range providers {
+		if provider.Provider.Type == "LarkMiniProgram" {
 			return provider.Provider
 		}
 	}
@@ -417,6 +428,8 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		}
 	} else if provider.Type == "AzureAD" || provider.Type == "AzureADB2C" || provider.Type == "ADFS" || provider.Type == "Okta" {
 		providerInfo.HostUrl = provider.Domain
+	} else if provider.Type == "Lark" || provider.Type == "LarkMiniProgram" {
+		providerInfo.UserIdType = provider.UserIdType
 	}
 
 	return providerInfo

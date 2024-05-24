@@ -79,6 +79,7 @@ class ProviderEditPage extends React.Component {
         if (res.status === "ok") {
           const provider = res.data;
           provider.userMapping = provider.userMapping || defaultUserMapping;
+          provider.userIdType = provider.userIdType || "open_id";
           this.setState({
             provider: provider,
           });
@@ -597,6 +598,29 @@ class ProviderEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
+        {
+          (this.state.provider.type !== "Lark" && this.state.provider.type !== "LarkMiniProgram") ? null : (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={2}>
+                  {Setting.getLabel(i18next.t("provider:UserIdType"), i18next.t("provider:UserIdType - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} style={{width: "100%"}} value={this.state.provider.userIdType} onChange={value => {
+                    this.updateProviderField("userIdType", value);
+                  }}>
+                    {
+                      [
+                        {id: "open_id", name: i18next.t("provider:OpenID")},
+                        {id: "union_id", name: i18next.t("provider:UnionID")},
+                        {id: "user_id", name: i18next.t("provider:UserID")},
+                      ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
+                    }
+                  </Select>
+                </Col>
+              </Row>
+            </React.Fragment>)
+        }
         {
           this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "Aliyun Captcha" ? null : (
             <React.Fragment>

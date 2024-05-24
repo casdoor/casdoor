@@ -242,6 +242,14 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		}
 	}
 
+	if tag == "lark_miniprogram" {
+		// Wechat Mini Program
+		token, tokenError, err = GetLarkMiniProgramToken(application, code, host, username, avatar, lang)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if tokenError != nil {
 		return tokenError, nil
 	}
@@ -742,6 +750,134 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		Organization: user.Owner,
 		User:         user.Name,
 		Code:         session.SessionKey, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		ExpiresIn:    application.ExpireInHours * hourSeconds,
+		Scope:        "",
+		TokenType:    "Bearer",
+		CodeIsUsed:   true,
+	}
+	_, err = AddToken(token)
+	if err != nil {
+		return nil, nil, err
+	}
+	return token, nil, nil
+}
+
+// GetLarkMiniProgramToken
+// Lark Mini Program flow
+func GetLarkMiniProgramToken(application *Application, code string, host string, username string, avatar string, lang string) (*Token, *TokenError, error) {
+	mpProvider := GetLarkMiniProgramProvider(application)
+	if mpProvider == nil {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "the application does not support lark mini program",
+		}, nil
+	}
+	provider, err := GetProvider(util.GetId("admin", mpProvider.Name))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mpIdp := idp.NewLarkMiniProgramIdProvider(provider.ClientId, provider.ClientSecret)
+	//appToken, err := mpIdp.GetToken()
+	//if err != nil {
+	//	return nil, &TokenError{
+	//		Error:            InvalidGrant,
+	//		ErrorDescription: fmt.Sprintf("get lark mini program app token error: %s", err.Error()),
+	//	}, nil
+	//}
+	userToken, err := mpIdp.GetUserToken(code)
+	if err != nil {
+		return nil, &TokenError{
+			Error:            InvalidGrant,
+			ErrorDescription: fmt.Sprintf("get lark mini program user token error: %s", err.Error()),
+		}, nil
+	}
+
+	userInfo, err := mpIdp.GetUserInfo(userToken)
+
+	var userId string
+	openId, unionId := userInfo.Data.OpenId, userInfo.Data.UnionId
+	if provider.UserIdType == "union_id" {
+		userId = userInfo.Data.UnionId
+	} else if provider.UserIdType == "open_id" {
+		userId = userInfo.Data.OpenId
+	} else if provider.UserIdType == "user_id" {
+		userId = userInfo.Data.UserId
+	}
+
+	if userId == "" {
+		return nil, &TokenError{
+			Error:            InvalidRequest,
+			ErrorDescription: "the lark mini program user is invalid",
+		}, nil
+	}
+	user, err := getUserByLarkId(application.Organization, userId, unionId, openId)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if user == nil {
+		if !application.EnableSignUp {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "the application does not allow to sign up new account",
+			}, nil
+		}
+		// Add new user
+		var name string
+		if CheckUsername(username, lang) == "" {
+			name = username
+		} else {
+			name = fmt.Sprintf("lark-%s", userId)
+		}
+
+		user = &User{
+			Owner:             application.Organization,
+			Id:                util.GenerateId(),
+			Name:              name,
+			Avatar:            avatar,
+			SignupApplication: application.Name,
+			Lark:              userId,
+			Type:              "normal-user",
+			CreatedTime:       util.GetCurrentTime(),
+			IsAdmin:           false,
+			IsForbidden:       false,
+			IsDeleted:         false,
+			Properties: map[string]string{
+				UserPropertiesLarkUserId:  userId,
+				UserPropertiesLarkOpenId:  openId,
+				UserPropertiesLarkUnionId: unionId,
+			},
+		}
+		_, err = AddUser(user)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+
+	err = ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, user, "", "", host)
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("generate jwt token error: %s", err.Error()),
+		}, nil
+	}
+
+	token := &Token{
+		Owner:        application.Owner,
+		Name:         tokenName,
+		CreatedTime:  util.GetCurrentTime(),
+		Application:  application.Name,
+		Organization: user.Owner,
+		User:         user.Name,
+		Code:         code, // a trick, because miniprogram does not use the code, so use the code field to save the session_key
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,

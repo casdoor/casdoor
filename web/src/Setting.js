@@ -464,7 +464,7 @@ export function isProviderVisible(providerItem) {
     return false;
   }
 
-  if (providerItem.provider.type === "WeChatMiniProgram") {
+  if (providerItem.provider.type === "WeChatMiniProgram" || providerItem.provider.type === "LarkMiniProgram") {
     return false;
   }
 
@@ -915,6 +915,9 @@ export function getProviderLogoURL(provider) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
+    if (provider.type.toLowerCase() === "larkminiprogram") {
+      return `${StaticBaseUrl}/img/social_lark.png`;
+    }
     return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
@@ -950,6 +953,7 @@ export function getProviderTypeOptions(category) {
         {id: "LinkedIn", name: "LinkedIn"},
         {id: "WeCom", name: "WeCom"},
         {id: "Lark", name: "Lark"},
+        {id: "LarkMiniProgram", name: "Lark Mini Program"},
         {id: "GitLab", name: "GitLab"},
         {id: "ADFS", name: "ADFS"},
         {id: "Baidu", name: "Baidu"},

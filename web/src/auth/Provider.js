@@ -69,6 +69,9 @@ const authInfo = {
     // scope: "email",
     endpoint: "https://open.feishu.cn/open-apis/authen/v1/index",
   },
+  LarkMiniProgram: {
+    endpoint: "https://open.feishu.cn/open-apis",
+  },
   GitLab: {
     scope: "read_user+profile",
     endpoint: "https://gitlab.com/oauth/authorize",

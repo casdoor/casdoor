@@ -31,6 +31,9 @@ import (
 const (
 	UserPropertiesWechatUnionId = "wechatUnionId"
 	UserPropertiesWechatOpenId  = "wechatOpenId"
+	UserPropertiesLarkUnionId   = "larkUnionId"
+	UserPropertiesLarkOpenId    = "larkOpenId"
+	UserPropertiesLarkUserId    = "larkUserId"
 )
 
 const UserEnforcerId = "built-in/user-enforcer-built-in"
@@ -413,6 +416,20 @@ func getUserByWechatId(owner string, wechatOpenId string, wechatUnionId string) 
 	}
 	user := &User{}
 	existed, err := ormer.Engine.Where("owner = ?", owner).Where("wechat = ? OR wechat = ?", wechatOpenId, wechatUnionId).Get(user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return user, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func getUserByLarkId(owner string, userId string, unionId string, openId string) (*User, error) {
+	user := &User{}
+	existed, err := ormer.Engine.Where("owner = ?", owner).Where("lark = ? OR lark = ? OR lark = ?", userId, unionId, openId).Get(user)
 	if err != nil {
 		return nil, err
 	}
