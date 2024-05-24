@@ -211,6 +211,9 @@ class UserEditPage extends React.Component {
 
     const user = this.state.user;
     if (key === "address") {
+      if (!user[key]) {
+        user[key] = ["", ""];
+      }
       user[key][idx] = value;
     } else {
       user[key] = value;
@@ -515,7 +518,7 @@ class UserEditPage extends React.Component {
               <span>{i18next.t("user:Address line") + " 1"}</span> :
             </Col>
             <Col span={20} >
-              <Input value={this.state.user.address[0]} onChange={e => {
+              <Input value={!this.state.user.address ? "" : this.state.user.address[0]} onChange={e => {
                 this.updateUserField("address", e.target.value, 0);
               }} />
             </Col>
@@ -527,7 +530,7 @@ class UserEditPage extends React.Component {
               <span>{i18next.t("user:Address line") + " 2"}</span> :
             </Col>
             <Col span={20} >
-              <Input value={this.state.user.address[1]} onChange={e => {
+              <Input value={!this.state.user.address ? "" : this.state.user.address[1]} onChange={e => {
                 this.updateUserField("address", e.target.value, 1);
               }} />
             </Col>
