@@ -833,6 +833,20 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
+          this.state.provider.type !== "Google" ? null : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))} :
+              </Col>
+              <Col span={1} >
+                <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
+                  this.updateProviderField("disableSsl", checked);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
+        {
           this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "AzureADB2C" && this.state.provider.type !== "Casdoor" && this.state.provider.type !== "Okta" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
