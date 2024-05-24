@@ -303,6 +303,9 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 	m["PreferredMfaType"] = user.PreferredMfaType
 	m["TotpSecret"] = user.TotpSecret
 	m["SignupApplication"] = user.SignupApplication
+	m["MfaPhoneEnabled"] = util.BoolToString(user.MfaPhoneEnabled)
+	m["MfaEmailEnabled"] = util.BoolToString(user.MfaEmailEnabled)
+	m["RecoveryCodes"] = strings.Join(user.RecoveryCodes, ",")
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
