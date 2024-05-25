@@ -194,7 +194,7 @@ jobs:
         with:
           context: .
           target: STANDARD
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
 
@@ -204,7 +204,7 @@ jobs:
         with:
           context: .
           target: ALLINONE
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
 
