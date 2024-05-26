@@ -169,6 +169,12 @@ func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 		user.TotpSecret = value
 	case "SignupApplication":
 		user.SignupApplication = value
+	case "MfaPhoneEnabled":
+		user.MfaPhoneEnabled = util.ParseBool(value)
+	case "MfaEmailEnabled":
+		user.MfaEmailEnabled = util.ParseBool(value)
+	case "RecoveryCodes":
+		user.RecoveryCodes = strings.Split(value, ",")
 	}
 }
 
