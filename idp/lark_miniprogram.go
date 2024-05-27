@@ -17,10 +17,11 @@ package idp
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io"
 	"net/http"
 	"strings"
+
+	"golang.org/x/oauth2"
 )
 
 type LarkMiniProgramIdProvider struct {
