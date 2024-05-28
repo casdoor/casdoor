@@ -139,10 +139,6 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_twilio.svg`,
       url: "https://www.twilio.com/messaging",
     },
-    "SendCloud SMS": {
-      logo: `${StaticBaseUrl}/img/sms_sendcloud.png`,
-      url: "https://www.sendcloud.net/",
-    },
     "SmsBao SMS": {
       logo: `${StaticBaseUrl}/img/social_smsbao.png`,
       url: "https://www.smsbao.com/",
@@ -1043,7 +1039,6 @@ export function getProviderTypeOptions(category) {
         {id: "Huawei Cloud SMS", name: "Huawei Cloud SMS"},
         {id: "UCloud SMS", name: "UCloud SMS"},
         {id: "Twilio SMS", name: "Twilio SMS"},
-        {id: "SendCloud SMS", name: "SendCloud SMS"},
         {id: "SmsBao SMS", name: "SmsBao SMS"},
         {id: "SUBMAIL SMS", name: "SUBMAIL SMS"},
         {id: "Msg91 SMS", name: "Msg91 SMS"},
