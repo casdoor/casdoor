@@ -725,6 +725,10 @@ func (c *ApiController) Login() {
 						Properties:        properties,
 					}
 
+					if user.Phone != "" || user.Email != "" {
+						user.NeedUpdatePassword = true
+					}
+
 					var affected bool
 					affected, err = object.AddUser(user)
 					if err != nil {

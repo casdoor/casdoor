@@ -328,6 +328,8 @@ function ManagementPage(props) {
       return <Redirect to="/login" />;
     } else if (props.account === undefined) {
       return null;
+    } else if (props.account.needUpdatePassword) {
+      return <Redirect to={"/forget/" + props.application.name} />;
     } else {
       return component;
     }
