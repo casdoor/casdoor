@@ -166,7 +166,7 @@
     "Next Step": "下一步",
     "Please input your username!": "请输入您的用户名！",
     "Reset": "重置",
-    "Retrieve password": "找回密码",
+    "Reset password": "重置密码",
     "Unknown forget type": "未知的忘记密码类型",
     "Verify": "验证"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "托管账户",
     "Modify password...": "编辑密码...",
     "Multi-factor authentication": "多因素认证",
+    "Need update password": "需要更新密码",
+    "Need update password - Tooltip": "强制用户在登录后更新密码",
     "New Email": "新邮箱",
     "New Password": "新密码",
     "New User": "添加用户",

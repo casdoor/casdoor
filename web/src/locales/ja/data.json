@@ -166,7 +166,7 @@
     "Next Step": "次のステップ",
     "Please input your username!": "ユーザー名を入力してください！",
     "Reset": "リセット",
-    "Retrieve password": "パスワードの取得",
+    "Reset password": "パスワードの取得",
     "Unknown forget type": "未知の忘却タイプ",
     "Verify": "検証"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "管理アカウント",
     "Modify password...": "パスワードを変更する...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "新しいメール",
     "New Password": "新しいパスワード",
     "New User": "新しいユーザー",

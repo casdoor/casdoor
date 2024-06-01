@@ -166,7 +166,7 @@
     "Next Step": "Следующий шаг",
     "Please input your username!": "Пожалуйста, введите своё имя пользователя!",
     "Reset": "Сбросить",
-    "Retrieve password": "Восстановить пароль",
+    "Reset password": "Восстановить пароль",
     "Unknown forget type": "Неизвестный забытый тип",
     "Verify": "Проверить"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "Управляемые аккаунты",
     "Modify password...": "Изменить пароль...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "Новое электронное письмо",
     "New Password": "Новый пароль",
     "New User": "Новый пользователь",

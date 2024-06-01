@@ -35,8 +35,8 @@ class ForgetPage extends React.Component {
       classes: props,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
       msg: null,
-      name: "",
-      username: "",
+      name: props.account ? props.account.name : "",
+      username: props.account ? props.account.name : "",
       phone: "",
       email: "",
       dest: "",
@@ -44,7 +44,6 @@ class ForgetPage extends React.Component {
       verifyType: "", // "email", "phone"
       current: 0,
     };
-
     this.form = React.createRef();
   }
 
@@ -205,6 +204,7 @@ class ForgetPage extends React.Component {
             initialValues={{
               application: application.name,
               organization: application.organization,
+              username: this.state.name,
             }}
             style={{width: "300px"}}
             size="large"
@@ -488,7 +488,7 @@ class ForgetPage extends React.Component {
               <Row>
                 <Col span={24}>
                   <div style={{textAlign: "center", fontSize: "28px"}}>
-                    {i18next.t("forget:Retrieve password")}
+                    {i18next.t("forget:Reset password")}
                   </div>
                 </Col>
               </Row>

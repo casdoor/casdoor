@@ -117,7 +117,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId}
+		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: user.NeedUpdatePassword}
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -139,7 +139,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 
 		resp = codeToResponse(code)
-
+		resp.Data2 = user.NeedUpdatePassword
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
@@ -152,6 +152,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			nonce := c.Input().Get("nonce")
 			token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
 			resp = tokenToResponse(token)
+
+			resp.Data2 = user.NeedUpdatePassword
 		}
 	} else if form.Type == ResponseTypeSaml { // saml flow
 		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
@@ -159,7 +161,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(err.Error(), nil)
 			return
 		}
-		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]string{"redirectUrl": redirectUrl, "method": method}}
+		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]interface{}{"redirectUrl": redirectUrl, "method": method, "needUpdatePassword": user.NeedUpdatePassword}}
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in

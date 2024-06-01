@@ -510,7 +510,9 @@ func (c *ApiController) SetPassword() {
 	}
 
 	targetUser.Password = newPassword
-	_, err = object.SetUserField(targetUser, "password", targetUser.Password)
+	targetUser.NeedUpdatePassword = false
+
+	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password"}, false)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
