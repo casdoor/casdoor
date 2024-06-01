@@ -153,21 +153,37 @@ class AuthCallback extends React.Component {
     // OAuth
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const signinUrl = localStorage.getItem("signinUrl");
+
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
           const responseType = this.getResponseType();
           if (responseType === "login") {
+            if (res.data2) {
+              sessionStorage.setItem("signinUrl", signinUrl);
+              Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+              return;
+            }
             Setting.showMessage("success", "Logged in successfully");
             // Setting.goToLinkSoft(this, "/");
-
             const link = Setting.getFromLink();
             Setting.goToLink(link);
           } else if (responseType === "code") {
+            if (res.data2) {
+              sessionStorage.setItem("signinUrl", signinUrl);
+              Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+              return;
+            }
             const code = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
           } else if (responseType === "token" || responseType === "id_token") {
+            if (res.data2) {
+              sessionStorage.setItem("signinUrl", signinUrl);
+              Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+              return;
+            }
             const token = res.data;
             Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
           } else if (responseType === "link") {
@@ -181,6 +197,11 @@ class AuthCallback extends React.Component {
                 relayState: oAuthParams.relayState,
               });
             } else {
+              if (res.data2.needUpdatePassword) {
+                sessionStorage.setItem("signinUrl", signinUrl);
+                Setting.goToLinkSoft(this, `/forget/${applicationName}`);
+                return;
+              }
               const SAMLResponse = res.data;
               const redirectUri = res.data2.redirectUrl;
               Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);

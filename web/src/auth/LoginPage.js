@@ -68,6 +68,8 @@ class LoginPage extends React.Component {
       this.state.applicationName = props.match?.params?.casApplicationName;
     }
 
+    localStorage.setItem("signinUrl", window.location.href);
+
     this.form = React.createRef();
   }
 
@@ -300,6 +302,12 @@ class LoginPage extends React.Component {
       return;
     }
 
+    if (resp.data2) {
+      sessionStorage.setItem("signinUrl", window.location.href);
+      Setting.goToLinkSoft(ths, `/forget/${application.name}`);
+      return;
+    }
+
     if (Setting.hasPromptPage(application)) {
       AuthBackend.getAccount()
         .then((res) => {
@@ -442,15 +450,27 @@ class LoginPage extends React.Component {
             const responseType = values["type"];
 
             if (responseType === "login") {
+              if (res.data2) {
+                sessionStorage.setItem("signinUrl", window.location.href);
+                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+              }
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
               this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
+              if (res.data2) {
+                sessionStorage.setItem("signinUrl", window.location.href);
+                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+              }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
             } else if (responseType === "saml") {
+              if (res.data2.needUpdatePassword) {
+                sessionStorage.setItem("signinUrl", window.location.href);
+                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+              }
               if (res.data2.method === "POST") {
                 this.setState({
                   samlResponse: res.data,
