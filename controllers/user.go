@@ -519,9 +519,9 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(fmt.Sprintf(c.T("the organization: %s is not found"), userOwner))
 		return
 	}
+	targetUser.Password = newPassword
 	targetUser.UpdateUserPassword(organization)
 
-	//targetUser.Password = newPassword
 	targetUser.NeedUpdatePassword = false
 
 	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password"}, false)
