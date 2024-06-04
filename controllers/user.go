@@ -514,14 +514,14 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(err.Error())
 		return
 	}
-
 	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("the organization: %s is not found"), userOwner))
+		c.ResponseError(fmt.Sprintf(c.T("the organization: %s is not found"), targetUser.Owner))
 		return
 	}
+
 	targetUser.Password = newPassword
-	targetUser.NeedUpdatePassword = false
 	targetUser.UpdateUserPassword(organization)
+	targetUser.NeedUpdatePassword = false
 
 	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type"}, false)
 	if err != nil {
