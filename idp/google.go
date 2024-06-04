@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -220,6 +221,14 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		phoneNumber = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
 	}
 
+	extra := make(map[string]string)
+	extra["access_token"] = token.Extra("access_token").(string)
+	extra["refresh_token"] = token.Extra("refresh_token").(string)
+	extra["expires_in"] = strconv.FormatFloat(token.Extra("expires_in").(float64), 'f', 6, 64)
+	extra["scope"] = token.Extra("scope").(string)
+	extra["token_type"] = token.Extra("token_type").(string)
+	extra["id_token"] = token.Extra("id_token").(string)
+
 	userInfo := UserInfo{
 		Id:          googleUserInfo.Id,
 		Username:    googleUserInfo.Email,
@@ -228,6 +237,7 @@ func (idp *GoogleIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		AvatarUrl:   googleUserInfo.Picture,
 		Phone:       phoneNumber,
 		CountryCode: countryCode,
+		Extra:       extra,
 	}
 	return &userInfo, nil
 }
