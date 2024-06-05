@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -46,18 +47,17 @@ func (c *ApiController) GetSystemInfo() {
 // @Success 200 {object} util.VersionInfo The Response object
 // @router /get-version-info [get]
 func (c *ApiController) GetVersionInfo() {
-	versionInfo, err := util.GetVersionInfo()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	var versionInfo *util.VersionInfo
+	var err error
+
+	runMode := conf.GetConfigString("runmode")
+
+	if runMode == "dev" {
+		versionInfo, err = util.GetVersionInfo()
+	} else if runMode == "prod" {
+		versionInfo, err = util.GetVersionInfoFromFile()
 	}
 
-	if versionInfo.Version != "" {
-		c.ResponseOk(versionInfo)
-		return
-	}
-
-	versionInfo, err = util.GetVersionInfoFromFile()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
