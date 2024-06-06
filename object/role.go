@@ -358,6 +358,9 @@ func roleChangeTrigger(oldName string, newName string) error {
 	for _, permission := range permissions {
 		for j, u := range permission.Roles {
 			// u = organization/username
+			if u == "*" {
+				continue
+			}
 			owner, name := util.GetOwnerAndNameFromId(u)
 			if name == oldName {
 				permission.Roles[j] = util.GetId(owner, newName)
