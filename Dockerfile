@@ -29,10 +29,6 @@ RUN adduser -D $USER -u 1000 \
     && mkdir logs \
     && chown -R $USER:$USER logs
 
-RUN mkdir -p /files \
-    && chmod -R 766 /files \
-    && chown casdoor:casdoor /files
-
 USER 1000
 WORKDIR /
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/server_${BUILDX_ARCH} ./server
@@ -68,10 +64,6 @@ COPY --from=BACK /go/src/casdoor/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=BACK /go/src/casdoor/conf/app.conf ./conf/app.conf
 COPY --from=BACK /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT /web/build ./web/build
-
-RUN mkdir -p /files \
-    && chmod -R 766 /files \
-    && chown casdoor:casdoor /files
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["/docker-entrypoint.sh"]
