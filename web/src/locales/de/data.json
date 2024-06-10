@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "Wenn aktiviert, werden gelöschte Benutzer nicht vollständig aus der Datenbank entfernt. Stattdessen werden sie als gelöscht markiert",
     "Tags": "Tags",
     "Tags - Tooltip": "Sammlung von Tags, die für Benutzer zur Auswahl zur Verfügung stehen",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "Ansichtsregel",
     "Visible": "Sichtbar",
     "Website URL": "Website-URL",

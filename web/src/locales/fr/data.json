@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "Lorsque c'est activée, la suppression de compte ne les retirera pas complètement de la base de données. Au lieu de cela, ils seront marqués comme supprimés",
     "Tags": "Étiquettes",
     "Tags - Tooltip": "Collection d'étiquettes disponibles pour les comptes",
+    "Use Email as username": "Utiliser l'e-mail comme identifiant",
+    "Use Email as username - Tooltip": "Utiliser l'adresse e-mail comme identifiant pour les comptes lorsque l'identifiant ne fait pas partie des champs d'inscription",
     "View rule": "Règle de visibilité",
     "Visible": "Visible",
     "Website URL": "URL du site web",

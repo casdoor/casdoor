@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "有効になっている場合、ユーザーを削除しても完全にデータベースから削除されません。代わりに、削除されたとマークされます",
     "Tags": "タグ",
     "Tags - Tooltip": "ユーザーが選択できるタグのコレクション",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "ビュールール",
     "Visible": "見える",
     "Website URL": "ウェブサイトのURL",
