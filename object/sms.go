@@ -48,7 +48,7 @@ func SendSms(provider *Provider, content string, phoneNumbers ...string) error {
 		if provider.AppId != "" {
 			phoneNumbers = append([]string{provider.AppId}, phoneNumbers...)
 		}
-	} else if provider.Type == sender.Aliyun || provider.Type == sender.SendCloud {
+	} else if provider.Type == sender.Aliyun {
 		for i, number := range phoneNumbers {
 			phoneNumbers[i] = strings.TrimPrefix(number, "+86")
 		}

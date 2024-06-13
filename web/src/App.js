@@ -414,6 +414,7 @@ class App extends Component {
             <Layout id="parent-area">
               <ManagementPage
                 account={this.state.account}
+                application={this.state.application}
                 uri={this.state.uri}
                 themeData={this.state.themeData}
                 themeAlgorithm={this.state.themeAlgorithm}

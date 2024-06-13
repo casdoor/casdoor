@@ -166,7 +166,7 @@
     "Next Step": "Bước tiếp theo",
     "Please input your username!": "Vui lòng nhập tên đăng nhập của bạn!",
     "Reset": "Đặt lại",
-    "Retrieve password": "Truy xuất mật khẩu",
+    "Reset password": "Truy xuất mật khẩu",
     "Unknown forget type": "Loại quên chưa biết",
     "Verify": "Xác thực"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "Quản lý tài khoản",
     "Modify password...": "Sửa đổi mật khẩu...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "Email mới",
     "New Password": "Mật khẩu mới",
     "New User": "Người dùng mới",

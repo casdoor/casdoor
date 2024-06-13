@@ -166,7 +166,7 @@
     "Next Step": "다음 단계",
     "Please input your username!": "사용자 이름을 입력하세요!",
     "Reset": "리셋",
-    "Retrieve password": "비밀번호를 복구하세요",
+    "Reset password": "비밀번호를 복구하세요",
     "Unknown forget type": "미지의 잊혀진 유형",
     "Verify": "검증하다"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "관리 계정",
     "Modify password...": "비밀번호 수정하기...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "새 이메일",
     "New Password": "새로운 비밀번호",
     "New User": "새로운 사용자",

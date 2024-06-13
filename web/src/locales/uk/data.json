@@ -166,7 +166,7 @@
     "Next Step": "Наступний крок",
     "Please input your username!": "Будь ласка, введіть своє ім'я користувача!",
     "Reset": "Скинути",
-    "Retrieve password": "Отримати пароль",
+    "Reset password": "Отримати пароль",
     "Unknown forget type": "Невідомий забутий тип",
     "Verify": "Підтвердити"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "Керовані облікові записи",
     "Modify password...": "Змінити пароль...",
     "Multi-factor authentication": "Багатофакторна аутентифікація",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "Нова електронна пошта",
     "New Password": "Новий пароль",
     "New User": "Новий користувач",

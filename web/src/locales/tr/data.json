@@ -166,7 +166,7 @@
     "Next Step": "Sonraki adım",
     "Please input your username!": "Lütfen kullanıcı adınızı girin",
     "Reset": "Sıfırla",
-    "Retrieve password": "Şifre kurtar",
+    "Reset password": "Şifre kurtar",
     "Unknown forget type": "Unknown forget type",
     "Verify": "Doğrula"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "Managed accounts",
     "Modify password...": "Modify password...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "New Email",
     "New Password": "New Password",
     "New User": "New User",

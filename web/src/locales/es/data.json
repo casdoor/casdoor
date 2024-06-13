@@ -166,7 +166,7 @@
     "Next Step": "Siguiente paso",
     "Please input your username!": "¡Por favor, ingrese su nombre de usuario!",
     "Reset": "Restablecer",
-    "Retrieve password": "Recuperar contraseña",
+    "Reset password": "Reset password",
     "Unknown forget type": "Tipo de olvido desconocido",
     "Verify": "Verificar"
   },
@@ -1130,6 +1130,8 @@
     "Managed accounts": "Cuentas gestionadas",
     "Modify password...": "Modificar contraseña...",
     "Multi-factor authentication": "Multi-factor authentication",
+    "Need update password": "Need update password",
+    "Need update password - Tooltip": "Force user update password after login",
     "New Email": "Nuevo correo electrónico",
     "New Password": "Nueva contraseña",
     "New User": "Nuevo Usuario",
