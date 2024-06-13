@@ -46,7 +46,16 @@ func (syncer *Syncer) getPartialAvatarUrl(avatar string) string {
 
 func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, affiliationMap map[int]string) *User {
 	user := *originalUser
-	user.Owner = syncer.Organization
+
+	var userinfo User
+	has, err := ormer.Engine.Where("name = ?", user.Name).Get(&userinfo)
+	if err != nil {
+		return nil
+	}
+	if has {
+		user.Owner = userinfo.Owner
+	}
+	//user.Owner = syncer.Organization
 
 	if user.Name == "" {
 		user.Name = originalUser.Id
@@ -87,6 +96,8 @@ func (syncer *Syncer) createOriginalUserFromUser(user *User) *OriginalUser {
 
 func (syncer *Syncer) setUserByKeyValue(user *User, key string, value string) {
 	switch key {
+	case "Owner":
+		user.Owner = value
 	case "Name":
 		user.Name = value
 	case "CreatedTime":
@@ -271,6 +282,7 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullStrin
 
 func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]string {
 	m := map[string]string{}
+	m["Owner"] = user.Owner
 	m["Name"] = user.Name
 	m["CreatedTime"] = user.CreatedTime
 	m["UpdatedTime"] = user.UpdatedTime

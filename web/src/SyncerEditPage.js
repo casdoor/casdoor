@@ -61,8 +61,14 @@ class SyncerEditPage extends React.Component {
           return;
         }
 
+        // add organizations
+        const syncerWithOrganizations = {
+          ...res.data,
+          organizations: res.data.organizations || [],
+        };
+
         this.setState({
-          syncer: res.data,
+          syncer: syncerWithOrganizations,
         });
       });
   }
@@ -100,6 +106,9 @@ class SyncerEditPage extends React.Component {
 
     const syncer = this.state.syncer;
     syncer[key] = value;
+    if (key === "organization") {
+      syncer.organizations = []; // 清空 organizations 字段
+    }
     this.setState({
       syncer: syncer,
     });
@@ -214,6 +223,27 @@ class SyncerEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.syncer.organization} onChange={(value => {this.updateSyncerField("organization", value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Organizations"), i18next.t("general:Organizations - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode={"multiple"} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.syncer.organizations} onChange={(value => {this.updateSyncerField("organizations", value);})}>
+              {
+                this.state.organizations.map((organization, index) => {
+                  if (!this.state.syncer.organization.includes(organization.name)) {
+                    return (
+                      <Option key={index} value={organization.name}>
+                        {organization.name}
+                      </Option>
+                    );
+                  }
+                  return null;
+                })
               }
             </Select>
           </Col>

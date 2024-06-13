@@ -35,11 +35,12 @@ type Syncer struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	Organization string `xorm:"varchar(100)" json:"organization"`
-	Type         string `xorm:"varchar(100)" json:"type"`
-	DatabaseType string `xorm:"varchar(100)" json:"databaseType"`
-	SslMode      string `xorm:"varchar(100)" json:"sslMode"`
-	SshType      string `xorm:"varchar(100)" json:"sshType"`
+	Organization  string   `xorm:"varchar(100)" json:"organization"`
+	Organizations []string `xorm:"varchar(1000)" json:"organizations"`
+	Type          string   `xorm:"varchar(100)" json:"type"`
+	DatabaseType  string   `xorm:"varchar(100)" json:"databaseType"`
+	SslMode       string   `xorm:"varchar(100)" json:"sslMode"`
+	SshType       string   `xorm:"varchar(100)" json:"sshType"`
 
 	Host             string         `xorm:"varchar(100)" json:"host"`
 	Port             int            `json:"port"`

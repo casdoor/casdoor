@@ -17,15 +17,15 @@ package object
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
-	"strconv"
-	"strings"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
+	"reflect"
+	"strconv"
+	"strings"
+	"sync"
 )
 
 const (
@@ -317,6 +317,46 @@ func GetUsers(owner string) ([]*User, error) {
 	}
 
 	return users, nil
+}
+
+func GetUsersForOrgs(owners []string) ([]*User, error) {
+	if len(owners) == 0 {
+		return nil, fmt.Errorf("The orgs columns should have at least one element")
+	}
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	var allUsers []*User
+	errCh := make(chan error, len(owners))
+
+	for _, owner := range owners {
+		owner := owner // 创建局部变量，避免闭包中的问题
+		wg.Add(1)
+		util.SafeGoroutine(func() {
+			defer wg.Done()
+			users, err := GetUsers(owner)
+			if err != nil {
+				errCh <- err // 发送错误到错误通道
+				return
+			}
+			mu.Lock()
+			allUsers = append(allUsers, users...)
+			mu.Unlock()
+		})
+	}
+
+	wg.Wait()
+	close(errCh) // 关闭错误通道，表示所有任务已完成
+
+	// 检查错误通道中是否有错误
+	for err := range errCh {
+		if err != nil {
+			// 处理错误
+			return nil, err
+		}
+	}
+
+	return allUsers, nil
 }
 
 func GetUsersWithFilter(owner string, cond builder.Cond) ([]*User, error) {

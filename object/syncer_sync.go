@@ -28,6 +28,15 @@ func (syncer *Syncer) syncUsers() error {
 	fmt.Printf("Running syncUsers()..\n")
 
 	users, err := GetUsers(syncer.Organization)
+
+	if len(syncer.Organizations) != 0 {
+		orgUsers, err := GetUsersForOrgs(syncer.Organizations)
+		if err != nil {
+			return err
+		}
+		users = append(users, orgUsers...)
+	}
+
 	if err != nil {
 		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
 		_, err2 := updateSyncerErrorText(syncer, line)

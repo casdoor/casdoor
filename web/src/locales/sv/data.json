@@ -297,6 +297,7 @@
     "Organization": "Organization",
     "Organization - Tooltip": "Similar to concepts such as tenants or user pools, each user and application belongs to an organization",
     "Organizations": "Organizations",
+    "Organizations - Tooltip": "Provides multi-organization synchronization capabilities",
     "Password": "Password",
     "Password - Tooltip": "Make sure the password is correct",
     "Password complexity options": "Password complexity options",
