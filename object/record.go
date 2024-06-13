@@ -33,7 +33,7 @@ var (
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
-	passwordRegex = regexp.MustCompile("\"password\":\".+\"")
+	passwordRegex = regexp.MustCompile(`"password":\s*"(.*?)"`)
 }
 
 type Record struct {
@@ -46,7 +46,7 @@ type Response struct {
 }
 
 func maskPassword(recordString string) string {
-	return passwordRegex.ReplaceAllString(recordString, "\"password\":\"***\"")
+	return passwordRegex.ReplaceAllString(recordString, `"password":"***"`)
 }
 
 func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
