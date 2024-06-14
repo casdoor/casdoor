@@ -30,7 +30,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-webauthn/webauthn v0.6.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.6.0
 	github.com/json-iterator/go v1.1.12
 	github.com/lestrrat-go/jwx v1.2.29
 	github.com/lib/pq v1.10.9
@@ -40,7 +40,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
 	github.com/prometheus/client_golang v1.11.1
-	github.com/prometheus/client_model v0.4.0
+	github.com/prometheus/client_model v0.5.0
 	github.com/qiangmzsx/string-adapter/v2 v2.1.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/russellhaering/gosaml2 v0.9.0
@@ -61,12 +61,13 @@ require (
 	github.com/xorm-io/xorm v1.1.6
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	golang.org/x/crypto v0.21.0
-	golang.org/x/net v0.21.0
-	golang.org/x/oauth2 v0.17.0
-	google.golang.org/api v0.150.0
+	golang.org/x/net v0.22.0
+	golang.org/x/oauth2 v0.18.0
+	google.golang.org/api v0.169.0
+	google.golang.org/grpc v1.64.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0
 	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
 	maunium.net/go/mautrix v0.16.0
-	modernc.org/sqlite v1.18.2
+	modernc.org/sqlite v1.21.2
 )
