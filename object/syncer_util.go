@@ -55,7 +55,7 @@ func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, aff
 	if has {
 		user.Owner = userinfo.Owner
 	}
-	//user.Owner = syncer.Organization
+	// user.Owner = syncer.Organization
 
 	if user.Name == "" {
 		user.Name = originalUser.Id

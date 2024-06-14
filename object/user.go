@@ -17,15 +17,16 @@ package object
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
+	"sync"
+
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
-	"reflect"
-	"strconv"
-	"strings"
-	"sync"
 )
 
 const (
