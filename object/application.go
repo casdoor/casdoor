@@ -97,7 +97,7 @@ type Application struct {
 	RedirectUris         []string   `xorm:"varchar(1000)" json:"redirectUris"`
 	TokenFormat          string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenFields          []string   `xorm:"varchar(1000)" json:"tokenFields"`
-	ExpireInHours        int        `json:"expireInHours"`
+	ExpireInHours        float64    `json:"expireInHours"`
 	RefreshExpireInHours int        `json:"refreshExpireInHours"`
 	SignupUrl            string     `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl            string     `xorm:"varchar(200)" json:"signinUrl"`
