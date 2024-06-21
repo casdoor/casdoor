@@ -411,7 +411,7 @@ function ManagementPage(props) {
     return Setting.isMobile() || window.location.pathname.startsWith("/trees");
   }
 
-  const menuStyleRight = Setting.isAdminUser(props.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "280px";
+  const menuStyleRight = Setting.isAdminUser(props.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "320px";
 
   const onClose = () => {
     setMenuVisible(false);
