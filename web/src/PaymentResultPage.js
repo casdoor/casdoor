@@ -17,6 +17,7 @@ import {Button, Result, Spin} from "antd";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as SubscriptionBackend from "./backend/SubscriptionBackend";
+import * as UserBackend from "./backend/UserBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 
@@ -34,11 +35,31 @@ class PaymentResultPage extends React.Component {
       pricing: props.pricing ?? null,
       subscription: props.subscription ?? null,
       timeout: null,
+      user: null,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getPayment();
+  }
+
+  getUser() {
+    UserBackend.getUser(this.props.account.owner, this.props.account.name)
+      .then((res) => {
+        if (res.data === null) {
+          this.props.history.push("/404");
+          return;
+        }
+
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
+        this.setState({
+          user: res.data,
+        });
+      });
   }
 
   componentWillUnmount() {
@@ -114,6 +135,12 @@ class PaymentResultPage extends React.Component {
           });
         }
       }
+
+      if (payment.state === "Paid") {
+        if (this.props.account) {
+          this.getUser();
+        }
+      }
     } catch (err) {
       Setting.showMessage("error", err.message);
       return;
@@ -128,6 +155,16 @@ class PaymentResultPage extends React.Component {
     }
   }
 
+  getCurrencyText(payment) {
+    if (payment?.currency === "USD") {
+      return i18next.t("product:USD");
+    } else if (payment?.currency === "CNY") {
+      return i18next.t("product:CNY");
+    } else {
+      return "(Unknown currency)";
+    }
+  }
+
   render() {
     const payment = this.state.payment;
 
@@ -136,6 +173,27 @@ class PaymentResultPage extends React.Component {
     }
 
     if (payment.state === "Paid") {
+      if (payment.isRecharge) {
+        return (
+          <div className="login-content">
+            {
+              Setting.renderHelmet(payment)
+            }
+            <Result
+              status="success"
+              title={`${i18next.t("payment:Recharge successful")}`}
+              subTitle={`${i18next.t("payment:You have successfully recharged")} ${payment.price} ${this.getCurrencyText(payment)}, ${i18next.t("payment:Your current balance is")} ${this.state.user?.balance} ${this.getCurrencyText(payment)}`}
+              extra={[
+                <Button type="primary" key="returnUrl" onClick={() => {
+                  this.goToPaymentUrl(payment);
+                }}>
+                  {i18next.t("payment:Return to Website")}
+                </Button>,
+              ]}
+            />
+          </div>
+        );
+      }
       return (
         <div className="login-content">
           {

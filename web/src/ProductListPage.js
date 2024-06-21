@@ -38,6 +38,7 @@ class ProductListPage extends BaseListPage {
       price: 300,
       quantity: 99,
       sold: 10,
+      isRecharge: false,
       providers: [],
       state: "Published",
     };
