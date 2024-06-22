@@ -166,6 +166,10 @@ func (c *ApiController) BuyProduct() {
 	providerName := c.Input().Get("providerName")
 	paymentEnv := c.Input().Get("paymentEnv")
 	customPriceStr := c.Input().Get("customPrice")
+	if customPriceStr == "" {
+		customPriceStr = "0"
+	}
+
 	customPrice, err := strconv.ParseFloat(customPriceStr, 64)
 	if err != nil {
 		c.ResponseError(err.Error())

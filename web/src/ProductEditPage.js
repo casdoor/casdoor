@@ -225,7 +225,7 @@ class ProductEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.product.isRecharge ? null : (<React.Fragment>
+          this.state.product.isRecharge ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("product:Price"), i18next.t("product:Price - Tooltip"))} :
@@ -236,28 +236,27 @@ class ProductEditPage extends React.Component {
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("product:Quantity"), i18next.t("product:Quantity - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <InputNumber value={this.state.product.quantity} disabled={isCreatedByPlan} onChange={value => {
-                  this.updateProductField("quantity", value);
-                }} />
-              </Col>
-            </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("product:Sold"), i18next.t("product:Sold - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <InputNumber value={this.state.product.sold} disabled={isCreatedByPlan} onChange={value => {
-                  this.updateProductField("sold", value);
-                }} />
-              </Col>
-            </Row>
-          </React.Fragment>)
-        }
+          )}
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Quantity"), i18next.t("product:Quantity - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.product.quantity} disabled={isCreatedByPlan} onChange={value => {
+              this.updateProductField("quantity", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Sold"), i18next.t("product:Sold - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.product.sold} disabled={isCreatedByPlan} onChange={value => {
+              this.updateProductField("sold", value);
+            }} />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :

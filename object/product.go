@@ -170,10 +170,12 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, nil, fmt.Errorf("the product: %s does not exist", id)
 	}
 
-	if product.IsRecharge && customPrice <= 0 {
-		return nil, nil, fmt.Errorf("the custom price should bigger than zero")
-	} else if product.IsRecharge && customPrice > 0 {
-		product.Price = customPrice
+	if product.IsRecharge {
+		if customPrice <= 0 {
+			return nil, nil, fmt.Errorf("the custom price should bigger than zero")
+		} else {
+			product.Price = customPrice
+		}
 	}
 
 	provider, err := product.getProvider(providerName)

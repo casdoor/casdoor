@@ -128,18 +128,8 @@ class ProductBuyPage extends React.Component {
     }
   }
 
-  getCurrencyText(product) {
-    if (product?.currency === "USD") {
-      return i18next.t("product:USD");
-    } else if (product?.currency === "CNY") {
-      return i18next.t("product:CNY");
-    } else {
-      return "(Unknown currency)";
-    }
-  }
-
   getPrice(product) {
-    return `${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`;
+    return `${this.getCurrencySymbol(product)}${product?.price} (${Setting.getCurrencyText(product)})`;
   }
 
   // Call Weechat Pay via jsapi
@@ -300,7 +290,7 @@ class ProductBuyPage extends React.Component {
               product.isRecharge ? (
                 <Descriptions.Item span={3} label={i18next.t("product:Price")}>
                   <Space>
-                    <InputNumber min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} /> {this.getCurrencyText(product)}
+                    <InputNumber min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} /> {Setting.getCurrencyText(product)}
                   </Space>
                 </Descriptions.Item>
               ) : (

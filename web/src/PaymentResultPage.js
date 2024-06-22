@@ -155,16 +155,6 @@ class PaymentResultPage extends React.Component {
     }
   }
 
-  getCurrencyText(payment) {
-    if (payment?.currency === "USD") {
-      return i18next.t("product:USD");
-    } else if (payment?.currency === "CNY") {
-      return i18next.t("product:CNY");
-    } else {
-      return "(Unknown currency)";
-    }
-  }
-
   render() {
     const payment = this.state.payment;
 
@@ -181,8 +171,8 @@ class PaymentResultPage extends React.Component {
             }
             <Result
               status="success"
-              title={`${i18next.t("payment:Recharge successful")}`}
-              subTitle={`${i18next.t("payment:You have successfully recharged")} ${payment.price} ${this.getCurrencyText(payment)}, ${i18next.t("payment:Your current balance is")} ${this.state.user?.balance} ${this.getCurrencyText(payment)}`}
+              title={`${i18next.t("payment:Recharged successfully")}`}
+              subTitle={`${i18next.t("payment:You have successfully recharged")} ${payment.price} ${Setting.getCurrencyText(payment)}, ${i18next.t("payment:Your current balance is")} ${this.state.user?.balance} ${Setting.getCurrencyText(payment)}`}
               extra={[
                 <Button type="primary" key="returnUrl" onClick={() => {
                   this.goToPaymentUrl(payment);
