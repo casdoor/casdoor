@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -164,6 +165,16 @@ func (c *ApiController) BuyProduct() {
 	host := c.Ctx.Request.Host
 	providerName := c.Input().Get("providerName")
 	paymentEnv := c.Input().Get("paymentEnv")
+	customPriceStr := c.Input().Get("customPrice")
+	if customPriceStr == "" {
+		customPriceStr = "0"
+	}
+
+	customPrice, err := strconv.ParseFloat(customPriceStr, 64)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	// buy `pricingName/planName` for `paidUserName`
 	pricingName := c.Input().Get("pricingName")
@@ -189,7 +200,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv)
+	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

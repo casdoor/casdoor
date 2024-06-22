@@ -687,7 +687,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance")
 	}
 
 	columns = append(columns, "updated_time")
@@ -1156,4 +1156,14 @@ func GenerateIdForNewUser(application *Application) (string, error) {
 
 	res := strconv.Itoa(lastUserId + 1)
 	return res, nil
+}
+
+func updateUserBalance(owner string, name string, balance float64) error {
+	user, err := getUser(owner, name)
+	if err != nil {
+		return err
+	}
+	user.Balance += balance
+	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
+	return err
 }

@@ -707,6 +707,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Balance") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Balance"), i18next.t("user:Balance - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.user.balance} onChange={value => {
+              this.updateUserField("balance", value);
+            }} />
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Score") {
       return (
         <Row style={{marginTop: "20px"}} >

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions, Spin} from "antd";
+import {Button, Descriptions, InputNumber, Space, Spin} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -36,6 +36,7 @@ class ProductBuyPage extends React.Component {
       pricing: props?.pricing ?? null,
       plan: null,
       isPlacingOrder: false,
+      customPrice: 0,
     };
   }
 
@@ -127,18 +128,8 @@ class ProductBuyPage extends React.Component {
     }
   }
 
-  getCurrencyText(product) {
-    if (product?.currency === "USD") {
-      return i18next.t("product:USD");
-    } else if (product?.currency === "CNY") {
-      return i18next.t("product:CNY");
-    } else {
-      return "(Unknown currency)";
-    }
-  }
-
   getPrice(product) {
-    return `${this.getCurrencySymbol(product)}${product?.price} (${this.getCurrencyText(product)})`;
+    return `${this.getCurrencySymbol(product)}${product?.price} (${Setting.getCurrencyText(product)})`;
   }
 
   // Call Weechat Pay via jsapi
@@ -192,7 +183,7 @@ class ProductBuyPage extends React.Component {
       isPlacingOrder: true,
     });
 
-    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "", this.state.paymentEnv)
+    ProductBackend.buyProduct(product.owner, product.name, provider.name, this.state.pricingName ?? "", this.state.planName ?? "", this.state.userName ?? "", this.state.paymentEnv, this.state.customPrice)
       .then((res) => {
         if (res.status === "ok") {
           const payment = res.data;
@@ -295,15 +286,27 @@ class ProductBuyPage extends React.Component {
             <Descriptions.Item label={i18next.t("product:Image")} span={3}>
               <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
             </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Price")}>
-              <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
-                {
-                  this.getPrice(product)
-                }
-              </span>
-            </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+            {
+              product.isRecharge ? (
+                <Descriptions.Item span={3} label={i18next.t("product:Price")}>
+                  <Space>
+                    <InputNumber min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} /> {Setting.getCurrencyText(product)}
+                  </Space>
+                </Descriptions.Item>
+              ) : (
+                <React.Fragment>
+                  <Descriptions.Item label={i18next.t("product:Price")}>
+                    <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
+                      {
+                        this.getPrice(product)
+                      }
+                    </span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
+                  <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+                </React.Fragment>
+              )
+            }
             <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
               {
                 this.renderPay(product)

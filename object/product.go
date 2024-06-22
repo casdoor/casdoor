@@ -39,6 +39,7 @@ type Product struct {
 	Price       float64  `json:"price"`
 	Quantity    int      `json:"quantity"`
 	Sold        int      `json:"sold"`
+	IsRecharge  bool     `json:"isRecharge"`
 	Providers   []string `xorm:"varchar(255)" json:"providers"`
 	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
 
@@ -160,13 +161,21 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	product, err := GetProduct(id)
 	if err != nil {
 		return nil, nil, err
 	}
 	if product == nil {
 		return nil, nil, fmt.Errorf("the product: %s does not exist", id)
+	}
+
+	if product.IsRecharge {
+		if customPrice <= 0 {
+			return nil, nil, fmt.Errorf("the custom price should bigger than zero")
+		} else {
+			product.Price = customPrice
+		}
 	}
 
 	provider, err := product.getProvider(providerName)
@@ -246,6 +255,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		Currency:           product.Currency,
 		Price:              product.Price,
 		ReturnUrl:          product.ReturnUrl,
+		IsRecharge:         product.IsRecharge,
 
 		User:       user.Name,
 		PayUrl:     payResp.PayUrl,
@@ -256,6 +266,10 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 	if provider.Type == "Dummy" {
 		payment.State = pp.PaymentStatePaid
+		err = updateUserBalance(user.Owner, user.Name, payment.Price)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	affected, err := AddPayment(payment)
@@ -304,8 +318,9 @@ func CreateProductForPlan(plan *Plan) *Product {
 		Price:       plan.Price,
 		Currency:    plan.Currency,
 
-		Quantity: 999,
-		Sold:     0,
+		Quantity:   999,
+		Sold:       0,
+		IsRecharge: false,
 
 		Providers: plan.PaymentProviders,
 		State:     "Published",
