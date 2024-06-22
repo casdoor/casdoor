@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "Якщо ввімкнено, видалення користувачів не призведе до їх повного видалення з бази даних. ",
     "Tags": "Теги",
     "Tags - Tooltip": "Колекція тегів, доступна для вибору користувачами",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "Переглянути правило",
     "Visible": "Видно",
     "Website URL": "адреса вебсайту",

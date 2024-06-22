@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "Khi được bật, việc xóa người dùng sẽ không hoàn toàn loại bỏ họ khỏi cơ sở dữ liệu. Thay vào đó, họ sẽ được đánh dấu là đã bị xóa",
     "Tags": "Thẻ",
     "Tags - Tooltip": "Bộ sưu tập các thẻ có sẵn cho người dùng lựa chọn",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "Xem quy tắc",
     "Visible": "Rõ ràng",
     "Website URL": "Địa chỉ trang web",

@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "사용 가능한 경우, 사용자 삭제 시 데이터베이스에서 완전히 삭제되지 않습니다. 대신 삭제됨으로 표시됩니다",
     "Tags": "태그",
     "Tags - Tooltip": "사용자가 선택할 수 있는 태그 컬렉션",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "보기 규칙",
     "Visible": "보이는",
     "Website URL": "웹사이트 URL",

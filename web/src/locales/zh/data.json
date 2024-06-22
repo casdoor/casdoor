@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "启用后，删除一个用户时不会在数据库彻底清除，只会标记为已删除状态",
     "Tags": "标签集合",
     "Tags - Tooltip": "可供用户选择的标签集合",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "查看规则",
     "Visible": "是否可见",
     "Website URL": "主页地址",

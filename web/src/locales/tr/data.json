@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "When enabled, deleting users will not completely remove them from the database. Instead, they will be marked as deleted",
     "Tags": "Tags",
     "Tags - Tooltip": "Collection of tags available for users to choose from",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "View rule",
     "Visible": "Görünür",
     "Website URL": "Web Sitesi URL'si",

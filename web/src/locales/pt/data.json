@@ -576,6 +576,8 @@
     "Soft deletion - Tooltip": "Quando ativada, a exclusão de usuários não os removerá completamente do banco de dados. Em vez disso, eles serão marcados como excluídos",
     "Tags": "Tags",
     "Tags - Tooltip": "Coleção de tags disponíveis para os usuários escolherem",
+    "Use Email as username": "Use Email as username",
+    "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "View rule": "Ver regra",
     "Visible": "Visível",
     "Website URL": "URL do website",
