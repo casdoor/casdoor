@@ -72,11 +72,6 @@ type User struct {
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
 	Address           []string `json:"address"`
-	Formatted         string   `xorm:"varchar(500)" json:"formatted"`
-	StreetAddress     string   `xorm:"varchar(100)" json:"streetAddress"`
-	Locality          string   `xorm:"varchar(100)" json:"locality"`
-	PostalCode        string   `xorm:"varchar(100)" json:"postalCode"`
-	Country           string   `xorm:"varchar(100)" json:"country"`
 	Affiliation       string   `xorm:"varchar(100)" json:"affiliation"`
 	Title             string   `xorm:"varchar(100)" json:"title"`
 	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
