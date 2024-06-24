@@ -108,6 +108,7 @@ func initBuiltInOrganization() bool {
 		AccountItems:       getBuiltInAccountItems(),
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
+		UseEmailAsUsername: false,
 	}
 	_, err = AddOrganization(organization)
 	if err != nil {

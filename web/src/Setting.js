@@ -1516,3 +1516,13 @@ export function getDefaultHtmlEmailContent() {
 </body>
 </html>`;
 }
+
+export function getCurrencyText(product) {
+  if (product?.currency === "USD") {
+    return i18next.t("product:USD");
+  } else if (product?.currency === "CNY") {
+    return i18next.t("product:CNY");
+  } else {
+    return "(Unknown currency)";
+  }
+}

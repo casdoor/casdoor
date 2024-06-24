@@ -416,6 +416,11 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if oldUser.Balance != newUser.Balance {
+		item := GetAccountItemByName("Balance", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if oldUser.Score != newUser.Score {
 		item := GetAccountItemByName("Score", organization)
 		itemsChanged = append(itemsChanged, item)
