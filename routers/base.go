@@ -95,10 +95,14 @@ func getUsernameByKeys(ctx *context.Context) (string, error) {
 	accessKey, accessSecret := getKeys(ctx)
 	user, err := object.GetUserByAccessKey(accessKey)
 	if err != nil {
+		return "", err
+	}
+
+	if user == nil {
 		return "", fmt.Errorf("user not found for access key: %s", accessKey)
 	}
 
-	if user == nil || accessSecret != user.AccessSecret {
+	if accessSecret != user.AccessSecret {
 		return "", fmt.Errorf("incorrect access secret for user: %s", user.Name)
 	}
 
