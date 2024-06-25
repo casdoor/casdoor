@@ -20,7 +20,6 @@ import * as Setting from "../../Setting";
 export const AgreementModal = (props) => {
   const {open, onOk, onCancel, application} = props;
   const [doc, setDoc] = useState("");
-
   useEffect(() => {
     getTermsOfUseContent(application.termsOfUse).then((data) => {
       setDoc(data);
@@ -75,7 +74,7 @@ function initDefaultValue(application) {
   return isAgreementRequired(application) && agreementItem.rule === "Signin (Default True)";
 }
 
-export function renderAgreementFormItem(application, required, layout, ths) {
+export function renderAgreementFormItem(application, required, layout, ths, agree) {
   return (<React.Fragment>
     <Form.Item
       name="agreement"
@@ -93,8 +92,10 @@ export function renderAgreementFormItem(application, required, layout, ths) {
             }
 
             if (!value) {
+              agree.setValue(false);
               return Promise.reject(i18next.t("signup:Please accept the agreement!"));
             } else {
+              agree.setValue(true);
               return Promise.resolve();
             }
           },

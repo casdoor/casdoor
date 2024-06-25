@@ -13,10 +13,9 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Radio, Result, Row} from "antd";
+import {Button, Form, Input, Radio, Result, Row, message} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
-import * as ProviderButton from "./ProviderButton";
 import i18next from "i18next";
 import * as Util from "./Util";
 import {authConfig} from "./Auth";
@@ -30,6 +29,8 @@ import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as InvitationBackend from "../backend/InvitationBackend";
+import Agree from "./Agree";
+import * as ProviderButton from "./ProviderButton";
 
 const formItemLayout = {
   labelCol: {
@@ -81,7 +82,7 @@ class SignupPage extends React.Component {
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
     };
-
+    this.agree = new Agree(false);
     this.form = React.createRef();
   }
 
@@ -622,7 +623,7 @@ class SignupPage extends React.Component {
         </Form.Item>
       );
     } else if (signupItem.name === "Agreement") {
-      return AgreementModal.renderAgreementFormItem(application, required, tailFormItemLayout, this);
+      return AgreementModal.renderAgreementFormItem(application, required, tailFormItemLayout, this, this.agree);
     } else if (signupItem.name.startsWith("Text ")) {
       return (
         <div dangerouslySetInnerHTML={{__html: signupItem.label}} />
@@ -653,11 +654,17 @@ class SignupPage extends React.Component {
       }
       return (
 
-        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-          return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location);
-        })
+        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => (
+          <span key={providerItem.provider.displayName} onClick={(e) => {
+            if (!this.agree.getValue()) {
+              e.preventDefault();
+              message.error("signup:Please accept the agreement!");
+            }
+          }}>
+            {ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location)}
+          </span>
+        )));
 
-      );
     }
   }
 
