@@ -487,6 +487,7 @@ class PermissionEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.permission.owner,
             permissionName: this.state.permission.name,
           });
 
