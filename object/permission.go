@@ -181,15 +181,15 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 			return false, err
 		}
 
-		if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
-			isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
-			if isEmpty {
-				err = ormer.Engine.DropTables(oldPermission.Adapter)
-				if err != nil {
-					return false, err
-				}
-			}
-		}
+		// if oldPermission.Adapter != "" && oldPermission.Adapter != permission.Adapter {
+		// 	isEmpty, _ := ormer.Engine.IsTableEmpty(oldPermission.Adapter)
+		// 	if isEmpty {
+		// 		err = ormer.Engine.DropTables(oldPermission.Adapter)
+		// 		if err != nil {
+		// 			return false, err
+		// 		}
+		// 	}
+		// }
 
 		err = addGroupingPolicies(permission)
 		if err != nil {
@@ -312,15 +312,15 @@ func DeletePermission(permission *Permission) (bool, error) {
 			return false, err
 		}
 
-		if permission.Adapter != "" && permission.Adapter != "permission_rule" {
-			isEmpty, _ := ormer.Engine.IsTableEmpty(permission.Adapter)
-			if isEmpty {
-				err = ormer.Engine.DropTables(permission.Adapter)
-				if err != nil {
-					return false, err
-				}
-			}
-		}
+		// if permission.Adapter != "" && permission.Adapter != "permission_rule" {
+		// 	isEmpty, _ := ormer.Engine.IsTableEmpty(permission.Adapter)
+		// 	if isEmpty {
+		// 		err = ormer.Engine.DropTables(permission.Adapter)
+		// 		if err != nil {
+		// 			return false, err
+		// 		}
+		// 	}
+		// }
 	}
 
 	return affected, nil
