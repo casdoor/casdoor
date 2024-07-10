@@ -109,6 +109,7 @@ func initBuiltInOrganization() bool {
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
 		UseEmailAsUsername: false,
+		EnableTour:         true,
 	}
 	_, err = AddOrganization(organization)
 	if err != nil {
