@@ -208,6 +208,12 @@ export function setIsTourVisible(visible) {
   window.dispatchEvent(new Event("storageTourChanged"));
 }
 
+export function setTourLogo(tourLogoSrc) {
+  if (tourLogoSrc !== "") {
+    TourObj["home"][0]["cover"] = (<img alt="casdoor.png" src={tourLogoSrc} />);
+  }
+}
+
 export function getTourVisible() {
   return localStorage.getItem("isTourVisible") !== "false";
 }

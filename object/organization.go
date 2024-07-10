@@ -73,6 +73,7 @@ type Organization struct {
 	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
+	EnableTour             bool       `json:"enableTour"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`

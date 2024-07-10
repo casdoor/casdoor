@@ -44,6 +44,7 @@ class OrganizationListPage extends BaseListPage {
       defaultPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
+      enableTour: true,
       accountItems: [
         {name: "Organization", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "ID", visible: true, viewRule: "Public", modifyRule: "Immutable"},
