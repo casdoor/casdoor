@@ -725,7 +725,7 @@ class ProviderEditPage extends React.Component {
           (this.state.provider.category === "Web3") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
           (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
-          (this.state.provider.category === "Notification" && (this.state.provider.type === "Google Chat" || this.state.provider.type === "Custom HTTP")) ? null : (
+          (this.state.provider.category === "Notification" && (this.state.provider.type === "Google Chat" || this.state.provider.type === "Custom HTTP") || this.state.provider.type === "Balance") ? null : (
               <React.Fragment>
                 {
                   (this.state.provider.category === "Storage" && this.state.provider.type === "Google Cloud Storage") ||

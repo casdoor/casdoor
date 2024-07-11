@@ -227,13 +227,17 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		NotifyUrl:          notifyUrl,
 		PaymentEnv:         paymentEnv,
 	}
+
 	// custom process for WeChat & WeChat Pay
 	if provider.Type == "WeChat Pay" {
 		payReq.PayerId, err = getUserExtraProperty(user, "WeChat", idp.BuildWechatOpenIdKey(provider.ClientId2))
 		if err != nil {
 			return nil, nil, err
 		}
+	} else if provider.Type == "Balance" {
+		payReq.PayerId = user.GetId()
 	}
+
 	payResp, err := pProvider.Pay(payReq)
 	if err != nil {
 		return nil, nil, err
@@ -289,11 +293,21 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 	if provider.Type == "Dummy" {
 		payment.State = pp.PaymentStatePaid
-		transaction.State = pp.PaymentStatePaid
-		err = updateUserBalance(user.Owner, user.Name, payment.Price)
+		err = UpdateUserBalance(user.Owner, user.Name, payment.Price)
 		if err != nil {
 			return nil, nil, err
 		}
+	} else if provider.Type == "Balance" {
+		if product.Price > user.Balance {
+			return nil, nil, fmt.Errorf("insufficient user balance")
+		}
+		transaction.Amount = -transaction.Amount
+		err = UpdateUserBalance(user.Owner, user.Name, -product.Price)
+		if err != nil {
+			return nil, nil, err
+		}
+		payment.State = pp.PaymentStatePaid
+		transaction.State = pp.PaymentStatePaid
 	}
 
 	affected, err := AddPayment(payment)
@@ -305,7 +319,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
-	if product.IsRecharge {
+	if product.IsRecharge || provider.Type == "Balance" {
 		affected, err = AddTransaction(transaction)
 		if err != nil {
 			return nil, nil, err

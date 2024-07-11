@@ -1158,7 +1158,7 @@ func GenerateIdForNewUser(application *Application) (string, error) {
 	return res, nil
 }
 
-func updateUserBalance(owner string, name string, balance float64) error {
+func UpdateUserBalance(owner string, name string, balance float64) error {
 	user, err := getUser(owner, name)
 	if err != nil {
 		return err
