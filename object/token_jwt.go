@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -139,6 +140,26 @@ type ClaimsShort struct {
 	jwt.RegisteredClaims
 }
 
+type OIDCAddress struct {
+	Formatted     string `json:"formatted"`
+	StreetAddress string `json:"street_address"`
+	Locality      string `json:"locality"`
+	Region        string `json:"region"`
+	PostalCode    string `json:"postal_code"`
+	Country       string `json:"country"`
+}
+
+type ClaimsStandard struct {
+	*UserShort
+	Gender    string      `json:"gender,omitempty"`
+	TokenType string      `json:"tokenType,omitempty"`
+	Nonce     string      `json:"nonce,omitempty"`
+	Scope     string      `json:"scope,omitempty"`
+	Address   OIDCAddress `json:"address,omitempty"`
+
+	jwt.RegisteredClaims
+}
+
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
 	TokenType string `json:"tokenType,omitempty"`
@@ -258,6 +279,49 @@ func getShortClaims(claims Claims) ClaimsShort {
 		Scope:            claims.Scope,
 		RegisteredClaims: claims.RegisteredClaims,
 	}
+	return res
+}
+
+func getStreetAddress(user *User) string {
+	var addrs string
+	for _, addr := range user.Address {
+		addrs += addr + "\n"
+	}
+	return addrs
+}
+
+func getStandardClaims(claims Claims) ClaimsStandard {
+	res := ClaimsStandard{
+		UserShort:        getShortUser(claims.User),
+		TokenType:        claims.TokenType,
+		Nonce:            claims.Nonce,
+		Scope:            claims.Scope,
+		RegisteredClaims: claims.RegisteredClaims,
+	}
+
+	res.UserShort.Phone = ""
+	res.UserShort.Email = ""
+
+	var scopes []string
+
+	if strings.Contains(claims.Scope, ",") {
+		scopes = strings.Split(claims.Scope, ",")
+	} else {
+		scopes = strings.Split(claims.Scope, " ")
+	}
+
+	for _, scope := range scopes {
+		if scope == "address" {
+			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
+		} else if scope == "phone" {
+			res.UserShort.Phone = claims.User.Phone
+		} else if scope == "email" {
+			res.UserShort.Email = claims.User.Email
+		} else if scope == "profile" {
+			res.Gender = claims.User.Gender
+		}
+	}
+
 	return res
 }
 
@@ -386,6 +450,13 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
 		refreshClaims["TokenType"] = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, refreshClaims)
+	} else if application.TokenFormat == "JWT-Standard" {
+		claimsStandard := getStandardClaims(claims)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsStandard)
+		claimsStandard.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claimsStandard.TokenType = "refresh-token"
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsStandard)
 	} else {
 		return "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
