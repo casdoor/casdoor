@@ -309,12 +309,22 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}, nil
 	}
 
-	_, err = ParseJwtToken(refreshToken, cert)
-	if err != nil {
-		return &TokenError{
-			Error:            InvalidGrant,
-			ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
-		}, nil
+	if application.TokenFormat == "JWT-Standard" {
+		_, err = ParseStandardJwtToken(refreshToken, cert)
+		if err != nil {
+			return &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
+			}, nil
+		}
+	} else {
+		_, err = ParseJwtToken(refreshToken, cert)
+		if err != nil {
+			return &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
+			}, nil
+		}
 	}
 
 	// generate a new token

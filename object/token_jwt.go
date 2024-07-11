@@ -299,9 +299,6 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 		RegisteredClaims: claims.RegisteredClaims,
 	}
 
-	res.UserShort.Phone = ""
-	res.UserShort.Email = ""
-
 	var scopes []string
 
 	if strings.Contains(claims.Scope, ",") {
@@ -313,10 +310,6 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 	for _, scope := range scopes {
 		if scope == "address" {
 			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
-		} else if scope == "phone" {
-			res.UserShort.Phone = claims.User.Phone
-		} else if scope == "email" {
-			res.UserShort.Email = claims.User.Email
 		} else if scope == "profile" {
 			res.Gender = claims.User.Gender
 		}
@@ -518,6 +511,34 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 	return nil, err
 }
 
+func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
+	t, err := jwt.ParseWithClaims(token, &ClaimsStandard{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		if cert.Certificate == "" {
+			return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
+		}
+
+		// RSA certificate
+		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
+		if err != nil {
+			return nil, err
+		}
+
+		return certificate, nil
+	})
+
+	if t != nil {
+		if claims, ok := t.Claims.(*ClaimsStandard); ok && t.Valid {
+			return claims, nil
+		}
+	}
+
+	return nil, err
+}
+
 func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
 	cert, err := getCertByApplication(application)
 	if err != nil {
@@ -525,4 +546,13 @@ func ParseJwtTokenByApplication(token string, application *Application) (*Claims
 	}
 
 	return ParseJwtToken(token, cert)
+}
+
+func ParseStandardJwtTokenByApplication(token string, application *Application) (*ClaimsStandard, error) {
+	cert, err := getCertByApplication(application)
+	if err != nil {
+		return nil, err
+	}
+
+	return ParseStandardJwtToken(token, cert)
 }
