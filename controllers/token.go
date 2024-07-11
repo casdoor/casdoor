@@ -359,6 +359,7 @@ func (c *ApiController) IntrospectToken() {
 			Jti:       jwtToken.ID,
 		}
 		c.ServeJSON()
+		return
 	}
 
 	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)

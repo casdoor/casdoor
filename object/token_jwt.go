@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 	"reflect"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -149,17 +148,6 @@ type OIDCAddress struct {
 	Country       string `json:"country"`
 }
 
-type ClaimsStandard struct {
-	*UserShort
-	Gender    string      `json:"gender,omitempty"`
-	TokenType string      `json:"tokenType,omitempty"`
-	Nonce     string      `json:"nonce,omitempty"`
-	Scope     string      `json:"scope,omitempty"`
-	Address   OIDCAddress `json:"address,omitempty"`
-
-	jwt.RegisteredClaims
-}
-
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
 	TokenType string `json:"tokenType,omitempty"`
@@ -279,42 +267,6 @@ func getShortClaims(claims Claims) ClaimsShort {
 		Scope:            claims.Scope,
 		RegisteredClaims: claims.RegisteredClaims,
 	}
-	return res
-}
-
-func getStreetAddress(user *User) string {
-	var addrs string
-	for _, addr := range user.Address {
-		addrs += addr + "\n"
-	}
-	return addrs
-}
-
-func getStandardClaims(claims Claims) ClaimsStandard {
-	res := ClaimsStandard{
-		UserShort:        getShortUser(claims.User),
-		TokenType:        claims.TokenType,
-		Nonce:            claims.Nonce,
-		Scope:            claims.Scope,
-		RegisteredClaims: claims.RegisteredClaims,
-	}
-
-	var scopes []string
-
-	if strings.Contains(claims.Scope, ",") {
-		scopes = strings.Split(claims.Scope, ",")
-	} else {
-		scopes = strings.Split(claims.Scope, " ")
-	}
-
-	for _, scope := range scopes {
-		if scope == "address" {
-			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
-		} else if scope == "profile" {
-			res.Gender = claims.User.Gender
-		}
-	}
-
 	return res
 }
 
@@ -511,34 +463,6 @@ func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
 	return nil, err
 }
 
-func ParseStandardJwtToken(token string, cert *Cert) (*ClaimsStandard, error) {
-	t, err := jwt.ParseWithClaims(token, &ClaimsStandard{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		if cert.Certificate == "" {
-			return nil, fmt.Errorf("the certificate field should not be empty for the cert: %v", cert)
-		}
-
-		// RSA certificate
-		certificate, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert.Certificate))
-		if err != nil {
-			return nil, err
-		}
-
-		return certificate, nil
-	})
-
-	if t != nil {
-		if claims, ok := t.Claims.(*ClaimsStandard); ok && t.Valid {
-			return claims, nil
-		}
-	}
-
-	return nil, err
-}
-
 func ParseJwtTokenByApplication(token string, application *Application) (*Claims, error) {
 	cert, err := getCertByApplication(application)
 	if err != nil {
@@ -546,13 +470,4 @@ func ParseJwtTokenByApplication(token string, application *Application) (*Claims
 	}
 
 	return ParseJwtToken(token, cert)
-}
-
-func ParseStandardJwtTokenByApplication(token string, application *Application) (*ClaimsStandard, error) {
-	cert, err := getCertByApplication(application)
-	if err != nil {
-		return nil, err
-	}
-
-	return ParseStandardJwtToken(token, cert)
 }
