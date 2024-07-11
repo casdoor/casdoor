@@ -222,6 +222,19 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 		if err != nil {
 			return nil, err
 		}
+
+		transaction, err := GetTransaction(payment.GetId())
+		if err != nil {
+			return nil, err
+		}
+
+		if transaction != nil {
+			transaction.State = payment.State
+			_, err = UpdateTransaction(transaction.GetId(), transaction)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	return payment, nil
