@@ -139,6 +139,15 @@ type ClaimsShort struct {
 	jwt.RegisteredClaims
 }
 
+type OIDCAddress struct {
+	Formatted     string `json:"formatted"`
+	StreetAddress string `json:"street_address"`
+	Locality      string `json:"locality"`
+	Region        string `json:"region"`
+	PostalCode    string `json:"postal_code"`
+	Country       string `json:"country"`
+}
+
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
 	TokenType string `json:"tokenType,omitempty"`
@@ -386,6 +395,13 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
 		refreshClaims["TokenType"] = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, refreshClaims)
+	} else if application.TokenFormat == "JWT-Standard" {
+		claimsStandard := getStandardClaims(claims)
+
+		token = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsStandard)
+		claimsStandard.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
+		claimsStandard.TokenType = "refresh-token"
+		refreshToken = jwt.NewWithClaims(jwt.SigningMethodRS256, claimsStandard)
 	} else {
 		return "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
