@@ -16,7 +16,7 @@ import React, {Component, Suspense, lazy} from "react";
 import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
-import {setIsTourVisible, setTourLogo} from "./TourConfig";
+import {setOrgIsTourVisible, setTourLogo} from "./TourConfig";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
 import {GithubOutlined, InfoCircleFilled, ShareAltOutlined} from "@ant-design/icons";
 import {Alert, Button, ConfigProvider, Drawer, FloatButton, Layout, Result, Tooltip} from "antd";
@@ -249,7 +249,7 @@ class App extends Component {
           this.setLanguage(account);
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
           setTourLogo(account.organization.logo);
-          setIsTourVisible(account.organization.enableTour);
+          setOrgIsTourVisible(account.organization.enableTour);
         } else {
           if (res.data !== "Please login first") {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);

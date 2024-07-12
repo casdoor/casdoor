@@ -203,9 +203,12 @@ export function getNextUrl(pathName = window.location.pathname) {
   return TourUrlList[TourUrlList.indexOf(pathName.replace("/", "")) + 1] || "";
 }
 
+export function setOrgIsTourVisible(visible) {
+  localStorage.setItem("isOrgTourVisible", visible);
+}
+
 export function setIsTourVisible(visible) {
   localStorage.setItem("isTourVisible", visible);
-  window.dispatchEvent(new Event("storageTourChanged"));
 }
 
 export function setTourLogo(tourLogoSrc) {
@@ -215,7 +218,7 @@ export function setTourLogo(tourLogoSrc) {
 }
 
 export function getTourVisible() {
-  return localStorage.getItem("isTourVisible") !== "false";
+  return localStorage.getItem("isTourVisible") !== "false" && localStorage.getItem("isOrgTourVisible") !== "false";
 }
 
 export function getNextButtonChild(nextPathName) {
