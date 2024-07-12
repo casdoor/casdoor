@@ -248,7 +248,7 @@ export const OtherProviderInfo = {
       url: "",
     },
     "Balance": {
-      logo: `${StaticBaseUrl}/img/payment_paypal.png`,
+      logo: `${StaticBaseUrl}/img/payment_balance.svg`,
       url: "",
     },
     "Alipay": {
