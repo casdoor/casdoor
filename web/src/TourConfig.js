@@ -203,8 +203,10 @@ export function getNextUrl(pathName = window.location.pathname) {
   return TourUrlList[TourUrlList.indexOf(pathName.replace("/", "")) + 1] || "";
 }
 
+let orgIsTourVisible = true;
+
 export function setOrgIsTourVisible(visible) {
-  localStorage.setItem("isOrgTourVisible", visible);
+  orgIsTourVisible = visible;
 }
 
 export function setIsTourVisible(visible) {
@@ -218,7 +220,7 @@ export function setTourLogo(tourLogoSrc) {
 }
 
 export function getTourVisible() {
-  return localStorage.getItem("isTourVisible") !== "false" && localStorage.getItem("isOrgTourVisible") !== "false";
+  return localStorage.getItem("isTourVisible") !== "false" && orgIsTourVisible;
 }
 
 export function getNextButtonChild(nextPathName) {
