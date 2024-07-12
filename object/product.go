@@ -227,13 +227,17 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		NotifyUrl:          notifyUrl,
 		PaymentEnv:         paymentEnv,
 	}
+
 	// custom process for WeChat & WeChat Pay
 	if provider.Type == "WeChat Pay" {
 		payReq.PayerId, err = getUserExtraProperty(user, "WeChat", idp.BuildWechatOpenIdKey(provider.ClientId2))
 		if err != nil {
 			return nil, nil, err
 		}
+	} else if provider.Type == "Balance" {
+		payReq.PayerId = user.GetId()
 	}
+
 	payResp, err := pProvider.Pay(payReq)
 	if err != nil {
 		return nil, nil, err
@@ -264,12 +268,46 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		OutOrderId: payResp.OrderId,
 	}
 
+	transaction := &Transaction{
+		Owner:       payment.Owner,
+		Name:        payment.Name,
+		DisplayName: payment.DisplayName,
+		Provider:    provider.Name,
+		Category:    provider.Category,
+		Type:        provider.Type,
+
+		ProductName:        product.Name,
+		ProductDisplayName: product.DisplayName,
+		Detail:             product.Detail,
+		Tag:                product.Tag,
+		Currency:           product.Currency,
+		Amount:             payment.Price,
+		ReturnUrl:          payment.ReturnUrl,
+
+		User:        payment.User,
+		Application: owner,
+		Payment:     payment.GetId(),
+
+		State: pp.PaymentStateCreated,
+	}
+
 	if provider.Type == "Dummy" {
 		payment.State = pp.PaymentStatePaid
-		err = updateUserBalance(user.Owner, user.Name, payment.Price)
+		err = UpdateUserBalance(user.Owner, user.Name, payment.Price)
 		if err != nil {
 			return nil, nil, err
 		}
+	} else if provider.Type == "Balance" {
+		if product.Price > user.Balance {
+			return nil, nil, fmt.Errorf("insufficient user balance")
+		}
+		transaction.Amount = -transaction.Amount
+		err = UpdateUserBalance(user.Owner, user.Name, -product.Price)
+		if err != nil {
+			return nil, nil, err
+		}
+		payment.State = pp.PaymentStatePaid
+		transaction.State = pp.PaymentStatePaid
 	}
 
 	affected, err := AddPayment(payment)
@@ -280,6 +318,17 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	if !affected {
 		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
+
+	if product.IsRecharge || provider.Type == "Balance" {
+		affected, err = AddTransaction(transaction)
+		if err != nil {
+			return nil, nil, err
+		}
+		if !affected {
+			return nil, nil, fmt.Errorf("failed to add transaction: %s", util.StructToJson(payment))
+		}
+	}
+
 	return payment, payResp.AttachInfo, nil
 }
 
