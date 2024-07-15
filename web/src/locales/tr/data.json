@@ -551,6 +551,11 @@
     "Your phone is": "Telefon numaranız",
     "preferred": "tercih edilen"
   },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
+  },
   "model": {
     "Edit Model": "Modeli Düzenle",
     "Model text": "Model text",
@@ -1136,6 +1141,7 @@
     "Link": "Link",
     "Location": "Location",
     "Location - Tooltip": "City of residence",
+    "MFA Accounts": "MFA Accounts",
     "Managed accounts": "Managed accounts",
     "Modify password...": "Modify password...",
     "Multi-factor authentication": "Multi-factor authentication",

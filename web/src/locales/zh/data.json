@@ -551,6 +551,11 @@
     "Your phone is": "你的手机号",
     "preferred": "首选"
   },
+  "mfaAccount": {
+    "Account Name": "账户名称",
+    "Issuer": "发行方",
+    "Secret Key": "密钥"
+  },
   "model": {
     "Edit Model": "编辑模型",
     "Model text": "模型文本",
@@ -1136,6 +1141,7 @@
     "Link": "绑定",
     "Location": "城市",
     "Location - Tooltip": "居住地址所在的城市",
+    "MFA Accounts": "存储两步验证",
     "Managed accounts": "托管账户",
     "Modify password...": "编辑密码...",
     "Multi-factor authentication": "多因素认证",

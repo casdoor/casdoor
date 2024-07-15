@@ -551,6 +551,11 @@
     "Your phone is": "Your phone is",
     "preferred": "preferred"
   },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
+  },
   "model": {
     "Edit Model": "Editar Modelo",
     "Model text": "Texto do Modelo",
@@ -1136,6 +1141,7 @@
     "Link": "Link",
     "Location": "Localização",
     "Location - Tooltip": "Cidade de residência",
+    "MFA Accounts": "MFA Accounts",
     "Managed accounts": "Contas gerenciadas",
     "Modify password...": "Modificar senha...",
     "Multi-factor authentication": "Autenticação de vários fatores",

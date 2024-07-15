@@ -168,6 +168,28 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-mfa-account:
+    post:
+      tags:
+      - MFA Account Api
+      operationId: ApiController.AddMFAAccounts
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the user
+        required: true
+        type: string
+      - in: body
+        name: MFAAccount
+        description: MFAAccount object
+        required: true
+        schema:
+          $ref: '#/definitions/object.MFAAccount'
+      responses:
+        "200":
+          description: Success or error
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-model:
     post:
       tags:
@@ -312,6 +334,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-record:
+    post:
+      tags:
+      - Record API
+      description: add a record
+      operationId: ApiController.AddRecord
+      parameters:
+      - in: body
+        name: body
+        description: The details of the record
+        required: true
+        schema:
+          $ref: '#/definitions/object.Record'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-resource:
     post:
       tags:
@@ -420,6 +460,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Token'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: add transaction
+      operationId: ApiController.AddTransaction
+      parameters:
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
       responses:
         "200":
           description: The Response object
@@ -659,6 +717,28 @@ paths:
       responses:
         "200":
           description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/delete-mfa-account:
+    post:
+      tags:
+      - MFA Account Api
+      operationId: ApiController.DeleteMFAAccount
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the user
+        required: true
+        type: string
+      - in: body
+        name: MFAAccount
+        description: MFAAccount object
+        required: true
+        schema:
+          $ref: '#/definitions/object.MFAAccount'
+      responses:
+        "200":
+          description: Success or error
           schema:
             $ref: '#/definitions/controllers.Response'
   /api/delete-mfa/:
@@ -924,6 +1004,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: delete transaction
+      operationId: ApiController.DeleteTransaction
+      parameters:
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-user:
     post:
       tags:
@@ -990,6 +1088,28 @@ paths:
       - in: query
         name: owner
         description: owner
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/faceid-signin-begin:
+    get:
+      tags:
+      - Login API
+      description: FaceId Login Flow 1st stage
+      operationId: ApiController.FaceIDSigninBegin
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: name
+        required: true
         type: string
       responses:
         "200":
@@ -1269,7 +1389,7 @@ paths:
     get:
       tags:
       - Cert API
-      description: get globle certs
+      description: get global certs
       operationId: ApiController.GetGlobalCerts
       responses:
         "200":
@@ -1357,6 +1477,23 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Invitation'
+  /api/get-invitation-info:
+    get:
+      tags:
+      - Invitation API
+      description: get invitation code information
+      operationId: ApiController.GetInvitationCodeInfo
+      parameters:
+      - in: query
+        name: code
+        description: Invitation code
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Invitation'
   /api/get-invitations:
     get:
       tags:
@@ -1422,6 +1559,25 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Ldap'
+  /api/get-mfa-accounts:
+    get:
+      tags:
+      - MFA Account Api
+      description: get MFA accounts
+      operationId: ApiController.GetMFAAccount
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The MFAAccounts object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.MFAAccount'
   /api/get-model:
     get:
       tags:
@@ -1795,6 +1951,63 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Provider'
+  /api/get-qrcode:
+    get:
+      tags:
+      - System API
+      operationId: ApiController.GetWechatQRCode
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/get-records:
+    get:
+      tags:
+      - Record API
+      description: get all records
+      operationId: ApiController.GetRecords
+      parameters:
+      - in: query
+        name: pageSize
+        description: The size of each page
+        required: true
+        type: string
+      - in: query
+        name: p
+        description: The number of the page
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Record'
+  /api/get-records-filter:
+    post:
+      tags:
+      - Record API
+      description: get records by filter
+      operationId: ApiController.GetRecordsByFilter
+      parameters:
+      - in: body
+        name: filter
+        description: filter Record message
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Record'
   /api/get-resource:
     get:
       tags:
@@ -2091,6 +2304,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Token'
+  /api/get-transaction:
+    get:
+      tags:
+      - Transaction API
+      description: get transaction
+      operationId: ApiController.GetTransaction
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the transaction
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Transaction'
+  /api/get-transactions:
+    get:
+      tags:
+      - Transaction API
+      description: get transactions
+      operationId: ApiController.GetTransactions
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of transactions
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Transaction'
   /api/get-user:
     get:
       tags:
@@ -2188,6 +2437,35 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Payment'
+  /api/get-user-transactions:
+    get:
+      tags:
+      - Transaction API
+      description: get transactions for a user
+      operationId: ApiController.GetUserTransaction
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of transactions
+        required: true
+        type: string
+      - in: query
+        name: organization
+        description: The organization of the user
+        required: true
+        type: string
+      - in: query
+        name: user
+        description: The username of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Transaction'
   /api/get-users:
     get:
       tags:
@@ -2240,11 +2518,17 @@ paths:
       tags:
       - System API
       operationId: ApiController.GetWebhookEventType
+      parameters:
+      - in: query
+        name: ticket
+        description: The eventId of QRCode
+        required: true
+        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Userinfo'
+            $ref: '#/definitions/controllers.Response'
   /api/get-webhooks:
     get:
       tags:
@@ -2921,6 +3205,28 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-mfa-account:
+    post:
+      tags:
+      - MFA Account Api
+      operationId: ApiController.UpdateMFAAccount
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the user
+        required: true
+        type: string
+      - in: body
+        name: MFAAccount
+        description: MFAAccount object
+        required: true
+        schema:
+          $ref: '#/definitions/object.MFAAccount'
+      responses:
+        "200":
+          description: Success or error
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-model:
     post:
       tags:
@@ -3239,6 +3545,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: update transaction
+      operationId: ApiController.UpdateTransaction
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the transaction
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-user:
     post:
       tags:
@@ -3475,10 +3804,13 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Userinfo'
+            $ref: '#/definitions/controllers.Response'
 definitions:
   casbin.Enforcer:
     title: Enforcer
+    type: object
+  casvisorsdk.Record:
+    title: Record
     type: object
   controllers.AuthForm:
     title: AuthForm
@@ -3491,6 +3823,8 @@ definitions:
         type: string
       provider:
         type: string
+      providerObject:
+        $ref: '#/definitions/object.Provider'
       receivers:
         type: array
         items:
@@ -3594,6 +3928,8 @@ definitions:
         type: string
       name:
         type: string
+      regex:
+        type: string
       viewRule:
         type: string
       visible:
@@ -3659,6 +3995,8 @@ definitions:
         type: boolean
       enableSamlCompress:
         type: boolean
+      enableSamlPostBinding:
+        type: boolean
       enableSignUp:
         type: boolean
       enableSigninSession:
@@ -3674,6 +4012,8 @@ definitions:
       failedSigninLimit:
         type: integer
         format: int64
+      footerHtml:
+        type: string
       forgetUrl:
         type: string
       formBackgroundUrl:
@@ -3691,12 +4031,10 @@ definitions:
         type: array
         items:
           type: string
+      headerHtml:
+        type: string
       homepageUrl:
         type: string
-      invitationCodes:
-        type: array
-        items:
-          type: string
       logo:
         type: string
       name:
@@ -3728,6 +4066,10 @@ definitions:
         type: string
       signinHtml:
         type: string
+      signinItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.SigninItem'
       signinMethods:
         type: array
         items:
@@ -3807,6 +4149,17 @@ definitions:
         type: string
       updatedTime:
         type: string
+  object.FaceId:
+    title: FaceId
+    type: object
+    properties:
+      faceIdData:
+        type: array
+        items:
+          type: number
+          format: double
+      name:
+        type: string
   object.GaugeVecInfo:
     title: GaugeVecInfo
     type: object
@@ -3855,7 +4208,7 @@ definitions:
       users:
         type: array
         items:
-          $ref: '#/definitions/object.User'
+          type: string
   object.Header:
     title: Header
     type: object
@@ -3920,10 +4273,14 @@ definitions:
         type: string
       createdTime:
         type: string
+      defaultCode:
+        type: string
       displayName:
         type: string
       email:
         type: string
+      isRegexp:
+        type: boolean
       name:
         type: string
       owner:
@@ -4019,6 +4376,16 @@ definitions:
       userPrincipalName:
         type: string
       uuid:
+        type: string
+  object.MFAAccount:
+    title: MFAAccount
+    type: object
+    properties:
+      accountName:
+        type: string
+      issuer:
+        type: string
+      secretKey:
         type: string
   object.ManagedAccount:
     title: ManagedAccount
@@ -4152,6 +4519,8 @@ definitions:
         type: string
       enableSoftDeletion:
         type: boolean
+      enableTour:
+        type: boolean
       favicon:
         type: string
       initScore:
@@ -4163,6 +4532,10 @@ definitions:
         type: array
         items:
           type: string
+      logo:
+        type: string
+      logoDark:
+        type: string
       masterPassword:
         type: string
       masterVerificationCode:
@@ -4189,12 +4562,16 @@ definitions:
           type: string
       themeData:
         $ref: '#/definitions/object.ThemeData'
+      useEmailAsUsername:
+        type: boolean
       websiteUrl:
         type: string
   object.Ormer:
     title: Ormer
     type: object
     properties:
+      Db:
+        $ref: '#/definitions/sql.DB'
       Engine:
         $ref: '#/definitions/xorm.Engine'
       dataSourceName:
@@ -4225,6 +4602,8 @@ definitions:
         type: string
       invoiceUrl:
         type: string
+      isRecharge:
+        type: boolean
       message:
         type: string
       name:
@@ -4396,6 +4775,8 @@ definitions:
         type: string
       image:
         type: string
+      isRecharge:
+        type: boolean
       name:
         type: string
       owner:
@@ -4532,6 +4913,10 @@ definitions:
         type: boolean
       canUnlink:
         type: boolean
+      countryCodes:
+        type: array
+        items:
+          type: string
       name:
         type: string
       owner:
@@ -4544,6 +4929,9 @@ definitions:
         type: string
       signupGroup:
         type: string
+  object.Record:
+    title: Record
+    type: object
   object.Resource:
     title: Resource
     type: object
@@ -4619,6 +5007,24 @@ definitions:
         type: string
       value:
         type: string
+  object.SigninItem:
+    title: SigninItem
+    type: object
+    properties:
+      customCss:
+        type: string
+      isCustom:
+        type: boolean
+      label:
+        type: string
+      name:
+        type: string
+      placeholder:
+        type: string
+      rule:
+        type: string
+      visible:
+        type: boolean
   object.SigninMethod:
     title: SigninMethod
     type: object
@@ -4633,6 +5039,8 @@ definitions:
     title: SignupItem
     type: object
     properties:
+      customCss:
+        type: string
       label:
         type: string
       name:
@@ -4700,6 +5108,8 @@ definitions:
         type: string
       avatarBaseUrl:
         type: string
+      cert:
+        type: string
       createdTime:
         type: string
       database:
@@ -4725,6 +5135,17 @@ definitions:
       port:
         type: integer
         format: int64
+      sshHost:
+        type: string
+      sshPassword:
+        type: string
+      sshPort:
+        type: integer
+        format: int64
+      sshType:
+        type: string
+      sshUser:
+        type: string
       sslMode:
         type: string
       syncInterval:
@@ -4838,6 +5259,47 @@ definitions:
         type: string
       token_type:
         type: string
+  object.Transaction:
+    title: Transaction
+    type: object
+    properties:
+      amount:
+        type: number
+        format: double
+      application:
+        type: string
+      category:
+        type: string
+      createdTime:
+        type: string
+      currency:
+        type: string
+      detail:
+        type: string
+      displayName:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      payment:
+        type: string
+      productDisplayName:
+        type: string
+      productName:
+        type: string
+      provider:
+        type: string
+      returnUrl:
+        type: string
+      state:
+        $ref: '#/definitions/pp.PaymentState'
+      tag:
+        type: string
+      type:
+        type: string
+      user:
+        type: string
   object.User:
     title: User
     type: object
@@ -4845,6 +5307,8 @@ definitions:
       accessKey:
         type: string
       accessSecret:
+        type: string
+      accessToken:
         type: string
       address:
         type: array
@@ -4872,6 +5336,9 @@ definitions:
         type: string
       baidu:
         type: string
+      balance:
+        type: number
+        format: double
       battlenet:
         type: string
       bilibili:
@@ -4893,6 +5360,8 @@ definitions:
       createdIp:
         type: string
       createdTime:
+        type: string
+      currency:
         type: string
       custom:
         type: string
@@ -4924,6 +5393,10 @@ definitions:
         type: string
       externalId:
         type: string
+      faceIds:
+        type: array
+        items:
+          $ref: '#/definitions/object.FaceId'
       facebook:
         type: string
       firstName:
@@ -4965,6 +5438,10 @@ definitions:
       instagram:
         type: string
       intercom:
+        type: string
+      invitation:
+        type: string
+      invitationCode:
         type: string
       isAdmin:
         type: boolean
@@ -5013,6 +5490,10 @@ definitions:
         type: string
       metamask:
         type: string
+      mfaAccounts:
+        type: array
+        items:
+          $ref: '#/definitions/object.MFAAccount'
       mfaEmailEnabled:
         type: boolean
       mfaPhoneEnabled:
@@ -5027,6 +5508,8 @@ definitions:
         type: string
       naver:
         type: string
+      needUpdatePassword:
+        type: boolean
       nextcloud:
         type: string
       okta:
@@ -5169,14 +5652,25 @@ definitions:
         type: string
       name:
         type: string
+      permissions:
+        type: array
+        items:
+          type: string
       phone:
         type: string
       picture:
         type: string
       preferred_username:
         type: string
+      roles:
+        type: array
+        items:
+          type: string
       sub:
         type: string
+  object.Verification:
+    title: Verification
+    type: object
   object.Webhook:
     title: Webhook
     type: object
@@ -5205,6 +5699,8 @@ definitions:
         type: string
       owner:
         type: string
+      singleOrgOnly:
+        type: boolean
       url:
         type: string
   pp.PaymentState:
@@ -5228,6 +5724,9 @@ definitions:
     type: object
   protocol.CredentialCreationResponse:
     title: CredentialCreationResponse
+    type: object
+  sql.DB:
+    title: DB
     type: object
   util.SystemInfo:
     title: SystemInfo

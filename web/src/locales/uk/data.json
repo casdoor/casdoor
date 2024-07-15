@@ -551,6 +551,11 @@
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"
   },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
+  },
   "model": {
     "Edit Model": "Редагувати модель",
     "Model text": "Текст моделі",
@@ -1136,6 +1141,7 @@
     "Link": "Посилання",
     "Location": "Місцезнаходження",
     "Location - Tooltip": "Місто проживання",
+    "MFA Accounts": "MFA Accounts",
     "Managed accounts": "Керовані облікові записи",
     "Modify password...": "Змінити пароль...",
     "Multi-factor authentication": "Багатофакторна аутентифікація",

@@ -303,4 +303,9 @@ func initAPI() {
 	beego.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
 	beego.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
+
+	beego.Router("/api/get-mfa-account", &controllers.ApiController{}, "GET:GetMFAAccount")
+	beego.Router("/api/add-mfa-account", &controllers.ApiController{}, "POST:AddMFAAccounts")
+	beego.Router("/api/delete-mfa-account", &controllers.ApiController{}, "POST:DeleteMFAAccount")
+	beego.Router("/api/update-mfa-account", &controllers.ApiController{}, "POST:UpdateMFAAccount")
 }

@@ -41,6 +41,7 @@ import {CheckCircleOutlined, HolderOutlined, UsergroupAddOutlined} from "@ant-de
 import * as MfaBackend from "./backend/MfaBackend";
 import AccountAvatar from "./account/AccountAvatar";
 import FaceIdTable from "./table/FaceIdTable";
+import MfaAccountTable from "./table/MfaAccountTable";
 
 const {Option} = Select;
 
@@ -1035,6 +1036,21 @@ class UserEditPage extends React.Component {
               title={i18next.t("user:Face IDs")}
               table={this.state.user.faceIds}
               onUpdateTable={(table) => {this.updateUserField("faceIds", table);}}
+            />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "MFA accounts") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:MFA accounts"), i18next.t("user:MFA accounts"))} :
+          </Col>
+          <Col span={22} >
+            <MfaAccountTable
+              title={i18next.t("user:MFA accounts")}
+              table={this.state.user.mfaAccounts}
+              onUpdateTable={(table) => {this.updateUserField("mfaAccounts", table);}}
             />
           </Col>
         </Row>
