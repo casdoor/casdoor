@@ -59,8 +59,10 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		}
 
 		bindPassword := string(r.AuthenticationSimple())
-		
-		var enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled bool = false, false, false
+
+		enableCaptcha := false
+		isSigninViaLdap := false
+		isPasswordWithLdapEnabled := false
 		if bindPassword != "" {
 			isPasswordWithLdapEnabled = true
 		}
