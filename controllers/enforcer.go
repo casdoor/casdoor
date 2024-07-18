@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -163,11 +164,17 @@ func (c *ApiController) GetPolicies() {
 			c.ResponseError(err.Error())
 			return
 		}
+		if adapter == nil {
+			c.ResponseError(fmt.Sprintf(c.T("the adapter: %s is not found"), adapterId))
+			return
+		}
+
 		err = adapter.InitAdapter()
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
+
 		c.ResponseOk()
 		return
 	}
