@@ -76,7 +76,7 @@ func getObject(ctx *context.Context) (string, string) {
 			}
 		}
 
-		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) {
+		if !(strings.HasPrefix(ctx.Request.URL.Path, "/api/get-") && strings.HasSuffix(ctx.Request.URL.Path, "s")) || ctx.Request.URL.Path == "/api/get-mfa-accounts" {
 			// query == "?id=built-in/admin"
 			id := ctx.Input.Query("id")
 			if id != "" {

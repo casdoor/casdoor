@@ -14,27 +14,24 @@
 
 package object
 
-func AddMfaAccount(user *User, mfaAccount *MFAAccount) (bool, error) {
-	user.MFAAccounts = append(user.MFAAccounts, *mfaAccount)
+func AddMfaAccount(user *User, mfaAccount *MfaAccount) (bool, error) {
+	user.MfaAccounts = append(user.MfaAccounts, *mfaAccount)
 	affected, err := updateUser(user.GetId(), user, []string{"mfaAccounts"})
-
 	if err != nil {
 		return false, err
 	}
 
 	return affected != 0, nil
-
 }
 
-func DeleteMfaAccount(user *User, mfaAccount *MFAAccount) (bool, error) {
-	for i, v := range user.MFAAccounts {
+func DeleteMfaAccount(user *User, mfaAccount *MfaAccount) (bool, error) {
+	for i, v := range user.MfaAccounts {
 		if v.SecretKey == mfaAccount.SecretKey && v.AccountName == mfaAccount.AccountName {
-			user.MFAAccounts = append(user.MFAAccounts[:i], user.MFAAccounts[i+1:]...)
+			user.MfaAccounts = append(user.MfaAccounts[:i], user.MfaAccounts[i+1:]...)
 			break
 		}
 	}
 	affected, err := updateUser(user.GetId(), user, []string{"mfaAccounts"})
-
 	if err != nil {
 		return false, err
 	}
@@ -42,11 +39,11 @@ func DeleteMfaAccount(user *User, mfaAccount *MFAAccount) (bool, error) {
 	return affected != 0, nil
 }
 
-func UpdateMfaAccount(user *User, updatedAccount *MFAAccount) (bool, error) {
-	for i, v := range user.MFAAccounts {
+func UpdateMfaAccount(user *User, updatedAccount *MfaAccount) (bool, error) {
+	for i, v := range user.MfaAccounts {
 		if v.SecretKey == updatedAccount.SecretKey && v.Issuer == updatedAccount.Issuer {
-			// Update the fields of the MFAAccount
-			user.MFAAccounts[i].AccountName = updatedAccount.AccountName
+			// Update the fields of the Mfa account
+			user.MfaAccounts[i].AccountName = updatedAccount.AccountName
 
 			// Update the user in the database
 			affected, err := updateUser(user.GetId(), user, []string{"mfaAccounts"})

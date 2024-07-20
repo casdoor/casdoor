@@ -17,19 +17,20 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/casdoor/casdoor/object"
 )
 
-// GetMFAAccount
-// @Tag MFA Account Api
-// @Title GetMFAAccount
+// GetMfaAccounts
+// @Tag Mfa Account Api
+// @Title GetMFAAccounts
 // @Description get MFA accounts
 // @Param       id          query       string  true        "The id ( owner/name ) of the user"
-// @Success     200         {array}     object.MFAAccount    The MFAAccounts object
+// @Success     200         {array}     object.MfaAccount    The MfaAccounts object
 // @router /get-mfa-accounts [get]
-func (c *ApiController) GetMFAAccount() {
+func (c *ApiController) GetMfaAccounts() {
 	id := c.Input().Get("id")
-	user, err := object.GetUserByUserIdOnly(id)
+	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -39,20 +40,20 @@ func (c *ApiController) GetMFAAccount() {
 		return
 	}
 
-	c.ResponseOk(user.MFAAccounts, len(user.MFAAccounts))
+	c.ResponseOk(user.MfaAccounts, len(user.MfaAccounts))
 }
 
-// AddMFAAccounts
-// @Tag MFA Account Api
-// @Title AddMFAAccounts
+// AddMfaAccount
+// @Tag Mfa Account Api
+// @Title AddMfaAccount
 // @Param       id          query       string               true       "The id ( owner/name ) of the user"
-// @Param       MFAAccount  body        object.MFAAccount    true       "MFAAccount object"
+// @Param       MfaAccount  body        object.MfaAccount    true       "MfaAccount object"
 // @Success     200         {object}    controllers.Response Success or error
 // @router /add-mfa-account [post]
-func (c *ApiController) AddMFAAccounts() {
+func (c *ApiController) AddMfaAccount() {
 	id := c.Input().Get("id")
 
-	user, err := object.GetUserByUserIdOnly(id)
+	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -62,7 +63,7 @@ func (c *ApiController) AddMFAAccounts() {
 		return
 	}
 
-	var mfaAccount object.MFAAccount
+	var mfaAccount object.MfaAccount
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &mfaAccount)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -73,17 +74,17 @@ func (c *ApiController) AddMFAAccounts() {
 	c.ServeJSON()
 }
 
-// DeleteMFAAccount
-// @Tag MFA Account Api
-// @Title DeleteMFAAccount
+// DeleteMfaAccount
+// @Tag Mfa Account Api
+// @Title DeleteMfaAccount
 // @Param       id          query       string               true       "The id ( owner/name ) of the user"
-// @Param       MFAAccount  body        object.MFAAccount    true       "MFAAccount object"
+// @Param       MfaAccount  body        object.MfaAccount    true       "MfaAccount object"
 // @Success     200         {object}    controllers.Response Success or error
 // @router /delete-mfa-account [post]
-func (c *ApiController) DeleteMFAAccount() {
+func (c *ApiController) DeleteMfaAccount() {
 	id := c.Input().Get("id")
 
-	user, err := object.GetUserByUserIdOnly(id)
+	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -93,7 +94,7 @@ func (c *ApiController) DeleteMFAAccount() {
 		return
 	}
 
-	var mfaAccount object.MFAAccount
+	var mfaAccount object.MfaAccount
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &mfaAccount)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -104,17 +105,17 @@ func (c *ApiController) DeleteMFAAccount() {
 	c.ServeJSON()
 }
 
-// UpdateMFAAccount
-// @Tag MFA Account Api
-// @Title UpdateMFAAccount
+// UpdateMfaAccount
+// @Tag Mfa Account Api
+// @Title UpdateMfaAccount
 // @Param       id          query       string              true       "The id ( owner/name ) of the user"
-// @Param       MFAAccount  body        object.MFAAccount   true       "MFAAccount object"
+// @Param       MfaAccount  body        object.MfaAccount   true       "MfaAccount object"
 // @Success     200         {object}    controllers.Response Success or error
 // @router /update-mfa-account [post]
-func (c *ApiController) UpdateMFAAccount() {
+func (c *ApiController) UpdateMfaAccount() {
 	id := c.Input().Get("id")
 
-	user, err := object.GetUserByUserIdOnly(id)
+	user, err := object.GetUser(id)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -124,7 +125,7 @@ func (c *ApiController) UpdateMFAAccount() {
 		return
 	}
 
-	var mfaAccount object.MFAAccount
+	var mfaAccount object.MfaAccount
 	err = json.Unmarshal(c.Ctx.Input.RequestBody, &mfaAccount)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -137,9 +138,9 @@ func (c *ApiController) UpdateMFAAccount() {
 		return
 	}
 	if !success {
-		c.ResponseError("MFAAccount updated failed")
+		c.ResponseError("Mfa account updated failed")
 		return
 	}
 
-	c.ResponseOk("MFAAccount updated successfully")
+	c.ResponseOk("Mfa account updated successfully")
 }

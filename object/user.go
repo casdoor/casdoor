@@ -204,7 +204,7 @@ type User struct {
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
 
 	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
-	MFAAccounts        []MFAAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
+	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
 }
 
@@ -231,7 +231,7 @@ type ManagedAccount struct {
 	SigninUrl   string `xorm:"varchar(200)" json:"signinUrl"`
 }
 
-type MFAAccount struct {
+type MfaAccount struct {
 	AccountName string `xorm:"varchar(100)" json:"accountName"`
 	Issuer      string `xorm:"varchar(100)" json:"issuer"`
 	SecretKey   string `xorm:"varchar(100)" json:"secretKey"`
@@ -610,8 +610,8 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 		}
 	}
 
-	if user.MFAAccounts != nil {
-		for _, mfaAccount := range user.MFAAccounts {
+	if user.MfaAccounts != nil {
+		for _, mfaAccount := range user.MfaAccounts {
 			mfaAccount.SecretKey = "***"
 		}
 	}
