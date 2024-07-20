@@ -275,7 +275,7 @@ class WebhookEditPage extends React.Component {
               }} >
               {
                 (
-                  ["signup", "login", "logout", "new-user"].concat(this.getApiPaths()).map((option, index) => {
+                  ["signup", "login", "logout", "new-user", "notify-payment", "invoice-payment"].concat(this.getApiPaths()).map((option, index) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     );

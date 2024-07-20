@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/object"
@@ -73,6 +74,18 @@ func AfterRecordMessage(ctx *context.Context) {
 	if err != nil {
 		fmt.Printf("AfterRecordMessage() error: %s\n", err.Error())
 		return
+	}
+
+	urlPath := getUrlPath(ctx.Request.URL.Path)
+
+	if strings.HasPrefix(urlPath, "/api/notify-payment") {
+		urlPath = "/api/notify-payment"
+		record.Action = "notify-payment"
+	}
+
+	if strings.HasPrefix(urlPath, "/api/invoice-payment") {
+		urlPath = "/api/invoice-payment"
+		record.Action = "invoice-payment"
 	}
 
 	userId := ctx.Input.Params()["recordUserId"]
