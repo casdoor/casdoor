@@ -79,6 +79,8 @@ var ldapAttributesMapping = map[string]FieldRelation{
 	},
 }
 
+const ldapMemberOfAttr = "memberOf"
+
 var AdditionalLdapAttributes []message.LDAPString
 
 func init() {
@@ -180,7 +182,22 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		}
 		return builder.Not{cond}, nil
 	case message.FilterEqualityMatch:
-		field, err := getUserFieldFromAttribute(string(f.AttributeDesc()))
+		attr := string(f.AttributeDesc())
+
+		if attr == ldapMemberOfAttr {
+			groupId := string(f.AssertionValue())
+			users, err := object.GetGroupUsers(groupId)
+			if err != nil {
+				return nil, err
+			}
+			var names []string
+			for _, user := range users {
+				names = append(names, user.Name)
+			}
+			return builder.In("name", names), nil
+		}
+
+		field, err := getUserFieldFromAttribute(attr)
 		if err != nil {
 			return nil, err
 		}
