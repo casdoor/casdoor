@@ -108,6 +108,7 @@ class AccountTable extends React.Component {
       {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
       {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
       {name: "Face ID", label: i18next.t("user:Face ID")},
+      {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
     ];
   };
 

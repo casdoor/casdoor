@@ -88,6 +88,7 @@ class OrganizationListPage extends BaseListPage {
         {Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+        {Name: "MFA accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
       ],
     };
   }
