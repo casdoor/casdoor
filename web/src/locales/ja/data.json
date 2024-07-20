@@ -551,11 +551,6 @@
     "Your phone is": "Your phone is",
     "preferred": "preferred"
   },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
-  },
   "model": {
     "Edit Model": "編集モデル",
     "Model text": "モデルテキスト",
@@ -1141,7 +1136,6 @@
     "Link": "リンク",
     "Location": "場所",
     "Location - Tooltip": "居住都市",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "管理アカウント",
     "Modify password...": "パスワードを変更する...",
     "Multi-factor authentication": "Multi-factor authentication",

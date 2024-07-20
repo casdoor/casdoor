@@ -551,11 +551,6 @@
     "Your phone is": "Your phone is",
     "preferred": "preferred"
   },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
-  },
   "model": {
     "Edit Model": "Mengedit Model",
     "Model text": "Teks Model",
@@ -1141,7 +1136,6 @@
     "Link": "Tautan",
     "Location": "Lokasi",
     "Location - Tooltip": "Kota tempat tinggal",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "Akun yang dikelola",
     "Modify password...": "Mengubah kata sandi...",
     "Multi-factor authentication": "Multi-factor authentication",

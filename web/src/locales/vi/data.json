@@ -551,11 +551,6 @@
     "Your phone is": "Your phone is",
     "preferred": "preferred"
   },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
-  },
   "model": {
     "Edit Model": "Sửa mô hình",
     "Model text": "Văn bản mẫu",
@@ -1141,7 +1136,6 @@
     "Link": "Liên kết",
     "Location": "Vị trí",
     "Location - Tooltip": "Thành phố cư trú",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "Quản lý tài khoản",
     "Modify password...": "Sửa đổi mật khẩu...",
     "Multi-factor authentication": "Multi-factor authentication",

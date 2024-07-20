@@ -551,11 +551,6 @@
     "Your phone is": "Ваш телефон",
     "preferred": "preferred"
   },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
-  },
   "model": {
     "Edit Model": "Редактировать модель",
     "Model text": "Модельный текст",
@@ -1141,7 +1136,6 @@
     "Link": "Ссылка",
     "Location": "Местоположение",
     "Location - Tooltip": "Город проживания",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "Управляемые аккаунты",
     "Modify password...": "Изменить пароль...",
     "Multi-factor authentication": "Multi-factor authentication",

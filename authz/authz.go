@@ -139,13 +139,6 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return false
 		}
 
-		if strings.HasPrefix(urlPath, "/api/add-mfa-account") || strings.HasPrefix(urlPath, "/api/delete-mfa-account") ||
-			strings.HasPrefix(urlPath, "/api/update-mfa-account") || strings.HasPrefix(urlPath, "/api/get-mfa-accounts") {
-			if subOwner != objOwner || subName != objName {
-				return false
-			}
-		}
-
 		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 			return true
 		}

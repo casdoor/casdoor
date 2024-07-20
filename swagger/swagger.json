@@ -260,40 +260,6 @@
                 }
             }
         },
-        "/api/add-mfa-account": {
-            "post": {
-                "tags": [
-                    "Mfa Account Api"
-                ],
-                "operationId": "ApiController.AddMfaAccount",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the user",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "MfaAccount",
-                        "description": "MfaAccount object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.MfaAccount"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success or error",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/add-model": {
             "post": {
                 "tags": [
@@ -518,34 +484,6 @@
                 }
             }
         },
-        "/api/add-record": {
-            "post": {
-                "tags": [
-                    "Record API"
-                ],
-                "description": "add a record",
-                "operationId": "ApiController.AddRecord",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the record",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Record"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/add-resource": {
             "post": {
                 "tags": [
@@ -708,34 +646,6 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/object.Token"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/add-transaction": {
-            "post": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "add transaction",
-                "operationId": "ApiController.AddTransaction",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the transaction",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Transaction"
                         }
                     }
                 ],
@@ -1108,40 +1018,6 @@
                 "responses": {
                     "200": {
                         "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/delete-mfa-account": {
-            "post": {
-                "tags": [
-                    "Mfa Account Api"
-                ],
-                "operationId": "ApiController.DeleteMfaAccount",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the user",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "MfaAccount",
-                        "description": "MfaAccount object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.MfaAccount"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success or error",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
                         }
@@ -1558,34 +1434,6 @@
                 }
             }
         },
-        "/api/delete-transaction": {
-            "post": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "delete transaction",
-                "operationId": "ApiController.DeleteTransaction",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the transaction",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Transaction"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/delete-user": {
             "post": {
                 "tags": [
@@ -1684,39 +1532,6 @@
                         "in": "query",
                         "name": "owner",
                         "description": "owner",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/faceid-signin-begin": {
-            "get": {
-                "tags": [
-                    "Login API"
-                ],
-                "description": "FaceId Login Flow 1st stage",
-                "operationId": "ApiController.FaceIDSigninBegin",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "owner",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "name",
-                        "description": "name",
-                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -2144,7 +1959,7 @@
                 "tags": [
                     "Cert API"
                 ],
-                "description": "get global certs",
+                "description": "get globle certs",
                 "operationId": "ApiController.GetGlobalCerts",
                 "responses": {
                     "200": {
@@ -2280,32 +2095,6 @@
                 }
             }
         },
-        "/api/get-invitation-info": {
-            "get": {
-                "tags": [
-                    "Invitation API"
-                ],
-                "description": "get invitation code information",
-                "operationId": "ApiController.GetInvitationCodeInfo",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "code",
-                        "description": "Invitation code",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/object.Invitation"
-                        }
-                    }
-                }
-            }
-        },
         "/api/get-invitations": {
             "get": {
                 "tags": [
@@ -2400,35 +2189,6 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/object.Ldap"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-mfa-accounts": {
-            "get": {
-                "tags": [
-                    "Mfa Account Api"
-                ],
-                "description": "get MFA accounts",
-                "operationId": "ApiController.GetMfaAccounts",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the user",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The MfaAccounts object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.MfaAccount"
                             }
                         }
                     }
@@ -3005,93 +2765,6 @@
                 }
             }
         },
-        "/api/get-qrcode": {
-            "get": {
-                "tags": [
-                    "System API"
-                ],
-                "operationId": "ApiController.GetWechatQRCode",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of provider",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-records": {
-            "get": {
-                "tags": [
-                    "Record API"
-                ],
-                "description": "get all records",
-                "operationId": "ApiController.GetRecords",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "pageSize",
-                        "description": "The size of each page",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "p",
-                        "description": "The number of the page",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/object.Record"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-records-filter": {
-            "post": {
-                "tags": [
-                    "Record API"
-                ],
-                "description": "get records by filter",
-                "operationId": "ApiController.GetRecordsByFilter",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "filter",
-                        "description": "filter Record message",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/object.Record"
-                        }
-                    }
-                }
-            }
-        },
         "/api/get-resource": {
             "get": {
                 "tags": [
@@ -3541,61 +3214,6 @@
                 }
             }
         },
-        "/api/get-transaction": {
-            "get": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "get transaction",
-                "operationId": "ApiController.GetTransaction",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the transaction",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/object.Transaction"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-transactions": {
-            "get": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "get transactions",
-                "operationId": "ApiController.GetTransactions",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "The owner of transactions",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Transaction"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/get-user": {
             "get": {
                 "tags": [
@@ -3743,49 +3361,6 @@
                 }
             }
         },
-        "/api/get-user-transactions": {
-            "get": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "get transactions for a user",
-                "operationId": "ApiController.GetUserTransaction",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "The owner of transactions",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "organization",
-                        "description": "The organization of the user",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "user",
-                        "description": "The username of the user",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Transaction"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/get-users": {
             "get": {
                 "tags": [
@@ -3864,20 +3439,11 @@
                     "System API"
                 ],
                 "operationId": "ApiController.GetWebhookEventType",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "ticket",
-                        "description": "The eventId of QRCode",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/controllers.Response"
+                            "$ref": "#/definitions/object.Userinfo"
                         }
                     }
                 }
@@ -4910,40 +4476,6 @@
                 }
             }
         },
-        "/api/update-mfa-account": {
-            "post": {
-                "tags": [
-                    "Mfa Account Api"
-                ],
-                "operationId": "ApiController.UpdateMfaAccount",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the user",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "MfaAccount",
-                        "description": "MfaAccount object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.MfaAccount"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success or error",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/update-model": {
             "post": {
                 "tags": [
@@ -5428,41 +4960,6 @@
                 }
             }
         },
-        "/api/update-transaction": {
-            "post": {
-                "tags": [
-                    "Transaction API"
-                ],
-                "description": "update transaction",
-                "operationId": "ApiController.UpdateTransaction",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the transaction",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the transaction",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Transaction"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/update-user": {
             "post": {
                 "tags": [
@@ -5819,7 +5316,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/controllers.Response"
+                            "$ref": "#/definitions/object.Userinfo"
                         }
                     }
                 }
@@ -5829,10 +5326,6 @@
     "definitions": {
         "casbin.Enforcer": {
             "title": "Enforcer",
-            "type": "object"
-        },
-        "casvisorsdk.Record": {
-            "title": "Record",
             "type": "object"
         },
         "controllers.AuthForm": {
@@ -5848,9 +5341,6 @@
                 },
                 "provider": {
                     "type": "string"
-                },
-                "providerObject": {
-                    "$ref": "#/definitions/object.Provider"
                 },
                 "receivers": {
                     "type": "array",
@@ -6005,9 +5495,6 @@
                 "name": {
                     "type": "string"
                 },
-                "regex": {
-                    "type": "string"
-                },
                 "viewRule": {
                     "type": "string"
                 },
@@ -6129,9 +5616,6 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "footerHtml": {
-                    "type": "string"
-                },
                 "forgetUrl": {
                     "type": "string"
                 },
@@ -6157,11 +5641,14 @@
                         "type": "string"
                     }
                 },
-                "headerHtml": {
-                    "type": "string"
-                },
                 "homepageUrl": {
                     "type": "string"
+                },
+                "invitationCodes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "logo": {
                     "type": "string"
@@ -6208,12 +5695,6 @@
                 },
                 "signinHtml": {
                     "type": "string"
-                },
-                "signinItems": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.SigninItem"
-                    }
                 },
                 "signinMethods": {
                     "type": "array",
@@ -6335,22 +5816,6 @@
                 }
             }
         },
-        "object.FaceId": {
-            "title": "FaceId",
-            "type": "object",
-            "properties": {
-                "faceIdData": {
-                    "type": "array",
-                    "items": {
-                        "type": "number",
-                        "format": "double"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "object.GaugeVecInfo": {
             "title": "GaugeVecInfo",
             "type": "object",
@@ -6419,7 +5884,7 @@
                 "users": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/object.User"
                     }
                 }
             }
@@ -6516,17 +5981,11 @@
                 "createdTime": {
                     "type": "string"
                 },
-                "defaultCode": {
-                    "type": "string"
-                },
                 "displayName": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
-                },
-                "isRegexp": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -6686,21 +6145,6 @@
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "object.MfaAccount": {
-            "title": "MfaAccount",
-            "type": "object",
-            "properties": {
-                "accountName": {
-                    "type": "string"
-                },
-                "issuer": {
-                    "type": "string"
-                },
-                "secretKey": {
                     "type": "string"
                 }
             }
@@ -6883,9 +6327,6 @@
                 "enableSoftDeletion": {
                     "type": "boolean"
                 },
-                "enableTour": {
-                    "type": "boolean"
-                },
                 "favicon": {
                     "type": "string"
                 },
@@ -6901,12 +6342,6 @@
                     "items": {
                         "type": "string"
                     }
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "logoDark": {
-                    "type": "string"
                 },
                 "masterPassword": {
                     "type": "string"
@@ -6947,9 +6382,6 @@
                 "themeData": {
                     "$ref": "#/definitions/object.ThemeData"
                 },
-                "useEmailAsUsername": {
-                    "type": "boolean"
-                },
                 "websiteUrl": {
                     "type": "string"
                 }
@@ -6959,9 +6391,6 @@
             "title": "Ormer",
             "type": "object",
             "properties": {
-                "Db": {
-                    "$ref": "#/definitions/sql.DB"
-                },
                 "Engine": {
                     "$ref": "#/definitions/xorm.Engine"
                 },
@@ -7006,9 +6435,6 @@
                 },
                 "invoiceUrl": {
                     "type": "string"
-                },
-                "isRecharge": {
-                    "type": "boolean"
                 },
                 "message": {
                     "type": "string"
@@ -7265,9 +6691,6 @@
                 "image": {
                     "type": "string"
                 },
-                "isRecharge": {
-                    "type": "boolean"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -7470,12 +6893,6 @@
                 "canUnlink": {
                     "type": "boolean"
                 },
-                "countryCodes": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "name": {
                     "type": "string"
                 },
@@ -7495,10 +6912,6 @@
                     "type": "string"
                 }
             }
-        },
-        "object.Record": {
-            "title": "Record",
-            "type": "object"
         },
         "object.Resource": {
             "title": "Resource",
@@ -7612,33 +7025,6 @@
                 }
             }
         },
-        "object.SigninItem": {
-            "title": "SigninItem",
-            "type": "object",
-            "properties": {
-                "customCss": {
-                    "type": "string"
-                },
-                "isCustom": {
-                    "type": "boolean"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "placeholder": {
-                    "type": "string"
-                },
-                "rule": {
-                    "type": "string"
-                },
-                "visible": {
-                    "type": "boolean"
-                }
-            }
-        },
         "object.SigninMethod": {
             "title": "SigninMethod",
             "type": "object",
@@ -7658,9 +7044,6 @@
             "title": "SignupItem",
             "type": "object",
             "properties": {
-                "customCss": {
-                    "type": "string"
-                },
                 "label": {
                     "type": "string"
                 },
@@ -7757,9 +7140,6 @@
                 "avatarBaseUrl": {
                     "type": "string"
                 },
-                "cert": {
-                    "type": "string"
-                },
                 "createdTime": {
                     "type": "string"
                 },
@@ -7796,22 +7176,6 @@
                 "port": {
                     "type": "integer",
                     "format": "int64"
-                },
-                "sshHost": {
-                    "type": "string"
-                },
-                "sshPassword": {
-                    "type": "string"
-                },
-                "sshPort": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "sshType": {
-                    "type": "string"
-                },
-                "sshUser": {
-                    "type": "string"
                 },
                 "sslMode": {
                     "type": "string"
@@ -7982,67 +7346,6 @@
                 }
             }
         },
-        "object.Transaction": {
-            "title": "Transaction",
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number",
-                    "format": "double"
-                },
-                "application": {
-                    "type": "string"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "createdTime": {
-                    "type": "string"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "string"
-                },
-                "displayName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "payment": {
-                    "type": "string"
-                },
-                "productDisplayName": {
-                    "type": "string"
-                },
-                "productName": {
-                    "type": "string"
-                },
-                "provider": {
-                    "type": "string"
-                },
-                "returnUrl": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "tag": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "user": {
-                    "type": "string"
-                }
-            }
-        },
         "object.User": {
             "title": "User",
             "type": "object",
@@ -8051,9 +7354,6 @@
                     "type": "string"
                 },
                 "accessSecret": {
-                    "type": "string"
-                },
-                "accessToken": {
                     "type": "string"
                 },
                 "address": {
@@ -8095,10 +7395,6 @@
                 "baidu": {
                     "type": "string"
                 },
-                "balance": {
-                    "type": "number",
-                    "format": "double"
-                },
                 "battlenet": {
                     "type": "string"
                 },
@@ -8132,9 +7428,6 @@
                 "createdTime": {
                     "type": "string"
                 },
-                "currency": {
-                    "type": "string"
-                },
                 "custom": {
                     "type": "string"
                 },
@@ -8142,9 +7435,6 @@
                     "type": "string"
                 },
                 "deezer": {
-                    "type": "string"
-                },
-                "deletedTime": {
                     "type": "string"
                 },
                 "digitalocean": {
@@ -8157,6 +7447,9 @@
                     "type": "string"
                 },
                 "displayName": {
+                    "type": "string"
+                },
+                "deletedTime": {
                     "type": "string"
                 },
                 "douyin": {
@@ -8179,12 +7472,6 @@
                 },
                 "externalId": {
                     "type": "string"
-                },
-                "faceIds": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.FaceId"
-                    }
                 },
                 "facebook": {
                     "type": "string"
@@ -8247,12 +7534,6 @@
                     "type": "string"
                 },
                 "intercom": {
-                    "type": "string"
-                },
-                "invitation": {
-                    "type": "string"
-                },
-                "invitationCode": {
                     "type": "string"
                 },
                 "isAdmin": {
@@ -8325,12 +7606,6 @@
                 "metamask": {
                     "type": "string"
                 },
-                "mfaAccounts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.MfaAccount"
-                    }
-                },
                 "mfaEmailEnabled": {
                     "type": "boolean"
                 },
@@ -8351,9 +7626,6 @@
                 },
                 "naver": {
                     "type": "string"
-                },
-                "needUpdatePassword": {
-                    "type": "boolean"
                 },
                 "nextcloud": {
                     "type": "string"
@@ -8567,12 +7839,6 @@
                 "name": {
                     "type": "string"
                 },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "phone": {
                     "type": "string"
                 },
@@ -8582,20 +7848,10 @@
                 "preferred_username": {
                     "type": "string"
                 },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "sub": {
                     "type": "string"
                 }
             }
-        },
-        "object.Verification": {
-            "title": "Verification",
-            "type": "object"
         },
         "object.Webhook": {
             "title": "Webhook",
@@ -8637,9 +7893,6 @@
                 "owner": {
                     "type": "string"
                 },
-                "singleOrgOnly": {
-                    "type": "boolean"
-                },
                 "url": {
                     "type": "string"
                 }
@@ -8671,10 +7924,6 @@
         },
         "protocol.CredentialCreationResponse": {
             "title": "CredentialCreationResponse",
-            "type": "object"
-        },
-        "sql.DB": {
-            "title": "DB",
             "type": "object"
         },
         "util.SystemInfo": {
