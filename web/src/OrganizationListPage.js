@@ -44,6 +44,7 @@ class OrganizationListPage extends BaseListPage {
       defaultPassword: "",
       enableSoftDeletion: false,
       isProfilePublic: true,
+      enableTour: true,
       accountItems: [
         {name: "Organization", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "ID", visible: true, viewRule: "Public", modifyRule: "Immutable"},
@@ -87,6 +88,7 @@ class OrganizationListPage extends BaseListPage {
         {Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
         {Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+        {Name: "MFA accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
       ],
     };
   }

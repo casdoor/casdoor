@@ -59,7 +59,15 @@ func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
 		}
 
 		bindPassword := string(r.AuthenticationSimple())
-		bindUser, err := object.CheckUserPassword(bindOrg, bindUsername, bindPassword, "en")
+
+		enableCaptcha := false
+		isSigninViaLdap := false
+		isPasswordWithLdapEnabled := false
+		if bindPassword != "" {
+			isPasswordWithLdapEnabled = true
+		}
+
+		bindUser, err := object.CheckUserPassword(bindOrg, bindUsername, bindPassword, "en", enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		if err != nil {
 			log.Printf("Bind failed User=%s, Pass=%#v, ErrMsg=%s", string(r.Name()), r.Authentication(), err)
 			res.SetResultCode(ldap.LDAPResultInvalidCredentials)

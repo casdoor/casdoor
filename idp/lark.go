@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nyaruka/phonenumbers"
 	"golang.org/x/oauth2"
 )
 
@@ -199,12 +200,25 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 
+	var phoneNumber string
+	var countryCode string
+	if len(larkUserInfo.Data.Mobile) != 0 {
+		phoneNumberParsed, err := phonenumbers.Parse(larkUserInfo.Data.Mobile, "")
+		if err != nil {
+			return nil, err
+		}
+		countryCode = phonenumbers.GetRegionCodeForNumber(phoneNumberParsed)
+		phoneNumber = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
+	}
+
 	userInfo := UserInfo{
 		Id:          larkUserInfo.Data.OpenId,
 		DisplayName: larkUserInfo.Data.EnName,
 		Username:    larkUserInfo.Data.Name,
 		Email:       larkUserInfo.Data.Email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
+		Phone:       phoneNumber,
+		CountryCode: countryCode,
 	}
 	return &userInfo, nil
 }

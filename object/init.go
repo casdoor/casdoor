@@ -78,6 +78,7 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Multi-factor authentication", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "WebAuthn credentials", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 		{Name: "Managed accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
+		{Name: "MFA accounts", Visible: true, ViewRule: "Self", ModifyRule: "Self"},
 	}
 }
 
@@ -109,6 +110,7 @@ func initBuiltInOrganization() bool {
 		EnableSoftDeletion: false,
 		IsProfilePublic:    false,
 		UseEmailAsUsername: false,
+		EnableTour:         true,
 	}
 	_, err = AddOrganization(organization)
 	if err != nil {

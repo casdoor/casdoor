@@ -252,8 +252,8 @@ class AdapterEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
           </Col>
           <Col span={2} >
-            <Button type={"primary"} onClick={() => {
-              AdapterBackend.getPolicies("", "", `${this.state.organizationName}/${this.state.adapterName}`)
+            <Button disabled={this.state.organizationName !== this.state.adapter.owner} type={"primary"} onClick={() => {
+              AdapterBackend.getPolicies("", "", `${this.state.adapter.owner}/${this.state.adapter.name}`)
                 .then((res) => {
                   if (res.status === "ok") {
                     Setting.showMessage("success", i18next.t("syncer:Connect successfully"));
@@ -279,13 +279,14 @@ class AdapterEditPage extends React.Component {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
+            organizationName: this.state.adapter.owner,
             adapterName: this.state.adapter.name,
           });
 
           if (exitAfterSave) {
             this.props.history.push("/adapters");
           } else {
-            this.props.history.push(`/adapters/${this.state.organizationName}/${this.state.adapter.name}`);
+            this.props.history.push(`/adapters/${this.state.adapter.owner}/${this.state.adapter.name}`);
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
