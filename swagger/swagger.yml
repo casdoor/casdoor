@@ -171,8 +171,8 @@ paths:
   /api/add-mfa-account:
     post:
       tags:
-      - MFA Account Api
-      operationId: ApiController.AddMFAAccounts
+      - Mfa Account Api
+      operationId: ApiController.AddMfaAccount
       parameters:
       - in: query
         name: id
@@ -180,11 +180,11 @@ paths:
         required: true
         type: string
       - in: body
-        name: MFAAccount
-        description: MFAAccount object
+        name: MfaAccount
+        description: MfaAccount object
         required: true
         schema:
-          $ref: '#/definitions/object.MFAAccount'
+          $ref: '#/definitions/object.MfaAccount'
       responses:
         "200":
           description: Success or error
@@ -722,8 +722,8 @@ paths:
   /api/delete-mfa-account:
     post:
       tags:
-      - MFA Account Api
-      operationId: ApiController.DeleteMFAAccount
+      - Mfa Account Api
+      operationId: ApiController.DeleteMfaAccount
       parameters:
       - in: query
         name: id
@@ -731,11 +731,11 @@ paths:
         required: true
         type: string
       - in: body
-        name: MFAAccount
-        description: MFAAccount object
+        name: MfaAccount
+        description: MfaAccount object
         required: true
         schema:
-          $ref: '#/definitions/object.MFAAccount'
+          $ref: '#/definitions/object.MfaAccount'
       responses:
         "200":
           description: Success or error
@@ -1562,9 +1562,9 @@ paths:
   /api/get-mfa-accounts:
     get:
       tags:
-      - MFA Account Api
+      - Mfa Account Api
       description: get MFA accounts
-      operationId: ApiController.GetMFAAccount
+      operationId: ApiController.GetMfaAccounts
       parameters:
       - in: query
         name: id
@@ -1573,11 +1573,11 @@ paths:
         type: string
       responses:
         "200":
-          description: The MFAAccounts object
+          description: The MfaAccounts object
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.MFAAccount'
+              $ref: '#/definitions/object.MfaAccount'
   /api/get-model:
     get:
       tags:
@@ -3208,8 +3208,8 @@ paths:
   /api/update-mfa-account:
     post:
       tags:
-      - MFA Account Api
-      operationId: ApiController.UpdateMFAAccount
+      - Mfa Account Api
+      operationId: ApiController.UpdateMfaAccount
       parameters:
       - in: query
         name: id
@@ -3217,11 +3217,11 @@ paths:
         required: true
         type: string
       - in: body
-        name: MFAAccount
-        description: MFAAccount object
+        name: MfaAccount
+        description: MfaAccount object
         required: true
         schema:
-          $ref: '#/definitions/object.MFAAccount'
+          $ref: '#/definitions/object.MfaAccount'
       responses:
         "200":
           description: Success or error
@@ -4377,16 +4377,6 @@ definitions:
         type: string
       uuid:
         type: string
-  object.MFAAccount:
-    title: MFAAccount
-    type: object
-    properties:
-      accountName:
-        type: string
-      issuer:
-        type: string
-      secretKey:
-        type: string
   object.ManagedAccount:
     title: ManagedAccount
     type: object
@@ -4398,6 +4388,16 @@ definitions:
       signinUrl:
         type: string
       username:
+        type: string
+  object.MfaAccount:
+    title: MfaAccount
+    type: object
+    properties:
+      accountName:
+        type: string
+      issuer:
+        type: string
+      secretKey:
         type: string
   object.MfaItem:
     title: MfaItem
@@ -5293,7 +5293,7 @@ definitions:
       returnUrl:
         type: string
       state:
-        $ref: '#/definitions/pp.PaymentState'
+        type: string
       tag:
         type: string
       type:
@@ -5493,7 +5493,7 @@ definitions:
       mfaAccounts:
         type: array
         items:
-          $ref: '#/definitions/object.MFAAccount'
+          $ref: '#/definitions/object.MfaAccount'
       mfaEmailEnabled:
         type: boolean
       mfaPhoneEnabled:

@@ -23,7 +23,7 @@ import (
 
 // GetMfaAccounts
 // @Tag Mfa Account Api
-// @Title GetMFAAccounts
+// @Title GetMfaAccounts
 // @Description get MFA accounts
 // @Param       id          query       string  true        "The id ( owner/name ) of the user"
 // @Success     200         {array}     object.MfaAccount    The MfaAccounts object

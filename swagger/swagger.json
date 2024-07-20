@@ -263,9 +263,9 @@
         "/api/add-mfa-account": {
             "post": {
                 "tags": [
-                    "MFA Account Api"
+                    "Mfa Account Api"
                 ],
-                "operationId": "ApiController.AddMFAAccounts",
+                "operationId": "ApiController.AddMfaAccount",
                 "parameters": [
                     {
                         "in": "query",
@@ -276,11 +276,11 @@
                     },
                     {
                         "in": "body",
-                        "name": "MFAAccount",
-                        "description": "MFAAccount object",
+                        "name": "MfaAccount",
+                        "description": "MfaAccount object",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.MFAAccount"
+                            "$ref": "#/definitions/object.MfaAccount"
                         }
                     }
                 ],
@@ -1118,9 +1118,9 @@
         "/api/delete-mfa-account": {
             "post": {
                 "tags": [
-                    "MFA Account Api"
+                    "Mfa Account Api"
                 ],
-                "operationId": "ApiController.DeleteMFAAccount",
+                "operationId": "ApiController.DeleteMfaAccount",
                 "parameters": [
                     {
                         "in": "query",
@@ -1131,11 +1131,11 @@
                     },
                     {
                         "in": "body",
-                        "name": "MFAAccount",
-                        "description": "MFAAccount object",
+                        "name": "MfaAccount",
+                        "description": "MfaAccount object",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.MFAAccount"
+                            "$ref": "#/definitions/object.MfaAccount"
                         }
                     }
                 ],
@@ -2409,10 +2409,10 @@
         "/api/get-mfa-accounts": {
             "get": {
                 "tags": [
-                    "MFA Account Api"
+                    "Mfa Account Api"
                 ],
                 "description": "get MFA accounts",
-                "operationId": "ApiController.GetMFAAccount",
+                "operationId": "ApiController.GetMfaAccounts",
                 "parameters": [
                     {
                         "in": "query",
@@ -2424,11 +2424,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The MFAAccounts object",
+                        "description": "The MfaAccounts object",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/object.MFAAccount"
+                                "$ref": "#/definitions/object.MfaAccount"
                             }
                         }
                     }
@@ -4913,9 +4913,9 @@
         "/api/update-mfa-account": {
             "post": {
                 "tags": [
-                    "MFA Account Api"
+                    "Mfa Account Api"
                 ],
-                "operationId": "ApiController.UpdateMFAAccount",
+                "operationId": "ApiController.UpdateMfaAccount",
                 "parameters": [
                     {
                         "in": "query",
@@ -4926,11 +4926,11 @@
                     },
                     {
                         "in": "body",
-                        "name": "MFAAccount",
-                        "description": "MFAAccount object",
+                        "name": "MfaAccount",
+                        "description": "MfaAccount object",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.MFAAccount"
+                            "$ref": "#/definitions/object.MfaAccount"
                         }
                     }
                 ],
@@ -6672,21 +6672,6 @@
                 }
             }
         },
-        "object.MFAAccount": {
-            "title": "MFAAccount",
-            "type": "object",
-            "properties": {
-                "accountName": {
-                    "type": "string"
-                },
-                "issuer": {
-                    "type": "string"
-                },
-                "secretKey": {
-                    "type": "string"
-                }
-            }
-        },
         "object.ManagedAccount": {
             "title": "ManagedAccount",
             "type": "object",
@@ -6701,6 +6686,21 @@
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.MfaAccount": {
+            "title": "MfaAccount",
+            "type": "object",
+            "properties": {
+                "accountName": {
+                    "type": "string"
+                },
+                "issuer": {
+                    "type": "string"
+                },
+                "secretKey": {
                     "type": "string"
                 }
             }
@@ -8030,7 +8030,7 @@
                     "type": "string"
                 },
                 "state": {
-                    "$ref": "#/definitions/pp.PaymentState"
+                    "type": "string"
                 },
                 "tag": {
                     "type": "string"
@@ -8328,7 +8328,7 @@
                 "mfaAccounts": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/object.MFAAccount"
+                        "$ref": "#/definitions/object.MfaAccount"
                     }
                 },
                 "mfaEmailEnabled": {
