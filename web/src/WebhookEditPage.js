@@ -167,6 +167,9 @@ class WebhookEditPage extends React.Component {
       ["add", "update", "delete"].forEach(action => {
         res.push(`${action}-${obj}`);
       });
+      if (obj === "payment") {
+        res.push("invoice-payment", "notify-payment");
+      }
     });
     return res;
   }
