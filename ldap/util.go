@@ -246,7 +246,7 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 		return nil, code
 	}
 
-	if name == "*" && m.Client.IsOrgAdmin { // get all users from organization 'org'
+	if name == "*" { // get all users from organization 'org'
 		if m.Client.IsGlobalAdmin && org == "*" {
 			filteredUsers, err = object.GetGlobalUsersWithFilter(buildSafeCondition(r.Filter()))
 			if err != nil {
