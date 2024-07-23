@@ -213,8 +213,8 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 
 	userInfo := UserInfo{
 		Id:          larkUserInfo.Data.OpenId,
-		DisplayName: larkUserInfo.Data.EnName,
-		Username:    larkUserInfo.Data.Name,
+		DisplayName: larkUserInfo.Data.Name,
+		Username:    larkUserInfo.Data.UserId,
 		Email:       larkUserInfo.Data.Email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
 		Phone:       phoneNumber,
