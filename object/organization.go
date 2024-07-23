@@ -356,6 +356,11 @@ func GetDefaultApplication(id string) (*Application, error) {
 		return nil, err
 	}
 
+	err = extendApplicationWithSigninMethods(defaultApplication)
+	if err != nil {
+		return nil, err
+	}
+
 	return defaultApplication, nil
 }
 
