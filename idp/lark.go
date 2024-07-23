@@ -213,8 +213,8 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 
 	userInfo := UserInfo{
 		Id:          larkUserInfo.Data.OpenId,
-		DisplayName: larkUserInfo.Data.EnName,
-		Username:    larkUserInfo.Data.Name,
+		DisplayName: larkUserInfo.Data.Name, //here we use the Chinese name to be the display name instead of the English name
+		Username:    larkUserInfo.Data.UserId, // here we shoule use UserId
 		Email:       larkUserInfo.Data.Email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
 		Phone:       phoneNumber,
