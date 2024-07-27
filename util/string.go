@@ -354,9 +354,16 @@ func StringToInterfaceArray(array []string) []interface{} {
 func StringToInterfaceArray2d(arrays [][]string) [][]interface{} {
 	var interfaceArrays [][]interface{}
 	for _, req := range arrays {
-		var interfaceArray []interface{}
-		for _, r := range req {
-			interfaceArray = append(interfaceArray, r)
+		var (
+			interfaceArray []interface{}
+			elem           interface{}
+		)
+		for _, elem = range req {
+			jStruct, err := TryJsonToAnonymousStruct(elem.(string))
+			if err == nil {
+				elem = jStruct
+			}
+			interfaceArray = append(interfaceArray, elem)
 		}
 		interfaceArrays = append(interfaceArrays, interfaceArray)
 	}
