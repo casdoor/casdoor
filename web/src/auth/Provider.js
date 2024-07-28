@@ -61,9 +61,9 @@ const authInfo = {
   },
   WeCom: {
     scope: "snsapi_userinfo",
-    endpoint: "https://open.work.weixin.qq.com/wwopen/sso/3rd_qrConnect",
+    endpoint: "https://login.work.weixin.qq.com/wwlogin/sso/login",
     silentEndpoint: "https://open.weixin.qq.com/connect/oauth2/authorize",
-    internalEndpoint: "https://open.work.weixin.qq.com/wwopen/sso/qrConnect",
+    internalEndpoint: "https://login.work.weixin.qq.com/wwlogin/sso/login",
   },
   Lark: {
     // scope: "email",
@@ -433,7 +433,7 @@ export function getAuthUrl(application, provider, method, code) {
         return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
       } else if (provider.method === "Normal") {
         endpoint = authInfo[provider.type].internalEndpoint;
-        return `${endpoint}?appid=${provider.clientId}&agentid=${provider.appId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+        return `${endpoint}?login_type=CorpApp&appid=${provider.clientId}&agentid=${provider.appId}&redirect_uri=${redirectUri}&state=${state}`;
       } else {
         return `https://error:not-supported-provider-method:${provider.method}`;
       }
@@ -442,7 +442,8 @@ export function getAuthUrl(application, provider, method, code) {
         endpoint = authInfo[provider.type].silentEndpoint;
         return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}&response_type=code#wechat_redirect`;
       } else if (provider.method === "Normal") {
-        return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&usertype=member`;
+        endpoint = authInfo[provider.type].endpoint;
+        return `${endpoint}?login_type=ServiceApp&appid=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}`;
       } else {
         return `https://error:not-supported-provider-method:${provider.method}`;
       }
