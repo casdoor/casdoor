@@ -665,6 +665,11 @@ func (c *ApiController) Login() {
 						return
 					}
 
+					if application.IsSignupItemRequired("Invitation code") {
+						c.ResponseError(c.T("check:Invitation code cannot be blank"))
+						return
+					}
+
 					// Handle username conflicts
 					var tmpUser *object.User
 					tmpUser, err = object.GetUser(util.GetId(application.Organization, userInfo.Username))
