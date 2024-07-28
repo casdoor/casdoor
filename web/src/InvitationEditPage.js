@@ -199,7 +199,7 @@ class InvitationEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.invitation.application}
               onChange={(value => {this.updateInvitationField("application", value);})}
               options={[
-                {label: "All", value: i18next.t("general:All")},
+                {label: i18next.t("general:All"), value: "All"},
                 ...this.state.applications.map((application) => Setting.getOption(application.name, application.name)),
               ]} />
           </Col>
