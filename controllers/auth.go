@@ -666,7 +666,7 @@ func (c *ApiController) Login() {
 					}
 
 					if application.IsSignupItemRequired("Invitation code") {
-						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+						c.ResponseError(c.T("check:Invitation code cannot be blank"))
 						return
 					}
 
