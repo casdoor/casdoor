@@ -140,7 +140,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
   const handleOAuthClick = (e, url) => {
     if (!ths.state.isAgreementChecked) {
       e.preventDefault();
-      message.warning(i18next.t("signup:Please accept the agreement!"));
+      message.error(i18next.t("signup:Please accept the agreement!"));
     } else {
       window.location.href = url;
     }
@@ -169,7 +169,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         <a key={provider.displayName} onClick={(e) => {
           if (!ths.state.isAgreementChecked) {
             e.preventDefault();
-            message.warning(i18next.t("signup:Please accept the agreement!"));
+            message.error(i18next.t("signup:Please accept the agreement!"));
           } else {
             goToSamlUrl(provider, location);
           }
@@ -183,7 +183,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         <a key={provider.displayName} onClick={(e) => {
           if (!ths.state.isAgreementChecked) {
             e.preventDefault();
-            message.warning(i18next.t("signup:Please accept the agreement!"));
+            message.error(i18next.t("signup:Please accept the agreement!"));
           } else {
             goToWeb3Url(application, provider, "signup");
           }
@@ -219,7 +219,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         <a key={provider.displayName} onClick={(e) => {
           if (!ths.state.isAgreementChecked) {
             e.preventDefault();
-            message.warning(i18next.t("signup:Please accept the agreement!"));
+            message.error(i18next.t("signup:Please accept the agreement!"));
           } else {
             goToSamlUrl(provider, location);
           }
@@ -240,7 +240,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
           <a onClick={(e) => {
             if (!ths.state.isAgreementChecked) {
               e.preventDefault();
-              message.warning(i18next.t("signup:Please accept the agreement!"));
+              message.error(i18next.t("signup:Please accept the agreement!"));
             } else {
               goToSamlUrl(provider, location);
             }
@@ -257,7 +257,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
           <a onClick={(e) => {
             if (!ths.state.isAgreementChecked) {
               e.preventDefault();
-              message.warning(i18next.t("signup:Please accept the agreement!"));
+              message.error(i18next.t("signup:Please accept the agreement!"));
             } else {
               goToWeb3Url(application, provider, "signup");
             }
