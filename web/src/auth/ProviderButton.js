@@ -43,6 +43,7 @@ import DouyinLoginButton from "./DouyinLoginButton";
 import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {WechatOfficialAccountModal} from "./Util";
+import {message} from "antd";
 
 function getSigninButton(provider) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName !== "" ? provider.displayName : provider.type);
@@ -135,7 +136,15 @@ export function goToWeb3Url(application, provider, method) {
   }
 }
 
-export function renderProviderLogo(provider, application, width, margin, size, location) {
+export function renderProviderLogo(provider, application, width, margin, size, location, ths) {
+  const handleOAuthClick = (e, url) => {
+    if (!ths.state.isAgreementChecked) {
+      e.preventDefault();
+      message.warning(i18next.t("signup:Please accept the agreement!"));
+    } else {
+      window.location.href = url;
+    }
+  };
   if (size === "small") {
     if (provider.category === "OAuth") {
       if (provider.type === "WeChat" && provider.clientId2 !== "" && provider.clientSecret2 !== "" && provider.disableSsl === true && !navigator.userAgent.includes("MicroMessenger")) {
@@ -147,22 +156,40 @@ export function renderProviderLogo(provider, application, width, margin, size, l
           </a>
         );
       } else {
+        const authUrl = Provider.getAuthUrl(application, provider, "signup");
         return (
-          <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")}>
-            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
+          <a key={provider.displayName} href={authUrl} onClick={(e) => handleOAuthClick(e, authUrl)}>
+            <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName}
+              className="provider-img" style={{margin: margin}} />
           </a>
         );
       }
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={() => goToSamlUrl(provider, location)}>
-          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
+        <a key={provider.displayName} onClick={(e) => {
+          if (!ths.state.isAgreementChecked) {
+            e.preventDefault();
+            message.warning(i18next.t("signup:Please accept the agreement!"));
+          } else {
+            goToSamlUrl(provider, location);
+          }
+        }}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName}
+            className="provider-img" style={{margin: margin}} />
         </a>
       );
     } else if (provider.category === "Web3") {
       return (
-        <a key={provider.displayName} onClick={() => goToWeb3Url(application, provider, "signup")}>
-          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={{margin: margin}} />
+        <a key={provider.displayName} onClick={(e) => {
+          if (!ths.state.isAgreementChecked) {
+            e.preventDefault();
+            message.warning(i18next.t("signup:Please accept the agreement!"));
+          } else {
+            goToWeb3Url(application, provider, "signup");
+          }
+        }}>
+          <img width={width} height={width} src={getProviderLogoURL(provider)} alt={provider.displayName}
+            className="provider-img" style={{margin: margin}} />
         </a>
       );
     }
@@ -170,23 +197,36 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     // style definition
     const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName);
     const customAStyle = {display: "block", height: "55px", color: "#000"};
-    const customButtonStyle = {display: "flex", alignItems: "center", width: "calc(100% - 10px)", height: "50px", margin: "5px", padding: "0 10px", backgroundColor: "transparent", boxShadow: "0px 1px 3px rgba(0,0,0,0.5)", border: "0px", borderRadius: "3px", cursor: "pointer"};
+    const customButtonStyle = {
+      display: "flex",
+      alignItems: "center", width: "calc(100% - 10px)", height: "50px", margin: "5px", padding: "0 10px", backgroundColor: "transparent", boxShadow: "0px 1px 3px rgba(0,0,0,0.5)", border: "0px", borderRadius: "3px", cursor: "pointer"};
     const customImgStyle = {justfyContent: "space-between"};
     const customSpanStyle = {textAlign: "center", width: "100%", fontSize: "19px"};
     if (provider.category === "OAuth") {
+      const authUrl = Provider.getAuthUrl(application, provider, "signup");
       return (
-        <a key={provider.displayName} href={Provider.getAuthUrl(application, provider, "signup")} style={customAStyle}>
+        <a key={provider.displayName} href={authUrl} style={customAStyle}
+          onClick={(e) => handleOAuthClick(e, authUrl)}>
           <div style={customButtonStyle}>
-            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={customImgStyle} />
+            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img"
+              style={customImgStyle} />
             <span style={customSpanStyle}>{text}</span>
           </div>
         </a>
       );
     } else if (provider.category === "SAML") {
       return (
-        <a key={provider.displayName} onClick={() => goToSamlUrl(provider, location)} style={customAStyle}>
+        <a key={provider.displayName} onClick={(e) => {
+          if (!ths.state.isAgreementChecked) {
+            e.preventDefault();
+            message.warning(i18next.t("signup:Please accept the agreement!"));
+          } else {
+            goToSamlUrl(provider, location);
+          }
+        }} style={customAStyle}>
           <div style={customButtonStyle}>
-            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img" style={customImgStyle} />
+            <img width={26} src={getProviderLogoURL(provider)} alt={provider.displayName} className="provider-img"
+              style={customImgStyle} />
             <span style={customSpanStyle}>{text}</span>
           </div>
         </a>
@@ -197,7 +237,14 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     if (provider.category === "SAML") {
       return (
         <div key={provider.displayName} className="provider-big-img">
-          <a onClick={() => goToSamlUrl(provider, location)}>
+          <a onClick={(e) => {
+            if (!ths.state.isAgreementChecked) {
+              e.preventDefault();
+              message.warning(i18next.t("signup:Please accept the agreement!"));
+            } else {
+              goToSamlUrl(provider, location);
+            }
+          }}>
             {
               getSigninButton(provider)
             }
@@ -207,7 +254,14 @@ export function renderProviderLogo(provider, application, width, margin, size, l
     } else if (provider.category === "Web3") {
       return (
         <div key={provider.displayName} className="provider-big-img">
-          <a onClick={() => goToWeb3Url(application, provider, "signup")}>
+          <a onClick={(e) => {
+            if (!ths.state.isAgreementChecked) {
+              e.preventDefault();
+              message.warning(i18next.t("signup:Please accept the agreement!"));
+            } else {
+              goToWeb3Url(application, provider, "signup");
+            }
+          }}>
             {
               getSigninButton(provider)
             }
@@ -215,9 +269,10 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </div>
       );
     } else {
+      const authUrl = Provider.getAuthUrl(application, provider, "signup");
       return (
         <div key={provider.displayName} className="provider-big-img">
-          <a href={Provider.getAuthUrl(application, provider, "signup")}>
+          <a href={authUrl} onClick={(e) => handleOAuthClick(e, authUrl)}>
             {
               getSigninButton(provider)
             }

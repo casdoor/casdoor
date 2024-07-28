@@ -104,7 +104,11 @@ export function renderAgreementFormItem(application, required, layout, ths) {
       {...layout}
       initialValue={initDefaultValue(application)}
     >
-      <Checkbox style={{float: "left"}}>
+      <Checkbox
+        style={{float: "left"}}
+        checked={ths.state.isAgreementChecked}
+        onChange={(e) => ths.setState({isAgreementChecked: e.target.checked})}
+      >
         {i18next.t("signup:Accept")}&nbsp;
         <a onClick={() => {
           ths.setState({
@@ -120,12 +124,14 @@ export function renderAgreementFormItem(application, required, layout, ths) {
       onOk={() => {
         ths.form.current.setFieldsValue({agreement: true});
         ths.setState({
+          isAgreementChecked: true,
           isTermsOfUseVisible: false,
         });
       }}
       onCancel={() => {
         ths.form.current.setFieldsValue({agreement: false});
         ths.setState({
+          isAgreementChecked: false,
           isTermsOfUseVisible: false,
         });
       }} />
