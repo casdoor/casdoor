@@ -665,6 +665,11 @@ func (c *ApiController) Login() {
 						return
 					}
 
+					if application.IsSignupItemRequired("Invitation code") {
+						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
+						return
+					}
+
 					// Handle username conflicts
 					var tmpUser *object.User
 					tmpUser, err = object.GetUser(util.GetId(application.Organization, userInfo.Username))
