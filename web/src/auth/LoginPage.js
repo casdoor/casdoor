@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs} from "antd";
+import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs, message} from "antd";
 import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
@@ -751,6 +751,7 @@ class LoginPage extends React.Component {
                   <span key ={id} onClick={(e) => {
                     if (!this.form.current.getFieldValue("agreement")) {
                       e.preventDefault();
+                      message.error(i18next.t("signup:Please accept the agreement!"));
                     }
                   }}>
                     {

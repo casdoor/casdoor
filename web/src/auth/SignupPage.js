@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Radio, Result, Row} from "antd";
+import {Button, Form, Input, Radio, Result, Row, message} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -658,6 +658,7 @@ class SignupPage extends React.Component {
             <span key={id} onClick={(e) => {
               if (!this.form.current.getFieldValue("agreement")) {
                 e.preventDefault();
+                message.error(i18next.t("signup:Please accept the agreement!"));
               }
             }}>
               {
