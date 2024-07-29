@@ -653,8 +653,18 @@ class SignupPage extends React.Component {
       }
       return (
 
-        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-          return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location);
+        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
+          return (
+            <span key={id} onClick={(e) => {
+              if (!this.form.current.getFieldValue("agreement")) {
+                e.preventDefault();
+              }
+            }}>
+              {
+                ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location)
+              }
+            </span>
+          );
         })
 
       );

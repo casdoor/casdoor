@@ -23,7 +23,6 @@ import * as AuthBackend from "./AuthBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Provider from "./Provider";
-import * as ProviderButton from "./ProviderButton";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import * as AgreementModal from "../common/modal/AgreementModal";
@@ -36,6 +35,7 @@ import {CaptchaModal, CaptchaRule} from "../common/modal/CaptchaModal";
 import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
+import * as ProviderButton from "./ProviderButton";
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class LoginPage extends React.Component {
@@ -746,8 +746,18 @@ class LoginPage extends React.Component {
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
-              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-                return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location);
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
+                return (
+                  <span key ={id} onClick={(e) => {
+                    if (!this.form.current.getFieldValue("agreement")) {
+                      e.preventDefault();
+                    }
+                  }}>
+                    {
+                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
+                    }
+                  </span>
+                );
               })
             }
             {
