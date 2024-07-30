@@ -656,7 +656,9 @@ class SignupPage extends React.Component {
         application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
           return (
             <span key={id} onClick={(e) => {
-              if (!this.form.current.getFieldValue("agreement")) {
+              const agreementChecked = this.form.current.getFieldValue("agreement");
+
+              if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
                 e.preventDefault();
                 message.error(i18next.t("signup:Please accept the agreement!"));
               }
