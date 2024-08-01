@@ -28,9 +28,7 @@ import (
 	"layeh.com/radius/rfc2866"
 )
 
-var (
-	StateMap map[string]AccessStateContent
-)
+var StateMap map[string]AccessStateContent
 
 const StateExpiredTime = time.Second * 120
 
