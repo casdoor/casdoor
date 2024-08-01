@@ -127,12 +127,12 @@ function initLanguage() {
         break;
       case "cs":
       case "cs-CZ":
-          language = "cs";
-          break;
+        language = "cs";
+        break;
       case "sk":
       case "sk-SK":
-          language = "sk";
-          break;
+        language = "sk";
+        break;
       default:
         language = Conf.DefaultLanguage;
       }
