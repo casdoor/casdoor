@@ -45,6 +45,8 @@ func TestGenerateI18nFrontend(t *testing.T) {
 	applyToOtherLanguage("frontend", "uk", data)
 	applyToOtherLanguage("frontend", "kk", data)
 	applyToOtherLanguage("frontend", "fa", data)
+	applyToOtherLanguage("frontend", "cs", data)
+	applyToOtherLanguage("frontend", "sk", data)
 }
 
 func TestGenerateI18nBackend(t *testing.T) {
@@ -73,4 +75,6 @@ func TestGenerateI18nBackend(t *testing.T) {
 	applyToOtherLanguage("backend", "uk", data)
 	applyToOtherLanguage("backend", "kk", data)
 	applyToOtherLanguage("backend", "fa", data)
+	applyToOtherLanguage("backend", "cs", data)
+	applyToOtherLanguage("backend", "sk", data)
 }
