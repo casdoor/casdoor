@@ -393,6 +393,20 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		itemsChanged = append(itemsChanged, item)
 	}
 
+	if oldUser.Address == nil {
+		oldUser.Address = []string{}
+	}
+	oldUserAddressJson, _ := json.Marshal(oldUser.Address)
+
+	if newUser.Address == nil {
+		newUser.Address = []string{}
+	}
+	newUserAddressJson, _ := json.Marshal(newUser.Address)
+	if string(oldUserAddressJson) != string(newUserAddressJson) {
+		item := GetAccountItemByName("Address", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
 	if newUser.FaceIds != nil {
 		item := GetAccountItemByName("Face ID", organization)
 		itemsChanged = append(itemsChanged, item)
@@ -423,6 +437,31 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 
 	if oldUser.Score != newUser.Score {
 		item := GetAccountItemByName("Score", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Karma != newUser.Karma {
+		item := GetAccountItemByName("Karma", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Language != newUser.Language {
+		item := GetAccountItemByName("Language", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Ranking != newUser.Ranking {
+		item := GetAccountItemByName("Ranking", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Currency != newUser.Currency {
+		item := GetAccountItemByName("Currency", organization)
+		itemsChanged = append(itemsChanged, item)
+	}
+
+	if oldUser.Hash != newUser.Hash {
+		item := GetAccountItemByName("Hash", organization)
 		itemsChanged = append(itemsChanged, item)
 	}
 
