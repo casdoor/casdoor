@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Radio, Result, Row} from "antd";
+import {Button, Form, Input, Radio, Result, Row, message} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -653,8 +653,21 @@ class SignupPage extends React.Component {
       }
       return (
 
-        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map(providerItem => {
-          return ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location);
+        application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
+          return (
+            <span key={id} onClick={(e) => {
+              const agreementChecked = this.form.current.getFieldValue("agreement");
+
+              if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
+                e.preventDefault();
+                message.error(i18next.t("signup:Please accept the agreement!"));
+              }
+            }}>
+              {
+                ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signupItem.rule, this.props.location)
+              }
+            </span>
+          );
         })
 
       );
