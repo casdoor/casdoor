@@ -35,7 +35,9 @@
         "FI",
         "SE",
         "UA",
-        "KZ"
+        "KZ",
+        "CZ",
+        "SK"
       ],
       "defaultAvatar": "",
       "defaultApplication": "",
@@ -62,7 +64,9 @@
         "sv",
         "uk",
         "kk",
-        "fa"
+        "fa",
+        "cs",
+        "sk"
       ],
       "masterPassword": "",
       "defaultPassword": "",
