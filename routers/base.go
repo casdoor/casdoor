@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/beego/beego/context"
-
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
@@ -126,7 +125,7 @@ func setSessionUser(ctx *context.Context, user string) {
 	}
 
 	// https://github.com/beego/beego/issues/3445#issuecomment-455411915
-	ctx.Input.CruSession.SessionReleaseIfPresent(ctx.ResponseWriter)
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
 func setSessionExpire(ctx *context.Context, ExpireTime int64) {
@@ -135,7 +134,7 @@ func setSessionExpire(ctx *context.Context, ExpireTime int64) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Input.CruSession.SessionReleaseIfPresent(ctx.ResponseWriter)
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
 func setSessionOidc(ctx *context.Context, scope string, aud string) {
@@ -147,7 +146,7 @@ func setSessionOidc(ctx *context.Context, scope string, aud string) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Input.CruSession.SessionReleaseIfPresent(ctx.ResponseWriter)
+	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
 func parseBearerToken(ctx *context.Context) string {
