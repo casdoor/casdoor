@@ -243,46 +243,69 @@ class ApplicationEditPage extends React.Component {
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteApplication()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Row style={{marginTop: "10px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
-              this.updateApplicationField("name", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.application.displayName} onChange={e => {
-              this.updateApplicationField("displayName", e.target.value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              value={this.state.application.name}
+              disabled={this.state.application.name === "app-built-in"}
+              onChange={e => {
+                this.updateApplicationField("name", e.target.value);
+              }}
+            />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
-                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              value={this.state.application.displayName}
+              onChange={e => {
+                this.updateApplicationField("displayName", e.target.value);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Logo"), i18next.t("general:Logo - Tooltip"))} :
+            </div>
+          </Col>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Row style={{marginTop: "20px"}}>
+              <Col style={{width: "200px", minWidth: "200px"}}>
+                <div style={{whiteSpace: "nowrap"}}>
+                  {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
+                </div>
               </Col>
-              <Col span={23} >
-                <Input prefix={<LinkOutlined />} value={this.state.application.logo} onChange={e => {
-                  this.updateApplicationField("logo", e.target.value);
-                }} />
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
+                <Input
+                  prefix={<LinkOutlined />}
+                  value={this.state.application.logo}
+                  onChange={e => {
+                    this.updateApplicationField("logo", e.target.value);
+                  }}
+                />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
-                {i18next.t("general:Preview")}:
+            <Row style={{marginTop: "20px"}}>
+              <Col style={{width: "200px", minWidth: "200px"}}>
+                <div style={{whiteSpace: "nowrap"}}>
+                  {i18next.t("general:Preview")}:
+                </div>
               </Col>
-              <Col span={23} >
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
                 <a target="_blank" rel="noreferrer" href={this.state.application.logo}>
                   <img src={this.state.application.logo} alt={this.state.application.logo} height={90} style={{marginBottom: "20px"}} />
                 </a>
@@ -290,87 +313,147 @@ class ApplicationEditPage extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Home"), i18next.t("general:Home - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.application.homepageUrl} onChange={e => {
-              this.updateApplicationField("homepageUrl", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.application.description} onChange={e => {
-              this.updateApplicationField("description", e.target.value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              prefix={<LinkOutlined />}
+              value={this.state.application.homepageUrl}
+              onChange={e => {
+                this.updateApplicationField("homepageUrl", e.target.value);
+              }}
+            />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account)} value={this.state.application.organization} onChange={(value => {this.updateApplicationField("organization", value);})}>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              value={this.state.application.description}
+              onChange={e => {
+                this.updateApplicationField("description", e.target.value);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
+            </div>
+          </Col>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Select
+              virtual={false}
+              style={{width: "100%"}}
+              disabled={!Setting.isAdminUser(this.props.account)}
+              value={this.state.application.organization}
+              onChange={(value => {this.updateApplicationField("organization", value);})}
+            >
               {
-                this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
+                this.state.organizations.map((organization, index) =>
+                  <Option key={index} value={organization.name}>{organization.name}</Option>
+                )
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Tags"), i18next.t("application:Tags - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("organization:Tags"), i18next.t("application:Tags - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Select virtual={false} mode="tags" style={{width: "100%"}} value={this.state.application.tags} onChange={(value => {this.updateApplicationField("tags", value);})}>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Select
+              virtual={false}
+              mode="tags"
+              style={{width: "100%"}}
+              value={this.state.application.tags}
+              onChange={(value => {this.updateApplicationField("tags", value);})}
+            >
               {
-                this.state.application.tags?.map((item, index) => <Option key={index} value={item}>{item}</Option>)
+                this.state.application.tags?.map((item, index) =>
+                  <Option key={index} value={item}>{item}</Option>
+                )
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("provider:Client ID"), i18next.t("provider:Client ID - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Input value={this.state.application.clientId} onChange={e => {
-              this.updateApplicationField("clientId", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.application.clientSecret} onChange={e => {
-              this.updateApplicationField("clientSecret", e.target.value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              value={this.state.application.clientId}
+              onChange={e => {
+                this.updateApplicationField("clientId", e.target.value);
+              }}
+            />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.cert} onChange={(value => {this.updateApplicationField("cert", value);})}>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input
+              value={this.state.application.clientSecret}
+              onChange={e => {
+                this.updateApplicationField("clientSecret", e.target.value);
+              }}
+            />
+          </Col>
+        </Row>
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Cert"), i18next.t("general:Cert - Tooltip"))} :
+            </div>
+          </Col>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Select
+              virtual={false}
+              style={{width: "100%"}}
+              value={this.state.application.cert}
+              onChange={(value => {this.updateApplicationField("cert", value);})}
+            >
               {
-                this.state.certs.map((cert, index) => <Option key={index} value={cert.name}>{cert.name}</Option>)
+                this.state.certs.map((cert, index) =>
+                  <Option key={index} value={cert.name}>{cert.name}</Option>
+                )
               }
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Redirect URLs"), i18next.t("application:Redirect URLs - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Redirect URLs"), i18next.t("application:Redirect URLs - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <UrlTable
               title={i18next.t("application:Redirect URLs")}
               table={this.state.application.redirectUris}
@@ -378,122 +461,171 @@ class ApplicationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Token format"), i18next.t("application:Token format - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.application.tokenFormat} onChange={(value => {this.updateApplicationField("tokenFormat", value);})}
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Select
+              value={this.state.application.tokenFormat}
+              onChange={(value) => {
+                this.updateApplicationField("tokenFormat", value);
+              }}
               options={["JWT", "JWT-Empty", "JWT-Custom", "JWT-Standard"].map((item) => Setting.getOption(item, item))}
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Token fields"), i18next.t("application:Token fields - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Token fields"), i18next.t("application:Token fields - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
-              {
-                Setting.getUserCommonFields().map((item, index) => <Option key={index} value={item}>{item}</Option>)
-              }
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Select
+              mode="multiple"
+              style={{width: "100%"}}
+              value={this.state.application.tokenFields}
+              onChange={(value) => {
+                this.updateApplicationField("tokenFields", value);
+              }}
+            >
+              {Setting.getUserCommonFields().map((item, index) => (
+                <Option key={index} value={item}>{item}</Option>
+              ))}
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.expireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
-              this.updateApplicationField("expireInHours", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
-              this.updateApplicationField("refreshExpireInHours", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1} precision={0} addonAfter="Times" onChange={value => {
-              this.updateApplicationField("failedSigninLimit", value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <InputNumber
+              min={1}
+              max={876000}
+              style={{width: "100%"}}
+              value={this.state.application.expireInHours}
+              onChange={(value) => {
+                this.updateApplicationField("expireInHours", value);
+              }}
+            />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
-              this.updateApplicationField("failedSigninFrozenTime", value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={1} step={1}
+              precision={0} addonAfter="Hours" onChange={value => {
+                this.updateApplicationField("refreshExpireInHours", value);
+              }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninLimit} min={1} step={1}
+              precision={0} addonAfter="Times" onChange={value => {
+                this.updateApplicationField("failedSigninLimit", value);
+              }} />
+          </Col>
+        </Row>
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Failed signin frozen time"), i18next.t("application:Failed signin frozen time - Tooltip"))} :
+            </div>
+          </Col>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1}
+              step={1} precision={0} addonAfter="Minutes" onChange={value => {
+                this.updateApplicationField("failedSigninFrozenTime", value);
+              }} />
+          </Col>
+        </Row>
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Enable signup"), i18next.t("application:Enable signup - Tooltip"))} :
+            </div>
+          </Col>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableSignUp} onChange={checked => {
               this.updateApplicationField("enableSignUp", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Signin session"), i18next.t("application:Enable signin session - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Signin session"), i18next.t("application:Enable signin session - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableSigninSession} onChange={checked => {
               if (!checked) {
                 this.updateApplicationField("enableAutoSignin", false);
               }
-
               this.updateApplicationField("enableSigninSession", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Auto signin"), i18next.t("application:Auto signin - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Auto signin"), i18next.t("application:Auto signin - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableAutoSignin} onChange={checked => {
               if (!this.state.application.enableSigninSession && checked) {
                 Setting.showMessage("error", i18next.t("application:Please enable \"Signin session\" first before enabling \"Auto signin\""));
                 return;
               }
-
               this.updateApplicationField("enableAutoSignin", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable Email linking"), i18next.t("application:Enable Email linking - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Enable Email linking"), i18next.t("application:Enable Email linking - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableLinkWithEmail} onChange={checked => {
               this.updateApplicationField("enableLinkWithEmail", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Signin methods"), i18next.t("application:Signin methods - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Signin methods"), i18next.t("application:Signin methods - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <SigninMethodTable
               title={i18next.t("application:Signin methods")}
               table={this.state.application.signinMethods}
@@ -503,11 +635,14 @@ class ApplicationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Org choice mode"), i18next.t("application:Org choice mode - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Org choice mode"), i18next.t("application:Org choice mode - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Select virtual={false} style={{width: "100%"}}
               options={[
                 {label: i18next.t("general:None"), value: "None"},
@@ -519,71 +654,95 @@ class ApplicationEditPage extends React.Component {
               value={this.state.application.orgChoiceMode ?? []}
               onChange={(value => {
                 this.updateApplicationField("orgChoiceMode", value);
-              })} >
+              })}>
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Signup URL"), i18next.t("general:Signup URL - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Input prefix={<LinkOutlined />} value={this.state.application.signupUrl} onChange={e => {
               this.updateApplicationField("signupUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Signin URL"), i18next.t("general:Signin URL - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Input prefix={<LinkOutlined />} value={this.state.application.signinUrl} onChange={e => {
               this.updateApplicationField("signinUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Forget URL"), i18next.t("general:Forget URL - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Input prefix={<LinkOutlined />} value={this.state.application.forgetUrl} onChange={e => {
               this.updateApplicationField("forgetUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Affiliation URL"), i18next.t("general:Affiliation URL - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Input prefix={<LinkOutlined />} value={this.state.application.affiliationUrl} onChange={e => {
               this.updateApplicationField("affiliationUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("signup:Terms of Use"), i18next.t("signup:Terms of Use - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("signup:Terms of Use"), i18next.t("signup:Terms of Use - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
-            <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}} onChange={e => {
-              this.updateApplicationField("termsOfUse", e.target.value);
-            }} />
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Input prefix={<LinkOutlined />} value={this.state.application.termsOfUse} style={{marginBottom: "10px"}}
+              onChange={e => {
+                this.updateApplicationField("termsOfUse", e.target.value);
+              }} />
             <Upload maxCount={1} accept=".html" showUploadList={false}
-              beforeUpload={file => {return false;}} onChange={info => {this.handleUpload(info);}}>
-              <Button icon={<UploadOutlined />} loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
+              beforeUpload={file => {
+                return false;
+              }} onChange={info => {
+                this.handleUpload(info);
+              }}>
+              <Button icon={<UploadOutlined />}
+                loading={this.state.uploading}>{i18next.t("general:Click to Upload")}</Button>
             </Upload>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Signup HTML"), i18next.t("provider:Signup HTML - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("provider:Signup HTML"), i18next.t("provider:Signup HTML - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
+              <div style={{width: "900px", height: "300px"}}>
                 <CodeMirror
                   value={this.state.application.signupHtml}
                   options={{mode: "htmlmixed", theme: "material-darker"}}
@@ -599,13 +758,16 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("provider:Signin HTML"), i18next.t("provider:Signin HTML - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("provider:Signin HTML"), i18next.t("provider:Signin HTML - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
+              <div style={{width: "900px", height: "300px"}}>
                 <CodeMirror
                   value={this.state.application.signinHtml}
                   options={{mode: "htmlmixed", theme: "material-darker"}}
@@ -621,16 +783,19 @@ class ApplicationEditPage extends React.Component {
             </Popover>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Grant types"), i18next.t("application:Grant types - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Select virtual={false} mode="multiple" style={{width: "100%"}}
               value={this.state.application.grantTypes}
               onChange={(value => {
                 this.updateApplicationField("grantTypes", value);
-              })} >
+              })}>
               {
                 [
                   {id: "authorization_code", name: "Authorization Code"},
@@ -644,178 +809,212 @@ class ApplicationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:SAML reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:SAML reply URL"), i18next.t("application:Redirect URL (Assertion Consumer Service POST Binding URL) - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Input prefix={<LinkOutlined />} value={this.state.application.samlReplyUrl} onChange={e => {
               this.updateApplicationField("samlReplyUrl", e.target.value);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable SAML compression"), i18next.t("application:Enable SAML compression - Tooltip"))} :
+
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Enable SAML compression"), i18next.t("application:Enable SAML compression - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableSamlCompress} onChange={checked => {
               this.updateApplicationField("enableSamlCompress", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
             {Setting.getLabel(i18next.t("application:Enable SAML C14N10"), i18next.t("application:Enable SAML C14N10 - Tooltip"))} :
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableSamlC14n10} onChange={checked => {
               this.updateApplicationField("enableSamlC14n10", checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
-            {Setting.getLabel(i18next.t("application:Enable SAML POST binding"), i18next.t("application:Enable SAML POST binding - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Enable SAML POST binding"), i18next.t("application:Enable SAML POST binding - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={1} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <Switch checked={this.state.application.enableSamlPostBinding} onChange={checked => {
               this.updateApplicationField("enableSamlPostBinding", checked);
               this.getSamlMetadata(checked);
             }} />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <SamlAttributeTable
               title={i18next.t("general:SAML attributes")}
               table={this.state.application.samlAttributes}
               application={this.state.application}
-              onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
+              onUpdateTable={(value) => {
+                this.updateApplicationField("samlAttributes", value);
+              }}
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22}>
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <CodeMirror
               value={this.state.samlMetadata}
               options={{mode: "xml", theme: "default"}}
-              onBeforeChange={(editor, data, value) => {}}
+              onBeforeChange={(editor, data, value) => {
+              }}
             />
             <br />
-            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&post=${this.state.application.enableSamlPostBinding}`);
-              Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-            }}
+            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />}
+              onClick={() => {
+                copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&post=${this.state.application.enableSamlPostBinding}`);
+                Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+              }}
             >
               {i18next.t("application:Copy SAML metadata URL")}
             </Button>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Providers"), i18next.t("general:Providers - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
             <ProviderTable
               title={i18next.t("general:Providers")}
               table={this.state.application.providers}
               providers={this.state.providers}
               application={this.state.application}
-              onUpdateTable={(value) => {this.updateApplicationField("providers", value);}}
+              onUpdateTable={(value) => {
+                this.updateApplicationField("providers", value);
+              }}
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+            </div>
           </Col>
-          {
-            this.renderSignupSigninPreview()
-          }
+          <Col style={{flex: "auto", marginLeft: "auto"}}>
+            {this.renderSignupSigninPreview()}
+          </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Background URL"), i18next.t("application:Background URL - Tooltip"))} :
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{width: "200px", minWidth: "200px"}}>
+            <div style={{whiteSpace: "nowrap"}}>
+              {Setting.getLabel(i18next.t("application:Background URL"), i18next.t("application:Background URL - Tooltip"))} :
+            </div>
           </Col>
-          <Col span={22} style={(Setting.isMobile()) ? {maxWidth: "100%"} : {}}>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("general:URL"), i18next.t("general:URL - Tooltip"))} :
-              </Col>
-              <Col span={22} >
+          <Col style={{flex: "auto", marginLeft: "20px"}}>
+            <Row>
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
                 <Input prefix={<LinkOutlined />} value={this.state.application.formBackgroundUrl} onChange={e => {
                   this.updateApplicationField("formBackgroundUrl", e.target.value);
                 }} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            <Row style={{marginTop: "20px"}}>
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
                 {i18next.t("general:Preview")}:
               </Col>
-              <Col span={22} >
+            </Row>
+            <Row>
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
                 <a target="_blank" rel="noreferrer" href={this.state.application.formBackgroundUrl}>
-                  <img src={this.state.application.formBackgroundUrl} alt={this.state.application.formBackgroundUrl} height={90} style={{marginBottom: "20px"}} />
+                  <img src={this.state.application.formBackgroundUrl} alt={this.state.application.formBackgroundUrl}
+                    height={90} style={{marginBottom: "20px"}} />
                 </a>
               </Col>
             </Row>
           </Col>
         </Row>
-        <Row>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :
-          </Col>
-          <Col span={22}>
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("formCss", value);
-                  }}
-                />
+        <div style={{margin: "0 auto", padding: "20px"}}>
+          <Row>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :
               </div>
-            } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
-              <Input value={this.state.application.formCss} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateApplicationField("formCss", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row>
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Custom CSS Mobile"), i18next.t("application:Custom CSS Mobile - Tooltip"))} :
-          </Col>
-          <Col span={22}>
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("formCssMobile", value);
-                  }}
-                />
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}}>
+                  <CodeMirror
+                    value={this.state.application.formCss === "" ? template : this.state.application.formCss}
+                    options={{mode: "css", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateApplicationField("formCss", value);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
+                <Input value={this.state.application.formCss} onChange={e => {
+                  this.updateApplicationField("formCss", e.target.value);
+                }} />
+              </Popover>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Custom CSS Mobile"), i18next.t("application:Custom CSS Mobile - Tooltip"))} :
               </div>
-            } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
-              <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateApplicationField("formCssMobile", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Row style={{marginTop: "20px"}} >
-              <Radio.Group buttonStyle="solid" onChange={e => {this.updateApplicationField("formOffset", e.target.value);}} value={this.state.application.formOffset}>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}}>
+                  <CodeMirror
+                    value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                    options={{mode: "css", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateApplicationField("formCssMobile", value);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
+                <Input value={this.state.application.formCssMobile} onChange={e => {
+                  this.updateApplicationField("formCssMobile", e.target.value);
+                }} />
+              </Popover>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Form position"), i18next.t("application:Form position - Tooltip"))} :
+              </div>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Radio.Group buttonStyle="solid" onChange={e => {
+                this.updateApplicationField("formOffset", e.target.value);
+              }} value={this.state.application.formOffset}>
                 <Radio.Button value={1}>{i18next.t("application:Left")}</Radio.Button>
                 <Radio.Button value={2}>{i18next.t("application:Center")}</Radio.Button>
                 <Radio.Button value={3}>{i18next.t("application:Right")}</Radio.Button>
@@ -823,157 +1022,171 @@ class ApplicationEditPage extends React.Component {
                   {i18next.t("application:Enable side panel")}
                 </Radio.Button>
               </Radio.Group>
-            </Row>
-            {this.state.application.formOffset === 4 ?
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 3}>
-                  {Setting.getLabel(i18next.t("application:Side panel HTML"), i18next.t("application:Side panel HTML - Tooltip"))} :
-                </Col>
-                <Col span={21} >
-                  <Popover placement="right" content={
-                    <div style={{width: "900px", height: "300px"}} >
-                      <CodeMirror value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
-                        options={{mode: "htmlmixed", theme: "material-darker"}}
-                        onBeforeChange={(editor, data, value) => {
-                          this.updateApplicationField("formSideHtml", value);
-                        }}
-                      />
-                    </div>
-                  } title={i18next.t("application:Side panel HTML - Edit")} trigger="click">
-                    <Input value={this.state.application.formSideHtml} style={{marginBottom: "10px"}} onChange={e => {
-                      this.updateApplicationField("formSideHtml", e.target.value);
-                    }} />
-                  </Popover>
-                </Col>
-              </Row>
-              : null}
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
-          </Col>
-          <Col span={22} style={{marginTop: "5px"}}>
-            <Row>
-              <Radio.Group buttonStyle="solid" value={this.state.application.themeData?.isEnabled ?? false} onChange={e => {
-                const {_, ...theme} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
-                this.updateApplicationField("themeData", {...theme, isEnabled: e.target.value});
-              }} >
+              {this.state.application.formOffset === 4 &&
+                    <Row style={{marginTop: "20px"}}>
+                      <Col style={{width: "300px", minWidth: "300px"}}>
+                        <div style={{whiteSpace: "nowrap"}}>
+                          {Setting.getLabel(i18next.t("application:Side panel HTML"), i18next.t("application:Side panel HTML - Tooltip"))} :
+                        </div>
+                      </Col>
+                      <Col style={{flex: "auto", marginLeft: "20px"}}>
+                        <Popover placement="right" content={
+                          <div style={{width: "900px", height: "300px"}}>
+                            <CodeMirror
+                              value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
+                              options={{mode: "htmlmixed", theme: "material-darker"}}
+                              onBeforeChange={(editor, data, value) => {
+                                this.updateApplicationField("formSideHtml", value);
+                              }}
+                            />
+                          </div>
+                        } title={i18next.t("application:Side panel HTML - Edit")} trigger="click">
+                          <Input value={this.state.application.formSideHtml} onChange={e => {
+                            this.updateApplicationField("formSideHtml", e.target.value);
+                          }} />
+                        </Popover>
+                      </Col>
+                    </Row>
+              }
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("theme:Theme"), i18next.t("theme:Theme - Tooltip"))} :
+              </div>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Radio.Group buttonStyle="solid" value={this.state.application.themeData?.isEnabled ?? false}
+                onChange={e => {
+                  const {_, ...theme} = this.state.application.themeData ?? {
+                    ...Conf.ThemeDefault,
+                    isEnabled: false,
+                  };
+                  this.updateApplicationField("themeData", {...theme, isEnabled: e.target.value});
+                }}>
                 <Radio.Button value={false}>{i18next.t("application:Follow organization theme")}</Radio.Button>
                 <Radio.Button value={true}>{i18next.t("theme:Customize theme")}</Radio.Button>
               </Radio.Group>
-            </Row>
-            {
-              this.state.application.themeData?.isEnabled ?
-                <Row style={{marginTop: "20px"}}>
-                  <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
-                    const {isEnabled} = this.state.application.themeData ?? {...Conf.ThemeDefault, isEnabled: false};
-                    this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
-                  }} />
-                </Row> : null
-            }
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Header HTML"), i18next.t("application:Header HTML - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.application.headerHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("headerHtml", value);
-                  }}
-                />
+              {
+                this.state.application.themeData?.isEnabled &&
+                    <Row style={{marginTop: "20px"}}>
+                      <ThemeEditor themeData={this.state.application.themeData} onThemeChange={(_, nextThemeData) => {
+                        const {isEnabled} = this.state.application.themeData ?? {
+                          ...Conf.ThemeDefault,
+                          isEnabled: false,
+                        };
+                        this.updateApplicationField("themeData", {...nextThemeData, isEnabled});
+                      }} />
+                    </Row>
+              }
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Header HTML"), i18next.t("application:Header HTML - Tooltip"))} :
               </div>
-            } title={i18next.t("application:Header HTML - Edit")} trigger="click">
-              <Input value={this.state.application.headerHtml} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateApplicationField("headerHtml", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Footer HTML"), i18next.t("application:Footer HTML - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.application.footerHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("footerHtml", value);
-                  }}
-                />
-              </div>
-            } title={i18next.t("application:Footer HTML - Edit")} trigger="click">
-              <Input value={this.state.application.footerHtml} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateApplicationField("footerHtml", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-          </Col>
-          <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getDefaultFooterContent())} >
-            {i18next.t("provider:Reset to Default HTML")}
-          </Button>
-          <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getEmptyFooterContent())} >
-            {i18next.t("application:Reset to Empty")}
-          </Button>
-        </Row>
-        {
-          <React.Fragment>
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
-              </Col>
-              <Col span={22} >
-                <SigninTable
-                  title={i18next.t("application:Signin items")}
-                  table={this.state.application.signinItems}
-                  onUpdateTable={(value) => {
-                    this.updateApplicationField("signinItems", value);
-                  }}
-                />
-              </Col>
-            </Row>
-          </React.Fragment>
-        }
-        {
-          !this.state.application.enableSignUp ? null : (
-            <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <SignupTable
-                    title={i18next.t("application:Signup items")}
-                    table={this.state.application.signupItems}
-                    onUpdateTable={(value) => {
-                      this.updateApplicationField("signupItems", value);
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}}>
+                  <CodeMirror
+                    value={this.state.application.headerHtml}
+                    options={{mode: "htmlmixed", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateApplicationField("headerHtml", value);
                     }}
                   />
-                </Col>
-              </Row>
-            </React.Fragment>
-          )
-        }
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
-          </Col>
-          {
-            this.renderPromptPreview()
-          }
-        </Row>
+                </div>
+              } title={i18next.t("application:Header HTML - Edit")} trigger="click">
+                <Input value={this.state.application.headerHtml} onChange={e => {
+                  this.updateApplicationField("headerHtml", e.target.value);
+                }} />
+              </Popover>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Footer HTML"), i18next.t("application:Footer HTML - Tooltip"))} :
+              </div>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}}>
+                  <CodeMirror
+                    value={this.state.application.footerHtml}
+                    options={{mode: "htmlmixed", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateApplicationField("footerHtml", value);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("application:Footer HTML - Edit")} trigger="click">
+                <Input value={this.state.application.footerHtml} onChange={e => {
+                  this.updateApplicationField("footerHtml", e.target.value);
+                }} />
+              </Popover>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}></Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <Button style={{marginRight: "10px"}}
+                onClick={() => this.updateApplicationField("footerHtml", Setting.getDefaultFooterContent())}>
+                {i18next.t("provider:Reset to Default HTML")}
+              </Button>
+              <Button onClick={() => this.updateApplicationField("footerHtml", Setting.getEmptyFooterContent())}>
+                {i18next.t("application:Reset to Empty")}
+              </Button>
+            </Col>
+          </Row>
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("application:Signin items"), i18next.t("application:Signin items - Tooltip"))} :
+              </div>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              <SigninTable
+                title={i18next.t("application:Signin items")}
+                table={this.state.application.signinItems}
+                onUpdateTable={(value) => {
+                  this.updateApplicationField("signinItems", value);
+                }}
+              />
+            </Col>
+          </Row>
+          {this.state.application.enableSignUp && (
+            <Row style={{marginTop: "20px"}}>
+              <Col style={{width: "200px", minWidth: "200px"}}>
+                <div style={{whiteSpace: "nowrap"}}>
+                  {Setting.getLabel(i18next.t("application:Signup items"), i18next.t("application:Signup items - Tooltip"))} :
+                </div>
+              </Col>
+              <Col style={{flex: "auto", marginLeft: "20px"}}>
+                <SignupTable
+                  title={i18next.t("application:Signup items")}
+                  table={this.state.application.signupItems}
+                  onUpdateTable={(value) => {
+                    this.updateApplicationField("signupItems", value);
+                  }}
+                />
+              </Col>
+            </Row>
+          )}
+          <Row style={{marginTop: "20px"}}>
+            <Col style={{width: "200px", minWidth: "200px"}}>
+              <div style={{whiteSpace: "nowrap"}}>
+                {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+              </div>
+            </Col>
+            <Col style={{flex: "auto", marginLeft: "20px"}}>
+              {this.renderPromptPreview()}
+            </Col>
+          </Row>
+        </div>
       </Card>
     );
   }
