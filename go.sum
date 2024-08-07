@@ -1052,8 +1052,8 @@ github.com/baidubce/bce-sdk-go v0.9.156 h1:f++WfptxGmSp5acsjl4kUxHpWDDccoFqkIrQK
 github.com/baidubce/bce-sdk-go v0.9.156/go.mod h1:zbYJMQwE4IZuyrJiFO8tO8NbtYiKTFTbwh4eIsqjVdg=
 github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f h1:ZNv7On9kyUzm7fvRZumSyy/IUiSC7AzL0I1jKKtwooA=
 github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f/go.mod h1:AuiFmCCPBSrqvVMvuqFuk0qogytodnVFVSN5CeJB8Gc=
-github.com/beego/beego v1.12.12 h1:ARY1sNVSS23N0mEQIhSqRDTyyDlx95JY0V3GogBbZbQ=
-github.com/beego/beego v1.12.12/go.mod h1:QURFL1HldOcCZAxnc1cZ7wrplsYR5dKPHFjmk6WkLAs=
+github.com/beego/beego v1.12.13 h1:g39O1LGLTiPejWVqQKK/TFGrroW9BCZQz6/pf4S8IRM=
+github.com/beego/beego v1.12.13/go.mod h1:QURFL1HldOcCZAxnc1cZ7wrplsYR5dKPHFjmk6WkLAs=
 github.com/beego/goyaml2 v0.0.0-20130207012346-5545475820dd/go.mod h1:1b+Y/CofkYwXMUU0OhQqGvsY2Bvgr4j6jfT699wyZKQ=
 github.com/beego/x2j v0.0.0-20131220205130-a0352aadc542/go.mod h1:kSeGC/p1AbBiEp5kat81+DSQrZenVBZXklMLaELspWU=
 github.com/beevik/etree v1.1.0 h1:T0xke/WvNtMoCqgzPhkX2r4rjY3GDZFi+FjpRZY2Jbs=
