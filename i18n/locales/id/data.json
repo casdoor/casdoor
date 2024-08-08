@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "Kunci objek: %s tidak diizinkan",
     "The provider type: %s is not supported": "Jenis penyedia: %s tidak didukung"
   },
-  "the adapter": {
-    " %s is not found": " %s is not found"
-  },
-  "the organization": {
-    " %s is not found": " %s is not found"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "Jenis grant (grant_type) %s tidak didukung dalam aplikasi ini",
     "Invalid application or wrong clientSecret": "Aplikasi tidak valid atau clientSecret salah",

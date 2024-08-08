@@ -234,8 +234,6 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
-    "Enable tour": "Enable tour",
-    "Enable tour - Tooltip": "When tour is enabled, users will see the tour when they first login in a new client",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -267,8 +265,6 @@
     "Invitations": "Invitations",
     "Is enabled": "Đã được kích hoạt",
     "Is enabled - Tooltip": "Đặt liệu nó có thể sử dụng hay không",
-    "Is shared": "Is shared",
-    "Is shared - Tooltip": "When share is enabled, other organizations will be able to use this application",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "Máy chủ LDAP",
     "Languages": "Ngôn ngữ",
@@ -554,11 +550,6 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
-  },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Sửa mô hình",
@@ -1145,7 +1136,6 @@
     "Link": "Liên kết",
     "Location": "Vị trí",
     "Location - Tooltip": "Thành phố cư trú",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "Quản lý tài khoản",
     "Modify password...": "Sửa đổi mật khẩu...",
     "Multi-factor authentication": "Multi-factor authentication",

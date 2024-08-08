@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "objectKey: %s není povolen",
     "The provider type: %s is not supported": "typ poskytovatele: %s není podporován"
   },
-  "the adapter": {
-    " %s is not found": " %s is not found"
-  },
-  "the organization": {
-    " %s is not found": " %s is not found"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s není v této aplikaci podporován",
     "Invalid application or wrong clientSecret": "Neplatná aplikace nebo špatný clientSecret",

@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "객체 키 : %s 는 허용되지 않습니다",
     "The provider type: %s is not supported": "제공자 유형: %s은/는 지원되지 않습니다"
   },
-  "the adapter": {
-    " %s is not found": " %s is not found"
-  },
-  "the organization": {
-    " %s is not found": " %s is not found"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "그랜트 유형: %s은(는) 이 어플리케이션에서 지원되지 않습니다",
     "Invalid application or wrong clientSecret": "잘못된 어플리케이션 또는 올바르지 않은 클라이언트 시크릿입니다",

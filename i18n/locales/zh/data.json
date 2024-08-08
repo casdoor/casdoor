@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "objectKey: %s被禁止",
     "The provider type: %s is not supported": "不支持的提供商类型: %s"
   },
-  "the adapter": {
-    " %s is not found": " %s 不存在"
-  },
-  "the organization": {
-    " %s is not found": " %s 不存在"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",

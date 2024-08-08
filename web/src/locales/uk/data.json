@@ -234,8 +234,6 @@
     "Enable": "Увімкнути",
     "Enable dark logo": "Увімкнути темний логотип",
     "Enable dark logo - Tooltip": "Увімкнути темний логотип",
-    "Enable tour": "Enable tour",
-    "Enable tour - Tooltip": "When tour is enabled, users will see the tour when they first login in a new client",
     "Enabled": "Увімкнено",
     "Enabled successfully": "Успішно ввімкнено",
     "Enforcers": "Силовики",
@@ -267,8 +265,6 @@
     "Invitations": "Запрошення",
     "Is enabled": "Увімкнено",
     "Is enabled - Tooltip": "Встановіть, чи можна використовувати",
-    "Is shared": "Is shared",
-    "Is shared - Tooltip": "When share is enabled, other organizations will be able to use this application",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "Сервери LDAP",
     "Languages": "Мови",
@@ -554,11 +550,6 @@
     "Your email is": "Ваша електронна адреса",
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"
-  },
-  "mfaAccount": {
-    "Account Name": "Account Name",
-    "Issuer": "Issuer",
-    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Редагувати модель",
@@ -1145,7 +1136,6 @@
     "Link": "Посилання",
     "Location": "Місцезнаходження",
     "Location - Tooltip": "Місто проживання",
-    "MFA accounts": "MFA accounts",
     "Managed accounts": "Керовані облікові записи",
     "Modify password...": "Змінити пароль...",
     "Multi-factor authentication": "Багатофакторна аутентифікація",

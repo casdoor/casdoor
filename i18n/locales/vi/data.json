@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
     "The provider type: %s is not supported": "Loại nhà cung cấp: %s không được hỗ trợ"
   },
-  "the adapter": {
-    " %s is not found": " %s is not found"
-  },
-  "the organization": {
-    " %s is not found": " %s is not found"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
     "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",

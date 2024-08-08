@@ -54,7 +54,7 @@
     "Phone cannot be empty": "Telefón nemôže byť prázdny",
     "Phone number is invalid": "Telefónne číslo je neplatné",
     "Please register using the email corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou e-mailu zodpovedajúceho kódu pozvania",
-    "Please register using the phone  corresponding to the invitation code": "Prosím zaregistrujte se pomocí telefonu odpovídajícího pozvánkovému kódu",
+    "Please register using the phone corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou telefónu zodpovedajúceho kódu pozvania",
     "Please register using the username corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou používateľského mena zodpovedajúceho kódu pozvania",
     "Session outdated, please login again": "Relácia je zastaraná, prosím, prihláste sa znova",
     "The invitation code has already been used": "Kód pozvania už bol použitý",
@@ -125,12 +125,6 @@
   "storage": {
     "The objectKey: %s is not allowed": "objectKey: %s nie je povolený",
     "The provider type: %s is not supported": "Typ poskytovateľa: %s nie je podporovaný"
-  },
-  "the adapter": {
-    " %s is not found": " %s is not found"
-  },
-  "the organization": {
-    " %s is not found": " %s is not found"
   },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s nie je podporovaný v tejto aplikácii",
