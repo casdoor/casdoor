@@ -83,7 +83,9 @@ func getAllFilePathsInFolder(folder string, fileSuffix string) []string {
 			if err != nil {
 				return err
 			}
-
+			if path == "../web" && fileSuffix == ".go" {
+				return filepath.SkipDir
+			}
 			if !strings.HasSuffix(info.Name(), fileSuffix) {
 				return nil
 			}
