@@ -154,6 +154,16 @@ func GetOwnerAndNameAndOtherFromId(id string) (string, string, string) {
 	return tokens[0], tokens[1], tokens[2]
 }
 
+func GetSharedOrgFromApp(rawName string) (name string, organization string) {
+	name = rawName
+	splitName := strings.Split(rawName, "-org-")
+	if len(splitName) >= 2 {
+		organization = splitName[len(splitName)-1]
+		name = splitName[0]
+	}
+	return name, organization
+}
+
 func GenerateId() string {
 	return uuid.NewString()
 }
