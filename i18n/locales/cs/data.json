@@ -5,6 +5,9 @@
     "Please sign out first": "Nejprve se prosím odhlaste",
     "The application does not allow to sign up new account": "Aplikace neumožňuje registraci nového účtu"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "Metoda výzvy by měla být S256",
     "Failed to create user, user information is invalid: %s": "Nepodařilo se vytvořit uživatele, informace o uživateli jsou neplatné: %s",

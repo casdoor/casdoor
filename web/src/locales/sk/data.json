@@ -234,6 +234,8 @@
     "Enable": "Povoliť",
     "Enable dark logo": "Povoliť tmavé logo",
     "Enable dark logo - Tooltip": "Povoliť tmavé logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Enable tour - Tooltip",
     "Enabled": "Povolené",
     "Enabled successfully": "Úspešne povolené",
     "Enforcers": "Vynútitelia",
@@ -550,6 +552,11 @@
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefón je",
     "preferred": "preferované"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Upraviť model",
@@ -1136,6 +1143,7 @@
     "Link": "Odkaz",
     "Location": "Miesto",
     "Location - Tooltip": "Mesto bydliska",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Spravované účty",
     "Modify password...": "Zmeniť heslo...",
     "Multi-factor authentication": "Viacfaktorová autentifikácia",

@@ -234,6 +234,8 @@
     "Enable": "Увімкнути",
     "Enable dark logo": "Увімкнути темний логотип",
     "Enable dark logo - Tooltip": "Увімкнути темний логотип",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Enable tour - Tooltip",
     "Enabled": "Увімкнено",
     "Enabled successfully": "Успішно ввімкнено",
     "Enforcers": "Силовики",
@@ -550,6 +552,11 @@
     "Your email is": "Ваша електронна адреса",
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Редагувати модель",
@@ -1136,6 +1143,7 @@
     "Link": "Посилання",
     "Location": "Місцезнаходження",
     "Location - Tooltip": "Місто проживання",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Керовані облікові записи",
     "Modify password...": "Змінити пароль...",
     "Multi-factor authentication": "Багатофакторна аутентифікація",

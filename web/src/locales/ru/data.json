@@ -234,6 +234,8 @@
     "Enable": "Включить",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Enable tour - Tooltip",
     "Enabled": "Включено",
     "Enabled successfully": "Успешно включено",
     "Enforcers": "Контролёры доступа",
@@ -550,6 +552,11 @@
     "Your email is": "Ваш email",
     "Your phone is": "Ваш телефон",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Редактировать модель",
@@ -1136,6 +1143,7 @@
     "Link": "Ссылка",
     "Location": "Местоположение",
     "Location - Tooltip": "Город проживания",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Управляемые аккаунты",
     "Modify password...": "Изменить пароль...",
     "Multi-factor authentication": "Multi-factor authentication",

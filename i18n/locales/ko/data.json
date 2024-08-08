@@ -5,6 +5,9 @@
     "Please sign out first": "먼저 로그아웃해주세요",
     "The application does not allow to sign up new account": "이 응용 프로그램은 새로운 계정 가입을 허용하지 않습니다"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "도전 방식은 S256이어야 합니다",
     "Failed to create user, user information is invalid: %s": "사용자를 만들지 못했습니다. 사용자 정보가 잘못되었습니다: %s",

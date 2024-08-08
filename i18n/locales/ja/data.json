@@ -5,6 +5,9 @@
     "Please sign out first": "最初にサインアウトしてください",
     "The application does not allow to sign up new account": "アプリケーションは新しいアカウントの登録を許可しません"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "チャレンジメソッドはS256である必要があります",
     "Failed to create user, user information is invalid: %s": "ユーザーの作成に失敗しました。ユーザー情報が無効です：%s",

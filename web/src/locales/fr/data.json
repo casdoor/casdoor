@@ -234,6 +234,8 @@
     "Enable": "Activer",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Enable tour - Tooltip",
     "Enabled": "Activé",
     "Enabled successfully": "Activé avec succès",
     "Enforcers": "Exécuteurs",
@@ -550,6 +552,11 @@
     "Your email is": "Votre e-mail est",
     "Your phone is": "Votre téléphone est",
     "preferred": "préféré"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Modifier le modèle",
@@ -1136,6 +1143,7 @@
     "Link": "Lier",
     "Location": "Localisation",
     "Location - Tooltip": "Ville de résidence",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Comptes gérés",
     "Modify password...": "Modifier le mot de passe...",
     "Multi-factor authentication": "Authentification multifacteur",

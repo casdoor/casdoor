@@ -234,6 +234,8 @@
     "Enable": "Povolit",
     "Enable dark logo": "Povolit tmavé logo",
     "Enable dark logo - Tooltip": "Povolit tmavé logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Enable tour - Tooltip",
     "Enabled": "Povoleno",
     "Enabled successfully": "Úspěšně povoleno",
     "Enforcers": "Enforcers",
@@ -521,7 +523,7 @@
     "Failed to initiate MFA": "Nepodařilo se zahájit MFA",
     "Have problems?": "Máte problémy?",
     "Multi-factor authentication": "Vícefaktorové ověřování",
-    "Multi-factor authentication - Tooltip": "Dvoufaktorové ověřování - Tooltip",
+    "Multi-factor authentication - Tooltip ": "Multi-factor authentication - Tooltip ",
     "Multi-factor authentication description": "Popis dvoufaktorového ověřování",
     "Multi-factor methods": "Metody dvoufaktorového ověřování",
     "Multi-factor recover": "Obnovení dvoufaktorového ověřování",
@@ -550,6 +552,11 @@
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefon je",
     "preferred": "preferované"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Upravit model",
@@ -1136,6 +1143,7 @@
     "Link": "Odkaz",
     "Location": "Místo",
     "Location - Tooltip": "Město bydliště",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Spravované účty",
     "Modify password...": "Změnit heslo...",
     "Multi-factor authentication": "Vícefaktorové ověřování",

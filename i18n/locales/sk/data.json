@@ -5,6 +5,9 @@
     "Please sign out first": "Najskôr sa prosím odhláste",
     "The application does not allow to sign up new account": "Aplikácia neumožňuje registráciu nového účtu"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "Metóda výzvy by mala byť S256",
     "Failed to create user, user information is invalid: %s": "Nepodarilo sa vytvoriť používateľa, informácie o používateľovi sú neplatné: %s",
@@ -54,7 +57,7 @@
     "Phone cannot be empty": "Telefón nemôže byť prázdny",
     "Phone number is invalid": "Telefónne číslo je neplatné",
     "Please register using the email corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou e-mailu zodpovedajúceho kódu pozvania",
-    "Please register using the phone corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou telefónu zodpovedajúceho kódu pozvania",
+    "Please register using the phone  corresponding to the invitation code": "Prosím zaregistrujte se pomocí telefonu odpovídajícího pozvánkovému kódu",
     "Please register using the username corresponding to the invitation code": "Prosím, zaregistrujte sa pomocou používateľského mena zodpovedajúceho kódu pozvania",
     "Session outdated, please login again": "Relácia je zastaraná, prosím, prihláste sa znova",
     "The invitation code has already been used": "Kód pozvania už bol použitý",

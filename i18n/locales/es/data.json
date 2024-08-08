@@ -5,6 +5,9 @@
     "Please sign out first": "Por favor, cierra sesión primero",
     "The application does not allow to sign up new account": "La aplicación no permite registrarse con una cuenta nueva"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "El método de desafío debe ser S256",
     "Failed to create user, user information is invalid: %s": "No se pudo crear el usuario, la información del usuario es inválida: %s",

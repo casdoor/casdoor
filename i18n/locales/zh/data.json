@@ -5,6 +5,9 @@
     "Please sign out first": "请先退出登录",
     "The application does not allow to sign up new account": "该应用不允许注册新用户"
   },
+  "adapter": {
+    "Adapter %s is not found": "适配器 %s 不存在"
+  },
   "auth": {
     "Challenge method should be S256": "Challenge方法应该为S256",
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",

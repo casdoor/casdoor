@@ -5,6 +5,9 @@
     "Please sign out first": "Пожалуйста, сначала выйдите из системы",
     "The application does not allow to sign up new account": "Приложение не позволяет зарегистрироваться новому аккаунту"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "Метод проверки должен быть S256",
     "Failed to create user, user information is invalid: %s": "Не удалось создать пользователя, информация о пользователе недействительна: %s",

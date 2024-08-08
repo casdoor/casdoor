@@ -5,6 +5,9 @@
     "Please sign out first": "Vui lòng đăng xuất trước",
     "The application does not allow to sign up new account": "Ứng dụng không cho phép đăng ký tài khoản mới"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "Phương pháp thách thức nên là S256",
     "Failed to create user, user information is invalid: %s": "Không thể tạo người dùng, thông tin người dùng không hợp lệ: %s",

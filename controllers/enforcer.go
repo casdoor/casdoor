@@ -165,7 +165,7 @@ func (c *ApiController) GetPolicies() {
 			return
 		}
 		if adapter == nil {
-			c.ResponseError(fmt.Sprintf(c.T("the adapter: %s is not found"), adapterId))
+			c.ResponseError(fmt.Sprintf(c.T("adapter:Adapter %s is not found"), adapterId))
 			return
 		}
 

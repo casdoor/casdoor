@@ -5,6 +5,9 @@
     "Please sign out first": "Silakan keluar terlebih dahulu",
     "The application does not allow to sign up new account": "Aplikasi tidak memperbolehkan untuk mendaftar akun baru"
   },
+  "adapter": {
+    "Adapter %s is not found": "Adapter %s is not found"
+  },
   "auth": {
     "Challenge method should be S256": "Metode tantangan harus S256",
     "Failed to create user, user information is invalid: %s": "Gagal membuat pengguna, informasi pengguna tidak valid: %s",
