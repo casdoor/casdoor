@@ -125,7 +125,7 @@ class TransactionEditPage extends React.Component {
           application: application,
         });
 
-        this.getCerts(application.organization);
+        this.getCerts(application);
 
         this.getSamlMetadata(application.enableSamlPostBinding);
       });

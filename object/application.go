@@ -333,16 +333,22 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 	return
 }
 
+func GetSharedOrgFromApp(rawName string) (name string, organization string) {
+	name = rawName
+	splitName := strings.Split(rawName, "-org-")
+	if len(splitName) >= 2 {
+		organization = splitName[len(splitName)-1]
+		name = splitName[0]
+	}
+	return name, organization
+}
+
 func getApplication(owner string, name string) (*Application, error) {
 	if owner == "" || name == "" {
 		return nil, nil
 	}
 
-	org := ""
-	splitName := strings.Split(name, "-org-")
-	if len(splitName) >= 2 {
-		org = splitName[len(splitName)-1]
-	}
+	name, org := GetSharedOrgFromApp(name)
 
 	application := Application{Owner: owner, Name: name}
 	existed, err := ormer.Engine.Get(&application)
@@ -352,8 +358,6 @@ func getApplication(owner string, name string) (*Application, error) {
 
 	if application.IsShared && org != "" {
 		application.Organization = org
-	} else if !application.IsShared && org != "" {
-		return nil, nil
 	}
 
 	if existed {
@@ -442,12 +446,7 @@ func GetApplicationByUserId(userId string) (application *Application, err error)
 func GetApplicationByClientId(clientId string) (*Application, error) {
 	application := Application{}
 
-	org := ""
-	splitId := strings.Split(clientId, "-org-")
-	if len(splitId) == 2 {
-		org = splitId[1]
-		clientId = splitId[0]
-	}
+	clientId, org := GetSharedOrgFromApp(clientId)
 
 	existed, err := ormer.Engine.Where("client_id=?", clientId).Get(&application)
 	if err != nil {
@@ -456,8 +455,6 @@ func GetApplicationByClientId(clientId string) (*Application, error) {
 
 	if application.IsShared && org != "" {
 		application.Organization = org
-	} else if !application.IsShared && org != "" {
-		return nil, nil
 	}
 
 	if existed {
@@ -653,8 +650,8 @@ func UpdateApplication(id string, application *Application) (bool, error) {
 		return false, err
 	}
 
-	if oldApplication.IsShared != application.IsShared && application.Organization != "built-in" {
-		return false, err
+	if application.IsShared == true && application.Organization != "built-in" {
+		return false, fmt.Errorf("only applications belonging to build-in organization can be shared")
 	}
 
 	for _, providerItem := range application.Providers {

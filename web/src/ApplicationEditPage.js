@@ -116,7 +116,6 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
-    this.getProviders();
   }
 
   getApplication() {
@@ -145,7 +144,9 @@ class ApplicationEditPage extends React.Component {
           application: application,
         });
 
-        this.getCerts(application.isShared ? this.props.account.owner : application.organization);
+        this.getProviders(application);
+
+        this.getCerts(application);
 
         this.getSamlMetadata(application.enableSamlPostBinding);
       });
@@ -166,7 +167,11 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getCerts(owner) {
+  getCerts(application) {
+    let owner = application.organization;
+    if (application.isShared) {
+      owner = this.props.owner;
+    }
     CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
@@ -175,8 +180,12 @@ class ApplicationEditPage extends React.Component {
       });
   }
 
-  getProviders() {
-    ProviderBackend.getProviders(this.state.owner)
+  getProviders(application) {
+    let owner = application.organization;
+    if (application.isShared) {
+      owner = this.props.account.owner;
+    }
+    ProviderBackend.getProviders(owner)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
@@ -999,7 +1008,11 @@ class ApplicationEditPage extends React.Component {
       redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";
     }
 
-    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}${this.state.application.isShared && this.props.account.owner !== "built-in" ? "-org-" + this.props.account.owner : ""}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
+    let clientId = this.state.application.clientId;
+    if (this.state.application.isShared && this.props.account.owner !== "built-in") {
+      clientId += `-org-${this.props.account.owner}`;
+    }
+    const signInUrl = `/login/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!Setting.isPasswordEnabled(this.state.application)) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");
