@@ -126,6 +126,12 @@
     "The objectKey: %s is not allowed": "Объект «objectKey: %s» не разрешен",
     "The provider type: %s is not supported": "Тип провайдера: %s не поддерживается"
   },
+  "the adapter": {
+    " %s is not found": " %s is not found"
+  },
+  "the organization": {
+    " %s is not found": " %s is not found"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Тип предоставления: %s не поддерживается в данном приложении",
     "Invalid application or wrong clientSecret": "Недействительное приложение или неправильный clientSecret",

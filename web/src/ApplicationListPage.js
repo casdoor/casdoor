@@ -123,7 +123,7 @@ class ApplicationListPage extends BaseListPage {
         render: (text, record, index) => {
           return (
             <Link to={`/applications/${record.organization}/${text}`}>
-              {text}
+              {record.isShared ? `${text}(shared)` : text}
             </Link>
           );
         },

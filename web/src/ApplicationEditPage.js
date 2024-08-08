@@ -145,7 +145,7 @@ class ApplicationEditPage extends React.Component {
           application: application,
         });
 
-        this.getCerts(application.organization);
+        this.getCerts(application.isShared ? this.props.account.owner : application.organization);
 
         this.getSamlMetadata(application.enableSamlPostBinding);
       });
@@ -260,6 +260,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.application.displayName} onChange={e => {
               this.updateApplicationField("displayName", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Is shared"), i18next.t("general:Is shared - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Switch disabled={Setting.isAdminUser()} checked={this.state.application.isShared} onChange={checked => {
+              this.updateApplicationField("isShared", checked);
             }} />
           </Col>
         </Row>
@@ -989,7 +999,7 @@ class ApplicationEditPage extends React.Component {
       redirectUri = "\"ERROR: You must specify at least one Redirect URL in 'Redirect URLs'\"";
     }
 
-    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
+    const signInUrl = `/login/oauth/authorize?client_id=${this.state.application.clientId}${this.state.application.isShared && this.props.account.owner !== "built-in" ? "-org-" + this.props.account.owner : ""}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;
     const maskStyle = {position: "absolute", top: "0px", left: "0px", zIndex: 10, height: "97%", width: "100%", background: "rgba(0,0,0,0.4)"};
     if (!Setting.isPasswordEnabled(this.state.application)) {
       signUpUrl = signInUrl.replace("/login/oauth/authorize", "/signup/oauth/authorize");

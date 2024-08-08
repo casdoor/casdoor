@@ -234,6 +234,8 @@
     "Enable": "启用",
     "Enable dark logo": "开启暗黑Logo",
     "Enable dark logo - Tooltip": "开启暗黑Logo",
+    "Enable tour": "开启教程",
+    "Enable tour - Tooltip": "选项开启后，用户将在新浏览器的第一次登陆后看见教程",
     "Enabled": "已开启",
     "Enabled successfully": "启用成功",
     "Enforcers": "Casbin执行器",
@@ -265,6 +267,8 @@
     "Invitations": "邀请码",
     "Is enabled": "已启用",
     "Is enabled - Tooltip": "是否启用",
+    "Is shared": "共享",
+    "Is shared - Tooltip": "开启共享后，其他组织将可以使用此应用",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPs",
     "Languages": "语言",
@@ -550,6 +554,11 @@
     "Your email is": "你的电子邮件",
     "Your phone is": "你的手机号",
     "preferred": "首选"
+  },
+  "mfaAccount": {
+    "Account Name": "账户名称",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "编辑模型",
@@ -1136,6 +1145,7 @@
     "Link": "绑定",
     "Location": "城市",
     "Location - Tooltip": "居住地址所在的城市",
+    "MFA accounts": "MFA账户",
     "Managed accounts": "托管账户",
     "Modify password...": "编辑密码...",
     "Multi-factor authentication": "多因素认证",

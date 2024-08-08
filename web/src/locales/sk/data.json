@@ -234,6 +234,8 @@
     "Enable": "Povoliť",
     "Enable dark logo": "Povoliť tmavé logo",
     "Enable dark logo - Tooltip": "Povoliť tmavé logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "When tour is enabled, users will see the tour when they first login in a new client",
     "Enabled": "Povolené",
     "Enabled successfully": "Úspešne povolené",
     "Enforcers": "Vynútitelia",
@@ -265,6 +267,8 @@
     "Invitations": "Pozvánky",
     "Is enabled": "Je povolené",
     "Is enabled - Tooltip": "Nastavte, či môže byť použitý",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "When share is enabled, other organizations will be able to use this application",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAP servery",
     "Languages": "Jazyky",
@@ -550,6 +554,11 @@
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefón je",
     "preferred": "preferované"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Upraviť model",
@@ -1136,6 +1145,7 @@
     "Link": "Odkaz",
     "Location": "Miesto",
     "Location - Tooltip": "Mesto bydliska",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Spravované účty",
     "Modify password...": "Zmeniť heslo...",
     "Multi-factor authentication": "Viacfaktorová autentifikácia",

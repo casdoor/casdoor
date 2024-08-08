@@ -126,6 +126,12 @@
     "The objectKey: %s is not allowed": "La clé d'objet : %s n'est pas autorisée",
     "The provider type: %s is not supported": "Le type de fournisseur : %s n'est pas pris en charge"
   },
+  "the adapter": {
+    " %s is not found": " %s is not found"
+  },
+  "the organization": {
+    " %s is not found": " %s is not found"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Type_de_subvention : %s n'est pas pris en charge dans cette application",
     "Invalid application or wrong clientSecret": "Application invalide ou clientSecret incorrect",

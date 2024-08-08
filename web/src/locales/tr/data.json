@@ -234,6 +234,8 @@
     "Enable": "Etkinleştir",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "When tour is enabled, users will see the tour when they first login in a new client",
     "Enabled": "Etkin",
     "Enabled successfully": "Başarıyla etkinleştirildi",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Davetler",
     "Is enabled": "Aktif Mi?",
     "Is enabled - Tooltip": "Set whether it can use",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "When share is enabled, other organizations will be able to use this application",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAP servers",
     "Languages": "Diller",
@@ -550,6 +554,11 @@
     "Your email is": "E-postanız",
     "Your phone is": "Telefon numaranız",
     "preferred": "tercih edilen"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Modeli Düzenle",
@@ -1136,6 +1145,7 @@
     "Link": "Link",
     "Location": "Location",
     "Location - Tooltip": "City of residence",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Managed accounts",
     "Modify password...": "Modify password...",
     "Multi-factor authentication": "Multi-factor authentication",
