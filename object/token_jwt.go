@@ -365,7 +365,7 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		},
 	}
 
-	if application.IsShared && user.Owner != "built-in" {
+	if application.IsShared {
 		claims.Audience = []string{application.ClientId + "-org-" + user.Owner}
 	}
 
