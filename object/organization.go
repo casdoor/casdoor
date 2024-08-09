@@ -319,6 +319,7 @@ func GetDefaultApplication(id string) (*Application, error) {
 		if defaultApplication == nil {
 			return nil, fmt.Errorf("The default application: %s does not exist", organization.DefaultApplication)
 		} else {
+			defaultApplication.Organization = organization.Name
 			return defaultApplication, nil
 		}
 	}

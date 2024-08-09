@@ -1371,6 +1371,13 @@ export function getApplicationName(application) {
   return `${application?.owner}/${application?.name}`;
 }
 
+export function getApplicationDisplayName(application) {
+  if (application.isShared) {
+    return `${application.name}(Shared)`;
+  }
+  return application.name;
+}
+
 export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }
