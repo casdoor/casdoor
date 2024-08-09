@@ -1009,7 +1009,7 @@ class ApplicationEditPage extends React.Component {
     }
 
     let clientId = this.state.application.clientId;
-    if (this.state.application.isShared && this.props.account.owner !== "built-in") {
+    if (this.state.application.isShared) {
       clientId += `-org-${this.props.account.owner}`;
     }
     const signInUrl = `/login/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=read&state=casdoor`;

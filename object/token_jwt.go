@@ -365,6 +365,10 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		},
 	}
 
+	if application.IsShared {
+		claims.Audience = []string{application.ClientId + "-org-" + user.Owner}
+	}
+
 	var token *jwt.Token
 	var refreshToken *jwt.Token
 
