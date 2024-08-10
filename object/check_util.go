@@ -52,6 +52,9 @@ func GetFailedSigninConfigByUser(user *User) (int, int, error) {
 	if err != nil {
 		return 0, 0, err
 	}
+	if application == nil {
+		return 0, 0, fmt.Errorf("the application for user %s is not found", user.GetId())
+	}
 
 	failedSigninLimit := application.FailedSigninLimit
 	if failedSigninLimit == 0 {

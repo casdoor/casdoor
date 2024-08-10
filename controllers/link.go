@@ -60,7 +60,6 @@ func (c *ApiController) Unlink() {
 			c.ResponseError(err.Error())
 			return
 		}
-
 		if application == nil {
 			c.ResponseError(c.T("link:You can't unlink yourself, you are not a member of any application"))
 			return

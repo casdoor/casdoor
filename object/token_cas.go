@@ -277,7 +277,6 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 	if err != nil {
 		return "", "", err
 	}
-
 	if application == nil {
 		return "", "", fmt.Errorf("the application for user %s is not found", userId)
 	}
