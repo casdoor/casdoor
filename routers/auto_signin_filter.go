@@ -67,6 +67,17 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 
+	accessKey := ctx.Input.Query("accessKey")
+	accessSecret := ctx.Input.Query("accessSecret")
+	if accessKey != "" && accessSecret != "" {
+		userId, err := getUsernameByKeys(ctx)
+		if err != nil {
+			responseError(ctx, err.Error())
+		}
+
+		setSessionUser(ctx, userId)
+	}
+
 	// "/page?clientId=123&clientSecret=456"
 	userId, err := getUsernameByClientIdSecret(ctx)
 	if err != nil {
