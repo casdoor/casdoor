@@ -87,7 +87,7 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 		// provider.Domain = "http://localhost:8000" or "https://door.casdoor.com"
 		host = util.UrlJoin(provider.Domain, "/files")
 	}
-	if provider.Type == "Azure Blob" {
+	if provider.Type == "Azure Blob" || provider.Type == "Google Cloud Storage" {
 		host = util.UrlJoin(host, provider.Bucket)
 	}
 
