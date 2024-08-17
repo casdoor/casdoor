@@ -24,6 +24,12 @@ import * as serviceWorker from "./serviceWorker";
 import {BrowserRouter} from "react-router-dom";
 import "./backend/FetchFilter";
 
+if (!String.prototype.replaceAll) {
+  String.prototype.replaceAll = function(search, replace) {
+    return this.split(search).join(replace);
+  };
+}
+
 const container = document.getElementById("root");
 
 const app = createRoot(container);
