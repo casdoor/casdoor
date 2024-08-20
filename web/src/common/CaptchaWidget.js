@@ -27,7 +27,7 @@ export const CaptchaWidget = (props) => {
 
   useEffect(() => {
     switch (captchaType) {
-    case "reCAPTCHA v2": {
+    case "reCAPTCHA": {
       const reTimer = setInterval(() => {
         if (!window.grecaptcha) {
           loadScript("https://recaptcha.net/recaptcha/api.js");
@@ -36,20 +36,6 @@ export const CaptchaWidget = (props) => {
           window.grecaptcha.render("captcha", {
             sitekey: siteKey,
             callback: onChange,
-          });
-          clearInterval(reTimer);
-        }
-      }, 300);
-      break;
-    }
-    case "reCAPTCHA v3": {
-      const reTimer = setInterval(() => {
-        if (!window.grecaptcha) {
-          loadScript(`https://recaptcha.net/recaptcha/api.js?render=${siteKey}`);
-        }
-        if (window.grecaptcha && window.grecaptcha.execute) {
-          window.grecaptcha.execute(siteKey, {action: "submit"}).then(function(token) {
-            onChange(token);
           });
           clearInterval(reTimer);
         }

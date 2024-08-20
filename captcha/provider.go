@@ -24,9 +24,7 @@ func GetCaptchaProvider(captchaType string) CaptchaProvider {
 	switch captchaType {
 	case "Default":
 		return NewDefaultCaptchaProvider()
-	case "reCAPTCHA v2":
-		return NewReCaptchaProvider()
-	case "reCAPTCHA v3":
+	case "reCAPTCHA":
 		return NewReCaptchaProvider()
 	case "Aliyun Captcha":
 		return NewAliyunCaptchaProvider()
