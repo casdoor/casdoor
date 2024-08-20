@@ -27,7 +27,8 @@ export const CaptchaWidget = (props) => {
 
   useEffect(() => {
     switch (captchaType) {
-    case "reCAPTCHA": {
+    case "reCAPTCHA" :
+    case "reCAPTCHA v2": {
       const reTimer = setInterval(() => {
         if (!window.grecaptcha) {
           loadScript("https://recaptcha.net/recaptcha/api.js");
@@ -36,6 +37,32 @@ export const CaptchaWidget = (props) => {
           window.grecaptcha.render("captcha", {
             sitekey: siteKey,
             callback: onChange,
+          });
+          clearInterval(reTimer);
+        }
+      }, 300);
+      break;
+    }
+    case "reCAPTCHA v3": {
+      const reTimer = setInterval(() => {
+        if (!window.grecaptcha) {
+          loadScript(`https://recaptcha.net/recaptcha/api.js?render=${siteKey}`);
+        }
+        if (window.grecaptcha && window.grecaptcha.render) {
+          const clientId = window.grecaptcha.render("captcha", {
+            "sitekey": siteKey,
+            "badge": "inline",
+            "size": "invisible",
+            "callback": onChange,
+            "error-callback": function() {
+              const logoWidth = `${document.getElementById("captcha").offsetWidth + 40}px`;
+              document.getElementsByClassName("grecaptcha-logo")[0].firstChild.style.width = logoWidth;
+              document.getElementsByClassName("grecaptcha-badge")[0].style.width = logoWidth;
+            },
+          });
+
+          window.grecaptcha.ready(function() {
+            window.grecaptcha.execute(clientId, {action: "submit"});
           });
           clearInterval(reTimer);
         }
