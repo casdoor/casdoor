@@ -339,6 +339,10 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Ldap:              syncUser.Uuid,
 			}
 
+			if ldap.DefaultGroup != "" {
+				newUser.Groups = []string{ldap.DefaultGroup}
+			}
+
 			affected, err := AddUser(newUser)
 			if err != nil {
 				return nil, nil, err
