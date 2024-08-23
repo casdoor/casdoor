@@ -234,6 +234,8 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "可能になっています",
     "Is enabled - Tooltip": "使用可能かどうかを設定してください",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAP",
     "LDAPs - Tooltip": "LDAPサーバー",
     "Languages": "言語",
@@ -441,6 +445,8 @@
     "Base DN": "ベース DN",
     "Base DN - Tooltip": "LDAP検索中のBase DN",
     "CN": "CN",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "LDAPを編集",
     "Enable SSL": "SSL を有効にする",
     "Enable SSL - Tooltip": "SSLを有効にするかどうか",
@@ -550,6 +556,11 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "編集モデル",
@@ -1136,6 +1147,7 @@
     "Link": "リンク",
     "Location": "場所",
     "Location - Tooltip": "居住都市",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "管理アカウント",
     "Modify password...": "パスワードを変更する...",
     "Multi-factor authentication": "Multi-factor authentication",

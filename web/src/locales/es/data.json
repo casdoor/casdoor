@@ -234,6 +234,8 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "Está habilitado",
     "Is enabled - Tooltip": "Establecer si se puede usar",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPs (Secure LDAP)",
     "LDAPs - Tooltip": "Servidores LDAP",
     "Languages": "Idiomas",
@@ -441,6 +445,8 @@
     "Base DN": "DN base",
     "Base DN - Tooltip": "Base DN durante la búsqueda LDAP",
     "CN": "CN (siglas en inglés) podría traducirse como \"Red de Comunicaciones\". Sin embargo, sin más contexto, no es posible saber cuál es el significado exacto de estas siglas",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "Editar LDAP",
     "Enable SSL": "Habilitar SSL",
     "Enable SSL - Tooltip": "Si se habilita SSL",
@@ -550,6 +556,11 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Editar modelo",
@@ -1136,6 +1147,7 @@
     "Link": "Enlace",
     "Location": "Ubicación",
     "Location - Tooltip": "Ciudad de residencia",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Cuentas gestionadas",
     "Modify password...": "Modificar contraseña...",
     "Multi-factor authentication": "Multi-factor authentication",

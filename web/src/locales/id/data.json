@@ -234,6 +234,8 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "Diaktifkan",
     "Is enabled - Tooltip": "Atur apakah itu dapat digunakan",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "Server LDAP",
     "Languages": "Bahasa-bahasa",
@@ -441,6 +445,8 @@
     "Base DN": "DN dasar",
     "Base DN - Tooltip": "Base DN selama pencarian LDAP",
     "CN": "CN",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "Mengedit LDAP",
     "Enable SSL": "Aktifkan SSL",
     "Enable SSL - Tooltip": "Apakah untuk mengaktifkan SSL?",
@@ -550,6 +556,11 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Mengedit Model",
@@ -1136,6 +1147,7 @@
     "Link": "Tautan",
     "Location": "Lokasi",
     "Location - Tooltip": "Kota tempat tinggal",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Akun yang dikelola",
     "Modify password...": "Mengubah kata sandi...",
     "Multi-factor authentication": "Multi-factor authentication",

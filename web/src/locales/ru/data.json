@@ -234,6 +234,8 @@
     "Enable": "Включить",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Включено",
     "Enabled successfully": "Успешно включено",
     "Enforcers": "Контролёры доступа",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "Включен",
     "Is enabled - Tooltip": "Установить, может ли использоваться",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPы",
     "LDAPs - Tooltip": "LDAP серверы",
     "Languages": "Языки",
@@ -441,6 +445,8 @@
     "Base DN": "Базовый DN",
     "Base DN - Tooltip": "Базовый DN во время поиска LDAP",
     "CN": "КНР",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "Изменить LDAP",
     "Enable SSL": "Включить SSL",
     "Enable SSL - Tooltip": "Перевод: Следует ли включать SSL",
@@ -550,6 +556,11 @@
     "Your email is": "Ваш email",
     "Your phone is": "Ваш телефон",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Редактировать модель",
@@ -1136,6 +1147,7 @@
     "Link": "Ссылка",
     "Location": "Местоположение",
     "Location - Tooltip": "Город проживания",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Управляемые аккаунты",
     "Modify password...": "Изменить пароль...",
     "Multi-factor authentication": "Multi-factor authentication",
