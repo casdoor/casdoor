@@ -230,7 +230,7 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
-            {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default - Tooltip"))} :
+            {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
           </Col>
           <Col span={21}>
             <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.defaultGroup ?? []} onChange={(value => {
