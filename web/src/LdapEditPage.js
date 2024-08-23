@@ -13,12 +13,13 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select, Switch} from "antd";
-import {EyeInvisibleOutlined, EyeTwoTone} from "@ant-design/icons";
+import {Button, Card, Col, Input, InputNumber, Row, Select, Space, Switch} from "antd";
+import {EyeInvisibleOutlined, EyeTwoTone, HolderOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as LddpBackend from "./backend/LdapBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+import * as GroupBackend from "./backend/GroupBackend";
 
 const {Option} = Select;
 
@@ -30,12 +31,14 @@ class LdapEditPage extends React.Component {
       organizationName: props.match.params.organizationName,
       ldap: null,
       organizations: [],
+      groups: null,
     };
   }
 
   UNSAFE_componentWillMount() {
     this.getLdap();
     this.getOrganizations();
+    this.getGroups();
   }
 
   getLdap() {
@@ -57,6 +60,17 @@ class LdapEditPage extends React.Component {
         this.setState({
           organizations: res.data || [],
         });
+      });
+  }
+
+  getGroups() {
+    GroupBackend.getGroups(this.state.organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
       });
   }
 
@@ -212,6 +226,31 @@ class LdapEditPage extends React.Component {
                 this.updateLdapField("password", e.target.value);
               }}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
+          </Col>
+          <Col span={21}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.defaultGroup ?? []} onChange={(value => {
+              this.updateLdapField("defaultGroup", value);
+            })}
+            >
+              <Option key={""} value={""}>
+                <Space>
+                  {i18next.t("general:Default")}
+                </Space>
+              </Option>
+              {
+                this.state.groups?.map((group) => <Option key={group.name} value={`${group.owner}/${group.name}`}>
+                  <Space>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>
+                </Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
