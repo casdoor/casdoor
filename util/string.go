@@ -131,6 +131,15 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
+func GetOwnerAndNameFromIdWithError(id string) (string, string, error) {
+	tokens := strings.Split(id, "/")
+	if len(tokens) != 2 {
+		return "", "", errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id)
+	}
+
+	return tokens[0], tokens[1], nil
+}
+
 func GetOwnerFromId(id string) string {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {
