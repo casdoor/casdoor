@@ -106,7 +106,8 @@ func getObject(ctx *context.Context) (string, string, error) {
 		var obj Object
 		err := json.Unmarshal(body, &obj)
 		if err != nil {
-			return "", "", err
+			// this is not error
+			return "", "", nil
 		}
 
 		if path == "/api/delete-resource" {
