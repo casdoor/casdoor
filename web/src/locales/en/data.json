@@ -234,6 +234,8 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "Is enabled",
     "Is enabled - Tooltip": "Set whether it can use",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAP servers",
     "Languages": "Languages",
@@ -441,6 +445,8 @@
     "Base DN": "Base DN",
     "Base DN - Tooltip": "Base DN during LDAP search",
     "CN": "CN",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "Edit LDAP",
     "Enable SSL": "Enable SSL",
     "Enable SSL - Tooltip": "Whether to enable SSL",
@@ -550,6 +556,11 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "Edit Model",
@@ -1136,6 +1147,7 @@
     "Link": "Link",
     "Location": "Location",
     "Location - Tooltip": "City of residence",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "Managed accounts",
     "Modify password...": "Modify password...",
     "Multi-factor authentication": "Multi-factor authentication",

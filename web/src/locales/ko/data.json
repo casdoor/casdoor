@@ -234,6 +234,8 @@
     "Enable": "Enable",
     "Enable dark logo": "Enable dark logo",
     "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable tour": "Enable tour",
+    "Enable tour - Tooltip": "Display tour for users",
     "Enabled": "Enabled",
     "Enabled successfully": "Enabled successfully",
     "Enforcers": "Enforcers",
@@ -265,6 +267,8 @@
     "Invitations": "Invitations",
     "Is enabled": "활성화됩니다",
     "Is enabled - Tooltip": "사용 가능한 지 여부를 설정하세요",
+    "Is shared": "Is shared",
+    "Is shared - Tooltip": "Share this application with other organizations",
     "LDAPs": "LDAPs",
     "LDAPs - Tooltip": "LDAP 서버",
     "Languages": "언어",
@@ -441,6 +445,8 @@
     "Base DN": "기본 DN",
     "Base DN - Tooltip": "LDAP 검색 중 기본 DN",
     "CN": "CN",
+    "Default group": "Default group",
+    "Default group - Tooltip": "Group to which users belong after synchronization",
     "Edit LDAP": "LDAP 수정",
     "Enable SSL": "SSL 활성화",
     "Enable SSL - Tooltip": "SSL을 활성화할지 여부를 결정하십시오",
@@ -550,6 +556,11 @@
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
+  },
+  "mfaAccount": {
+    "Account Name": "Account Name",
+    "Issuer": "Issuer",
+    "Secret Key": "Secret Key"
   },
   "model": {
     "Edit Model": "편집 형태 모델",
@@ -1136,6 +1147,7 @@
     "Link": "링크",
     "Location": "장소",
     "Location - Tooltip": "거주 도시",
+    "MFA accounts": "MFA accounts",
     "Managed accounts": "관리 계정",
     "Modify password...": "비밀번호 수정하기...",
     "Multi-factor authentication": "Multi-factor authentication",
