@@ -19,10 +19,12 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/util"
+	"github.com/beego/beego/utils/pagination"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
+
+	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 )
 
 type Group struct {
@@ -298,7 +300,7 @@ func ExtendGroupWithUsers(group *Group) error {
 		return nil
 	}
 
-	users, err := GetUsers(group.Owner)
+	users, err := GetPaginationGroupUsers(group.GetId(), 0, 10, "", "", "", "")
 	if err != nil {
 		return err
 	}
