@@ -28,7 +28,7 @@ import (
 
 func deployStaticFiles(provider *object.Provider) {
 	certificate := ""
-	if provider.Cert != "" {
+	if provider.Category == "Storage" && provider.Type == "Casdoor" {
 		cert, err := object.GetCert(util.GetId(provider.Owner, provider.Cert))
 		if err != nil {
 			panic(err)
