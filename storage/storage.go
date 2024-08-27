@@ -36,7 +36,7 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 		return NewGoogleCloudStorageProvider(clientSecret, bucket, endpoint), nil
 	case "Synology":
 		return NewSynologyNasStorageProvider(clientId, clientSecret, endpoint), nil
-	case "Casdoor Storage":
+	case "Casdoor":
 		return NewCasdoorStorageProvider(providerType, clientId, clientSecret, region, bucket, endpoint, cert, content), nil
 	}
 
