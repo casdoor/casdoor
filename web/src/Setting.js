@@ -229,6 +229,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_synology.png`,
       url: "https://www.synology.com/en-global/dsm/feature/file_sharing",
     },
+    "Casdoor Storage": {
+      logo: `${StaticBaseUrl}/img/casdoor.png`,
+      url: "https://door.casdoor.com",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -1062,6 +1066,7 @@ export function getProviderTypeOptions(category) {
         {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
         {id: "Google Cloud Storage", name: "Google Cloud Storage"},
         {id: "Synology", name: "Synology"},
+        {id: "Casdoor Storage", name: "Casdoor Storage"},
       ]
     );
   } else if (category === "SAML") {

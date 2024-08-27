@@ -116,7 +116,20 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, error) {
 	endpoint := getProviderEndpoint(provider)
-	storageProvider, err := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
+	var (
+		err  error
+		cert *Cert
+	)
+	if provider.Cert != "" {
+		cert, err = GetCert(util.GetId(provider.Owner, provider.Cert))
+		if err != nil {
+			return nil, err
+		}
+		if cert == nil {
+			return nil, fmt.Errorf("no cert for %s", provider.Cert)
+		}
+	}
+	storageProvider, err := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint, cert.Certificate, provider.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -144,9 +157,13 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 	objectKeyRefined := refineObjectKey(provider, objectKey)
 
-	_, err = storageProvider.Put(objectKeyRefined, fileBuffer)
+	object, err := storageProvider.Put(objectKeyRefined, fileBuffer)
 	if err != nil {
 		return "", "", err
+	}
+
+	if provider.Type == "Casdoor Storage" {
+		fileUrl = object.Path
 	}
 
 	return fileUrl, objectKey, nil
