@@ -257,7 +257,7 @@ func (c *ApiController) UploadResource() {
 		fileType, _ = util.GetOwnerAndNameFromIdNoCheck(mimeType + "/")
 	}
 
-	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 175)
+	fullFilePath = object.GetTruncatedPath(provider, fullFilePath, 450)
 	if tag != "avatar" && tag != "termsOfUse" && !strings.HasPrefix(tag, "idCard") {
 		ext := filepath.Ext(filepath.Base(fullFilePath))
 		index := len(fullFilePath) - len(ext)

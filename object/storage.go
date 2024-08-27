@@ -100,12 +100,13 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 	fileUrl := ""
 	if host != "" {
-		fileUrl = util.UrlJoin(host, escapePath(objectKey))
+		// fileUrl = util.UrlJoin(host, escapePath(objectKey))
+		fileUrl = util.UrlJoin(host, objectKey)
 	}
 
-	if fileUrl != "" && hasTimestamp {
-		fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
-	}
+	// if fileUrl != "" && hasTimestamp {
+	//	fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
+	// }
 
 	if provider.Type == ProviderTypeTencentCloudCOS {
 		objectKey = escapePath(objectKey)

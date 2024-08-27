@@ -36,7 +36,7 @@ type Resource struct {
 	FileType    string `xorm:"varchar(100)" json:"fileType"`
 	FileFormat  string `xorm:"varchar(100)" json:"fileFormat"`
 	FileSize    int    `json:"fileSize"`
-	Url         string `xorm:"varchar(255)" json:"url"`
+	Url         string `xorm:"varchar(500)" json:"url"`
 	Description string `xorm:"varchar(255)" json:"description"`
 }
 

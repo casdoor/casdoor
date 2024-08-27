@@ -32,6 +32,7 @@ import {authConfig} from "./auth/Auth";
 import ProductBuyPage from "./ProductBuyPage";
 import PaymentResultPage from "./PaymentResultPage";
 import QrCodePage from "./QrCodePage";
+import CaptchaPage from "./CaptchaPage";
 import CustomHead from "./basic/CustomHead";
 
 class EntryPage extends React.Component {
@@ -120,6 +121,7 @@ class EntryPage extends React.Component {
             <Route exact path="/buy-plan/:owner/:pricingName" render={(props) => <ProductBuyPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
             <Route exact path="/buy-plan/:owner/:pricingName/result" render={(props) => <PaymentResultPage {...this.props} pricing={this.state.pricing} onUpdatePricing={onUpdatePricing} {...props} />} />
             <Route exact path="/qrcode/:owner/:paymentName" render={(props) => <QrCodePage {...this.props} onUpdateApplication={onUpdateApplication} {...props} />} />
+            <Route exact path="/captcha" render={(props) => <CaptchaPage {...props} />} />
           </Switch>
         </div>
       </React.Fragment>
