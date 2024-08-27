@@ -1083,6 +1083,8 @@ github.com/casbin/casbin/v2 v2.28.3/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRt
 github.com/casbin/casbin/v2 v2.37.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/casbin/v2 v2.77.2 h1:yQinn/w9x8AswiwqwtrXz93VU48R1aYTXdHEx4RI3jM=
 github.com/casbin/casbin/v2 v2.77.2/go.mod h1:mzGx0hYW9/ksOSpw3wNjk3NRAroq5VMFYUQ6G43iGPk=
+github.com/casdoor/casdoor-go-sdk v0.50.0 h1:bUYbz/MzJuWfLKJbJM0+U0YpYewAur+THp5TKnufWZM=
+github.com/casdoor/casdoor-go-sdk v0.50.0/go.mod h1:cMnkCQJgMYpgAlgEx8reSt1AVaDIQLcJ1zk5pzBaz+4=
 github.com/casdoor/go-reddit/v2 v2.1.0 h1:kIbfdJ7AA7H0uTQ8s0q4GGZqSS5V9wVE74RrXyD9XPs=
 github.com/casdoor/go-reddit/v2 v2.1.0/go.mod h1:eagkvwlZ4Hcsuc/uQsLHYEulz5jN65SVSwV/AIE7zsc=
 github.com/casdoor/go-sms-sender v0.24.0 h1:LNLsce3EG/87I3JS6UiajF3LlQmdIiCgebEu0IE4wSM=
@@ -1091,8 +1093,8 @@ github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR
 github.com/casdoor/gomail/v2 v2.0.1/go.mod h1:VnGPslEAtpix5FjHisR/WKB1qvZDBaujbikxDe9d+2Q=
 github.com/casdoor/notify v0.45.0 h1:OlaFvcQFjGOgA4mRx07M8AH1gvb5xNo21mcqrVGlLgk=
 github.com/casdoor/notify v0.45.0/go.mod h1:wNHQu0tiDROMBIvz0j3Om3Lhd5yZ+AIfnFb8MYb8OLQ=
-github.com/casdoor/oss v1.7.0 h1:VCOuD+CcD0MAA99p6JTyUak14bVR6UsaeyuTaVg0Mrs=
-github.com/casdoor/oss v1.7.0/go.mod h1:rJAWA0hLhtu94t6IRpotLUkXO1NWMASirywQYaGizJE=
+github.com/casdoor/oss v1.8.0 h1:uuyKhDIp7ydOtV4lpqhAY23Ban2Ln8La8+QT36CwylM=
+github.com/casdoor/oss v1.8.0/go.mod h1:uaqO7KBI2lnZcnB8rF7O6C2bN7llIbfC5Ql8ex1yR1U=
 github.com/casdoor/xorm-adapter/v3 v3.1.0 h1:NodWayRtSLVSeCvL9H3Hc61k0G17KhV9IymTCNfh3kk=
 github.com/casdoor/xorm-adapter/v3 v3.1.0/go.mod h1:4WTcUw+bTgBylGHeGHzTtBvuTXRS23dtwzFLl9tsgFM=
 github.com/casvisor/casvisor-go-sdk v1.4.0 h1:hbZEGGJ1cwdHFAxeXrMoNw6yha6Oyg2F0qQhBNCN/dg=
@@ -1460,8 +1462,9 @@ github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
 github.com/google/uuid v1.4.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/googleapis/enterprise-certificate-proxy v0.0.0-20220520183353-fd19c99a87aa/go.mod h1:17drOmN3MwGY7t0e+Ei9b45FFGA3fBs3x36SsCg1hq8=
 github.com/googleapis/enterprise-certificate-proxy v0.1.0/go.mod h1:17drOmN3MwGY7t0e+Ei9b45FFGA3fBs3x36SsCg1hq8=
 github.com/googleapis/enterprise-certificate-proxy v0.2.0/go.mod h1:8C0jb7/mgJe/9KK8Lm7X9ctZC2t60YyIpYEI16jx0Qg=

@@ -16,7 +16,7 @@ package storage
 
 import "github.com/casdoor/oss"
 
-func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string) (oss.StorageInterface, error) {
+func GetStorageProvider(providerType string, clientId string, clientSecret string, region string, bucket string, endpoint string, cert string, content string) (oss.StorageInterface, error) {
 	switch providerType {
 	case "Local File System":
 		return NewLocalFileSystemStorageProvider(), nil
@@ -36,6 +36,8 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 		return NewGoogleCloudStorageProvider(clientSecret, bucket, endpoint), nil
 	case "Synology":
 		return NewSynologyNasStorageProvider(clientId, clientSecret, endpoint), nil
+	case "Casdoor":
+		return NewCasdoorStorageProvider(providerType, clientId, clientSecret, region, bucket, endpoint, cert, content), nil
 	}
 
 	return nil, nil
