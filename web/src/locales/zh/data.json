@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token中所包含的用户字段",
     "Token format": "Access Token格式",
     "Token format - Tooltip": "Access Token格式",
+    "Token signing method": "Token签名算法",
+    "Token signing method - Tooltip": "JWT token的签名算法，需要与证书算法相匹配",
     "You are unexpected to see this prompt page": "错误：该提醒页面不应出现"
   },
   "cert": {

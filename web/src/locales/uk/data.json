@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Поля маркерів – підказка",
     "Token format": "Формат маркера",
     "Token format - Tooltip": "Формат маркера доступу",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Ви неочікувано побачите цю сторінку запиту"
   },
   "cert": {

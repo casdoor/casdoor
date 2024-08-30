@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Формат жетона",
     "Token format - Tooltip": "Формат токена доступа",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Вы не ожидали увидеть эту страницу-подсказку"
   },
   "cert": {

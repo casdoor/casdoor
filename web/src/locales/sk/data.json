@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Používateľské polia zahrnuté v tokene",
     "Token format": "Formát tokenu",
     "Token format - Tooltip": "Formát prístupového tokenu",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Neočekávali ste, že uvidíte túto výzvu"
   },
   "cert": {
