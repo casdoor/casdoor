@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "トークン形式",
     "Token format - Tooltip": "アクセストークンのフォーマット",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "このプロンプトページを見ることは予期せぬことである"
   },
   "cert": {
