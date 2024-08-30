@@ -442,52 +442,32 @@ func generateJwtToken(application *Application, user *User, nonce string, scope 
 		}
 	}
 
-	var tokenString string
-	var refreshTokenString string
+	var (
+		tokenString        string
+		refreshTokenString string
+		key                interface{}
+	)
 
 	if strings.Contains(application.TokenSigningMethod, "RS") || application.TokenSigningMethod == "" {
 		// RSA private key
-		key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
-		if err != nil {
-			return "", "", "", err
-		}
-		token.Header["kid"] = cert.Name
-		tokenString, err = token.SignedString(key)
-		if err != nil {
-			return "", "", "", err
-		}
-		refreshTokenString, err = refreshToken.SignedString(key)
+		key, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	} else if strings.Contains(application.TokenSigningMethod, "ES") {
 		// ES private key
-		key, err := jwt.ParseECPrivateKeyFromPEM([]byte(cert.PrivateKey))
-		if err != nil {
-			return "", "", "", err
-		}
-		token.Header["kid"] = cert.Name
-		tokenString, err = token.SignedString(key)
-		if err != nil {
-			return "", "", "", err
-		}
-		refreshTokenString, err = refreshToken.SignedString(key)
+		key, err = jwt.ParseECPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	} else if strings.Contains(application.TokenSigningMethod, "Ed") {
 		// Ed private key
-		key, err := jwt.ParseEdPrivateKeyFromPEM([]byte(cert.PrivateKey))
-		if err != nil {
-			return "", "", "", err
-		}
-		token.Header["kid"] = cert.Name
-		tokenString, err = token.SignedString(key)
-		if err != nil {
-			return "", "", "", err
-		}
-		refreshTokenString, err = refreshToken.SignedString(key)
-	} else if strings.Contains(application.TokenSigningMethod, "HS") {
-		tokenString, err = token.SignedString([]byte("233"))
-		if err != nil {
-			return "", "", "", err
-		}
-		refreshTokenString, err = refreshToken.SignedString([]byte("233"))
+		key, err = jwt.ParseEdPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	}
+	if err != nil {
+		return "", "", "", err
+	}
+
+	token.Header["kid"] = cert.Name
+	tokenString, err = token.SignedString(key)
+	if err != nil {
+		return "", "", "", err
+	}
+	refreshTokenString, err = refreshToken.SignedString(key)
 
 	return tokenString, refreshTokenString, name, err
 }
