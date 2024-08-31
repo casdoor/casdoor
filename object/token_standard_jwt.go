@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/util"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -23,11 +24,14 @@ import (
 
 type ClaimsStandard struct {
 	*UserShort
-	Gender    string      `json:"gender,omitempty"`
-	TokenType string      `json:"tokenType,omitempty"`
-	Nonce     string      `json:"nonce,omitempty"`
-	Scope     string      `json:"scope,omitempty"`
-	Address   OIDCAddress `json:"address,omitempty"`
+	EmailVerified       bool        `json:"email_verified,omitempty"`
+	PhoneNumber         string      `json:"phone_number,omitempty"`
+	PhoneNumberVerified bool        `json:"phone_number_verified,omitempty"`
+	Gender              string      `json:"gender,omitempty"`
+	TokenType           string      `json:"tokenType,omitempty"`
+	Nonce               string      `json:"nonce,omitempty"`
+	Scope               string      `json:"scope,omitempty"`
+	Address             OIDCAddress `json:"address,omitempty"`
 
 	jwt.RegisteredClaims
 }
@@ -43,12 +47,14 @@ func getStreetAddress(user *User) string {
 func getStandardClaims(claims Claims) ClaimsStandard {
 	res := ClaimsStandard{
 		UserShort:        getShortUser(claims.User),
+		EmailVerified:    claims.User.EmailVerified,
 		TokenType:        claims.TokenType,
 		Nonce:            claims.Nonce,
 		Scope:            claims.Scope,
 		RegisteredClaims: claims.RegisteredClaims,
 	}
 
+	res.Phone = ""
 	var scopes []string
 
 	if strings.Contains(claims.Scope, ",") {
@@ -62,6 +68,15 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
 		} else if scope == "profile" {
 			res.Gender = claims.User.Gender
+		} else if scope == "phone" && claims.User.Phone != "" {
+			res.PhoneNumberVerified = true
+			phoneNumber, ok := util.GetE164Number(claims.User.Phone, claims.User.CountryCode)
+			if !ok {
+				res.PhoneNumberVerified = false
+			} else {
+				res.PhoneNumber = phoneNumber
+			}
+
 		}
 	}
 
