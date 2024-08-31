@@ -94,6 +94,7 @@ class OAuthWidget extends React.Component {
   unlinkUser(providerType, linkedValue) {
     const body = {
       providerType: providerType,
+      providerCategory: "OAuth",
       // should add the unlink user's info, cause the user may not be logged in, but a admin want to unlink the user.
       user: this.props.user,
     };
@@ -129,13 +130,31 @@ class OAuthWidget extends React.Component {
 
   renderIdp(user, application, providerItem) {
     const provider = providerItem.provider;
-    const linkedValue = user[provider.type.toLowerCase()];
     const profileUrl = this.getProviderLink(user, provider);
-    const id = this.getUserProperty(user, provider.type, "id");
-    const username = this.getUserProperty(user, provider.type, "username");
-    const displayName = this.getUserProperty(user, provider.type, "displayName");
-    const email = this.getUserProperty(user, provider.type, "email");
-    let avatarUrl = this.getUserProperty(user, provider.type, "avatarUrl");
+    let linkedValue = "";
+    let id = "";
+    let username = "";
+    let displayName = "";
+    let email = "";
+    let avatarUrl = "";
+    let propertyName = "";
+    if (provider.type.toLowerCase() === "custom") {
+      const providerName = provider.name.match(/provider_(\w+)/)[1];
+      propertyName = `Custom_${providerName}`;
+      const customId = this.getUserProperty(user, propertyName, "id");
+      if (customId !== undefined) {
+        linkedValue = customId;
+      }
+    } else {
+      propertyName = provider.type;
+      linkedValue = user[provider.type.toLowerCase()];
+    }
+    id = this.getUserProperty(user, propertyName, "id");
+    username = this.getUserProperty(user, propertyName, "username");
+    displayName = this.getUserProperty(user, propertyName, "displayName");
+    email = this.getUserProperty(user, propertyName, "email");
+    avatarUrl = this.getUserProperty(user, propertyName, "avatarUrl");
+
     // the account user
     const account = this.props.account;
 
@@ -167,7 +186,7 @@ class OAuthWidget extends React.Component {
           }
           <span style={{marginLeft: "5px"}}>
             {
-              `${provider.type}:`
+              `${propertyName}:`
             }
           </span>
         </Col>
@@ -213,7 +232,14 @@ class OAuthWidget extends React.Component {
                 )
               )
             ) : (
-              <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => this.unlinkUser(provider.type, linkedValue)}>{i18next.t("user:Unlink")}</Button>
+              <Button disabled={!providerItem.canUnlink && !Setting.isAdminUser(account)} style={{marginLeft: "20px", width: linkButtonWidth}} onClick={() => {
+                if (provider.type === "Custom") {
+                  const providerName = provider.name.match(/provider_(\w+)/)[1];
+                  this.unlinkUser("Custom_" + providerName, linkedValue);
+                } else {
+                  this.unlinkUser(provider.type, linkedValue);
+                }
+              }}>{i18next.t("user:Unlink")}</Button>
             )
           }
         </Col>

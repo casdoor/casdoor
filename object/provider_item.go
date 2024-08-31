@@ -37,9 +37,9 @@ func (application *Application) GetProviderItem(providerName string) *ProviderIt
 	return nil
 }
 
-func (application *Application) GetProviderItemByType(providerType string) *ProviderItem {
+func (application *Application) GetProviderItemByCategoryAndType(providerCategory string, providerType string) *ProviderItem {
 	for _, item := range application.Providers {
-		if item.Provider.Type == providerType {
+		if item.Provider.Type == providerType && item.Provider.Category == providerCategory {
 			return item
 		}
 	}

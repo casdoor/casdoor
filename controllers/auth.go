@@ -22,6 +22,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -610,7 +611,11 @@ func (c *ApiController) Login() {
 					return
 				}
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
-				user, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				if provider.Type == "Custom" {
+					user, err = object.GetUserByProperties(application.Organization, provider, userInfo.Id)
+				} else {
+					user, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				}
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -624,7 +629,19 @@ func (c *ApiController) Login() {
 					c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 				}
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+				if provider.Category == "OAuth" || provider.Category == "Web3" {
+					if provider.Type == "Custom" {
+						pattern := `provider_(\w+)`
+						matchRe, _ := regexp.Compile(pattern)
+						providerName := matchRe.FindStringSubmatch(provider.Name)[1]
+						customOAuthName := fmt.Sprintf("Custom_%s", providerName)
+						_, err = object.SetUserOAuthProperties(organization, user, customOAuthName, userInfo)
+					} else {
+						_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+					}
+				} else {
+					c.ResponseError(fmt.Errorf("sync info is not supported for %s", provider.Category).Error())
+				}
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -755,16 +772,26 @@ func (c *ApiController) Login() {
 				}
 
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-
-				_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
+				if provider.Type == "Custom" {
+					pattern := `provider_(\w+)`
+					matchRe, _ := regexp.Compile(pattern)
+					providerName := matchRe.FindStringSubmatch(provider.Name)[1]
+					_, err = object.SetUserOAuthProperties(organization, user, fmt.Sprintf("Custom_%s", providerName), userInfo)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+				} else {
+					_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+					_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
 				}
 
 				resp = c.HandleLoggedIn(application, user, &authForm)
@@ -784,7 +811,15 @@ func (c *ApiController) Login() {
 			}
 
 			var oldUser *object.User
-			oldUser, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+			if provider.Category == "OAuth" || provider.Category == "Web3" {
+				if provider.Type == "Custom" {
+					oldUser, err = object.GetUserByProperties(application.Organization, provider, userInfo.Id)
+				} else {
+					oldUser, err = object.GetUserByField(application.Organization, provider.Type, userInfo.Id)
+				}
+			} else {
+				c.ResponseError(fmt.Errorf("login via %s is not supported for %s", authForm.Method, provider.Category).Error())
+			}
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -803,23 +838,37 @@ func (c *ApiController) Login() {
 			}
 
 			// sync info from 3rd-party if possible
-			_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			var isLinked bool
-			isLinked, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			if isLinked {
-				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+			if provider.Category == "OAuth" || provider.Category == "Web3" {
+				if provider.Type == "Custom" {
+					pattern := `provider_(\w+)`
+					matchRe, _ := regexp.Compile(pattern)
+					providerName := matchRe.FindStringSubmatch(provider.Name)[1]
+					_, err = object.SetUserOAuthProperties(organization, user, fmt.Sprintf("Custom_%s", providerName), userInfo)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+					resp = &Response{Status: "ok", Msg: "", Data: true}
+				} else {
+					_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+					var isLinked bool
+					isLinked, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+					if isLinked {
+						resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+					} else {
+						resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+					}
+				}
 			} else {
-				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+				c.ResponseError(fmt.Errorf("sync info is not supported for %s", provider.Category).Error())
 			}
 		}
 	} else if c.getMfaUserSession() != "" {

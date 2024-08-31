@@ -29,6 +29,25 @@ import (
 	"github.com/xorm-io/core"
 )
 
+func GetUserByProperties(organizationName string, customProvider *Provider, userId string) (*User, error) {
+	users := make([]User, 0)
+	err := ormer.Engine.Where("owner=?", organizationName).Find(&users)
+	if err != nil {
+		return nil, err
+	}
+
+	pattern := `provider_(\w+)`
+	matchRe, _ := regexp.Compile(pattern)
+	providerName := matchRe.FindStringSubmatch(customProvider.Name)[1]
+	customPropertyId := fmt.Sprintf("%s_%s_%s_id", strings.ToLower(customProvider.Category), customProvider.Type, providerName)
+	for _, user := range users {
+		if id, exists := user.Properties[customPropertyId]; exists && id == userId {
+			return &user, nil
+		}
+	}
+	return nil, nil
+}
+
 func GetUserByField(organizationName string, field string, value string) (*User, error) {
 	if field == "" || value == "" {
 		return nil, nil
@@ -179,16 +198,20 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 }
 
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
+	return SetUserProperties(organization, user, "oauth", providerType, userInfo)
+}
+
+func SetUserProperties(organization *Organization, user *User, providerCategory string, providerType string, userInfo *idp.UserInfo) (bool, error) {
 	if userInfo.Id != "" {
-		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
+		propertyName := fmt.Sprintf("%s_%s_id", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
 	}
 	if userInfo.Username != "" {
-		propertyName := fmt.Sprintf("oauth_%s_username", providerType)
+		propertyName := fmt.Sprintf("%s_%s_username", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.Username)
 	}
 	if userInfo.DisplayName != "" {
-		propertyName := fmt.Sprintf("oauth_%s_displayName", providerType)
+		propertyName := fmt.Sprintf("%s_%s_displayName", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.DisplayName)
 		if user.DisplayName == "" {
 			user.DisplayName = userInfo.DisplayName
@@ -201,7 +224,7 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 	if userInfo.Email != "" {
-		propertyName := fmt.Sprintf("oauth_%s_email", providerType)
+		propertyName := fmt.Sprintf("%s_%s_email", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.Email)
 		if user.Email == "" {
 			user.Email = userInfo.Email
@@ -209,12 +232,12 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	}
 
 	if userInfo.UnionId != "" {
-		propertyName := fmt.Sprintf("oauth_%s_unionId", providerType)
+		propertyName := fmt.Sprintf("%s_%s_unionId", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.UnionId)
 	}
 
 	if userInfo.AvatarUrl != "" {
-		propertyName := fmt.Sprintf("oauth_%s_avatarUrl", providerType)
+		propertyName := fmt.Sprintf("%s_%s_avatarUrl", providerCategory, providerType)
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
 		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
 			user.Avatar = userInfo.AvatarUrl
@@ -223,7 +246,7 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 
 	if userInfo.Extra != nil {
 		// Save extra info as json string
-		propertyName := fmt.Sprintf("oauth_%s_extra", providerType)
+		propertyName := fmt.Sprintf("%s_%s_extra", providerCategory, providerType)
 		oldExtraJson := getUserProperty(user, propertyName)
 		extra := make(map[string]string)
 		if oldExtraJson != "" {
@@ -246,8 +269,12 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 }
 
 func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
+	return ClearUserProperties(user, "oauth", providerType)
+}
+
+func ClearUserProperties(user *User, providerCategory string, providerType string) (bool, error) {
 	for k := range user.Properties {
-		prefix := fmt.Sprintf("oauth_%s_", providerType)
+		prefix := fmt.Sprintf("%s_%s_", providerCategory, providerType)
 		if strings.HasPrefix(k, prefix) {
 			delete(user.Properties, k)
 		}

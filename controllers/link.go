@@ -16,13 +16,16 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/object"
 )
 
 type LinkForm struct {
-	ProviderType string      `json:"providerType"`
-	User         object.User `json:"user"`
+	ProviderType     string      `json:"providerType"`
+	ProviderCategory string      `json:"providerCategory"`
+	User             object.User `json:"user"`
 }
 
 // Unlink ...
@@ -43,6 +46,7 @@ func (c *ApiController) Unlink() {
 		return
 	}
 	providerType := form.ProviderType
+	providerCategory := form.ProviderCategory
 
 	// the user will be unlinked from the provider
 	unlinkedUser := form.User
@@ -70,7 +74,7 @@ func (c *ApiController) Unlink() {
 			return
 		}
 
-		provider := application.GetProviderItemByType(providerType)
+		provider := application.GetProviderItemByCategoryAndType(providerCategory, providerType)
 		if provider == nil {
 			c.ResponseError(c.T("link:This application has no providers of type") + providerType)
 			return
@@ -86,24 +90,44 @@ func (c *ApiController) Unlink() {
 	// only two situations can happen here
 	// 1. the user is the global admin
 	// 2. the user is unlinking themselves and provider can be unlinked
-
-	value := object.GetUserField(&unlinkedUser, providerType)
-
-	if value == "" {
-		c.ResponseError(c.T("link:Please link first"), value)
-		return
-	}
-
-	_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	_, err = object.LinkUserAccount(&unlinkedUser, providerType, "")
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if providerCategory == "OAuth" {
+		if strings.HasPrefix(providerType, "Custom") {
+			var customLinked bool
+			for k := range unlinkedUser.Properties {
+				prefix := fmt.Sprintf("oauth_%s_", providerType)
+				if strings.HasPrefix(k, prefix) {
+					customLinked = true
+					break
+				}
+			}
+			if !customLinked {
+				c.ResponseError(c.T("link:Please link first"), "")
+				return
+			}
+			_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		} else {
+			value := object.GetUserField(&unlinkedUser, providerType)
+			if value == "" {
+				c.ResponseError(c.T("link:Please link first"), value)
+				return
+			}
+			_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			_, err = object.LinkUserAccount(&unlinkedUser, providerType, "")
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+	} else {
+		c.ResponseError(fmt.Errorf("Unlink provider category %s is not supported", providerCategory).Error())
 	}
 
 	c.ResponseOk()

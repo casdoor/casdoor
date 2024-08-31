@@ -859,6 +859,7 @@ class UserEditPage extends React.Component {
                           user={this.state.user}
                           application={this.state.application}
                           providerItem={providerItem}
+                          account={this.props.account}
                           onUnlinked={() => {return this.unlinked();}} />
                       )
                     )
