@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/object"
@@ -23,6 +24,10 @@ import (
 )
 
 func AutoSigninFilter(ctx *context.Context) {
+	urlPath := ctx.Request.URL.Path
+	if strings.HasPrefix(urlPath, "/api/login/oauth/access_token") {
+		return
+	}
 	//if getSessionUser(ctx) != "" {
 	//	return
 	//}
