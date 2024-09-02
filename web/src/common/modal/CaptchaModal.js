@@ -115,7 +115,7 @@ export const CaptchaModal = (props) => {
     } else {
       return (
         <Col>
-          <Row>
+          <Row justify={"center"}>
             <CaptchaWidget
               captchaType={captchaType}
               subType={subType}
