@@ -18,8 +18,9 @@ import * as ModelBackend from "./backend/ModelBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
+
 import {Controlled as CodeMirror} from "react-codemirror2";
-import {createLinter} from "./utils/modelLinter";
+import "codemirror/lib/codemirror.css";
 
 require("codemirror/mode/properties/properties");
 
@@ -149,20 +150,12 @@ class ModelEditPage extends React.Component {
             <div style={{width: "100%"}} >
               <CodeMirror
                 value={this.state.model.modelText}
-                options={{
-                  mode: "properties",
-                  theme: "default",
-                  lineNumbers: true,
-                  lint: true,
-                }}
+                options={{mode: "properties", theme: "default"}}
                 onBeforeChange={(editor, data, value) => {
                   if (Setting.builtInObject(this.state.model)) {
                     return;
                   }
                   this.updateModelField("modelText", value);
-                }}
-                editorDidMount={(editor, value, cb) => {
-                  createLinter(editor.constructor);
                 }}
               />
             </div>
