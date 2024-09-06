@@ -219,6 +219,50 @@ func checkSigninErrorTimes(user *User, lang string) error {
 	return nil
 }
 
+func CheckPasswordWithoutRecord(user *User, password string, lang string, options ...bool) (success bool, needRecord bool, err error) {
+	enableCaptcha := false
+	if len(options) > 0 {
+		enableCaptcha = options[0]
+	}
+	// check the login error times
+	if !enableCaptcha {
+		err := checkSigninErrorTimes(user, lang)
+		if err != nil {
+			return false, false, err
+		}
+	}
+
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, false, err
+	}
+
+	if organization == nil {
+		return false, false, fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
+	}
+
+	passwordType := user.PasswordType
+	if passwordType == "" {
+		passwordType = organization.PasswordType
+	}
+	credManager := cred.GetCredManager(passwordType)
+	if credManager != nil {
+		if organization.MasterPassword != "" {
+			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
+				return true, false, nil
+			}
+		}
+
+		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
+			return true, false, nil
+		}
+
+		return false, true, nil
+	} else {
+		return false, false, fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
+	}
+}
+
 func CheckPassword(user *User, password string, lang string, options ...bool) error {
 	enableCaptcha := false
 	if len(options) > 0 {
@@ -231,36 +275,15 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 			return err
 		}
 	}
-
-	organization, err := GetOrganizationByUser(user)
-	if err != nil {
-		return err
+	success, needRecord, err := CheckPasswordWithoutRecord(user, password, lang, options...)
+	if success {
+		return resetUserSigninErrorTimes(user)
 	}
 
-	if organization == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
-	}
-
-	passwordType := user.PasswordType
-	if passwordType == "" {
-		passwordType = organization.PasswordType
-	}
-	credManager := cred.GetCredManager(passwordType)
-	if credManager != nil {
-		if organization.MasterPassword != "" {
-			if credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
-				return resetUserSigninErrorTimes(user)
-			}
-		}
-
-		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
-			return resetUserSigninErrorTimes(user)
-		}
-
+	if needRecord {
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
-	} else {
-		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
+	return err
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string) string {
@@ -326,6 +349,31 @@ func checkLdapUserPassword(user *User, password string, lang string) error {
 	return resetUserSigninErrorTimes(user)
 }
 
+func CheckUserPasswordViaLdapWithoutRecord(user *User, password string, lang string, enableCaptcha bool) (success bool, needRecord bool, err error) {
+	if user.Ldap == "" {
+		return false, false, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), user.Name)
+	}
+
+	// check the login error times
+	if !enableCaptcha {
+		err = checkSigninErrorTimes(user, lang)
+		if err != nil {
+			return false, false, err
+		}
+	}
+
+	// only for LDAP users
+	err = checkLdapUserPassword(user, password, lang)
+	if err != nil {
+		if err.Error() == "user not exist" {
+			return false, false, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), user.Name)
+		}
+		return false, true, err
+	}
+
+	return true, false, nil
+}
+
 func CheckUserPassword(organization string, username string, password string, lang string, options ...bool) (*User, error) {
 	enableCaptcha := false
 	isSigninViaLdap := false
@@ -348,44 +396,42 @@ func CheckUserPassword(organization string, username string, password string, la
 		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
-	var checkErr error
-
-	if !isSigninViaLdap {
-		checkErr = CheckPassword(user, password, lang, enableCaptcha)
-		if checkErr != nil && (!isPasswordWithLdapEnabled || user.Ldap == "") {
-			return nil, checkErr
-		} else if checkErr == nil {
-			return user, nil
+	if isSigninViaLdap {
+		success, needRecord, err := CheckUserPasswordViaLdapWithoutRecord(user, password, lang, enableCaptcha)
+		if success {
+			return user, resetUserSigninErrorTimes(user)
 		}
+
+		if needRecord {
+			return nil, recordSigninErrorInfo(user, lang, options...)
+		}
+		return nil, err
 	}
 
-	if user.Ldap == "" {
-		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
-	}
+	if isPasswordWithLdapEnabled {
+		success, needRecordPasswd, err := CheckPasswordWithoutRecord(user, password, lang, options...)
+		if success {
+			return user, resetUserSigninErrorTimes(user)
+		}
 
-	// check the login error times
-	if !enableCaptcha && isSigninViaLdap {
-		err = checkSigninErrorTimes(user, lang)
+		success, needRecord, errLdap := CheckUserPasswordViaLdapWithoutRecord(user, password, lang, enableCaptcha)
+		if success {
+			return user, resetUserSigninErrorTimes(user)
+		}
+
+		if needRecord || needRecordPasswd {
+			return nil, recordSigninErrorInfo(user, lang, options...)
+		}
+
 		if err != nil {
 			return nil, err
 		}
+
+		return nil, errLdap
 	}
 
-	// only for LDAP users
-	err = checkLdapUserPassword(user, password, lang)
-	if err != nil {
-		if err.Error() == "user not exist" {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
-		}
-
-		if checkErr != nil {
-			return nil, checkErr
-		} else {
-			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
-		}
-	}
-
-	return user, nil
+	err = CheckPassword(user, password, lang, options...)
+	return nil, err
 }
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
