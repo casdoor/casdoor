@@ -348,40 +348,43 @@ func CheckUserPassword(organization string, username string, password string, la
 		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
-	if isSigninViaLdap {
-		if user.Ldap == "" {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+	var checkErr error
+
+	if !isSigninViaLdap {
+		checkErr = CheckPassword(user, password, lang, enableCaptcha)
+		if checkErr != nil && (!isPasswordWithLdapEnabled || user.Ldap == "") {
+			return nil, checkErr
+		} else if checkErr == nil {
+			return user, nil
 		}
 	}
 
-	if user.Ldap != "" && (isSigninViaLdap || user.Password == "") {
-		if !isSigninViaLdap && !isPasswordWithLdapEnabled {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
-		}
+	if user.Ldap == "" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+	}
 
-		// check the login error times
-		if !enableCaptcha {
-			err = checkSigninErrorTimes(user, lang)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		// only for LDAP users
-		err = checkLdapUserPassword(user, password, lang)
-		if err != nil {
-			if err.Error() == "user not exist" {
-				return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
-			}
-
-			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
-		}
-	} else {
-		err = CheckPassword(user, password, lang, enableCaptcha)
+	// check the login error times
+	if !enableCaptcha && isSigninViaLdap {
+		err = checkSigninErrorTimes(user, lang)
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	// only for LDAP users
+	err = checkLdapUserPassword(user, password, lang)
+	if err != nil {
+		if err.Error() == "user not exist" {
+			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+		}
+
+		if checkErr != nil {
+			return nil, checkErr
+		} else {
+			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
+		}
+	}
+
 	return user, nil
 }
 
