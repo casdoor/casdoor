@@ -434,10 +434,9 @@ class SyncerEditPage extends React.Component {
             {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.syncer.table}
-              disabled={this.state.syncer.type === "Keycloak"} onChange={e => {
-                this.updateSyncerField("table", e.target.value);
-              }} />
+            <Input value={this.state.syncer.table} onChange={e => {
+              this.updateSyncerField("table", e.target.value);
+            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
