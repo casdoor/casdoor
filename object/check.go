@@ -427,7 +427,11 @@ func CheckUserPassword(organization string, username string, password string, la
 			return nil, err
 		}
 
-		return nil, errLdap
+		if errLdap != nil {
+			return nil, errLdap
+		}
+
+		return nil, recordSigninErrorInfo(user, lang, options...)
 	}
 
 	err = CheckPassword(user, password, lang, options...)
