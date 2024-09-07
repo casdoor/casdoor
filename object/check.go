@@ -219,19 +219,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 	return nil
 }
 
-func CheckPasswordWithoutRecord(user *User, password string, lang string, options ...bool) (success bool, needRecord bool, err error) {
-	enableCaptcha := false
-	if len(options) > 0 {
-		enableCaptcha = options[0]
-	}
-	// check the login error times
-	if !enableCaptcha {
-		err := checkSigninErrorTimes(user, lang)
-		if err != nil {
-			return false, false, err
-		}
-	}
-
+func CheckPasswordWithoutRecord(user *User, password string, lang string) (success bool, needRecord bool, err error) {
 	organization, err := GetOrganizationByUser(user)
 	if err != nil {
 		return false, false, err
@@ -275,7 +263,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 			return err
 		}
 	}
-	success, needRecord, err := CheckPasswordWithoutRecord(user, password, lang, options...)
+	success, needRecord, err := CheckPasswordWithoutRecord(user, password, lang)
 	if success {
 		return resetUserSigninErrorTimes(user)
 	}
@@ -349,17 +337,9 @@ func checkLdapUserPassword(user *User, password string, lang string) error {
 	return resetUserSigninErrorTimes(user)
 }
 
-func CheckUserPasswordViaLdapWithoutRecord(user *User, password string, lang string, enableCaptcha bool) (success bool, needRecord bool, err error) {
+func CheckUserPasswordViaLdapWithoutRecord(user *User, password string, lang string) (success bool, needRecord bool, err error) {
 	if user.Ldap == "" {
 		return false, false, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), user.Name)
-	}
-
-	// check the login error times
-	if !enableCaptcha {
-		err = checkSigninErrorTimes(user, lang)
-		if err != nil {
-			return false, false, err
-		}
 	}
 
 	// only for LDAP users
@@ -396,8 +376,16 @@ func CheckUserPassword(organization string, username string, password string, la
 		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
+	// check the login error times
+	if !enableCaptcha {
+		err := checkSigninErrorTimes(user, lang)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	if isSigninViaLdap {
-		success, needRecord, err := CheckUserPasswordViaLdapWithoutRecord(user, password, lang, enableCaptcha)
+		success, needRecord, err := CheckUserPasswordViaLdapWithoutRecord(user, password, lang)
 		if success {
 			return user, resetUserSigninErrorTimes(user)
 		}
@@ -409,12 +397,12 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if isPasswordWithLdapEnabled {
-		success, needRecordPasswd, err := CheckPasswordWithoutRecord(user, password, lang, options...)
+		success, needRecordPasswd, err := CheckPasswordWithoutRecord(user, password, lang)
 		if success {
 			return user, resetUserSigninErrorTimes(user)
 		}
 
-		success, needRecord, errLdap := CheckUserPasswordViaLdapWithoutRecord(user, password, lang, enableCaptcha)
+		success, needRecord, errLdap := CheckUserPasswordViaLdapWithoutRecord(user, password, lang)
 		if success {
 			return user, resetUserSigninErrorTimes(user)
 		}
@@ -434,7 +422,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		return nil, recordSigninErrorInfo(user, lang, options...)
 	}
 
-	err = CheckPassword(user, password, lang, options...)
+	err = CheckPassword(user, password, lang)
 	if err != nil {
 		return nil, err
 	}
