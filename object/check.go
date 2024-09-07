@@ -431,7 +431,7 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	err = CheckPassword(user, password, lang, options...)
-	return nil, err
+	return user, err
 }
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
