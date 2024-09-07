@@ -59,3 +59,11 @@ code {
 .full-height-editor [class*="CodeMirror"] {
   height: 100%;
 }
+
+.no-horizontal-scroll [class*="CodeMirror-hscrollbar"] {
+  display: none !important;
+}
+
+.no-horizontal-scroll [class*="CodeMirror-scroll"] {
+  overflow-x: hidden !important;
+}

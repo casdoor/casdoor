@@ -141,9 +141,6 @@ class ModelEditPage extends React.Component {
           <Button onClick={() => this.submitModelEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitModelEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteModel()}>{i18next.t("general:Cancel")}</Button> : null}
-          <Button style={{marginLeft: "20px"}} onClick={this.toggleEditor}>
-            {this.state.useIframeEditor ? "Switch to Basic Editor" : "Switch to Advanced Editor"}
-          </Button>
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         <Row style={{marginTop: "10px"}} >
@@ -208,12 +205,6 @@ class ModelEditPage extends React.Component {
       </Card>
     );
   }
-
-  toggleEditor = () => {
-    this.setState(prevState => ({
-      useIframeEditor: !prevState.useIframeEditor,
-    }));
-  };
 
   render() {
     return (
