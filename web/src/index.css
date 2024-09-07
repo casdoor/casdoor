@@ -51,3 +51,11 @@ code {
 .custom-link:hover {
   color: rgb(64 64 64) !important;
 }
+
+.full-height-editor {
+  height: 100%;
+}
+
+.full-height-editor [class*="CodeMirror"] {
+  height: 100%;
+}
