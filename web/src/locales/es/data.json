@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Formato del token",
     "Token format - Tooltip": "El formato del token de acceso",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Es inesperado ver esta página de inicio"
   },
   "cert": {

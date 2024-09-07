@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Format token",
     "Token format - Tooltip": "Format dari token akses",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Anda tidak mengharapkan untuk melihat halaman prompt ini"
   },
   "cert": {

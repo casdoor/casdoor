@@ -112,7 +112,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 		ResponseModesSupported:                 []string{"query", "fragment", "login", "code", "link"},
 		GrantTypesSupported:                    []string{"password", "authorization_code"},
 		SubjectTypesSupported:                  []string{"public"},
-		IdTokenSigningAlgValuesSupported:       []string{"RS256"},
+		IdTokenSigningAlgValuesSupported:       []string{"RS256", "RS512", "ES256", "ES384", "ES512"},
 		ScopesSupported:                        []string{"openid", "email", "profile", "address", "phone", "offline_access"},
 		ClaimsSupported:                        []string{"iss", "ver", "sub", "aud", "iat", "exp", "id", "type", "displayName", "avatar", "permanentAvatar", "email", "phone", "location", "affiliation", "title", "homepage", "bio", "tag", "region", "language", "score", "ranking", "isOnline", "isAdmin", "isForbidden", "signupApplication", "ldap"},
 		RequestParameterSupported:              true,

@@ -354,8 +354,8 @@ func CheckUserPassword(organization string, username string, password string, la
 		}
 	}
 
-	if user.Ldap != "" {
-		if !isSigninViaLdap && !isPasswordWithLdapEnabled {
+	if user.Ldap != "" && (isSigninViaLdap || user.Password == "") {
+		if !isPasswordWithLdapEnabled {
 			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
 		}
 

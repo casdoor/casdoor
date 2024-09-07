@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "Định dạng mã thông báo",
     "Token format - Tooltip": "Định dạng của mã thông báo truy cập",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "Bạn không mong đợi thấy trang này hiện lên"
   },
   "cert": {

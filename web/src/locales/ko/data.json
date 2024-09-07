@@ -121,6 +121,8 @@
     "Token fields - Tooltip": "Token fields - Tooltip",
     "Token format": "토큰 형식",
     "Token format - Tooltip": "접근 토큰의 형식",
+    "Token signing method": "Token signing method",
+    "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "You are unexpected to see this prompt page": "당신은 이 프롬프트 페이지를 볼 것을 예상하지 못했습니다"
   },
   "cert": {

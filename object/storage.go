@@ -100,12 +100,13 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 	fileUrl := ""
 	if host != "" {
-		fileUrl = util.UrlJoin(host, escapePath(objectKey))
+		// fileUrl = util.UrlJoin(host, escapePath(objectKey))
+		fileUrl = util.UrlJoin(host, objectKey)
 	}
 
-	if fileUrl != "" && hasTimestamp {
-		fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
-	}
+	// if fileUrl != "" && hasTimestamp {
+	//	fileUrl = fmt.Sprintf("%s?t=%s", fileUrl, util.GetCurrentUnixTime())
+	// }
 
 	if provider.Type == ProviderTypeTencentCloudCOS {
 		objectKey = escapePath(objectKey)
@@ -116,7 +117,18 @@ func GetUploadFileUrl(provider *Provider, fullFilePath string, hasTimestamp bool
 
 func getStorageProvider(provider *Provider, lang string) (oss.StorageInterface, error) {
 	endpoint := getProviderEndpoint(provider)
-	storageProvider, err := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint)
+	certificate := ""
+	if provider.Category == "Storage" && provider.Type == "Casdoor" {
+		cert, err := GetCert(util.GetId(provider.Owner, provider.Cert))
+		if err != nil {
+			return nil, err
+		}
+		if cert == nil {
+			return nil, fmt.Errorf("no cert for %s", provider.Cert)
+		}
+		certificate = cert.Certificate
+	}
+	storageProvider, err := storage.GetStorageProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.RegionId, provider.Bucket, endpoint, certificate, provider.Content)
 	if err != nil {
 		return nil, err
 	}
@@ -144,9 +156,13 @@ func uploadFile(provider *Provider, fullFilePath string, fileBuffer *bytes.Buffe
 	fileUrl, objectKey := GetUploadFileUrl(provider, fullFilePath, true)
 	objectKeyRefined := refineObjectKey(provider, objectKey)
 
-	_, err = storageProvider.Put(objectKeyRefined, fileBuffer)
+	object, err := storageProvider.Put(objectKeyRefined, fileBuffer)
 	if err != nil {
 		return "", "", err
+	}
+
+	if provider.Type == "Casdoor" {
+		fileUrl = object.Path
 	}
 
 	return fileUrl, objectKey, nil

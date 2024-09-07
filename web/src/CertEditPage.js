@@ -288,14 +288,14 @@ class CertEditPage extends React.Component {
           Setting.showMessage("success", i18next.t("general:Successfully saved"));
           this.setState({
             certName: this.state.cert.name,
+          }, () => {
+            if (exitAfterSave) {
+              this.props.history.push("/certs");
+            } else {
+              this.props.history.push(`/certs/${this.state.cert.owner}/${this.state.cert.name}`);
+              this.getCert();
+            }
           });
-
-          if (exitAfterSave) {
-            this.props.history.push("/certs");
-          } else {
-            this.props.history.push(`/certs/${this.state.cert.owner}/${this.state.cert.name}`);
-            this.getCert();
-          }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
           this.updateCertField("name", this.state.certName);

@@ -229,6 +229,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_synology.png`,
       url: "https://www.synology.com/en-global/dsm/feature/file_sharing",
     },
+    "Casdoor": {
+      logo: `${StaticBaseUrl}/img/casdoor.png`,
+      url: "https://casdoor.org/docs/provider/storage/overview",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -280,6 +284,14 @@ export const OtherProviderInfo = {
       url: "https://pkg.go.dev/github.com/dchest/captcha",
     },
     "reCAPTCHA": {
+      logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
+      url: "https://www.google.com/recaptcha",
+    },
+    "reCAPTCHA v2": {
+      logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
+      url: "https://www.google.com/recaptcha",
+    },
+    "reCAPTCHA v3": {
       logo: `${StaticBaseUrl}/img/social_recaptcha.png`,
       url: "https://www.google.com/recaptcha",
     },
@@ -1062,6 +1074,7 @@ export function getProviderTypeOptions(category) {
         {id: "Qiniu Cloud Kodo", name: "Qiniu Cloud Kodo"},
         {id: "Google Cloud Storage", name: "Google Cloud Storage"},
         {id: "Synology", name: "Synology"},
+        {id: "Casdoor", name: "Casdoor"},
       ]
     );
   } else if (category === "SAML") {
@@ -1083,7 +1096,8 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Captcha") {
     return ([
       {id: "Default", name: "Default"},
-      {id: "reCAPTCHA", name: "reCAPTCHA"},
+      {id: "reCAPTCHA v2", name: "reCAPTCHA v2"},
+      {id: "reCAPTCHA v3", name: "reCAPTCHA v3"},
       {id: "hCaptcha", name: "hCaptcha"},
       {id: "Aliyun Captcha", name: "Aliyun Captcha"},
       {id: "GEETEST", name: "GEETEST"},
