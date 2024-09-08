@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Image, Input, Row, Table, Tooltip} from "antd";
+import {Button, Col, Image, Input, Popover, QRCode, Row, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -23,6 +23,8 @@ class MfaAccountTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
+      qrUrl: this.props.qrUrl,
+      icon: this.props.icon,
       mfaAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
         item.key = index;
         return item;
@@ -158,6 +160,15 @@ class MfaAccountTable extends React.Component {
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
             <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Popover trigger="focus" content={
+              <QRCode
+                value={this.state.qrUrl}
+                icon={this.state.icon}
+                bordered={false}
+              />
+            }>
+              <Button style={{marginLeft: "5px"}} type="primary" size="small">{i18next.t("general:QR Code")}</Button>
+            </Popover>
           </div>
         )}
       />
