@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, List, QRCode, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -1040,26 +1040,6 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
-    } else if (accountItem.name === "MFA devices") {
-      return (
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("user:MFA devices"), i18next.t("user:MFA devices"))} :
-          </Col>
-          <Col span={(Setting.isMobile()) ? 22 : 2} >
-            <QRCode
-              value={
-                "casdoor-app://login/into?serverUrl=" + window.location.origin +
-                "&clientId=" + this.state.application.clientId +
-                "&organiz   ationName=" + this.state.organizationName +
-                "&appName=" + this.state.user.signupApplication
-              }
-              icon={this.state.user.avatar}
-              errorLevel="M"
-            />
-          </Col>
-        </Row>
-      );
     } else if (accountItem.name === "MFA accounts") {
       return (
         <Row style={{marginTop: "20px"}} >
@@ -1070,6 +1050,13 @@ class UserEditPage extends React.Component {
             <MfaAccountTable
               title={i18next.t("user:MFA accounts")}
               table={this.state.user.mfaAccounts}
+              qrUrl={
+                "casdoor-app://login/into?serverUrl=" + window.location.origin +
+                "&clientId=" + this.state.application.clientId +
+                "&organizationName=" + this.state.organizationName +
+                "&appName=" + this.state.user.signupApplication
+              }
+              icon={this.state.user.avatar}
               onUpdateTable={(table) => {this.updateUserField("mfaAccounts", table);}}
             />
           </Col>

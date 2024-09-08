@@ -109,7 +109,6 @@ class AccountTable extends React.Component {
       {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
       {name: "Face ID", label: i18next.t("user:Face ID")},
       {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
-      {name: "MFA devices", label: i18next.t("user:MFA devices")},
     ];
   };
 
