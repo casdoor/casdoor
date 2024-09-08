@@ -11,9 +11,11 @@ const {TabPane} = Tabs;
 const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmit}) => {
   const [activeKey, setActiveKey] = useState(initialUseIframeEditor ? "advanced" : "basic");
   const iframeRef = useRef(null);
+  const [localModelText, setLocalModelText] = useState(model.modelText);
 
   const handleModelTextChange = useCallback((newModelText) => {
     if (!Setting.builtInObject(model)) {
+      setLocalModelText(newModelText);
       onModelTextChange(newModelText);
     }
   }, [model, onModelTextChange]);
@@ -41,7 +43,16 @@ const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmi
   }, [onSubmit, submitModelEdit]);
 
   const handleTabChange = (key) => {
-    setActiveKey(key);
+    if (activeKey === "advanced" && key === "basic") {
+      submitModelEdit().then(() => {
+        setActiveKey(key);
+      });
+    } else {
+      setActiveKey(key);
+      if (key === "advanced" && iframeRef.current) {
+        iframeRef.current.updateModelText(localModelText);
+      }
+    }
   };
 
   return (
@@ -54,13 +65,13 @@ const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmi
         {activeKey === "advanced" ? (
           <IframeEditor
             ref={iframeRef}
-            modelText={model.modelText}
+            modelText={localModelText}
             onModelTextChange={handleModelTextChange}
             style={{width: "100%", height: "100%"}}
           />
         ) : (
           <CodeMirror
-            value={model.modelText}
+            value={localModelText}
             className="full-height-editor no-horizontal-scroll"
             options={{mode: "properties", theme: "default"}}
             onBeforeChange={(editor, data, value) => {
