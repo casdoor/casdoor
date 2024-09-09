@@ -8,10 +8,11 @@ import {Tabs} from "antd";
 
 const {TabPane} = Tabs;
 
-const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmit}) => {
-  const [activeKey, setActiveKey] = useState(initialUseIframeEditor ? "advanced" : "basic");
+const CasbinEditor = ({model, onModelTextChange}) => {
+  const [activeKey, setActiveKey] = useState("basic");
   const iframeRef = useRef(null);
   const [localModelText, setLocalModelText] = useState(model.modelText);
+  const [_useIframeEditor, setUseIframeEditor] = useState(false);
 
   const handleModelTextChange = useCallback((newModelText) => {
     if (!Setting.builtInObject(model)) {
@@ -20,17 +21,17 @@ const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmi
     }
   }, [model, onModelTextChange]);
 
-  const submitModelEdit = useCallback(() => {
+  const syncModelText = useCallback(() => {
     if (activeKey === "advanced" && iframeRef.current) {
       return new Promise((resolve) => {
-        const handleSubmitMessage = (event) => {
+        const handleSyncMessage = (event) => {
           if (event.data.type === "modelUpdate") {
-            window.removeEventListener("message", handleSubmitMessage);
+            window.removeEventListener("message", handleSyncMessage);
             handleModelTextChange(event.data.modelText);
             resolve();
           }
         };
-        window.addEventListener("message", handleSubmitMessage);
+        window.addEventListener("message", handleSyncMessage);
         iframeRef.current.getModelText();
       });
     } else {
@@ -38,22 +39,19 @@ const CasbinEditor = ({model, initialUseIframeEditor, onModelTextChange, onSubmi
     }
   }, [activeKey, handleModelTextChange]);
 
-  useEffect(() => {
-    onSubmit(submitModelEdit);
-  }, [onSubmit, submitModelEdit]);
-
   const handleTabChange = (key) => {
-    if (activeKey === "advanced" && key === "basic") {
-      submitModelEdit().then(() => {
-        setActiveKey(key);
-      });
-    } else {
+    syncModelText().then(() => {
       setActiveKey(key);
+      setUseIframeEditor(key === "advanced");
       if (key === "advanced" && iframeRef.current) {
         iframeRef.current.updateModelText(localModelText);
       }
-    }
+    });
   };
+
+  useEffect(() => {
+    setLocalModelText(model.modelText);
+  }, [model.modelText]);
 
   return (
     <div style={{height: "100%", width: "100%", display: "flex", flexDirection: "column"}}>

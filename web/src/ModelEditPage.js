@@ -33,9 +33,7 @@ class ModelEditPage extends React.Component {
       organizations: [],
       users: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
-      useIframeEditor: false,
     };
-    this.submitModelEdit = this.submitModelEdit.bind(this);
   }
 
   UNSAFE_componentWillMount() {
@@ -89,12 +87,6 @@ class ModelEditPage extends React.Component {
   }
 
   submitModelEdit(exitAfterSave) {
-    this.modelEditorSubmit().then(() => {
-      this.performSubmit(exitAfterSave);
-    });
-  }
-
-  performSubmit(exitAfterSave) {
     const model = Setting.deepCopy(this.state.model);
     ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
       .then((res) => {
@@ -193,11 +185,7 @@ class ModelEditPage extends React.Component {
             <div style={{position: "relative", height: "500px"}} >
               <ModelEditor
                 model={this.state.model}
-                useIframeEditor={this.state.useIframeEditor}
                 onModelTextChange={(value) => this.updateModelField("modelText", value)}
-                onSubmit={(submitFunc) => {
-                  this.modelEditorSubmit = submitFunc;
-                }}
               />
             </div>
           </Col>
