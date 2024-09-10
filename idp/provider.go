@@ -115,6 +115,8 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewDouyinIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Bilibili":
 		return NewBilibiliIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+	case "CSTNET":
+		return NewCSTNETIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "MetaMask":
 		return NewMetaMaskIdProvider(), nil
 	case "Web3Onboard":

@@ -1083,7 +1083,6 @@ func (c *ApiController) GetCaptchaStatus() {
 func (c *ApiController) Callback() {
 	code := c.GetString("code")
 	state := c.GetString("state")
-
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", code, state)
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
 }
