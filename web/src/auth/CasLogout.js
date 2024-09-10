@@ -48,6 +48,7 @@ class CasLogout extends React.Component {
               }
             });
           } else {
+            Setting.showMessage("success", "Logged out successfully");
             this.props.onUpdateAccount(null);
             if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
               Setting.goToLink(redirectUri);
@@ -56,7 +57,6 @@ class CasLogout extends React.Component {
             } else {
               Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
             }
-            Setting.showMessage("success", "Logged out successfully");
           }
         });
       }, logoutInterval);
