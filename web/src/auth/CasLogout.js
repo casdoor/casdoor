@@ -34,50 +34,38 @@ class CasLogout extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
-
     const logoutInterval = 100;
-    const logoutTimeOut = (s, redirectUri, linkSoftFlag) => {
+
+    const logoutTimeOut = (redirectUri) => {
       setTimeout(() => {
         AuthBackend.getAccount().then((accountRes) => {
           if (accountRes.status === "ok") {
             AuthBackend.logout().then((logoutRes) => {
               if (logoutRes.status === "ok") {
-                const redirectData = logoutRes.data2;
-                if (redirectData !== null && redirectData !== undefined && redirectData !== "") {
-                  logoutTimeOut(s, redirectData, false);
-                } else if (params.has("service")) {
-                  logoutTimeOut(s, params.get("service"), false);
-                } else {
-                  logoutTimeOut(s, `/cas/${this.state.owner}/${this.state.applicationName}/login`, true);
-                }
+                logoutTimeOut(logoutRes.data2);
               } else {
                 Setting.showMessage("error", `Failed to log out: ${logoutRes.msg}`);
               }
             });
           } else {
-            if (linkSoftFlag) {
-              Setting.goToLinkSoft(this, redirectUri);
-            } else {
+            this.props.onUpdateAccount(null);
+            if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
               Setting.goToLink(redirectUri);
+            } else if (params.has("service")) {
+              Setting.goToLink(params.get("service"));
+            } else {
+              Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
             }
             Setting.showMessage("success", "Logged out successfully");
-            this.props.onUpdateAccount(null);
           }
         });
-      }, s);
+      }, logoutInterval);
     };
 
     AuthBackend.logout()
       .then((res) => {
         if (res.status === "ok") {
-          const redirectUri = res.data2;
-          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
-            logoutTimeOut(logoutInterval, redirectUri, false);
-          } else if (params.has("service")) {
-            logoutTimeOut(logoutInterval, params.get("service"), false);
-          } else {
-            logoutTimeOut(logoutInterval, `/cas/${this.state.owner}/${this.state.applicationName}/login`, true);
-          }
+          logoutTimeOut(res.data2);
         } else {
           Setting.showMessage("error", `Failed to log out: ${res.msg}`);
         }
