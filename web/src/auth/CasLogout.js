@@ -44,11 +44,11 @@ class CasLogout extends React.Component {
               if (logoutRes.status === "ok") {
                 logoutTimeOut(logoutRes.data2);
               } else {
-                Setting.showMessage("error", `Failed to log out: ${logoutRes.msg}`);
+                Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${logoutRes.msg}`);
               }
             });
           } else {
-            Setting.showMessage("success", "Logged out successfully");
+            Setting.showMessage("success", i18next.t("application:Logged out successfully"));
             this.props.onUpdateAccount(null);
             if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
               Setting.goToLink(redirectUri);
@@ -67,7 +67,7 @@ class CasLogout extends React.Component {
         if (res.status === "ok") {
           logoutTimeOut(res.data2);
         } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${res.msg}`);
         }
       });
   }
