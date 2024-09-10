@@ -34,25 +34,42 @@ class CasLogout extends React.Component {
 
   UNSAFE_componentWillMount() {
     const params = new URLSearchParams(this.props.location.search);
+    const logoutInterval = 100;
+
+    const logoutTimeOut = (redirectUri) => {
+      setTimeout(() => {
+        AuthBackend.getAccount().then((accountRes) => {
+          if (accountRes.status === "ok") {
+            AuthBackend.logout().then((logoutRes) => {
+              if (logoutRes.status === "ok") {
+                logoutTimeOut(logoutRes.data2);
+              } else {
+                Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${logoutRes.msg}`);
+              }
+            });
+          } else {
+            Setting.showMessage("success", i18next.t("application:Logged out successfully"));
+            this.props.onUpdateAccount(null);
+            if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
+              Setting.goToLink(redirectUri);
+            } else if (params.has("service")) {
+              Setting.goToLink(params.get("service"));
+            } else {
+              Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
+            }
+          }
+        });
+      }, logoutInterval);
+    };
 
     AuthBackend.logout()
       .then((res) => {
         if (res.status === "ok") {
-          Setting.showMessage("success", "Logged out successfully");
-          this.props.onUpdateAccount(null);
-          const redirectUri = res.data2;
-          if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
-            Setting.goToLink(redirectUri);
-          } else if (params.has("service")) {
-            Setting.goToLink(params.get("service"));
-          } else {
-            Setting.goToLinkSoft(this, `/cas/${this.state.owner}/${this.state.applicationName}/login`);
-          }
+          logoutTimeOut(res.data2);
         } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("login:Failed to log out")}: ${res.msg}`);
         }
       });
-
   }
 
   render() {
