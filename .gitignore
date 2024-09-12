@@ -32,5 +32,6 @@ commentsRouter*.go
 casdoor
 server
 
+casdoor.db
 # include helm-chart
 !manifests/casdoor

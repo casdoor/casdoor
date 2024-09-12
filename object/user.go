@@ -127,6 +127,7 @@ type User struct {
 	Slack           string `xorm:"slack varchar(100)" json:"slack"`
 	Steam           string `xorm:"steam varchar(100)" json:"steam"`
 	Bilibili        string `xorm:"bilibili varchar(100)" json:"bilibili"`
+	CSTNET          string `xorm:"cstnet varchar(100)" json:"cstnet"`
 	Okta            string `xorm:"okta varchar(100)" json:"okta"`
 	Douyin          string `xorm:"douyin varchar(100)" json:"douyin"`
 	Line            string `xorm:"line varchar(100)" json:"line"`
@@ -691,7 +692,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
 			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
-			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
+			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "cstnet", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",

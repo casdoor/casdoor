@@ -7401,6 +7401,9 @@
                 "bilibili": {
                     "type": "string"
                 },
+                "cstnet": {
+                    "type": "string"
+                },
                 "bio": {
                     "type": "string"
                 },

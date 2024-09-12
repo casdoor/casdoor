@@ -38,6 +38,7 @@ import AzureADB2CLoginButton from "./AzureADB2CLoginButton";
 import SlackLoginButton from "./SlackLoginButton";
 import SteamLoginButton from "./SteamLoginButton";
 import BilibiliLoginButton from "./BilibiliLoginButton";
+import CSTNETLoginButton from "./CSTNETLoginButton";
 import OktaLoginButton from "./OktaLoginButton";
 import DouyinLoginButton from "./DouyinLoginButton";
 import LoginButton from "./LoginButton";
@@ -92,6 +93,8 @@ function getSigninButton(provider) {
     return <SteamLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Bilibili") {
     return <BilibiliLoginButton text={text} align={"center"} />;
+  } else if (provider.type === "CSTNET") {
+    return <CSTNETLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Okta") {
     return <OktaLoginButton text={text} align={"center"} />;
   } else if (provider.type === "Douyin") {
