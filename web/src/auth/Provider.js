@@ -125,6 +125,9 @@ const authInfo = {
   Bilibili: {
     endpoint: "https://passport.bilibili.com/register/pc_oauth2.html",
   },
+  CSTNET: {
+    endpoint: "https://passport.escience.cn/oauth2/authorize",
+  },
   Line: {
     scope: "profile%20openid%20email",
     endpoint: "https://access.line.me/oauth2/v2.1/authorize",
@@ -474,6 +477,8 @@ export function getAuthUrl(application, provider, method, code) {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
+  } else if (provider.type === "CSTNET") {
+    return `${endpoint}?response_type=code&client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&theme=full`;
   } else if (provider.type === "Deezer") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&perms=${scope}`;
   } else if (provider.type === "Lastfm") {
