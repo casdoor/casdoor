@@ -58,7 +58,7 @@ func CorsFilter(ctx *context.Context) {
 		return
 	}
 
-	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/login/oauth/access_token" {
+	if ctx.Request.Method == "POST" && (ctx.Request.RequestURI == "/api/login/oauth/access_token" || ctx.Request.RequestURI == "/api/acs") {
 		setCorsHeaders(ctx, origin)
 		return
 	}
