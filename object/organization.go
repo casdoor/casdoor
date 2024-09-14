@@ -282,7 +282,7 @@ func GetAccountItemByName(name string, organization *Organization) *AccountItem 
 
 func CheckAccountItemModifyRule(accountItem *AccountItem, isAdmin bool, lang string) (bool, string) {
 	if accountItem == nil {
-		return false, fmt.Sprintf(i18n.Translate(lang, "organization:Only items in Account items are allowed to be modified."))
+		return true, ""
 	}
 
 	switch accountItem.ModifyRule {
