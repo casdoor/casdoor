@@ -78,7 +78,7 @@ type Application struct {
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
-	UseEmailAsNameId      bool            `json:"useEmailAsNameId"`
+	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
 	OrgChoiceMode         string          `json:"orgChoiceMode"`

@@ -65,7 +65,11 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	assertion.CreateAttr("IssueInstant", now)
 	assertion.CreateElement("saml:Issuer").SetText(host)
 	subject := assertion.CreateElement("saml:Subject")
-	subject.CreateElement("saml:NameID").SetText(user.Name)
+	nameIDValue := user.Name
+	if application.UseEmailAsSamlNameId {
+		nameIDValue = user.Email
+	}
+	subject.CreateElement("saml:NameID").SetText(nameIDValue)
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateAttr("Method", "urn:oasis:names:tc:SAML:2.0:cm:bearer")
 	subjectConfirmationData := subjectConfirmation.CreateElement("saml:SubjectConfirmationData")
@@ -430,7 +434,11 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	// nameIdentifier inside subject
 	nameIdentifier := subject.CreateElement("saml:NameIdentifier")
 	// nameIdentifier.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
-	nameIdentifier.SetText(user.Name)
+	if application.UseEmailAsSamlNameId {
+		nameIdentifier.SetText(user.Email)
+	} else {
+		nameIdentifier.SetText(user.Name)
+	}
 
 	// subjectConfirmation inside subject
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
@@ -439,7 +447,7 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	attributeStatement := assertion.CreateElement("saml:AttributeStatement")
 	subjectInAttribute := attributeStatement.CreateElement("saml:Subject")
 	nameIdentifierInAttribute := subjectInAttribute.CreateElement("saml:NameIdentifier")
-	if application.UseEmailAsNameId {
+	if application.UseEmailAsSamlNameId {
 		nameIdentifierInAttribute.SetText(user.Email)
 	} else {
 		nameIdentifierInAttribute.SetText(user.Name)

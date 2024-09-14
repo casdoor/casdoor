@@ -708,8 +708,8 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Use Email as NameID"), i18next.t("application:Use Email as NameID - Tooltip"))} :
           </Col>
           <Col span={1}>
-            <Switch checked={this.state.application.useEmailAsNameId} onChange={checked => {
-              this.updateApplicationField("useEmailAsNameId", checked);
+            <Switch checked={this.state.application.useEmailAsSamlNameId} onChange={checked => {
+              this.updateApplicationField("useEmailAsSamlNameId", checked);
             }} />
           </Col>
         </Row>
