@@ -281,7 +281,7 @@ func GetValidationBySaml(samlRequest string, host string) (string, string, error
 		return "", "", fmt.Errorf("the application for user %s is not found", userId)
 	}
 
-	samlResponse, err := NewSamlResponse11(user, request.RequestID, host)
+	samlResponse, err := NewSamlResponse11(application, user, request.RequestID, host)
 	if err != nil {
 		return "", "", err
 	}
