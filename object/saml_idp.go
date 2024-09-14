@@ -386,7 +386,7 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 }
 
 // NewSamlResponse11 return a saml1.1 response(not 2.0)
-func NewSamlResponse11(user *User, requestID string, host string) (*etree.Element, error) {
+func NewSamlResponse11(application *Application, user *User, requestID string, host string) (*etree.Element, error) {
 	samlResponse := &etree.Element{
 		Space: "samlp",
 		Tag:   "Response",
@@ -439,7 +439,11 @@ func NewSamlResponse11(user *User, requestID string, host string) (*etree.Elemen
 	attributeStatement := assertion.CreateElement("saml:AttributeStatement")
 	subjectInAttribute := attributeStatement.CreateElement("saml:Subject")
 	nameIdentifierInAttribute := subjectInAttribute.CreateElement("saml:NameIdentifier")
-	nameIdentifierInAttribute.SetText(user.Name)
+	if application.UseEmailAsNameId {
+		nameIdentifierInAttribute.SetText(user.Email)
+	} else {
+		nameIdentifierInAttribute.SetText(user.Name)
+	}
 
 	subjectConfirmationInAttribute := subjectInAttribute.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmationInAttribute.CreateElement("saml:ConfirmationMethod").SetText("urn:oasis:names:tc:SAML:1.0:cm:artifact")
