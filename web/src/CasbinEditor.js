@@ -12,7 +12,6 @@ const CasbinEditor = ({model, onModelTextChange}) => {
   const [activeKey, setActiveKey] = useState("basic");
   const iframeRef = useRef(null);
   const [localModelText, setLocalModelText] = useState(model.modelText);
-  const [_useIframeEditor, setUseIframeEditor] = useState(false);
 
   const handleModelTextChange = useCallback((newModelText) => {
     if (!Setting.builtInObject(model)) {
@@ -22,8 +21,8 @@ const CasbinEditor = ({model, onModelTextChange}) => {
   }, [model, onModelTextChange]);
 
   const syncModelText = useCallback(() => {
-    if (activeKey === "advanced" && iframeRef.current) {
-      return new Promise((resolve) => {
+    return new Promise((resolve) => {
+      if (activeKey === "advanced" && iframeRef.current) {
         const handleSyncMessage = (event) => {
           if (event.data.type === "modelUpdate") {
             window.removeEventListener("message", handleSyncMessage);
@@ -33,16 +32,15 @@ const CasbinEditor = ({model, onModelTextChange}) => {
         };
         window.addEventListener("message", handleSyncMessage);
         iframeRef.current.getModelText();
-      });
-    } else {
-      return Promise.resolve();
-    }
+      } else {
+        resolve();
+      }
+    });
   }, [activeKey, handleModelTextChange]);
 
   const handleTabChange = (key) => {
     syncModelText().then(() => {
       setActiveKey(key);
-      setUseIframeEditor(key === "advanced");
       if (key === "advanced" && iframeRef.current) {
         iframeRef.current.updateModelText(localModelText);
       }
@@ -63,7 +61,7 @@ const CasbinEditor = ({model, onModelTextChange}) => {
         {activeKey === "advanced" ? (
           <IframeEditor
             ref={iframeRef}
-            modelText={localModelText}
+            initialModelText={localModelText}
             onModelTextChange={handleModelTextChange}
             style={{width: "100%", height: "100%"}}
           />
