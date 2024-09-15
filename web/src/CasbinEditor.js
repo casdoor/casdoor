@@ -9,7 +9,7 @@ import {Tabs} from "antd";
 const {TabPane} = Tabs;
 
 const CasbinEditor = ({model, onModelTextChange}) => {
-  const [activeKey, setActiveKey] = useState("basic");
+  const [activeKey, setActiveKey] = useState("advanced");
   const iframeRef = useRef(null);
   const [localModelText, setLocalModelText] = useState(model.modelText);
 
