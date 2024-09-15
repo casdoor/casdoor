@@ -950,7 +950,17 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	return deleteUser(user)
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return false, err
+	}
+	if organization != nil && organization.EnableSoftDeletion {
+		user.IsDeleted = true
+		user.DeletedTime = util.GetCurrentTime()
+		return UpdateUser(user.GetId(), user, []string{"is_deleted", "deleted_time"}, false)
+	} else {
+		return deleteUser(user)
+	}
 }
 
 func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, error) {
