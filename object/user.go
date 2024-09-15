@@ -954,7 +954,7 @@ func DeleteUser(user *User) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if organization.EnableSoftDeletion {
+	if organization != nil && organization.EnableSoftDeletion {
 		user.IsDeleted = true
 		user.DeletedTime = util.GetCurrentTime()
 		return UpdateUser(user.GetId(), user, []string{"is_deleted", "deleted_time"}, false)
