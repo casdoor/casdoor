@@ -86,45 +86,6 @@ class ModelEditPage extends React.Component {
     });
   }
 
-  submitModelEdit(exitAfterSave) {
-    const model = Setting.deepCopy(this.state.model);
-    ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
-      .then((res) => {
-        if (res.status === "ok") {
-          Setting.showMessage("success", i18next.t("general:Successfully saved"));
-          this.setState({
-            modelName: this.state.model.name,
-          });
-
-          if (exitAfterSave) {
-            this.props.history.push("/models");
-          } else {
-            this.props.history.push(`/models/${this.state.model.owner}/${this.state.model.name}`);
-          }
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updateModelField("name", this.state.modelName);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
-  }
-
-  deleteModel() {
-    ModelBackend.deleteModel(this.state.model)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.props.history.push("/models");
-        } else {
-          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
-        }
-      })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
-      });
-  }
-
   renderModel() {
     return (
       <Card size="small" title={
@@ -192,6 +153,45 @@ class ModelEditPage extends React.Component {
         </Row>
       </Card>
     );
+  }
+
+  submitModelEdit(exitAfterSave) {
+    const model = Setting.deepCopy(this.state.model);
+    ModelBackend.updateModel(this.state.organizationName, this.state.modelName, model)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully saved"));
+          this.setState({
+            modelName: this.state.model.name,
+          });
+
+          if (exitAfterSave) {
+            this.props.history.push("/models");
+          } else {
+            this.props.history.push(`/models/${this.state.model.owner}/${this.state.model.name}`);
+          }
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+          this.updateModelField("name", this.state.modelName);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
+  deleteModel() {
+    ModelBackend.deleteModel(this.state.model)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push("/models");
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
   }
 
   render() {
