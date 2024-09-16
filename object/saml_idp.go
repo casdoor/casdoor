@@ -188,17 +188,17 @@ type NameIDFormat struct {
 }
 
 type SingleSignOnService struct {
-	XMLName  xml.Name
+	// XMLName  xml.Name
 	Binding  string `xml:"Binding,attr"`
 	Location string `xml:"Location,attr"`
 }
 
 type Attribute struct {
 	// XMLName      xml.Name
+	Xmlns        string   `xml:"xmlns,attr"`
 	Name         string   `xml:"Name,attr"`
 	NameFormat   string   `xml:"NameFormat,attr"`
 	FriendlyName string   `xml:"FriendlyName,attr"`
-	Xmlns        string   `xml:"xmlns,attr"`
 	Values       []string `xml:"AttributeValue"`
 }
 
