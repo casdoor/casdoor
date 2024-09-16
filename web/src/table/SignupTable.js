@@ -73,6 +73,16 @@ class SignupTable extends React.Component {
     this.updateTable(table);
   }
 
+  addCustomRow(table) {
+    const randomName = "Text " + Date.now().toString();
+    const row = {name: Setting.getNewRowNameForTable(table, randomName), visible: true, rule: "Signal Choice", isCustom: true, customItemField: ""};
+    if (table === undefined) {
+      table = [];
+    }
+    table = Setting.addRow(table, row);
+    this.updateTable(table);
+  }
+
   deleteRow(table, i) {
     table = Setting.deleteRow(table, i);
     this.updateTable(table);
@@ -89,12 +99,20 @@ class SignupTable extends React.Component {
   }
 
   renderTable(table) {
+    table = table ?? [];
     const columns = [
       {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
+          if (record.isCustom) {
+            return <Input style={{width: "100%"}}
+              value={text} onPressEnter={e => {
+                this.updateField(table, index, "name", e.target.value);
+              }} disabled>
+            </Input>;
+          }
           const items = [
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "ID", displayName: i18next.t("general:ID")},
@@ -207,7 +225,7 @@ class SignupTable extends React.Component {
         key: "label",
         width: "150px",
         render: (text, record, index) => {
-          if (record.name.startsWith("Text ")) {
+          if (record.name.startsWith("Text ") || record?.isCustom) {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
@@ -239,22 +257,25 @@ class SignupTable extends React.Component {
         key: "customCss",
         width: "180px",
         render: (text, record, index) => {
-          return (
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}}>
-                <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
-                  }}
-                />
-              </div>
-            } title={i18next.t("application:CSS style")} trigger="click">
-              <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
-                this.updateField(table, index, "customCss", e.target.value ? e.target.value : SignupTableDefaultCssMap[record.name]);
-              }} />
-            </Popover>
-          );
+          if (!record.name.startsWith("Text ") && !record?.isCustom) {
+            return (
+              <Popover placement="right" content={
+                <div style={{width: "900px", height: "300px"}}>
+                  <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
+                    options={{mode: "css", theme: "material-darker"}}
+                    onBeforeChange={(editor, data, value) => {
+                      this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
+                    }}
+                  />
+                </div>
+              } title={i18next.t("application:CSS style")} trigger="click">
+                <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
+                  this.updateField(table, index, "customCss", e.target.value ? e.target.value : SignupTableDefaultCssMap[record.name]);
+                }} />
+              </Popover>
+            );
+          }
+          return null;
         },
       },
       {
@@ -289,6 +310,22 @@ class SignupTable extends React.Component {
               this.updateField(table, index, "regex", e.target.value);
             }} />
           );
+        },
+      },
+      {
+        title: i18next.t("signup:Custom Item Field"),
+        dataIndex: "customItemField",
+        key: "customItemField",
+        render: (text, record, index) => {
+          if (record.isCustom && (record.rule === "Multiple Choices" || record.rule === "Signal Choice")) {
+            return (
+              <Input
+                value={text}
+                onChange={e => this.updateField(table, index, "customItemField", e.target.value)}
+              />
+            );
+          }
+          return null;
         },
       },
       {
@@ -329,6 +366,11 @@ class SignupTable extends React.Component {
             options = [
               {id: "big", name: i18next.t("application:Big icon")},
               {id: "small", name: i18next.t("application:Small icon")},
+            ];
+          } else if (record.isCustom === true) {
+            options = [
+              {id: "Signal Choice", name: i18next.t("application:Signal Choice")},
+              {id: "Multiple Choices", name: i18next.t("application:Multiple Choices")},
             ];
           }
 
@@ -371,6 +413,7 @@ class SignupTable extends React.Component {
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
             <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addCustomRow(table)}>{i18next.t("general:Add custom item")}</Button>
           </div>
         )}
       />
