@@ -60,10 +60,10 @@ code {
   height: 100%;
 }
 
-.no-horizontal-scroll [class*="CodeMirror-hscrollbar"] {
+.no-horizontal-scroll-editor [class*="CodeMirror-hscrollbar"] {
   display: none !important;
 }
 
-.no-horizontal-scroll [class*="CodeMirror-scroll"] {
+.no-horizontal-scroll-editor [class*="CodeMirror-scroll"] {
   overflow-x: hidden !important;
 }

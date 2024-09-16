@@ -82,7 +82,7 @@ const CasbinEditor = ({model, onModelTextChange}) => {
         ) : (
           <CodeMirror
             value={localModelText}
-            className="full-height-editor no-horizontal-scroll"
+            className="full-height-editor no-horizontal-scroll-editor"
             options={{mode: "properties", theme: "default"}}
             onBeforeChange={(editor, data, value) => {
               handleModelTextChange(value);
