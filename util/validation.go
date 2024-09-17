@@ -100,11 +100,9 @@ func FilterField(field string) bool {
 	return ReFieldWhiteList.MatchString(field)
 }
 
-func ValidateCustomFields(keys []string) error {
-	for _, key := range keys {
-		if reInvalidKey.MatchString(key) {
-			return fmt.Errorf("invalid key: %s contains spaces or special characters", key)
-		}
+func ValidateCustomFields(key string) error {
+	if reInvalidKey.MatchString(key) {
+		return fmt.Errorf("invalid key: %s contains spaces or special characters", key)
 	}
 	return nil
 }

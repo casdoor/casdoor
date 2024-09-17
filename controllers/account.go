@@ -90,16 +90,6 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	keys := make([]string, 0, len(authForm.CustomFields))
-	for i := range authForm.CustomFields {
-		keys = append(keys, string(authForm.CustomFields[i]))
-	}
-
-	if err := util.ValidateCustomFields(keys); err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -140,6 +130,42 @@ func (c *ApiController) Signup() {
 	invitationName := ""
 	if invitation != nil {
 		invitationName = invitation.Name
+	}
+
+	var customFields map[string]interface{}
+	if err := json.Unmarshal([]byte(authForm.CustomFields), &customFields); err != nil {
+		c.ResponseError(c.T(fmt.Sprintf("failed to unmarshal custom fields: %v", err)))
+		return
+	}
+
+	for label, options := range customFields {
+		if err := util.ValidateCustomFields(label); err != nil {
+			c.ResponseError(c.T(err.Error()))
+			return
+		}
+
+		switch options := options.(type) {
+		case string:
+			if err := util.ValidateCustomFields(options); err != nil {
+				c.ResponseError(c.T(err.Error()))
+				return
+			}
+		case []interface{}:
+			for _, option := range options {
+				if optionStr, ok := option.(string); ok {
+					if err := util.ValidateCustomFields(optionStr); err != nil {
+						c.ResponseError(c.T(err.Error()))
+						return
+					}
+				} else {
+					c.ResponseError(c.T("invalid option: expected string"))
+					return
+				}
+			}
+		default:
+			c.ResponseError(c.T("invalid options format"))
+			return
+		}
 	}
 
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
