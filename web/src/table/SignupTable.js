@@ -257,7 +257,7 @@ class SignupTable extends React.Component {
         key: "customCss",
         width: "180px",
         render: (text, record, index) => {
-          if (!record.name.startsWith("Text ") && !record?.isCustom) {
+          if (!record.name.startsWith("Text ")) {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}}>

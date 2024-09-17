@@ -673,10 +673,14 @@ class SignupPage extends React.Component {
 
       );
     } else if (signupItem.name.startsWith("CustomItem")) {
+      const options = signupItem.customItemField.split(",").map(value => ({
+        value: value.trim(),
+        label: value.trim(),
+      }));
       return (
         <Form.Item
           name="custom_field"
-          className="signup-custom-field-field"
+          className="signup-custom-field"
           label={signupItem.label ? signupItem.label : i18next.t("signup:Custom Item Field")}
           rules={[
             {
@@ -685,7 +689,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <CustomItemSelect className="signup-custom-field-select" onChange={(value) => {this.setState({region: value});}} />
+          <CustomItemSelect options={options} className="signup-custom-field-select" onChange={(value) => {this.setState({region: value});}} />
         </Form.Item>
       );
     }
