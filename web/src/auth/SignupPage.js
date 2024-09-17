@@ -199,9 +199,20 @@ class SignupPage extends React.Component {
   onFinish(values) {
     const application = this.getApplicationObj();
 
+    const customFields = {};
+    const customFieldKeys = this.form.current.getFieldsValue(true);
+    for (const [key, value] of Object.entries(customFieldKeys)) {
+      if (key.startsWith("custom_field_")) {
+        const newKey = key.replace("custom_field_", "");
+        customFields[newKey] = value;
+      }
+    }
+    values.customFields = JSON.stringify(customFields);
+
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
+
     AuthBackend.signup(values)
       .then((res) => {
         if (res.status === "ok") {
@@ -677,9 +688,11 @@ class SignupPage extends React.Component {
         value: value.trim(),
         label: value.trim(),
       }));
+      const isMultiple = signupItem.rule === "Multiple Choices";
+      const isSingle = signupItem.rule === "Single Choice";
       return (
         <Form.Item
-          name="custom_field"
+          name={`custom_field_${signupItem.label}`}
           className="signup-custom-field"
           label={signupItem.label ? signupItem.label : i18next.t("signup:Custom Item Field")}
           rules={[
@@ -689,7 +702,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <CustomItemSelect options={options} className="signup-custom-field-select" onChange={(value) => {this.setState({region: value});}} />
+          <CustomItemSelect options={options} className="signup-custom-field-select" isMultiple={isMultiple} isSingle={isSingle} onChange={(value) => {this.setState({region: value});}} />
         </Form.Item>
       );
     }

@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Select} from "antd";
+import i18next from "i18next";
 
 const {Option} = Select;
 
@@ -21,7 +22,7 @@ class CustomItemSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.defaultValue || "",
+      value: props.defaultValue || [],
     };
   }
 
@@ -38,9 +39,10 @@ class CustomItemSelect extends React.Component {
         virtual={false}
         mode={isMultiple ? "multiple" : (isSingle ? "single" : undefined)}
         showSearch
+        allowClear={true}
         optionFilterProp="label"
         style={{width: "100%"}}
-        placeholder={placeholder || "Please select an item"}
+        placeholder={isMultiple ? "" : placeholder || i18next.t("Please select an item")}
         onChange={(value) => this.onChange(value)}
         filterOption={(input, option) =>
           (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
@@ -48,7 +50,7 @@ class CustomItemSelect extends React.Component {
         filterSort={(optionA, optionB) =>
           (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
         }
-        defaultValue={this.state.value}
+        value={Array.isArray(this.state.value) && this.state.value.length ? this.state.value : undefined}
       >
         {options.map((item) => (
           <Option key={item.value} value={item.value} label={item.label}>
