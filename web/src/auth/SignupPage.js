@@ -30,6 +30,7 @@ import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as InvitationBackend from "../backend/InvitationBackend";
+import CustomItemSelect from "../common/select/CustomItemSelect";
 
 const formItemLayout = {
   labelCol: {
@@ -670,6 +671,22 @@ class SignupPage extends React.Component {
           );
         })
 
+      );
+    } else if (signupItem.name.startsWith("CustomItem")) {
+      return (
+        <Form.Item
+          name="custom_field"
+          className="signup-custom-field-field"
+          label={signupItem.label ? signupItem.label : i18next.t("signup:Custom Item Field")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please select your options!"),
+            },
+          ]}
+        >
+          <CustomItemSelect className="signup-custom-field-select" onChange={(value) => {this.setState({region: value});}} />
+        </Form.Item>
       );
     }
   }

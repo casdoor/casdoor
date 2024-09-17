@@ -74,8 +74,8 @@ class SignupTable extends React.Component {
   }
 
   addCustomRow(table) {
-    const randomName = "Text " + Date.now().toString();
-    const row = {name: Setting.getNewRowNameForTable(table, randomName), visible: true, rule: "Signal Choice", isCustom: true, customItemField: ""};
+    const randomName = "CustomItem " + Date.now().toString();
+    const row = {name: Setting.getNewRowNameForTable(table, randomName), visible: true, rule: "Single Choice", isCustom: true, customItemField: ""};
     if (table === undefined) {
       table = [];
     }
@@ -317,11 +317,22 @@ class SignupTable extends React.Component {
         dataIndex: "customItemField",
         key: "customItemField",
         render: (text, record, index) => {
-          if (record.isCustom && (record.rule === "Multiple Choices" || record.rule === "Signal Choice")) {
+          const initialValue = text || "";
+          const isMultiple = record.rule === "Multiple Choices";
+          const isSingle = record.rule === "Single Choice";
+          const isCustom = record.isCustom;
+          if (isCustom && (isMultiple || isSingle)) {
+            const selectedValues = initialValue ? initialValue.split(",") : [];
             return (
-              <Input
-                value={text}
-                onChange={e => this.updateField(table, index, "customItemField", e.target.value)}
+              <Select
+                virtual={false}
+                mode="tags"
+                style={{width: "100%"}}
+                value={selectedValues}
+                placeholder={i18next.t("signup:Input Option Placeholder")}
+                onChange={value => {
+                  this.updateField(table, index, "customItemField", value.join(","));
+                }}
               />
             );
           }
@@ -369,7 +380,7 @@ class SignupTable extends React.Component {
             ];
           } else if (record.isCustom === true) {
             options = [
-              {id: "Signal Choice", name: i18next.t("application:Signal Choice")},
+              {id: "Single Choice", name: i18next.t("application:Single Choice")},
               {id: "Multiple Choices", name: i18next.t("application:Multiple Choices")},
             ];
           }
