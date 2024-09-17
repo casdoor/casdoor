@@ -18,8 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/form"
@@ -92,11 +90,14 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	for key := range authForm.CustomFields {
-		if strings.Contains(strconv.Itoa(key), " ") || regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`).MatchString(strconv.Itoa(key)) {
-			c.ResponseError(c.T("signup:Custom field names cannot contain spaces or special characters."))
-			return
-		}
+	keys := make([]string, 0, len(authForm.CustomFields))
+	for i := range authForm.CustomFields {
+		keys = append(keys, string(authForm.CustomFields[i]))
+	}
+
+	if err := util.ValidateCustomFields(keys); err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))

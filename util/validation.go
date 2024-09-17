@@ -28,6 +28,7 @@ var (
 	ReWhiteSpace     *regexp.Regexp
 	ReFieldWhiteList *regexp.Regexp
 	ReUserName       *regexp.Regexp
+	reInvalidKey     *regexp.Regexp
 )
 
 func init() {
@@ -35,6 +36,7 @@ func init() {
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
 	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*$")
+	reInvalidKey, _ = regexp.Compile(`[ !@#$%^&*(),.?":{}|<>]`)
 }
 
 func IsEmailValid(email string) bool {
@@ -96,4 +98,13 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 
 func FilterField(field string) bool {
 	return ReFieldWhiteList.MatchString(field)
+}
+
+func ValidateCustomFields(keys []string) error {
+	for _, key := range keys {
+		if reInvalidKey.MatchString(key) {
+			return fmt.Errorf("invalid key: %s contains spaces or special characters", key)
+		}
+	}
+	return nil
 }
