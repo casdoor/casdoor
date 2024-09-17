@@ -204,6 +204,12 @@ class SignupPage extends React.Component {
     for (const [key, value] of Object.entries(customFieldKeys)) {
       if (key.startsWith("custom_field_")) {
         const newKey = key.replace("custom_field_", "");
+
+        if (/[\s!@#$%^&*(),.?":{}|<>]/.test(newKey)) {
+          message.error(i18next.t("signup:Custom field names cannot contain spaces or special characters."));
+          return;
+        }
+
         customFields[newKey] = value;
       }
     }

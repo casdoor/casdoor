@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Popover, Row, Select, Switch, Table, Tooltip} from "antd";
+import {Button, Col, Input, Popover, Row, Select, Switch, Table, Tooltip, message} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -106,13 +106,6 @@ class SignupTable extends React.Component {
         dataIndex: "name",
         key: "name",
         render: (text, record, index) => {
-          if (record.isCustom) {
-            return <Input style={{width: "100%"}}
-              value={text} onPressEnter={e => {
-                this.updateField(table, index, "name", e.target.value);
-              }} disabled>
-            </Input>;
-          }
           const items = [
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "ID", displayName: i18next.t("general:ID")},
@@ -151,7 +144,9 @@ class SignupTable extends React.Component {
               onChange={value => {
                 this.updateField(table, index, "name", value);
                 this.updateField(table, index, "customCss", SignupTableDefaultCssMap[value]);
-              }} >
+              }}
+              disabled={record.isCustom}
+            >
               {
                 Setting.getDeduplicatedArray(items, table, "name").map((item, index) => <Option key={index} value={item.name}>{item.displayName}</Option>)
               }
@@ -225,6 +220,14 @@ class SignupTable extends React.Component {
         key: "label",
         width: "150px",
         render: (text, record, index) => {
+          const validateLabel = (value) => {
+            // 校验是否包含空格或特殊字符
+            if (/[\s!@#$%^&*(),.?":{}|<>]/.test(value)) {
+              message.error(i18next.t("signup:Label cannot contain spaces or special characters."));
+              return false;
+            }
+            return true;
+          };
           if (record.name.startsWith("Text ") || record?.isCustom) {
             return (
               <Popover placement="right" content={
@@ -238,7 +241,12 @@ class SignupTable extends React.Component {
                 </div>
               } title={i18next.t("signup:Label HTML")} trigger="click">
                 <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateField(table, index, "label", e.target.value);
+                  const newValue = e.target.value;
+                  if (validateLabel(newValue)) {
+                    this.updateField(table, index, "label", newValue);
+                  } else {
+                    e.target.value = text;
+                  }
                 }} />
               </Popover>
             );
@@ -246,7 +254,12 @@ class SignupTable extends React.Component {
 
           return (
             <Input value={text} onChange={e => {
-              this.updateField(table, index, "label", e.target.value);
+              const newValue = e.target.value;
+              if (validateLabel(newValue)) {
+                this.updateField(table, index, "label", newValue);
+              } else {
+                e.target.value = text;
+              }
             }} />
           );
         },
@@ -257,25 +270,25 @@ class SignupTable extends React.Component {
         key: "customCss",
         width: "180px",
         render: (text, record, index) => {
-          if (!record.name.startsWith("Text ")) {
-            return (
-              <Popover placement="right" content={
-                <div style={{width: "900px", height: "300px"}}>
-                  <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
-                    options={{mode: "css", theme: "material-darker"}}
-                    onBeforeChange={(editor, data, value) => {
-                      this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
-                    }}
-                  />
-                </div>
-              } title={i18next.t("application:CSS style")} trigger="click">
-                <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
-                  this.updateField(table, index, "customCss", e.target.value ? e.target.value : SignupTableDefaultCssMap[record.name]);
-                }} />
-              </Popover>
-            );
+          if (record.name.startsWith("Text ")) {
+            return null;
           }
-          return null;
+          return (
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}}>
+                <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:CSS style")} trigger="click">
+              <Input value={text ? text : SignupTableDefaultCssMap[record.name]} onChange={e => {
+                this.updateField(table, index, "customCss", e.target.value ? e.target.value : SignupTableDefaultCssMap[record.name]);
+              }} />
+            </Popover>
+          );
         },
       },
       {
@@ -318,10 +331,10 @@ class SignupTable extends React.Component {
         key: "customItemField",
         render: (text, record, index) => {
           const initialValue = text || "";
-          const isMultiple = record.rule === "Multiple Choices";
-          const isSingle = record.rule === "Single Choice";
           const isCustom = record.isCustom;
-          if (isCustom && (isMultiple || isSingle)) {
+          const isValidRule = ["Multiple Choices", "Single Choice"].includes(record.rule);
+
+          if (isCustom && isValidRule) {
             const selectedValues = initialValue ? initialValue.split(",") : [];
             return (
               <Select
