@@ -31,6 +31,7 @@ type AuthForm struct {
 	Affiliation    string `json:"affiliation"`
 	IdCard         string `json:"idCard"`
 	Region         string `json:"region"`
+	CustomFields   string `json:"customFields"`
 	InvitationCode string `json:"invitationCode"`
 
 	Application string `json:"application"`

@@ -205,6 +205,7 @@ func (c *ApiController) Signup() {
 		Phone:             authForm.Phone,
 		CountryCode:       authForm.CountryCode,
 		Address:           []string{},
+		CustomFields:      authForm.CustomFields,
 		Affiliation:       authForm.Affiliation,
 		IdCard:            authForm.IdCard,
 		Region:            authForm.Region,
