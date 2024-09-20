@@ -938,7 +938,7 @@ class LoginPage extends React.Component {
             signinItem.label ? Setting.renderSignupLink(application, signinItem.label) :
               (
                 <React.Fragment>
-                  {i18next.t("login:No account?")}
+                  {i18next.t("login:No account?")}&nbsp;
                   {
                     Setting.renderSignupLink(application, i18next.t("login:sign up now"))
                   }
