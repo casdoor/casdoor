@@ -114,7 +114,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		}
 	} else if user.Type == "guest-user" {
-		guestUserLifeTime := time.Duration(application.GuestUserLifetimeInHours) * time.Second
+		guestUserLifeTime := time.Duration(application.GuestUserLifetimeInHours) * time.Hour
 		if err != nil {
 			c.ResponseError(err.Error())
 		} else {
