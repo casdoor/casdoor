@@ -24,6 +24,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -493,6 +494,24 @@ func (c *ApiController) Login() {
 			organization, err = object.GetOrganizationByUser(user)
 			if err != nil {
 				c.ResponseError(err.Error())
+			}
+
+			if user.Type == "guest-user" {
+				guestUserLifeTime, err := time.ParseDuration(organization.GuestUserLifetime)
+				if err != nil {
+					c.ResponseError(err.Error())
+				} else {
+					createdTime := util.String2Time(user.CreatedTime)
+					if createdTime.Add(guestUserLifeTime).Before(time.Now()) {
+						_, err = object.DeleteUser(user)
+						if err != nil {
+							c.ResponseError(err.Error())
+						}
+						c.ResponseError(fmt.Sprintf(c.T("auth:The guest user account %s has expired"), user.Name))
+						return
+
+					}
+				}
 			}
 
 			if object.IsNeedPromptMfa(organization, user) {

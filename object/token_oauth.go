@@ -189,6 +189,46 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 	}, nil
 }
 
+func GetGuestUserToken(guestUser *User, clientId string, scope string, nonce string, host string) (interface{}, error) {
+	application, err := GetApplicationByClientId(clientId)
+	if err != nil {
+		return nil, err
+	}
+	if application == nil {
+		return &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "client_id is invalid",
+		}, nil
+	}
+
+	guestUser.Name = util.GetRandomName()
+	guestUser.Type = "guest-user"
+	guestUser.Owner = application.Organization
+	guestUser.CreatedTime = util.GetCurrentTime()
+	_, err = AddUser(guestUser)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := GetTokenByUser(application, guestUser, nonce, scope, host)
+	if err != nil {
+		return nil, err
+	}
+	token.CodeIsUsed = true
+	go updateUsedByCode(token)
+
+	tokenWrapper := &TokenWrapper{
+		AccessToken:  token.AccessToken,
+		IdToken:      token.AccessToken,
+		RefreshToken: token.RefreshToken,
+		TokenType:    token.TokenType,
+		ExpiresIn:    token.ExpiresIn,
+		Scope:        token.Scope,
+	}
+
+	return tokenWrapper, nil
+}
+
 func GetOAuthToken(grantType string, clientId string, clientSecret string, code string, verifier string, scope string, nonce string, username string, password string, host string, refreshToken string, tag string, avatar string, lang string) (interface{}, error) {
 	application, err := GetApplicationByClientId(clientId)
 	if err != nil {

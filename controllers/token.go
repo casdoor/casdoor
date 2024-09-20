@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -170,6 +171,7 @@ func (c *ApiController) GetOAuthToken() {
 	tag := c.Input().Get("tag")
 	avatar := c.Input().Get("avatar")
 	refreshToken := c.Input().Get("refresh_token")
+	state := c.Input().Get("state")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
@@ -220,13 +222,29 @@ func (c *ApiController) GetOAuthToken() {
 	}
 
 	host := c.Ctx.Request.Host
-	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+
+	if code == "guest-user" {
+		guestUser := new(object.User)
+		err := json.Unmarshal([]byte(state), guestUser)
+		if err != nil {
+			c.ResponseError(fmt.Sprintf("the state parameter cannot be parsed as user: %s", err.Error()))
+			return
+		}
+		token, err := object.GetGuestUserToken(guestUser, clientId, scope, nonce, host)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.Data["json"] = token
+	} else {
+		token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.Data["json"] = token
 	}
 
-	c.Data["json"] = token
 	c.SetTokenErrorHttpStatus()
 	c.ServeJSON()
 }
