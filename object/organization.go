@@ -79,9 +79,9 @@ type Organization struct {
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
 }
 
-func GetOrganizationCount(owner, field, value string) (int64, error) {
+func GetOrganizationCount(owner, name, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
-	return session.Count(&Organization{})
+	return session.Count(&Organization{Name: name})
 }
 
 func GetOrganizations(owner string, name ...string) ([]*Organization, error) {
