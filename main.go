@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -71,6 +72,15 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
+
+	sessionCookieLifeTimeStr := conf.GetConfigString("sessionCookieLifeTime")
+	if sessionCookieLifeTimeStr != "" {
+		sessionCookieLifeTime, err := strconv.Atoi(sessionCookieLifeTimeStr)
+		if err != nil {
+			panic(err)
+		}
+		beego.BConfig.WebConfig.Session.SessionCookieLifeTime = sessionCookieLifeTime
+	}
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
