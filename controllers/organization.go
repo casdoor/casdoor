@@ -65,7 +65,7 @@ func (c *ApiController) GetOrganizations() {
 			c.ResponseOk(organizations)
 		} else {
 			limit := util.ParseInt(limit)
-			count, err := object.GetOrganizationCount(owner, field, value)
+			count, err := object.GetOrganizationCount(owner, organizationName, field, value)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -138,7 +138,7 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
-	count, err := object.GetOrganizationCount("", "", "")
+	count, err := object.GetOrganizationCount("", "", "", "")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
