@@ -557,6 +557,14 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 			itemsChanged = append(itemsChanged, item)
 		}
 	}
+	if oldUser.NeedUpdateUsername != newUser.NeedUpdateUsername {
+		item := GetAccountItemByName("Need update username", organization)
+		if item == nil {
+			newUser.NeedUpdateUsername = oldUser.NeedUpdateUsername
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
 
 	if oldUser.Balance != newUser.Balance {
 		item := GetAccountItemByName("Balance", organization)

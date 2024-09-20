@@ -282,6 +282,10 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if oldUser.Type == "guest-user" && oldUser.NeedUpdateUsername && user.Name != oldUser.Name {
+		user.NeedUpdateUsername = false
+	}
+
 	if c.Input().Get("allowEmpty") == "" {
 		if user.DisplayName == "" {
 			c.ResponseError(c.T("user:Display name cannot be empty"))

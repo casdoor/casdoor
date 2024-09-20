@@ -402,10 +402,26 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:User type"), i18next.t("general:User type - Tooltip"))} :
           </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}
-              options={["normal-user", "paid-user"].map(item => Setting.getOption(item, item))}
-            />
+          <Col span={11} >
+            {
+              (this.state.user.type === "guest-user") ? (
+                <Select virtual={false} style={{width: "280Px"}} value={this.state.user.type} disabled options={["guest-user"].map(item => Setting.getOption(item, item))} />
+              ) : (
+                <Select virtual={false} style={{width: "280Px"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})} options={["normal-user", "paid-user"].map(item => Setting.getOption(item, item))} />
+              )
+            }
+          </Col>
+          <Col span={Setting.isMobile() ? 22 : 11} >
+            {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
+            {(this.state.user.type === "guest-user") ? (
+              <Button type={"default"}
+                onClick={() => {
+                  this.updateUserField("type", "normal-user");
+                  this.submitUserEdit(false);
+                }}>
+                {i18next.t("user:upgrade")}
+              </Button>
+            ) : null}
           </Col>
         </Row>
       );
@@ -1071,6 +1087,20 @@ class UserEditPage extends React.Component {
           <Col span={(Setting.isMobile()) ? 22 : 2} >
             <Switch disabled={(!this.state.user.phone) && (!this.state.user.email) && (!this.state.user.mfaProps)} checked={this.state.user.needUpdatePassword} onChange={checked => {
               this.updateUserField("needUpdatePassword", checked);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Need update username") {
+      window.console.log(this.state.user);
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Need update username"), i18next.t("user:Need update username - Tooltip"))} :
+          </Col>
+          <Col span={(Setting.isMobile()) ? 22 : 2} >
+            <Switch disabled={this.state.user.type === "guest-user"} checked={this.state.user.needUpdateUsername} onChange={checked => {
+              this.updateUserField("needUpdateUsername", checked);
             }} />
           </Col>
         </Row>

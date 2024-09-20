@@ -206,6 +206,16 @@ func GetRandomName() string {
 	return string(result)
 }
 
+func GetRandomPassport() string {
+	const charset = "0123456789abcdefghijklmnopqrstuvwxyz"
+	var result []byte
+	r := rand.New(rand.NewSource(time.Now().Add(1 * time.Second).UnixNano()))
+	for i := 0; i < 6; i++ {
+		result = append(result, charset[r.Intn(len(charset))])
+	}
+	return string(result)
+}
+
 func GetId(owner, name string) string {
 	return fmt.Sprintf("%s/%s", owner, name)
 }

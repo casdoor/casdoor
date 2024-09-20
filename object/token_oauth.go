@@ -201,10 +201,14 @@ func GetGuestUserToken(guestUser *User, clientId string, scope string, nonce str
 		}, nil
 	}
 
+	guestUser.Id = ""
 	guestUser.Name = util.GetRandomName()
+	guestUser.Password = util.GetRandomPassport()
 	guestUser.Type = "guest-user"
 	guestUser.Owner = application.Organization
 	guestUser.CreatedTime = util.GetCurrentTime()
+	guestUser.NeedUpdateUsername = true
+
 	_, err = AddUser(guestUser)
 	if err != nil {
 		return nil, err

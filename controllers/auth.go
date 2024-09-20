@@ -113,6 +113,27 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			}
 
 		}
+	} else if user.Type == "guest-user" {
+		guestUserLifeTime := time.Duration(application.GuestUserLifetimeInHours) * time.Second
+		if err != nil {
+			c.ResponseError(err.Error())
+		} else {
+			createdTime := util.String2Time(user.CreatedTime)
+			if createdTime.Add(guestUserLifeTime).Before(time.Now()) {
+				_, err = object.DeleteUser(user)
+				if err != nil {
+					c.ResponseError(err.Error())
+				}
+				c.ResponseError(fmt.Sprintf(c.T("auth:The guest user account %s has expired"), user.Name))
+				return
+
+			}
+		}
+
+		if user.NeedUpdateUsername {
+			// todo: update guest-user's username
+			c.ResponseError(fmt.Sprintf(c.T("auth:The guest user %s needs to update username"), user.Name))
+		}
 	}
 
 	if form.Type == ResponseTypeLogin {
@@ -494,24 +515,6 @@ func (c *ApiController) Login() {
 			organization, err = object.GetOrganizationByUser(user)
 			if err != nil {
 				c.ResponseError(err.Error())
-			}
-
-			if user.Type == "guest-user" {
-				guestUserLifeTime, err := time.ParseDuration(organization.GuestUserLifetime)
-				if err != nil {
-					c.ResponseError(err.Error())
-				} else {
-					createdTime := util.String2Time(user.CreatedTime)
-					if createdTime.Add(guestUserLifeTime).Before(time.Now()) {
-						_, err = object.DeleteUser(user)
-						if err != nil {
-							c.ResponseError(err.Error())
-						}
-						c.ResponseError(fmt.Sprintf(c.T("auth:The guest user account %s has expired"), user.Name))
-						return
-
-					}
-				}
 			}
 
 			if object.IsNeedPromptMfa(organization, user) {

@@ -104,6 +104,7 @@ class AccountTable extends React.Component {
       {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
       {name: "Is deleted", label: i18next.t("user:Is deleted")},
       {name: "Need update password", label: i18next.t("user:Need update password")},
+      {name: "Need update username", label: i18next.t("user:Need update username")},
       {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
       {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
       {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
