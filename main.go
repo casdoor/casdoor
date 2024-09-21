@@ -76,20 +76,12 @@ func main() {
 
 	sessionCookieLifeTimeStr := conf.GetConfigString("sessionCookieLifeTime")
 	if sessionCookieLifeTimeStr != "" {
-		sessionCookieLifeTime, err := strconv.Atoi(sessionCookieLifeTimeStr)
+		sessionCookieLifeTime, err := strconv.ParseInt(sessionCookieLifeTimeStr, 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		beego.BConfig.WebConfig.Session.SessionCookieLifeTime = sessionCookieLifeTime
-	}
-
-	sessionGCMaxLifetimeStr := conf.GetConfigString("sessionGCMaxLifetime")
-	if sessionGCMaxLifetimeStr != "" {
-		sessionGCMaxLifetime, err := strconv.ParseInt(sessionGCMaxLifetimeStr, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = sessionGCMaxLifetime
+		beego.BConfig.WebConfig.Session.SessionCookieLifeTime = int(sessionCookieLifeTime)
+		beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = sessionCookieLifeTime
 	}
 
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
