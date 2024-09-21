@@ -31,15 +31,17 @@ type SigninMethod struct {
 }
 
 type SignupItem struct {
-	Name        string `json:"name"`
-	Visible     bool   `json:"visible"`
-	Required    bool   `json:"required"`
-	Prompted    bool   `json:"prompted"`
-	CustomCss   string `json:"customCss"`
-	Label       string `json:"label"`
-	Placeholder string `json:"placeholder"`
-	Regex       string `json:"regex"`
-	Rule        string `json:"rule"`
+	Name        string   `json:"name"`
+	Visible     bool     `json:"visible"`
+	Required    bool     `json:"required"`
+	Prompted    bool     `json:"prompted"`
+	Type        string   `json:"type"`
+	CustomCss   string   `json:"customCss"`
+	Label       string   `json:"label"`
+	Placeholder string   `json:"placeholder"`
+	Options     []string `json:"options"`
+	Regex       string   `json:"regex"`
+	Rule        string   `json:"rule"`
 }
 
 type SigninItem struct {

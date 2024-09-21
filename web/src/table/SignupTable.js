@@ -65,7 +65,7 @@ class SignupTable extends React.Component {
   }
 
   addRow(table) {
-    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, rule: "None", customCss: ""};
+    const row = {name: Setting.getNewRowNameForTable(table, "Please select a signup item"), visible: true, required: true, options: [], rule: "None", customCss: ""};
     if (table === undefined) {
       table = [];
     }
@@ -202,6 +202,25 @@ class SignupTable extends React.Component {
         },
       },
       {
+        title: i18next.t("provider:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "160px",
+        render: (text, record, index) => {
+          const options = [
+            {id: "Input", name: i18next.t("application:Input")},
+            {id: "Single Choice", name: i18next.t("application:Single Choice")},
+            {id: "Multiple Choices", name: i18next.t("application:Multiple Choices")},
+          ];
+
+          return (
+            <Select virtual={false} style={{width: "100%"}} value={text} onChange={(value => {
+              this.updateField(table, index, "type", value);
+            })} options={options.map(item => Setting.getOption(item.name, item.id))} />
+          );
+        },
+      },
+      {
         title: i18next.t("signup:Label"),
         dataIndex: "label",
         key: "label",
@@ -261,7 +280,7 @@ class SignupTable extends React.Component {
         title: i18next.t("signup:Placeholder"),
         dataIndex: "placeholder",
         key: "placeholder",
-        width: "200px",
+        width: "110px",
         render: (text, record, index) => {
           if (record.name.startsWith("Text ")) {
             return null;
@@ -271,6 +290,26 @@ class SignupTable extends React.Component {
             <Input value={text} onChange={e => {
               this.updateField(table, index, "placeholder", e.target.value);
             }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("signup:Options"),
+        dataIndex: "options",
+        key: "options",
+        width: "180px",
+        render: (text, record, index) => {
+          if (record.type !== "Single Choice" && record.type !== "Multiple Choices") {
+            return null;
+          }
+
+          return (
+            <Select virtual={false} mode="tags" style={{width: "100%"}} value={text}
+              onChange={(value => {
+                this.updateField(table, index, "options", value);
+              })}
+              options={text?.map((option) => Setting.getOption(option, option))}
+            />
           );
         },
       },
