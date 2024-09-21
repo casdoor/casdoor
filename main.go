@@ -72,6 +72,7 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
+	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
 
 	sessionCookieLifeTimeStr := conf.GetConfigString("sessionCookieLifeTime")
 	if sessionCookieLifeTimeStr != "" {
@@ -81,6 +82,16 @@ func main() {
 		}
 		beego.BConfig.WebConfig.Session.SessionCookieLifeTime = sessionCookieLifeTime
 	}
+
+	sessionGCMaxLifetimeStr := conf.GetConfigString("sessionGCMaxLifetime")
+	if sessionGCMaxLifetimeStr != "" {
+		sessionGCMaxLifetime, err := strconv.ParseInt(sessionGCMaxLifetimeStr, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = sessionGCMaxLifetime
+	}
+
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
