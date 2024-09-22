@@ -412,7 +412,6 @@ class UserEditPage extends React.Component {
             }
           </Col>
           <Col span={Setting.isMobile() ? 22 : 11} >
-            {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
             {(this.state.user.type === "guest-user") ? (
               <Button type={"default"}
                 onClick={() => {
@@ -1092,7 +1091,6 @@ class UserEditPage extends React.Component {
         </Row>
       );
     } else if (accountItem.name === "Need update username") {
-      window.console.log(this.state.user);
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
