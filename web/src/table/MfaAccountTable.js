@@ -159,16 +159,20 @@ class MfaAccountTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-            <Popover trigger="focus" content={
-              <QRCode
-                value={this.state.qrUrl}
-                icon={this.state.icon}
-                bordered={false}
-              />
-            }>
-              <Button style={{marginLeft: "5px"}} type="primary" size="small">{i18next.t("general:QR Code")}</Button>
-            </Popover>
+            <Button style={{marginRight: "10px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            {this.state.qrUrl && this.state.qrUrl.length > 0 && this.state.qrUrl.length <= 2000 ? (
+              <Popover trigger="focus" overlayInnerStyle={{padding: 0}} content={
+                <QRCode
+                  value={this.state.qrUrl}
+                  icon={this.state.icon}
+                  errorLevel="M"
+                  size={230}
+                  bordered={false}
+                />
+              }>
+                <Button style={{marginLeft: "5px"}} type="primary" size="small">{i18next.t("general:QR Code")}</Button>
+              </Popover>
+            ) : null}
           </div>
         )}
       />
