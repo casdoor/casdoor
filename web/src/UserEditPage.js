@@ -1050,7 +1050,8 @@ class UserEditPage extends React.Component {
             <MfaAccountTable
               title={i18next.t("user:MFA accounts")}
               table={this.state.user.mfaAccounts}
-              qrUrl={`casdoor-app://login?serverUrl=${window.location.origin}&accessToken=${this.props.account.accessToken}`}
+              serverUrl={window.location.origin}
+              accessToken={this.props.account?.accessToken}
               icon={this.state.user.avatar}
               onUpdateTable={(table) => {this.updateUserField("mfaAccounts", table);}}
             />
