@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Image, Input, Popover, QRCode, Row, Table, Tooltip} from "antd";
+import {Alert, Button, Col, Image, Input, Popover, QRCode, Row, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -23,7 +23,6 @@ class MfaAccountTable extends React.Component {
     super(props);
     this.state = {
       classes: props,
-      qrUrl: this.props.qrUrl,
       icon: this.props.icon,
       mfaAccounts: this.props.table !== null ? this.props.table.map((item, index) => {
         item.key = index;
@@ -75,6 +74,42 @@ class MfaAccountTable extends React.Component {
   downRow(table, i) {
     table = Setting.swapRow(table, i, i + 1);
     this.updateTable(table);
+  }
+
+  getQrUrl() {
+    const {accessToken} = this.props;
+    let qrUrl = `casdoor-app://login?serverUrl=${window.location.origin}&accessToken=${accessToken}`;
+    let error = null;
+
+    if (!accessToken) {
+      qrUrl = "";
+      error = i18next.t("general:Access token is empty");
+    }
+
+    if (qrUrl.length >= 2000) {
+      qrUrl = "";
+      error = i18next.t("general:QR code is too large");
+    }
+
+    return {qrUrl, error};
+  }
+
+  renderQrCode() {
+    const {qrUrl, error} = this.getQrUrl();
+
+    if (error) {
+      return <Alert message={error} type="error" showIcon />;
+    } else {
+      return (
+        <QRCode
+          value={qrUrl}
+          icon={this.state.icon}
+          errorLevel="M"
+          size={230}
+          bordered={false}
+        />
+      );
+    }
   }
 
   renderTable(table) {
@@ -159,14 +194,9 @@ class MfaAccountTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-            <Popover trigger="focus" content={
-              <QRCode
-                value={this.state.qrUrl}
-                icon={this.state.icon}
-                bordered={false}
-              />
-            }>
+            <Button style={{marginRight: "10px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
+            <Popover trigger="focus" overlayInnerStyle={{padding: 0}}
+              content={this.renderQrCode()}>
               <Button style={{marginLeft: "5px"}} type="primary" size="small">{i18next.t("general:QR Code")}</Button>
             </Popover>
           </div>
