@@ -37,7 +37,7 @@ COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/conf/app.conf ./conf/app.co
 COPY --from=BACK --chown=$USER:$USER /go/src/casdoor/version_info.txt ./go/src/casdoor/version_info.txt
 COPY --from=FRONT --chown=$USER:$USER /web/build ./web/build
 
-ENTRYPOINT ["/server"]
+ENTRYPOINT ["sudo","/server"]
 
 
 FROM debian:latest AS db
