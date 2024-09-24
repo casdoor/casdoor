@@ -200,6 +200,7 @@ func (c *ApiController) Signup() {
 		Type:              userType,
 		Password:          authForm.Password,
 		DisplayName:       authForm.Name,
+		Gender:            authForm.Gender,
 		Avatar:            organization.DefaultAvatar,
 		Email:             authForm.Email,
 		Phone:             authForm.Phone,

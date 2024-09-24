@@ -634,43 +634,9 @@ class SignupPage extends React.Component {
     } else if (signupItem.name === "Agreement") {
       return AgreementModal.renderAgreementFormItem(application, required, tailFormItemLayout, this);
     } else if (signupItem.name.startsWith("Text ")) {
-      if (signupItem.type) {
-        if (!signupItem.type || signupItem.type === "Input") {
-          return (
-            <Form.Item
-              name={signupItem.name.toLowerCase().replace(" ", "_")}
-              label={signupItem.label ? signupItem.label : signupItem.name}
-              rules={[
-                {
-                  required: signupItem.required,
-                  message: i18next.t(`signup:Please input your ${signupItem.label}!`),
-                },
-              ]}
-            >
-              <Input placeholder={signupItem.placeholder} />
-            </Form.Item>
-          );
-        } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
-          return (
-            <Form.Item
-              name={signupItem.name.toLowerCase().replace(" ", "_")}
-              label={signupItem.label ? signupItem.label : signupItem.name}
-              rules={[
-                {
-                  required: signupItem.required,
-                  message: i18next.t(`Please select your ${signupItem.label}!`),
-                },
-              ]}
-            >
-              <Select
-                mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
-                placeholder={signupItem.placeholder}
-                options={signupItem.options.map(option => ({label: option, value: option}))}
-              />
-            </Form.Item>
-          );
-        }
-      }
+      return (
+        <div dangerouslySetInnerHTML={{__html: signupItem.label}} />
+      );
     } else if (signupItem.name === "Signup button") {
       return (
         <Form.Item {...tailFormItemLayout}>
