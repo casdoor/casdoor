@@ -286,6 +286,7 @@ class SignupPage extends React.Component {
   }
 
   renderFormItem(application, signupItem) {
+    const validItems = ["Gender", "Bio", "Tag", "Education"];
     if (!signupItem.visible) {
       return null;
     }
@@ -723,15 +724,8 @@ class SignupPage extends React.Component {
             </span>
           );
         })
-
       );
-    } else if (signupItem.name === "Gender") {
-      return renderFormItem(signupItem);
-    } else if (signupItem.name === "Bio") {
-      return renderFormItem(signupItem);
-    } else if (signupItem.name === "Tag") {
-      return renderFormItem(signupItem);
-    } else if (signupItem.name === "Education") {
+    } else if (validItems.includes(signupItem.name)) {
       return renderFormItem(signupItem);
     }
   }
