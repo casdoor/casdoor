@@ -87,7 +87,7 @@ type Application struct {
 	SamlReplyUrl          string          `xorm:"varchar(100)" json:"samlReplyUrl"`
 	Providers             []*ProviderItem `xorm:"mediumtext" json:"providers"`
 	SigninMethods         []*SigninMethod `xorm:"varchar(2000)" json:"signinMethods"`
-	SignupItems           []*SignupItem   `xorm:"varchar(2000)" json:"signupItems"`
+	SignupItems           []*SignupItem   `xorm:"varchar(3000)" json:"signupItems"`
 	SigninItems           []*SigninItem   `xorm:"mediumtext" json:"signinItems"`
 	GrantTypes            []string        `xorm:"varchar(1000)" json:"grantTypes"`
 	OrganizationObj       *Organization   `xorm:"-" json:"organizationObj"`
