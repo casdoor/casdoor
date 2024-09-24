@@ -126,6 +126,12 @@
     "The objectKey: %s is not allowed": "オブジェクトキー %s は許可されていません",
     "The provider type: %s is not supported": "プロバイダータイプ：%sはサポートされていません"
   },
+  "the adapter": {
+    " %s is not found": " %s is not found"
+  },
+  "the organization": {
+    " %s is not found": " %s is not found"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "grant_type：%sはこのアプリケーションでサポートされていません",
     "Invalid application or wrong clientSecret": "無効なアプリケーションまたは誤ったクライアントシークレットです",
@@ -135,6 +141,8 @@
   },
   "user": {
     "Display name cannot be empty": "表示名は空にできません",
+    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
+    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。"
   },
   "user_upload": {
