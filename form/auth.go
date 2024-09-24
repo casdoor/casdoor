@@ -27,6 +27,9 @@ type AuthForm struct {
 	FirstName      string `json:"firstName"`
 	LastName       string `json:"lastName"`
 	Gender         string `json:"gender"`
+	Bio            string `json:"bio"`
+	Tag            string `json:"tag"`
+	Education      string `json:"education"`
 	Email          string `json:"email"`
 	Phone          string `json:"phone"`
 	Affiliation    string `json:"affiliation"`

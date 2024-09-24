@@ -202,6 +202,18 @@ class SignupPage extends React.Component {
       values.gender = values.gender.join(", ");
     }
 
+    if (Array.isArray(values.bio)) {
+      values.bio = values.bio.join(", ");
+    }
+
+    if (Array.isArray(values.tag)) {
+      values.tag = values.tag.join(", ");
+    }
+
+    if (Array.isArray(values.education)) {
+      values.education = values.education.join(", ");
+    }
+
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
@@ -682,6 +694,165 @@ class SignupPage extends React.Component {
 
       );
     } else if (signupItem.name === "Gender") {
+      if (!signupItem.type) {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      }
+      if (!signupItem.type || signupItem.type === "Input") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`Please select your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Select
+              mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
+              placeholder={signupItem.placeholder}
+              showSearch={false}
+              options={signupItem.options.map(option => ({label: option, value: option}))}
+            />
+          </Form.Item>
+        );
+      }
+    } else if (signupItem.name === "Bio") {
+      if (!signupItem.type || signupItem === "") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      }
+      if (!signupItem.type || signupItem.type === "Input") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`Please select your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Select
+              mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
+              placeholder={signupItem.placeholder}
+              showSearch={false}
+              options={signupItem.options.map(option => ({label: option, value: option}))}
+            />
+          </Form.Item>
+        );
+      }
+    } else if (signupItem.name === "Tag") {
+      if (!signupItem.type) {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      }
+      if (!signupItem.type || signupItem.type === "Input") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`signup:Please input your ${signupItem.label}!`),
+              },
+            ]}
+          >
+            <Input placeholder={signupItem.placeholder} />
+          </Form.Item>
+        );
+      } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
+        return (
+          <Form.Item
+            name={signupItem.name.toLowerCase()}
+            label={signupItem.label ? signupItem.label : signupItem.name}
+            rules={[
+              {
+                required: signupItem.required,
+                message: i18next.t(`Please select your ${signupItem.label || signupItem.name}!`),
+              },
+            ]}
+          >
+            <Select
+              mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
+              placeholder={signupItem.placeholder}
+              showSearch={false}
+              options={signupItem.options.map(option => ({label: option, value: option}))}
+            />
+          </Form.Item>
+        );
+      }
+    } else if (signupItem.name === "Education") {
       if (!signupItem.type) {
         return (
           <Form.Item
