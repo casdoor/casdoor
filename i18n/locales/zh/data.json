@@ -126,12 +126,6 @@
     "The objectKey: %s is not allowed": "objectKey: %s被禁止",
     "The provider type: %s is not supported": "不支持的提供商类型: %s"
   },
-  "the adapter": {
-    " %s is not found": " %s 未找到"
-  },
-  "the organization": {
-    " %s is not found": " %s 未找到"
-  },
   "token": {
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
@@ -141,8 +135,6 @@
   },
   "user": {
     "Display name cannot be empty": "显示名称不可为空",
-    "MFA email is enabled but email is empty": "MFA邮箱已启用，但邮箱为空",
-    "MFA phone is enabled but phone number is empty": "MFA电话已启用，但电话号码为空",
     "New password cannot contain blank space.": "新密码不可以包含空格"
   },
   "user_upload": {
