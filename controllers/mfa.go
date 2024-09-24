@@ -72,9 +72,11 @@ func (c *ApiController) MfaSetupInitiate() {
 	}
 
 	recoveryCode := uuid.NewString()
-	c.SetSession(MfaRecoveryCodesSession, recoveryCode)
-	if mfaType == object.TotpType {
-		c.SetSession(MfaTotpSecretSession, mfaProps.Secret)
+	if !c.isSessionOidc() {
+		c.SetSession(MfaRecoveryCodesSession, recoveryCode)
+		if mfaType == object.TotpType {
+			c.SetSession(MfaTotpSecretSession, mfaProps.Secret)
+		}
 	}
 
 	mfaProps.RecoveryCodes = []string{recoveryCode}
@@ -87,8 +89,11 @@ func (c *ApiController) MfaSetupInitiate() {
 // @Title MfaSetupVerify
 // @Tag MFA API
 // @Description setup verify totp
-// @param	secret		form	string	true	"MFA secret"
-// @param	passcode	form 	string 	true	"MFA passcode"
+// @param mfaType		form 	string 	true	"MFA type"
+// @param passcode		form 	string 	true	"MFA passcode"
+// @param dest			form	string	false	"Destination (for SMS or Email)"
+// @param countryCode	form	string	false	"Country code (for SMS)"
+// @param secret		form	string	false	"Secret (for TOTP)"
 // @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/verify [post]
 func (c *ApiController) MfaSetupVerify() {
@@ -104,32 +109,28 @@ func (c *ApiController) MfaSetupVerify() {
 		MfaType: mfaType,
 	}
 	if mfaType == object.TotpType {
-		secret := c.GetSession(MfaTotpSecretSession)
-		if secret == nil {
-			c.ResponseError("totp secret is missing")
+		secret, err := c.getSessionOrFormValue("secret", MfaTotpSecretSession)
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
-		config.Secret = secret.(string)
-	} else if mfaType == object.SmsType {
-		dest := c.GetSession(MfaDestSession)
-		if dest == nil {
-			c.ResponseError("destination is missing")
+		config.Secret = secret
+	} else if mfaType == object.SmsType || mfaType == object.EmailType {
+		dest, err := c.getSessionOrFormValue("dest", MfaDestSession)
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
-		config.Secret = dest.(string)
-		countryCode := c.GetSession(MfaCountryCodeSession)
-		if countryCode == nil {
-			c.ResponseError("country code is missing")
-			return
+		config.Secret = dest
+
+		if mfaType == object.SmsType {
+			countryCode, err := c.getSessionOrFormValue("countryCode", MfaCountryCodeSession)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+			config.CountryCode = countryCode
 		}
-		config.CountryCode = countryCode.(string)
-	} else if mfaType == object.EmailType {
-		dest := c.GetSession(MfaDestSession)
-		if dest == nil {
-			c.ResponseError("destination is missing")
-			return
-		}
-		config.Secret = dest.(string)
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
@@ -150,9 +151,13 @@ func (c *ApiController) MfaSetupVerify() {
 // @Title MfaSetupEnable
 // @Tag MFA API
 // @Description enable totp
-// @param owner	form	string	true	"owner of user"
-// @param name	form	string	true	"name of user"
-// @param type	form	string	true	"MFA auth type"
+// @param owner			form	string	true	"owner of user"
+// @param name			form	string	true	"name of user"
+// @param mfaType		form	string	true	"MFA auth type"
+// @param recoveryCode	form	string	false	"Recovery code"
+// @param dest			form	string	false	"Destination (for SMS or Email)"
+// @param countryCode	form	string	false	"Country code (for SMS)"
+// @param secret		form	string	false	"Secret (for TOTP)"
 // @Success 200 {object} controllers.Response The Response object
 // @router /mfa/setup/enable [post]
 func (c *ApiController) MfaSetupEnable() {
@@ -176,43 +181,45 @@ func (c *ApiController) MfaSetupEnable() {
 	}
 
 	if mfaType == object.TotpType {
-		secret := c.GetSession(MfaTotpSecretSession)
-		if secret == nil {
-			c.ResponseError("totp secret is missing")
+		secret, err := c.getSessionOrFormValue("secret", MfaTotpSecretSession)
+		if err != nil {
+			c.ResponseError(err.Error())
 			return
 		}
-		config.Secret = secret.(string)
+		config.Secret = secret
 	} else if mfaType == object.EmailType {
 		if user.Email == "" {
-			dest := c.GetSession(MfaDestSession)
-			if dest == nil {
-				c.ResponseError("destination is missing")
+			dest, err := c.getSessionOrFormValue("dest", MfaDestSession)
+			if err != nil {
+				c.ResponseError(err.Error())
 				return
 			}
-			user.Email = dest.(string)
+			user.Email = dest
 		}
 	} else if mfaType == object.SmsType {
 		if user.Phone == "" {
-			dest := c.GetSession(MfaDestSession)
-			if dest == nil {
-				c.ResponseError("destination is missing")
+			dest, err := c.getSessionOrFormValue("dest", MfaDestSession)
+			if err != nil {
+				c.ResponseError(err.Error())
 				return
 			}
-			user.Phone = dest.(string)
-			countryCode := c.GetSession(MfaCountryCodeSession)
-			if countryCode == nil {
-				c.ResponseError("country code is missing")
+			user.Phone = dest
+
+			countryCode, err := c.getSessionOrFormValue("countryCode", MfaCountryCodeSession)
+			if err != nil {
+				c.ResponseError(err.Error())
 				return
 			}
-			user.CountryCode = countryCode.(string)
+			user.CountryCode = countryCode
 		}
 	}
-	recoveryCodes := c.GetSession(MfaRecoveryCodesSession)
-	if recoveryCodes == nil {
-		c.ResponseError("recovery codes is missing")
+
+	recoveryCode, err := c.getSessionOrFormValue("recoveryCode", MfaRecoveryCodesSession)
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
-	config.RecoveryCodes = []string{recoveryCodes.(string)}
+	config.RecoveryCodes = []string{recoveryCode}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
@@ -226,12 +233,14 @@ func (c *ApiController) MfaSetupEnable() {
 		return
 	}
 
-	c.DelSession(MfaRecoveryCodesSession)
-	if mfaType == object.TotpType {
-		c.DelSession(MfaTotpSecretSession)
-	} else {
-		c.DelSession(MfaCountryCodeSession)
-		c.DelSession(MfaDestSession)
+	if !c.isSessionOidc() {
+		c.DelSession(MfaRecoveryCodesSession)
+		if mfaType == object.TotpType {
+			c.DelSession(MfaTotpSecretSession)
+		} else {
+			c.DelSession(MfaCountryCodeSession)
+			c.DelSession(MfaDestSession)
+		}
 	}
 
 	c.ResponseOk(http.StatusText(http.StatusOK))

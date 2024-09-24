@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -173,6 +174,26 @@ func (c *ApiController) GetSessionOidc() (string, string) {
 		aud = ""
 	}
 	return scope, aud
+}
+
+func (c *ApiController) isSessionOidc() bool {
+	return c.Ctx.Input.CruSession.Get("scope") != nil && c.Ctx.Input.CruSession.Get("aud") != nil
+}
+
+func (c *ApiController) getSessionOrFormValue(formField string, sessionField string) (string, error) {
+	if c.isSessionOidc() {
+		res := c.Ctx.Request.Form.Get(formField)
+		if res != "" {
+			return res, nil
+		}
+	} else {
+		res, ok := c.GetSession(sessionField).(string)
+		if ok {
+			return res, nil
+		}
+	}
+
+	return "", fmt.Errorf("%s is missing", formField)
 }
 
 // SetSessionUsername ...
