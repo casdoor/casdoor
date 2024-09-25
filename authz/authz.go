@@ -77,6 +77,7 @@ p, *, *, POST, /api/verify-code, *, *
 p, *, *, POST, /api/reset-email-or-phone, *, *
 p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
+p, *, *, GET, /.well-known/webfinger, *, *
 p, *, *, *, /.well-known/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *

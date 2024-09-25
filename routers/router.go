@@ -290,6 +290,7 @@ func initAPI() {
 
 	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
 	beego.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
+	beego.Router("/.well-known/webfinger", &controllers.RootController{}, "GET:GetWebFinger")
 
 	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
 	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
