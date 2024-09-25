@@ -34,11 +34,9 @@ func LogoutFilter(ctx *context.Context) {
 				ctx.Input.CruSession.Set("accessToken", "")
 				ctx.Input.CruSession.Delete("SessionData")
 				responseError(ctx, T(ctx, "auth:Long time of no operation"))
-			} else {
-				cookie2LastTime[sessionId] = currentTime
+				return
 			}
-		} else {
-			cookie2LastTime[sessionId] = currentTime
 		}
+		cookie2LastTime[sessionId] = currentTime
 	}
 }
