@@ -410,6 +410,12 @@ func (c *ApiController) GetEmailAndPhone() {
 	organization := c.Ctx.Request.Form.Get("organization")
 	username := c.Ctx.Request.Form.Get("username")
 
+	enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
+	if enableErrorMask2 {
+		c.ResponseError("Error")
+		return
+	}
+
 	user, err := object.GetUserByFields(organization, username)
 	if err != nil {
 		c.ResponseError(err.Error())

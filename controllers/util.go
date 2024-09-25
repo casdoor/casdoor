@@ -45,6 +45,15 @@ func (c *ApiController) ResponseOk(data ...interface{}) {
 
 // ResponseError ...
 func (c *ApiController) ResponseError(error string, data ...interface{}) {
+	enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
+	if enableErrorMask2 {
+		error = c.T("subscription:Error")
+
+		resp := &Response{Status: "error", Msg: error}
+		c.ResponseJsonData(resp, data...)
+		return
+	}
+
 	enableErrorMask := conf.GetConfigBool("enableErrorMask")
 	if enableErrorMask {
 		if strings.HasPrefix(error, "The user: ") && strings.HasSuffix(error, " doesn't exist") || strings.HasPrefix(error, "用户: ") && strings.HasSuffix(error, "不存在") {
