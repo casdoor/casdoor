@@ -454,29 +454,27 @@ class SignupPage extends React.Component {
                 },
               ]}
             >
-              <Input className="signup-email-input" placeholder={signupItem.placeholder}
-                disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""}
-                onChange={e => this.setState({email: e.target.value})} />
+              <Input className="signup-email-input" placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation.email !== ""} onChange={e => this.setState({email: e.target.value})} />
             </Form.Item>
             {
               signupItem.rule !== "No verification" &&
-                  <Form.Item
-                    name="emailCode"
-                    className="signup-email-code"
-                    label={signupItem.label ? signupItem.label : i18next.t("code:Email code")}
-                    rules={[{
-                      required: required,
-                      message: i18next.t("code:Please input your verification code!"),
-                    }]}
-                  >
-                    <SendCodeInput
-                      className="signup-email-code-input"
-                      disabled={!this.state.validEmail}
-                      method={"signup"}
-                      onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
-                      application={application}
-                    />
-                  </Form.Item>
+              <Form.Item
+                name="emailCode"
+                className="signup-email-code"
+                label={signupItem.label ? signupItem.label : i18next.t("code:Email code")}
+                rules={[{
+                  required: required,
+                  message: i18next.t("code:Please input your verification code!"),
+                }]}
+              >
+                <SendCodeInput
+                  className="signup-email-code-input"
+                  disabled={!this.state.validEmail}
+                  method={"signup"}
+                  onButtonClickArgs={[this.state.email, "email", Setting.getApplicationName(application)]}
+                  application={application}
+                />
+              </Form.Item>
             }
           </React.Fragment>
         );
@@ -485,8 +483,7 @@ class SignupPage extends React.Component {
       const renderPhoneItem = () => {
         return (
           <React.Fragment>
-            <Form.Item className="signup-phone"
-              label={signupItem.label ? signupItem.label : i18next.t("general:Phone")} required={required}>
+            <Form.Item className="signup-phone" label={signupItem.label ? signupItem.label : i18next.t("general:Phone")} required={required}>
               <Input.Group compact>
                 <Form.Item
                   name="countryCode"
@@ -541,26 +538,26 @@ class SignupPage extends React.Component {
             </Form.Item>
             {
               signupItem.rule !== "No verification" &&
-                  <Form.Item
-                    name="phoneCode"
-                    className="phone-code"
-                    label={signupItem.label ? signupItem.label : i18next.t("code:Phone code")}
-                    rules={[
-                      {
-                        required: required,
-                        message: i18next.t("code:Please input your phone verification code!"),
-                      },
-                    ]}
-                  >
-                    <SendCodeInput
-                      className="signup-phone-code-input"
-                      disabled={!this.state.validPhone}
-                      method={"signup"}
-                      onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
-                      application={application}
-                      countryCode={this.form.current?.getFieldValue("countryCode")}
-                    />
-                  </Form.Item>
+              <Form.Item
+                name="phoneCode"
+                className="phone-code"
+                label={signupItem.label ? signupItem.label : i18next.t("code:Phone code")}
+                rules={[
+                  {
+                    required: required,
+                    message: i18next.t("code:Please input your phone verification code!"),
+                  },
+                ]}
+              >
+                <SendCodeInput
+                  className="signup-phone-code-input"
+                  disabled={!this.state.validPhone}
+                  method={"signup"}
+                  onButtonClickArgs={[this.state.phone, "phone", Setting.getApplicationName(application)]}
+                  application={application}
+                  countryCode={this.form.current?.getFieldValue("countryCode")}
+                />
+              </Form.Item>
             }
           </React.Fragment>
         );
@@ -578,7 +575,7 @@ class SignupPage extends React.Component {
 
         return (
           <React.Fragment>
-            <Row style={{marginTop: "30px", marginBottom: "20px"}}>
+            <Row style={{marginTop: "30px", marginBottom: "20px"}} >
               <Radio.Group style={{width: "400px"}} buttonStyle="solid" onChange={e => {
                 this.setState({
                   emailOrPhoneMode: e.target.value,
@@ -672,8 +669,7 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <Input className="signup-invitation-code-input" placeholder={signupItem.placeholder}
-            disabled={this.state.invitation !== undefined && this.state.invitation !== ""} />
+          <Input className="signup-invitation-code-input" placeholder={signupItem.placeholder} disabled={this.state.invitation !== undefined && this.state.invitation !== ""} />
         </Form.Item>
       );
     } else if (signupItem.name === "Agreement") {
@@ -688,7 +684,7 @@ class SignupPage extends React.Component {
           <Button type="primary" htmlType="submit" className="signup-button">
             {i18next.t("account:Sign Up")}
           </Button>
-            &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
+          &nbsp;&nbsp;{i18next.t("signup:Have account?")}&nbsp;
           <a className="signup-link" onClick={() => {
             const linkInStorage = sessionStorage.getItem("signinUrl");
             if (linkInStorage !== null && linkInStorage !== "") {
