@@ -23,6 +23,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -31,6 +32,8 @@ import (
 	"time"
 
 	"golang.org/x/oauth2"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 )
 
 type AlipayIdProvider struct {
@@ -204,10 +207,6 @@ func (idp *AlipayIdProvider) postWithBody(body interface{}, targetUrl string) ([
 	if err != nil {
 		return nil, err
 	}
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -215,6 +214,16 @@ func (idp *AlipayIdProvider) postWithBody(body interface{}, targetUrl string) ([
 		}
 	}(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("http status code is not 200, code is %d", resp.StatusCode)
+	}
+
+	utf8Reader := transform.NewReader(resp.Body,
+		simplifiedchinese.GBK.NewDecoder())
+	data, err := io.ReadAll(utf8Reader)
+	if err != nil {
+		return nil, err
+	}
 	return data, nil
 }
 
