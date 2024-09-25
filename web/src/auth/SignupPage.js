@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Radio, Result, Row, message} from "antd";
+import {Button, Form, Input, Radio, Result, Row, Select, message} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -48,6 +48,38 @@ const formItemLayout = {
       span: 16,
     },
   },
+};
+
+const renderFormItem = (signupItem) => {
+  const commonProps = {
+    name: signupItem.name.toLowerCase(),
+    label: signupItem.label || signupItem.name,
+    rules: [
+      {
+        required: signupItem.required,
+        message: i18next.t(`signup:Please input your ${signupItem.label || signupItem.name}!`),
+      },
+    ],
+  };
+
+  if (!signupItem.type || signupItem.type === "Input") {
+    return (
+      <Form.Item {...commonProps}>
+        <Input placeholder={signupItem.placeholder} />
+      </Form.Item>
+    );
+  } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
+    return (
+      <Form.Item {...commonProps}>
+        <Select
+          mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
+          placeholder={signupItem.placeholder}
+          showSearch={false}
+          options={signupItem.options.map(option => ({label: option, value: option}))}
+        />
+      </Form.Item>
+    );
+  }
 };
 
 export const tailFormItemLayout = {
@@ -198,6 +230,22 @@ class SignupPage extends React.Component {
   onFinish(values) {
     const application = this.getApplicationObj();
 
+    if (Array.isArray(values.gender)) {
+      values.gender = values.gender.join(", ");
+    }
+
+    if (Array.isArray(values.bio)) {
+      values.bio = values.bio.join(", ");
+    }
+
+    if (Array.isArray(values.tag)) {
+      values.tag = values.tag.join(", ");
+    }
+
+    if (Array.isArray(values.education)) {
+      values.education = values.education.join(", ");
+    }
+
     const params = new URLSearchParams(window.location.search);
     values.plan = params.get("plan");
     values.pricing = params.get("pricing");
@@ -238,6 +286,7 @@ class SignupPage extends React.Component {
   }
 
   renderFormItem(application, signupItem) {
+    const validItems = ["Gender", "Bio", "Tag", "Education"];
     if (!signupItem.visible) {
       return null;
     }
@@ -366,7 +415,9 @@ class SignupPage extends React.Component {
             },
           ]}
         >
-          <RegionSelect className="signup-region-select" onChange={(value) => {this.setState({region: value});}} />
+          <RegionSelect className="signup-region-select" onChange={(value) => {
+            this.setState({region: value});
+          }} />
         </Form.Item>
       );
     } else if (signupItem.name === "Email" || signupItem.name === "Phone" || signupItem.name === "Email or Phone" || signupItem.name === "Phone or Email") {
@@ -669,8 +720,9 @@ class SignupPage extends React.Component {
             </span>
           );
         })
-
       );
+    } else if (validItems.includes(signupItem.name)) {
+      return renderFormItem(signupItem);
     }
   }
 
