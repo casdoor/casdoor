@@ -24,16 +24,18 @@ import (
 )
 
 var (
-	logoutMinutes   = time.Minute * 30
-	cookie2LastTime sync.Map
+	enableInactiveLogout = true
+	logoutMinutes        time.Duration
+	cookie2LastTime      sync.Map
 )
 
 func init() {
 	logoutMinutesInt, err := strconv.Atoi(conf.GetConfigString("logoutMinutes"))
 	if err != nil || logoutMinutesInt <= 0 {
-		logoutMinutesInt = 30
+		enableInactiveLogout = false
+	} else {
+		logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
 	}
-	logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
 }
 
 func inactiveLogout(ctx *context.Context, sessionId string) {
@@ -45,6 +47,9 @@ func inactiveLogout(ctx *context.Context, sessionId string) {
 }
 
 func LogoutFilter(ctx *context.Context) {
+	if !enableInactiveLogout {
+		return
+	}
 	owner, name := getSubject(ctx)
 	if owner == "anonymous" || name == "anonymous" {
 		return
