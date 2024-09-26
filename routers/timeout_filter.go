@@ -24,13 +24,13 @@ import (
 )
 
 var (
-	inactiveTimeoutMinutes        int
+	inactiveTimeoutMinutes        int64
 	requestTimeMap                sync.Map
 )
 
 func init() {
-	inactiveTimeoutMinutes, err := strconv.Atoi(conf.GetConfigString("inactiveTimeoutMinutes"))
-	if err != nil || inactiveTimeoutMinutes < 0 {
+	inactiveTimeoutMinutes, err := conf.GetConfigInt64("inactiveTimeoutMinutes")
+	if err != nil {
 		inactiveTimeoutMinutes = 0
 	}
 }
