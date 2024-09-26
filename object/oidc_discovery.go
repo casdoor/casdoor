@@ -190,7 +190,6 @@ func GetWebFinger(resource string, rels []string, host string) (WebFinger, error
 	switch resourceType {
 	case "acct":
 		user, err := GetUserByEmailOnly(resourceValue)
-
 		if err != nil {
 			return wf, err
 		}
