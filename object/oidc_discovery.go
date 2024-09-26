@@ -44,6 +44,18 @@ type OidcDiscovery struct {
 	EndSessionEndpoint                     string   `json:"end_session_endpoint"`
 }
 
+type WebFinger struct {
+	Subject    string             `json:"subject"`
+	Links      []WebFingerLink    `json:"links"`
+	Aliases    *[]string          `json:"aliases,omitempty"`
+	Properties *map[string]string `json:"properties,omitempty"`
+}
+
+type WebFingerLink struct {
+	Rel  string `json:"rel"`
+	Href string `json:"href"`
+}
+
 func isIpAddress(host string) bool {
 	// Attempt to split the host and port, ignoring the error
 	hostWithoutPort, _, err := net.SplitHostPort(host)
@@ -159,4 +171,44 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	}
 
 	return jwks, nil
+}
+
+func GetWebFinger(resource string, rels []string, host string) (WebFinger, error) {
+	wf := WebFinger{}
+
+	resourceSplit := strings.Split(resource, ":")
+
+	if len(resourceSplit) != 2 {
+		return wf, fmt.Errorf("invalid resource")
+	}
+
+	resourceType := resourceSplit[0]
+	resourceValue := resourceSplit[1]
+
+	oidcDiscovery := GetOidcDiscovery(host)
+
+	switch resourceType {
+	case "acct":
+		user, err := GetUserByEmailOnly(resourceValue)
+		if err != nil {
+			return wf, err
+		}
+
+		if user == nil {
+			return wf, fmt.Errorf("user not found")
+		}
+
+		wf.Subject = resource
+
+		for _, rel := range rels {
+			if rel == "http://openid.net/specs/connect/1.0/issuer" {
+				wf.Links = append(wf.Links, WebFingerLink{
+					Rel:  "http://openid.net/specs/connect/1.0/issuer",
+					Href: oidcDiscovery.Issuer,
+				})
+			}
+		}
+	}
+
+	return wf, nil
 }

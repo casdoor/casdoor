@@ -14,7 +14,11 @@
 
 package controllers
 
-import "github.com/casdoor/casdoor/object"
+import (
+	"strings"
+
+	"github.com/casdoor/casdoor/object"
+)
 
 // GetOidcDiscovery
 // @Title GetOidcDiscovery
@@ -40,5 +44,33 @@ func (c *RootController) GetJwks() {
 		return
 	}
 	c.Data["json"] = jwks
+	c.ServeJSON()
+}
+
+// GetWebFinger
+// @Title GetWebFinger
+// @Tag OIDC API
+// @Param resource query string true "resource"
+// @Success 200 {object} object.WebFinger
+// @router /.well-known/webfinger [get]
+func (c *RootController) GetWebFinger() {
+	resource := c.Input().Get("resource")
+	rels := []string{}
+	host := c.Ctx.Request.Host
+
+	for key, value := range c.Input() {
+		if strings.HasPrefix(key, "rel") {
+			rels = append(rels, value...)
+		}
+	}
+
+	webfinger, err := object.GetWebFinger(resource, rels, host)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = webfinger
+	c.Ctx.Output.ContentType("application/jrd+json")
 	c.ServeJSON()
 }
