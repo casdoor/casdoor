@@ -200,10 +200,14 @@ func GetWebFinger(resource string, rels []string, host string) (WebFinger, error
 
 		wf.Subject = resource
 
-		wf.Links = append(wf.Links, WebFingerLink{
-			Rel:  "http://openid.net/specs/connect/1.0/issuer",
-			Href: oidcDiscovery.Issuer,
-		})
+		for _, rel := range rels {
+			if rel == "http://openid.net/specs/connect/1.0/issuer" {
+				wf.Links = append(wf.Links, WebFingerLink{
+					Rel:  "http://openid.net/specs/connect/1.0/issuer",
+					Href: oidcDiscovery.Issuer,
+				})
+			}
+		}
 	}
 
 	return wf, nil
