@@ -15,13 +15,11 @@
 package routers
 
 import (
-	"fmt"
 	"strconv"
 	"sync"
 	"time"
 
 	"github.com/beego/beego/context"
-	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/conf"
 )
 
@@ -31,31 +29,31 @@ var (
 )
 
 func init() {
-	logoutMinutesStr := conf.GetConfigString("logoutMinutes")
-	if logoutMinutesStr == "" {
-		logs.Info("get logoutMinutes failed. use default time duration: 30 minutes")
-	} else {
-		logoutMinutesInt, err := strconv.Atoi(logoutMinutesStr)
-		if err != nil {
-			logs.Info(fmt.Sprintf("get logoutMinutes failed, err:%v. use default time duration: 30 minutes", err))
-		}
-		logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
+	logoutMinutesInt, err := strconv.Atoi(conf.GetConfigString("logoutMinutes"))
+	if err != nil || logoutMinutesInt <= 0 {
+		logoutMinutesInt = 30
 	}
+	logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
+}
+
+func inactiveLogout(ctx *context.Context, sessionId string) {
+	cookie2LastTime.Delete(sessionId)
+	ctx.Input.CruSession.Set("username", "")
+	ctx.Input.CruSession.Set("accessToken", "")
+	ctx.Input.CruSession.Delete("SessionData")
+	responseError(ctx, T(ctx, "auth:Long time of no operation"))
 }
 
 func LogoutFilter(ctx *context.Context) {
 	owner, name := getSubject(ctx)
-	if owner != "anonymous" && name != "anonymous" {
-		sessionId := ctx.Input.CruSession.SessionID()
-		currentTime := time.Now()
-		if cookieTime, exist := cookie2LastTime.Load(sessionId); exist && cookieTime.(time.Time).Add(logoutMinutes).Before(currentTime) {
-			cookie2LastTime.Delete(sessionId)
-			ctx.Input.CruSession.Set("username", "")
-			ctx.Input.CruSession.Set("accessToken", "")
-			ctx.Input.CruSession.Delete("SessionData")
-			responseError(ctx, T(ctx, "auth:Long time of no operation"))
-			return
-		}
-		cookie2LastTime.Store(sessionId, currentTime)
+	if owner == "anonymous" || name == "anonymous" {
+		return
 	}
+	sessionId := ctx.Input.CruSession.SessionID()
+	currentTime := time.Now()
+	if cookieTime, exist := cookie2LastTime.Load(sessionId); exist && cookieTime.(time.Time).Add(logoutMinutes).Before(currentTime) {
+		inactiveLogout(ctx, sessionId)
+		return
+	}
+	cookie2LastTime.Store(sessionId, currentTime)
 }
