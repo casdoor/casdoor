@@ -2,6 +2,7 @@ package routers
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/beego/beego/context"
@@ -11,7 +12,7 @@ import (
 
 var (
 	logoutMinutes   = time.Minute * 30
-	cookie2LastTime = make(map[string]time.Time, 1)
+	cookie2LastTime sync.Map
 )
 
 func init() {
@@ -28,14 +29,14 @@ func LogoutFilter(ctx *context.Context) {
 	if owner != "anonymous" && name != "anonymous" {
 		sessionId := ctx.Input.CruSession.SessionID()
 		currentTime := time.Now()
-		if cookieTime, exist := cookie2LastTime[sessionId]; exist && cookieTime.Add(logoutMinutes).Before(currentTime) {
-			delete(cookie2LastTime, sessionId)
+		if cookieTime, exist := cookie2LastTime.Load(sessionId); exist && cookieTime.(time.Time).Add(logoutMinutes).Before(currentTime) {
+			cookie2LastTime.Delete(sessionId)
 			ctx.Input.CruSession.Set("username", "")
 			ctx.Input.CruSession.Set("accessToken", "")
 			ctx.Input.CruSession.Delete("SessionData")
 			responseError(ctx, T(ctx, "auth:Long time of no operation"))
 			return
 		}
-		cookie2LastTime[sessionId] = currentTime
+		cookie2LastTime.Store(sessionId, currentTime)
 	}
 }
