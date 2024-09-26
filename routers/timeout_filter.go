@@ -15,7 +15,7 @@
 package routers
 
 import (
-	"strconv"
+	"fmt"
 	"sync"
 	"time"
 
@@ -24,12 +24,13 @@ import (
 )
 
 var (
-	inactiveTimeoutMinutes        int64
-	requestTimeMap                sync.Map
+	inactiveTimeoutMinutes int64
+	requestTimeMap         sync.Map
 )
 
 func init() {
-	inactiveTimeoutMinutes, err := conf.GetConfigInt64("inactiveTimeoutMinutes")
+	var err error
+	inactiveTimeoutMinutes, err = conf.GetConfigInt64("inactiveTimeoutMinutes")
 	if err != nil {
 		inactiveTimeoutMinutes = 0
 	}
@@ -57,7 +58,7 @@ func TimeoutFilter(ctx *context.Context) {
 	currentTime := time.Now()
 	preRequestTime, has := requestTimeMap.Load(sessionId)
 	requestTimeMap.Store(sessionId, currentTime)
-	if has && preRequestTime.(time.Time).Add(time.Minute * time.Duration(inactiveTimeoutMinutes)).Before(currentTime) {
+	if has && preRequestTime.(time.Time).Add(time.Minute*time.Duration(inactiveTimeoutMinutes)).Before(currentTime) {
 		timeoutLogout(ctx, sessionId)
 	}
 }
