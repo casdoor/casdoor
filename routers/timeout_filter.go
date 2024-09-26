@@ -24,14 +24,14 @@ import (
 )
 
 var (
-	logoutMinutes        int
-	requestTimeMap      sync.Map
+	inactiveTimeoutMinutes        int
+	requestTimeMap                sync.Map
 )
 
 func init() {
-	logoutMinutes, err := strconv.Atoi(conf.GetConfigString("logoutMinutes"))
-	if err != nil || logoutMinutes < 0 {
-		logoutMinutes = 0
+	inactiveTimeoutMinutes, err := strconv.Atoi(conf.GetConfigString("inactiveTimeoutMinutes"))
+	if err != nil || inactiveTimeoutMinutes < 0 {
+		inactiveTimeoutMinutes = 0
 	}
 }
 
@@ -40,11 +40,11 @@ func timeoutLogout(ctx *context.Context, sessionId string) {
 	ctx.Input.CruSession.Set("username", "")
 	ctx.Input.CruSession.Set("accessToken", "")
 	ctx.Input.CruSession.Delete("SessionData")
-	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), logoutMinutes))
+	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), inactiveTimeoutMinutes))
 }
 
-func LogoutFilter(ctx *context.Context) {
-	if logoutMinutes <= 0 {
+func TimeoutFilter(ctx *context.Context) {
+	if inactiveTimeoutMinutes <= 0 {
 		return
 	}
 
@@ -57,7 +57,7 @@ func LogoutFilter(ctx *context.Context) {
 	currentTime := time.Now()
 	preRequestTime, has := requestTimeMap.Load(sessionId)
 	requestTimeMap.Store(sessionId, currentTime)
-	if has && preRequestTime.(time.Time).Add(time.Minute * time.Duration(logoutMinutes)).Before(currentTime) {
+	if has && preRequestTime.(time.Time).Add(time.Minute * time.Duration(inactiveTimeoutMinutes)).Before(currentTime) {
 		timeoutLogout(ctx, sessionId)
 	}
 }
