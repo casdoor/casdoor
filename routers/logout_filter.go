@@ -16,6 +16,7 @@ package routers
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
@@ -30,10 +31,14 @@ var (
 )
 
 func init() {
-	logoutMinutesInt, err := conf.GetConfigInt64("logoutMinutes")
-	if err != nil {
-		logs.Info(fmt.Sprintf("get logoutMinutes failed, err:%v. use default time duration: 30 minutes", err))
+	logoutMinutesStr := conf.GetConfigString("logoutMinutes")
+	if logoutMinutesStr == "" {
+		logs.Info("get logoutMinutes failed. use default time duration: 30 minutes")
 	} else {
+		logoutMinutesInt, err := strconv.Atoi(logoutMinutesStr)
+		if err != nil {
+			logs.Info(fmt.Sprintf("get logoutMinutes failed, err:%v. use default time duration: 30 minutes", err))
+		}
 		logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
 	}
 }
