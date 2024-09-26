@@ -200,7 +200,7 @@ func (idp *AlipayIdProvider) postWithBody(body interface{}, targetUrl string) ([
 
 	formData.Set("sign", sign)
 
-	resp, err := idp.Client.PostForm(targetUrl, formData)
+	resp, err := idp.Client.Post(targetUrl, "application/x-www-form-urlencoded;charset=utf-8", strings.NewReader(formData.Encode()))
 	if err != nil {
 		return nil, err
 	}
