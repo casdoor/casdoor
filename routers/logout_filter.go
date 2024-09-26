@@ -24,41 +24,40 @@ import (
 )
 
 var (
-	enableInactiveLogout = true
-	logoutMinutes        time.Duration
-	cookie2LastTime      sync.Map
+	logoutMinutes        int
+	requestTimeMap      sync.Map
 )
 
 func init() {
-	logoutMinutesInt, err := strconv.Atoi(conf.GetConfigString("logoutMinutes"))
-	if err != nil || logoutMinutesInt <= 0 {
-		enableInactiveLogout = false
-	} else {
-		logoutMinutes = time.Minute * time.Duration(logoutMinutesInt)
+	logoutMinutes, err := strconv.Atoi(conf.GetConfigString("logoutMinutes"))
+	if err != nil || logoutMinutes < 0 {
+		logoutMinutes = 0
 	}
 }
 
-func inactiveLogout(ctx *context.Context, sessionId string) {
-	cookie2LastTime.Delete(sessionId)
+func timeoutLogout(ctx *context.Context, sessionId string) {
+	requestTimeMap.Delete(sessionId)
 	ctx.Input.CruSession.Set("username", "")
 	ctx.Input.CruSession.Set("accessToken", "")
 	ctx.Input.CruSession.Delete("SessionData")
-	responseError(ctx, T(ctx, "auth:Long time of no operation"))
+	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), logoutMinutes))
 }
 
 func LogoutFilter(ctx *context.Context) {
-	if !enableInactiveLogout {
+	if logoutMinutes <= 0 {
 		return
 	}
+
 	owner, name := getSubject(ctx)
 	if owner == "anonymous" || name == "anonymous" {
 		return
 	}
+
 	sessionId := ctx.Input.CruSession.SessionID()
 	currentTime := time.Now()
-	if cookieTime, exist := cookie2LastTime.Load(sessionId); exist && cookieTime.(time.Time).Add(logoutMinutes).Before(currentTime) {
-		inactiveLogout(ctx, sessionId)
-		return
+	preRequestTime, has := requestTimeMap.Load(sessionId)
+	requestTimeMap.Store(sessionId, currentTime)
+	if has && preRequestTime.(time.Time).Add(time.Minute * time.Duration(logoutMinutes)).Before(currentTime) {
+		timeoutLogout(ctx, sessionId)
 	}
-	cookie2LastTime.Store(sessionId, currentTime)
 }
