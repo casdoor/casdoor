@@ -343,3 +343,16 @@ func GetVerification(id string) (*VerificationRecord, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	return getVerification(owner, name)
 }
+
+func GetVerificationRecordByCode(dest, code string) (*VerificationRecord, error) {
+	var record VerificationRecord
+	record.Receiver = dest
+	has, err := ormer.Engine.Desc("time").Where("code = ?", code).Get(&record)
+	if err != nil {
+		return nil, err
+	}
+	if !has {
+		return nil, nil
+	}
+	return &record, nil
+}

@@ -489,6 +489,11 @@ func (c *ApiController) SetPassword() {
 			c.ResponseError(c.T("general:Missing parameter"))
 			return
 		}
+		record, err := object.GetVerificationRecordByCode(userName, code)
+		if err != nil || record == nil {
+			c.ResponseError(c.T("general:Wrong target user"))
+			return
+		}
 		c.SetSession("verifiedCode", "")
 	}
 
