@@ -372,6 +372,7 @@ class App extends Component {
                     <EntryPage
                       account={this.state.account}
                       theme={this.state.themeData}
+                      themeAlgorithm={this.state.themeAlgorithm}
                       updateApplication={(application) => {
                         this.setState({
                           application: application,

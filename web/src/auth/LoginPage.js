@@ -1283,7 +1283,7 @@ class LoginPage extends React.Component {
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
-            <div className="login-form">
+            <div className="login-form" style={{backgroundColor: this.props.themeAlgorithm && this.props.themeAlgorithm.includes("dark") ? "black" : "white"}}>
               <div>
                 {
                   this.renderLoginPanel(application)
