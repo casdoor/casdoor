@@ -1168,7 +1168,7 @@ export function renderLogo(application) {
 
 function isSigninMethodEnabled(application, signinMethod) {
   if (application && application.signinMethods) {
-    return application.signinMethods.filter(item => item.name === signinMethod).length > 0;
+    return application.signinMethods.filter(item => item.name === signinMethod && item.rule !== "Hide-Password").length > 0;
   } else {
     return false;
   }
