@@ -136,6 +136,7 @@ class SigninMethodTable extends React.Component {
             options = [
               {id: "All", name: i18next.t("general:All")},
               {id: "Non-LDAP", name: i18next.t("general:Non-LDAP")},
+              {id: "Hide-Password", name: i18next.t("general:Hide-Password")},
             ];
           }
 

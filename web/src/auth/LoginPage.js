@@ -1125,6 +1125,9 @@ class LoginPage extends React.Component {
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
+      if (signinMethod.rule === "Hide-Password") {
+        return;
+      }
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
       if (item) {
         let label = signinMethod.name === signinMethod.displayName ? item.label : signinMethod.displayName;
