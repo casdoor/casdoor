@@ -58,6 +58,8 @@ type Organization struct {
 	LogoDark               string     `xorm:"varchar(200)" json:"logoDark"`
 	Favicon                string     `xorm:"varchar(200)" json:"favicon"`
 	PasswordType           string     `xorm:"varchar(100)" json:"passwordType"`
+	PasswordObfuscatorType string     `xorm:"json" json:"passwordObfuscatorType"`
+	PasswordObfuscatorKey  string     `xorm:"json" json:"passwordObfuscatorKey"`
 	PasswordSalt           string     `xorm:"varchar(100)" json:"passwordSalt"`
 	PasswordOptions        []string   `xorm:"varchar(100)" json:"passwordOptions"`
 	CountryCodes           []string   `xorm:"varchar(200)"  json:"countryCodes"`
@@ -168,6 +170,7 @@ func GetMaskedOrganization(organization *Organization, errs ...error) (*Organiza
 	if organization.MasterVerificationCode != "" {
 		organization.MasterVerificationCode = "***"
 	}
+
 	return organization, nil
 }
 

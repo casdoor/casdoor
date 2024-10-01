@@ -19,6 +19,7 @@ import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
 import * as Conf from "../Conf";
+import CryptoJS from "crypto-js";
 import * as AuthBackend from "./AuthBackend";
 import * as OrganizationBackend from "../backend/OrganizationBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
@@ -235,6 +236,34 @@ class LoginPage extends React.Component {
     }
   }
 
+  encryptByDES(key, password) {
+    const iv = CryptoJS.lib.WordArray.random(8); // 生成随机 IV
+    const encrypted = CryptoJS.DES.encrypt(
+      CryptoJS.enc.Hex.parse(Buffer.from(password, "utf-8").toString("hex")),
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        pad: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
+  }
+
+  encryptByAES(key, password) {
+    const iv = CryptoJS.lib.WordArray.random(16); // 生成随机 IV
+    const encrypted = CryptoJS.AES.encrypt(
+      CryptoJS.enc.Hex.parse(Buffer.from(password, "utf-8").toString("hex")),
+      CryptoJS.enc.Hex.parse(key),
+      {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        pad: CryptoJS.pad.Pkcs7,
+      }
+    );
+    return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
+  }
+
   onUpdateAccount(account) {
     this.props.onUpdateAccount(account);
   }
@@ -388,6 +417,12 @@ class LoginPage extends React.Component {
       } else if (this.state.enableCaptchaModal === CaptchaRule.Dynamic) {
         this.checkCaptchaStatus(values);
         return;
+      }
+      const application = this.getApplicationObj();
+      if (application?.organizationObj?.passwordObfuscatorType === "des") {
+        values["password"] = this.encryptByDES(application.organizationObj.passwordObfuscatorKey, values["password"]);
+      } else if (application?.organizationObj?.passwordObfuscatorType === "aes") {
+        values["password"] = this.encryptByAES(application.organizationObj.passwordObfuscatorKey, values["password"]);
       }
     }
     this.login(values);
