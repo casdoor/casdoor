@@ -19,6 +19,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
 import * as Setting from "./Setting";
 import * as Conf from "./Conf";
+import * as Obfuscator from "./auth/Obfuscator";
 import i18next from "i18next";
 import {LinkOutlined} from "@ant-design/icons";
 import LdapTable from "./table/LdapTable";
@@ -114,72 +115,23 @@ class OrganizationEditPage extends React.Component {
     });
   }
 
-  getRandomHexKey(length) {
-    const characters = "123456789abcdef";
-    let key = "";
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      key += characters[randomIndex];
-    }
-    return key;
-  }
-
-  getRandomKeyForObfuscator(obfuscatorType) {
-    if (obfuscatorType === "des") {
-      return this.getRandomHexKey(16);
-    } else if (obfuscatorType === "aes") {
-      return this.getRandomHexKey(32);
-    } else {
-      return "";
-    }
-  }
-
-  checkObfuscatorKey(obfuscatorType, obfuscatorKey) {
-    if (obfuscatorType === "plain" && obfuscatorKey !== "") {
-      this.setState({
-        passwordObfuscatorKeyValid: false,
-        passwordObfuscatorKeyErrorMessage: i18next.t("organization:The key should be empty"),
-      });
-      return;
-    } else if (obfuscatorType === "des") {
-      const regex = /^[1-9a-f]{16}$/;
-      if (!regex.test(obfuscatorKey)) {
-        this.setState({
-          passwordObfuscatorKeyValid: false,
-          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the DES regex") + " ^[1-9A-F]{16}$",
-        });
-        return;
-      }
-    } else if (obfuscatorType === "aes") {
-      const regex = /^[1-9a-f]{32}$/;
-      if (!regex.test(obfuscatorKey)) {
-        this.setState({
-          passwordObfuscatorKeyValid: false,
-          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the AES regex") + " ^[1-9A-F]{32}$",
-        });
-        return;
-      }
-    }
-    this.setState({
-      passwordObfuscatorKeyValid: true,
-    });
-  }
-
   updatePasswordObfuscator(key, value) {
     const organization = this.state.organization;
     if (organization.passwordObfuscatorType === "") {
-      organization.passwordObfuscatorType = "plain";
+      organization.passwordObfuscatorType = "Plain";
     }
     if (key === "type") {
       organization.passwordObfuscatorType = value;
-      organization.passwordObfuscatorKey = this.getRandomKeyForObfuscator(value);
+      organization.passwordObfuscatorKey = Obfuscator.getRandomKeyForObfuscator(value);
     } else if (key === "key") {
       organization.passwordObfuscatorKey = value;
     }
+    const [passwordObfuscatorKeyValid, passwordObfuscatorKeyErrorMessage] = Obfuscator.checkObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
     this.setState({
       organization: organization,
+      passwordObfuscatorKeyValid: passwordObfuscatorKeyValid,
+      passwordObfuscatorKeyErrorMessage: passwordObfuscatorKeyErrorMessage,
     });
-    this.checkObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
   }
 
   renderOrganization() {
@@ -374,15 +326,15 @@ class OrganizationEditPage extends React.Component {
               onChange={(value => {this.updatePasswordObfuscator("type", value);})}>
               {
                 [
-                  {id: "plain", name: "Plain"},
-                  {id: "aes", name: "AES"},
-                  {id: "des", name: "DES"},
+                  {id: "Plain", name: "Plain"},
+                  {id: "AES", name: "AES"},
+                  {id: "DES", name: "DES"},
                 ].map((obfuscatorType, index) => <Option key={index} value={obfuscatorType.id}>{obfuscatorType.name}</Option>)
               }
             </Select>
           </Col>
         </Row>
-        {(this.state.organization.passwordObfuscatorType !== "" && this.state.organization.passwordObfuscatorType !== "plain") ? (
+        {(this.state.organization.passwordObfuscatorType !== "" && this.state.organization.passwordObfuscatorType !== "Plain") ? (
           <Row style={{marginTop: "20px"}} >
             <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
               {Setting.getLabel(i18next.t("general:Password obf key"), i18next.t("general:Password obf key - Tooltip"))} :

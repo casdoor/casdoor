@@ -12,14 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package passwdObfuscator
+package obfuscator
 
-// PKCS7 反填充
-func unPaddingPKCS7(s []byte) []byte {
-	length := len(s)
-	if length == 0 {
-		return s
+type PasswordObfuscator interface {
+	Decrypt(passwordCipher string) (string, error)
+}
+
+func GetPasswordObfuscator(obfuscatorType string, obfuscatorKey string) PasswordObfuscator {
+	if obfuscatorType == "Plain" {
+		return NewPlainPasswordObfuscator()
+	} else if obfuscatorType == "DES" {
+		return NewDESObfuscator(obfuscatorKey)
+	} else if obfuscatorType == "AES" {
+		return NewAESObfuscator(obfuscatorKey)
 	}
-	unPadding := int(s[length-1])
-	return s[:(length - unPadding)]
+	return nil
 }

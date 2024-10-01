@@ -12,15 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package passwdObfuscator
+package obfuscator
 
-type PlainPasswordObfuscator struct{}
+import (
+	"crypto/aes"
+	"encoding/hex"
+)
 
-func NewPlainPasswordObfuscator() *PlainPasswordObfuscator {
-	obfuscator := &PlainPasswordObfuscator{}
+type AESObfuscator struct {
+	key string
+}
+
+func NewAESObfuscator(key string) *AESObfuscator {
+	obfuscator := &AESObfuscator{key: key}
 	return obfuscator
 }
 
-func (obfuscator *PlainPasswordObfuscator) Decrypte(passwdCipher string) (string, error) {
-	return passwdCipher, nil
+func (obfuscator *AESObfuscator) Decrypt(passwordCipherStr string) (string, error) {
+	key, err := hex.DecodeString(obfuscator.key)
+	if err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	return Decrypt(passwordCipherStr, block)
 }

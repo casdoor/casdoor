@@ -12,19 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package passwdObfuscator
+package obfuscator
 
-type PasswordObfuscator interface {
-	Decrypte(passwdCipher string) (string, error)
+import (
+	"crypto/des"
+	"encoding/hex"
+)
+
+type DESObfuscator struct {
+	key string
 }
 
-func GetPasswordObfuscator(obfuscatorType string, obfuscatorKey string) PasswordObfuscator {
-	if obfuscatorType == "plain" {
-		return NewPlainPasswordObfuscator()
-	} else if obfuscatorType == "des" {
-		return NewDESObfuscator(obfuscatorKey)
-	} else if obfuscatorType == "aes" {
-		return NewAESObfuscator(obfuscatorKey)
+func NewDESObfuscator(key string) *DESObfuscator {
+	obfuscator := &DESObfuscator{key: key}
+	return obfuscator
+}
+
+func (obfuscator *DESObfuscator) Decrypt(passwordCipherStr string) (string, error) {
+	key, err := hex.DecodeString(obfuscator.key)
+	if err != nil {
+		return "", err
 	}
-	return nil
+
+	block, err := des.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	return Decrypt(passwordCipherStr, block)
 }

@@ -12,49 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package passwdObfuscator
+package obfuscator
 
 import (
-	"crypto/aes"
 	"crypto/cipher"
 	"encoding/hex"
 	"fmt"
 )
 
-type AESObfuscator struct {
-	key string
+// PKCS7 反填充
+func unPaddingPKCS7(s []byte) []byte {
+	length := len(s)
+	if length == 0 {
+		return s
+	}
+	unPadding := int(s[length-1])
+	return s[:(length - unPadding)]
 }
 
-func NewAESObfuscator(key string) *AESObfuscator {
-	obfuscator := &AESObfuscator{key: key}
-	return obfuscator
-}
-
-func (obfuscator *AESObfuscator) Decrypte(passwdCipherStr string) (string, error) {
-	key, err := hex.DecodeString(obfuscator.key)
+func Decrypt(passwordCipherStr string, block cipher.Block) (string, error) {
+	passwordCipherBytes, err := hex.DecodeString(passwordCipherStr)
 	if err != nil {
 		return "", err
 	}
 
-	passwdCipherBytes, err := hex.DecodeString(passwdCipherStr)
-	if err != nil {
-		return "", err
-	}
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	if len(passwdCipherBytes) < block.BlockSize() {
+	if len(passwordCipherBytes) < block.BlockSize() {
 		return "", fmt.Errorf("ciphertext too short")
 	}
 
-	iv := passwdCipherBytes[:block.BlockSize()]
-	password := make([]byte, len(passwdCipherBytes)-block.BlockSize())
+	iv := passwordCipherBytes[:block.BlockSize()]
+	password := make([]byte, len(passwordCipherBytes)-block.BlockSize())
 
 	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(password, passwdCipherBytes[block.BlockSize():])
+	mode.CryptBlocks(password, passwordCipherBytes[block.BlockSize():])
 
 	return string(unPaddingPKCS7(password)), nil
 }
