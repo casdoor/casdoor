@@ -12,22 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package obfuscator
+package util
 
 import (
+	"crypto/aes"
 	"crypto/cipher"
+	"crypto/des"
 	"encoding/hex"
 	"fmt"
 )
 
-// PKCS7 反填充
-func unPaddingPKCS7(s []byte) []byte {
-	length := len(s)
-	if length == 0 {
-		return s
+func GetPlainPassword(passwordObfuscatorType string, passwordObfuscatorKey string, passwordCipher string) (string, error) {
+	if passwordObfuscatorType == "DES" || passwordObfuscatorType == "AES" {
+		key, err := hex.DecodeString(passwordObfuscatorKey)
+		if err != nil {
+			return "", err
+		}
+		if passwordObfuscatorType == "DES" {
+			block, err := des.NewCipher(key)
+			if err != nil {
+				return "", err
+			}
+			return Decrypt(passwordCipher, block)
+		} else {
+			block, err := aes.NewCipher(key)
+			if err != nil {
+				return "", err
+			}
+			return Decrypt(passwordCipher, block)
+		}
 	}
-	unPadding := int(s[length-1])
-	return s[:(length - unPadding)]
+	return passwordCipher, nil
 }
 
 func Decrypt(passwordCipherStr string, block cipher.Block) (string, error) {
@@ -46,5 +61,14 @@ func Decrypt(passwordCipherStr string, block cipher.Block) (string, error) {
 	mode := cipher.NewCBCDecrypter(block, iv)
 	mode.CryptBlocks(password, passwordCipherBytes[block.BlockSize():])
 
-	return string(unPaddingPKCS7(password)), nil
+	return string(unPaddingPkcs7(password)), nil
+}
+
+func unPaddingPkcs7(s []byte) []byte {
+	length := len(s)
+	if length == 0 {
+		return s
+	}
+	unPadding := int(s[length-1])
+	return s[:(length - unPadding)]
 }

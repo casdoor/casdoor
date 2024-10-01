@@ -66,6 +66,9 @@ type AuthForm struct {
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`
 
+	PasswordObfuscatorType string `json:"passwordObfuscatorType"`
+	PasswordObfuscatorKey  string `json:"passwordObfuscatorKey"`
+
 	FaceId []float64 `json:"faceId"`
 }
 

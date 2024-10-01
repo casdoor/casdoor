@@ -29,7 +29,6 @@ import (
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/idp"
-	"github.com/casdoor/casdoor/obfuscator"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
@@ -463,22 +462,9 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			password := authForm.Password
-
-			var organization *object.Organization
-			organization, err = object.GetOrganization(util.GetId("admin", authForm.Organization))
+			password, err := util.GetPlainPassword(authForm.PasswordObfuscatorType, authForm.PasswordObfuscatorKey, authForm.Password)
 			if err != nil {
 				c.ResponseError(err.Error())
-			}
-			if organization != nil {
-				passwordObfuscator := obfuscator.GetPasswordObfuscator(organization.PasswordObfuscatorType, organization.PasswordObfuscatorKey)
-				if passwordObfuscator != nil {
-					password, err = passwordObfuscator.Decrypt(password)
-					if err != nil {
-						c.ResponseError(err.Error())
-						return
-					}
-				}
 			}
 
 			isSigninViaLdap := authForm.SigninMethod == "LDAP"
