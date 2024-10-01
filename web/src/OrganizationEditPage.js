@@ -146,7 +146,7 @@ class OrganizationEditPage extends React.Component {
       if (!regex.test(obfuscatorKey)) {
         this.setState({
           passwordObfuscatorKeyValid: false,
-          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the des regex: ") + "^[1-9A-F]{16}$",
+          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the DES regex") + " ^[1-9A-F]{16}$",
         });
         return;
       }
@@ -155,7 +155,7 @@ class OrganizationEditPage extends React.Component {
       if (!regex.test(obfuscatorKey)) {
         this.setState({
           passwordObfuscatorKeyValid: false,
-          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the des regex: ") + "^[1-9A-F]{32}$",
+          passwordObfuscatorKeyErrorMessage: i18next.t("organization:The input key doesn't match the AES regex") + " ^[1-9A-F]{32}$",
         });
         return;
       }
