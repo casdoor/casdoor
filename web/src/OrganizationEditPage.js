@@ -582,6 +582,11 @@ class OrganizationEditPage extends React.Component {
     const organization = Setting.deepCopy(this.state.organization);
     organization.accountItems = organization.accountItems?.filter(accountItem => accountItem.name !== "Please select an account item");
 
+    if (!this.state.passwordObfuscatorKeyValid) {
+      Setting.showMessage("error", i18next.t("organization:the password obfuscator key is invalid"));
+      return;
+    }
+
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)
       .then((res) => {
         if (res.status === "ok") {
