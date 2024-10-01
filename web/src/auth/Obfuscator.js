@@ -43,9 +43,8 @@ export function checkObfuscatorKey(obfuscatorType, obfuscatorKey) {
   return [true, ""];
 }
 
-export function encryptByDes(key, password) {
-  const iv = CryptoJS.lib.WordArray.random(8);
-  const encrypted = CryptoJS.DES.encrypt(
+function encrypt(cipher, key, iv, password) {
+  const encrypted = cipher.encrypt(
     CryptoJS.enc.Hex.parse(Buffer.from(password, "utf-8").toString("hex")),
     CryptoJS.enc.Hex.parse(key),
     {
@@ -57,16 +56,12 @@ export function encryptByDes(key, password) {
   return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
 }
 
+export function encryptByDes(key, password) {
+  const iv = CryptoJS.lib.WordArray.random(8);
+  return encrypt(CryptoJS.DES, key, iv, password);
+}
+
 export function encryptByAes(key, password) {
   const iv = CryptoJS.lib.WordArray.random(16);
-  const encrypted = CryptoJS.AES.encrypt(
-    CryptoJS.enc.Hex.parse(Buffer.from(password, "utf-8").toString("hex")),
-    CryptoJS.enc.Hex.parse(key),
-    {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      pad: CryptoJS.pad.Pkcs7,
-    }
-  );
-  return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
+  return encrypt(CryptoJS.AES, key, iv, password);
 }
