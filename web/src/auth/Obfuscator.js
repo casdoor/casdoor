@@ -14,23 +14,13 @@
 
 import CryptoJS from "crypto-js";
 import i18next from "i18next";
-
-const characters = "123456789abcdef";
-
-export function getRandomHexKey(length) {
-  let key = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    key += characters[randomIndex];
-  }
-  return key;
-}
+import * as Setting from "../Setting";
 
 export function getRandomKeyForObfuscator(obfuscatorType) {
   if (obfuscatorType === "DES") {
-    return this.getRandomHexKey(16);
+    return Setting.getRandomHexKey(16);
   } else if (obfuscatorType === "AES") {
-    return this.getRandomHexKey(32);
+    return Setting.getRandomHexKey(32);
   } else {
     return "";
   }

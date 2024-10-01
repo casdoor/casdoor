@@ -380,6 +380,12 @@ class LoginPage extends React.Component {
       return;
     }
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
+      const application = this.getApplicationObj();
+      if (application?.organizationObj?.passwordObfuscatorType === "DES") {
+        values["password"] = Obfuscator.encryptByDes(application.organizationObj.passwordObfuscatorKey, values["password"]);
+      } else if (application?.organizationObj?.passwordObfuscatorType === "AES") {
+        values["password"] = Obfuscator.encryptByAes(application.organizationObj.passwordObfuscatorKey, values["password"]);
+      }
       if (this.state.enableCaptchaModal === CaptchaRule.Always) {
         this.setState({
           openCaptchaModal: true,
@@ -389,12 +395,6 @@ class LoginPage extends React.Component {
       } else if (this.state.enableCaptchaModal === CaptchaRule.Dynamic) {
         this.checkCaptchaStatus(values);
         return;
-      }
-      const application = this.getApplicationObj();
-      if (application?.organizationObj?.passwordObfuscatorType === "DES") {
-        values["password"] = Obfuscator.encryptByDes(application.organizationObj.passwordObfuscatorKey, values["password"]);
-      } else if (application?.organizationObj?.passwordObfuscatorType === "AES") {
-        values["password"] = Obfuscator.encryptByAes(application.organizationObj.passwordObfuscatorKey, values["password"]);
       }
     }
     this.login(values);
