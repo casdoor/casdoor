@@ -44,7 +44,7 @@ func decryptDesOrAes(passwordCipher string, block cipher.Block) (string, error) 
 	iv := passwordCipherBytes[:block.BlockSize()]
 	password := make([]byte, len(passwordCipherBytes)-block.BlockSize())
 
-	mode := cipher.NewCBCer(block, iv)
+	mode := cipher.NewCBCDecrypter(block, iv)
 	mode.CryptBlocks(password, passwordCipherBytes[block.BlockSize():])
 
 	return string(unPaddingPkcs7(password)), nil
