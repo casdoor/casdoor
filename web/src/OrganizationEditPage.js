@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -39,9 +39,8 @@ class OrganizationEditPage extends React.Component {
       applications: [],
       ldaps: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
-      passwordObfuscatorKeyValid: true,
-      passwordObfuscatorKeyErrorMessage: "",
     };
+    this.passwordObfuscatorKeyRef = React.createRef();
   }
 
   UNSAFE_componentWillMount() {
@@ -63,7 +62,7 @@ class OrganizationEditPage extends React.Component {
 
           this.setState({
             organization: organization,
-          });
+          }, () => this.passwordObfuscatorKeyRef.current?.setFieldsValue({"passwordObfuscatorKey": organization.passwordObfuscatorKey}));
         } else {
           Setting.showMessage("error", res.msg);
         }
@@ -123,15 +122,24 @@ class OrganizationEditPage extends React.Component {
     if (key === "type") {
       organization.passwordObfuscatorType = value;
       organization.passwordObfuscatorKey = Obfuscator.getRandomKeyForObfuscator(value);
+      this.setState({}, () => this.passwordObfuscatorKeyRef.current?.setFields([
+        {
+          name: "passwordObfuscatorKey",
+          rules: [
+            {
+              pattern: Obfuscator.passwordObfuscatorKeyRegex[organization.passwordObfuscatorType],
+              message: `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${Obfuscator.passwordObfuscatorKeyRegex[organization.passwordObfuscatorType]}`,
+            },
+          ],
+        },
+      ]));
     } else if (key === "key") {
       organization.passwordObfuscatorKey = value;
+      this.passwordObfuscatorKeyRef.current?.validateFields(["passwordObfuscatorKey"]);
     }
-    const [passwordObfuscatorKeyValid, passwordObfuscatorKeyErrorMessage] = Obfuscator.checkPasswordObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
     this.setState({
       organization: organization,
-      passwordObfuscatorKeyValid: passwordObfuscatorKeyValid,
-      passwordObfuscatorKeyErrorMessage: passwordObfuscatorKeyErrorMessage,
-    });
+    }, () => this.passwordObfuscatorKeyRef.current?.setFieldsValue({"passwordObfuscatorKey": organization.passwordObfuscatorKey}));
   }
 
   renderOrganization() {
@@ -340,12 +348,24 @@ class OrganizationEditPage extends React.Component {
               {Setting.getLabel(i18next.t("general:Password obf key"), i18next.t("general:Password obf key - Tooltip"))} :
             </Col>
             <Col span={22} >
-              <Input
-                value={this.state.organization.passwordObfuscatorKey}
-                onChange={(e) => {this.updatePasswordObfuscator("key", e.target.value);}}
-                status={(!this.state.passwordObfuscatorKeyValid && this.state.passwordObfuscatorKeyErrorMessage) ? "error" : undefined}
-              />
-              {!this.state.passwordObfuscatorKeyValid && this.state.passwordObfuscatorKeyErrorMessage && <Row style={{marginTop: "20px"}} > <div style={{color: "red", marginTop: "-20px"}}>{this.state.passwordObfuscatorKeyErrorMessage}</div> </Row>}
+              <Form
+                ref={this.passwordObfuscatorKeyRef}
+              >
+                <Form.Item
+                  name="passwordObfuscatorKey"
+                  rules={[
+                    {
+                      pattern: Obfuscator.passwordObfuscatorKeyRegex[this.state.organization.passwordObfuscatorType],
+                      message: `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${Obfuscator.passwordObfuscatorKeyRegex[this.state.organization.passwordObfuscatorType]}`,
+                    },
+                  ]}
+                >
+                  <Input
+                    value={this.state.organization.passwordObfuscatorKey}
+                    onChange={(e) => {this.updatePasswordObfuscator("key", e.target.value);}}
+                  />
+                </Form.Item>
+              </Form>
             </Col>
           </Row>) : null}
         <Row style={{marginTop: "20px"}} >
@@ -582,7 +602,8 @@ class OrganizationEditPage extends React.Component {
     const organization = Setting.deepCopy(this.state.organization);
     organization.accountItems = organization.accountItems?.filter(accountItem => accountItem.name !== "Please select an account item");
 
-    if (!this.state.passwordObfuscatorKeyValid) {
+    const passwordObfuscatorKeyValid = Obfuscator.checkPasswordObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
+    if (!passwordObfuscatorKeyValid) {
       Setting.showMessage("error", i18next.t("organization:the password obfuscator key is invalid"));
       return;
     }
