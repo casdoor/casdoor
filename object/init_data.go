@@ -174,13 +174,17 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
-		return nil, err
+		panic(err)
+		// return nil, err
 	}
 
 	// transform nil slice to empty slice
 	for _, organization := range data.Organizations {
 		if organization.Tags == nil {
 			organization.Tags = []string{}
+		}
+		if organization.AccountItems == nil {
+			organization.AccountItems = []*AccountItem{}
 		}
 	}
 	for _, application := range data.Applications {
@@ -275,7 +279,9 @@ func initDefinedOrganization(organization *Organization) {
 		}
 	}
 	organization.CreatedTime = util.GetCurrentTime()
-	organization.AccountItems = getBuiltInAccountItems()
+	if(len(organization.AccountItems) == 0) {
+		organization.AccountItems = getBuiltInAccountItems()
+	}
 
 	_, err = AddOrganization(organization)
 	if err != nil {
