@@ -13,39 +13,22 @@
 // limitations under the License.
 
 import CryptoJS from "crypto-js";
-import * as Setting from "../Setting";
+import i18next from "i18next";
 
 export function getRandomKeyForObfuscator(obfuscatorType) {
   if (obfuscatorType === "DES") {
-    return Setting.getRandomHexKey(16);
+    return getRandomHexKey(16);
   } else if (obfuscatorType === "AES") {
-    return Setting.getRandomHexKey(32);
+    return getRandomHexKey(32);
   } else {
     return "";
   }
 }
 
-export const passwordObfuscatorKeyRegex = {
+export const passwordObfuscatorKeyRegexes = {
   "DES": /^[1-9a-f]{16}$/,
   "AES": /^[1-9a-f]{32}$/,
 };
-
-export function checkPasswordObfuscatorKey(passwordObfuscatorType, passwordObfuscatorKey) {
-  if (passwordObfuscatorType === "Plain" && passwordObfuscatorKey !== "") {
-    return false;
-  } else if (passwordObfuscatorType === "AES") {
-    const regex = /^[1-9a-f]{32}$/;
-    if (!regex.test(passwordObfuscatorKey)) {
-      return false;
-    }
-  } else if (passwordObfuscatorType === "DES") {
-    const regex = /^[1-9a-f]{16}$/;
-    if (!regex.test(passwordObfuscatorKey)) {
-      return false;
-    }
-  }
-  return true;
-}
 
 function encrypt(cipher, key, iv, password) {
   const encrypted = cipher.encrypt(
@@ -60,12 +43,44 @@ function encrypt(cipher, key, iv, password) {
   return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
 }
 
-export function encryptByDes(key, password) {
+export function encryptByPasswordObfuscator(passwordObfuscatorType, passwordObfuscatorKey, password) {
+  if (passwordObfuscatorType === undefined) {
+    return ["", i18next.t("organization:failed to get password obfuscator")];
+  } else if (passwordObfuscatorType === "DES") {
+    if (passwordObfuscatorKeyRegexes[passwordObfuscatorType].test(passwordObfuscatorKey)) {
+      return [encryptByDes(passwordObfuscatorKey, password), ""];
+    } else {
+      return ["", `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${passwordObfuscatorKeyRegexes[passwordObfuscatorType]}`];
+    }
+  } else if (passwordObfuscatorType === "AES") {
+    if (passwordObfuscatorKeyRegexes[passwordObfuscatorType].test(passwordObfuscatorKey)) {
+      return [encryptByAes(passwordObfuscatorKey, password), ""];
+    } else {
+      return ["", `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${passwordObfuscatorKeyRegexes[passwordObfuscatorType]}`];
+    }
+  } else if (passwordObfuscatorType === "Plain" || passwordObfuscatorType === "") {
+    return [password, ""];
+  } else {
+    return ["", `${i18next.t("organization:unsupported password obfuscator type")}: ${passwordObfuscatorType}`];
+  }
+}
+
+function encryptByDes(key, password) {
   const iv = CryptoJS.lib.WordArray.random(8);
   return encrypt(CryptoJS.DES, key, iv, password);
 }
 
-export function encryptByAes(key, password) {
+function encryptByAes(key, password) {
   const iv = CryptoJS.lib.WordArray.random(16);
   return encrypt(CryptoJS.AES, key, iv, password);
+}
+
+function getRandomHexKey(length) {
+  const characters = "123456789abcdef";
+  let key = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    key += characters[randomIndex];
+  }
+  return key;
 }

@@ -380,11 +380,13 @@ class LoginPage extends React.Component {
       return;
     }
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
-      const application = this.getApplicationObj();
-      if (application?.organizationObj?.passwordObfuscatorType === "DES") {
-        values["password"] = Obfuscator.encryptByDes(application.organizationObj.passwordObfuscatorKey, values["password"]);
-      } else if (application?.organizationObj?.passwordObfuscatorType === "AES") {
-        values["password"] = Obfuscator.encryptByAes(application.organizationObj.passwordObfuscatorKey, values["password"]);
+      const organization = this.getApplicationObj()?.organizationObj;
+      const [passwordCipher, errorMessage] = Obfuscator.encryptByPasswordObfuscator(organization?.passwordObfuscatorType, organization?.passwordObfuscatorKey, values["password"]);
+      if (errorMessage.length > 0) {
+        Setting.showMessage("error", errorMessage);
+        return;
+      } else {
+        values["password"] = passwordCipher;
       }
       if (this.state.enableCaptchaModal === CaptchaRule.Always) {
         this.setState({

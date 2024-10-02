@@ -1554,13 +1554,3 @@ export function getCurrencyText(product) {
     return "(Unknown currency)";
   }
 }
-
-export function getRandomHexKey(length) {
-  const characters = "123456789abcdef";
-  let key = "";
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    key += characters[randomIndex];
-  }
-  return key;
-}

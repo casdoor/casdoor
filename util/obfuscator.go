@@ -44,7 +44,7 @@ func GetPlainPassword(passwordObfuscatorType string, passwordObfuscatorKey strin
 	} else if passwordObfuscatorType == "Plain" || passwordObfuscatorType == "" {
 		return passwordCipher, nil
 	} else {
-		return "", fmt.Errorf("invalid obfuscator type: %s", passwordObfuscatorType)
+		return "", fmt.Errorf("unsupported password obfuscator type: %s", passwordObfuscatorType)
 	}
 }
 

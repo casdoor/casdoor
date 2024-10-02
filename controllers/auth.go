@@ -468,6 +468,7 @@ func (c *ApiController) Login() {
 				password, err = util.GetPlainPassword(application.OrganizationObj.PasswordObfuscatorType, application.OrganizationObj.PasswordObfuscatorKey, authForm.Password)
 				if err != nil {
 					c.ResponseError(err.Error())
+					return
 				}
 			}
 
