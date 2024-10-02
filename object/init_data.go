@@ -174,8 +174,7 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
-		panic(err)
-		// return nil, err
+		return nil, err
 	}
 
 	// transform nil slice to empty slice
