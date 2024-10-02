@@ -465,7 +465,7 @@ func (c *ApiController) Login() {
 			password := authForm.Password
 
 			if application.OrganizationObj != nil {
-				password, err = util.GetPlainPassword(application.OrganizationObj.PasswordObfuscatorType, application.OrganizationObj.PasswordObfuscatorKey, authForm.Password)
+				password, err = util.GetUnobfuscatedPassword(application.OrganizationObj.PasswordObfuscatorType, application.OrganizationObj.PasswordObfuscatorKey, authForm.Password)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
