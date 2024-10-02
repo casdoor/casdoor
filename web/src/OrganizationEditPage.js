@@ -126,7 +126,7 @@ class OrganizationEditPage extends React.Component {
     } else if (key === "key") {
       organization.passwordObfuscatorKey = value;
     }
-    const [passwordObfuscatorKeyValid, passwordObfuscatorKeyErrorMessage] = Obfuscator.checkObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
+    const [passwordObfuscatorKeyValid, passwordObfuscatorKeyErrorMessage] = Obfuscator.checkPasswordObfuscatorKey(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
     this.setState({
       organization: organization,
       passwordObfuscatorKeyValid: passwordObfuscatorKeyValid,

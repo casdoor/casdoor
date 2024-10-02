@@ -41,8 +41,11 @@ func GetPlainPassword(passwordObfuscatorType string, passwordObfuscatorKey strin
 			}
 			return Decrypt(passwordCipher, block)
 		}
+	} else if passwordObfuscatorType == "Plain" || passwordObfuscatorType == "" {
+		return passwordCipher, nil
+	} else {
+		return "", fmt.Errorf("invalid obfuscator type: %s", passwordObfuscatorType)
 	}
-	return passwordCipher, nil
 }
 
 func Decrypt(passwordCipherStr string, block cipher.Block) (string, error) {
@@ -52,7 +55,7 @@ func Decrypt(passwordCipherStr string, block cipher.Block) (string, error) {
 	}
 
 	if len(passwordCipherBytes) < block.BlockSize() {
-		return "", fmt.Errorf("ciphertext too short")
+		return "", fmt.Errorf("the password ciphertext should contain a random hexadecimal string of length %d at the beginning", block.BlockSize()*2)
 	}
 
 	iv := passwordCipherBytes[:block.BlockSize()]

@@ -464,14 +464,11 @@ func (c *ApiController) Login() {
 
 			password := authForm.Password
 
-			if application.OrganizationObj == nil {
-				c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), application.Organization))
-				return
-			}
-
-			password, err = util.GetPlainPassword(application.OrganizationObj.PasswordObfuscatorType, application.OrganizationObj.PasswordObfuscatorKey, authForm.Password)
-			if err != nil {
-				c.ResponseError(err.Error())
+			if application.OrganizationObj != nil {
+				password, err = util.GetPlainPassword(application.OrganizationObj.PasswordObfuscatorType, application.OrganizationObj.PasswordObfuscatorKey, authForm.Password)
+				if err != nil {
+					c.ResponseError(err.Error())
+				}
 			}
 
 			isSigninViaLdap := authForm.SigninMethod == "LDAP"

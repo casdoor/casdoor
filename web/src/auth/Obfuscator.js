@@ -26,18 +26,18 @@ export function getRandomKeyForObfuscator(obfuscatorType) {
   }
 }
 
-export function checkObfuscatorKey(obfuscatorType, obfuscatorKey) {
-  if (obfuscatorType === "Plain" && obfuscatorKey !== "") {
-    return [false, i18next.t("organization:The key should be empty")];
-  } else if (obfuscatorType === "DES") {
-    const regex = /^[1-9a-f]{16}$/;
-    if (!regex.test(obfuscatorKey)) {
-      return [false, i18next.t("organization:The input key doesn't match the DES regex") + " ^[1-9a-f]{16}$"];
-    }
-  } else if (obfuscatorType === "AES") {
+export function checkPasswordObfuscatorKey(passwordObfuscatorType, passwordObfuscatorKey) {
+  if (passwordObfuscatorType === "Plain" && passwordObfuscatorKey !== "") {
+    return [false, i18next.t("organization:The password obfuscator key should be empty")];
+  } else if (passwordObfuscatorType === "AES") {
     const regex = /^[1-9a-f]{32}$/;
-    if (!regex.test(obfuscatorKey)) {
-      return [false, i18next.t("organization:The input key doesn't match the AES regex") + " ^[1-9a-f]{32}$"];
+    if (!regex.test(passwordObfuscatorKey)) {
+      return [false, i18next.t("organization:The password obfuscator key doesn't match the AES regex") + " ^[1-9a-f]{32}$"];
+    }
+  } else if (passwordObfuscatorType === "DES") {
+    const regex = /^[1-9a-f]{16}$/;
+    if (!regex.test(passwordObfuscatorKey)) {
+      return [false, i18next.t("organization:The password obfuscator key doesn't match the DES regex") + " ^[1-9a-f]{16}$"];
     }
   }
   return [true, ""];

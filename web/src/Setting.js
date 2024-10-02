@@ -1555,9 +1555,8 @@ export function getCurrencyText(product) {
   }
 }
 
-const characters = "123456789abcdef";
-
 export function getRandomHexKey(length) {
+  const characters = "123456789abcdef";
   let key = "";
   for (let i = 0; i < length; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
