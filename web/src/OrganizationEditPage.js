@@ -350,6 +350,7 @@ class OrganizationEditPage extends React.Component {
               }}
               filterOption={(input, option) => (option?.text ?? "").toLowerCase().includes(input.toLowerCase())}
             >
+              {Setting.getCountryCodeOption({name: i18next.t("organization:All"), code: "All", phone: 0})}
               {
                 Setting.getCountryCodeData().map((country) => Setting.getCountryCodeOption(country))
               }
