@@ -35,6 +35,8 @@ class OrganizationListPage extends BaseListPage {
       passwordType: "plain",
       PasswordSalt: "",
       passwordOptions: [],
+      passwordObfuscatorType: "Plain",
+      passwordObfuscatorKey: "",
       countryCodes: ["US"],
       defaultAvatar: `${Setting.StaticBaseUrl}/img/casbin.svg`,
       defaultApplication: "",
