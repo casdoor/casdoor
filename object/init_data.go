@@ -182,6 +182,9 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		if organization.Tags == nil {
 			organization.Tags = []string{}
 		}
+		if organization.AccountItems == nil {
+			organization.AccountItems = []*AccountItem{}
+		}
 	}
 	for _, application := range data.Applications {
 		if application.Providers == nil {
@@ -275,7 +278,9 @@ func initDefinedOrganization(organization *Organization) {
 		}
 	}
 	organization.CreatedTime = util.GetCurrentTime()
-	organization.AccountItems = getBuiltInAccountItems()
+	if len(organization.AccountItems) == 0 {
+		organization.AccountItems = getBuiltInAccountItems()
+	}
 
 	_, err = AddOrganization(organization)
 	if err != nil {
