@@ -43,25 +43,34 @@ function encrypt(cipher, key, iv, password) {
   return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Hex);
 }
 
-export function encryptByPasswordObfuscator(passwordObfuscatorType, passwordObfuscatorKey, password) {
+export function checkPasswordObfuscator(passwordObfuscatorType, passwordObfuscatorKey) {
   if (passwordObfuscatorType === undefined) {
-    return ["", i18next.t("organization:failed to get password obfuscator")];
-  } else if (passwordObfuscatorType === "DES") {
-    if (passwordObfuscatorKeyRegexes[passwordObfuscatorType].test(passwordObfuscatorKey)) {
-      return [encryptByDes(passwordObfuscatorKey, password), ""];
-    } else {
-      return ["", `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${passwordObfuscatorKeyRegexes[passwordObfuscatorType]}`];
-    }
-  } else if (passwordObfuscatorType === "AES") {
-    if (passwordObfuscatorKeyRegexes[passwordObfuscatorType].test(passwordObfuscatorKey)) {
-      return [encryptByAes(passwordObfuscatorKey, password), ""];
-    } else {
-      return ["", `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${passwordObfuscatorKeyRegexes[passwordObfuscatorType]}`];
-    }
+    return i18next.t("organization:failed to get password obfuscator");
   } else if (passwordObfuscatorType === "Plain" || passwordObfuscatorType === "") {
-    return [password, ""];
+    return "";
+  } else if (passwordObfuscatorType === "AES" || passwordObfuscatorType === "DES") {
+    if (passwordObfuscatorKeyRegexes[passwordObfuscatorType].test(passwordObfuscatorKey)) {
+      return "";
+    } else {
+      return `${i18next.t("organization:The password obfuscator key doesn't match the regex")}: ${passwordObfuscatorKeyRegexes[passwordObfuscatorType].source}`;
+    }
   } else {
-    return ["", `${i18next.t("organization:unsupported password obfuscator type")}: ${passwordObfuscatorType}`];
+    return `${i18next.t("organization:unsupported password obfuscator type")}: ${passwordObfuscatorType}`;
+  }
+}
+
+export function encryptByPasswordObfuscator(passwordObfuscatorType, passwordObfuscatorKey, password) {
+  const passwordObfuscatorErrorMessage = checkPasswordObfuscator(passwordObfuscatorType, passwordObfuscatorKey);
+  if (passwordObfuscatorErrorMessage.length > 0) {
+    return ["", passwordObfuscatorErrorMessage];
+  } else {
+    if (passwordObfuscatorType === "Plain" || passwordObfuscatorType === "") {
+      return [password, ""];
+    } else if (passwordObfuscatorType === "AES") {
+      return [encryptByAes(passwordObfuscatorKey, password), ""];
+    } else if (passwordObfuscatorType === "DES") {
+      return [encryptByDes(passwordObfuscatorKey, password), ""];
+    }
   }
 }
 
