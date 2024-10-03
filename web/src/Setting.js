@@ -418,6 +418,9 @@ export function getCountryCode(country) {
 }
 
 export function getCountryCodeData(countryCodes = phoneNumber.getCountries()) {
+  if (countryCodes?.includes("All")) {
+    countryCodes = phoneNumber.getCountries();
+  }
   return countryCodes?.map((countryCode) => {
     if (phoneNumber.isSupportedCountry(countryCode)) {
       const name = initCountries().getName(countryCode, getLanguage());
@@ -436,10 +439,10 @@ export function getCountryCodeOption(country) {
     <Option key={country.code} value={country.code} label={`+${country.phone}`} text={`${country.name}, ${country.code}, ${country.phone}`} >
       <div style={{display: "flex", justifyContent: "space-between", marginRight: "10px"}}>
         <div>
-          {getCountryImage(country)}
+          {country.code === "All" ? null : getCountryImage(country)}
           {`${country.name}`}
         </div>
-        {`+${country.phone}`}
+        {country.code === "All" ? null : `+${country.phone}`}
       </div>
     </Option>
   );
