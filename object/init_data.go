@@ -278,7 +278,7 @@ func initDefinedOrganization(organization *Organization) {
 		}
 	}
 	organization.CreatedTime = util.GetCurrentTime()
-	if(len(organization.AccountItems) == 0) {
+	if (len(organization.AccountItems) == 0) {
 		organization.AccountItems = getBuiltInAccountItems()
 	}
 
