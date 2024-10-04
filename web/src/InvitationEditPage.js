@@ -20,6 +20,7 @@ import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
+import * as GroupBackend from "./backend/GroupBackend";
 
 const {Option} = Select;
 
@@ -33,6 +34,7 @@ class InvitationEditPage extends React.Component {
       invitation: null,
       organizations: [],
       applications: [],
+      groups: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -41,6 +43,7 @@ class InvitationEditPage extends React.Component {
     this.getInvitation();
     this.getOrganizations();
     this.getApplicationsByOrganization(this.state.organizationName);
+    this.getGroupsByOrganization(this.state.organizationName);
   }
 
   getInvitation() {
@@ -72,6 +75,17 @@ class InvitationEditPage extends React.Component {
         this.setState({
           applications: res.data || [],
         });
+      });
+  }
+
+  getGroupsByOrganization(organizationName) {
+    GroupBackend.getGroups(organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
+          });
+        }
       });
   }
 
@@ -120,7 +134,7 @@ class InvitationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || isCreatedByPlan} value={this.state.invitation.owner} onChange={(value => {this.updateInvitationField("owner", value); this.getApplicationsByOrganization(value);})}>
+            <Select virtual={false} style={{width: "100%"}} disabled={!Setting.isAdminUser(this.props.account) || isCreatedByPlan} value={this.state.invitation.owner} onChange={(value => {this.updateInvitationField("owner", value); this.getApplicationsByOrganization(value);this.getGroupsByOrganization(value);})}>
               {
                 this.state.organizations.map((organization, index) => <Option key={index} value={organization.name}>{organization.name}</Option>)
               }
@@ -202,6 +216,21 @@ class InvitationEditPage extends React.Component {
                 {label: i18next.t("general:All"), value: "All"},
                 ...this.state.applications.map((application) => Setting.getOption(application.name, application.name)),
               ]} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Signup group"), i18next.t("provider:Signup group - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.invitation.signupGroup} onChange={(value => {this.updateInvitationField("signupGroup", value);})}>
+              <Option key={""} value={""}>
+                {i18next.t("general:Default")}
+              </Option>
+              {
+                this.state.groups.map((group, index) => <Option key={index} value={`${group.owner}/${group.name}`}>{group.name}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
