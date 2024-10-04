@@ -277,6 +277,7 @@ class App extends Component {
         <Footer id="footer" style={
           {
             textAlign: "center",
+            background: this.state.themeAlgorithm.includes("dark") ? "black" : "white",
           }
         }>
           {
@@ -447,7 +448,7 @@ class App extends Component {
                 setLogoutState={() => {
                   this.setState({
                     account: null,
-                    themeAlgorithm: ["default"],
+                    // themeAlgorithm: ["default"],
                   });
                 }}
               />
