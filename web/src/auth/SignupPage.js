@@ -846,7 +846,7 @@ class SignupPage extends React.Component {
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
             </div>
-            <div className="login-form" style={this.props.themeAlgorithm && this.props.themeAlgorithm.includes("dark") ? {backgroundColor: "black"} : {}}>
+            <div className="login-form">
               {
                 Setting.renderHelmet(application)
               }
