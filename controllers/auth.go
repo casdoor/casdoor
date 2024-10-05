@@ -1096,3 +1096,21 @@ func (c *ApiController) Callback() {
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", code, state)
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
 }
+
+// CheckEntryIp
+// @Title CheckEntryIp
+// @router /check-entry-ip [get]
+// @Tag Login API
+// @Success 200 {object} controllers.Response The Response object
+func (c *ApiController) CheckEntryIp() {
+	userId := c.Input().Get("userId")
+	organizationId := c.Input().Get("organizationId")
+	applicationId := c.Input().Get("applicationId")
+
+	checkErr := object.CheckEntryIp(userId, organizationId, applicationId, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if checkErr != nil {
+		c.ResponseError(checkErr.Error())
+	} else {
+		c.ResponseOk()
+	}
+}

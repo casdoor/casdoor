@@ -557,6 +557,14 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 			itemsChanged = append(itemsChanged, item)
 		}
 	}
+	if oldUser.LimitedIps != newUser.LimitedIps {
+		item := GetAccountItemByName("Limited ips", organization)
+		if item == nil {
+			newUser.LimitedIps = oldUser.LimitedIps
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
 
 	if oldUser.Balance != newUser.Balance {
 		item := GetAccountItemByName("Balance", organization)

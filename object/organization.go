@@ -71,6 +71,7 @@ type Organization struct {
 	MasterPassword         string     `xorm:"varchar(100)" json:"masterPassword"`
 	DefaultPassword        string     `xorm:"varchar(100)" json:"defaultPassword"`
 	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
+	LimitedIps             string     `xorm:"varchar(1000)" json:"limitedIps"`
 	InitScore              int        `json:"initScore"`
 	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
 	IsProfilePublic        bool       `json:"isProfilePublic"`

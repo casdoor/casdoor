@@ -100,6 +100,7 @@ p, *, *, GET, /api/get-all-actions, *, *
 p, *, *, GET, /api/get-all-roles, *, *
 p, *, *, GET, /api/get-invitation-info, *, *
 p, *, *, GET, /api/faceid-signin-begin, *, *
+p, *, *, GET, /api/check-entry-ip, *, *
 `
 
 		sa := stringadapter.NewAdapter(ruleText)

@@ -150,6 +150,18 @@ class LoginPage extends React.Component {
       });
   }
 
+  checkEntryIpForApplication(application) {
+    AuthBackend.checkEntryIp("", "", application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
+      .then((res) => {
+        if (res.status === "error") {
+          this.onUpdateApplication(null);
+          this.setState({
+            msg: res.msg,
+          });
+        }
+      });
+  }
+
   getApplicationLogin() {
     const loginParams = (this.state.type === "cas") ? Util.getCasLoginParameters("admin", this.state.applicationName) : Util.getOAuthGetParameters();
     AuthBackend.getApplicationLogin(loginParams)
@@ -157,6 +169,7 @@ class LoginPage extends React.Component {
         if (res.status === "ok") {
           const application = res.data;
           this.onUpdateApplication(application);
+          this.checkEntryIpForApplication(application);
         } else {
           this.onUpdateApplication(null);
           this.setState({
@@ -182,6 +195,7 @@ class LoginPage extends React.Component {
             return ;
           }
           this.onUpdateApplication(res.data);
+          this.checkEntryIpForApplication(res.data);
         });
     } else {
       OrganizationBackend.getDefaultApplication("admin", this.state.owner)
@@ -192,6 +206,7 @@ class LoginPage extends React.Component {
             this.setState({
               applicationName: res.data.name,
             });
+            this.checkEntryIpForApplication(application);
           } else {
             this.onUpdateApplication(null);
             Setting.showMessage("error", res.msg);
@@ -405,130 +420,139 @@ class LoginPage extends React.Component {
   }
 
   login(values) {
-    // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
-    if (this.state.type === "cas") {
-      // CAS
-      const casParams = Util.getCasParameters();
-      values["type"] = this.state.type;
-      AuthBackend.loginCas(values, casParams).then((res) => {
-        const loginHandler = (res) => {
-          let msg = "Logged in successfully. ";
-          if (casParams.service === "") {
-            // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
-            msg += "Now you can visit apps protected by Casdoor.";
-          }
-          Setting.showMessage("success", msg);
-
-          if (casParams.service !== "") {
-            const st = res.data;
-            const newUrl = new URL(casParams.service);
-            newUrl.searchParams.append("ticket", st);
-            window.location.href = newUrl.toString();
-          }
-        };
-
-        if (res.status === "ok") {
-          if (res.data === NextMfa) {
-            this.setState({
-              getVerifyTotp: () => {
-                return (
-                  <MfaAuthVerifyForm
-                    mfaProps={res.data2}
-                    formValues={values}
-                    authParams={casParams}
-                    application={this.getApplicationObj()}
-                    onFail={() => {
-                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
-                    }}
-                    onSuccess={(res) => loginHandler(res)}
-                  />);
-              },
-            });
-          } else {
-            loginHandler(res);
-          }
-        } else {
-          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-        }
-      });
-    } else {
-      // OAuth
-      const oAuthParams = Util.getOAuthGetParameters();
-      this.populateOauthValues(values);
-      AuthBackend.login(values, oAuthParams)
-        .then((res) => {
-          const loginHandler = (res) => {
-            const responseType = values["type"];
-
-            if (responseType === "login") {
-              if (res.data2) {
-                sessionStorage.setItem("signinUrl", window.location.href);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+    AuthBackend.checkEntryIp(values["organization"], values["username"], "", "", "", "").then((checkRes) => {
+      if (checkRes.status === "error") {
+        this.onUpdateApplication(null);
+        this.setState({
+          msg: checkRes.msg,
+        });
+      } else {
+        // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
+        if (this.state.type === "cas") {
+          // CAS
+          const casParams = Util.getCasParameters();
+          values["type"] = this.state.type;
+          AuthBackend.loginCas(values, casParams).then((res) => {
+            const loginHandler = (res) => {
+              let msg = "Logged in successfully. ";
+              if (casParams.service === "") {
+                // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
+                msg += "Now you can visit apps protected by Casdoor.";
               }
-              Setting.showMessage("success", i18next.t("application:Logged in successfully"));
-              this.props.onLoginSuccess();
-            } else if (responseType === "code") {
-              this.postCodeLoginAction(res);
-            } else if (responseType === "token" || responseType === "id_token") {
-              if (res.data2) {
-                sessionStorage.setItem("signinUrl", window.location.href);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+              Setting.showMessage("success", msg);
+
+              if (casParams.service !== "") {
+                const st = res.data;
+                const newUrl = new URL(casParams.service);
+                newUrl.searchParams.append("ticket", st);
+                window.location.href = newUrl.toString();
               }
-              const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
-              const accessToken = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
-            } else if (responseType === "saml") {
-              if (res.data2.needUpdatePassword) {
-                sessionStorage.setItem("signinUrl", window.location.href);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
-              }
-              if (res.data2.method === "POST") {
+            };
+
+            if (res.status === "ok") {
+              if (res.data === NextMfa) {
                 this.setState({
-                  samlResponse: res.data,
-                  redirectUrl: res.data2.redirectUrl,
-                  relayState: oAuthParams.relayState,
+                  getVerifyTotp: () => {
+                    return (
+                      <MfaAuthVerifyForm
+                        mfaProps={res.data2}
+                        formValues={values}
+                        authParams={casParams}
+                        application={this.getApplicationObj()}
+                        onFail={() => {
+                          Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                        }}
+                        onSuccess={(res) => loginHandler(res)}
+                      />);
+                  },
                 });
               } else {
-                const SAMLResponse = res.data;
-                const redirectUri = res.data2.redirectUrl;
-                Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+                loginHandler(res);
               }
-            }
-          };
-
-          if (res.status === "ok") {
-            if (res.data === NextMfa) {
-              this.setState({
-                getVerifyTotp: () => {
-                  return (
-                    <MfaAuthVerifyForm
-                      mfaProps={res.data2}
-                      formValues={values}
-                      authParams={oAuthParams}
-                      application={this.getApplicationObj()}
-                      onFail={() => {
-                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
-                      }}
-                      onSuccess={(res) => loginHandler(res)}
-                    />);
-                },
-              });
-            } else if (res.data === "SelectPlan") {
-              // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
-              const pricing = res.data2;
-              Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${values.username}`);
-            } else if (res.data === "BuyPlanResult") {
-              // paid-user has pending subscription, go to buy-plan/result apge to notify payment result
-              const sub = res.data2;
-              Setting.goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
             } else {
-              loginHandler(res);
+              Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
             }
-          } else {
-            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-          }
-        });
-    }
+          });
+        } else {
+          // OAuth
+          const oAuthParams = Util.getOAuthGetParameters();
+          this.populateOauthValues(values);
+          AuthBackend.login(values, oAuthParams)
+            .then((res) => {
+              const loginHandler = (res) => {
+                const responseType = values["type"];
+
+                if (responseType === "login") {
+                  if (res.data2) {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                  }
+                  Setting.showMessage("success", i18next.t("application:Logged in successfully"));
+                  this.props.onLoginSuccess();
+                } else if (responseType === "code") {
+                  this.postCodeLoginAction(res);
+                } else if (responseType === "token" || responseType === "id_token") {
+                  if (res.data2) {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                  }
+                  const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
+                  const accessToken = res.data;
+                  Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+                } else if (responseType === "saml") {
+                  if (res.data2.needUpdatePassword) {
+                    sessionStorage.setItem("signinUrl", window.location.href);
+                    Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                  }
+                  if (res.data2.method === "POST") {
+                    this.setState({
+                      samlResponse: res.data,
+                      redirectUrl: res.data2.redirectUrl,
+                      relayState: oAuthParams.relayState,
+                    });
+                  } else {
+                    const SAMLResponse = res.data;
+                    const redirectUri = res.data2.redirectUrl;
+                    Setting.goToLink(`${redirectUri}?SAMLResponse=${encodeURIComponent(SAMLResponse)}&RelayState=${oAuthParams.relayState}`);
+                  }
+                }
+              };
+
+              if (res.status === "ok") {
+                if (res.data === NextMfa) {
+                  this.setState({
+                    getVerifyTotp: () => {
+                      return (
+                        <MfaAuthVerifyForm
+                          mfaProps={res.data2}
+                          formValues={values}
+                          authParams={oAuthParams}
+                          application={this.getApplicationObj()}
+                          onFail={() => {
+                            Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                          }}
+                          onSuccess={(res) => loginHandler(res)}
+                        />);
+                    },
+                  });
+                } else if (res.data === "SelectPlan") {
+                  // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
+                  const pricing = res.data2;
+                  Setting.goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${values.username}`);
+                } else if (res.data === "BuyPlanResult") {
+                  // paid-user has pending subscription, go to buy-plan/result apge to notify payment result
+                  const sub = res.data2;
+                  Setting.goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
+                } else {
+                  loginHandler(res);
+                }
+              } else {
+                Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+              }
+            });
+        }
+      }
+    });
   }
 
   isProviderVisible(providerItem) {
