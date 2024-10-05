@@ -277,7 +277,6 @@ class App extends Component {
         <Footer id="footer" style={
           {
             textAlign: "center",
-            background: this.state.themeAlgorithm.includes("dark") ? "black" : "white",
           }
         }>
           {
@@ -363,7 +362,11 @@ class App extends Component {
     if (this.isDoorPages()) {
       return (
         <ConfigProvider theme={{
-          algorithm: Setting.getAlgorithm(["default"]),
+          token: {
+            colorPrimary: this.state.themeData.colorPrimary,
+            borderRadius: this.state.themeData.borderRadius,
+          },
+          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             <Layout id="parent-area">
@@ -448,7 +451,6 @@ class App extends Component {
                 setLogoutState={() => {
                   this.setState({
                     account: null,
-                    // themeAlgorithm: ["default"],
                   });
                 }}
               />
