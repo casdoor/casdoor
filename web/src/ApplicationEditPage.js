@@ -977,6 +977,7 @@ class ApplicationEditPage extends React.Component {
                 <SigninTable
                   title={i18next.t("application:Signin items")}
                   table={this.state.application.signinItems}
+                  themeAlgorithm={this.state.themeAlgorithm}
                   onUpdateTable={(value) => {
                     this.updateApplicationField("signinItems", value);
                   }}
