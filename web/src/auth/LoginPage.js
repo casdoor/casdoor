@@ -1290,8 +1290,8 @@ class LoginPage extends React.Component {
       <React.Fragment>
         <CustomGithubCorner />
         <div className="login-content" style={{margin: this.props.preview ?? this.parseOffset(application.formOffset)}}>
-          {Setting.inIframe() || Setting.isMobile() ? null : (<div dangerouslySetInnerHTML={{__html: this.state.themeAlgorithm.includes("dark") ? application.darkModeFormCss : application.formCss}} />)}
-          {Setting.inIframe() || !Setting.isMobile() ? null : (<div dangerouslySetInnerHTML={{__html: this.state.themeAlgorithm.includes("dark") ? application.darkModeFormCssMobile : application.formCssMobile}} />)}
+          {Setting.inIframe() || Setting.isMobile() ? null : (<div dangerouslySetInnerHTML={{__html: this.props.themeAlgorithm && this.props.themeAlgorithm.includes("dark") ? application.darkModeFormCss : application.formCss}} />)}
+          {Setting.inIframe() || !Setting.isMobile() ? null : (<div dangerouslySetInnerHTML={{__html: this.props.themeAlgorithm && this.props.themeAlgorithm.includes("dark") ? application.darkModeFormCssMobile : application.formCssMobile}} />)}
           <div className="login-panel">
             <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
               <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
