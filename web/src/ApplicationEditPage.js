@@ -54,6 +54,15 @@ const template = `<style>
 }
 </style>`;
 
+const darkModetemplate = `<style>
+  .login-panel{
+    padding: 40px 70px 0 70px;
+    border-radius: 10px;
+    background-color: #000000;
+    box-shadow: 0 0 30px 20px rgba(0, 0, 0, 0.20);
+}
+</style>`;
+
 const previewGrid = Setting.isMobile() ? 22 : 11;
 const previewWidth = Setting.isMobile() ? "110%" : "90%";
 
@@ -844,6 +853,48 @@ class ApplicationEditPage extends React.Component {
             } title={i18next.t("application:Custom CSS Mobile - Edit")} trigger="click">
               <Input value={this.state.application.formCssMobile} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateApplicationField("formCssMobile", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Dark Mode Custom CSS"), i18next.t("application:Dark Mode Custom CSS - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror value={this.state.application.darkModeFormCss === "" ? darkModetemplate : this.state.application.darkModeFormCss}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("darkModeFormCss", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Dark Mode Custom CSS - Edit")} trigger="click">
+              <Input value={this.state.application.darkModeFormCss} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("darkModeFormCss", e.target.value);
+              }} />
+            </Popover>
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Dark Mode Custom CSS Mobile"), i18next.t("application:Dark Mode Custom CSS Mobile - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Popover placement="right" content={
+              <div style={{width: "900px", height: "300px"}} >
+                <CodeMirror value={this.state.application.darkModeFormCssMobile === "" ? darkModetemplate : this.state.application.darkModeFormCssMobile}
+                  options={{mode: "css", theme: "material-darker"}}
+                  onBeforeChange={(editor, data, value) => {
+                    this.updateApplicationField("darkModeFormCssMobile", value);
+                  }}
+                />
+              </div>
+            } title={i18next.t("application:Dark Mode Custom CSS Mobile - Edit")} trigger="click">
+              <Input value={this.state.application.darkModeFormCssMobile} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateApplicationField("darkModeFormCssMobile", e.target.value);
               }} />
             </Popover>
           </Col>
