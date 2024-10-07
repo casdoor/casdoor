@@ -154,7 +154,6 @@ class SignupPage extends React.Component {
     ApplicationBackend.getApplication("admin", applicationName)
       .then((res) => {
         if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
           this.onUpdateApplication(null);
           this.setState({
             msg: res.msg,
