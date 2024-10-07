@@ -146,18 +146,6 @@ class SignupPage extends React.Component {
     }
   }
 
-  checkEntryIp(application) {
-    AuthBackend.checkEntryIp(application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
-      .then((res) => {
-        if (res.status === "error") {
-          this.onUpdateApplication(null);
-          this.setState({
-            msg: res.msg,
-          });
-        }
-      });
-  }
-
   getApplication(applicationName) {
     if (applicationName === undefined) {
       return;
@@ -167,11 +155,14 @@ class SignupPage extends React.Component {
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);
+          this.onUpdateApplication(null);
+          this.setState({
+            msg: res.msg,
+          });
           return;
         }
 
         this.onUpdateApplication(res.data);
-        this.checkEntryIp(res.data);
       });
   }
 
@@ -181,7 +172,6 @@ class SignupPage extends React.Component {
         if (res.status === "ok") {
           const application = res.data;
           this.onUpdateApplication(application);
-          this.checkEntryIp(application);
         } else {
           this.onUpdateApplication(null);
           this.setState({
@@ -830,7 +820,6 @@ class SignupPage extends React.Component {
     if (application === undefined) {
       return null;
     }
-
     if (application === null) {
       return Util.renderMessageLarge(this, this.state.msg);
     }

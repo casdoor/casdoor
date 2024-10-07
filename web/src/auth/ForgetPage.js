@@ -57,18 +57,6 @@ class ForgetPage extends React.Component {
     }
   }
 
-  checkEntryIp(application) {
-    AuthBackend.checkEntryIp(application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
-      .then((res) => {
-        if (res.status === "error") {
-          this.onUpdateApplication(null);
-          this.setState({
-            msg: res.msg,
-          });
-        }
-      });
-  }
-
   getApplication() {
     if (this.state.applicationName === undefined) {
       return;
@@ -77,10 +65,12 @@ class ForgetPage extends React.Component {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
         if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
+          this.onUpdateApplication(null);
+          this.setState({
+            msg: res.msg,
+          });
           return;
         }
-        this.checkEntryIp(res.data);
         this.onUpdateApplication(res.data);
       });
   }

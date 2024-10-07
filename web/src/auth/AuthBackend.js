@@ -164,13 +164,3 @@ export function getCaptchaStatus(values) {
     },
   }).then(res => res.json());
 }
-
-export function checkEntryIp(organizationOwner, organizationName, applicationOwner, applicationName) {
-  return fetch(`${Setting.ServerUrl}/api/check-entry-ip?organizationId=${organizationOwner}/${encodeURIComponent(organizationName)}&applicationId=${applicationOwner}/${encodeURIComponent(applicationName)}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}

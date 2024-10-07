@@ -370,6 +370,11 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
+	if msg = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
 	c.ServeJSON()
 }
@@ -424,12 +429,6 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(organization, username)))
-		return
-	}
-
-	entryIpCheckError := object.CheckEntryIpByUser(user, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckError != nil {
-		c.ResponseError(entryIpCheckError.Error())
 		return
 	}
 

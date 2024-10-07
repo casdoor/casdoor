@@ -55,7 +55,7 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
 
-	entryIpCheckError := object.CheckEntryIpByUser(user, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	entryIpCheckError := object.CheckEntryIp(user, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 	if entryIpCheckError != nil {
 		c.ResponseError(entryIpCheckError.Error())
 		return
@@ -1101,21 +1101,4 @@ func (c *ApiController) Callback() {
 
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", code, state)
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
-}
-
-// CheckEntryIp
-// @Title CheckEntryIp
-// @router /check-entry-ip [get]
-// @Tag Login API
-// @Success 200 {object} controllers.Response The Response object
-func (c *ApiController) CheckEntryIp() {
-	organizationId := c.Input().Get("organizationId")
-	applicationId := c.Input().Get("applicationId")
-
-	checkErr := object.CheckEntryIpByApplicationIdAndOrganizationId(applicationId, organizationId, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if checkErr != nil {
-		c.ResponseError(checkErr.Error())
-	} else {
-		c.ResponseOk()
-	}
 }

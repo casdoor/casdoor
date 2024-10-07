@@ -206,7 +206,7 @@ type User struct {
 	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
-	IpWhitelist        string           `xorm:"varchar(1000)" json:"ipWhitelist"`
+	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }
 
 type Userinfo struct {
