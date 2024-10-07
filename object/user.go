@@ -206,7 +206,7 @@ type User struct {
 	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
-	LimitedIps         string           `xorm:"varchar(1000)" json:"limitedIps"`
+	IpWhitelist        string           `xorm:"varchar(1000)" json:"ipWhitelist"`
 }
 
 type Userinfo struct {
@@ -697,7 +697,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "limited_ips",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
 		}
 	}
 	if isAdmin {

@@ -165,8 +165,8 @@ export function getCaptchaStatus(values) {
   }).then(res => res.json());
 }
 
-export function checkEntryIp(userOwner, userName, organizationOwner, organizationName, applicationOwner, applicationName) {
-  return fetch(`${Setting.ServerUrl}/api/check-entry-ip?userId=${userOwner}/${encodeURIComponent(userName)}&organizationId=${organizationOwner}/${encodeURIComponent(organizationName)}&applicationId=${applicationOwner}/${encodeURIComponent(applicationName)}`, {
+export function checkEntryIp(organizationOwner, organizationName, applicationOwner, applicationName) {
+  return fetch(`${Setting.ServerUrl}/api/check-entry-ip?organizationId=${organizationOwner}/${encodeURIComponent(organizationName)}&applicationId=${applicationOwner}/${encodeURIComponent(applicationName)}`, {
     method: "GET",
     credentials: "include",
     headers: {

@@ -600,11 +600,11 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Limited ips"), i18next.t("general:Limited ips - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Ip whitelist"), i18next.t("general:Ip whitelist - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.application.limitedIps} onChange={e => {
-              this.updateApplicationField("limitedIps", e.target.value);
+            <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhiteList} onChange={e => {
+              this.updateApplicationField("ipWhitelist", e.target.value);
             }} />
           </Col>
         </Row>
@@ -1151,6 +1151,11 @@ class ApplicationEditPage extends React.Component {
     const application = Setting.deepCopy(this.state.application);
     application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
     application.signinMethods = application.signinMethods?.filter(signinMethod => ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID"].includes(signinMethod.name));
+
+    if (application.ipWhitelist !== "" && !Setting.isIpWhitelistValid(application.ipWhitelist)) {
+      Setting.showMessage("error", i18next.t("general:Ip whitelist does not meet the CIDR format requirements"));
+      return;
+    }
 
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {

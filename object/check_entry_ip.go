@@ -22,97 +22,91 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 )
 
-func CheckEntryIp(userId string, organizationId string, applicationId string, remoteAddress string, lang string) error {
+func CheckEntryIpByApplicationIdAndOrganizationId(applicationId string, organizationId string, remoteAddress string, lang string) error {
+	var organization *Organization
+	var application *Application
+	var err error
+
+	if organizationId != "" && organizationId != "/" {
+		organization, err = GetOrganization(organizationId)
+		if err != nil {
+			return err
+		}
+		if organization == nil {
+			return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationId)
+		}
+	}
+
+	if applicationId != "" && applicationId != "/" {
+		application, err = GetApplication(applicationId)
+		if err != nil {
+			return err
+		}
+		if application == nil {
+			return fmt.Errorf(i18n.Translate(lang, "auth:The application: %s does not exist"), applicationId)
+		}
+	}
+
+	return checkEntryIpByObject(nil, organization, application, remoteAddress, lang)
+}
+
+func CheckEntryIpByUser(user *User, remoteAddress string, lang string) error {
+	if user == nil {
+		return fmt.Errorf(i18n.Translate(lang, "general:User doesn't exist"))
+	}
+
+	organization, err := GetOrganizationByUser(user)
+	if err != nil {
+		return err
+	}
+	if organization == nil {
+		return fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), user.Owner)
+	}
+
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return err
+	}
+	if application == nil {
+		return fmt.Errorf(i18n.Translate(lang, "util:No application is found for userId: %s"), user.GetId())
+	}
+
+	return checkEntryIpByObject(user, organization, application, remoteAddress, lang)
+}
+
+func checkEntryIpByObject(user *User, organization *Organization, application *Application, remoteAddress string, lang string) error {
 	entryIp, _, err := net.SplitHostPort(remoteAddress)
 	if err != nil {
 		return err
 	}
 
-	userValid, userCheckErr := checkEntryIpForUser(userId, entryIp, lang)
-	organizationValid, organizationCheckErr := checkEntryIpForOrganization(organizationId, entryIp, lang)
-	applicationValid, applicationCheckErr := checkEntryIpForApplcation(applicationId, entryIp, lang)
-
-	if userCheckErr == nil && organizationCheckErr == nil && applicationCheckErr == nil {
-		if userValid && organizationValid && applicationValid {
-			return nil
-		} else {
-			return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned. If you think this is a mistake, please contact the administrator."), entryIp)
-		}
-	} else {
-		checkErrorMsg := i18n.Translate(lang, "check:Failed to check entry ip: ")
-		if userCheckErr != nil {
-			checkErrorMsg += fmt.Sprintf(i18n.Translate(lang, "check:user check error: %s. "), userCheckErr.Error())
-		}
-		if organizationCheckErr != nil {
-			checkErrorMsg += fmt.Sprintf(i18n.Translate(lang, "check:organization check error: %s. "), organizationCheckErr.Error())
-		}
-		if applicationCheckErr != nil {
-			checkErrorMsg += fmt.Sprintf(i18n.Translate(lang, "check:application check error: %s. "), applicationCheckErr.Error())
-		}
-		return fmt.Errorf(checkErrorMsg)
+	if user != nil && !isEntryIpAllowd(user.IpWhitelist, entryIp) {
+		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of user %s"), entryIp, user.Name)
 	}
+
+	if application != nil && !isEntryIpAllowd(application.IpWhitelist, entryIp) {
+		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of application %s"), entryIp, application.Name)
+	}
+
+	if organization != nil && !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
+		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of organization %s"), entryIp, organization.Name)
+	}
+
+	return nil
 }
 
-func checkEntryIpForUser(userId string, entryIp string, lang string) (bool, error) {
-	if userId == "" || userId == "/" {
-		return true, nil
-	}
-
-	user, err := GetUser(userId)
-	if err != nil {
-		return false, err
-	}
-	if user == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId)
-	}
-
-	return isRemoteAddressAllowd(user.LimitedIps, entryIp), nil
-}
-
-func checkEntryIpForOrganization(organizationId string, entryIp string, lang string) (bool, error) {
-	if organizationId == "" || organizationId == "/" {
-		return true, nil
-	}
-
-	organization, err := GetOrganization(organizationId)
-	if err != nil {
-		return false, err
-	}
-	if organization == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationId)
-	}
-
-	return isRemoteAddressAllowd(organization.LimitedIps, entryIp), nil
-}
-
-func checkEntryIpForApplcation(applicationId string, entryIp string, lang string) (bool, error) {
-	if applicationId == "" || applicationId == "/" {
-		return true, nil
-	}
-
-	application, err := GetApplication(applicationId)
-	if err != nil {
-		return false, err
-	}
-	if application == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:The application: %s does not exist"), applicationId)
-	}
-
-	return isRemoteAddressAllowd(application.LimitedIps, entryIp), nil
-}
-
-func isRemoteAddressAllowd(limitedIpsStr string, entryIp string) bool {
-	if limitedIpsStr == "" {
+func isEntryIpAllowd(ipWhitelistStr string, entryIp string) bool {
+	if ipWhitelistStr == "" {
 		return true
 	}
 
-	limitedIps := strings.Split(limitedIpsStr, ",")
-	for _, limitedIp := range limitedIps {
-		_, limitedIpNet, _ := net.ParseCIDR(limitedIp)
-		if limitedIpNet != nil && limitedIpNet.Contains(net.ParseIP(entryIp)) {
-			return false
+	ipWhitelist := strings.Split(ipWhitelistStr, ",")
+	for _, ip := range ipWhitelist {
+		_, ipNet, _ := net.ParseCIDR(ip)
+		if ipNet != nil && ipNet.Contains(net.ParseIP(entryIp)) {
+			return true
 		}
 	}
 
-	return true
+	return false
 }

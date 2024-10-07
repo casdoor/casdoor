@@ -57,8 +57,8 @@ class ForgetPage extends React.Component {
     }
   }
 
-  checkEntryIpForApplication(application) {
-    AuthBackend.checkEntryIp("", "", application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
+  checkEntryIp(application) {
+    AuthBackend.checkEntryIp(application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
       .then((res) => {
         if (res.status === "error") {
           this.onUpdateApplication(null);
@@ -80,7 +80,7 @@ class ForgetPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
-        this.checkEntryIpForApplication(res.data);
+        this.checkEntryIp(res.data);
         this.onUpdateApplication(res.data);
       });
   }
@@ -96,57 +96,48 @@ class ForgetPage extends React.Component {
     switch (name) {
     case "step1":
       const username = forms.step1.getFieldValue("username");
-      AuthBackend.checkEntryIp(forms.step1.getFieldValue("organization"), username, "", "", "", "").then((checkRes) => {
-        if (checkRes.status === "error") {
-          this.onUpdateApplication(null);
-          this.setState({
-            msg: checkRes.msg,
-          });
-        } else {
-          AuthBackend.getEmailAndPhone(forms.step1.getFieldValue("organization"), username)
-            .then((res) => {
-              if (res.status === "ok") {
-                const phone = res.data.phone;
-                const email = res.data.email;
+      AuthBackend.getEmailAndPhone(forms.step1.getFieldValue("organization"), username)
+        .then((res) => {
+          if (res.status === "ok") {
+            const phone = res.data.phone;
+            const email = res.data.email;
 
-                if (!phone && !email) {
-                  Setting.showMessage("error", "no verification method!");
-                } else {
-                  this.setState({
-                    name: res.data.name,
-                    phone: phone,
-                    email: email,
-                  });
+            if (!phone && !email) {
+              Setting.showMessage("error", "no verification method!");
+            } else {
+              this.setState({
+                name: res.data.name,
+                phone: phone,
+                email: email,
+              });
 
-                  const saveFields = (type, dest, fixed) => {
-                    this.setState({
-                      verifyType: type,
-                      isVerifyTypeFixed: fixed,
-                      dest: dest,
-                    });
-                  };
+              const saveFields = (type, dest, fixed) => {
+                this.setState({
+                  verifyType: type,
+                  isVerifyTypeFixed: fixed,
+                  dest: dest,
+                });
+              };
 
-                  switch (res.data2) {
-                  case "email":
-                    saveFields("email", email, true);
-                    break;
-                  case "phone":
-                    saveFields("phone", phone, true);
-                    break;
-                  case "username":
-                    phone !== "" ? saveFields("phone", phone, false) : saveFields("email", email, false);
-                  }
-
-                  this.setState({
-                    current: 1,
-                  });
-                }
-              } else {
-                Setting.showMessage("error", res.msg);
+              switch (res.data2) {
+              case "email":
+                saveFields("email", email, true);
+                break;
+              case "phone":
+                saveFields("phone", phone, true);
+                break;
+              case "username":
+                phone !== "" ? saveFields("phone", phone, false) : saveFields("email", email, false);
               }
-            });
-        }
-      });
+
+              this.setState({
+                current: 1,
+              });
+            }
+          } else {
+            Setting.showMessage("error", res.msg);
+          }
+        });
       break;
     case "step2":
       UserBackend.verifyCode({

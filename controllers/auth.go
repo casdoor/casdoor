@@ -55,6 +55,12 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
 
+	entryIpCheckError := object.CheckEntryIpByUser(user, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckError != nil {
+		c.ResponseError(entryIpCheckError.Error())
+		return
+	}
+
 	allowed, err := object.CheckLoginPermission(userId, application)
 	if err != nil {
 		c.ResponseError(err.Error(), nil)
@@ -1103,11 +1109,10 @@ func (c *ApiController) Callback() {
 // @Tag Login API
 // @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) CheckEntryIp() {
-	userId := c.Input().Get("userId")
 	organizationId := c.Input().Get("organizationId")
 	applicationId := c.Input().Get("applicationId")
 
-	checkErr := object.CheckEntryIp(userId, organizationId, applicationId, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	checkErr := object.CheckEntryIpByApplicationIdAndOrganizationId(applicationId, organizationId, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 	if checkErr != nil {
 		c.ResponseError(checkErr.Error())
 	} else {

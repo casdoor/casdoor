@@ -427,6 +427,12 @@ func (c *ApiController) GetEmailAndPhone() {
 		return
 	}
 
+	entryIpCheckError := object.CheckEntryIpByUser(user, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckError != nil {
+		c.ResponseError(entryIpCheckError.Error())
+		return
+	}
+
 	respUser := object.User{Name: user.Name}
 	var contentType string
 	switch username {

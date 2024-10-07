@@ -146,8 +146,8 @@ class SignupPage extends React.Component {
     }
   }
 
-  checkEntryIpForApplication(application) {
-    AuthBackend.checkEntryIp("", "", application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
+  checkEntryIp(application) {
+    AuthBackend.checkEntryIp(application.organizationObj.owner, application.organizationObj.name, application.owner, application.name)
       .then((res) => {
         if (res.status === "error") {
           this.onUpdateApplication(null);
@@ -171,7 +171,7 @@ class SignupPage extends React.Component {
         }
 
         this.onUpdateApplication(res.data);
-        this.checkEntryIpForApplication(res.data);
+        this.checkEntryIp(res.data);
       });
   }
 
@@ -181,7 +181,7 @@ class SignupPage extends React.Component {
         if (res.status === "ok") {
           const application = res.data;
           this.onUpdateApplication(application);
-          this.checkEntryIpForApplication(application);
+          this.checkEntryIp(application);
         } else {
           this.onUpdateApplication(null);
           this.setState({
@@ -243,62 +243,53 @@ class SignupPage extends React.Component {
   }
 
   onFinish(values) {
-    AuthBackend.checkEntryIp(values["organization"], values["username"], "", "", "", "").then((checkRes) => {
-      if (checkRes.status === "error") {
-        this.onUpdateApplication(null);
-        this.setState({
-          msg: checkRes.msg,
-        });
-      } else {
-        const application = this.getApplicationObj();
+    const application = this.getApplicationObj();
 
-        if (Array.isArray(values.gender)) {
-          values.gender = values.gender.join(", ");
+    if (Array.isArray(values.gender)) {
+      values.gender = values.gender.join(", ");
+    }
+
+    if (Array.isArray(values.bio)) {
+      values.bio = values.bio.join(", ");
+    }
+
+    if (Array.isArray(values.tag)) {
+      values.tag = values.tag.join(", ");
+    }
+
+    if (Array.isArray(values.education)) {
+      values.education = values.education.join(", ");
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    values.plan = params.get("plan");
+    values.pricing = params.get("pricing");
+    AuthBackend.signup(values)
+      .then((res) => {
+        if (res.status === "ok") {
+          // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
+          values.username = res.data.split("/")[1];
+          if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
+            AuthBackend.getAccount("")
+              .then((res) => {
+                let account = null;
+                if (res.status === "ok") {
+                  account = res.data;
+                  account.organization = res.data2;
+
+                  this.onUpdateAccount(account);
+                  Setting.goToLinkSoft(this, this.getResultPath(application, values));
+                } else {
+                  Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+                }
+              });
+          } else {
+            Setting.goToLinkSoft(this, this.getResultPath(application, values));
+          }
+        } else {
+          Setting.showMessage("error", res.msg);
         }
-
-        if (Array.isArray(values.bio)) {
-          values.bio = values.bio.join(", ");
-        }
-
-        if (Array.isArray(values.tag)) {
-          values.tag = values.tag.join(", ");
-        }
-
-        if (Array.isArray(values.education)) {
-          values.education = values.education.join(", ");
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        values.plan = params.get("plan");
-        values.pricing = params.get("pricing");
-        AuthBackend.signup(values)
-          .then((res) => {
-            if (res.status === "ok") {
-              // the user's id will be returned by `signup()`, if user signup by phone, the `username` in `values` is undefined.
-              values.username = res.data.split("/")[1];
-              if (Setting.hasPromptPage(application) && (!values.plan || !values.pricing)) {
-                AuthBackend.getAccount("")
-                  .then((res) => {
-                    let account = null;
-                    if (res.status === "ok") {
-                      account = res.data;
-                      account.organization = res.data2;
-
-                      this.onUpdateAccount(account);
-                      Setting.goToLinkSoft(this, this.getResultPath(application, values));
-                    } else {
-                      Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-                    }
-                  });
-              } else {
-                Setting.goToLinkSoft(this, this.getResultPath(application, values));
-              }
-            } else {
-              Setting.showMessage("error", res.msg);
-            }
-          });
-      }
-    });
+      });
   }
 
   onFinishFailed(values, errorFields, outOfDate) {

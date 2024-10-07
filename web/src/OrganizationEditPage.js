@@ -454,11 +454,11 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Limited ips"), i18next.t("general:Limited ips - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Ip whitelist"), i18next.t("general:Ip whitelist - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.organization.limitedIps} onChange={e => {
-              this.updateOrganizationField("limitedIps", e.target.value);
+            <Input value={this.state.organization.ipWhitelist} onChange={e => {
+              this.updateOrganizationField("ipWhitelist", e.target.value);
             }} />
           </Col>
         </Row>
@@ -587,6 +587,11 @@ class OrganizationEditPage extends React.Component {
     const passwordObfuscatorErrorMessage = Obfuscator.checkPasswordObfuscator(organization.passwordObfuscatorType, organization.passwordObfuscatorKey);
     if (passwordObfuscatorErrorMessage.length > 0) {
       Setting.showMessage("error", passwordObfuscatorErrorMessage);
+      return;
+    }
+
+    if (organization.ipWhitelist !== "" && !Setting.isIpWhitelistValid(organization.ipWhitelist)) {
+      Setting.showMessage("error", i18next.t("general:Ip whitelist does not meet the CIDR format requirements"));
       return;
     }
 
