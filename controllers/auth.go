@@ -262,6 +262,14 @@ func (c *ApiController) GetApplicationLogin() {
 		}
 	}
 
+	if application != nil {
+		entryIpCheckError := object.CheckEntryIp(nil, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+		if entryIpCheckError != nil {
+			c.ResponseError(entryIpCheckError.Error())
+			return
+		}
+	}
+
 	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
 		c.ResponseError(msg, application)

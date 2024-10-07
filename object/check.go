@@ -34,11 +34,6 @@ const (
 	DefaultFailedSigninFrozenTime = 15
 )
 
-var (
-	IPv4CIDRRegex = regexp.MustCompile(`^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/([0-9]|[1-2][0-9]|3[0-2]))$/`)
-	IPv6CIDRRegex = regexp.MustCompile(`^((\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*)(\/(([1-9])|([1-9][0-9])|(1[0-1][0-9]|12[0-8]))))*$`)
-)
-
 func CheckUserSignup(application *Application, organization *Organization, authForm *form.AuthForm, lang string) string {
 	if organization == nil {
 		return i18n.Translate(lang, "check:Organization does not exist")
@@ -590,15 +585,15 @@ func CheckEntryIp(user *User, application *Application, organization *Organizati
 		return err
 	}
 
-	if !isEntryIpAllowd(user.IpWhitelist, entryIp) {
+	if user != nil && !isEntryIpAllowd(user.IpWhitelist, entryIp) {
 		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of user %s"), entryIp, user.Name)
 	}
 
-	if !isEntryIpAllowd(application.IpWhitelist, entryIp) {
+	if application != nil && !isEntryIpAllowd(application.IpWhitelist, entryIp) {
 		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of application %s"), entryIp, application.Name)
 	}
 
-	if !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
+	if organization != nil && !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
 		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of organization %s"), entryIp, organization.Name)
 	}
 
@@ -628,8 +623,8 @@ func CheckIpWhitelist(ipWhitelistStr string, lang string) string {
 
 	ipWhiteList := strings.Split(ipWhitelistStr, ",")
 	for _, ip := range ipWhiteList {
-		if !IPv4CIDRRegex.MatchString(ip) || !IPv6CIDRRegex.MatchString(ip) {
-			return i18n.Translate(lang, "check:%s does not meet the CIDR format requirements")
+		if _, _, err := net.ParseCIDR(ip); err != nil {
+			return fmt.Sprintf(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
 		}
 	}
 
