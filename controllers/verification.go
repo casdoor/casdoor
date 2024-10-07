@@ -532,35 +532,6 @@ func (c *ApiController) VerifyCode() {
 		return
 	}
 
-	var application *object.Application
-	application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
-	if err != nil {
-		c.ResponseError(err.Error(), nil)
-		return
-	}
-
-	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
-		return
-	}
-
-	organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
-	if err != nil {
-		c.ResponseError(c.T(err.Error()))
-		return
-	}
-
-	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), authForm.Organization))
-		return
-	}
-
-	entryIpCheckError := object.CheckEntryIp(nil, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckError != nil {
-		c.ResponseError(entryIpCheckError.Error())
-		return
-	}
-
 	c.SetSession("verifiedCode", authForm.Code)
 	c.ResponseOk()
 }

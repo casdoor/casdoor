@@ -540,6 +540,22 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	application, err := object.GetApplicationByUser(targetUser)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:the application for user %s is not found"), userId))
+		return
+	}
+
+	entryIpCheckError := object.CheckEntryIp(targetUser, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckError != nil {
+		c.ResponseError(entryIpCheckError.Error())
+		return
+	}
+
 	targetUser.Password = newPassword
 	targetUser.UpdateUserPassword(organization)
 	targetUser.NeedUpdatePassword = false
