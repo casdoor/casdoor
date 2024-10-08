@@ -538,7 +538,6 @@
     "Have problems?": "遇到问题?",
     "Multi-factor authentication": "多因素认证",
     "Multi-factor authentication - Tooltip ": "多因素认证 - Tooltip ",
-    "Multi-factor authentication description": "您已经启用多因素认证，请输入认证码",
     "Multi-factor methods": "多因素认证方式",
     "Multi-factor recover": "重置多因素认证",
     "Multi-factor recover description": "如果您无法访问您的设备，输入您的多因素认证恢复代码来确认您的身份",
@@ -563,6 +562,7 @@
     "Verification failed": "验证失败",
     "Verify Code": "验证码",
     "Verify Password": "验证密码",
+    "You have enabled multi-factor authentication, please enter the authentication code": "您已经启用多因素认证，请输入认证码",
     "Your email is": "你的电子邮件",
     "Your phone is": "你的手机号",
     "preferred": "首选"

@@ -538,7 +538,6 @@
     "Have problems?": "Máte problémy?",
     "Multi-factor authentication": "Vícefaktorové ověřování",
     "Multi-factor authentication - Tooltip ": "Dvoufaktorové ověřování - Tooltip",
-    "Multi-factor authentication description": "Popis dvoufaktorového ověřování",
     "Multi-factor methods": "Metody dvoufaktorového ověřování",
     "Multi-factor recover": "Obnovení dvoufaktorového ověřování",
     "Multi-factor recover description": "Popis obnovení dvoufaktorového ověřování",
@@ -563,6 +562,7 @@
     "Verification failed": "Ověření selhalo",
     "Verify Code": "Ověřit kód",
     "Verify Password": "Ověřit heslo",
+    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefon je",
     "preferred": "preferované"

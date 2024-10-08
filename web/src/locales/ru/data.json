@@ -538,7 +538,6 @@
     "Have problems?": "Возникли проблемы?",
     "Multi-factor authentication": "Многофакторная аутентификация",
     "Multi-factor authentication - Tooltip ": "Multi-factor authentication - Tooltip ",
-    "Multi-factor authentication description": "Multi-factor authentication description",
     "Multi-factor methods": "Multi-factor methods",
     "Multi-factor recover": "Multi-factor recover",
     "Multi-factor recover description": "Multi-factor recover description",
@@ -563,6 +562,7 @@
     "Verification failed": "Проверка не удалась",
     "Verify Code": "Verify Code",
     "Verify Password": "Verify Password",
+    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
     "Your email is": "Ваш email",
     "Your phone is": "Ваш телефон",
     "preferred": "preferred"

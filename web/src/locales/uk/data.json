@@ -538,7 +538,6 @@
     "Have problems?": "Є проблеми?",
     "Multi-factor authentication": "Багатофакторна аутентифікація",
     "Multi-factor authentication - Tooltip ": "Багатофакторна автентифікація – підказка ",
-    "Multi-factor authentication description": "Опис багатофакторної автентифікації",
     "Multi-factor methods": "Багатофакторні методи",
     "Multi-factor recover": "Багатофакторне відновлення",
     "Multi-factor recover description": "Опис багатофакторного відновлення",
@@ -563,6 +562,7 @@
     "Verification failed": "Не вдалося перевірити",
     "Verify Code": "Підтвердити код",
     "Verify Password": "Підтвердіть пароль",
+    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
     "Your email is": "Ваша електронна адреса",
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"
