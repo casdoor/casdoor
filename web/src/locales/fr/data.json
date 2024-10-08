@@ -538,7 +538,6 @@
     "Have problems?": "Des problèmes ?",
     "Multi-factor authentication": "Authentification multifacteur",
     "Multi-factor authentication - Tooltip ": "Authentification multifacteur - infobulle ",
-    "Multi-factor authentication description": "Description de l'authentification multifacteur",
     "Multi-factor methods": "Méthodes d'authentification multifacteur",
     "Multi-factor recover": "Restauration de l'authentification multifacteur",
     "Multi-factor recover description": "Description de la restauration de l'authentification multifacteur",
@@ -563,6 +562,7 @@
     "Verification failed": "Échec de la vérification",
     "Verify Code": "Vérifier le code",
     "Verify Password": "Confirmez le mot de passe",
+    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
     "Your email is": "Votre e-mail est",
     "Your phone is": "Votre téléphone est",
     "preferred": "préféré"

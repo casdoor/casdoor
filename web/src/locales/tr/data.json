@@ -538,7 +538,6 @@
     "Have problems?": "Have problems?",
     "Multi-factor authentication": "Multi-factor authentication",
     "Multi-factor authentication - Tooltip ": "Multi-factor authentication - Tooltip ",
-    "Multi-factor authentication description": "Multi-factor authentication description",
     "Multi-factor methods": "Multi-factor methods",
     "Multi-factor recover": "Multi-factor recover",
     "Multi-factor recover description": "Multi-factor recover description",
@@ -563,6 +562,7 @@
     "Verification failed": "Doğrulama başarısız",
     "Verify Code": "Kodu doğrula",
     "Verify Password": "Parolayı Doğrula",
+    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
     "Your email is": "E-postanız",
     "Your phone is": "Telefon numaranız",
     "preferred": "tercih edilen"
