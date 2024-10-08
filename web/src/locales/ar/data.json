@@ -1,25 +1,25 @@
 {
   "account": {
-    "Logout": "Logout",
-    "My Account": "My Account",
-    "Sign Up": "Sign Up"
+    "Logout": "تسجيل خروج",
+    "My Account": "حسابي",
+    "Sign Up": "إنشاء حساب"
   },
   "adapter": {
-    "Duplicated policy rules": "Duplicated policy rules",
-    "Edit Adapter": "Edit Adapter",
-    "Failed to sync policies": "Failed to sync policies",
-    "New Adapter": "New Adapter",
-    "Policies": "Policies",
-    "Policies - Tooltip": "Casbin policy rules",
-    "Rule type": "Rule type",
-    "Sync policies successfully": "Sync policies successfully",
-    "Use same DB": "Use same DB",
+    "Duplicated policy rules": "قواعد السياسات المكررة",
+    "Edit Adapter": "تعديل المحول",
+    "Failed to sync policies": "فشل في مزامنة السياسات",
+    "New Adapter": "محول جديد",
+    "Policies": "شروط الاستخدام",
+    "Policies - Tooltip": "قواعد سياسة كاسبين",
+    "Rule type": "الإشتراطات",
+    "Sync policies successfully": "تمت مزامنة السياسات بنجاح",
+    "Use same DB": "استخدام نفس DB",
     "Use same DB - Tooltip": "Use same DB - Tooltip"
   },
   "application": {
-    "Always": "Always",
-    "Auto signin": "Auto signin",
-    "Auto signin - Tooltip": "When a logged-in session exists in Casdoor, it is automatically used for application-side login",
+    "Always": "دائماً",
+    "Auto signin": "تسجيل الدخول التلقائي",
+    "Auto signin - Tooltip": "",
     "Background URL": "Background URL",
     "Background URL - Tooltip": "URL of the background image used in the login page",
     "Big icon": "Big icon",
