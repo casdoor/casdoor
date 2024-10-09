@@ -370,6 +370,11 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
+	if msg = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
 	c.ServeJSON()
 }
@@ -532,6 +537,22 @@ func (c *ApiController) SetPassword() {
 	}
 	if organization == nil {
 		c.ResponseError(fmt.Sprintf(c.T("the organization: %s is not found"), targetUser.Owner))
+		return
+	}
+
+	application, err := object.GetApplicationByUser(targetUser)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:the application for user %s is not found"), userId))
+		return
+	}
+
+	entryIpCheckError := object.CheckEntryIp(targetUser, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckError != nil {
+		c.ResponseError(entryIpCheckError.Error())
 		return
 	}
 

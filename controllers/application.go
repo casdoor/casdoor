@@ -110,6 +110,14 @@ func (c *ApiController) GetApplication() {
 		}
 	}
 
+	if application != nil {
+		entryIpCheckError := object.CheckEntryIp(nil, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+		if entryIpCheckError != nil {
+			c.ResponseError(entryIpCheckError.Error())
+			return
+		}
+	}
+
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
 
@@ -229,6 +237,11 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
+	if msg := object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application))
 	c.ServeJSON()
 }
@@ -256,6 +269,11 @@ func (c *ApiController) AddApplication() {
 
 	if err := checkQuotaForApplication(int(count)); err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if msg := object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
 		return
 	}
 
