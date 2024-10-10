@@ -71,20 +71,29 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Multi-factor authentication")}
         </div>
-        <div style={{marginBottom: 24}}>
-          {i18next.t("mfa:You have enabled multi-factor authentication, please enter the authentication code")}
-        </div>
         {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
-          <MfaVerifySmsForm
-            mfaProps={mfaProps}
-            method={mfaAuth}
-            onFinish={verify}
-            application={application}
-          />) : (
-          <MfaVerifyTotpForm
-            mfaProps={mfaProps}
-            onFinish={verify}
-          />
+          <div>
+            <div style={{marginBottom: 24}}>
+              {i18next.t(
+                "mfa:You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process"
+              )}
+            </div>
+            <MfaVerifySmsForm
+              mfaProps={mfaProps}
+              method={mfaAuth}
+              onFinish={verify}
+              application={application}
+            />
+          </div>
+        ) : (
+          <div>
+            <div style={{marginBottom: 24}}>
+              {i18next.t(
+                "mfa:You have enabled multi-factor authentication, please enter the authentication code"
+              )}
+            </div>
+            <MfaVerifyTotpForm mfaProps={mfaProps} onFinish={verify} />
+          </div>
         )}
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}

@@ -563,6 +563,7 @@
     "Verify Code": "Підтвердити код",
     "Verify Password": "Підтвердіть пароль",
     "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
+    "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process": "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process",
     "Your email is": "Ваша електронна адреса",
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"

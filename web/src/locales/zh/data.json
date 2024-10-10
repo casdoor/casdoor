@@ -563,6 +563,7 @@
     "Verify Code": "验证码",
     "Verify Password": "验证密码",
     "You have enabled multi-factor authentication, please enter the authentication code": "您已经启用多因素认证，请输入认证码",
+    "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process": "您已启用多重身份验证。请点击发送代码并按照提示完成登录过程",
     "Your email is": "你的电子邮件",
     "Your phone is": "你的手机号",
     "preferred": "首选"

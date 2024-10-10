@@ -563,6 +563,7 @@
     "Verify Code": "Vérifier le code",
     "Verify Password": "Confirmez le mot de passe",
     "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
+    "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process": "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process",
     "Your email is": "Votre e-mail est",
     "Your phone is": "Votre téléphone est",
     "preferred": "préféré"
