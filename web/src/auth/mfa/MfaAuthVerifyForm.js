@@ -24,14 +24,7 @@ import MfaVerifyTotpForm from "./MfaVerifyTotpForm";
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
 
-export function MfaAuthVerifyForm({
-  formValues,
-  authParams,
-  mfaProps,
-  application,
-  onSuccess,
-  onFail,
-}) {
+export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application, onSuccess, onFail}) {
   formValues.password = "";
   formValues.username = "";
   const [loading, setLoading] = useState(false);
@@ -41,54 +34,43 @@ export function MfaAuthVerifyForm({
   const verify = ({passcode}) => {
     setLoading(true);
     const values = {...formValues, passcode, mfaType};
-    const loginFunction =
-      formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-    loginFunction(values, authParams)
-      .then((res) => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      })
-      .catch((res) => {
-        onFail(res.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const loginFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+    loginFunction(values, authParams).then((res) => {
+      if (res.status === "ok") {
+        onSuccess(res);
+      } else {
+        onFail(res.msg);
+      }
+    }).catch((res) => {
+      onFail(res.message);
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   const recover = () => {
     setLoading(true);
     const values = {...formValues, recoveryCode};
-    const loginFunction =
-      formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
-    loginFunction(values, authParams)
-      .then((res) => {
-        if (res.status === "ok") {
-          onSuccess(res);
-        } else {
-          onFail(res.msg);
-        }
-      })
-      .catch((res) => {
-        onFail(res.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const loginFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
+    loginFunction(values, authParams).then((res) => {
+      if (res.status === "ok") {
+        onSuccess(res);
+      } else {
+        onFail(res.msg);
+      }
+    }).catch((res) => {
+      onFail(res.message);
+    }).finally(() => {
+      setLoading(false);
+    });
   };
 
   if (mfaType !== RecoveryMfaType) {
     return (
       <div style={{width: 300, height: 350}}>
-        <div
-          style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}
-        >
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Multi-factor authentication")}
         </div>
-
         {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
           <div>
             <div style={{marginBottom: 24}}>
@@ -113,14 +95,11 @@ export function MfaAuthVerifyForm({
             <MfaVerifyTotpForm mfaProps={mfaProps} onFinish={verify} />
           </div>
         )}
-
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
-          <a
-            onClick={() => {
-              setMfaType("recovery");
-            }}
-          >
+          <a onClick={() => {
+            setMfaType("recovery");
+          }}>
             {i18next.t("mfa:Use a recovery code")}
           </a>
         </span>
@@ -129,39 +108,28 @@ export function MfaAuthVerifyForm({
   } else {
     return (
       <div style={{width: 300, height: 350}}>
-        <div
-          style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}
-        >
+        <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Multi-factor recover")}
         </div>
         <div style={{marginBottom: 24}}>
           {i18next.t("mfa:Multi-factor recover description")}
         </div>
-        <Input
-          placeholder={i18next.t("mfa:Recovery code")}
+        <Input placeholder={i18next.t("mfa:Recovery code")}
           style={{marginBottom: 24}}
           type={"passcode"}
           size={"large"}
-          onChange={(event) => setRecoveryCode(event.target.value)}
+          onChange={event => setRecoveryCode(event.target.value)}
         />
-        <Button
-          style={{width: "100%", marginBottom: 20}}
-          size={"large"}
-          loading={loading}
-          type={"primary"}
-          onClick={() => {
+        <Button style={{width: "100%", marginBottom: 20}} size={"large"} loading={loading}
+          type={"primary"} onClick={() => {
             recover();
-          }}
-        >
-          {i18next.t("forget:Verify")}
+          }}>{i18next.t("forget:Verify")}
         </Button>
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}
-          <a
-            onClick={() => {
-              setMfaType(mfaProps.mfaType);
-            }}
-          >
+          <a onClick={() => {
+            setMfaType(mfaProps.mfaType);
+          }}>
             {i18next.t("mfa:Use SMS verification code")}
           </a>
         </span>
