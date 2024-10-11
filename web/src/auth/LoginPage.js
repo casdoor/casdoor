@@ -83,6 +83,8 @@ class LoginPage extends React.Component {
       } else {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
       }
+    } else {
+      this.updateCaptchaRule(this.getApplicationObj());
     }
   }
 
@@ -93,17 +95,7 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
-
-      const captchaProviderItems = this.getCaptchaProviderItems(this.props.application);
-      if (captchaProviderItems) {
-        if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
-          this.setState({enableCaptchaModal: CaptchaRule.Always});
-        } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
-          this.setState({enableCaptchaModal: CaptchaRule.Dynamic});
-        } else {
-          this.setState({enableCaptchaModal: CaptchaRule.Never});
-        }
-      }
+      this.updateCaptchaRule(this.props.application);
     }
 
     if (prevProps.account !== this.props.account && this.props.account !== undefined) {
@@ -129,6 +121,19 @@ class LoginPage extends React.Component {
           values["application"] = this.props.application.name;
           this.login(values);
         }
+      }
+    }
+  }
+
+  updateCaptchaRule(application) {
+    const captchaProviderItems = this.getCaptchaProviderItems(application);
+    if (captchaProviderItems) {
+      if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
+        this.setState({enableCaptchaModal: CaptchaRule.Always});
+      } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
+        this.setState({enableCaptchaModal: CaptchaRule.Dynamic});
+      } else {
+        this.setState({enableCaptchaModal: CaptchaRule.Never});
       }
     }
   }
