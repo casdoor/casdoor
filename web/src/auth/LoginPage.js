@@ -389,7 +389,7 @@ class LoginPage extends React.Component {
       } else {
         values["password"] = passwordCipher;
       }
-      const captchaRule = this.getCaptchaRule(this.props.application);
+      const captchaRule = this.getCaptchaRule(this.getApplicationObj());
       if (captchaRule === CaptchaRule.Always) {
         this.setState({
           openCaptchaModal: true,
@@ -913,7 +913,7 @@ class LoginPage extends React.Component {
   }
 
   renderCaptchaModal(application) {
-    if (this.getCaptchaRule(this.props.application) === CaptchaRule.Never) {
+    if (this.getCaptchaRule(this.getApplicationObj()) === CaptchaRule.Never) {
       return null;
     }
     const captchaProviderItems = this.getCaptchaProviderItems(application);
