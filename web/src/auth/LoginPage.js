@@ -52,7 +52,6 @@ class LoginPage extends React.Component {
       username: null,
       validEmailOrPhone: false,
       validEmail: false,
-      enableCaptchaModal: CaptchaRule.Never,
       openCaptchaModal: false,
       openFaceRecognitionModal: false,
       verifyCaptcha: undefined,
@@ -83,8 +82,6 @@ class LoginPage extends React.Component {
       } else {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
       }
-    } else {
-      this.updateCaptchaRule(this.getApplicationObj());
     }
   }
 
@@ -95,7 +92,6 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
-      this.updateCaptchaRule(this.props.application);
     }
 
     if (prevProps.account !== this.props.account && this.props.account !== undefined) {
@@ -125,15 +121,15 @@ class LoginPage extends React.Component {
     }
   }
 
-  updateCaptchaRule(application) {
+  getCaptchaRule(application) {
     const captchaProviderItems = this.getCaptchaProviderItems(application);
     if (captchaProviderItems) {
       if (captchaProviderItems.some(providerItem => providerItem.rule === "Always")) {
-        this.setState({enableCaptchaModal: CaptchaRule.Always});
+        return CaptchaRule.Always;
       } else if (captchaProviderItems.some(providerItem => providerItem.rule === "Dynamic")) {
-        this.setState({enableCaptchaModal: CaptchaRule.Dynamic});
+        return CaptchaRule.Dynamic;
       } else {
-        this.setState({enableCaptchaModal: CaptchaRule.Never});
+        return CaptchaRule.Never;
       }
     }
   }
@@ -393,13 +389,14 @@ class LoginPage extends React.Component {
       } else {
         values["password"] = passwordCipher;
       }
-      if (this.state.enableCaptchaModal === CaptchaRule.Always) {
+      const captchaRule = this.getCaptchaRule(this.props.application);
+      if (captchaRule === CaptchaRule.Always) {
         this.setState({
           openCaptchaModal: true,
           values: values,
         });
         return;
-      } else if (this.state.enableCaptchaModal === CaptchaRule.Dynamic) {
+      } else if (captchaRule === CaptchaRule.Dynamic) {
         this.checkCaptchaStatus(values);
         return;
       }
@@ -916,7 +913,7 @@ class LoginPage extends React.Component {
   }
 
   renderCaptchaModal(application) {
-    if (this.state.enableCaptchaModal === CaptchaRule.Never) {
+    if (this.getCaptchaRule(this.props.application) === CaptchaRule.Never) {
       return null;
     }
     const captchaProviderItems = this.getCaptchaProviderItems(application);
