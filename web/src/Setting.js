@@ -1557,3 +1557,7 @@ export function getCurrencyText(product) {
     return "(Unknown currency)";
   }
 }
+
+export function isDarkTheme(themeAlgorithm) {
+  return themeAlgorithm && themeAlgorithm.includes("dark");
+}
