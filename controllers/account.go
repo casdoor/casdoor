@@ -116,9 +116,9 @@ func (c *ApiController) Signup() {
 		return
 	}
 
-	entryIpCheckError := object.CheckEntryIp(nil, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckError != nil {
-		c.ResponseError(entryIpCheckError.Error())
+	entryIpCheckMsg := object.CheckEntryIp(nil, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckMsg != "" {
+		c.ResponseError(entryIpCheckMsg)
 		return
 	}
 

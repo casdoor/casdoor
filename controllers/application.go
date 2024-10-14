@@ -111,9 +111,9 @@ func (c *ApiController) GetApplication() {
 	}
 
 	if application != nil {
-		application.IsRestricted = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
-		if !application.IsRestricted && application.OrganizationObj != nil {
-			application.OrganizationObj.IsRestricted = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
+		application.IpRestriction = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+		if application.IpRestriction == "" && application.OrganizationObj != nil {
+			application.OrganizationObj.IpRestriction = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 		}
 	}
 

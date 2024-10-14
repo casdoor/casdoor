@@ -95,15 +95,15 @@ class EntryPage extends React.Component {
         });
     };
 
+    if (this.state.application?.ipRestriction) {
+      return Util.renderMessageLarge(this, this.state.application.ipRestriction);
+    }
+
+    if (this.state.application?.organizationObj?.ipRestriction) {
+      return Util.renderMessageLarge(this, this.state.application.organizationObj.ipRestriction);
+    }
+
     const isDarkMode = this.props.themeAlgorithm.includes("dark");
-
-    if (this.state.application?.isRestricted) {
-      return Util.renderMessageLarge(this, `${i18next.t("check:Your IP address has been banned according to the configuration of application")} ${this.state.application.name}`);
-    }
-
-    if (this.state.application?.organizationObj?.isRestricted) {
-      return Util.renderMessageLarge(this, `${i18next.t("check:Your IP address has been banned according to the configuration of organization")} ${this.state.application.organizationObj.name}`);
-    }
 
     return (
       <React.Fragment>
@@ -135,6 +135,7 @@ class EntryPage extends React.Component {
             <Route exact path="/captcha" render={(props) => <CaptchaPage {...props} />} />
           </Switch>
         </div>
+
       </React.Fragment>
     );
   }

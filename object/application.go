@@ -95,7 +95,7 @@ type Application struct {
 	Tags                  []string        `xorm:"mediumtext" json:"tags"`
 	SamlAttributes        []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
 	IsShared              bool            `json:"isShared"`
-	IsRestricted          bool            `json:"isRestricted"`
+	IpRestriction         string          `json:"ipRestriction"`
 
 	ClientId             string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret         string     `xorm:"varchar(100)" json:"clientSecret"`

@@ -55,9 +55,9 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
 
-	entryIpCheckError := object.CheckEntryIp(user, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckError != nil {
-		c.ResponseError(entryIpCheckError.Error())
+	entryIpCheckMsg := object.CheckEntryIp(user, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if entryIpCheckMsg != "" {
+		c.ResponseError(entryIpCheckMsg)
 		return
 	}
 
@@ -263,9 +263,9 @@ func (c *ApiController) GetApplicationLogin() {
 	}
 
 	if application != nil {
-		application.IsRestricted = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
-		if !application.IsRestricted && application.OrganizationObj != nil {
-			application.OrganizationObj.IsRestricted = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
+		application.IpRestriction = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+		if application.IpRestriction == "" && application.OrganizationObj != nil {
+			application.OrganizationObj.IpRestriction = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 		}
 	}
 

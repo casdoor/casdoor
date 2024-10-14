@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"net"
 	"regexp"
 	"strings"
 	"time"
@@ -577,56 +576,4 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 	}
 
 	return false, nil
-}
-
-func CheckEntryIp(user *User, application *Application, organization *Organization, remoteAddress string, lang string) error {
-	entryIp, _, err := net.SplitHostPort(remoteAddress)
-	if err != nil {
-		return err
-	}
-
-	if user != nil && !isEntryIpAllowd(user.IpWhitelist, entryIp) {
-		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of user %s"), entryIp, user.Name)
-	}
-
-	if application != nil && !isEntryIpAllowd(application.IpWhitelist, entryIp) {
-		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of application %s"), entryIp, application.Name)
-	}
-
-	if organization != nil && !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
-		return fmt.Errorf(i18n.Translate(lang, "check:Your IP address %s has been banned according to the configuration of organization %s"), entryIp, organization.Name)
-	}
-
-	return nil
-}
-
-func isEntryIpAllowd(ipWhitelistStr string, entryIp string) bool {
-	if ipWhitelistStr == "" {
-		return true
-	}
-
-	ipWhitelist := strings.Split(ipWhitelistStr, ",")
-	for _, ip := range ipWhitelist {
-		_, ipNet, _ := net.ParseCIDR(ip)
-		if ipNet != nil && ipNet.Contains(net.ParseIP(entryIp)) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func CheckIpWhitelist(ipWhitelistStr string, lang string) string {
-	if ipWhitelistStr == "" {
-		return ""
-	}
-
-	ipWhiteList := strings.Split(ipWhitelistStr, ",")
-	for _, ip := range ipWhiteList {
-		if _, _, err := net.ParseCIDR(ip); err != nil {
-			return fmt.Sprintf(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
-		}
-	}
-
-	return ""
 }
