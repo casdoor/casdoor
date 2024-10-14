@@ -262,12 +262,7 @@ func (c *ApiController) GetApplicationLogin() {
 		}
 	}
 
-	if application != nil {
-		application.IpRestriction = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-		if application.IpRestriction == "" && application.OrganizationObj != nil {
-			application.OrganizationObj.IpRestriction = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-		}
-	}
+	object.CheckEntryIp(c.Ctx.Request.RemoteAddr, nil, application, nil, c.GetAcceptLanguage())
 
 	application = object.GetMaskedApplication(application, "")
 	if msg != "" {
