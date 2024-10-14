@@ -34,6 +34,7 @@ import PaymentResultPage from "./PaymentResultPage";
 import QrCodePage from "./QrCodePage";
 import CaptchaPage from "./CaptchaPage";
 import CustomHead from "./basic/CustomHead";
+import * as Util from "./auth/Util";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -96,6 +97,14 @@ class EntryPage extends React.Component {
 
     const isDarkMode = this.props.themeAlgorithm.includes("dark");
 
+    if (this.state.application?.isRestricted) {
+      return Util.renderMessageLarge(this, `${i18next.t("check:Your IP address has been banned according to the configuration of application")} ${this.state.application.name}`);
+    }
+
+    if (this.state.application?.organizationObj?.isRestricted) {
+      return Util.renderMessageLarge(this, `${i18next.t("check:Your IP address has been banned according to the configuration of organization")} ${this.state.application.organizationObj.name}`);
+    }
+
     return (
       <React.Fragment>
         <CustomHead headerHtml={this.state.application?.headerHtml} />
@@ -126,7 +135,6 @@ class EntryPage extends React.Component {
             <Route exact path="/captcha" render={(props) => <CaptchaPage {...props} />} />
           </Switch>
         </div>
-
       </React.Fragment>
     );
   }

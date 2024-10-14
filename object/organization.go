@@ -77,6 +77,7 @@ type Organization struct {
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
+	IsRestricted           bool       `json:"isRestricted"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`

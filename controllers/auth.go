@@ -263,10 +263,9 @@ func (c *ApiController) GetApplicationLogin() {
 	}
 
 	if application != nil {
-		entryIpCheckError := object.CheckEntryIp(nil, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-		if entryIpCheckError != nil {
-			c.ResponseError(entryIpCheckError.Error())
-			return
+		application.IsRestricted = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
+		if !application.IsRestricted && application.OrganizationObj != nil {
+			application.OrganizationObj.IsRestricted = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage()) != nil
 		}
 	}
 

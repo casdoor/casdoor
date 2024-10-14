@@ -112,7 +112,6 @@ class SignupPage extends React.Component {
       region: "",
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
-      msg: null,
     };
 
     this.form = React.createRef();
@@ -154,10 +153,7 @@ class SignupPage extends React.Component {
     ApplicationBackend.getApplication("admin", applicationName)
       .then((res) => {
         if (res.status === "error") {
-          this.onUpdateApplication(null);
-          this.setState({
-            msg: res.msg,
-          });
+          Setting.showMessage("error", res.msg);
           return;
         }
 
@@ -816,11 +812,8 @@ class SignupPage extends React.Component {
 
   render() {
     const application = this.getApplicationObj();
-    if (application === undefined) {
+    if (application === undefined || application === null) {
       return null;
-    }
-    if (application === null) {
-      return Util.renderMessageLarge(this, this.state.msg);
     }
 
     let existSignupButton = false;

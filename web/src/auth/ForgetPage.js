@@ -65,10 +65,7 @@ class ForgetPage extends React.Component {
     ApplicationBackend.getApplication("admin", this.state.applicationName)
       .then((res) => {
         if (res.status === "error") {
-          this.onUpdateApplication(null);
-          this.setState({
-            msg: res.msg,
-          });
+          Setting.showMessage("error", res.msg);
           return;
         }
         this.onUpdateApplication(res.data);
