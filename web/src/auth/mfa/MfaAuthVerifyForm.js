@@ -106,7 +106,7 @@ export function MfaAuthVerifyForm({
           <div>
             <div style={{marginBottom: 24}}>
               {i18next.t(
-                "mfa:You have enabled multi-factor authentication, please enter the authentication code"
+                "mfa:You have enabled Multi-Factor Authentication, please enter the TOTP code"
               )}
             </div>
             <MfaVerifyTotpForm mfaProps={mfaProps} onFinish={verify} />

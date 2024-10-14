@@ -562,7 +562,7 @@
     "Verification failed": "验证失败",
     "Verify Code": "验证码",
     "Verify Password": "验证密码",
-    "You have enabled multi-factor authentication, please enter the authentication code": "您已经启用多因素认证，请输入认证码",
+    "You have enabled Multi-Factor Authentication, please enter the TOTP code": "You have enabled Multi-Factor Authentication, please enter the TOTP code",
     "You have enabled Multi-Factor Authentication. Please click \"Send Code\" to continue": "You have enabled Multi-Factor Authentication. Please click \"Send Code\" to continue",
     "Your email is": "你的电子邮件",
     "Your phone is": "你的手机号",
