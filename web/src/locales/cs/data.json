@@ -563,7 +563,7 @@
     "Verify Code": "Ověřit kód",
     "Verify Password": "Ověřit heslo",
     "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
-    "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process": "You have enabled Multi-factor Authentication. Please click Send Code and follow the prompts to finish your login process",
+    "You have enabled Multi-Factor Authentication. Please click \"Send Code\" to continue": "You have enabled Multi-Factor Authentication. Please click \"Send Code\" to continue",
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefon je",
     "preferred": "preferované"
