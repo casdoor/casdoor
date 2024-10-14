@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {useState} from "react";
+import React, {Fragment, useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "../AuthBackend";
@@ -67,24 +67,32 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
 
   if (mfaType !== RecoveryMfaType) {
     return (
-      <div style={{width: 300, height: 350}}>
+      <div style={{width: 320, height: 350}}>
         <div style={{marginBottom: 24, textAlign: "center", fontSize: "24px"}}>
           {i18next.t("mfa:Multi-factor authentication")}
         </div>
-        <div style={{marginBottom: 24}}>
-          {i18next.t("mfa:You have enabled multi-factor authentication, please enter the authentication code")}
-        </div>
         {mfaType === SmsMfaType || mfaType === EmailMfaType ? (
-          <MfaVerifySmsForm
-            mfaProps={mfaProps}
-            method={mfaAuth}
-            onFinish={verify}
-            application={application}
-          />) : (
-          <MfaVerifyTotpForm
-            mfaProps={mfaProps}
-            onFinish={verify}
-          />
+          <Fragment>
+            <div style={{marginBottom: 24}}>
+              {i18next.t("mfa:You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue")}
+            </div>
+            <MfaVerifySmsForm
+              mfaProps={mfaProps}
+              method={mfaAuth}
+              onFinish={verify}
+              application={application}
+            />
+          </Fragment>
+        ) : (
+          <Fragment>
+            <div style={{marginBottom: 24}}>
+              {i18next.t("mfa:You have enabled Multi-Factor Authentication, please enter the TOTP code")}
+            </div>
+            <MfaVerifyTotpForm
+              mfaProps={mfaProps}
+              onFinish={verify}
+            />
+          </Fragment>
         )}
         <span style={{float: "right"}}>
           {i18next.t("mfa:Have problems?")}

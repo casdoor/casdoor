@@ -562,7 +562,8 @@
     "Verification failed": "Ověření selhalo",
     "Verify Code": "Ověřit kód",
     "Verify Password": "Ověřit heslo",
-    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
+    "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue": "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue",
+    "You have enabled Multi-Factor Authentication, please enter the TOTP code": "You have enabled Multi-Factor Authentication, please enter the TOTP code",
     "Your email is": "Váš email je",
     "Your phone is": "Váš telefon je",
     "preferred": "preferované"

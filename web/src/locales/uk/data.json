@@ -562,7 +562,8 @@
     "Verification failed": "Не вдалося перевірити",
     "Verify Code": "Підтвердити код",
     "Verify Password": "Підтвердіть пароль",
-    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
+    "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue": "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue",
+    "You have enabled Multi-Factor Authentication, please enter the TOTP code": "You have enabled Multi-Factor Authentication, please enter the TOTP code",
     "Your email is": "Ваша електронна адреса",
     "Your phone is": "Ваш телефон",
     "preferred": "бажаний"

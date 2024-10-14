@@ -562,7 +562,8 @@
     "Verification failed": "Verification failed",
     "Verify Code": "Verify Code",
     "Verify Password": "Verify Password",
-    "You have enabled multi-factor authentication, please enter the authentication code": "You have enabled multi-factor authentication, please enter the authentication code",
+    "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue": "You have enabled Multi-Factor Authentication, Please click 'Send Code' to continue",
+    "You have enabled Multi-Factor Authentication, please enter the TOTP code": "You have enabled Multi-Factor Authentication, please enter the TOTP code",
     "Your email is": "Your email is",
     "Your phone is": "Your phone is",
     "preferred": "preferred"
