@@ -21,7 +21,7 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
-	ldap "github.com/forestmgy/ldapserver"
+	ldap "github.com/casdoor/ldapserver"
 	"github.com/lor00x/goldap/message"
 )
 

@@ -1091,6 +1091,8 @@ github.com/casdoor/go-sms-sender v0.24.0 h1:LNLsce3EG/87I3JS6UiajF3LlQmdIiCgebEu
 github.com/casdoor/go-sms-sender v0.24.0/go.mod h1:bOm4H8/YfJmEHjBatEVQFOnAf0OOn1B0Wi5B7zDhws0=
 github.com/casdoor/gomail/v2 v2.0.1 h1:J+FG6x80s9e5lBHUn8Sv0Y56mud34KiWih5YdmudR/w=
 github.com/casdoor/gomail/v2 v2.0.1/go.mod h1:VnGPslEAtpix5FjHisR/WKB1qvZDBaujbikxDe9d+2Q=
+github.com/casdoor/ldapserver v1.2.0 h1:HdSYe+ULU6z9K+2BqgTrJKQRR4//ERAXB64ttOun6Ow=
+github.com/casdoor/ldapserver v1.2.0/go.mod h1:VwYU2vqQ2pA8sa00PRekH71R2XmgfzMKhmp1XrrDu2s=
 github.com/casdoor/notify v0.45.0 h1:OlaFvcQFjGOgA4mRx07M8AH1gvb5xNo21mcqrVGlLgk=
 github.com/casdoor/notify v0.45.0/go.mod h1:wNHQu0tiDROMBIvz0j3Om3Lhd5yZ+AIfnFb8MYb8OLQ=
 github.com/casdoor/oss v1.8.0 h1:uuyKhDIp7ydOtV4lpqhAY23Ban2Ln8La8+QT36CwylM=
@@ -1237,8 +1239,6 @@ github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
-github.com/forestmgy/ldapserver v1.1.0 h1:gvil4nuLhqPEL8SugCkFhRyA0/lIvRdwZSqlrw63ll4=
-github.com/forestmgy/ldapserver v1.1.0/go.mod h1:1RZ8lox1QSY7rmbjdmy+sYQXY4Lp7SpGzpdE3+j3IyM=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible h1:TcekIExNqud5crz4xD2pavyTgWiPvpYe4Xau31I0PRk=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
