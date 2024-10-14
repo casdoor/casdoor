@@ -35,14 +35,18 @@ func CheckEntryIp(user *User, application *Application, organization *Organizati
 		}
 	}
 
-	if application != nil && !isEntryIpAllowd(application.IpWhitelist, entryIp) {
+	if application != nil {
 		err = isEntryIpAllowd(application.IpWhitelist, entryIp)
 		if err != nil {
 			return fmt.Errorf(err.Error() + application.Name)
 		}
 	}
 
-	if organization != nil && !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
+	if application.OrganizationObj != nil {
+		organization = application.OrganizationObj
+	}
+
+	if organization != nil {
 		err = isEntryIpAllowd(organization.IpWhitelist, entryIp)
 		if err != nil {
 			return fmt.Errorf(err.Error() + organization.Name)
