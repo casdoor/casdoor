@@ -22,44 +22,60 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 )
 
-func CheckEntryIp(user *User, application *Application, organization *Organization, remoteAddress string, lang string) string {
+func CheckEntryIp(user *User, application *Application, organization *Organization, remoteAddress string, lang string) error {
 	entryIp, _, err := net.SplitHostPort(remoteAddress)
 	if err != nil {
-		return err.Error()
+		return err
 	}
 
-	if user != nil && !isEntryIpAllowd(user.IpWhitelist, entryIp) {
-		return fmt.Sprintf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: %s"), entryIp, user.Name)
+	if user != nil {
+		err = isEntryIpAllowd(user.IpWhitelist, entryIp)
+		if err != nil {
+			return fmt.Errorf(err.Error() + user.Name)
+		}
 	}
 
 	if application != nil && !isEntryIpAllowd(application.IpWhitelist, entryIp) {
-		return fmt.Sprintf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: %s"), entryIp, application.Name)
+		err = isEntryIpAllowd(application.IpWhitelist, entryIp)
+		if err != nil {
+			return fmt.Errorf(err.Error() + application.Name)
+		}
 	}
 
 	if organization != nil && !isEntryIpAllowd(organization.IpWhitelist, entryIp) {
-		return fmt.Sprintf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: %s"), entryIp, organization.Name)
+		err = isEntryIpAllowd(organization.IpWhitelist, entryIp)
+		if err != nil {
+			return fmt.Errorf(err.Error() + organization.Name)
+		}
 	}
 
-	return ""
+	return nil
 }
 
-func isEntryIpAllowd(ipWhitelistStr string, entryIp string) bool {
+func isEntryIpAllowd(ipWhitelistStr string, entryIp string) error {
 	if ipWhitelistStr == "" {
 		return true
 	}
 
 	ipWhitelist := strings.Split(ipWhitelistStr, ",")
 	for _, ip := range ipWhitelist {
-		_, ipNet, _ := net.ParseCIDR(ip)
-		if ipNet != nil && ipNet.Contains(net.ParseIP(entryIp)) {
-			return true
+		_, ipNet, err := net.ParseCIDR(ip)
+		if err != nil {
+			return err
+		}
+		if ipNet == nil {
+			return fmt.Errorf("CIDR for IP: %s should not be empty", ip)
+		}
+		
+		if ipNet.Contains(net.ParseIP(entryIp)) {
+			return nil
 		}
 	}
 
-	return false
+	return fmt.Sprintf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp)
 }
 
-func CheckIpWhitelist(ipWhitelistStr string, lang string) string {
+func CheckIpWhitelist(ipWhitelistStr string, lang string) error {
 	if ipWhitelistStr == "" {
 		return ""
 	}
@@ -67,9 +83,9 @@ func CheckIpWhitelist(ipWhitelistStr string, lang string) string {
 	ipWhiteList := strings.Split(ipWhitelistStr, ",")
 	for _, ip := range ipWhiteList {
 		if _, _, err := net.ParseCIDR(ip); err != nil {
-			return fmt.Sprintf(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
+			return fmt.Errorf(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
 		}
 	}
 
-	return ""
+	return nil
 }
