@@ -23,7 +23,6 @@ import (
 )
 
 func CheckEntryIp(clientIp string, user *User, application *Application, organization *Organization, lang string) error {
-
 	clientIp = strings.TrimRight(clientIp, ": ")
 	var err error
 	if user != nil {
