@@ -558,7 +558,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		}
 	}
 	if oldUser.IpWhitelist != newUser.IpWhitelist {
-		item := GetAccountItemByName("Ip whitelist", organization)
+		item := GetAccountItemByName("IP whitelist", organization)
 		if item == nil {
 			newUser.IpWhitelist = oldUser.IpWhitelist
 		} else {
