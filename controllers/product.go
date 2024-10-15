@@ -182,18 +182,16 @@ func (c *ApiController) BuyProduct() {
 	paidUserName := c.Input().Get("userName")
 	owner, _ := util.GetOwnerAndNameFromId(id)
 	userId := util.GetId(owner, paidUserName)
-	isUserNameFromPayload := true
+	if paidUserName != "" && !c.IsAdmin() {
+		c.ResponseError(c.T("general:Only admin user can specify user"))
+		return
+	}
 	if paidUserName == "" {
 		userId = c.GetSessionUsername()
-		isUserNameFromPayload = false
 	}
 	if userId == "" {
 		c.ResponseError(c.T("general:Please login first"))
 		return
-	}
-
-	if c.IsAdmin() {
-		isUserNameFromPayload = false
 	}
 
 	user, err := object.GetUser(userId)
@@ -206,7 +204,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice, isUserNameFromPayload)
+	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
