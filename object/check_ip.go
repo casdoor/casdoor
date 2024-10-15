@@ -22,7 +22,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 )
 
-func CheckEntryIp(user *User, application *Application, organization *Organization, remoteAddress string, lang string) error {
+func CheckEntryIp(remoteAddress string, user *User, application *Application, organization *Organization, lang string) error {
 	entryIp, _, err := net.SplitHostPort(remoteAddress)
 	if err != nil {
 		return err

@@ -110,7 +110,7 @@ func (c *ApiController) GetApplication() {
 		}
 	}
 
-	object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	object.CheckEntryIp(c.Ctx.Request.RemoteAddr, nil, application, nil, c.GetAcceptLanguage())
 
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }

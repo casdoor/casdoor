@@ -550,7 +550,7 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	err = object.CheckEntryIp(targetUser, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	err = object.CheckEntryIp(c.Ctx.Request.RemoteAddr, targetUser, application, organization, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
