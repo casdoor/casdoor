@@ -193,7 +193,7 @@ func (c *ApiController) BuyProduct() {
 	}
 
 	if c.IsAdmin() {
-		isUserNameFromPayload = true
+		isUserNameFromPayload = false
 	}
 
 	user, err := object.GetUser(userId)
