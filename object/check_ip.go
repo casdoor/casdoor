@@ -44,10 +44,10 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 			application.IpRestriction = err.Error() + application.Name
 			return fmt.Errorf(err.Error() + application.Name)
 		}
-	}
 
-	if organization == nil && application.OrganizationObj != nil {
-		organization = application.OrganizationObj
+		if organization == nil && application.OrganizationObj != nil {
+			organization = application.OrganizationObj
+		}
 	}
 
 	if organization != nil {
