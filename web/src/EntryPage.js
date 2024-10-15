@@ -34,6 +34,7 @@ import PaymentResultPage from "./PaymentResultPage";
 import QrCodePage from "./QrCodePage";
 import CaptchaPage from "./CaptchaPage";
 import CustomHead from "./basic/CustomHead";
+import * as Util from "./auth/Util";
 
 class EntryPage extends React.Component {
   constructor(props) {
@@ -93,6 +94,14 @@ class EntryPage extends React.Component {
           this.props.updataThemeData(themeData);
         });
     };
+
+    if (this.state.application?.ipRestriction) {
+      return Util.renderMessageLarge(this, this.state.application.ipRestriction);
+    }
+
+    if (this.state.application?.organizationObj?.ipRestriction) {
+      return Util.renderMessageLarge(this, this.state.application.organizationObj.ipRestriction);
+    }
 
     const isDarkMode = this.props.themeAlgorithm.includes("dark");
 

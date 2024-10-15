@@ -116,6 +116,13 @@ func (c *ApiController) Signup() {
 		return
 	}
 
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	err = object.CheckEntryIp(clientIp, nil, application, organization, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	msg := object.CheckUserSignup(application, organization, &authForm, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)

@@ -557,6 +557,14 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 			itemsChanged = append(itemsChanged, item)
 		}
 	}
+	if oldUser.IpWhitelist != newUser.IpWhitelist {
+		item := GetAccountItemByName("IP whitelist", organization)
+		if item == nil {
+			newUser.IpWhitelist = oldUser.IpWhitelist
+		} else {
+			itemsChanged = append(itemsChanged, item)
+		}
+	}
 
 	if oldUser.Balance != newUser.Balance {
 		item := GetAccountItemByName("Balance", organization)

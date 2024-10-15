@@ -71,11 +71,13 @@ type Organization struct {
 	MasterPassword         string     `xorm:"varchar(100)" json:"masterPassword"`
 	DefaultPassword        string     `xorm:"varchar(100)" json:"defaultPassword"`
 	MasterVerificationCode string     `xorm:"varchar(100)" json:"masterVerificationCode"`
+	IpWhitelist            string     `xorm:"varchar(200)" json:"ipWhitelist"`
 	InitScore              int        `json:"initScore"`
 	EnableSoftDeletion     bool       `json:"enableSoftDeletion"`
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
+	IpRestriction          string     `json:"ipRestriction"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`

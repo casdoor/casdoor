@@ -539,6 +539,11 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
+	if oldUser.IpWhitelist != user.IpWhitelist {
+		if err := CheckIpWhitelist(user.IpWhitelist, lang); err != nil {
+			return err.Error()
+		}
+	}
 
 	return ""
 }

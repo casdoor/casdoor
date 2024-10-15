@@ -119,6 +119,11 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
+	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization))
 	c.ServeJSON()
 }
@@ -145,6 +150,11 @@ func (c *ApiController) AddOrganization() {
 	}
 
 	if err = checkQuotaForOrganization(int(count)); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
