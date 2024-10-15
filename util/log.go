@@ -23,16 +23,15 @@ import (
 	"github.com/beego/beego/logs"
 )
 
-func GetIPInfo(clientIP string) string {
-	if clientIP == "" {
+func getIpInfo(clientIp string) string {
+	if clientIp == "" {
 		return ""
 	}
 
-	ips := strings.Split(clientIP, ",")
+	ips := strings.Split(clientIp, ",")
 	res := ""
 	for i := range ips {
 		ip := strings.TrimSpace(ips[i])
-		// desc := GetDescFromIP(ip)
 		ipstr := fmt.Sprintf("%s: %s", ip, "")
 		if i != len(ips)-1 {
 			res += ipstr + " -> "
@@ -44,29 +43,29 @@ func GetIPInfo(clientIP string) string {
 	return res
 }
 
-func GetIPFromRequest(req *http.Request) string {
-	clientIP := req.Header.Get("x-forwarded-for")
-	if clientIP == "" {
+func GetClientIpFromRequest(req *http.Request) string {
+	clientIp := req.Header.Get("x-forwarded-for")
+	if clientIp == "" {
 		ipPort := strings.Split(req.RemoteAddr, ":")
 		if len(ipPort) >= 1 && len(ipPort) <= 2 {
-			clientIP = ipPort[0]
+			clientIp = ipPort[0]
 		} else if len(ipPort) > 2 {
 			idx := strings.LastIndex(req.RemoteAddr, ":")
-			clientIP = req.RemoteAddr[0:idx]
-			clientIP = strings.TrimLeft(clientIP, "[")
-			clientIP = strings.TrimRight(clientIP, "]")
+			clientIp = req.RemoteAddr[0:idx]
+			clientIp = strings.TrimLeft(clientIp, "[")
+			clientIp = strings.TrimRight(clientIp, "]")
 		}
 	}
 
-	return GetIPInfo(clientIP)
+	return getIpInfo(clientIp)
 }
 
 func LogInfo(ctx *context.Context, f string, v ...interface{}) {
-	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
+	ipString := fmt.Sprintf("(%s) ", GetClientIpFromRequest(ctx.Request))
 	logs.Info(ipString+f, v...)
 }
 
 func LogWarning(ctx *context.Context, f string, v ...interface{}) {
-	ipString := fmt.Sprintf("(%s) ", GetIPFromRequest(ctx.Request))
+	ipString := fmt.Sprintf("(%s) ", GetClientIpFromRequest(ctx.Request))
 	logs.Warning(ipString+f, v...)
 }

@@ -132,7 +132,8 @@ func (c *ApiController) SendVerificationCode() {
 		c.ResponseError(err.Error())
 		return
 	}
-	remoteAddr := util.GetIPFromRequest(c.Ctx.Request)
+
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 
 	if msg := vform.CheckParameter(form.SendVerifyCode, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
@@ -259,7 +260,7 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
-		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, remoteAddr, vform.Dest)
+		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest)
 	case object.VerifyTypePhone:
 		if vform.Method == LoginVerification || vform.Method == ForgetVerification {
 			if user != nil && util.GetMaskedPhone(user.Phone) == vform.Dest {
@@ -309,7 +310,7 @@ func (c *ApiController) SendVerificationCode() {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
 		} else {
-			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, remoteAddr, phone)
+			sendResp = object.SendVerificationCodeToPhone(organization, user, provider, clientIp, phone)
 		}
 	}
 

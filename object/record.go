@@ -50,7 +50,7 @@ func maskPassword(recordString string) string {
 }
 
 func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
-	ip := strings.Replace(util.GetIPFromRequest(ctx.Request), ": ", "", -1)
+	clientIp := strings.Replace(util.GetClientIpFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
 	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
 	if len(requestUri) > 1000 {
@@ -83,7 +83,7 @@ func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	record := casvisorsdk.Record{
 		Name:        util.GenerateId(),
 		CreatedTime: util.GetCurrentTime(),
-		ClientIp:    ip,
+		ClientIp:    clientIp,
 		User:        "",
 		Method:      ctx.Request.Method,
 		RequestUri:  requestUri,
