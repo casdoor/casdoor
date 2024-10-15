@@ -29,26 +29,28 @@ func CheckEntryIp(user *User, application *Application, organization *Organizati
 	}
 
 	if user != nil {
-		err = isEntryIpAllowd(user.IpWhitelist, entryIp)
+		err = isEntryIpAllowd(user.IpWhitelist, entryIp, lang)
 		if err != nil {
 			return fmt.Errorf(err.Error() + user.Name)
 		}
 	}
 
 	if application != nil {
-		err = isEntryIpAllowd(application.IpWhitelist, entryIp)
+		err = isEntryIpAllowd(application.IpWhitelist, entryIp, lang)
 		if err != nil {
+			application.IpRestriction = err.Error() + application.Name
 			return fmt.Errorf(err.Error() + application.Name)
 		}
 	}
 
-	if application.OrganizationObj != nil {
+	if organization == nil && application.OrganizationObj != nil {
 		organization = application.OrganizationObj
 	}
 
 	if organization != nil {
-		err = isEntryIpAllowd(organization.IpWhitelist, entryIp)
+		err = isEntryIpAllowd(organization.IpWhitelist, entryIp, lang)
 		if err != nil {
+			organization.IpRestriction = err.Error() + organization.Name
 			return fmt.Errorf(err.Error() + organization.Name)
 		}
 	}
@@ -56,9 +58,9 @@ func CheckEntryIp(user *User, application *Application, organization *Organizati
 	return nil
 }
 
-func isEntryIpAllowd(ipWhitelistStr string, entryIp string) error {
+func isEntryIpAllowd(ipWhitelistStr string, entryIp string, lang string) error {
 	if ipWhitelistStr == "" {
-		return true
+		return nil
 	}
 
 	ipWhitelist := strings.Split(ipWhitelistStr, ",")
@@ -70,18 +72,18 @@ func isEntryIpAllowd(ipWhitelistStr string, entryIp string) error {
 		if ipNet == nil {
 			return fmt.Errorf("CIDR for IP: %s should not be empty", ip)
 		}
-		
+
 		if ipNet.Contains(net.ParseIP(entryIp)) {
 			return nil
 		}
 	}
 
-	return fmt.Sprintf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp)
+	return fmt.Errorf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp)
 }
 
 func CheckIpWhitelist(ipWhitelistStr string, lang string) error {
 	if ipWhitelistStr == "" {
-		return ""
+		return nil
 	}
 
 	ipWhiteList := strings.Split(ipWhitelistStr, ",")

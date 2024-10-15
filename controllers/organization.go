@@ -119,8 +119,8 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
-	if msg := object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
+	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -154,8 +154,8 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
-	if msg := object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
+	if err = object.CheckIpWhitelist(organization.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 

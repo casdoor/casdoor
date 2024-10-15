@@ -55,9 +55,9 @@ func tokenToResponse(token *object.Token) *Response {
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	userId := user.GetId()
 
-	entryIpCheckMsg := object.CheckEntryIp(user, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckMsg != "" {
-		c.ResponseError(entryIpCheckMsg)
+	err := object.CheckEntryIp(user, application, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -262,7 +262,7 @@ func (c *ApiController) GetApplicationLogin() {
 		}
 	}
 
-	object.CheckEntryIp(c.Ctx.Request.RemoteAddr, nil, application, nil, c.GetAcceptLanguage())
+	object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 
 	application = object.GetMaskedApplication(application, "")
 	if msg != "" {

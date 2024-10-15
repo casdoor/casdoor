@@ -110,12 +110,7 @@ func (c *ApiController) GetApplication() {
 		}
 	}
 
-	if application != nil {
-		application.IpRestriction = object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-		if application.IpRestriction == "" && application.OrganizationObj != nil {
-			application.OrganizationObj.IpRestriction = object.CheckEntryIp(nil, nil, application.OrganizationObj, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-		}
-	}
+	object.CheckEntryIp(nil, application, nil, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
 
 	c.ResponseOk(object.GetMaskedApplication(application, userId))
 }
@@ -236,8 +231,8 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	if msg := object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
+	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -271,8 +266,8 @@ func (c *ApiController) AddApplication() {
 		return
 	}
 
-	if msg := object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
+	if err = object.CheckIpWhitelist(application.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 

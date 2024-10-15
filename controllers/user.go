@@ -370,8 +370,8 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	if msg = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); msg != "" {
-		c.ResponseError(msg)
+	if err = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -550,9 +550,9 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	entryIpCheckMsg := object.CheckEntryIp(targetUser, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
-	if entryIpCheckMsg != "" {
-		c.ResponseError(entryIpCheckMsg)
+	err = object.CheckEntryIp(targetUser, application, organization, c.Ctx.Request.RemoteAddr, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
 		return
 	}
 

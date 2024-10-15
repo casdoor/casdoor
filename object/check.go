@@ -540,8 +540,8 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 		}
 	}
 	if oldUser.IpWhitelist != user.IpWhitelist {
-		if msg := CheckIpWhitelist(user.IpWhitelist, lang); msg != "" {
-			return msg
+		if err := CheckIpWhitelist(user.IpWhitelist, lang); err != nil {
+			return err.Error()
 		}
 	}
 
