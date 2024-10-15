@@ -332,6 +332,9 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	if err != nil {
 		return nil, err
 	}
+	if user == nil {
+		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(application.Organization, token.User))
+	}
 
 	if user.IsForbidden {
 		return &TokenError{
