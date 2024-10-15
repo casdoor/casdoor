@@ -161,7 +161,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64, isUserNameFromPayload bool) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	product, err := GetProduct(id)
 	if err != nil {
 		return nil, nil, err
@@ -298,6 +298,9 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			return nil, nil, err
 		}
 	} else if provider.Type == "Balance" {
+		if isUserNameFromPayload {
+			return nil, nil, fmt.Errorf("please login first")
+		}
 		if product.Price > user.Balance {
 			return nil, nil, fmt.Errorf("insufficient user balance")
 		}
