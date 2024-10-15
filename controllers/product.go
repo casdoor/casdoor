@@ -182,10 +182,10 @@ func (c *ApiController) BuyProduct() {
 	paidUserName := c.Input().Get("userName")
 	owner, _ := util.GetOwnerAndNameFromId(id)
 	userId := util.GetId(owner, paidUserName)
-	isUserNameFromPayload := false
+	isUserNameFromPayload := true
 	if paidUserName == "" {
 		userId = c.GetSessionUsername()
-		isUserNameFromPayload = true
+		isUserNameFromPayload = false
 	}
 	if userId == "" {
 		c.ResponseError(c.T("general:Please login first"))
