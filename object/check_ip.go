@@ -23,17 +23,23 @@ import (
 )
 
 func CheckEntryIp(clientIp string, user *User, application *Application, organization *Organization, lang string) error {
-	clientIp = strings.TrimRight(clientIp, ": ")
+	entryIp := net.ParseIP(clientIp)
+	if entryIp == nil {
+		return fmt.Errorf(i18n.Translate(lang, "check:Failed to parse client IP: %s"), clientIp)
+	} else if entryIp.IsLoopback() {
+		return nil
+	}
+
 	var err error
 	if user != nil {
-		err = isEntryIpAllowd(user.IpWhitelist, clientIp, lang)
+		err = isEntryIpAllowd(user.IpWhitelist, entryIp, lang)
 		if err != nil {
 			return fmt.Errorf(err.Error() + user.Name)
 		}
 	}
 
 	if application != nil {
-		err = isEntryIpAllowd(application.IpWhitelist, clientIp, lang)
+		err = isEntryIpAllowd(application.IpWhitelist, entryIp, lang)
 		if err != nil {
 			application.IpRestriction = err.Error() + application.Name
 			return fmt.Errorf(err.Error() + application.Name)
@@ -45,7 +51,7 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 	}
 
 	if organization != nil {
-		err = isEntryIpAllowd(organization.IpWhitelist, clientIp, lang)
+		err = isEntryIpAllowd(organization.IpWhitelist, entryIp, lang)
 		if err != nil {
 			organization.IpRestriction = err.Error() + organization.Name
 			return fmt.Errorf(err.Error() + organization.Name)
@@ -55,7 +61,7 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 	return nil
 }
 
-func isEntryIpAllowd(ipWhitelistStr string, clientIp string, lang string) error {
+func isEntryIpAllowd(ipWhitelistStr string, entryIp net.IP, lang string) error {
 	if ipWhitelistStr == "" {
 		return nil
 	}
@@ -67,15 +73,15 @@ func isEntryIpAllowd(ipWhitelistStr string, clientIp string, lang string) error 
 			return err
 		}
 		if ipNet == nil {
-			return fmt.Errorf("CIDR for IP: %s should not be empty", ip)
+			return fmt.Errorf(i18n.Translate(lang, "check:CIDR for IP: %s should not be empty"), entryIp.String())
 		}
 
-		if ipNet.Contains(net.ParseIP(clientIp)) {
+		if ipNet.Contains(entryIp) {
 			return nil
 		}
 	}
 
-	return fmt.Errorf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), clientIp)
+	return fmt.Errorf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp.String())
 }
 
 func CheckIpWhitelist(ipWhitelistStr string, lang string) error {

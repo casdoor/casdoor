@@ -29,16 +29,17 @@ func getIpInfo(clientIp string) string {
 	}
 
 	ips := strings.Split(clientIp, ",")
-	res := ""
-	for i := range ips {
-		ip := strings.TrimSpace(ips[i])
-		ipstr := fmt.Sprintf("%s: %s", ip, "")
-		if i != len(ips)-1 {
-			res += ipstr + " -> "
-		} else {
-			res += ipstr
-		}
-	}
+	res := strings.TrimSpace(ips[0])
+	//res := ""
+	//for i := range ips {
+	//	ip := strings.TrimSpace(ips[i])
+	//	ipstr := fmt.Sprintf("%s: %s", ip, "")
+	//	if i != len(ips)-1 {
+	//		res += ipstr + " -> "
+	//	} else {
+	//		res += ipstr
+	//	}
+	//}
 
 	return res
 }
