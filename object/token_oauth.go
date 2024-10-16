@@ -328,10 +328,17 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 	}
 
 	// generate a new token
-	user, err := getUser(application.Organization, token.User)
+	organization := application.Organization
+	// If application is a shared applicaiton, organization of the user can be different from the organization of the application. In this case, we need to get the organization of the user from the token.
+	if application.IsShared {
+		organization = token.Organization
+	}
+
+	user, err := getUser(organization, token.User)
 	if err != nil {
 		return nil, err
 	}
+
 	if user == nil {
 		return "", fmt.Errorf("The user: %s doesn't exist", util.GetId(application.Organization, token.User))
 	}
