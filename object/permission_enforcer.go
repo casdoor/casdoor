@@ -364,7 +364,7 @@ func GetAllActions(userId string) ([]string, error) {
 
 	res := []string{}
 	for _, enforcer := range enforcers {
-		items := enforcer.GetAllObjects()
+		items := enforcer.GetAllActions()
 		res = append(res, items...)
 	}
 	return res, nil
