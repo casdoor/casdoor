@@ -533,5 +533,6 @@ func (c *ApiController) VerifyCode() {
 	}
 
 	c.SetSession("verifiedCode", authForm.Code)
+	c.SetSession("verifiedUserId", user.GetId())
 	c.ResponseOk()
 }
