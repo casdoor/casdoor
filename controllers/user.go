@@ -365,7 +365,8 @@ func (c *ApiController) AddUser() {
 	}
 
 	emptyUser := object.User{}
-	if msg := object.CheckUpdateUser(&emptyUser, &user, c.GetAcceptLanguage()); msg != "" {
+	msg := object.CheckUpdateUser(&emptyUser, &user, c.GetAcceptLanguage())
+	if msg != "" {
 		c.ResponseError(msg)
 		return
 	}
