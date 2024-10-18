@@ -364,14 +364,10 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	msg := object.CheckUsername(user.Name, c.GetAcceptLanguage())
+	emptyUser := object.User{}
+	msg := object.CheckUpdateUser(&emptyUser, &user, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
-		return
-	}
-
-	if err = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); err != nil {
-		c.ResponseError(err.Error())
 		return
 	}
 
