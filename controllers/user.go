@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/casdoor/casdoor/i18n"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -373,6 +374,20 @@ func (c *ApiController) AddUser() {
 	if err = object.CheckIpWhitelist(user.IpWhitelist, c.GetAcceptLanguage()); err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if user.Phone != "" {
+		if object.HasUserByField(user.Owner, "phone", user.Phone) {
+			c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Phone already exists"))
+			return
+		}
+	}
+
+	if user.Email != "" {
+		if object.HasUserByField(user.Owner, "email", user.Email) {
+			c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Email already exists"))
+			return
+		}
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
