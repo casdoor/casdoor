@@ -17,11 +17,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/casdoor/casdoor/i18n"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
