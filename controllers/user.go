@@ -21,7 +21,6 @@ import (
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -376,18 +375,10 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	if user.Phone != "" {
-		if object.HasUserByField(user.Owner, "phone", user.Phone) {
-			c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Phone already exists"))
-			return
-		}
-	}
-
-	if user.Email != "" {
-		if object.HasUserByField(user.Owner, "email", user.Email) {
-			c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Email already exists"))
-			return
-		}
+	emptyUser := object.User{}
+	if msg := object.CheckUpdateUser(&emptyUser, &user, c.GetAcceptLanguage()); msg != "" {
+		c.ResponseError(msg)
+		return
 	}
 
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user))
