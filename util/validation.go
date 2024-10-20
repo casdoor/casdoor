@@ -105,7 +105,6 @@ func FilterField(field string) bool {
 func IsValidOrigin(origin string) (bool, error) {
 	var originUrl string
 	originParsed, err := url.Parse(origin)
-
 	if err != nil {
 		return false, err
 	}
