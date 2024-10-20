@@ -102,19 +102,17 @@ func FilterField(field string) bool {
 	return ReFieldWhiteList.MatchString(field)
 }
 
-func CheckCorsOrigin(origin string, isPanic bool) bool {
+func IsValidOrigin(origin string) (bool, error) {
 	var originUrl string
 	originParsed, err := url.Parse(origin)
 
-	if err != nil && isPanic {
-		panic(err)
-	} else if err != nil {
-		return false
+	if err != nil {
+		return false, err
 	}
 
 	if originParsed != nil && originParsed.Host != "" {
 		originUrl = fmt.Sprintf("%s://%s", originParsed.Scheme, originParsed.Hostname())
 	}
 
-	return originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org")
+	return originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org"), nil
 }

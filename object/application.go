@@ -723,7 +723,11 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
-	if util.CheckCorsOrigin(redirectUri, false) {
+	pass, err := util.IsValidOrigin(redirectUri)
+	if err != nil {
+		panic(err)
+	}
+	if pass {
 		return true
 	}
 	for _, targetUri := range application.RedirectUris {
