@@ -15,7 +15,9 @@
 package routers
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -48,11 +50,17 @@ func CorsFilter(ctx *context.Context) {
 	originHostname := getHostname(origin)
 	host := removePort(ctx.Request.Host)
 
+	var originUrl string
+	originParsed, _ := url.Parse(origin)
+	if originParsed != nil && originParsed.Host != "" {
+		originUrl = fmt.Sprintf("%s://%s", originParsed.Scheme, originParsed.Hostname())
+	}
+
 	if origin == "null" {
 		origin = ""
 	}
 
-	if strings.HasPrefix(origin, "http://localhost") || strings.HasPrefix(origin, "https://localhost") || strings.HasPrefix(origin, "http://127.0.0.1") || strings.HasPrefix(origin, "http://casdoor-app") || strings.Contains(origin, ".chromiumapp.org") {
+	if originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org") {
 		setCorsHeaders(ctx, origin)
 		return
 	}
