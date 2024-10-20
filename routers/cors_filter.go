@@ -15,14 +15,11 @@
 package routers
 
 import (
-	"fmt"
-	"net/http"
-	"net/url"
-	"strings"
-
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
+	"net/http"
 )
 
 const (
@@ -50,17 +47,11 @@ func CorsFilter(ctx *context.Context) {
 	originHostname := getHostname(origin)
 	host := removePort(ctx.Request.Host)
 
-	var originUrl string
-	originParsed, _ := url.Parse(origin)
-	if originParsed != nil && originParsed.Host != "" {
-		originUrl = fmt.Sprintf("%s://%s", originParsed.Scheme, originParsed.Hostname())
-	}
-
 	if origin == "null" {
 		origin = ""
 	}
 
-	if originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org") {
+	if util.CheckCorsOrigin(origin, true) {
 		setCorsHeaders(ctx, origin)
 		return
 	}

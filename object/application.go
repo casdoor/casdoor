@@ -723,6 +723,9 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
+	if util.CheckCorsOrigin(redirectUri, false) {
+		return true
+	}
 	for _, targetUri := range application.RedirectUris {
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {

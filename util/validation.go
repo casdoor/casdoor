@@ -17,6 +17,7 @@ package util
 import (
 	"fmt"
 	"net/mail"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -99,4 +100,21 @@ func GetCountryCode(prefix string, phone string) (string, error) {
 
 func FilterField(field string) bool {
 	return ReFieldWhiteList.MatchString(field)
+}
+
+func CheckCorsOrigin(origin string, isPanic bool) bool {
+	var originUrl string
+	originParsed, err := url.Parse(origin)
+
+	if err != nil && isPanic {
+		panic(err)
+	} else if err != nil {
+		return false
+	}
+
+	if originParsed != nil && originParsed.Host != "" {
+		originUrl = fmt.Sprintf("%s://%s", originParsed.Scheme, originParsed.Hostname())
+	}
+
+	return originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org")
 }
