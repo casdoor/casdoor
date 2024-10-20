@@ -103,15 +103,19 @@ func FilterField(field string) bool {
 }
 
 func IsValidOrigin(origin string) (bool, error) {
-	var originUrl string
-	originParsed, err := url.Parse(origin)
+	urlObj, err := url.Parse(origin)
 	if err != nil {
 		return false, err
 	}
-
-	if originParsed != nil && originParsed.Host != "" {
-		originUrl = fmt.Sprintf("%s://%s", originParsed.Scheme, originParsed.Hostname())
+	if urlObj == nil {
+		return false, nil
 	}
 
-	return originUrl == "http://localhost" || originUrl == "https://localhost" || originUrl == "http://127.0.0.1" || originUrl == "http://casdoor-app" || strings.HasSuffix(originUrl, ".chromiumapp.org"), nil
+	originHostOnly := ""
+	if urlObj.Host != "" {
+		originHostOnly = fmt.Sprintf("%s://%s", urlObj.Scheme, urlObj.Hostname())
+	}
+
+	res := originHostOnly == "http://localhost" || originHostOnly == "https://localhost" || originHostOnly == "http://127.0.0.1" || originHostOnly == "http://casdoor-app" || strings.HasSuffix(originHostOnly, ".chromiumapp.org")
+	return res, nil
 }
