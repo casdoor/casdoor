@@ -723,13 +723,14 @@ func (application *Application) GetId() string {
 }
 
 func (application *Application) IsRedirectUriValid(redirectUri string) bool {
-	pass, err := util.IsValidOrigin(redirectUri)
+	isValid, err := util.IsValidOrigin(redirectUri)
 	if err != nil {
 		panic(err)
 	}
-	if pass {
+	if isValid {
 		return true
 	}
+
 	for _, targetUri := range application.RedirectUris {
 		targetUriRegex := regexp.MustCompile(targetUri)
 		if targetUriRegex.MatchString(redirectUri) || strings.Contains(redirectUri, targetUri) {
