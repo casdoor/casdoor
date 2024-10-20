@@ -52,14 +52,13 @@ func CorsFilter(ctx *context.Context) {
 		origin = ""
 	}
 
-	pass, err := util.IsValidOrigin(origin)
+	isValid, err := util.IsValidOrigin(origin)
 	if err != nil {
 		ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 		responseError(ctx, err.Error())
 		return
 	}
-
-	if pass {
+	if isValid {
 		setCorsHeaders(ctx, origin)
 		return
 	}
