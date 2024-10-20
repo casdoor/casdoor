@@ -15,11 +15,12 @@
 package routers
 
 import (
+	"net/http"
+
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
-	"net/http"
 )
 
 const (
