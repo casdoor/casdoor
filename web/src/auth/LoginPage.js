@@ -227,6 +227,22 @@ class LoginPage extends React.Component {
     return "password";
   }
 
+  getCurrentLoginMethod() {
+    if (this.state.loginMethod === "password") {
+      return "Password";
+    } else if (this.state.loginMethod?.includes("verificationCode")) {
+      return "Verification code";
+    } else if (this.state.loginMethod === "webAuthn") {
+      return "WebAuthn";
+    } else if (this.state.loginMethod === "ldap") {
+      return "LDAP";
+    } else if (this.state.loginMethod === "faceId") {
+      return "Face ID";
+    } else {
+      return "Password";
+    }
+  }
+
   getPlaceholder() {
     switch (this.state.loginMethod) {
     case "verificationCode": return i18next.t("login:Email or phone");
@@ -262,17 +278,7 @@ class LoginPage extends React.Component {
       values["organization"] = this.getApplicationObj().organization;
     }
 
-    if (this.state.loginMethod === "password") {
-      values["signinMethod"] = "Password";
-    } else if (this.state.loginMethod?.includes("verificationCode")) {
-      values["signinMethod"] = "Verification code";
-    } else if (this.state.loginMethod === "webAuthn") {
-      values["signinMethod"] = "WebAuthn";
-    } else if (this.state.loginMethod === "ldap") {
-      values["signinMethod"] = "LDAP";
-    } else if (this.state.loginMethod === "faceId") {
-      values["signinMethod"] = "Face ID";
-    }
+    values["signinMethod"] = this.getCurrentLoginMethod();
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
@@ -409,6 +415,7 @@ class LoginPage extends React.Component {
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
+      values["signinMethod"] = this.getCurrentLoginMethod();
       values["type"] = this.state.type;
       AuthBackend.loginCas(values, casParams).then((res) => {
         const loginHandler = (res) => {
