@@ -816,6 +816,10 @@ func AddUser(user *User) (bool, error) {
 		user.UpdateUserPassword(organization)
 	}
 
+	if user.CreatedTime == "" {
+		user.CreatedTime = util.GetCurrentTime()
+	}
+
 	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
