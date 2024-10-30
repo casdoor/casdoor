@@ -95,6 +95,8 @@ p, *, *, GET, /api/get-plan, *, *
 p, *, *, GET, /api/get-subscription, *, *
 p, *, *, GET, /api/get-provider, *, *
 p, *, *, GET, /api/get-organization-names, *, *
+p, *, *, post, /api/enforce, *, *
+p, *, *, post, /api/batch-enforce, *, *
 p, *, *, GET, /api/get-all-objects, *, *
 p, *, *, GET, /api/get-all-actions, *, *
 p, *, *, GET, /api/get-all-roles, *, *
