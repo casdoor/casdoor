@@ -176,8 +176,12 @@ func (c *ApiController) Signup() {
 
 	username := authForm.Username
 	if !application.IsSignupItemVisible("Username") {
-		if organization.UseEmailAsUsername && application.IsSignupItemVisible("Email") {
-			username = authForm.Email
+		if organization.UseEmailAsUsername {
+			if application.IsSignupItemVisible("Email") {
+				username = authForm.Email
+			} else {
+				username = util.GetUsernameFromEmail(authForm.Email)
+			}
 		} else {
 			username = id
 		}

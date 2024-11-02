@@ -64,7 +64,7 @@ class UserListPage extends BaseListPage {
     const owner = (Setting.isDefaultOrganizationSelected(this.props.account) || this.props.groupName) ? this.state.organizationName : Setting.getRequestOrganization(this.props.account);
     return {
       owner: owner,
-      name: `user_${randomName}`,
+      name: this.state.organization["useEmailAsUsername"] ? `${randomName}` : `user_${randomName}`,
       createdTime: moment().format(),
       type: "normal-user",
       password: "123",
