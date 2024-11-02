@@ -25,10 +25,11 @@ import (
 )
 
 var (
-	rePhone          *regexp.Regexp
-	ReWhiteSpace     *regexp.Regexp
-	ReFieldWhiteList *regexp.Regexp
-	ReUserName       *regexp.Regexp
+	rePhone             *regexp.Regexp
+	ReWhiteSpace        *regexp.Regexp
+	ReFieldWhiteList    *regexp.Regexp
+	ReUserName          *regexp.Regexp
+	ReUserNameWithEmail *regexp.Regexp
 )
 
 func init() {
@@ -36,6 +37,7 @@ func init() {
 	ReWhiteSpace, _ = regexp.Compile(`\s`)
 	ReFieldWhiteList, _ = regexp.Compile(`^[A-Za-z0-9]+$`)
 	ReUserName, _ = regexp.Compile("^[a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*$")
+	ReUserNameWithEmail, _ = regexp.Compile(`^([a-zA-Z0-9]+([-._][a-zA-Z0-9]+)*)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$`) // Add support for email formats
 }
 
 func IsEmailValid(email string) bool {
