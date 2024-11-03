@@ -187,7 +187,7 @@ class RoleEditPage extends React.Component {
             {Setting.getLabel(i18next.t("role:Sub users"), i18next.t("role:Sub users - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.role.users}
+            <Select virtual={true} mode="multiple" style={{width: "100%"}} value={this.state.role.users}
               onChange={(value => {this.updateRoleField("users", value);})}
               options={this.state.users.map((user) => Setting.getOption(`${user.owner}/${user.name}`, `${user.owner}/${user.name}`))}
             />
