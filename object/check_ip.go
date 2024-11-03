@@ -43,6 +43,8 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 		if err != nil {
 			application.IpRestriction = err.Error() + application.Name
 			return fmt.Errorf(err.Error() + application.Name)
+		} else {
+			application.IpRestriction = ""
 		}
 
 		if organization == nil && application.OrganizationObj != nil {
@@ -55,6 +57,8 @@ func CheckEntryIp(clientIp string, user *User, application *Application, organiz
 		if err != nil {
 			organization.IpRestriction = err.Error() + organization.Name
 			return fmt.Errorf(err.Error() + organization.Name)
+		} else {
+			organization.IpRestriction = ""
 		}
 	}
 
