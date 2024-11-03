@@ -37,7 +37,7 @@ class MfaSetupPage extends React.Component {
     this.state = {
       account: props.account,
       application: null,
-      applicationName: props.account.signupApplication ?? "",
+      applicationName: props.account.signupApplication ?? localStorage.getItem("applicationName") ?? "",
       current: location.state?.from !== undefined ? 1 : 0,
       mfaProps: null,
       mfaType: params.get("mfaType") ?? SmsMfaType,
