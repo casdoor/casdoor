@@ -603,7 +603,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:IP whitelist"), i18next.t("general:IP whitelist - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhiteList} onChange={e => {
+            <Input placeholder = {this.state.application.organizationObj?.ipWhitelist} value={this.state.application.ipWhitelist} onChange={e => {
               this.updateApplicationField("ipWhitelist", e.target.value);
             }} />
           </Col>
