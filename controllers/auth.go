@@ -854,6 +854,7 @@ func (c *ApiController) Login() {
 		}
 
 		if authForm.Passcode != "" {
+			user.CountryCode = user.GetCountryCode(user.CountryCode)
 			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferredMfaProps(false))
 			if mfaUtil == nil {
 				c.ResponseError("Invalid multi-factor authentication type")

@@ -444,8 +444,8 @@ class LoginPage extends React.Component {
                     formValues={values}
                     authParams={casParams}
                     application={this.getApplicationObj()}
-                    onFail={() => {
-                      Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                    onFail={(errorMessage) => {
+                      Setting.showMessage("error", errorMessage);
                     }}
                     onSuccess={(res) => loginHandler(res)}
                   />);
@@ -513,8 +513,8 @@ class LoginPage extends React.Component {
                       formValues={values}
                       authParams={oAuthParams}
                       application={this.getApplicationObj()}
-                      onFail={() => {
-                        Setting.showMessage("error", i18next.t("mfa:Verification failed"));
+                      onFail={(errorMessage) => {
+                        Setting.showMessage("error", errorMessage);
                       }}
                       onSuccess={(res) => loginHandler(res)}
                     />);
