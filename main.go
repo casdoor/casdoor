@@ -54,12 +54,12 @@ func main() {
 	beego.SetStaticPath("/files", "files")
 	// https://studygolang.com/articles/2303
 	beego.InsertFilter("*", beego.BeforeRouter, routers.StaticFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.AutoSigninFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.CorsFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.TimeoutFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.ApiFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
-	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
+	beego.InsertFilter("*", beego.BeforeExec, routers.AutoSigninFilter)
+	beego.InsertFilter("*", beego.BeforeExec, routers.TimeoutFilter)
+	beego.InsertFilter("*", beego.BeforeExec, routers.ApiFilter)
+	beego.InsertFilter("*", beego.BeforeExec, routers.PrometheusFilter)
+	beego.InsertFilter("*", beego.BeforeExec, routers.RecordMessage)
 	beego.InsertFilter("*", beego.AfterExec, routers.AfterRecordMessage, false)
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
