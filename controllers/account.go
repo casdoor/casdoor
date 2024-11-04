@@ -139,7 +139,7 @@ func (c *ApiController) Signup() {
 		invitationName = invitation.Name
 	}
 
-	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
+	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" {
 		var checkResult *object.VerifyResult
 		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
 		if err != nil {
@@ -153,7 +153,7 @@ func (c *ApiController) Signup() {
 	}
 
 	var checkPhone string
-	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" && authForm.Phone != "" {
+	if application.IsSignupItemVisible("Phone") && application.GetSignupItemRule("Phone") != "No verification" {
 		checkPhone, _ = util.GetE164Number(authForm.Phone, authForm.CountryCode)
 
 		var checkResult *object.VerifyResult
