@@ -168,6 +168,12 @@ func (c *ApiController) Signup() {
 		}
 	}
 
+	msg = object.CheckExistingUserDetails(organization, &authForm, c.GetAcceptLanguage())
+	if msg != "" {
+		c.ResponseError(msg)
+		return
+	}
+
 	id, err := object.GenerateIdForNewUser(application)
 	if err != nil {
 		c.ResponseError(err.Error())

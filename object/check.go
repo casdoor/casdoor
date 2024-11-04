@@ -55,16 +55,6 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		if msg := CheckUsername(authForm.Username, lang); msg != "" {
 			return msg
 		}
-
-		if HasUserByField(organization.Name, "name", authForm.Username) {
-			return i18n.Translate(lang, "check:Username already exists")
-		}
-		if HasUserByField(organization.Name, "email", authForm.Email) {
-			return i18n.Translate(lang, "check:Email already exists")
-		}
-		if HasUserByField(organization.Name, "phone", authForm.Phone) {
-			return i18n.Translate(lang, "check:Phone already exists")
-		}
 	}
 
 	if application.IsSignupItemVisible("Password") {
@@ -80,9 +70,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 				return i18n.Translate(lang, "check:Email cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "email", authForm.Email) {
-				return i18n.Translate(lang, "check:Email already exists")
-			} else if !util.IsEmailValid(authForm.Email) {
+			if !util.IsEmailValid(authForm.Email) {
 				return i18n.Translate(lang, "check:Email is invalid")
 			}
 		}
@@ -94,9 +82,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 				return i18n.Translate(lang, "check:Phone cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "phone", authForm.Phone) {
-				return i18n.Translate(lang, "check:Phone already exists")
-			} else if !util.IsPhoneAllowInRegin(authForm.CountryCode, organization.CountryCodes) {
+			if !util.IsPhoneAllowInRegin(authForm.CountryCode, organization.CountryCodes) {
 				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
 			} else if !util.IsPhoneValid(authForm.Phone, authForm.CountryCode) {
 				return i18n.Translate(lang, "check:Phone number is invalid")
@@ -149,6 +135,19 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 		}
 	}
 
+	return ""
+}
+
+func CheckExistingUserDetails(organization *Organization, authForm *form.AuthForm, lang string) string {
+	if HasUserByField(organization.Name, "name", authForm.Username) {
+		return i18n.Translate(lang, "check:Username already exists")
+	}
+	if HasUserByField(organization.Name, "email", authForm.Email) {
+		return i18n.Translate(lang, "check:Email already exists")
+	}
+	if HasUserByField(organization.Name, "phone", authForm.Phone) {
+		return i18n.Translate(lang, "check:Phone already exists")
+	}
 	return ""
 }
 
