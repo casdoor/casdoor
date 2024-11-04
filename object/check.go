@@ -21,6 +21,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/cred"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
@@ -341,6 +342,10 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user == nil || user.IsDeleted {
+		enableErrorMask := conf.GetConfigBool("enableErrorMask")
+		if enableErrorMask {
+			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
+		}
 		return nil, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
 	}
 

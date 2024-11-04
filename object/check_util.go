@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 )
 
@@ -100,6 +101,10 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 	if leftChances == 0 && enableCaptcha {
 		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
 	} else if leftChances >= 0 {
+		enableErrorMask := conf.GetConfigBool("enableErrorMask")
+		if enableErrorMask {
+			return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
+		}
 		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect, you have %d remaining chances"), leftChances)
 	}
 
