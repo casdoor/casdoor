@@ -537,14 +537,19 @@ func CheckUsernameWithEmail(username string, lang string) string {
 
 func CheckUpdateUser(oldUser, user *User, lang string) string {
 	if oldUser.Name != user.Name {
-		// Check if the organization uses email as the username
-		organization, err := GetOrganizationByUser(oldUser)
+		organizationName := oldUser.Owner
+		if organizationName == "" {
+			organizationName = user.Owner
+		}
+
+		organization, err := getOrganization("admin", organizationName)
 		if err != nil {
 			return err.Error()
 		}
 		if organization == nil {
-			return fmt.Sprintf(i18n.Translate(lang, "The organization: %s does not exist"), oldUser.Owner)
+			return fmt.Sprintf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
 		}
+
 		if organization.UseEmailAsUsername {
 			if msg := CheckUsernameWithEmail(user.Name, lang); msg != "" {
 				return msg
