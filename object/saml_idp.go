@@ -107,6 +107,12 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
+	memberOf := attributes.CreateElement("saml:Attribute")
+	memberOf.CreateAttr("Name", "MemberOf")
+	memberOf.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+	memberOf.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(LdapUser.MemberOf)
+
+
 	for _, item := range application.SamlAttributes {
 		role := attributes.CreateElement("saml:Attribute")
 		role.CreateAttr("Name", item.Name)
