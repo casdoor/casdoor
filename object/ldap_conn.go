@@ -52,10 +52,10 @@ type LdapUser struct {
 	MobileTelephoneNumber string
 	RegisteredAddress     string
 	PostalAddress         string
-
-	GroupId  string `json:"groupId"`
-	Address  string `json:"address"`
-	MemberOf string `json:"memberOf"`
+	GroupId  	      string   `json:"groupId"`
+	Address               string   `json:"address"`
+	MemberOf              string   `json:"memberOf"`
+	Member                []string `json:"member"`
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -142,7 +142,7 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress", "memberOf",
 	}
 	if l.IsAD {
 		SearchAttributes = append(SearchAttributes, "sAMAccountName")
@@ -202,7 +202,8 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 			case "postalAddress":
 				user.PostalAddress = attribute.Values[0]
 			case "memberOf":
-				user.MemberOf = attribute.Values[0]
+				fmt.Printf("Synchronized user %s: %v\n", user, attribute.Values)
+				user.Member = attribute.Values
 			}
 		}
 		ldapUsers = append(ldapUsers, user)
@@ -261,6 +262,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:             util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:            util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			RegisteredAddress: util.ReturnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
+			Member:            user.Member,
 		}
 	}
 	return res
@@ -332,6 +334,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Avatar:            organization.DefaultAvatar,
 				Email:             syncUser.Email,
 				Phone:             syncUser.Mobile,
+				Member:            syncUser.Member,
 				Address:           []string{syncUser.Address},
 				Affiliation:       affiliation,
 				Tag:               tag,
