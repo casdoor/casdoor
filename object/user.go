@@ -47,12 +47,13 @@ func InitUserManager() {
 }
 
 type User struct {
-	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
-	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
-	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
-	DeletedTime string `xorm:"varchar(100)" json:"deletedTime"`
-
+	Owner       	  string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name       	  string `xorm:"varchar(100) notnull pk" json:"name"`
+	CreatedTime 	  string `xorm:"varchar(100) index" json:"createdTime"`
+	UpdatedTime 	  string `xorm:"varchar(100)" json:"updatedTime"`
+	DeletedTime 	  string `xorm:"varchar(100)" json:"deletedTime"`
+	Member            []string `json:"member"`
+	
 	Id                string   `xorm:"varchar(100) index" json:"id"`
 	ExternalId        string   `xorm:"varchar(100) index" json:"externalId"`
 	Type              string   `xorm:"varchar(100)" json:"type"`
@@ -697,7 +698,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "member",
 		}
 	}
 	if isAdmin {
