@@ -52,7 +52,7 @@ type LdapUser struct {
 	MobileTelephoneNumber string
 	RegisteredAddress     string
 	PostalAddress         string
-	GroupId  	      string   `json:"groupId"`
+	GroupId               string   `json:"groupId"`
 	Address               string   `json:"address"`
 	MemberOf              string   `json:"memberOf"`
 	Member                []string `json:"member"`

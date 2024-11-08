@@ -116,7 +116,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 		attributeValue.CreateAttr("xsi:type", "xs:string")
 		attributeValue.SetText(member)
 	}
-	
+
 	for _, item := range application.SamlAttributes {
 		role := attributes.CreateElement("saml:Attribute")
 		role.CreateAttr("Name", item.Name)
