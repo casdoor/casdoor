@@ -107,6 +107,16 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
+	userMember := attributes.CreateElement("saml:Attribute")
+	userMember.CreateAttr("Name", "UserMember")
+	userMember.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
+
+	for _, member := range user.Member {
+		attributeValue := userMember.CreateElement("saml:AttributeValue")
+		attributeValue.CreateAttr("xsi:type", "xs:string")
+		attributeValue.SetText(member)
+	}
+	
 	for _, item := range application.SamlAttributes {
 		role := attributes.CreateElement("saml:Attribute")
 		role.CreateAttr("Name", item.Name)
@@ -255,6 +265,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 			Attribute: []Attribute{
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Email", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "E-Mail"},
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "DisplayName", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "displayName"},
+				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "UserMember", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "userMember"},
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Name", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "Name"},
 			},
 			SingleSignOnService: SingleSignOnService{
