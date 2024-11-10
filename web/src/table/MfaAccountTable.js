@@ -76,7 +76,7 @@ class MfaAccountTable extends React.Component {
     this.updateTable(table);
   }
 
-  getQrUrl() {
+  getQrUrl(forQrCode = true) {
     const {accessToken} = this.props;
     let qrUrl = `casdoor-app://login?serverUrl=${window.location.origin}&accessToken=${accessToken}`;
     let error = null;
@@ -86,7 +86,7 @@ class MfaAccountTable extends React.Component {
       error = i18next.t("general:Access token is empty");
     }
 
-    if (qrUrl.length >= 2000) {
+    if (forQrCode && qrUrl.length >= 2000) {
       qrUrl = "";
       error = i18next.t("general:QR code is too large");
     }
@@ -94,8 +94,27 @@ class MfaAccountTable extends React.Component {
     return {qrUrl, error};
   }
 
+  handleCopyUrl = async() => {
+    if (!window.isSecureContext) {
+      return;
+    }
+
+    const {qrUrl, error} = this.getQrUrl(false);
+    if (error) {
+      Setting.showMessage("error", error);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(qrUrl);
+      Setting.showMessage("success", i18next.t("general:Copied to clipboard"));
+    } catch (err) {
+      Setting.showMessage("error", i18next.t("general:Failed to copy"));
+    }
+  };
+
   renderQrCode() {
-    const {qrUrl, error} = this.getQrUrl();
+    const {qrUrl, error} = this.getQrUrl(true);
 
     if (error) {
       return <Alert message={error} type="error" showIcon />;
@@ -110,6 +129,40 @@ class MfaAccountTable extends React.Component {
         />
       );
     }
+  }
+
+  renderUrlString() {
+    const {qrUrl, error} = this.getQrUrl(false);
+
+    if (error) {
+      return <Alert message={error} type="error" showIcon />;
+    }
+
+    return (
+      <div
+        style={{
+          padding: "10px",
+          maxWidth: "400px",
+          maxHeight: "100px",
+          overflow: "auto",
+          wordBreak: "break-all",
+          whiteSpace: "pre-wrap",
+          cursor: "pointer",
+          userSelect: "all",
+          backgroundColor: "#f5f5f5",
+          borderRadius: "4px",
+        }}
+        onClick={(e) => {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(e.target);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }}
+      >
+        {qrUrl}
+      </div>
+    );
   }
 
   renderTable(table) {
@@ -194,10 +247,42 @@ class MfaAccountTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "10px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
-            <Popover trigger="focus" overlayInnerStyle={{padding: 0}}
-              content={this.renderQrCode()}>
-              <Button style={{marginLeft: "5px"}} type="primary" size="small">{i18next.t("general:QR Code")}</Button>
+            <Button style={{marginRight: "10px"}} type="primary" size="small" onClick={() => this.addRow(table)}>
+              {i18next.t("general:Add")}
+            </Button>
+            <Popover
+              trigger="focus"
+              overlayInnerStyle={{padding: 0}}
+              content={this.renderQrCode()}
+            >
+              <Button style={{marginRight: "10px"}} type="primary" size="small">
+                {i18next.t("general:QR Code")}
+              </Button>
+            </Popover>
+            <Popover
+              trigger="click"
+              content={this.renderUrlString()}
+              title={
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}>
+                  <span>{i18next.t("general:URL String")}</span>
+                  {window.isSecureContext && (
+                    <Button
+                      size="small"
+                      onClick={this.handleCopyUrl}
+                    >
+                      {i18next.t("general:Copy URL")}
+                    </Button>
+                  )}
+                </div>
+              }
+            >
+              <Button type="primary" size="small">
+                {i18next.t("general:Show URL")}
+              </Button>
             </Popover>
           </div>
         )}
