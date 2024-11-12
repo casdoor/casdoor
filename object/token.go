@@ -116,6 +116,11 @@ func GetTokenByAccessToken(accessToken string) (*Token, error) {
 	return &token, nil
 }
 
+func GetTokenByAccessTokenOrId(accessToken, tokenId string) (*Token, error) {
+	token := Token{AccessTokenHash: getTokenHash(accessToken)}
+	return GetTokenByTokenOrId(token, tokenId)
+}
+
 func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
 	existed, err := ormer.Engine.Get(&token)
@@ -137,10 +142,29 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
-func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
+func GetTokenByRefreshTokenOrId(refreshToken, tokenId string) (*Token, error) {
+	token := Token{RefreshTokenHash: getTokenHash(refreshToken)}
+	return GetTokenByTokenOrId(token, tokenId)
+}
+
+func GetTokenByTokenOrId(token Token, tokenId string) (*Token, error) {
+	existed, err := ormer.Engine.Get(&token)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		owner, name := util.GetOwnerAndNameFromId(tokenId)
+		return getToken(owner, name)
+	}
+
+	return &token, nil
+}
+
+func GetTokenByValueOrId(tokenValue, tokenTypeHint, tokenId string) (*Token, error) {
 	switch tokenTypeHint {
 	case "access_token":
-		token, err := GetTokenByAccessToken(tokenValue)
+		token, err := GetTokenByAccessTokenOrId(tokenValue, tokenId)
 		if err != nil {
 			return nil, err
 		}
@@ -148,7 +172,7 @@ func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 			return token, nil
 		}
 	case "refresh_token":
-		token, err := GetTokenByRefreshToken(tokenValue)
+		token, err := GetTokenByRefreshTokenOrId(tokenValue, tokenId)
 		if err != nil {
 			return nil, err
 		}

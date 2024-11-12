@@ -321,8 +321,54 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
+	resData := &object.IntrospectionResponse{Active: false}
+
+	if application.TokenFormat == "JWT-Standard" {
+		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
+		if err != nil || jwtToken.Valid() != nil {
+			// and token revoked case. but we not implement
+			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
+			// refs: https://tools.ietf.org/html/rfc7009
+			c.Data["json"] = resData
+			c.ServeJSON()
+			return
+		}
+
+		resData = &object.IntrospectionResponse{
+			Scope: jwtToken.Scope,
+			Exp:   jwtToken.ExpiresAt.Unix(),
+			Iat:   jwtToken.IssuedAt.Unix(),
+			Nbf:   jwtToken.NotBefore.Unix(),
+			Sub:   jwtToken.Subject,
+			Aud:   jwtToken.Audience,
+			Iss:   jwtToken.Issuer,
+			Jti:   jwtToken.ID,
+		}
+	} else {
+		jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
+		if err != nil || jwtToken.Valid() != nil {
+			// and token revoked case. but we not implement
+			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
+			// refs: https://tools.ietf.org/html/rfc7009
+			c.Data["json"] = resData
+			c.ServeJSON()
+			return
+		}
+
+		resData = &object.IntrospectionResponse{
+			Scope: jwtToken.Scope,
+			Exp:   jwtToken.ExpiresAt.Unix(),
+			Iat:   jwtToken.IssuedAt.Unix(),
+			Nbf:   jwtToken.NotBefore.Unix(),
+			Sub:   jwtToken.Subject,
+			Aud:   jwtToken.Audience,
+			Iss:   jwtToken.Issuer,
+			Jti:   jwtToken.ID,
+		}
+	}
+
 	tokenTypeHint := c.Input().Get("token_type_hint")
-	token, err := object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
+	token, err := object.GetTokenByValueOrId(tokenValue, tokenTypeHint, resData.Jti)
 	if err != nil {
 		c.ResponseTokenError(err.Error())
 		return
@@ -333,58 +379,11 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
-	if application.TokenFormat == "JWT-Standard" {
-		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
-		if err != nil || jwtToken.Valid() != nil {
-			// and token revoked case. but we not implement
-			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
-			// refs: https://tools.ietf.org/html/rfc7009
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
-			return
-		}
+	resData.Active = true
+	resData.ClientId = clientId
+	resData.Username = token.User
+	resData.TokenType = token.TokenType
 
-		c.Data["json"] = &object.IntrospectionResponse{
-			Active:    true,
-			Scope:     jwtToken.Scope,
-			ClientId:  clientId,
-			Username:  token.User,
-			TokenType: token.TokenType,
-			Exp:       jwtToken.ExpiresAt.Unix(),
-			Iat:       jwtToken.IssuedAt.Unix(),
-			Nbf:       jwtToken.NotBefore.Unix(),
-			Sub:       jwtToken.Subject,
-			Aud:       jwtToken.Audience,
-			Iss:       jwtToken.Issuer,
-			Jti:       jwtToken.ID,
-		}
-		c.ServeJSON()
-		return
-	}
-
-	jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
-	if err != nil || jwtToken.Valid() != nil {
-		// and token revoked case. but we not implement
-		// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
-		// refs: https://tools.ietf.org/html/rfc7009
-		c.Data["json"] = &object.IntrospectionResponse{Active: false}
-		c.ServeJSON()
-		return
-	}
-
-	c.Data["json"] = &object.IntrospectionResponse{
-		Active:    true,
-		Scope:     jwtToken.Scope,
-		ClientId:  clientId,
-		Username:  token.User,
-		TokenType: token.TokenType,
-		Exp:       jwtToken.ExpiresAt.Unix(),
-		Iat:       jwtToken.IssuedAt.Unix(),
-		Nbf:       jwtToken.NotBefore.Unix(),
-		Sub:       jwtToken.Subject,
-		Aud:       jwtToken.Audience,
-		Iss:       jwtToken.Issuer,
-		Jti:       jwtToken.ID,
-	}
+	c.Data["json"] = resData
 	c.ServeJSON()
 }
