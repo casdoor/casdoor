@@ -103,14 +103,6 @@ func GetTokenByAccessToken(accessToken string) (*Token, error) {
 	}
 
 	if !existed {
-		token = Token{AccessToken: accessToken}
-		existed, err = ormer.Engine.Get(&token)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if !existed {
 		return nil, nil
 	}
 	return &token, nil
@@ -121,14 +113,6 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	existed, err := ormer.Engine.Get(&token)
 	if err != nil {
 		return nil, err
-	}
-
-	if !existed {
-		token = Token{RefreshToken: refreshToken}
-		existed, err = ormer.Engine.Get(&token)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	if !existed {
