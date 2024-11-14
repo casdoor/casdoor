@@ -25,6 +25,7 @@ import (
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
+	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 	goldap "github.com/go-ldap/ldap/v3"
 )
 
@@ -382,7 +383,41 @@ func CheckUserPassword(organization string, username string, password string, la
 			return nil, err
 		}
 	}
+	// TODO Check if the password has expired
+	if isPasswordExpiredFromRecord(user.Owner, user.Name) {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:Your password has not been changed for too long, please click Forgot Password to change your password"))
+	}
 	return user, nil
+}
+
+func isPasswordExpiredFromRecord(owner, name string) bool {
+	const passwordExpiryMonths = 3
+	lastChangeTime, err := getLastPasswordChangeTime(owner, name, "set-password")
+	// If the query fails or there is no record, assume the password has not expired
+	if err != nil || lastChangeTime.IsZero() {
+		return false
+	}
+	expiryDate := lastChangeTime.AddDate(0, passwordExpiryMonths, 0)
+	return time.Now().After(expiryDate)
+}
+
+func getLastPasswordChangeTime(owner, name, action string) (time.Time, error) {
+	record := &casvisorsdk.Record{
+		Organization: owner,
+		User:         name,
+		Action:       action,
+	}
+	records, err := GetRecordsByField(record)
+	if err != nil || len(records) == 0 {
+		return time.Time{}, err
+	}
+
+	lastRecord := records[len(records)-1]
+	lastChangeTime, err := time.Parse(time.RFC3339, lastRecord.CreatedTime)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return lastChangeTime, nil
 }
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
