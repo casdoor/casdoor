@@ -173,6 +173,7 @@ func initAPI() {
 	beego.Router("/api/get-all-objects", &controllers.ApiController{}, "GET:GetAllObjects")
 	beego.Router("/api/get-all-actions", &controllers.ApiController{}, "GET:GetAllActions")
 	beego.Router("/api/get-all-roles", &controllers.ApiController{}, "GET:GetAllRoles")
+	beego.Router("/api/casbin-cli", &controllers.ApiController{}, "GET:CasbinCli")
 
 	beego.Router("/api/get-sessions", &controllers.ApiController{}, "GET:GetSessions")
 	beego.Router("/api/get-session", &controllers.ApiController{}, "GET:GetSingleSession")
