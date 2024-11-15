@@ -17,12 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
 
-	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -331,69 +326,4 @@ func (c *ApiController) GetAllRoles() {
 	}
 
 	c.ResponseOk(roles)
-}
-
-// CasbinCli
-// @Title CasbinCli
-// @Tag Enforcer API
-// @Description Call casbin-go-cli
-// @Param   enforcerId    query   string  false   "enforcer id"
-// @Success 200 {object} controllers.Response The Response object
-// @router /casbin-cli [get]
-func (c *ApiController) CasbinCli() {
-	enforcerId := c.Input().Get("enforcerId")
-	command := c.Input().Get("command")
-	args := c.Input().Get("args")
-
-	cliPath, err := filepath.Abs("casbin-go-cli")
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	tmpDir := "./tmp"
-	modelPath := filepath.Join(tmpDir, "tmpModel.conf")
-	policyPath := filepath.Join(tmpDir, "tmpPolicy.csv")
-
-	if _, err := os.Stat(tmpDir); os.IsNotExist(err) {
-		err = os.Mkdir(tmpDir, os.ModePerm)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-	}
-
-	inputArgs := []string{command, "-m", modelPath, "-p", policyPath}
-	if args != "" {
-		inputArgs = append(inputArgs, strings.Split(args, " ")...)
-	}
-
-	enforcer, err := object.GetInitializedEnforcer(enforcerId)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if enforcer == nil {
-		c.ResponseError(fmt.Sprintf(c.T("enforcer:The enforcer: \"%s\" doesn't exist"), enforcerId))
-		return
-	}
-
-	util.WriteStringToPath(enforcer.GetModel().ToText(), modelPath)
-
-	adapter := fileadapter.NewAdapter(policyPath)
-	enforcer.SetAdapter(adapter)
-	err = enforcer.SavePolicy()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	casbinCli := exec.Command(cliPath, inputArgs...)
-	output, err := casbinCli.CombinedOutput()
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk(string(output))
 }
