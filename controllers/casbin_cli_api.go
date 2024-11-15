@@ -15,9 +15,9 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"os/exec"
-	"strings"
 )
 
 // RunCasbinCommand
@@ -44,9 +44,14 @@ func (c *ApiController) RunCasbinCommand() {
 	}
 
 	// argString's example:
-	// enforce -m "examples/rbac_model.conf" -p "examples/rbac_policy.csv" "alice" "data1" "read"
+	// ["enforce", "-m", "examples/rbac_model.conf", "-p", "examples/rbac_policy.csv", "alice", "data1", "read"]
 	// see: https://github.com/jcasbin/casbin-java-cli?tab=readme-ov-file#get-started
-	args := strings.Split(argString, " ")
+	var args []string
+	err = json.Unmarshal([]byte(argString), &args)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	command := exec.Command(binaryName, args...)
 	outputBytes, err := command.CombinedOutput()
