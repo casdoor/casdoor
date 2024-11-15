@@ -489,6 +489,7 @@ func (c *ApiController) Login() {
 			} else {
 				isPasswordWithLdapEnabled = false
 			}
+			// TODO Problem localization, embedding a new function that forces users to change their passwords every 3/6/12 months
 			user, err = object.CheckUserPassword(authForm.Organization, authForm.Username, password, c.GetAcceptLanguage(), enableCaptcha, isSigninViaLdap, isPasswordWithLdapEnabled)
 		}
 
