@@ -113,6 +113,9 @@ export function getCasLoginParameters(owner, name) {
 
 export function getOAuthGetParameters(params) {
   const queries = (params !== undefined) ? params : new URLSearchParams(window.location.search);
+  const lowercaseQueries = {};
+  queries.forEach((val, key) => {lowercaseQueries[key.toLowerCase()] = val;});
+
   const clientId = getRefinedValue(queries.get("client_id"));
   const responseType = getRefinedValue(queries.get("response_type"));
 
@@ -138,9 +141,9 @@ export function getOAuthGetParameters(params) {
   const nonce = getRefinedValue(queries.get("nonce"));
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
-  const samlRequest = getRefinedValue(queries.get("SAMLRequest"));
-  const relayState = getRefinedValue(queries.get("RelayState"));
-  const noRedirect = getRefinedValue(queries.get("noRedirect"));
+  const samlRequest = getRefinedValue(lowercaseQueries["samlRequest".toLowerCase()]);
+  const relayState = getRefinedValue(lowercaseQueries["RelayState".toLowerCase()]);
+  const noRedirect = getRefinedValue(lowercaseQueries["noRedirect".toLowerCase()]);
 
   if (clientId === "" && samlRequest === "") {
     // login
