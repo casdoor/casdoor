@@ -198,11 +198,11 @@ function ManagementPage(props) {
             </div>
           </Tooltip>
           <OpenTour />
-          {Setting.isAdminUser(props.account) && !Setting.isMobile() && (props.uri.indexOf("/trees") === -1) &&
+          {Setting.isAdminUser(props.account) && (props.uri.indexOf("/trees") === -1) &&
                         <OrganizationSelect
                           initValue={Setting.getOrganization()}
                           withAll={true}
-                          style={{marginRight: "20px", width: "180px", display: "flex"}}
+                          style={{marginRight: "20px", width: "180px", display: !Setting.isMobile() ? "flex" : "none"}}
                           onChange={(value) => {
                             Setting.setOrganization(value);
                           }}
