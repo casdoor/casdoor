@@ -222,10 +222,13 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 	originFrontend, originBackend := getOriginFromHost(host)
 
 	idpLocation := ""
+	idpBinding := ""
 	if enablePostBinding {
 		idpLocation = fmt.Sprintf("%s/api/saml/redirect/%s/%s", originBackend, application.Owner, application.Name)
+		idpBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
 	} else {
 		idpLocation = fmt.Sprintf("%s/login/saml/authorize/%s/%s", originFrontend, application.Owner, application.Name)
+		idpBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
 	}
 
 	d := IdpEntityDescriptor{
@@ -258,7 +261,7 @@ func GetSamlMeta(application *Application, host string, enablePostBinding bool) 
 				{Xmlns: "urn:oasis:names:tc:SAML:2.0:assertion", Name: "Name", NameFormat: "urn:oasis:names:tc:SAML:2.0:attrname-format:basic", FriendlyName: "Name"},
 			},
 			SingleSignOnService: SingleSignOnService{
-				Binding:  "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+				Binding:  idpBinding,
 				Location: idpLocation,
 			},
 			ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol",
