@@ -765,7 +765,7 @@ class ApplicationEditPage extends React.Component {
             />
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
-              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&post=${this.state.application.enableSamlPostBinding}`);
+              copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&enablePostBinding=${this.state.application.enableSamlPostBinding}`);
               Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
             }}
             >
