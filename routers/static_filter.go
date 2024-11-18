@@ -80,6 +80,14 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
+	allowed, err := object.CheckLoginPermission(userId, application)
+	if err != nil {
+		return "", err
+	}
+	if !allowed {
+		return "", nil
+	}
+
 	code, err := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, ctx.Request.Host, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err
