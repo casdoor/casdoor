@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
@@ -561,8 +562,9 @@ func (c *ApiController) SetPassword() {
 	targetUser.Password = newPassword
 	targetUser.UpdateUserPassword(organization)
 	targetUser.NeedUpdatePassword = false
+	targetUser.LastChangePasswordTime = time.Now().Format(time.RFC3339)
 
-	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type"}, false)
+	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

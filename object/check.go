@@ -381,12 +381,12 @@ func CheckUserPassword(organization string, username string, password string, la
 		if err != nil {
 			return nil, err
 		}
+
+		if checkPasswordExpired(user) {
+			return nil, fmt.Errorf(i18n.Translate(lang, "check:Your password has expired. Please reset your password by clicking \"Forgot password\""))
+		}
 	}
-	if CheckPasswordExpired(user) {
-		user.NeedUpdatePassword = true
-		UpdateUser(user.GetId(), user, []string{"need_update_password"}, false)
-		return nil, fmt.Errorf(i18n.Translate(lang, "check:Your password has not been changed for too long, please click Forgot Password to change your password"))
-	}
+
 	return user, nil
 }
 

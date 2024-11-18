@@ -1083,6 +1083,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Last change password time") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Last change password time"), i18next.t("user:Last change password time"))} :
+          </Col>
+          <Col span={22}>
+            <Input value={this.state.user.lastChangePasswordTime} onChange={e => {
+              this.updateUserField("lastChangePasswordTime", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
     }
   }
 
