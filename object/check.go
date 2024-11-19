@@ -381,7 +381,13 @@ func CheckUserPassword(organization string, username string, password string, la
 		if err != nil {
 			return nil, err
 		}
+
+		err = checkPasswordExpired(user, lang)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	return user, nil
 }
 
