@@ -200,14 +200,14 @@ type User struct {
 	Permissions []*Permission `json:"permissions"`
 	Groups      []string      `xorm:"groups varchar(1000)" json:"groups"`
 
-	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
-	SigninWrongTimes    int    `json:"signinWrongTimes"`
+	LastChangePasswordTime string `xorm:"varchar(100)" json:"lastChangePasswordTime"`
+	LastSigninWrongTime    string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
+	SigninWrongTimes       int    `json:"signinWrongTimes"`
 
-	ManagedAccounts        []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
-	MfaAccounts            []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
-	NeedUpdatePassword     bool             `json:"needUpdatePassword"`
-	IpWhitelist            string           `xorm:"varchar(200)" json:"ipWhitelist"`
-	LastChangePasswordTime string           `xorm:"varchar(100)" json:"lastChangePasswordTime"`
+	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
+	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
+	NeedUpdatePassword bool             `json:"needUpdatePassword"`
+	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }
 
 type Userinfo struct {
@@ -691,14 +691,14 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"owner", "display_name", "avatar", "first_name", "last_name",
 			"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
 			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
-			"signin_wrong_times", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
+			"signin_wrong_times", "last_change_password_time", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
 			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
 			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "line", "amazon",
 			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "last_change_password_time",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
 		}
 	}
 	if isAdmin {
