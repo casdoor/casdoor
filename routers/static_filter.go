@@ -85,7 +85,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", err
 	}
 	if !allowed {
-		return "", nil
+		return "", fmt.Errorf(T(ctx, "auth:Unauthorized operation"))
 	}
 
 	code, err := object.GetOAuthCode(userId, clientId, responseType, redirectUri, scope, state, nonce, codeChallenge, ctx.Request.Host, getAcceptLanguage(ctx))
@@ -123,8 +123,7 @@ func StaticFilter(ctx *context.Context) {
 	if urlPath == "/login/oauth/authorize" {
 		redirectUrl, err := fastAutoSignin(ctx)
 		if err != nil {
-			responseError(ctx, err.Error())
-			return
+			defer responseError(ctx, err.Error())
 		}
 
 		if redirectUrl != "" {
