@@ -92,11 +92,6 @@ class LoginPage extends React.Component {
     }
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
-      if (this.props.application.enableAutoSignin) {
-        const values = {};
-        values["application"] = this.props.application.name;
-        this.login(values);
-      }
     }
 
     if (prevProps.account !== this.props.account && this.props.account !== undefined) {
@@ -116,6 +111,14 @@ class LoginPage extends React.Component {
             this.sendPopupData({type: "windowClosed"}, params.get("redirect_uri"));
           });
         }
+      }
+    }
+
+    if ((prevProps.application !== this.props.application) || (prevProps.account !== this.props.account)) {
+      if (this.props.application?.enableAutoSignin && this.props.account && this.props.account.owner === this.props.application.organization) {
+        const values = {};
+        values["application"] = this.props.application.name;
+        this.login(values);
       }
     }
   }
