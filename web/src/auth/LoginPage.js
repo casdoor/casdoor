@@ -488,6 +488,10 @@ class LoginPage extends React.Component {
               const accessToken = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
             } else if (responseType === "saml") {
+              if (res.data === RequiredMfa) {
+                this.props.onLoginSuccess(window.location.href);
+                return;
+              }
               if (res.data2.needUpdatePassword) {
                 sessionStorage.setItem("signinUrl", window.location.href);
                 Setting.goToLink(this, `/forget/${this.state.applicationName}`);
