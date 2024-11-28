@@ -247,7 +247,7 @@ func (c *ApiController) SendVerificationCode() {
 				vform.Dest = mfaProps.Secret
 			}
 		} else if vform.Method == MfaSetupVerification {
-			c.SetSession(MfaDestSession, vform.Dest)
+			object.SetPropsFromContext(MfaDestSession, vform.Dest, c.Ctx.Input.CruSession, vform.MfaCacheKey)
 		}
 
 		provider, err = application.GetEmailProvider(vform.Method)
@@ -284,8 +284,8 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			if vform.Method == MfaSetupVerification {
-				c.SetSession(MfaCountryCodeSession, vform.CountryCode)
-				c.SetSession(MfaDestSession, vform.Dest)
+				object.SetPropsFromContext(MfaCountryCodeSession, vform.CountryCode, c.Ctx.Input.CruSession, vform.MfaCacheKey)
+				object.SetPropsFromContext(MfaDestSession, vform.Dest, c.Ctx.Input.CruSession, vform.MfaCacheKey)
 			}
 		} else if vform.Method == MfaAuthVerification {
 			mfaProps := user.GetPreferredMfaProps(false)

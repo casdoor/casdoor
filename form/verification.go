@@ -31,6 +31,8 @@ type VerificationForm struct {
 	CaptchaType  string `form:"captchaType"`
 	ClientSecret string `form:"clientSecret"`
 	CaptchaToken string `form:"captchaToken"`
+
+	MfaCacheKey string `form:"mfaCacheKey"`
 }
 
 const (
