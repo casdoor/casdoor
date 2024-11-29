@@ -84,7 +84,7 @@ func (c *ApiController) MfaSetupVerify() {
 	passcode := c.Ctx.Request.Form.Get("passcode")
 	secret := c.Ctx.Request.Form.Get("secret")
 	dest := c.Ctx.Request.Form.Get("dest")
-	countryCode := c.Ctx.Request.Form.Get("secret")
+	countryCode := c.Ctx.Request.Form.Get("countryCode")
 
 	if mfaType == "" || passcode == "" {
 		c.ResponseError("missing auth type or passcode")
