@@ -15,6 +15,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   useEffect(() => {
     if (method === mfaAuth) {
       setDest(mfaProps.secret);
+      form.setFieldValue("dest", mfaProps.secret);
       return;
     }
     if (mfaProps.mfaType === SmsMfaType) {
