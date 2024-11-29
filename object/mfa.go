@@ -16,9 +16,7 @@ package object
 
 import (
 	"fmt"
-	"sync"
 
-	"github.com/beego/beego/session"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -50,8 +48,6 @@ const (
 	NextMfa          = "NextMfa"
 	RequiredMfa      = "RequiredMfa"
 )
-
-var MfaCache = sync.Map{}
 
 func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 	switch mfaType {
@@ -186,42 +182,4 @@ func SetPreferredMultiFactorAuth(user *User, mfaType string) error {
 		return err
 	}
 	return nil
-}
-
-func GetPropsFromContext(key string, curSession session.Store, mfaCacheKey string) string {
-	if mfaCacheKey != "" {
-		propMap, exist := MfaCache.Load(mfaCacheKey)
-		if !exist {
-			return ""
-		}
-		if propMap == nil {
-			return ""
-		}
-		return propMap.(map[string]string)[key]
-	}
-
-	val := curSession.Get(key)
-	if val != nil {
-		return val.(string)
-	}
-	return ""
-}
-
-func SetPropsFromContext(key string, value string, curSession session.Store, mfaCacheKey string) {
-	if mfaCacheKey != "" {
-		propMap, exist := MfaCache.Load(mfaCacheKey)
-		if !exist {
-			return
-		}
-		if propMap == nil {
-			return
-		}
-		propMap.(map[string]string)[key] = value
-		MfaCache.Store(mfaCacheKey, propMap)
-	}
-
-	err := curSession.Set(key, value)
-	if err != nil {
-		return
-	}
 }

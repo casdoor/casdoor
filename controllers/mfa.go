@@ -42,7 +42,6 @@ func (c *ApiController) MfaSetupInitiate() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
-	stateLess := c.Ctx.Request.Form.Get("stateLess")
 	userId := util.GetId(owner, name)
 
 	if len(userId) == 0 {
@@ -73,27 +72,15 @@ func (c *ApiController) MfaSetupInitiate() {
 	}
 
 	recoveryCode := uuid.NewString()
-	mfaCacheKey := ""
-	if stateLess == "true" {
-		mfaCacheKey = c.Ctx.Input.CruSession.SessionID() + util.GenerateSimpleTimeId()
-		mfaCacheVal := make(map[string]string)
-		mfaCacheVal[MfaRecoveryCodesSession] = recoveryCode
-		if mfaType == object.TotpType {
-			mfaCacheVal[MfaTotpSecretSession] = mfaProps.Secret
-		}
-		mfaCacheVal["verifiedUserId"] = userId
-		object.MfaCache.Store(mfaCacheKey, mfaCacheVal)
-	} else {
-		c.SetSession(MfaRecoveryCodesSession, recoveryCode)
-		if mfaType == object.TotpType {
-			c.SetSession(MfaTotpSecretSession, mfaProps.Secret)
-		}
+	c.SetSession(MfaRecoveryCodesSession, recoveryCode)
+	if mfaType == object.TotpType {
+		c.SetSession(MfaTotpSecretSession, mfaProps.Secret)
 	}
 
 	mfaProps.RecoveryCodes = []string{recoveryCode}
 
 	resp := mfaProps
-	c.ResponseOk(resp, mfaCacheKey)
+	c.ResponseOk(resp)
 }
 
 // MfaSetupVerify
@@ -107,7 +94,6 @@ func (c *ApiController) MfaSetupInitiate() {
 func (c *ApiController) MfaSetupVerify() {
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
 	passcode := c.Ctx.Request.Form.Get("passcode")
-	mfaCacheKey := c.Ctx.Request.Form.Get("mfaCacheKey")
 
 	if mfaType == "" || passcode == "" {
 		c.ResponseError("missing auth type or passcode")
@@ -118,32 +104,32 @@ func (c *ApiController) MfaSetupVerify() {
 		MfaType: mfaType,
 	}
 	if mfaType == object.TotpType {
-		secret := object.GetPropsFromContext(MfaTotpSecretSession, c.Ctx.Input.CruSession, mfaCacheKey)
-		if secret == "" {
+		secret := c.GetSession(MfaTotpSecretSession)
+		if secret == nil {
 			c.ResponseError("totp secret is missing")
 			return
 		}
-		config.Secret = secret
+		config.Secret = secret.(string)
 	} else if mfaType == object.SmsType {
-		dest := object.GetPropsFromContext(MfaDestSession, c.Ctx.Input.CruSession, mfaCacheKey)
-		if dest == "" {
+		dest := c.GetSession(MfaDestSession)
+		if dest == nil {
 			c.ResponseError("destination is missing")
 			return
 		}
-		config.Secret = dest
-		countryCode := object.GetPropsFromContext(MfaCountryCodeSession, c.Ctx.Input.CruSession, mfaCacheKey)
-		if countryCode == "" {
+		config.Secret = dest.(string)
+		countryCode := c.GetSession(MfaCountryCodeSession)
+		if countryCode == nil {
 			c.ResponseError("country code is missing")
 			return
 		}
-		config.CountryCode = countryCode
+		config.CountryCode = countryCode.(string)
 	} else if mfaType == object.EmailType {
-		dest := object.GetPropsFromContext(MfaDestSession, c.Ctx.Input.CruSession, mfaCacheKey)
-		if dest == "" {
+		dest := c.GetSession(MfaDestSession)
+		if dest == nil {
 			c.ResponseError("destination is missing")
 			return
 		}
-		config.Secret = dest
+		config.Secret = dest.(string)
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
@@ -173,7 +159,6 @@ func (c *ApiController) MfaSetupEnable() {
 	owner := c.Ctx.Request.Form.Get("owner")
 	name := c.Ctx.Request.Form.Get("name")
 	mfaType := c.Ctx.Request.Form.Get("mfaType")
-	mfaCacheKey := c.Ctx.Request.Form.Get("mfaCacheKey")
 
 	user, err := object.GetUser(util.GetId(owner, name))
 	if err != nil {
@@ -191,43 +176,43 @@ func (c *ApiController) MfaSetupEnable() {
 	}
 
 	if mfaType == object.TotpType {
-		secret := object.GetPropsFromContext(MfaTotpSecretSession, c.Ctx.Input.CruSession, mfaCacheKey)
-		if secret == "" {
+		secret := c.GetSession(MfaTotpSecretSession)
+		if secret == nil {
 			c.ResponseError("totp secret is missing")
 			return
 		}
-		config.Secret = secret
+		config.Secret = secret.(string)
 	} else if mfaType == object.EmailType {
 		if user.Email == "" {
-			dest := object.GetPropsFromContext(MfaDestSession, c.Ctx.Input.CruSession, mfaCacheKey)
-			if dest == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
 				c.ResponseError("destination is missing")
 				return
 			}
-			user.Email = dest
+			user.Email = dest.(string)
 		}
 	} else if mfaType == object.SmsType {
 		if user.Phone == "" {
-			dest := object.GetPropsFromContext(MfaDestSession, c.Ctx.Input.CruSession, mfaCacheKey)
-			if dest == "" {
+			dest := c.GetSession(MfaDestSession)
+			if dest == nil {
 				c.ResponseError("destination is missing")
 				return
 			}
-			user.Phone = dest
-			countryCode := object.GetPropsFromContext(MfaCountryCodeSession, c.Ctx.Input.CruSession, mfaCacheKey)
-			if countryCode == "" {
+			user.Phone = dest.(string)
+			countryCode := c.GetSession(MfaCountryCodeSession)
+			if countryCode == nil {
 				c.ResponseError("country code is missing")
 				return
 			}
-			user.CountryCode = countryCode
+			user.CountryCode = countryCode.(string)
 		}
 	}
-	recoveryCodes := object.GetPropsFromContext(MfaRecoveryCodesSession, c.Ctx.Input.CruSession, mfaCacheKey)
-	if recoveryCodes == "" {
+	recoveryCodes := c.GetSession(MfaRecoveryCodesSession)
+	if recoveryCodes == nil {
 		c.ResponseError("recovery codes is missing")
 		return
 	}
-	config.RecoveryCodes = []string{recoveryCodes}
+	config.RecoveryCodes = []string{recoveryCodes.(string)}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
 	if mfaUtil == nil {
@@ -241,16 +226,12 @@ func (c *ApiController) MfaSetupEnable() {
 		return
 	}
 
-	if mfaCacheKey == "" {
-		c.DelSession(MfaRecoveryCodesSession)
-		if mfaType == object.TotpType {
-			c.DelSession(MfaTotpSecretSession)
-		} else {
-			c.DelSession(MfaCountryCodeSession)
-			c.DelSession(MfaDestSession)
-		}
+	c.DelSession(MfaRecoveryCodesSession)
+	if mfaType == object.TotpType {
+		c.DelSession(MfaTotpSecretSession)
 	} else {
-		object.MfaCache.Delete(mfaCacheKey)
+		c.DelSession(MfaCountryCodeSession)
+		c.DelSession(MfaDestSession)
 	}
 
 	c.ResponseOk(http.StatusText(http.StatusOK))
