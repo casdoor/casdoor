@@ -26,11 +26,13 @@ export const mfaSetup = "mfaSetup";
 
 export function MfaVerifyForm({mfaProps, application, user, onSuccess, onFail}) {
   const [form] = Form.useForm();
-  const onFinish = ({passcode}) => {
-    const data = {passcode, mfaType: mfaProps.mfaType, ...user};
+  const onFinish = ({passcode, countryCode, dest}) => {
+    const data = {passcode, mfaType: mfaProps.mfaType, secret: mfaProps.secret, dest: dest, countryCode: countryCode, ...user};
     MfaBackend.MfaSetupVerify(data)
       .then((res) => {
         if (res.status === "ok") {
+          res.dest = dest;
+          res.countryCode = countryCode;
           onSuccess(res);
         } else {
           onFail(res);

@@ -32,6 +32,9 @@ export function MfaSetupVerify(values) {
   formData.append("name", values.name);
   formData.append("mfaType", values.mfaType);
   formData.append("passcode", values.passcode);
+  formData.append("secret", values.secret);
+  formData.append("dest", values.dest);
+  formData.append("countryCode", values.countryCode);
   return fetch(`${Setting.ServerUrl}/api/mfa/setup/verify`, {
     method: "POST",
     credentials: "include",
@@ -44,6 +47,10 @@ export function MfaSetupEnable(values) {
   formData.append("mfaType", values.mfaType);
   formData.append("owner", values.owner);
   formData.append("name", values.name);
+  formData.append("secret", values.secret);
+  formData.append("recoveryCodes", values.recoveryCodes);
+  formData.append("dest", values.dest);
+  formData.append("countryCode", values.countryCode);
   return fetch(`${Setting.ServerUrl}/api/mfa/setup/enable`, {
     method: "POST",
     credentials: "include",
