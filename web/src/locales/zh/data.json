@@ -741,7 +741,16 @@
     "There is no payment channel for this product.": "该商品没有付款方式。",
     "This product is currently not in sale.": "该商品目前未在售。",
     "USD": "美元",
-    "WeChat Pay": "微信支付"
+    "WeChat Pay": "微信支付",
+    "EUR": "欧元",
+    "JPY": "日元",
+    "GBP": "英镑",
+    "AUD": "澳元",
+    "CAD": "加元",
+    "CHF": "瑞士法郎",
+    "HKD": "港币",
+    "SGD": "新加坡元",
+    "RUB": "卢布"
   },
   "provider": {
     "Access key": "访问密钥",
