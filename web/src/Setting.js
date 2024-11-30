@@ -1572,7 +1572,7 @@ export function getCurrencyText(product) {
   } else if (product?.currency === "RUB") {
     return i18next.t("product:RUB");
   } else {
-    return i18next.t("product:Unknown currency");
+    return "(Unknown currency)";
   }
 }
 
