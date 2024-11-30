@@ -748,9 +748,7 @@
     "AUD": "AUD",
     "CAD": "CAD",
     "CHF": "CHF",
-    "HKD": "HKD",
-    "SGD": "SGD",
-    "RUB": "RUB"
+    "HKD": "HKD"
   },
   "provider": {
     "Access key": "Access key",

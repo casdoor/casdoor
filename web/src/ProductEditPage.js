@@ -216,8 +216,7 @@ class ProductEditPage extends React.Component {
                   {id: "CAD", name: "CAD"},
                   {id: "CHF", name: "CHF"},
                   {id: "HKD", name: "HKD"},
-                  {id: "SGD", name: "SGD"},
-                  {id: "RUB", name: "RUB"},
+                  {id: "SGD", name: "SGD"}
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

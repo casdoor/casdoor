@@ -1569,8 +1569,6 @@ export function getCurrencyText(product) {
     return i18next.t("product:HKD");
   } else if (product?.currency === "SGD") {
     return i18next.t("product:SGD");
-  } else if (product?.currency === "RUB") {
-    return i18next.t("product:RUB");
   } else {
     return "(Unknown currency)";
   }
