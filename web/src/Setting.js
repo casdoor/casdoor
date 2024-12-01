@@ -1553,6 +1553,22 @@ export function getCurrencyText(product) {
     return i18next.t("product:USD");
   } else if (product?.currency === "CNY") {
     return i18next.t("product:CNY");
+  } else if (product?.currency === "EUR") {
+    return i18next.t("product:EUR");
+  } else if (product?.currency === "JPY") {
+    return i18next.t("product:JPY");
+  } else if (product?.currency === "GBP") {
+    return i18next.t("product:GBP");
+  } else if (product?.currency === "AUD") {
+    return i18next.t("product:AUD");
+  } else if (product?.currency === "CAD") {
+    return i18next.t("product:CAD");
+  } else if (product?.currency === "CHF") {
+    return i18next.t("product:CHF");
+  } else if (product?.currency === "HKD") {
+    return i18next.t("product:HKD");
+  } else if (product?.currency === "SGD") {
+    return i18next.t("product:SGD");
   } else {
     return "(Unknown currency)";
   }

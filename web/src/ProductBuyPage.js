@@ -123,6 +123,22 @@ class ProductBuyPage extends React.Component {
       return "$";
     } else if (product?.currency === "CNY") {
       return "￥";
+    } else if (product?.currency === "EUR") {
+      return "€";
+    } else if (product?.currency === "JPY") {
+      return "¥";
+    } else if (product?.currency === "GBP") {
+      return "£";
+    } else if (product?.currency === "AUD") {
+      return "A$";
+    } else if (product?.currency === "CAD") {
+      return "C$";
+    } else if (product?.currency === "CHF") {
+      return "CHF";
+    } else if (product?.currency === "HKD") {
+      return "HK$";
+    } else if (product?.currency === "SGD") {
+      return "S$";
     } else {
       return "(Unknown currency)";
     }
