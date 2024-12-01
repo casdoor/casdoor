@@ -31,12 +31,14 @@ func StartLdapServer() {
 	ldapsServerPort := conf.GetConfigString("ldapsServerPort")
 
 	server := ldap.NewServer()
+	serverSsl := ldap.NewServer()
 	routes := ldap.NewRouteMux()
 
 	routes.Bind(handleBind)
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
+	serverSsl.Handle(routes)
 	go func() {
 		if ldapServerPort == "" || ldapServerPort == "0" {
 			return
@@ -51,14 +53,15 @@ func StartLdapServer() {
 		if ldapsServerPort == "" || ldapsServerPort == "0" {
 			return
 		}
-		secureConn := func(s *ldap.Server) {
-			config, _ := getTLSconfig()
-			s.Listener = tls.NewListener(s.Listener, config)
-		}
-		if secureConn == nil {
+		config, err := getTLSconfig()
+		if err != nil {
+			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
 			return
 		}
-		err := server.ListenAndServe("0.0.0.0:"+ldapsServerPort, secureConn)
+		secureConn := func(s *ldap.Server) {
+			s.Listener = tls.NewListener(s.Listener, config)
+		}
+		err = serverSsl.ListenAndServe("0.0.0.0:"+ldapsServerPort, secureConn)
 		if err != nil {
 			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
 		}
@@ -68,17 +71,12 @@ func StartLdapServer() {
 func getTLSconfig() (*tls.Config, error) {
 	ldapsCertId := conf.GetConfigString("ldapsCertId")
 	if ldapsCertId == "" {
-		ldapsCertId = "admin/cert-built-in"
-	}
-	ldapsServerName := conf.GetConfigString("ldapsServerName")
-	if ldapsServerName == "" {
-		ldapsServerName = "localhost"
+		return nil, fmt.Errorf("ldapsCertId is empty")
 	}
 	rawCert, err := object.GetCert(ldapsCertId)
 	if err != nil {
 		return nil, err
 	}
-
 	cert, err := tls.X509KeyPair([]byte(rawCert.Certificate), []byte(rawCert.PrivateKey))
 	if err != nil {
 		return &tls.Config{}, err
@@ -88,7 +86,6 @@ func getTLSconfig() (*tls.Config, error) {
 		MinVersion:   tls.VersionTLS10,
 		MaxVersion:   tls.VersionTLS13,
 		Certificates: []tls.Certificate{cert},
-		ServerName:   ldapsServerName,
 	}, nil
 }
 
