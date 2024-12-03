@@ -124,6 +124,7 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 	switch tokenTypeHint {
 	case "access_token":
+	case "access-token":
 		token, err := GetTokenByAccessToken(tokenValue)
 		if err != nil {
 			return nil, err
@@ -132,6 +133,7 @@ func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
 			return token, nil
 		}
 	case "refresh_token":
+	case "refresh-token":
 		token, err := GetTokenByRefreshToken(tokenValue)
 		if err != nil {
 			return nil, err
