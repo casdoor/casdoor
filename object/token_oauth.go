@@ -504,7 +504,7 @@ func GetPasswordToken(application *Application, username string, password string
 	}
 
 	if user.Ldap != "" {
-		err = checkLdapUserPassword(user, password, "en")
+		err = CheckLdapUserPassword(user, password, "en")
 	} else {
 		err = CheckPassword(user, password, "en")
 	}
