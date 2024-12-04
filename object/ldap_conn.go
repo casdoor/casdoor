@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
@@ -372,7 +373,7 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
-func ResetLdapPassword(user *User, newPassword string) error {
+func ResetLdapPassword(user *User, newPassword string, lang string) error {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
 		return err
@@ -399,13 +400,13 @@ func ResetLdapPassword(user *User, newPassword string) error {
 		}
 		if len(searchResult.Entries) > 1 {
 			conn.Close()
-			return err
+			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
 		}
 
-		userDN := searchResult.Entries[0].DN
+		userDn := searchResult.Entries[0].DN
 
 		var pwdEncoded string
-		passwordModify := goldap.NewModifyRequest(userDN, nil)
+		modifyPasswordRequest := goldap.NewModifyRequest(userDn, nil)
 		if conn.IsAD {
 			utf16 := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
 			pwdEncoded, err := utf16.NewEncoder().String("\"" + newPassword + "\"")
@@ -413,14 +414,14 @@ func ResetLdapPassword(user *User, newPassword string) error {
 				conn.Close()
 				return err
 			}
-			passwordModify.Replace("unicodePwd", []string{pwdEncoded})
-			passwordModify.Replace("userAccountControl", []string{"512"})
+			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
+			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else {
 			pwdEncoded = newPassword
-			passwordModify.Replace("userPassword", []string{pwdEncoded})
+			modifyPasswordRequest.Replace("userPassword", []string{pwdEncoded})
 		}
 
-		err = conn.Conn.Modify(passwordModify)
+		err = conn.Conn.Modify(modifyPasswordRequest)
 		if err != nil {
 			conn.Close()
 			return err

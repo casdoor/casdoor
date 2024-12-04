@@ -475,7 +475,11 @@ func (c *ApiController) SetPassword() {
 
 	userId := util.GetId(userOwner, userName)
 
-	user, _ := object.GetUser(userId)
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
@@ -522,16 +526,12 @@ func (c *ApiController) SetPassword() {
 	} else if code == "" {
 		if user.Ldap == "" {
 			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
 		} else {
 			err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
+		}
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
 		}
 	}
 
@@ -575,16 +575,13 @@ func (c *ApiController) SetPassword() {
 
 	if user.Ldap == "" {
 		_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
 	} else {
-		err := object.ResetLdapPassword(targetUser, newPassword)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
+		err = object.ResetLdapPassword(targetUser, newPassword, c.GetAcceptLanguage())
+	}
+
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
 	}
 
 	c.ResponseOk()
