@@ -142,7 +142,7 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		}
 		for _, attr := range attrs {
 			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
-			if string(attr) == "cn" {
+			if string(attr) == "title" {
 				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))
 			}
 		}
