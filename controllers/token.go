@@ -402,6 +402,7 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 	}
+	introspectionResponse.TokenType = token.TokenType
 
 	c.Data["json"] = introspectionResponse
 	c.ServeJSON()
