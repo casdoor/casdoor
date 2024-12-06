@@ -19,6 +19,63 @@ import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as Setting from "./Setting";
+import * as OrganizationBackend from "./backend/OrganizationBackend";
+
+const buyProductPagedefaultCss = `<style>
+    .login-content {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .product-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 24px;
+    }
+
+    .product-descriptions {
+      width: 100%;
+    }
+
+    .product-title {
+      color: #1890ff;
+      text-align: center;
+      display: block;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .product-item {
+        padding: 16px 24px;
+      }
+
+    .product-name {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .product-detail, .product-tag, .product-sku {
+      font-size: 16px;
+    }
+
+    .product-price {
+      font-size: 28px;
+      color: #f5222d;
+      font-weight: bold;
+    }
+
+    .product-quantity, .product-sold {
+      font-size: 16px;
+    }
+
+    .product-payment {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  </style>`;
 
 class ProductBuyPage extends React.Component {
   constructor(props) {
@@ -37,6 +94,7 @@ class ProductBuyPage extends React.Component {
       plan: null,
       isPlacingOrder: false,
       customPrice: 0,
+      organization: null,
     };
   }
 
@@ -55,6 +113,24 @@ class ProductBuyPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getProduct();
     this.getPaymentEnv();
+    this.getOrganization();
+  }
+
+  getOrganization() {
+    if (this.state.owner === null) {
+      return;
+    }
+
+    OrganizationBackend.getOrganization("admin", this.state.owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            organization: res.data,
+          });
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      });
   }
 
   setStateAsync(state) {
@@ -241,7 +317,7 @@ class ProductBuyPage extends React.Component {
     }
 
     return (
-      <Button style={{height: "50px", borderWidth: "2px"}} shape="round" icon={
+      <Button className="payment-provider-button" style={{height: "50px", borderWidth: "2px"}} shape="round" icon={
         <img style={{marginRight: "10px"}} width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />
       } size={"large"} >
         {
@@ -289,47 +365,66 @@ class ProductBuyPage extends React.Component {
 
     return (
       <div className="login-content">
-        <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
-          <Descriptions title={<span style={Setting.isMobile() ? {fontSize: 20} : {fontSize: 28}}>{i18next.t("product:Buy Product")}</span>} bordered>
-            <Descriptions.Item label={i18next.t("general:Name")} span={3}>
-              <span style={{fontSize: 25}}>
-                {Setting.getLanguageText(product?.displayName)}
-              </span>
-            </Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Detail")}><span style={{fontSize: 16}}>{Setting.getLanguageText(product?.detail)}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("user:Tag")}><span style={{fontSize: 16}}>{product?.tag}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:SKU")}><span style={{fontSize: 16}}>{product?.name}</span></Descriptions.Item>
-            <Descriptions.Item label={i18next.t("product:Image")} span={3}>
-              <img src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
-            </Descriptions.Item>
-            {
-              product.isRecharge ? (
-                <Descriptions.Item span={3} label={i18next.t("product:Price")}>
-                  <Space>
-                    <InputNumber min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} /> {Setting.getCurrencyText(product)}
-                  </Space>
-                </Descriptions.Item>
-              ) : (
-                <React.Fragment>
-                  <Descriptions.Item label={i18next.t("product:Price")}>
-                    <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
-                      {
-                        this.getPrice(product)
-                      }
-                    </span>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-                  <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
-                </React.Fragment>
-              )
-            }
-            <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+        <div dangerouslySetInnerHTML={{__html: buyProductPagedefaultCss}} />
+        {Setting.inIframe() || Setting.isMobile() ? null : (
+          <div dangerouslySetInnerHTML={{__html: this.state.organization?.buyProductPageCss}} />
+        )}
+        {Setting.inIframe() || !Setting.isMobile() ? null : (
+          <div dangerouslySetInnerHTML={{__html: this.state.organization?.buyProductPageCssMobile}} />
+        )}
+
+        <div className="product-box">
+          <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
+            <Descriptions title={<span className="product-title">{i18next.t("product:Buy Product")}</span>} bordered className="product-descriptions">
+              <Descriptions.Item label={i18next.t("general:Name")} span={3} className="product-item">
+                <span className="product-name">
+                  {Setting.getLanguageText(product?.displayName)}
+                </span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Detail")} className="product-item">
+                <span className="product-detail">{Setting.getLanguageText(product?.detail)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("user:Tag")} className="product-item">
+                <span className="product-tag">{product?.tag}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:SKU")} className="product-item">
+                <span className="product-sku">{product?.name}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={i18next.t("product:Image")} span={3} className="product-item">
+                <img className="product-image" src={product?.image} alt={product?.name} height={90} style={{marginBottom: "20px"}} />
+              </Descriptions.Item>
               {
-                this.renderPay(product)
+                product.isRecharge ? (
+                  <Descriptions.Item span={3} label={i18next.t("product:Price")} className="product-item">
+                    <Space className="product-price-input">
+                      <InputNumber className="price-input" min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} />
+                      <span className="price-currency">{Setting.getCurrencyText(product)}</span>
+                    </Space>
+                  </Descriptions.Item>
+                ) : (
+                  <React.Fragment>
+                    <Descriptions.Item label={i18next.t("product:Price")} className="product-item">
+                      <span className="product-price">
+                        {this.getPrice(product)}
+                      </span>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={i18next.t("product:Quantity")} className="product-item">
+                      <span className="product-quantity">{product?.quantity}</span>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={i18next.t("product:Sold")} className="product-item">
+                      <span className="product-sold">{product?.sold}</span>
+                    </Descriptions.Item>
+                  </React.Fragment>
+                )
               }
-            </Descriptions.Item>
-          </Descriptions>
-        </Spin>
+              <Descriptions.Item label={i18next.t("product:Pay")} span={3} className="product-item">
+                <div className="product-payment">
+                  {this.renderPay(product)}
+                </div>
+              </Descriptions.Item>
+            </Descriptions>
+          </Spin>
+        </div>
       </div>
     );
   }
