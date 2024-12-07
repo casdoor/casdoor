@@ -77,6 +77,9 @@ func getTLSconfig() (*tls.Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	if rawCert == nil {
+		return nil, fmt.Errorf("cert is empty")
+	}
 	cert, err := tls.X509KeyPair([]byte(rawCert.Certificate), []byte(rawCert.PrivateKey))
 	if err != nil {
 		return &tls.Config{}, err
