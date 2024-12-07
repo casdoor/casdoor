@@ -19,7 +19,6 @@ import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as Setting from "./Setting";
-import * as OrganizationBackend from "./backend/OrganizationBackend";
 
 const buyProductPagedefaultCss = `<style>
     .login-content {
@@ -113,24 +112,6 @@ class ProductBuyPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getProduct();
     this.getPaymentEnv();
-    this.getOrganization();
-  }
-
-  getOrganization() {
-    if (this.state.owner === null) {
-      return;
-    }
-
-    OrganizationBackend.getOrganization("admin", this.state.owner)
-      .then((res) => {
-        if (res.status === "ok") {
-          this.setState({
-            organization: res.data,
-          });
-        } else {
-          Setting.showMessage("error", res.msg);
-        }
-      });
   }
 
   setStateAsync(state) {
@@ -367,10 +348,10 @@ class ProductBuyPage extends React.Component {
       <div className="login-content">
         <div dangerouslySetInnerHTML={{__html: buyProductPagedefaultCss}} />
         {Setting.inIframe() || Setting.isMobile() ? null : (
-          <div dangerouslySetInnerHTML={{__html: this.state.organization?.buyProductPageCss}} />
+          <div dangerouslySetInnerHTML={{__html: this.state.product?.buyProductPageCss}} />
         )}
         {Setting.inIframe() || !Setting.isMobile() ? null : (
-          <div dangerouslySetInnerHTML={{__html: this.state.organization?.buyProductPageCssMobile}} />
+          <div dangerouslySetInnerHTML={{__html: this.state.product?.buyProductPageCssMobile}} />
         )}
 
         <div className="product-box">

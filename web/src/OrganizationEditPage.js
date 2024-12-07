@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Popover, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -26,59 +26,8 @@ import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
 import MfaTable from "./table/MfaTable";
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-require("codemirror/theme/material-darker.css");
 
 const {Option} = Select;
-
-const buyProductCssTemplate = `<style>
-  .login-content {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-  }
-
-  .product-box {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 24px;
-  }
-
-  .product-descriptions {
-    width: 100%;
-  }
-
-  .product-title {
-    color: #1890ff;
-    text-align: center;
-    display: block;
-    margin-bottom: 20px;
-    font-size: 28px;
-  }
-
-  .product-item {
-    padding: 16px 24px;
-  }
-
-  .product-name {
-    font-size: 25px;
-    font-weight: bold;
-  }
-
-  .product-price {
-    font-size: 28px;
-    color: #f5222d;
-    font-weight: bold;
-  }
-
-  .product-payment {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-</style>`;
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -635,50 +584,6 @@ class OrganizationEditPage extends React.Component {
                 this.setState({ldaps: value});
               }}
             />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Buy Product Page CSS"), i18next.t("organization:Buy Product Page CSS - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.organization.buyProductPageCss === "" ? buyProductCssTemplate : this.state.organization.buyProductPageCss}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateOrganizationField("buyProductPageCss", value);
-                  }}
-                />
-              </div>
-            } title={i18next.t("organization:Buy Product Page CSS - Edit")} trigger="click">
-              <Input value={this.state.organization.buyProductPageCss} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateOrganizationField("buyProductPageCss", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Buy Product Page CSS (Mobile)"), i18next.t("organization:Buy Product Page CSS (Mobile) - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.organization.buyProductPageCssMobile === "" ? buyProductCssTemplate : this.state.organization.buyProductPageCssMobile}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateOrganizationField("buyProductPageCssMobile", value);
-                  }}
-                />
-              </div>
-            } title={i18next.t("organization:Buy Product Page CSS (Mobile) - Edit")} trigger="click">
-              <Input value={this.state.organization.buyProductPageCssMobile} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateOrganizationField("buyProductPageCssMobile", e.target.value);
-              }} />
-            </Popover>
           </Col>
         </Row>
       </Card>
