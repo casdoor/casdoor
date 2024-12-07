@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import CryptoJS from "crypto-js";
-import i18next from "i18next";
 import {Buffer} from "buffer";
 
 export function getRandomKeyForObfuscator(obfuscatorType) {
