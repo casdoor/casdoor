@@ -1150,7 +1150,7 @@ class LoginPage extends React.Component {
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
-      if (signinMethod.rule === "Hide-Password") {
+      if (signinMethod.rule === "Hide password") {
         return;
       }
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));

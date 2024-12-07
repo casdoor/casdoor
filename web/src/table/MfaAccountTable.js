@@ -176,7 +176,7 @@ class MfaAccountTable extends React.Component {
               content={<CasdoorAppUrl accessToken={this.props.accessToken} />}
             >
               <Button type="primary" size="small">
-                {i18next.t("general:Show URL")}
+                {i18next.t("general:URL")}
               </Button>
             </Popover>
           </div>

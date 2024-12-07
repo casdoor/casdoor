@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Alert, Button, QRCode} from "antd";
+import copy from "copy-to-clipboard";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -62,12 +63,8 @@ export const CasdoorAppUrl = ({accessToken}) => {
       return;
     }
 
-    try {
-      await navigator.clipboard.writeText(qrUrl);
-      Setting.showMessage("success", i18next.t("general:Copied to clipboard"));
-    } catch (err) {
-      Setting.showMessage("error", i18next.t("general:Failed to copy"));
-    }
+    copy(qrUrl);
+    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
   };
 
   if (error) {
@@ -82,14 +79,9 @@ export const CasdoorAppUrl = ({accessToken}) => {
         alignItems: "center",
         marginBottom: "10px",
       }}>
-        <span>{i18next.t("general:URL String")}</span>
         {window.isSecureContext && (
-          <Button
-            size="small"
-            onClick={handleCopyUrl}
-            style={{marginLeft: "10px"}}
-          >
-            {i18next.t("general:Copy URL")}
+          <Button size="small" type="primary" onClick={handleCopyUrl} style={{marginLeft: "10px"}}>
+            {i18next.t("resource:Copy Link")}
           </Button>
         )}
       </div>
