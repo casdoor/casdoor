@@ -15,6 +15,7 @@
 package ldap
 
 import (
+	"crypto/tls"
 	"fmt"
 	"hash/fnv"
 	"log"
@@ -27,21 +28,68 @@ import (
 
 func StartLdapServer() {
 	ldapServerPort := conf.GetConfigString("ldapServerPort")
-	if ldapServerPort == "" || ldapServerPort == "0" {
-		return
-	}
+	ldapsServerPort := conf.GetConfigString("ldapsServerPort")
 
 	server := ldap.NewServer()
+	serverSsl := ldap.NewServer()
 	routes := ldap.NewRouteMux()
 
 	routes.Bind(handleBind)
 	routes.Search(handleSearch).Label(" SEARCH****")
 
 	server.Handle(routes)
-	err := server.ListenAndServe("0.0.0.0:" + ldapServerPort)
+	serverSsl.Handle(routes)
+	go func() {
+		if ldapServerPort == "" || ldapServerPort == "0" {
+			return
+		}
+		err := server.ListenAndServe("0.0.0.0:" + ldapServerPort)
+		if err != nil {
+			log.Printf("StartLdapServer() failed, err = %s", err.Error())
+		}
+	}()
+
+	go func() {
+		if ldapsServerPort == "" || ldapsServerPort == "0" {
+			return
+		}
+		ldapsCertId := conf.GetConfigString("ldapsCertId")
+		if ldapsCertId == "" {
+			return
+		}
+		config, err := getTLSconfig(ldapsCertId)
+		if err != nil {
+			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
+			return
+		}
+		secureConn := func(s *ldap.Server) {
+			s.Listener = tls.NewListener(s.Listener, config)
+		}
+		err = serverSsl.ListenAndServe("0.0.0.0:"+ldapsServerPort, secureConn)
+		if err != nil {
+			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
+		}
+	}()
+}
+
+func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
+	rawCert, err := object.GetCert(ldapsCertId)
 	if err != nil {
-		log.Printf("StartLdapServer() failed, err = %s", err.Error())
+		return nil, err
 	}
+	if rawCert == nil {
+		return nil, fmt.Errorf("cert is empty")
+	}
+	cert, err := tls.X509KeyPair([]byte(rawCert.Certificate), []byte(rawCert.PrivateKey))
+	if err != nil {
+		return &tls.Config{}, err
+	}
+
+	return &tls.Config{
+		MinVersion:   tls.VersionTLS10,
+		MaxVersion:   tls.VersionTLS13,
+		Certificates: []tls.Certificate{cert},
+	}, nil
 }
 
 func handleBind(w ldap.ResponseWriter, m *ldap.Message) {
