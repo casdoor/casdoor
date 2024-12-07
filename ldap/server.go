@@ -53,7 +53,11 @@ func StartLdapServer() {
 		if ldapsServerPort == "" || ldapsServerPort == "0" {
 			return
 		}
-		config, err := getTLSconfig()
+		ldapsCertId := conf.GetConfigString("ldapsCertId")
+		if ldapsCertId == "" {
+			return
+		}
+		config, err := getTLSconfig(ldapsCertId)
 		if err != nil {
 			log.Printf("StartLdapsServer() failed, err = %s", err.Error())
 			return
@@ -68,11 +72,7 @@ func StartLdapServer() {
 	}()
 }
 
-func getTLSconfig() (*tls.Config, error) {
-	ldapsCertId := conf.GetConfigString("ldapsCertId")
-	if ldapsCertId == "" {
-		return nil, fmt.Errorf("ldapsCertId is empty")
-	}
+func getTLSconfig(ldapsCertId string) (*tls.Config, error) {
 	rawCert, err := object.GetCert(ldapsCertId)
 	if err != nil {
 		return nil, err
