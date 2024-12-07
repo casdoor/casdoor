@@ -377,7 +377,7 @@ class ProductEditPage extends React.Component {
                   }}
                 />
               </div>
-            } title={i18next.t("product:Buy Product Page CSS - Edit")} trigger="click">
+            } title={i18next.t("product:Buy product page CSS - Edit")} trigger="click">
               <Input value={this.state.product.buyProductPageCss} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateProductField("buyProductPageCss", e.target.value);
               }} />
@@ -399,7 +399,7 @@ class ProductEditPage extends React.Component {
                   }}
                 />
               </div>
-            } title={i18next.t("product:Buy Product Page CSS (Mobile) - Edit")} trigger="click">
+            } title={i18next.t("product:Buy product page CSS Mobile - Edit")} trigger="click">
               <Input value={this.state.product.buyProductPageCssMobile} style={{marginBottom: "10px"}} onChange={e => {
                 this.updateProductField("buyProductPageCssMobile", e.target.value);
               }} />
