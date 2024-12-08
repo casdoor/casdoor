@@ -31,19 +31,18 @@ type Product struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
-	Image                   string   `xorm:"varchar(100)" json:"image"`
-	Detail                  string   `xorm:"varchar(1000)" json:"detail"`
-	Description             string   `xorm:"varchar(200)" json:"description"`
-	Tag                     string   `xorm:"varchar(100)" json:"tag"`
-	Currency                string   `xorm:"varchar(100)" json:"currency"`
-	Price                   float64  `json:"price"`
-	Quantity                int      `json:"quantity"`
-	Sold                    int      `json:"sold"`
-	IsRecharge              bool     `json:"isRecharge"`
-	Providers               []string `xorm:"varchar(255)" json:"providers"`
-	ReturnUrl               string   `xorm:"varchar(1000)" json:"returnUrl"`
-	BuyProductPageCss       string   `xorm:"text" json:"buyProductPageCss"`
-	BuyProductPageCssMobile string   `xorm:"text" json:"buyProductPageCssMobile"`
+	Image       string   `xorm:"varchar(100)" json:"image"`
+	Detail      string   `xorm:"varchar(1000)" json:"detail"`
+	Description string   `xorm:"varchar(200)" json:"description"`
+	Tag         string   `xorm:"varchar(100)" json:"tag"`
+	Currency    string   `xorm:"varchar(100)" json:"currency"`
+	Price       float64  `json:"price"`
+	Quantity    int      `json:"quantity"`
+	Sold        int      `json:"sold"`
+	IsRecharge  bool     `json:"isRecharge"`
+	Providers   []string `xorm:"varchar(255)" json:"providers"`
+	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
+	FormCss     string   `xorm:"text" json:"formCss"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 

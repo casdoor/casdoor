@@ -20,39 +20,23 @@ import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
 import * as Setting from "./Setting";
 
-const buyProductPagedefaultCss = `<style>
+const formCssdefault = `<style>
     .login-content {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-
-    .product-box {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 24px;
-    }
-
-    .product-descriptions {
-      width: 100%;
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin: 0 auto;
+      position: relative;
     }
 
     .product-title {
-      color: #1890ff;
-      text-align: center;
-      display: block;
-      margin-bottom: 20px;
       font-size: 28px;
     }
 
-    .product-item {
-        padding: 16px 24px;
-      }
-
     .product-name {
       font-size: 25px;
-      font-weight: bold;
     }
 
     .product-detail, .product-tag, .product-sku {
@@ -61,18 +45,12 @@ const buyProductPagedefaultCss = `<style>
 
     .product-price {
       font-size: 28px;
-      color: #f5222d;
+      color: red;
       font-weight: bold;
     }
 
     .product-quantity, .product-sold {
       font-size: 16px;
-    }
-
-    .product-payment {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
     }
   </style>`;
 
@@ -346,14 +324,10 @@ class ProductBuyPage extends React.Component {
 
     return (
       <div className="login-content">
-        <div dangerouslySetInnerHTML={{__html: buyProductPagedefaultCss}} />
+        <div dangerouslySetInnerHTML={{__html: formCssdefault}} />
         {Setting.inIframe() || Setting.isMobile() ? null : (
-          <div dangerouslySetInnerHTML={{__html: this.state.product?.buyProductPageCss}} />
+          <div dangerouslySetInnerHTML={{__html: this.state.product?.formCss ?? ""}} />
         )}
-        {Setting.inIframe() || !Setting.isMobile() ? null : (
-          <div dangerouslySetInnerHTML={{__html: this.state.product?.buyProductPageCssMobile}} />
-        )}
-
         <div className="product-box">
           <Spin spinning={this.state.isPlacingOrder} size="large" tip={i18next.t("product:Placing order...")} style={{paddingTop: "10%"}} >
             <Descriptions title={<span className="product-title">{i18next.t("product:Buy Product")}</span>} bordered className="product-descriptions">

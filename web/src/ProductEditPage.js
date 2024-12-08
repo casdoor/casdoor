@@ -26,7 +26,7 @@ import "codemirror/lib/codemirror.css";
 require("codemirror/theme/material-darker.css");
 
 const {Option} = Select;
-const buyProductCssTemplate = `<style>
+const formCssTemplate = `<style>
   .login-content {
     max-width: 900px;
     margin: 40px auto;
@@ -364,44 +364,22 @@ class ProductEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Buy product page CSS"), i18next.t("product:Buy product page CSS - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:Custom CSS"), i18next.t("application:Custom CSS - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
                 <CodeMirror
-                  value={this.state.product.buyProductPageCss === "" ? buyProductCssTemplate : this.state.product.buyProductPageCss}
+                  value={this.state.product.formCss === "" ? formCssTemplate : this.state.product.formCss}
                   options={{mode: "css", theme: "material-darker"}}
                   onBeforeChange={(editor, data, value) => {
-                    this.updateProductField("buyProductPageCss", value);
+                    this.updateProductField("formCss", value);
                   }}
                 />
               </div>
-            } title={i18next.t("product:Buy product page CSS - Edit")} trigger="click">
-              <Input value={this.state.product.buyProductPageCss} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateProductField("buyProductPageCss", e.target.value);
-              }} />
-            </Popover>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Buy product page CSS Mobile"), i18next.t("product:Buy product page CSS Mobile - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Popover placement="right" content={
-              <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.product.buyProductPageCssMobile === "" ? buyProductCssTemplate : this.state.product.buyProductPageCssMobile}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateProductField("buyProductPageCssMobile", value);
-                  }}
-                />
-              </div>
-            } title={i18next.t("product:Buy product page CSS Mobile - Edit")} trigger="click">
-              <Input value={this.state.product.buyProductPageCssMobile} style={{marginBottom: "10px"}} onChange={e => {
-                this.updateProductField("buyProductPageCssMobile", e.target.value);
+            } title={i18next.t("application:Custom CSS - Edit")} trigger="click">
+              <Input value={this.state.product.formCss} style={{marginBottom: "10px"}} onChange={e => {
+                this.updateProductField("formCss", e.target.value);
               }} />
             </Popover>
           </Col>
