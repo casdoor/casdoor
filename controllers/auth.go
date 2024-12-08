@@ -25,6 +25,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
@@ -920,6 +921,155 @@ func (c *ApiController) Login() {
 
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+// OneStepLogin ...
+// @Title OneStepLogin
+// @Tag Login API
+func (c *ApiController) OneStepLogin() {
+
+	var authForm form.AuthForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if authForm.Phone == "" || authForm.PhoneCode == "" {
+		c.ResponseError("Phone and code are required")
+		return
+	}
+
+	var application *object.Application
+	application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+	if err != nil {
+		logs.Error(err.Error())
+		c.ResponseError(fmt.Sprintf("Failed to get application admin/%s", authForm.Application))
+		return
+	}
+
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+		return
+	}
+
+	if !application.IsCodeSigninViaSmsEnabled() {
+		c.ResponseError("The login method: login with SMS is not enabled for the application")
+		return
+	}
+
+	user, _ := object.GetUserByFields(authForm.Organization, authForm.Phone)
+	if user == nil {
+		if !application.EnableSignUp {
+			c.ResponseError(c.T("account:The application does not allow to sign up new account"))
+			return
+		}
+		organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
+		if err != nil {
+			c.ResponseError(c.T(err.Error()))
+			return
+		}
+		id, err := object.GenerateIdForNewUser(application)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		username := authForm.Username
+		if !application.IsSignupItemVisible("Username") {
+			if organization.UseEmailAsUsername && application.IsSignupItemVisible("Email") {
+				username = authForm.Email
+			} else {
+				username = id
+			}
+		}
+
+		user := &object.User{
+			Owner:             authForm.Organization,
+			Name:              username,
+			CreatedTime:       util.GetCurrentTime(),
+			Id:                id,
+			Password:          authForm.Password,
+			DisplayName:       authForm.Name,
+			Gender:            authForm.Gender,
+			Bio:               authForm.Bio,
+			Tag:               authForm.Tag,
+			Education:         authForm.Education,
+			Avatar:            organization.DefaultAvatar,
+			Email:             authForm.Email,
+			Phone:             authForm.Phone,
+			CountryCode:       authForm.CountryCode,
+			Address:           []string{},
+			Affiliation:       authForm.Affiliation,
+			IdCard:            authForm.IdCard,
+			Region:            authForm.Region,
+			IsAdmin:           false,
+			IsForbidden:       false,
+			IsDeleted:         false,
+			SignupApplication: application.Name,
+			Properties:        map[string]string{},
+			Karma:             0,
+		}
+
+		var affected bool
+		affected, err = object.AddUser(user)
+		if err != nil {
+			c.ResponseError(fmt.Sprintf("Failed to create user: %s", err.Error()))
+			return
+		}
+
+		if !affected {
+			c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
+			return
+		}
+	}
+
+	authForm.CountryCode = user.GetCountryCode(authForm.CountryCode)
+	var checkDest string
+	var ok bool
+	if checkDest, ok = util.GetE164Number(authForm.Phone, authForm.CountryCode); !ok {
+		c.ResponseError(fmt.Sprintf("Phone number is invalid in your region %s", authForm.CountryCode))
+		return
+	}
+
+	// check result through Phone
+	err = object.CheckSigninCode(user, checkDest, authForm.Code, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(fmt.Sprintf("Phone - %s", err.Error()))
+		return
+	}
+
+	// disable the verification code
+	err = object.DisableVerificationCode(checkDest)
+	if err != nil {
+		c.ResponseError(err.Error(), nil)
+		return
+	}
+
+	// 登录成功后的处理逻辑
+	// var organization *object.Organization
+	// organization, err = object.GetOrganizationByUser(user)
+	// if err != nil {
+	// c.ResponseError(err.Error())
+	// return
+	// }
+
+	// if object.IsNeedPromptMfa(organization, user) {
+	//     // The prompt page needs the user to be signed in
+	//     c.SetSessionUsername(user.GetId())
+	//     c.ResponseOk(object.RequiredMfa)
+	//     return
+	// }
+
+	// if user.IsMfaEnabled() {
+	//     c.setMfaUserSession(user.GetId())
+	//     c.ResponseOk(object.NextMfa, user.GetPreferredMfaProps(true))
+	//     return
+	// }
+	logs.Info("handle login")
+	resp := c.HandleLoggedIn(application, user, &authForm)
+	c.Ctx.Input.SetParam("recordUserId", user.GetId())
+
+	c.ResponseOk(resp)
 }
 
 func (c *ApiController) GetSamlLogin() {

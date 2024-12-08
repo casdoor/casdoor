@@ -20,11 +20,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/casdoor/casdoor/object"
+	"github.com/kylinholmes/casdoor/object"
 
 	"github.com/beego/beego/context"
-	"github.com/casdoor/casdoor/authz"
-	"github.com/casdoor/casdoor/util"
+	"github.com/kylinholmes/casdoor/authz"
+	"github.com/kylinholmes/casdoor/util"
 )
 
 type Object struct {
