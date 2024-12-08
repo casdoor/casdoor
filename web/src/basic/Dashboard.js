@@ -141,6 +141,9 @@ const Dashboard = (props) => {
         i18next.t("general:Certs"),
         i18next.t("general:Permissions"),
         i18next.t("general:Transactions"),
+        i18next.t("general:Models"),
+        i18next.t("general:Adapters"),
+        i18next.t("general:Enforcers"),
       ], top: "10%"},
       grid: {left: "3%", right: "4%", bottom: "0", top: "25%", containLabel: true},
       xAxis: {type: "category", boundaryGap: false, data: dateArray},
@@ -157,6 +160,9 @@ const Dashboard = (props) => {
         {name: i18next.t("general:Certs"), type: "line", data: dashboardData.certCounts},
         {name: i18next.t("general:Permissions"), type: "line", data: dashboardData.permissionCounts},
         {name: i18next.t("general:Transactions"), type: "line", data: dashboardData.transactionCounts},
+        {name: i18next.t("general:Models"), type: "line", data: dashboardData.modelCounts},
+        {name: i18next.t("general:Adapters"), type: "line", data: dashboardData.adapterCounts},
+        {name: i18next.t("general:Enforcers"), type: "line", data: dashboardData.enforcerCounts},
       ],
     };
     myChart.setOption(option);
