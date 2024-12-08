@@ -233,6 +233,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/casdoor.png`,
       url: "https://casdoor.org/docs/provider/storage/overview",
     },
+    "CUCloud OSS": {
+      logo: `${StaticBaseUrl}/img/social_cucloud.png`,
+      url: "https://www.cucloud.cn/product/oss.html",
+    },
   },
   SAML: {
     "Aliyun IDaaS": {
@@ -1078,6 +1082,7 @@ export function getProviderTypeOptions(category) {
         {id: "Google Cloud Storage", name: "Google Cloud Storage"},
         {id: "Synology", name: "Synology"},
         {id: "Casdoor", name: "Casdoor"},
+        {id: "CUCloud OSS", name: "CUCloud OSS"},
       ]
     );
   } else if (category === "SAML") {
