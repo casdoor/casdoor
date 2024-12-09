@@ -475,6 +475,16 @@ func (c *ApiController) SetPassword() {
 
 	userId := util.GetId(userOwner, userName)
 
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return
+	}
+
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
 		c.ResponseError(c.T("general:Please login first"), "Please login first")
@@ -518,7 +528,11 @@ func (c *ApiController) SetPassword() {
 			}
 		}
 	} else if code == "" {
-		err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+		if user.Ldap == "" {
+			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+		} else {
+			err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+		}
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -563,7 +577,12 @@ func (c *ApiController) SetPassword() {
 	targetUser.NeedUpdatePassword = false
 	targetUser.LastChangePasswordTime = util.GetCurrentTime()
 
-	_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
+	if user.Ldap == "" {
+		_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
+	} else {
+		err = object.ResetLdapPassword(targetUser, newPassword, c.GetAcceptLanguage())
+	}
+
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

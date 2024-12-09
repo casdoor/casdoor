@@ -20,9 +20,11 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	goldap "github.com/go-ldap/ldap/v3"
 	"github.com/thanhpk/randstr"
+	"golang.org/x/text/encoding/unicode"
 )
 
 type LdapConn struct {
@@ -369,6 +371,64 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	}
 
 	return existUuids, nil
+}
+
+func ResetLdapPassword(user *User, newPassword string, lang string) error {
+	ldaps, err := GetLdaps(user.Owner)
+	if err != nil {
+		return err
+	}
+
+	for _, ldapServer := range ldaps {
+		conn, err := ldapServer.GetLdapConn()
+		if err != nil {
+			continue
+		}
+
+		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
+			0, 0, false, ldapServer.buildAuthFilterString(user), []string{}, nil)
+
+		searchResult, err := conn.Conn.Search(searchReq)
+		if err != nil {
+			conn.Close()
+			return err
+		}
+
+		if len(searchResult.Entries) == 0 {
+			conn.Close()
+			continue
+		}
+		if len(searchResult.Entries) > 1 {
+			conn.Close()
+			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
+		}
+
+		userDn := searchResult.Entries[0].DN
+
+		var pwdEncoded string
+		modifyPasswordRequest := goldap.NewModifyRequest(userDn, nil)
+		if conn.IsAD {
+			utf16 := unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM)
+			pwdEncoded, err := utf16.NewEncoder().String("\"" + newPassword + "\"")
+			if err != nil {
+				conn.Close()
+				return err
+			}
+			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
+			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
+		} else {
+			pwdEncoded = newPassword
+			modifyPasswordRequest.Replace("userPassword", []string{pwdEncoded})
+		}
+
+		err = conn.Conn.Modify(modifyPasswordRequest)
+		if err != nil {
+			conn.Close()
+			return err
+		}
+		conn.Close()
+	}
+	return nil
 }
 
 func (ldapUser *LdapUser) buildLdapUserName(owner string) (string, error) {
