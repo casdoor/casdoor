@@ -480,6 +480,10 @@ func (c *ApiController) SetPassword() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if user == nil {
+		c.ResponseError("User doesn't exist")
+		return
+	}
 
 	requestUserId := c.GetSessionUsername()
 	if requestUserId == "" && code == "" {
