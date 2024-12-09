@@ -9,7 +9,7 @@
     "Challenge method should be S256": "Challenge方法应该为S256",
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
     "Failed to login in: %s": "登录失败: %s",
-    "Invalid token": "无效token",
+    "Invalid token": "无效 token",
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
@@ -46,9 +46,9 @@
     "Invitation code exhausted": "邀请码使用次数已耗尽",
     "Invitation code is invalid": "邀请码无效",
     "Invitation code suspended": "邀请码已被禁止使用",
-    "LDAP user name or password incorrect": "LDAP密码错误",
+    "LDAP user name or password incorrect": "LDAP 密码错误",
     "LastName cannot be blank": "姓不可以为空",
-    "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的uid，请检查您的 LDAP 服务器",
+    "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的 UID，请检查您的 LDAP 服务器",
     "Organization does not exist": "组织不存在",
     "Phone already exists": "该手机号已存在",
     "Phone cannot be empty": "手机号不可为空",
@@ -59,7 +59,7 @@
     "Session outdated, please login again": "会话已过期，请重新登录",
     "The invitation code has already been used": "邀请码已被使用",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
-    "The user: %s doesn't exist in LDAP server": "用户: %s 在LDAP服务器中未找到",
+    "The user: %s doesn't exist in LDAP server": "用户: %s 在 LDAP 服务器中未找到",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",
     "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "值 \\\"%s\\\"在账户信息字段\\\"%s\\\" 中与应用的账户项正则表达式不匹配",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "值\\\"%s\\\"在注册字段\\\"%s\\\"中与应用\\\"%s\\\"的注册项正则表达式不匹配",
@@ -68,7 +68,7 @@
     "Username cannot contain white spaces": "用户名禁止包含空格",
     "Username cannot start with a digit": "用户名禁止使用数字开头",
     "Username is too long (maximum is 39 characters).": "用户名过长（最大允许长度为39个字符）",
-    "Username must have at least 2 characters": "用户名至少要有2个字符",
+    "Username must have at least 2 characters": "用户名至少要有 2 个字符",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",
     "password or code is incorrect": "密码错误",
@@ -81,7 +81,7 @@
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
-    "this operation is not allowed in demo mode": "demo模式下不允许该操作",
+    "this operation is not allowed in demo mode": "demo 模式下不允许该操作",
     "this operation requires administrator to perform": "只有管理员才能进行此操作"
   },
   "ldap": {
@@ -109,7 +109,7 @@
   },
   "resource": {
     "User is nil for tag: avatar": "上传头像时用户为空",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username或fullFilePath为空: username = %s, fullFilePath = %s"
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username 或 fullFilePath 为空: username = %s, fullFilePath = %s"
   },
   "saml": {
     "Application %s not found": "未找到应用: %s"
@@ -129,9 +129,9 @@
   "token": {
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
-    "Invalid client_id": "无效的ClientId",
+    "Invalid client_id": "无效的客户端 ID",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重定向 URI：%s在许可跳转列表中未找到",
-    "Token not found, invalid accessToken": "未查询到对应token, accessToken无效"
+    "Token not found, invalid accessToken": "未查询到对应 token, accessToken 无效"
   },
   "user": {
     "Display name cannot be empty": "显示名称不可为空",
@@ -156,12 +156,12 @@
     "Unknown type": "未知类型",
     "Wrong verification code!": "验证码错误!",
     "You should verify your code in %d min!": "请在 %d 分钟内输入正确验证码",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "请添加一个SMS提供商到应用： %s 的 \\\"提供商 \\\"列表",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "请添加一个Email提供商到应用： %s 的 \\\"提供商 \\\"列表",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "请添加一个 SMS 提供商到应用： %s 的 \\\"提供商 \\\"列表",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "请添加一个 Email 提供商到应用： %s 的 \\\"提供商 \\\"列表",
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
     "Found no credentials for this user": "该用户没有 WebAuthn 凭据",
-    "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
+    "Please call WebAuthnSigninBegin first": "请先调用 WebAuthnSigninBegin 函数"
   }
 }
