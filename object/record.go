@@ -33,7 +33,7 @@ var (
 
 func init() {
 	logPostOnly = conf.GetConfigBool("logPostOnly")
-	passwordRegex = regexp.MustCompile("\"password\":\".+\"")
+	passwordRegex = regexp.MustCompile("\"password\":\"([^\"]*?)\"")
 }
 
 type Record struct {
