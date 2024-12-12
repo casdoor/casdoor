@@ -34,3 +34,5 @@ server
 
 # include helm-chart
 !manifests/casdoor
+docker-compose.yml
+conf/app.conf
