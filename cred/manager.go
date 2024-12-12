@@ -14,9 +14,12 @@
 
 package cred
 
+import "go.mau.fi/util/random"
+
 type CredManager interface {
-	GetHashedPassword(password string, userSalt string, organizationSalt string) string
-	IsPasswordCorrect(password string, passwordHash string, userSalt string, organizationSalt string) bool
+	GetHashedPassword(password string, salt string) string
+	IsPasswordCorrect(password string, passwordHash string, salt string) bool
+	GenerateSalt() string
 }
 
 func GetCredManager(passwordType string) CredManager {
@@ -27,7 +30,7 @@ func GetCredManager(passwordType string) CredManager {
 	} else if passwordType == "sha512-salt" {
 		return NewSha512SaltCredManager()
 	} else if passwordType == "md5-salt" {
-		return NewMd5UserSaltCredManager()
+		return NewMd5SaltCredManager()
 	} else if passwordType == "bcrypt" {
 		return NewBcryptCredManager()
 	} else if passwordType == "pbkdf2-salt" {
@@ -36,4 +39,8 @@ func GetCredManager(passwordType string) CredManager {
 		return NewArgon2idCredManager()
 	}
 	return nil
+}
+
+func generateSaltString() string {
+	return random.String(20)
 }

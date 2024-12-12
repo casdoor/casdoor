@@ -677,6 +677,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 
 	if user.Password == "***" {
 		user.Password = oldUser.Password
+		user.PasswordSalt = oldUser.PasswordSalt
 	}
 
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {

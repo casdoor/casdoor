@@ -42,7 +42,14 @@ func (user *User) UpdateUserHash() error {
 func (user *User) UpdateUserPassword(organization *Organization) {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
-		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt, organization.PasswordSalt)
+		if user.PasswordSalt == "" {
+			if organization.PasswordSalt != "" {
+				user.PasswordSalt = organization.PasswordSalt
+			} else {
+				user.PasswordSalt = credManager.GenerateSalt()
+			}
+		}
+		hashedPassword := credManager.GetHashedPassword(user.Password, user.PasswordSalt)
 		user.Password = hashedPassword
 		user.PasswordType = organization.PasswordType
 	}

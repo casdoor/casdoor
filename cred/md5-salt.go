@@ -19,7 +19,7 @@ import (
 	"encoding/hex"
 )
 
-type Md5UserSaltCredManager struct{}
+type Md5SaltCredManager struct{}
 
 func getMd5(data []byte) []byte {
 	hash := md5.Sum(data)
@@ -32,19 +32,20 @@ func getMd5HexDigest(s string) string {
 	return res
 }
 
-func NewMd5UserSaltCredManager() *Md5UserSaltCredManager {
-	cm := &Md5UserSaltCredManager{}
+func NewMd5SaltCredManager() *Md5SaltCredManager {
+	cm := &Md5SaltCredManager{}
 	return cm
 }
 
-func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
-	res := getMd5HexDigest(password)
-	if userSalt != "" {
-		res = getMd5HexDigest(res + userSalt)
-	}
+func (cm *Md5SaltCredManager) GetHashedPassword(password string, salt string) string {
+	res := getMd5HexDigest(password + salt)
 	return res
 }
 
-func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt, organizationSalt)
+func (cm *Md5SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
+}
+
+func (cm *Md5SaltCredManager) GenerateSalt() string {
+	return generateSaltString()
 }
