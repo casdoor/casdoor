@@ -26,10 +26,12 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
         onModelTextChange(event.data.modelText);
       } else if (event.data.type === "iframeReady") {
         setIframeReady(true);
-        iframeRef.current?.contentWindow.postMessage({
-          type: "initializeModel",
-          modelText: initialModelText,
-        }, "*");
+        if (initialModelText && iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage({
+            type: "initializeModel",
+            modelText: initialModelText,
+          }, "*");
+        }
       }
     };
 
@@ -39,11 +41,15 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
 
   useImperativeHandle(ref, () => ({
     getModelText: () => {
-      iframeRef.current?.contentWindow.postMessage({type: "getModelText"}, "*");
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
+          type: "getModelText",
+        }, "*");
+      }
     },
     updateModelText: (newModelText) => {
-      if (iframeReady) {
-        iframeRef.current?.contentWindow.postMessage({
+      if (iframeReady && iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
           type: "updateModelText",
           modelText: newModelText,
         }, "*");
