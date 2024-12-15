@@ -198,7 +198,7 @@ type GitHubUserEmailInfo struct {
 func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	req.Header.Add("Authorization", "token "+token.AccessToken)
 	resp, err := idp.Client.Do(req)
@@ -219,11 +219,10 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
-	githubUserInfo.Email = ""
 	if githubUserInfo.Email == "" {
 		reqEmail, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		reqEmail.Header.Add("Authorization", "token "+token.AccessToken)
 		respEmail, err := idp.Client.Do(reqEmail)
@@ -233,6 +232,9 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 		defer respEmail.Body.Close()
 		emailBody, err := io.ReadAll(respEmail.Body)
+		if err != nil {
+			return nil, err
+		}
 
 		var userEmails []GitHubUserEmailInfo
 		err = json.Unmarshal(emailBody, &userEmails)
@@ -281,23 +283,25 @@ func (idp *GithubIdProvider) postWithBody(body interface{}, url string) ([]byte,
 }
 
 func (idp *GithubIdProvider) getEmailFromEmailsResult(emailInfo []GitHubUserEmailInfo) string {
+	primaryEmail := ""
+	verifiedEmail := ""
+
 	for _, addr := range emailInfo {
-		if addr.Email != "" && addr.Primary && !strings.Contains(addr.Email, "users.noreply.github.com") {
-			return addr.Email
+		if strings.Contains(addr.Email, "users.noreply.github.com") {
+			continue
+		}
+
+		if addr.Primary && addr.Verified {
+			primaryEmail = addr.Email
+			break
+		} else if addr.Verified && verifiedEmail == "" {
+			verifiedEmail = addr.Email
 		}
 	}
 
-	for _, addr := range emailInfo {
-		if addr.Email != "" && addr.Verified {
-			return addr.Email
-		}
+	if primaryEmail == "" {
+		return primaryEmail
 	}
 
-	for _, addr := range emailInfo {
-		if addr.Email != "" {
-			return addr.Email
-		}
-	}
-
-	return ""
+	return verifiedEmail
 }
