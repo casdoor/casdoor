@@ -287,19 +287,19 @@ func (idp *GithubIdProvider) getEmailFromEmailsResult(emailInfo []GitHubUserEmai
 	verifiedEmail := ""
 
 	for _, addr := range emailInfo {
-		if strings.Contains(addr.Email, "users.noreply.github.com") {
+		if !addr.Verified || strings.Contains(addr.Email, "users.noreply.github.com") {
 			continue
 		}
 
-		if addr.Primary && addr.Verified {
+		if addr.Primary {
 			primaryEmail = addr.Email
 			break
-		} else if addr.Verified && verifiedEmail == "" {
+		} else if verifiedEmail == "" {
 			verifiedEmail = addr.Email
 		}
 	}
 
-	if primaryEmail == "" {
+	if primaryEmail != "" {
 		return primaryEmail
 	}
 
