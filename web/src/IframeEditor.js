@@ -17,6 +17,7 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => {
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
+  const currentLang = localStorage.getItem("language") || "en";
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -30,6 +31,7 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
           iframeRef.current.contentWindow.postMessage({
             type: "initializeModel",
             modelText: initialModelText,
+            lang: currentLang,
           }, "*");
         }
       }
@@ -37,7 +39,7 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [onModelTextChange, initialModelText]);
+  }, [onModelTextChange, initialModelText, currentLang]);
 
   useImperativeHandle(ref, () => ({
     getModelText: () => {
@@ -60,7 +62,7 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
   return (
     <iframe
       ref={iframeRef}
-      src="https://editor.casbin.org/model-editor"
+      src={`https://editor.casbin.org/model-editor?lang=${currentLang}`}
       frameBorder="0"
       width="100%"
       height="500px"
