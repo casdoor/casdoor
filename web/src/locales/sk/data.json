@@ -592,12 +592,12 @@
     "Secret Key": "Secret Key"
   },
   "model": {
+    "Advanced Editor": "Rozšírený editor",
+    "Basic Editor": "Základný editor",
     "Edit Model": "Upraviť model",
     "Model text": "Text modelu",
     "Model text - Tooltip": "Model prístupu Casbin, vrátane vstavaných modelov ako ACL, RBAC, ABAC, RESTful, atď. Môžete tiež vytvoriť vlastné modely. Pre viac informácií navštívte web Casbin",
-    "New Model": "Nový model",
-    "Basic Editor": "Základný editor",
-    "Advanced Editor": "Rozšírený editor"
+    "New Model": "Nový model"
   },
   "organization": {
     "Account items": "Položky účtu",

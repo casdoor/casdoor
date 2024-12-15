@@ -592,12 +592,12 @@
     "Secret Key": "密钥"
   },
   "model": {
+    "Advanced Editor": "高级编辑器",
+    "Basic Editor": "基础编辑器",
     "Edit Model": "编辑模型",
     "Model text": "模型文本",
     "Model text - Tooltip": "Casbin访问控制模型，支持ACL、RBAC、ABAC、RESTful等内置模型，也可以自定义模型，具体请查看Casbin官网",
-    "New Model": "添加模型",
-    "Basic Editor": "基础编辑器",
-    "Advanced Editor": "高级编辑器"
+    "New Model": "添加模型"
   },
   "organization": {
     "Account items": "个人页设置项",
