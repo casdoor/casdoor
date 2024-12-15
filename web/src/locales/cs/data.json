@@ -595,7 +595,9 @@
     "Edit Model": "Upravit model",
     "Model text": "Text modelu",
     "Model text - Tooltip": "Casbin model řízení přístupu, včetně vestavěných modelů jako ACL, RBAC, ABAC, RESTful, atd. Můžete také vytvářet vlastní modely. Pro více informací navštivte webové stránky Casbin",
-    "New Model": "Nový model"
+    "New Model": "Nový model",
+    "Basic Editor": "Základní editor",
+    "Advanced Editor": "Pokročilý editor"
   },
   "organization": {
     "Account items": "Položky účtu",

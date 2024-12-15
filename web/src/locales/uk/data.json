@@ -595,7 +595,9 @@
     "Edit Model": "Редагувати модель",
     "Model text": "Текст моделі",
     "Model text - Tooltip": "Модель контролю доступу Casbin, включаючи такі вбудовані моделі, як ACL, RBAC, ABAC, RESTful тощо. Ви також можете створювати власні моделі. ",
-    "New Model": "Нова модель"
+    "New Model": "Нова модель",
+    "Basic Editor": "Базовий редактор",
+    "Advanced Editor": "Розширений редактор"
   },
   "organization": {
     "Account items": "Елементи облікового запису",

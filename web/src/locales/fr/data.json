@@ -595,7 +595,9 @@
     "Edit Model": "Modifier le modèle",
     "Model text": "Définition du modèle",
     "Model text - Tooltip": "Modèle de contrôle d'accès Casbin, comprenant des modèles intégrés tels que ACL, RBAC, ABAC, RESTful, etc. Vous pouvez également créer des modèles personnalisés. Pour plus d'informations, veuillez visiter le site web de Casbin",
-    "New Model": "Nouveau modèle"
+    "New Model": "Nouveau modèle",
+    "Basic Editor": "Éditeur de base",
+    "Advanced Editor": "Éditeur avancé"
   },
   "organization": {
     "Account items": "Champs du compte",
