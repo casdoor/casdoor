@@ -592,6 +592,8 @@
     "Secret Key": "کلید مخفی"
   },
   "model": {
+    "Advanced Editor": "ویرایشگر پیشرفته",
+    "Basic Editor": "ویرایشگر ابتدایی",
     "Edit Model": "ویرایش مدل",
     "Model text": "متن مدل",
     "Model text - Tooltip": "مدل کنترل دسترسی Casbin، شامل مدل‌های داخلی مانند ACL، RBAC، ABAC، RESTful و غیره. همچنین می‌توانید مدل‌های سفارشی ایجاد کنید. برای اطلاعات بیشتر، لطفاً به وب‌سایت Casbin مراجعه کنید",

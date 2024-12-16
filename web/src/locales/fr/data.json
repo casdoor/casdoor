@@ -592,6 +592,8 @@
     "Secret Key": "Secret Key"
   },
   "model": {
+    "Advanced Editor": "Éditeur avancé",
+    "Basic Editor": "Éditeur de base",
     "Edit Model": "Modifier le modèle",
     "Model text": "Définition du modèle",
     "Model text - Tooltip": "Modèle de contrôle d'accès Casbin, comprenant des modèles intégrés tels que ACL, RBAC, ABAC, RESTful, etc. Vous pouvez également créer des modèles personnalisés. Pour plus d'informations, veuillez visiter le site web de Casbin",

@@ -19,6 +19,7 @@ import "codemirror/mode/properties/properties";
 import * as Setting from "./Setting";
 import IframeEditor from "./IframeEditor";
 import {Tabs} from "antd";
+import i18next from "i18next";
 
 const {TabPane} = Tabs;
 
@@ -68,8 +69,8 @@ const CasbinEditor = ({model, onModelTextChange}) => {
   return (
     <div style={{height: "100%", width: "100%", display: "flex", flexDirection: "column"}}>
       <Tabs activeKey={activeKey} onChange={handleTabChange} style={{flex: "0 0 auto", marginTop: "-10px"}}>
-        <TabPane tab="Basic Editor" key="basic" />
-        <TabPane tab="Advanced Editor" key="advanced" />
+        <TabPane tab={i18next.t("model:Basic Editor")} key="basic" />
+        <TabPane tab={i18next.t("model:Advanced Editor")} key="advanced" />
       </Tabs>
       <div style={{flex: "1 1 auto", overflow: "hidden"}}>
         {activeKey === "advanced" ? (
