@@ -749,6 +749,7 @@ func (c *ApiController) Login() {
 						IsDeleted:         false,
 						SignupApplication: application.Name,
 						Properties:        properties,
+						Groups:            authForm.Groups,
 					}
 
 					var affected bool

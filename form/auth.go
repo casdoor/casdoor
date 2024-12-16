@@ -20,22 +20,23 @@ type AuthForm struct {
 	Type         string `json:"type"`
 	SigninMethod string `json:"signinMethod"`
 
-	Organization   string `json:"organization"`
-	Username       string `json:"username"`
-	Password       string `json:"password"`
-	Name           string `json:"name"`
-	FirstName      string `json:"firstName"`
-	LastName       string `json:"lastName"`
-	Gender         string `json:"gender"`
-	Bio            string `json:"bio"`
-	Tag            string `json:"tag"`
-	Education      string `json:"education"`
-	Email          string `json:"email"`
-	Phone          string `json:"phone"`
-	Affiliation    string `json:"affiliation"`
-	IdCard         string `json:"idCard"`
-	Region         string `json:"region"`
-	InvitationCode string `json:"invitationCode"`
+	Organization   string   `json:"organization"`
+	Username       string   `json:"username"`
+	Password       string   `json:"password"`
+	Name           string   `json:"name"`
+	FirstName      string   `json:"firstName"`
+	LastName       string   `json:"lastName"`
+	Gender         string   `json:"gender"`
+	Bio            string   `json:"bio"`
+	Tag            string   `json:"tag"`
+	Education      string   `json:"education"`
+	Email          string   `json:"email"`
+	Phone          string   `json:"phone"`
+	Affiliation    string   `json:"affiliation"`
+	IdCard         string   `json:"idCard"`
+	Region         string   `json:"region"`
+	InvitationCode string   `json:"invitationCode"`
+	Groups         []string `json:"groups"`
 
 	Application string `json:"application"`
 	ClientId    string `json:"clientId"`
