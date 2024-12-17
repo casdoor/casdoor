@@ -36,3 +36,4 @@ server
 !manifests/casdoor
 docker-compose.yml
 conf/app.conf
+node_modules/

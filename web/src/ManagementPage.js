@@ -102,15 +102,12 @@ function ManagementPage(props) {
     AuthBackend.logout()
       .then((res) => {
         if (res.status === "ok") {
-          const owner = props.account.owner;
           props.setLogoutState();
           clearWeb3AuthToken();
           Setting.showMessage("success", i18next.t("application:Logged out successfully"));
           const redirectUri = res.data2;
           if (redirectUri !== null && redirectUri !== undefined && redirectUri !== "") {
             Setting.goToLink(redirectUri);
-          } else if (owner !== "built-in") {
-            Setting.goToLink(`${window.location.origin}/login/${owner}`);
           } else {
             Setting.goToLinkSoft({props}, "/");
           }
@@ -334,6 +331,11 @@ function ManagementPage(props) {
       return null;
     } else if (props.account.needUpdatePassword) {
       return <Redirect to={"/forget/" + props.application.name} />;
+    // if user is not from built in organization, show unauthorized page
+    } else if (props.account.owner !== "built-in") {
+      return <Result status="403" title="403 FORBIDDEN" subTitle={i18next.t("general:Sorry, you are not authorized to access this page.")}
+        extra={<div>{"Logged in as " + props.account.displayName + " from " + props.account.owner}<br /><br /><Button type="primary" onClick={logout}>{i18next.t("general:Logout")}</Button></div>}
+      />;
     } else {
       return component;
     }
@@ -428,35 +430,37 @@ function ManagementPage(props) {
   return (
     <React.Fragment>
       <EnableMfaNotification account={props.account} />
-      <Header style={{padding: "0", marginBottom: "3px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
-        {props.requiredEnableMfa || (Setting.isMobile() ?
-          <React.Fragment>
-            <Drawer title={i18next.t("general:Close")} placement="left" visible={menuVisible} onClose={onClose}>
-              <Menu
-                items={getMenuItems()}
-                mode={"inline"}
-                selectedKeys={[props.selectedMenuKey]}
-                style={{lineHeight: "64px"}}
-                onClick={onClose}
-              >
-              </Menu>
-            </Drawer>
-            <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
-              {i18next.t("general:Menu")}
-            </Button>
-          </React.Fragment> :
-          <Menu
-            onClick={onClose}
-            items={getMenuItems()}
-            mode={"horizontal"}
-            selectedKeys={[props.selectedMenuKey]}
-            style={{position: "absolute", left: 0, right: menuStyleRight, backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}}
-          />
-        )}
-        {
-          renderAccountMenu()
-        }
-      </Header>
+      {props.account?.owner === "built-in" && (
+        <Header style={{padding: "0", marginBottom: "3px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
+          {props.requiredEnableMfa || (Setting.isMobile() ?
+            <React.Fragment>
+              <Drawer title={i18next.t("general:Close")} placement="left" visible={menuVisible} onClose={onClose}>
+                <Menu
+                  items={getMenuItems()}
+                  mode={"inline"}
+                  selectedKeys={[props.selectedMenuKey]}
+                  style={{lineHeight: "64px"}}
+                  onClick={onClose}
+                >
+                </Menu>
+              </Drawer>
+              <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
+                {i18next.t("general:Menu")}
+              </Button>
+            </React.Fragment> :
+            <Menu
+              onClick={onClose}
+              items={getMenuItems()}
+              mode={"horizontal"}
+              selectedKeys={[props.selectedMenuKey]}
+              style={{position: "absolute", left: 0, right: menuStyleRight, backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}}
+            />
+          )}
+          {
+            renderAccountMenu()
+          }
+        </Header>
+      )}
       <Content style={{display: "flex", flexDirection: "column"}} >
         {isWithoutCard() ?
           renderRouter() :
