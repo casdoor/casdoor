@@ -23,6 +23,9 @@ func GetStorageProvider(providerType string, clientId string, clientSecret strin
 	case "AWS S3":
 		return NewAwsS3StorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "MinIO":
+		if region == "" {
+			region = "_"
+		}
 		return NewMinIOS3StorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
 	case "Aliyun OSS":
 		return NewAliyunOssStorageProvider(clientId, clientSecret, region, bucket, endpoint), nil
