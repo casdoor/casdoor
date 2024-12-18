@@ -309,6 +309,10 @@ func (c *ApiController) UpdateUser() {
 		user.Name = strings.ToLower(user.Name)
 	}
 
+	if user.Id != oldUser.Id && user.Id == "" {
+		user.Id = oldUser.Id
+	}
+
 	isAdmin := c.IsAdmin()
 	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
