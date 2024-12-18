@@ -57,7 +57,7 @@ type VerificationRecord struct {
 	Receiver   string `xorm:"varchar(100) index notnull" json:"receiver"`
 	Code       string `xorm:"varchar(10) notnull" json:"code"`
 	Time       int64  `xorm:"notnull" json:"time"`
-	IsUsed     bool
+	IsUsed     bool   `xorm:"notnull" json:"isUsed"`
 }
 
 func IsAllowSend(user *User, remoteAddr, recordType string) error {
