@@ -22,6 +22,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"math/rand"
+	"strings"
 	"sync"
 	"time"
 
@@ -184,6 +185,15 @@ func StoreCasTokenForProxyTicket(token *CasAuthenticationSuccess, targetService,
 	return proxyTicket
 }
 
+func escapeXMLText(input string) (string, error) {
+	var sb strings.Builder
+	err := xml.EscapeText(&sb, []byte(input))
+	if err != nil {
+		return "", err
+	}
+	return sb.String(), nil
+}
+
 func GenerateCasToken(userId string, service string) (string, error) {
 	user, err := GetUser(userId)
 	if err != nil {
@@ -225,6 +235,11 @@ func GenerateCasToken(userId string, service string) (string, error) {
 		}
 
 		if value != "" {
+			if escapedValue, err := escapeXMLText(value); err != nil {
+				return "", err
+			} else {
+				value = escapedValue
+			}
 			authenticationSuccess.Attributes.UserAttributes.Attributes = append(authenticationSuccess.Attributes.UserAttributes.Attributes, &CasNamedAttribute{
 				Name:  k,
 				Value: value,
