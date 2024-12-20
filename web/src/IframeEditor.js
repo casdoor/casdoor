@@ -17,6 +17,7 @@ import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} fro
 const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => {
   const iframeRef = useRef(null);
   const [iframeReady, setIframeReady] = useState(false);
+  const currentLang = localStorage.getItem("language") || "en";
 
   useEffect(() => {
     const handleMessage = (event) => {
@@ -26,24 +27,31 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
         onModelTextChange(event.data.modelText);
       } else if (event.data.type === "iframeReady") {
         setIframeReady(true);
-        iframeRef.current?.contentWindow.postMessage({
-          type: "initializeModel",
-          modelText: initialModelText,
-        }, "*");
+        if (initialModelText && iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage({
+            type: "initializeModel",
+            modelText: initialModelText,
+            lang: currentLang,
+          }, "*");
+        }
       }
     };
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [onModelTextChange, initialModelText]);
+  }, [onModelTextChange, initialModelText, currentLang]);
 
   useImperativeHandle(ref, () => ({
     getModelText: () => {
-      iframeRef.current?.contentWindow.postMessage({type: "getModelText"}, "*");
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
+          type: "getModelText",
+        }, "*");
+      }
     },
     updateModelText: (newModelText) => {
-      if (iframeReady) {
-        iframeRef.current?.contentWindow.postMessage({
+      if (iframeReady && iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
           type: "updateModelText",
           modelText: newModelText,
         }, "*");
@@ -54,7 +62,7 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
   return (
     <iframe
       ref={iframeRef}
-      src="https://editor.casbin.org/model-editor"
+      src={`https://editor.casbin.org/model-editor?lang=${currentLang}`}
       frameBorder="0"
       width="100%"
       height="500px"

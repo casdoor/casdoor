@@ -188,10 +188,17 @@ type GitHubUserInfo struct {
 	} `json:"plan"`
 }
 
+type GitHubUserEmailInfo struct {
+	Email      string `json:"email"`
+	Primary    bool   `json:"primary"`
+	Verified   bool   `json:"verified"`
+	Visibility string `json:"visibility"`
+}
+
 func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	req.Header.Add("Authorization", "token "+token.AccessToken)
 	resp, err := idp.Client.Do(req)
@@ -210,6 +217,32 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 	err = json.Unmarshal(body, &githubUserInfo)
 	if err != nil {
 		return nil, err
+	}
+
+	if githubUserInfo.Email == "" {
+		reqEmail, err := http.NewRequest("GET", "https://api.github.com/user/emails", nil)
+		if err != nil {
+			return nil, err
+		}
+		reqEmail.Header.Add("Authorization", "token "+token.AccessToken)
+		respEmail, err := idp.Client.Do(reqEmail)
+		if err != nil {
+			return nil, err
+		}
+
+		defer respEmail.Body.Close()
+		emailBody, err := io.ReadAll(respEmail.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var userEmails []GitHubUserEmailInfo
+		err = json.Unmarshal(emailBody, &userEmails)
+		if err != nil {
+			return nil, err
+		}
+
+		githubUserInfo.Email = idp.getEmailFromEmailsResult(userEmails)
 	}
 
 	userInfo := UserInfo{
@@ -247,4 +280,28 @@ func (idp *GithubIdProvider) postWithBody(body interface{}, url string) ([]byte,
 	}(resp.Body)
 
 	return data, nil
+}
+
+func (idp *GithubIdProvider) getEmailFromEmailsResult(emailInfo []GitHubUserEmailInfo) string {
+	primaryEmail := ""
+	verifiedEmail := ""
+
+	for _, addr := range emailInfo {
+		if !addr.Verified || strings.Contains(addr.Email, "users.noreply.github.com") {
+			continue
+		}
+
+		if addr.Primary {
+			primaryEmail = addr.Email
+			break
+		} else if verifiedEmail == "" {
+			verifiedEmail = addr.Email
+		}
+	}
+
+	if primaryEmail != "" {
+		return primaryEmail
+	}
+
+	return verifiedEmail
 }

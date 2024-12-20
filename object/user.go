@@ -679,6 +679,10 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		user.Password = oldUser.Password
 	}
 
+	if user.Id != oldUser.Id && user.Id == "" {
+		user.Id = oldUser.Id
+	}
+
 	if user.Avatar != oldUser.Avatar && user.Avatar != "" && user.PermanentAvatar != "*" {
 		user.PermanentAvatar, err = getPermanentAvatarUrl(user.Owner, user.Name, user.Avatar, false)
 		if err != nil {

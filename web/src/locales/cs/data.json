@@ -592,6 +592,8 @@
     "Secret Key": "Secret Key"
   },
   "model": {
+    "Advanced Editor": "Pokročilý editor",
+    "Basic Editor": "Základní editor",
     "Edit Model": "Upravit model",
     "Model text": "Text modelu",
     "Model text - Tooltip": "Casbin model řízení přístupu, včetně vestavěných modelů jako ACL, RBAC, ABAC, RESTful, atd. Můžete také vytvářet vlastní modely. Pro více informací navštivte webové stránky Casbin",

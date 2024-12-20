@@ -592,6 +592,8 @@
     "Secret Key": "Secret Key"
   },
   "model": {
+    "Advanced Editor": "Розширений редактор",
+    "Basic Editor": "Базовий редактор",
     "Edit Model": "Редагувати модель",
     "Model text": "Текст моделі",
     "Model text - Tooltip": "Модель контролю доступу Casbin, включаючи такі вбудовані моделі, як ACL, RBAC, ABAC, RESTful тощо. Ви також можете створювати власні моделі. ",
