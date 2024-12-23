@@ -1,12 +1,11 @@
-const { defineConfig } = require("cypress");
+const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    "retries": {
-      "runMode": 3,
-      "openMode": 0
-    }
+    baseUrl: 'http://localhost:7001',
+    retries: {
+      runMode: 2,
+      openMode: 0,
+    },
   },
 });
-Cypress.config('defaultCommandTimeout', 10000);
-Cypress.config('pageLoadTimeout', 30000); 
