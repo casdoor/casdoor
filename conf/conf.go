@@ -110,3 +110,19 @@ func GetConfigBatchSize() int {
 	}
 	return res
 }
+
+func GetSessionDefaultTimeout() int64 {
+	timeout, err := GetConfigInt64("session_default_timeout")
+	if err != nil || timeout <= 0 {
+		timeout = 2592000
+	}
+	return timeout
+}
+
+func GetCookieDefaultTimeout() int64 {
+	timeout, err := GetConfigInt64("cookie_default_timeout")
+	if err != nil || timeout <= 0 {
+		timeout = 2592000
+	}
+	return timeout
+}

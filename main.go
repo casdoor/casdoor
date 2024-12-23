@@ -71,8 +71,13 @@ func main() {
 		beego.BConfig.WebConfig.Session.SessionProvider = "redis"
 		beego.BConfig.WebConfig.Session.SessionProviderConfig = conf.GetConfigString("redisEndpoint")
 	}
-	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
-	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
+	
+	sessionTimeout := beego.AppConfig.DefaultInt("session.default_timeout", 720) 
+	cookieLifetime := beego.AppConfig.DefaultInt("cookie.default_lifetime", 43200) 
+
+	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = int64(sessionTimeout * 60)
+	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = cookieLifetime
+
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
 	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))

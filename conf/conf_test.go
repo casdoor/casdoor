@@ -125,3 +125,58 @@ func TestGetConfigLogs(t *testing.T) {
 		assert.Equal(t, scenery.expected, quota)
 	}
 }
+func TestGetSessionDefaultTimeout(t *testing.T) {
+	scenarios := []struct {
+		description string
+		envValue    string
+		configValue string
+		expected    int64
+	}{
+		{"Valid timeout from config", "", "3600", 3600},
+		{"Valid timeout from environment", "7200", "", 7200},
+		{"Invalid timeout falls back to default", "", "-100", 2592000},
+		{"Missing timeout falls back to default", "", "", 2592000},
+	}
+
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			if scenery.envValue != "" {
+				os.Setenv("session_default_timeout", scenery.envValue)
+			} else {
+				os.Unsetenv("session_default_timeout")
+			}
+
+			beego.AppConfig.Set("session_default_timeout", scenery.configValue)
+			actual := GetSessionDefaultTimeout()
+			assert.Equal(t, scenery.expected, actual)
+		})
+	}
+}
+func TestGetCookieDefaultTimeout(t *testing.T) {
+	scenarios := []struct {
+		description string
+		envValue    string
+		configValue string
+		expected    int64
+	}{
+		{"Valid timeout from config", "", "3600", 3600},
+		{"Valid timeout from environment", "7200", "", 7200},
+		{"Invalid timeout falls back to default", "", "-100", 2592000},
+		{"Missing timeout falls back to default", "", "", 2592000},
+	}
+
+	for _, scenery := range scenarios {
+		t.Run(scenery.description, func(t *testing.T) {
+			if scenery.envValue != "" {
+				os.Setenv("cookie_default_timeout", scenery.envValue)
+			} else {
+				os.Unsetenv("cookie_default_timeout")
+			}
+
+			beego.AppConfig.Set("cookie_default_timeout", scenery.configValue)
+
+			actual := GetCookieDefaultTimeout()
+			assert.Equal(t, scenery.expected, actual)
+		})
+	}
+}

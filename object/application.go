@@ -19,6 +19,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/beego/beego"
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -123,8 +125,47 @@ type Application struct {
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
+	SessionTimeout         int `json:"session_timeout"`
+	CookieTimeout          int `json:"cookie_timeout"`
 }
 
+func InitApplicationDefaults(app *Application) {
+	if app.SessionTimeout == 0 {
+		app.SessionTimeout = 2592000
+	}
+	if app.CookieTimeout == 0 {
+		app.CookieTimeout = 2592000
+	}
+}
+
+func ConfigureSession(app *Application) {
+	sessionTimeout := int(conf.GetSessionDefaultTimeout())
+	if sessionTimeout == 0 {
+		sessionTimeout = app.SessionTimeout
+	}
+
+	cookieTimeout := int(conf.GetCookieDefaultTimeout())
+	if cookieTimeout == 0 {
+		cookieTimeout = app.CookieTimeout
+	}
+	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = sessionTimeout
+	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = int64(sessionTimeout)
+}
+func GetApplicationAndConfigure(owner, name string) (*Application, error) {
+	app := &Application{}
+	has, err := ormer.Engine.Where("owner = ? and name = ?", owner, name).Get(app)
+	if err != nil {
+		return nil, err
+	}
+
+	if !has {
+		return nil, fmt.Errorf("application not found")
+	}
+	InitApplicationDefaults(app)
+	ConfigureSession(app)
+
+	return app, nil
+}
 func GetApplicationCount(owner, field, value string) (int64, error) {
 	session := GetSession(owner, -1, -1, field, value, "", "")
 	return session.Count(&Application{})

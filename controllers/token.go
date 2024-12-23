@@ -82,6 +82,12 @@ func (c *ApiController) GetToken() {
 		return
 	}
 
+	// Set token expiration based on session timeout (per-application or global)
+	if token != nil {
+		// Assuming app.SessionTimeout is available for the current application
+		token.ExpiresIn = object.GetSessionTimeoutForToken(token.Application)
+	}
+
 	c.ResponseOk(token)
 }
 
@@ -103,6 +109,10 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
+	// Set the expiration time based on application's session timeout
+	token.ExpiresIn = object.GetSessionTimeoutForToken(token.Application)
+
+	// Update the token
 	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
 	c.ServeJSON()
 }
@@ -121,6 +131,9 @@ func (c *ApiController) AddToken() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	// Set the expiration time based on application's session timeout
+	token.ExpiresIn = object.GetSessionTimeoutForToken(token.Application)
 
 	c.Data["json"] = wrapActionResponse(object.AddToken(&token))
 	c.ServeJSON()
@@ -143,7 +156,7 @@ func (c *ApiController) DeleteToken() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
-}
+} 
 
 // GetOAuthToken
 // @Title GetOAuthToken
