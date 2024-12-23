@@ -332,7 +332,8 @@ func (c *ApiController) Logout() {
 		c.ClearUserSession()
 		c.ClearTokenSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
-		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		application := c.GetSessionApplication()
+		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, application.Name), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -340,7 +341,6 @@ func (c *ApiController) Logout() {
 
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
 
-		application := c.GetSessionApplication()
 		if application == nil || application.Name == "app-built-in" || application.HomepageUrl == "" {
 			c.ResponseOk(user)
 			return
@@ -381,7 +381,7 @@ func (c *ApiController) Logout() {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, application.Name), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

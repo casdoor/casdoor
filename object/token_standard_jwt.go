@@ -24,14 +24,14 @@ import (
 
 type ClaimsStandard struct {
 	*UserShort
-	EmailVerified       bool        `json:"email_verified,omitempty"`
-	PhoneNumber         string      `json:"phone_number,omitempty"`
-	PhoneNumberVerified bool        `json:"phone_number_verified,omitempty"`
-	Gender              string      `json:"gender,omitempty"`
-	TokenType           string      `json:"tokenType,omitempty"`
-	Nonce               string      `json:"nonce,omitempty"`
-	Scope               string      `json:"scope,omitempty"`
-	Address             OIDCAddress `json:"address,omitempty"`
+	EmailVerified       bool     `json:"email_verified,omitempty"`
+	PhoneNumber         string   `json:"phone_number,omitempty"`
+	PhoneNumberVerified bool     `json:"phone_number_verified,omitempty"`
+	Gender              string   `json:"gender,omitempty"`
+	TokenType           string   `json:"tokenType,omitempty"`
+	Nonce               string   `json:"nonce,omitempty"`
+	Scope               string   `json:"scope,omitempty"`
+	Address             []string `json:"address,omitempty"`
 
 	jwt.RegisteredClaims
 }
@@ -65,7 +65,7 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 
 	for _, scope := range scopes {
 		if scope == "address" {
-			res.Address = OIDCAddress{StreetAddress: getStreetAddress(claims.User)}
+			res.Address = claims.User.Address
 		} else if scope == "profile" {
 			res.Gender = claims.User.Gender
 		} else if scope == "phone" && claims.User.Phone != "" {
