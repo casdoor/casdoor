@@ -18,6 +18,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -43,6 +46,31 @@ type Token struct {
 	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
 	CodeIsUsed       bool   `json:"codeIsUsed"`
 	CodeExpireIn     int64  `json:"codeExpireIn"`
+}
+
+func GetSessionTimeoutForToken(applicationName string) int {
+	app, err := GetApplication(applicationName)
+	if err != nil {
+		return getGlobalSessionTimeout()
+	}
+	if app.SessionTimeout != 0 {
+		return app.SessionTimeout
+	}
+	return getGlobalSessionTimeout()
+}
+func getGlobalSessionTimeout() int {
+	sessionTimeoutStr := os.Getenv("SESSION_TIMEOUT")
+	if sessionTimeoutStr == "" {
+		return 2592000
+	}
+
+	sessionTimeout, err := strconv.Atoi(sessionTimeoutStr)
+	if err != nil {
+		log.Printf("Invalid session timeout value, using default: %v", err)
+		return 2592000
+	}
+
+	return sessionTimeout
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -189,6 +217,7 @@ func UpdateToken(id string, token *Token) (bool, error) {
 	} else if t == nil {
 		return false, nil
 	}
+	token.ExpiresIn = GetSessionTimeoutForToken(token.Application)
 
 	token.popularHashes()
 
@@ -201,6 +230,8 @@ func UpdateToken(id string, token *Token) (bool, error) {
 }
 
 func AddToken(token *Token) (bool, error) {
+	token.ExpiresIn = GetSessionTimeoutForToken(token.Application)
+
 	token.popularHashes()
 
 	affected, err := ormer.Engine.Insert(token)
