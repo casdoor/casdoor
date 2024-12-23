@@ -156,7 +156,7 @@ func (c *ApiController) DeleteToken() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteToken(&token))
 	c.ServeJSON()
-} 
+}
 
 // GetOAuthToken
 // @Title GetOAuthToken
