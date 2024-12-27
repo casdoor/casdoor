@@ -41,6 +41,7 @@ type ProviderInfo struct {
 	ClientSecret  string
 	ClientId2     string
 	ClientSecret2 string
+	Domain        string
 	AppId         string
 	HostUrl       string
 	RedirectUrl   string
@@ -108,7 +109,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 			return nil, fmt.Errorf("Infoflow provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Casdoor":
-		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
+		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.Domain), nil
 	case "Okta":
 		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Douyin":

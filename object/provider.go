@@ -408,6 +408,7 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 		ClientSecret:  provider.ClientSecret,
 		ClientId2:     provider.ClientId2,
 		ClientSecret2: provider.ClientSecret2,
+		Domain:        provider.Domain,
 		AppId:         provider.AppId,
 		HostUrl:       provider.Host,
 		TokenURL:      provider.CustomTokenUrl,
