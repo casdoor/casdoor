@@ -77,108 +77,163 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	adapters := []DashboardDateItem{}
 	enforcers := []DashboardDateItem{}
 
+	var (
+		organizationCount int64
+		userCount         int64
+		providerCount     int64
+		applicationCount  int64
+		subscriptionCount int64
+		roleCount         int64
+		groupCount        int64
+		resourceCount     int64
+		certCount         int64
+		permissionCount   int64
+		transactionCount  int64
+		modelCount        int64
+		adapterCount      int64
+		enforcerCount     int64
+	)
+
+	time30day := time.Now().AddDate(0, 0, -30)
 	var wg sync.WaitGroup
+	var err error
 	wg.Add(14)
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Organization{}).Select("created_time").Find(&organizations, &Organization{Owner: owner}); err != nil {
+		if organizationCount, err = ormer.Engine.Table(&Organization{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Organization{}).Select("created_time").Where("created_time >= ?", time30day).Find(&organizations, &Organization{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&User{}).Select("created_time").Find(&users, &User{Owner: owner}); err != nil {
+		if userCount, err = ormer.Engine.Table(&User{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&User{}).Select("created_time").Where("created_time >= ?", time30day).Find(&users, &User{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&Provider{}).Select("created_time").Find(&providers, &Provider{Owner: owner}); err != nil {
+		if providerCount, err = ormer.Engine.Table(&Provider{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Provider{}).Select("created_time").Where("created_time >= ?", time30day).Find(&providers, &Provider{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&Application{}).Select("created_time").Find(&applications, &Application{Owner: owner}); err != nil {
+		if applicationCount, err = ormer.Engine.Table(&Application{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Application{}).Select("created_time").Where("created_time >= ?", time30day).Find(&applications, &Application{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&Subscription{}).Select("created_time").Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
+		if subscriptionCount, err = ormer.Engine.Table(&Subscription{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Subscription{}).Select("created_time").Where("created_time >= ?", time30day).Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&Role{}).Select("created_time").Find(&roles, &Role{Owner: owner}); err != nil {
+		if roleCount, err = ormer.Engine.Table(&Role{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Role{}).Select("created_time").Where("created_time >= ?", time30day).Find(&roles, &Role{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-
-		if err := ormer.Engine.Table(&Group{}).Find(&groups, &Group{Owner: owner}); err != nil {
+		if groupCount, err = ormer.Engine.Table(&Group{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Group{}).Where("created_time >= ?", time30day).Find(&groups, &Group{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Resource{}).Select("created_time").Find(&resources, &Resource{Owner: owner}); err != nil {
+		if resourceCount, err = ormer.Engine.Table(&Resource{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Resource{}).Select("created_time").Where("created_time >= ?", time30day).Find(&resources, &Resource{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Cert{}).Select("created_time").Find(&certs, &Cert{Owner: owner}); err != nil {
+		if certCount, err = ormer.Engine.Table(&Cert{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Cert{}).Select("created_time").Where("created_time >= ?", time30day).Find(&certs, &Cert{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Permission{}).Select("created_time").Find(&permissions, &Permission{Owner: owner}); err != nil {
+		if permissionCount, err = ormer.Engine.Table(&Permission{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Permission{}).Select("created_time").Where("created_time >= ?", time30day).Find(&permissions, &Permission{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Transaction{}).Select("created_time").Find(&transactions, &Transaction{Owner: owner}); err != nil {
+		if transactionCount, err = ormer.Engine.Table(&Transaction{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Transaction{}).Select("created_time").Where("created_time >= ?", time30day).Find(&transactions, &Transaction{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Model{}).Select("created_time").Find(&models, &Model{Owner: owner}); err != nil {
+		if modelCount, err = ormer.Engine.Table(&Model{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Model{}).Select("created_time").Where("created_time >= ?", time30day).Find(&models, &Model{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Adapter{}).Select("created_time").Find(&adapters, &Adapter{Owner: owner}); err != nil {
+		if adapterCount, err = ormer.Engine.Table(&Adapter{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Adapter{}).Select("created_time").Where("created_time >= ?", time30day).Find(&adapters, &Adapter{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Table(&Enforcer{}).Select("created_time").Find(&enforcers, &Enforcer{Owner: owner}); err != nil {
+		if enforcerCount, err = ormer.Engine.Table(&Enforcer{}).Where("created_time < ?", time30day).Count(); err != nil {
+			panic(err)
+		}
+		if err := ormer.Engine.Table(&Enforcer{}).Select("created_time").Where("created_time >= ?", time30day).Find(&enforcers, &Enforcer{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -187,26 +242,26 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	nowTime := time.Now()
 	for i := 30; i >= 0; i-- {
 		cutTime := nowTime.AddDate(0, 0, -i)
-		dashboard.OrganizationCounts[30-i] = countCreatedBefore(organizations, cutTime)
-		dashboard.UserCounts[30-i] = countCreatedBefore(users, cutTime)
-		dashboard.ProviderCounts[30-i] = countCreatedBefore(providers, cutTime)
-		dashboard.ApplicationCounts[30-i] = countCreatedBefore(applications, cutTime)
-		dashboard.SubscriptionCounts[30-i] = countCreatedBefore(subscriptions, cutTime)
-		dashboard.RoleCounts[30-i] = countCreatedBefore(roles, cutTime)
-		dashboard.GroupCounts[30-i] = countCreatedBefore(groups, cutTime)
-		dashboard.ResourceCounts[30-i] = countCreatedBefore(resources, cutTime)
-		dashboard.CertCounts[30-i] = countCreatedBefore(certs, cutTime)
-		dashboard.PermissionCounts[30-i] = countCreatedBefore(permissions, cutTime)
-		dashboard.TransactionCounts[30-i] = countCreatedBefore(transactions, cutTime)
-		dashboard.ModelCounts[30-i] = countCreatedBefore(models, cutTime)
-		dashboard.AdapterCounts[30-i] = countCreatedBefore(adapters, cutTime)
-		dashboard.EnforcerCounts[30-i] = countCreatedBefore(enforcers, cutTime)
+		dashboard.OrganizationCounts[30-i] = countCreatedBefore(organizations, cutTime, organizationCount)
+		dashboard.UserCounts[30-i] = countCreatedBefore(users, cutTime, userCount)
+		dashboard.ProviderCounts[30-i] = countCreatedBefore(providers, cutTime, providerCount)
+		dashboard.ApplicationCounts[30-i] = countCreatedBefore(applications, cutTime, applicationCount)
+		dashboard.SubscriptionCounts[30-i] = countCreatedBefore(subscriptions, cutTime, subscriptionCount)
+		dashboard.RoleCounts[30-i] = countCreatedBefore(roles, cutTime, roleCount)
+		dashboard.GroupCounts[30-i] = countCreatedBefore(groups, cutTime, groupCount)
+		dashboard.ResourceCounts[30-i] = countCreatedBefore(resources, cutTime, resourceCount)
+		dashboard.CertCounts[30-i] = countCreatedBefore(certs, cutTime, certCount)
+		dashboard.PermissionCounts[30-i] = countCreatedBefore(permissions, cutTime, permissionCount)
+		dashboard.TransactionCounts[30-i] = countCreatedBefore(transactions, cutTime, transactionCount)
+		dashboard.ModelCounts[30-i] = countCreatedBefore(models, cutTime, modelCount)
+		dashboard.AdapterCounts[30-i] = countCreatedBefore(adapters, cutTime, adapterCount)
+		dashboard.EnforcerCounts[30-i] = countCreatedBefore(enforcers, cutTime, enforcerCount)
 	}
 	return dashboard, nil
 }
 
-func countCreatedBefore(objects interface{}, before time.Time) int {
-	count := 0
+func countCreatedBefore(objects interface{}, before time.Time, baseNumber int64) int {
+	count := int(baseNumber)
 	switch obj := objects.(type) {
 	case []Organization:
 		for _, o := range obj {
