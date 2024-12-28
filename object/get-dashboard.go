@@ -36,6 +36,10 @@ type Dashboard struct {
 	EnforcerCounts     []int `json:"enforcerCounts"`
 }
 
+type DashboardDateItem struct {
+	CreatedTime string `json:"createTime"`
+}
+
 func GetDashboard(owner string) (*Dashboard, error) {
 	if owner == "All" {
 		owner = ""
@@ -58,26 +62,26 @@ func GetDashboard(owner string) (*Dashboard, error) {
 		EnforcerCounts:     make([]int, 31),
 	}
 
-	organizations := []Organization{}
-	users := []User{}
-	providers := []Provider{}
-	applications := []Application{}
-	subscriptions := []Subscription{}
-	roles := []Role{}
-	groups := []Group{}
-	resources := []Resource{}
-	certs := []Cert{}
-	permissions := []Permission{}
-	transactions := []Transaction{}
-	models := []Model{}
-	adapters := []Adapter{}
-	enforcers := []Enforcer{}
+	organizations := []DashboardDateItem{}
+	users := []DashboardDateItem{}
+	providers := []DashboardDateItem{}
+	applications := []DashboardDateItem{}
+	subscriptions := []DashboardDateItem{}
+	roles := []DashboardDateItem{}
+	groups := []DashboardDateItem{}
+	resources := []DashboardDateItem{}
+	certs := []DashboardDateItem{}
+	permissions := []DashboardDateItem{}
+	transactions := []DashboardDateItem{}
+	models := []DashboardDateItem{}
+	adapters := []DashboardDateItem{}
+	enforcers := []DashboardDateItem{}
 
 	var wg sync.WaitGroup
 	wg.Add(14)
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&organizations, &Organization{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Organization{}).Select("created_time").Find(&organizations, &Organization{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -85,7 +89,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&users, &User{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&User{}).Select("created_time").Find(&users, &User{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -93,7 +97,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&providers, &Provider{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Provider{}).Select("created_time").Find(&providers, &Provider{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -101,7 +105,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&applications, &Application{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Application{}).Select("created_time").Find(&applications, &Application{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -109,7 +113,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Subscription{}).Select("created_time").Find(&subscriptions, &Subscription{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -117,7 +121,7 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&roles, &Role{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Role{}).Select("created_time").Find(&roles, &Role{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -125,56 +129,56 @@ func GetDashboard(owner string) (*Dashboard, error) {
 	go func() {
 		defer wg.Done()
 
-		if err := ormer.Engine.Find(&groups, &Group{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Group{}).Find(&groups, &Group{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&resources, &Resource{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Resource{}).Select("created_time").Find(&resources, &Resource{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&certs, &Cert{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Cert{}).Select("created_time").Find(&certs, &Cert{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&permissions, &Permission{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Permission{}).Select("created_time").Find(&permissions, &Permission{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&transactions, &Transaction{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Transaction{}).Select("created_time").Find(&transactions, &Transaction{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&models, &Model{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Model{}).Select("created_time").Find(&models, &Model{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&adapters, &Adapter{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Adapter{}).Select("created_time").Find(&adapters, &Adapter{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		if err := ormer.Engine.Find(&enforcers, &Enforcer{Owner: owner}); err != nil {
+		if err := ormer.Engine.Table(&Enforcer{}).Select("created_time").Find(&enforcers, &Enforcer{Owner: owner}); err != nil {
 			panic(err)
 		}
 	}()
@@ -296,6 +300,13 @@ func countCreatedBefore(objects interface{}, before time.Time) int {
 			}
 		}
 	case []Enforcer:
+		for _, e := range obj {
+			createdTime, _ := time.Parse("2006-01-02T15:04:05-07:00", e.CreatedTime)
+			if createdTime.Before(before) {
+				count++
+			}
+		}
+	case []DashboardDateItem:
 		for _, e := range obj {
 			createdTime, _ := time.Parse("2006-01-02T15:04:05-07:00", e.CreatedTime)
 			if createdTime.Before(before) {
