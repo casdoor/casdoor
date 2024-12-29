@@ -195,6 +195,12 @@ type GitHubUserEmailInfo struct {
 	Visibility string `json:"visibility"`
 }
 
+type GitHubErrorInfo struct {
+	Message          string `json:"message"`
+	DocumentationUrl string `json:"documentation_url"`
+	Status           string `json:"status"`
+}
+
 func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
 	if err != nil {
@@ -234,6 +240,15 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		emailBody, err := io.ReadAll(respEmail.Body)
 		if err != nil {
 			return nil, err
+		}
+
+		if respEmail.StatusCode != 200 {
+			var errMessage GitHubErrorInfo
+			err = json.Unmarshal(emailBody, &errMessage)
+			if err != nil {
+				return nil, err
+			}
+			return nil, fmt.Errorf("%s, %s", errMessage.Message, errMessage.DocumentationUrl)
 		}
 
 		var userEmails []GitHubUserEmailInfo
