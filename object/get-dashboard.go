@@ -49,20 +49,20 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 			defer wg.Done()
 			var dashboardDateItems []DashboardDateItem
 			var countResult int64
-			if owner == "" {
-				if countResult, err = ormer.Engine.Table(tableName).Where("created_time < ?", time30day).Count(); err != nil {
-					panic(err)
-				}
-				if err := ormer.Engine.Table(tableName).Select("created_time").Where("created_time >= ?", time30day).Find(&dashboardDateItems); err != nil {
-					panic(err)
-				}
-			} else {
-				if countResult, err = ormer.Engine.Table(tableName).Where("created_time < ? and owner = ?", time30day, owner).Count(); err != nil {
-					panic(err)
-				}
-				if err := ormer.Engine.Table(tableName).Select("created_time").Where("created_time >= ? and owner = ?", time30day, owner).Find(&dashboardDateItems); err != nil {
-					panic(err)
-				}
+
+			dbQueryBefore := ormer.Engine.Where("1=1")
+			dbQueryAfter := ormer.Engine.Cols("created_time").Where("1=1")
+
+			if owner != "" {
+				dbQueryAfter = dbQueryBefore.And("owner = ?", owner)
+				dbQueryBefore = dbQueryAfter.And("owner = ?", owner)
+			}
+
+			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableName).Count(); err != nil {
+				panic(err)
+			}
+			if err = dbQueryAfter.And("created_time >= ?", time30day).Table(tableName).Find(&dashboardDateItems); err != nil {
+				panic(err)
 			}
 
 			dashboardMap.Store(tableName, DashboardMapItem{
