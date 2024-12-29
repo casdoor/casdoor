@@ -237,6 +237,7 @@ type MfaAccount struct {
 	AccountName string `xorm:"varchar(100)" json:"accountName"`
 	Issuer      string `xorm:"varchar(100)" json:"issuer"`
 	SecretKey   string `xorm:"varchar(100)" json:"secretKey"`
+	Origin      string `xorm:"varchar(100)" json:"origin"`
 }
 
 type FaceId struct {
