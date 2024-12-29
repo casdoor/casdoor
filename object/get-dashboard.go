@@ -50,8 +50,8 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 			var dashboardDateItems []DashboardDateItem
 			var countResult int64
 
-			dbQueryBefore := ormer.Engine.Where("1=1")
-			dbQueryAfter := ormer.Engine.Cols("created_time").Where("1=1")
+			dbQueryBefore := ormer.Engine.Cols("created_time")
+			dbQueryAfter := ormer.Engine.Cols("created_time")
 
 			if owner != "" {
 				dbQueryAfter = dbQueryBefore.And("owner = ?", owner)
