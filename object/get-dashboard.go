@@ -47,15 +47,15 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 		tableName := tableName
 		go func() {
 			defer wg.Done()
-			var dashboardDateItems []DashboardDateItem
+			dashboardDateItems := []DashboardDateItem{}
 			var countResult int64
 
 			dbQueryBefore := ormer.Engine.Cols("created_time")
 			dbQueryAfter := ormer.Engine.Cols("created_time")
 
 			if owner != "" {
-				dbQueryAfter = dbQueryBefore.And("owner = ?", owner)
-				dbQueryBefore = dbQueryAfter.And("owner = ?", owner)
+				dbQueryAfter = dbQueryAfter.And("owner = ?", owner)
+				dbQueryBefore = dbQueryBefore.And("owner = ?", owner)
 			}
 
 			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableName).Count(); err != nil {
