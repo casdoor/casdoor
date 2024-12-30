@@ -18,6 +18,8 @@ package object
 
 import (
 	"crypto/tls"
+	"fmt"
+	"regexp"
 
 	"github.com/casdoor/casdoor/email"
 	"github.com/casdoor/gomail/v2"
@@ -41,6 +43,11 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
 		fromAddress = provider.ClientId
+	}
+
+	reg := regexp.MustCompile(provider.Metadata)
+	if !reg.MatchString(dest) {
+		return fmt.Errorf("email dest is not in allowed list")
 	}
 
 	fromName := provider.ClientSecret2
