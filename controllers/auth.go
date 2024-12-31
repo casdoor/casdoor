@@ -22,6 +22,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -616,6 +617,13 @@ func (c *ApiController) Login() {
 			if err != nil {
 				c.ResponseError(fmt.Sprintf(c.T("auth:Failed to login in: %s"), err.Error()))
 				return
+			}
+
+			if provider.EmailRegex != "" {
+				reg := regexp.MustCompile(provider.EmailRegex)
+				if !reg.MatchString(userInfo.Email) {
+					c.ResponseError(fmt.Sprintf(c.T("auth:email is not in allowed list")))
+				}
 			}
 		}
 
