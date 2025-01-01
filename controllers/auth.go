@@ -620,9 +620,13 @@ func (c *ApiController) Login() {
 			}
 
 			if provider.EmailRegex != "" {
-				reg := regexp.MustCompile(provider.EmailRegex)
+				reg, err := regexp.Compile(provider.EmailRegex)
+				if err != nil {
+					c.ResponseError(fmt.Sprintf(c.T("auth:Failed to login in: %s"), err.Error()))
+					return
+				}
 				if !reg.MatchString(userInfo.Email) {
-					c.ResponseError(fmt.Sprintf(c.T("auth:email is not in allowed list")))
+					c.ResponseError(fmt.Sprintf(c.T("check:Email is invalid")))
 				}
 			}
 		}
