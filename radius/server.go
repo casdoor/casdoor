@@ -68,8 +68,10 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	log.Printf("handleAccessRequest() username=%v, org=%v, password=%v", username, organization, password)
 
 	if organization == "" {
-		w.Write(r.Response(radius.CodeAccessReject))
-		return
+		organization = conf.GetConfigString("radiusDefaultOrganization")
+		if organization == "" {
+			organization = "built-in"
+		}
 	}
 
 	var user *object.User
