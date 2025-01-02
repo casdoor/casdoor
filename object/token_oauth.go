@@ -309,6 +309,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		}, nil
 	}
 
+	var oldTokenScope string
 	if application.TokenFormat == "JWT-Standard" {
 		oldToken, err := ParseStandardJwtToken(refreshToken, cert)
 		if err != nil {
@@ -317,9 +318,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 				ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
 			}, nil
 		}
-		if scope == "" {
-			scope = oldToken.Scope
-		}
+		oldTokenScope = oldToken.Scope
 	} else {
 		oldToken, err := ParseJwtToken(refreshToken, cert)
 		if err != nil {
@@ -328,9 +327,11 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 				ErrorDescription: fmt.Sprintf("parse refresh token error: %s", err.Error()),
 			}, nil
 		}
-		if scope == "" {
-			scope = oldToken.Scope
-		}
+		oldTokenScope = oldToken.Scope
+	}
+
+	if scope == "" {
+		scope = oldTokenScope
 	}
 
 	// generate a new token
