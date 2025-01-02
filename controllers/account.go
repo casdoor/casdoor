@@ -329,6 +329,22 @@ func (c *ApiController) Logout() {
 			return
 		}
 
+		var token string
+		token = c.Ctx.Request.Header.Get("Authorization")
+		token = strings.TrimPrefix(token, "Bearer ")
+
+		if token == "" {
+			c.ResponseError(c.T("general:Missing parameter") + ": id_token_hint" + " or Authorization header")
+		}
+
+		if token != "" {
+			_, _, _, err := object.ExpireTokenByAccessToken(token)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+
 		c.ClearUserSession()
 		c.ClearTokenSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
