@@ -322,6 +322,8 @@ func (c *ApiController) Logout() {
 
 	user := c.GetSessionUsername()
 
+	util.LogInfo(c.Ctx, "API: [%s] is logging out, access token: %s, redirect uri: %s", user, accessToken, redirectUri)
+
 	if accessToken == "" && redirectUri == "" {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		if user == "" {
