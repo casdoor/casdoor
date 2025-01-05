@@ -331,6 +331,9 @@ func (c *ApiController) Login() {
 		return
 	}
 
+	useVerificationCode := false
+	verificationCodeType := ""
+
 	if authForm.Username != "" {
 		if authForm.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
@@ -391,8 +394,8 @@ func (c *ApiController) Login() {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
 			}
-
-			verificationCodeType := object.GetVerifyType(authForm.Username)
+			useVerificationCode = true
+			verificationCodeType = object.GetVerifyType(authForm.Username)
 			if verificationCodeType == object.VerifyTypeEmail && !application.IsCodeSigninViaEmailEnabled() {
 				c.ResponseError(c.T("auth:The login method: login with email is not enabled for the application"))
 				return
@@ -522,7 +525,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if user.IsMfaEnabled() {
+			if user.IsMfaEnabled() && (!useVerificationCode || verificationCodeType != user.PreferredMfaType) {
 				c.setMfaUserSession(user.GetId())
 				c.ResponseOk(object.NextMfa, user.GetPreferredMfaProps(true))
 				return
