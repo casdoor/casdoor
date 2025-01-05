@@ -248,16 +248,17 @@ func (idp *GithubIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 			if err != nil {
 				return nil, err
 			}
-			return nil, fmt.Errorf("%s, %s", errMessage.Message, errMessage.DocumentationUrl)
-		}
 
-		var userEmails []GitHubUserEmailInfo
-		err = json.Unmarshal(emailBody, &userEmails)
-		if err != nil {
-			return nil, err
-		}
+			fmt.Printf("GithubIdProvider:GetUserInfo() error, status code = %d, error message = %v\n", respEmail.StatusCode, errMessage)
+		} else {
+			var userEmails []GitHubUserEmailInfo
+			err = json.Unmarshal(emailBody, &userEmails)
+			if err != nil {
+				return nil, err
+			}
 
-		githubUserInfo.Email = idp.getEmailFromEmailsResult(userEmails)
+			githubUserInfo.Email = idp.getEmailFromEmailsResult(userEmails)
+		}
 	}
 
 	userInfo := UserInfo{
