@@ -1136,11 +1136,24 @@ func (user *User) IsMfaEnabled() bool {
 	return user.PreferredMfaType != ""
 }
 
-func (user *User) GetPreferredMfaProps(masked bool) *MfaProps {
+func (user *User) GetPreferredMfaProps(masked bool, skipMfaType ...string) *MfaProps {
 	if user == nil || user.PreferredMfaType == "" {
 		return nil
 	}
-	return user.GetMfaProps(user.PreferredMfaType, masked)
+	realUseMfaType := user.PreferredMfaType
+	if len(skipMfaType) > 0 && util.InSlice(skipMfaType, user.PreferredMfaType) {
+		for _, mfa := range GetAllMfaProps(user, masked) {
+			if mfa.Enabled && !util.InSlice(skipMfaType, mfa.MfaType) {
+				realUseMfaType = mfa.MfaType
+				break
+			}
+		}
+		if util.InSlice(skipMfaType, realUseMfaType) {
+			return nil
+		}
+	}
+
+	return user.GetMfaProps(realUseMfaType, masked)
 }
 
 func AddUserKeys(user *User, isAdmin bool) (bool, error) {

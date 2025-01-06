@@ -525,10 +525,17 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if user.IsMfaEnabled() && (!useVerificationCode || verificationCodeType != user.PreferredMfaType) {
+			if user.IsMfaEnabled() {
+				var skipMfaType []string
+				if useVerificationCode {
+					skipMfaType = []string{verificationCodeType}
+				}
 				c.setMfaUserSession(user.GetId())
-				c.ResponseOk(object.NextMfa, user.GetPreferredMfaProps(true))
-				return
+				preferredMfaProps := user.GetPreferredMfaProps(true, skipMfaType...)
+				if preferredMfaProps != nil {
+					c.ResponseOk(object.NextMfa, preferredMfaProps)
+					return
+				}
 			}
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
@@ -870,7 +877,7 @@ func (c *ApiController) Login() {
 
 		if authForm.Passcode != "" {
 			user.CountryCode = user.GetCountryCode(user.CountryCode)
-			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferredMfaProps(false))
+			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetMfaProps(authForm.MfaType, false))
 			if mfaUtil == nil {
 				c.ResponseError("Invalid multi-factor authentication type")
 				return
