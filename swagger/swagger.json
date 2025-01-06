@@ -7558,6 +7558,9 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "kwai": {
+                    "type": "string"
+                },
                 "language": {
                     "type": "string"
                 },
