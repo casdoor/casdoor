@@ -15,6 +15,7 @@
 package object
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -59,10 +60,12 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 			}
 
 			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableName).Count(); err != nil {
-				panic(err)
+				fmt.Print(err)
+				return
 			}
 			if err = dbQueryAfter.And("created_time >= ?", time30day).Table(tableName).Find(&dashboardDateItems); err != nil {
-				panic(err)
+				fmt.Print(err)
+				return
 			}
 
 			dashboardMap.Store(tableName, DashboardMapItem{
