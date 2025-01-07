@@ -119,6 +119,10 @@ const authInfo = {
     scope: "user_info",
     endpoint: "https://open.douyin.com/platform/oauth/connect",
   },
+  Kwai: {
+    scope: "user_info",
+    endpoint: "https://open.kuaishou.com/oauth2/connect",
+  },
   Custom: {
     endpoint: "https://example.com/",
   },
@@ -470,6 +474,8 @@ export function getAuthUrl(application, provider, method, code) {
     return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Douyin" || provider.type === "TikTok") {
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+  } else if (provider.type === "Kwai") {
+    return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
