@@ -83,6 +83,11 @@ func main() {
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
 
+	err = util.StopOldInstance(port)
+	if err != nil {
+		panic(err)
+	}
+
 	go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
