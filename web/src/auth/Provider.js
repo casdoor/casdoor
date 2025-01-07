@@ -475,7 +475,7 @@ export function getAuthUrl(application, provider, method, code) {
   } else if (provider.type === "Douyin" || provider.type === "TikTok") {
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Kwai") {
-    return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
+    return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
