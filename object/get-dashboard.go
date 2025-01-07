@@ -41,11 +41,11 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 	var wg sync.WaitGroup
 	var err error
 	wg.Add(len(tableNames))
-
+	ch := make(chan error, len(tableNames))
 	for _, tableName := range tableNames {
 		dashboard[tableName+"Counts"] = make([]int64, 31)
 		tableName := tableName
-		go func() {
+		go func(ch chan error) {
 			defer wg.Done()
 			dashboardDateItems := []DashboardDateItem{}
 			var countResult int64
@@ -59,20 +59,29 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 			}
 
 			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableName).Count(); err != nil {
-				panic(err)
+				ch <- err
+				return
 			}
 			if err = dbQueryAfter.And("created_time >= ?", time30day).Table(tableName).Find(&dashboardDateItems); err != nil {
-				panic(err)
+				ch <- err
+				return
 			}
 
 			dashboardMap.Store(tableName, DashboardMapItem{
 				dashboardDateItems: dashboardDateItems,
 				itemCount:          countResult,
 			})
-		}()
+		}(ch)
 	}
 
 	wg.Wait()
+	close(ch)
+
+	for err = range ch {
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	nowTime := time.Now()
 	for i := 30; i >= 0; i-- {
