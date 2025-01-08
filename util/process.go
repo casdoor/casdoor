@@ -29,7 +29,7 @@ func getPidByPort(port int) (int, error) {
 	case "windows":
 		cmd = exec.Command("cmd", "/c", "netstat -ano | findstr :"+strconv.Itoa(port))
 	case "darwin", "linux":
-		cmd = exec.Command("lsof", "-i", ":"+strconv.Itoa(port))
+		cmd = exec.Command("lsof", "-t", "-i", ":"+strconv.Itoa(port))
 	default:
 		return 0, fmt.Errorf("unsupported OS: %s", runtime.GOOS)
 	}
@@ -59,7 +59,7 @@ func getPidByPort(port int) (int, error) {
 					return pid, nil
 				}
 			} else {
-				pid, err := strconv.Atoi(fields[1])
+				pid, err := strconv.Atoi(fields[0])
 				if err != nil {
 					return 0, err
 				}
