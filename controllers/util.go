@@ -294,12 +294,18 @@ func checkQuotaForProvider(count int) error {
 	return nil
 }
 
-func checkQuotaForUser(count int) error {
+func checkQuotaForUser() error {
 	quota := conf.GetConfigQuota().User
 	if quota == -1 {
 		return nil
 	}
-	if count >= quota {
+
+	count, err := object.GetUserCount("", "", "", "")
+	if err != nil {
+		return err
+	}
+
+	if int(count) >= quota {
 		return fmt.Errorf("user quota is exceeded")
 	}
 	return nil

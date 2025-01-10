@@ -353,13 +353,7 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	count, err := object.GetUserCount("", "", "", "")
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if err := checkQuotaForUser(int(count)); err != nil {
+	if err := checkQuotaForUser(); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
