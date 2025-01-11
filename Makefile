@@ -75,7 +75,7 @@ vendor: ## Update vendor.
 	go mod vendor
 
 .PHONY: run
-run: fmt vet ## Run backend in local 
+run: fmt vet ## Run backend in local
 	go run ./main.go
 
 .PHONY: docker-build

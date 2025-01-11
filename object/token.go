@@ -17,11 +17,36 @@ package object
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
+
+type BasicTokenType string
+
+const (
+	Bearer BasicTokenType = "bearer"
+	Mac    BasicTokenType = "mac"
+)
+
+func (btt *BasicTokenType) UnmarshalJSON(data []byte) error {
+	var tokenType string
+	if err := json.Unmarshal(data, &tokenType); err != nil {
+		return err
+	}
+
+	switch tokenType {
+	case string(Bearer):
+		*btt = Bearer
+	case string(Mac):
+		*btt = Mac
+	default:
+		*btt = BasicTokenType(tokenType)
+	}
+
+	return nil
+}
 
 type Token struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -32,17 +57,17 @@ type Token struct {
 	Organization string `xorm:"varchar(100)" json:"organization"`
 	User         string `xorm:"varchar(100)" json:"user"`
 
-	Code             string `xorm:"varchar(100) index" json:"code"`
-	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
-	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
-	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
-	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`
-	ExpiresIn        int    `json:"expiresIn"`
-	Scope            string `xorm:"varchar(100)" json:"scope"`
-	TokenType        string `xorm:"varchar(100)" json:"tokenType"`
-	CodeChallenge    string `xorm:"varchar(100)" json:"codeChallenge"`
-	CodeIsUsed       bool   `json:"codeIsUsed"`
-	CodeExpireIn     int64  `json:"codeExpireIn"`
+	Code             string         `xorm:"varchar(100) index" json:"code"`
+	AccessToken      string         `xorm:"mediumtext" json:"accessToken"`
+	RefreshToken     string         `xorm:"mediumtext" json:"refreshToken"`
+	AccessTokenHash  string         `xorm:"varchar(100) index" json:"accessTokenHash"`
+	RefreshTokenHash string         `xorm:"varchar(100) index" json:"refreshTokenHash"`
+	ExpiresIn        int            `json:"expiresIn"`
+	Scope            string         `xorm:"varchar(100)" json:"scope"`
+	TokenType        BasicTokenType `xorm:"varchar(100)" json:"tokenType"`
+	CodeChallenge    string         `xorm:"varchar(100)" json:"codeChallenge"`
+	CodeIsUsed       bool           `json:"codeIsUsed"`
+	CodeExpireIn     int64          `json:"codeExpireIn"`
 }
 
 func GetTokenCount(owner, organization, field, value string) (int64, error) {
@@ -121,29 +146,53 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
+// 	OPTIONAL.  A hint about the type of the token submitted for
+//  introspection.  The protected resource MAY pass this parameter to
+//  help the authorization server optimize the token lookup.  If the
+//  server is unable to locate the token using the given hint, it MUST
+//  extend its search across all of its supported token types.  An
+//  authorization server MAY ignore this parameter, particularly if it
+//  is able to detect the token type automatically.  Values for this
+//  field are defined in the "OAuth Token Type Hints" registry defined
+//  in OAuth Token Revocation [RFC7009].
+// 	Source: https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
+
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
+	/// https://datatracker.ietf.org/doc/html/rfc7009#section-2.1
 	switch tokenTypeHint {
 	case "access_token":
-	case "access-token":
 		token, err := GetTokenByAccessToken(tokenValue)
 		if err != nil {
 			return nil, err
 		}
-		if token != nil {
-			return token, nil
-		}
+
+		return token, nil
 	case "refresh_token":
-	case "refresh-token":
 		token, err := GetTokenByRefreshToken(tokenValue)
 		if err != nil {
 			return nil, err
 		}
+
+		return token, nil
+	default:
+		token, err := GetTokenByAccessToken(tokenValue)
+		if err != nil {
+			return nil, err
+		}
+
+		if token == nil {
+			token, err = GetTokenByRefreshToken(tokenValue)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		if token != nil {
 			return token, nil
 		}
-	}
 
-	return nil, nil
+		return nil, nil
+	}
 }
 
 func updateUsedByCode(token *Token) bool {

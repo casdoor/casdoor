@@ -43,12 +43,12 @@ type Code struct {
 }
 
 type TokenWrapper struct {
-	AccessToken  string `json:"access_token"`
-	IdToken      string `json:"id_token"`
-	RefreshToken string `json:"refresh_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	Scope        string `json:"scope"`
+	AccessToken  string         `json:"access_token"`
+	IdToken      string         `json:"id_token"`
+	RefreshToken string         `json:"refresh_token"`
+	TokenType    BasicTokenType `json:"token_type"`
+	ExpiresIn    int            `json:"expires_in"`
+	Scope        string         `json:"scope"`
 }
 
 type TokenError struct {
@@ -56,19 +56,41 @@ type TokenError struct {
 	ErrorDescription string `json:"error_description,omitempty"`
 }
 
+/*
+If the introspection call is properly authorized but the token is not
+active, does not exist on this server, or the protected resource is
+not allowed to introspect this particular token, then the
+authorization server MUST return an introspection response with the
+"active" field set to "false".  Note that to avoid disclosing too
+much of the authorization server's state to a third party, the
+authorization server SHOULD NOT include any additional information
+about an inactive token, including why the token is inactive.
+
+The following is a non-normative example response for a token that
+has been revoked or is otherwise invalid:
+
+HTTP/1.1 200 OK
+	Content-Type: application/json
+
+{
+	"active": false
+}
+*/
+
+// https://datatracker.ietf.org/doc/html/rfc7662#section-2.2
 type IntrospectionResponse struct {
-	Active    bool     `json:"active"`
-	Scope     string   `json:"scope,omitempty"`
-	ClientId  string   `json:"client_id,omitempty"`
-	Username  string   `json:"username,omitempty"`
-	TokenType string   `json:"token_type,omitempty"`
-	Exp       int64    `json:"exp,omitempty"`
-	Iat       int64    `json:"iat,omitempty"`
-	Nbf       int64    `json:"nbf,omitempty"`
-	Sub       string   `json:"sub,omitempty"`
-	Aud       []string `json:"aud,omitempty"`
-	Iss       string   `json:"iss,omitempty"`
-	Jti       string   `json:"jti,omitempty"`
+	Active    bool           `json:"active"`
+	Scope     string         `json:"scope,omitempty"`
+	ClientId  string         `json:"client_id,omitempty"`
+	Username  string         `json:"username,omitempty"`
+	TokenType BasicTokenType `json:"token_type,omitempty"`
+	Exp       int64          `json:"exp,omitempty"`
+	Iat       int64          `json:"iat,omitempty"`
+	Nbf       int64          `json:"nbf,omitempty"`
+	Sub       string         `json:"sub,omitempty"`
+	Aud       []string       `json:"aud,omitempty"`
+	Iss       string         `json:"iss,omitempty"`
+	Jti       string         `json:"jti,omitempty"`
 }
 
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
@@ -173,7 +195,7 @@ func GetOAuthCode(userId string, clientId string, responseType string, redirectU
 		RefreshToken:  refreshToken,
 		ExpiresIn:     application.ExpireInHours * hourSeconds,
 		Scope:         scope,
-		TokenType:     "Bearer",
+		TokenType:     Bearer,
 		CodeChallenge: challenge,
 		CodeIsUsed:    false,
 		CodeExpireIn:  time.Now().Add(time.Minute * 5).Unix(),
@@ -375,7 +397,7 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		RefreshToken: newRefreshToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    Bearer,
 	}
 	_, err = AddToken(newToken)
 	if err != nil {
@@ -553,7 +575,7 @@ func GetPasswordToken(application *Application, username string, password string
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    Bearer,
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)
@@ -598,7 +620,7 @@ func GetClientCredentialsToken(application *Application, clientSecret string, sc
 		AccessToken:  accessToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    Bearer,
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)
@@ -661,7 +683,7 @@ func GetTokenByUser(application *Application, user *User, scope string, nonce st
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        scope,
-		TokenType:    "Bearer",
+		TokenType:    Bearer,
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)
@@ -771,7 +793,7 @@ func GetWechatMiniProgramToken(application *Application, code string, host strin
 		RefreshToken: refreshToken,
 		ExpiresIn:    application.ExpireInHours * hourSeconds,
 		Scope:        "",
-		TokenType:    "Bearer",
+		TokenType:    Bearer,
 		CodeIsUsed:   true,
 	}
 	_, err = AddToken(token)

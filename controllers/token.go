@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -300,14 +299,45 @@ func (c *ApiController) ResponseTokenError(errorMsg string) {
 // @router /login/oauth/introspect [post]
 func (c *ApiController) IntrospectToken() {
 	tokenValue := c.Input().Get("token")
+
+	var introspectionResponse object.IntrospectionResponse
+
+	// 	https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
+	//
+	//	To prevent token scanning attacks, the endpoint MUST also require
+	// 	some form of authorization to access this endpoint, such as client
+	// 	authentication as described in OAuth 2.0 [RFC6749] or a separate
+	// 	OAuth 2.0 access token such as the bearer token described in OAuth
+	// 	2.0 Bearer Token Usage [RFC6750].  The methods of managing and
+	// 	validating these authentication credentials are out of scope of this
+	// 	specification.
 	clientId, clientSecret, ok := c.Ctx.Request.BasicAuth()
 	if !ok {
-		clientId = c.Input().Get("client_id")
-		clientSecret = c.Input().Get("client_secret")
-		if clientId == "" || clientSecret == "" {
-			c.ResponseTokenError(object.InvalidRequest)
-			return
-		}
+		//  TODO: Bearer parser with audience and checking privileges
+		//  Example
+		//  POST /introspect HTTP/1.1
+		//  Host: server.example.com
+		//  Accept: application/json
+		//  Content-Type: application/x-www-form-urlencoded
+		//  Authorization: Bearer 23410913-abewfq.123483
+		//
+		// token=2YotnFZFEjr1zCsicMWpAA
+		//
+		//
+		c.ResponseTokenError(c.T("basicAuth:Invalid BasicAuth credentials"))
+		return
+	}
+
+	tokenTypeHint := c.Input().Get("token_type_hint")
+	token, err := object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
+	if err != nil {
+		c.ResponseTokenError(err.Error())
+		return
+	}
+	if token == nil {
+		c.Data["json"] = introspectionResponse
+		c.ServeJSON()
+		return
 	}
 
 	application, err := object.GetApplicationByClientId(clientId)
@@ -321,30 +351,13 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
-	tokenTypeHint := c.Input().Get("token_type_hint")
-	var token *object.Token
-	if tokenTypeHint != "" {
-		token, err = object.GetTokenByTokenValue(tokenValue, tokenTypeHint)
-		if err != nil {
-			c.ResponseTokenError(err.Error())
-			return
-		}
-		if token == nil {
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
-			return
-		}
-	}
-
-	var introspectionResponse object.IntrospectionResponse
-
 	if application.TokenFormat == "JWT-Standard" {
 		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
 		if err != nil || jwtToken.Valid() != nil {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
+			c.Data["json"] = introspectionResponse
 			c.ServeJSON()
 			return
 		}
@@ -354,7 +367,7 @@ func (c *ApiController) IntrospectToken() {
 			Scope:     jwtToken.Scope,
 			ClientId:  clientId,
 			Username:  jwtToken.Name,
-			TokenType: jwtToken.TokenType,
+			TokenType: object.BasicTokenType(jwtToken.TokenType),
 			Exp:       jwtToken.ExpiresAt.Unix(),
 			Iat:       jwtToken.IssuedAt.Unix(),
 			Nbf:       jwtToken.NotBefore.Unix(),
@@ -369,7 +382,7 @@ func (c *ApiController) IntrospectToken() {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
+			c.Data["json"] = introspectionResponse
 			c.ServeJSON()
 			return
 		}
@@ -379,7 +392,7 @@ func (c *ApiController) IntrospectToken() {
 			Scope:     jwtToken.Scope,
 			ClientId:  clientId,
 			Username:  jwtToken.Name,
-			TokenType: jwtToken.TokenType,
+			TokenType: object.BasicTokenType(jwtToken.TokenType),
 			Exp:       jwtToken.ExpiresAt.Unix(),
 			Iat:       jwtToken.IssuedAt.Unix(),
 			Nbf:       jwtToken.NotBefore.Unix(),
@@ -389,20 +402,6 @@ func (c *ApiController) IntrospectToken() {
 			Jti:       jwtToken.ID,
 		}
 	}
-
-	if tokenTypeHint == "" {
-		token, err = object.GetTokenByTokenValue(tokenValue, introspectionResponse.TokenType)
-		if err != nil {
-			c.ResponseTokenError(err.Error())
-			return
-		}
-		if token == nil {
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
-			return
-		}
-	}
-	introspectionResponse.TokenType = token.TokenType
 
 	c.Data["json"] = introspectionResponse
 	c.ServeJSON()
