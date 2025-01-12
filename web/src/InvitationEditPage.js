@@ -111,9 +111,10 @@ class InvitationEditPage extends React.Component {
     if (this.state.invitation.owner === "built-in") {
       defaultApplication = "app-built-in";
     } else {
-      defaultApplication = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner).defaultApplication;
+      const selectedOrganization = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner);
+      defaultApplication = selectedOrganization.defaultApplication;
       if (!defaultApplication) {
-        Setting.showMessage("error", i18next.t("invitation:You need to specify a default application for the organization"));
+        Setting.showMessage("error", i18next.t("invitation:You need to specify a default application for ") + selectedOrganization.name);
         return;
       }
     }
