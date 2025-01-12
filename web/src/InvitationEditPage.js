@@ -106,6 +106,22 @@ class InvitationEditPage extends React.Component {
     });
   }
 
+  copySignupLink() {
+    let defaultApplication;
+    if (this.state.invitation.owner === "built-in") {
+      defaultApplication = "app-built-in";
+    } else {
+      const selectedOrganization = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner);
+      defaultApplication = selectedOrganization.defaultApplication;
+      if (!defaultApplication) {
+        Setting.showMessage("error", i18next.t("invitation:You need to specify a default application for ") + selectedOrganization.name);
+        return;
+      }
+    }
+    copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`);
+    Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
+  }
+
   renderInvitation() {
     const isCreatedByPlan = this.state.invitation.tag === "auto_created_invitation_for_plan";
     return (
@@ -114,16 +130,7 @@ class InvitationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("invitation:New Invitation") : i18next.t("invitation:Edit Invitation")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} onClick={() => {
-            let defaultApplication;
-            if (this.state.invitation.owner === "built-in") {
-              defaultApplication = "app-built-in";
-            } else {
-              defaultApplication = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner).defaultApplication;
-            }
-            copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`);
-            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-          }}>
+          <Button style={{marginLeft: "20px"}} onClick={_ => this.copySignupLink()}>
             {i18next.t("application:Copy signup page URL")}
           </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
@@ -330,16 +337,7 @@ class InvitationEditPage extends React.Component {
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} size="large" onClick={() => {
-            let defaultApplication;
-            if (this.state.invitation.owner === "built-in") {
-              defaultApplication = "app-built-in";
-            } else {
-              defaultApplication = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner).defaultApplication;
-            }
-            copy(`${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`);
-            Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
-          }}>
+          <Button style={{marginLeft: "20px"}} size="large" onClick={_ => this.copySignupLink()}>
             {i18next.t("application:Copy signup page URL")}
           </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
