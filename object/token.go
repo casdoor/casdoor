@@ -121,29 +121,54 @@ func GetTokenByRefreshToken(refreshToken string) (*Token, error) {
 	return &token, nil
 }
 
+//		OPTIONAL.  A hint about the type of the token submitted for
+//		introspection.  The protected resource MAY pass this parameter to
+//		help the authorization server optimize the token lookup.  If the
+//		server is unable to locate the token using the given hint, it MUST
+//		extend its search across all of its supported token types.  An
+//		authorization server MAY ignore this parameter, particularly if it
+//		is able to detect the token type automatically.  Values for this
+//		field are defined in the "OAuth Token Type Hints" registry defined
+//		in OAuth Token Revocation [RFC7009].
+//	 Source: https://datatracker.ietf.org/doc/html/rfc7662#section-2.1
 func GetTokenByTokenValue(tokenValue, tokenTypeHint string) (*Token, error) {
+	/// https://datatracker.ietf.org/doc/html/rfc7009#section-2.1
 	switch tokenTypeHint {
 	case "access_token":
-	case "access-token":
 		token, err := GetTokenByAccessToken(tokenValue)
 		if err != nil {
 			return nil, err
 		}
-		if token != nil {
-			return token, nil
-		}
+
+		return token, nil
 	case "refresh_token":
-	case "refresh-token":
 		token, err := GetTokenByRefreshToken(tokenValue)
 		if err != nil {
 			return nil, err
 		}
+
+		return token, nil
+	case "":
+		token, err := GetTokenByAccessToken(tokenValue)
+		if err != nil {
+			return nil, err
+		}
+
+		if token == nil {
+			token, err = GetTokenByRefreshToken(tokenValue)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		if token != nil {
 			return token, nil
 		}
-	}
 
-	return nil, nil
+		return nil, nil
+	default:
+		return nil, nil
+	}
 }
 
 func updateUsedByCode(token *Token) bool {
