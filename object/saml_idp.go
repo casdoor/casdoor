@@ -338,6 +338,9 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	} else if authnRequest.AssertionConsumerServiceURL == "" {
 		return "", "", "", fmt.Errorf("err: SAML request don't has attribute 'AssertionConsumerServiceURL' in <samlp:AuthnRequest>")
 	}
+	if authnRequest.ProtocolBinding == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" {
+		method = "POST"
+	}
 
 	_, originBackend := getOriginFromHost(host)
 
