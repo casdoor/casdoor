@@ -62,7 +62,6 @@ class LoginPage extends React.Component {
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
-      mfaType: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
