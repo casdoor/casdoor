@@ -331,6 +331,8 @@ func (c *ApiController) Login() {
 		return
 	}
 
+	verificationType := ""
+
 	if authForm.Username != "" {
 		if authForm.Type == ResponseTypeLogin {
 			if c.GetSessionUsername() != "" {
@@ -424,6 +426,12 @@ func (c *ApiController) Login() {
 			if err != nil {
 				c.ResponseError(err.Error(), nil)
 				return
+			}
+
+			if verificationCodeType == object.VerifyTypePhone {
+				verificationType = "sms"
+			} else {
+				verificationType = "email"
 			}
 		} else {
 			var application *object.Application
@@ -524,8 +532,19 @@ func (c *ApiController) Login() {
 
 			if user.IsMfaEnabled() {
 				c.setMfaUserSession(user.GetId())
-				c.ResponseOk(object.NextMfa, user.GetPreferredMfaProps(true))
-				return
+				mfaList := object.GetAllMfaProps(user, true)
+				mfaAllowList := []*object.MfaProps{}
+				for _, prop := range mfaList {
+					if prop.MfaType == verificationType || !prop.Enabled {
+						continue
+					}
+					mfaAllowList = append(mfaAllowList, prop)
+				}
+				if len(mfaAllowList) >= 1 {
+					c.SetSession("verificationCodeType", verificationType)
+					c.ResponseOk(object.NextMfa, mfaAllowList)
+					return
+				}
 			}
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
@@ -866,8 +885,12 @@ func (c *ApiController) Login() {
 		}
 
 		if authForm.Passcode != "" {
+			if authForm.MfaType == c.GetSession("verificationCodeType") {
+				c.ResponseError("Invalid multi-factor authentication type")
+				return
+			}
 			user.CountryCode = user.GetCountryCode(user.CountryCode)
-			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetPreferredMfaProps(false))
+			mfaUtil := object.GetMfaUtil(authForm.MfaType, user.GetMfaProps(authForm.MfaType, false))
 			if mfaUtil == nil {
 				c.ResponseError("Invalid multi-factor authentication type")
 				return
@@ -878,6 +901,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			}
+			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
 			err = object.MfaRecover(user, authForm.RecoveryCode)
 			if err != nil {
