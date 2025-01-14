@@ -53,6 +53,8 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, c
 		return NewRocketChatProvider(clientId, clientSecret, appId, receiver)
 	} else if typ == "Viber" {
 		return NewViberProvider(clientId, clientSecret, appId, receiver)
+	} else if typ == "CuCloud" {
+		return NewCuCloudProvider(clientId, clientSecret, appId, title, method, clientId2, metaData)
 	}
 
 	return nil, nil
