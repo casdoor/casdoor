@@ -846,11 +846,14 @@ func AddUser(user *User) (bool, error) {
 		}
 	}
 
-	count, err := GetUserCount(user.Owner, "", "", "")
-	if err != nil {
-		return false, err
+	rankingItem := GetAccountItemByName("Ranking", organization)
+	if rankingItem != nil {
+		count, err := GetUserCount(user.Owner, "", "", "")
+		if err != nil {
+			return false, err
+		}
+		user.Ranking = int(count + 1)
 	}
-	user.Ranking = int(count + 1)
 
 	if user.Groups != nil && len(user.Groups) > 0 {
 		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
