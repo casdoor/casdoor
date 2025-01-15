@@ -773,7 +773,7 @@ class ProviderEditPage extends React.Component {
             )
         }
         {
-          this.state.provider.category !== "Email" && !["WeChat", "Apple", "Aliyun Captcha", "WeChat Pay", "Twitter", "Reddit", "CuCloud"].includes(this.state.provider.type) ? null : (
+          this.state.provider.category !== "Email" && this.state.provider.type !== "WeChat" && this.state.provider.type !== "Apple" && this.state.provider.type !== "Aliyun Captcha" && this.state.provider.type !== "WeChat Pay" && this.state.provider.type !== "Twitter" && this.state.provider.type !== "Reddit" && this.state.provider.type !== "CuCloud" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -999,11 +999,22 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 </Row>
               ) : null}
-              {["Custom HTTP", "CuCloud"].includes(this.state.provider.type) ? (
+              {["Custom HTTP"].includes(this.state.provider.type) ? (
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.state.provider.type === "Custom HTTP" ? Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip")) : null}
-                    {this.state.provider.type === "CuCloud" ? Setting.getLabel(i18next.t("user:Title"), i18next.t("provider:title - Tooltip")) : null} :
+                    {Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip"))} :
+                  </Col>
+                  <Col span={22} >
+                    <Input value={this.state.provider.title} onChange={e => {
+                      this.updateProviderField("title", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+              ) : null}
+              {["CuCloud"].includes(this.state.provider.type) ? (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("user:Title"), i18next.t("provider:title - Tooltip"))} :
                   </Col>
                   <Col span={22} >
                     <Input value={this.state.provider.title} onChange={e => {
@@ -1024,34 +1035,36 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 </Row>
               ) : null}
-              {["Google Chat", "CuCloud"].includes(this.state.provider.type) ? (
+              {["Google Chat"].includes(this.state.provider.type) ? (
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.state.provider.type === "Google Chat" ? Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip")) : null}
-                    {this.state.provider.type === "CuCloud" ? Setting.getLabel(i18next.t("provider:Notify type"), i18next.t("provider:Notify type - Tooltip")) : null} :
+                    {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
                   </Col>
                   <Col span={22}>
-                    {
-                      this.state.provider.type === "Google Chat" ? <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
-                        this.updateProviderField("metadata", e.target.value);
-                      }} /> : null
-                    }
-                    {
-                      this.state.provider.type === "CuCloud" ? (
-                        <Select virtual={false} style={{width: "100%"}} value={this.state.provider.metadata} onChange={value => {
-                          this.updateProviderField("metadata", value);
-                        }}>
-                          {
-                            [
-                              {id: "all", name: "all"},
-                              {id: "email", name: "email"},
-                              {id: "http", name: "http"},
-                              {id: "message", name: "message"},
-                            ].map((metadata, index) => <Option key={index} value={metadata.id}>{metadata.name}</Option>)
-                          }
-                        </Select>
-                      ) : null
-                    }
+                    <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
+                      this.updateProviderField("metadata", e.target.value);
+                    }} />
+                  </Col>
+                </Row>
+              ) : null}
+              {["CuCloud"].includes(this.state.provider.type) ? (
+                <Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("provider:Notify type"), i18next.t("provider:Notify type - Tooltip"))} :
+                  </Col>
+                  <Col span={22}>
+                    <Select virtual={false} style={{width: "100%"}} value={this.state.provider.metadata} onChange={value => {
+                      this.updateProviderField("metadata", value);
+                    }}>
+                      {
+                        [
+                          {id: "all", name: "all"},
+                          {id: "email", name: "email"},
+                          {id: "http", name: "http"},
+                          {id: "message", name: "message"},
+                        ].map((metadata, index) => <Option key={index} value={metadata.id}>{metadata.name}</Option>)
+                      }
+                    </Select>
                   </Col>
                 </Row>
               ) : null}
