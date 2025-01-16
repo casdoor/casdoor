@@ -19,11 +19,11 @@ import (
 	"github.com/casdoor/notify/service/cucloud"
 )
 
-func NewCuCloudProvider(accessKey, secretKey, topicName, messageTitle, cloudRegionCode, accountId, notifyType string) (notify.Notifier, error) {
-	cuCloud := cucloud.New(accessKey, secretKey, topicName, messageTitle, cloudRegionCode, accountId, notifyType)
+func NewCucloudProvider(accessKey, secretKey, topicName, messageTitle, cloudRegionCode, accountId, notifyType string) (notify.Notifier, error) {
+	cucloud := cucloud.New(accessKey, secretKey, topicName, messageTitle, cloudRegionCode, accountId, notifyType)
 
 	notifier := notify.New()
-	notifier.UseServices(cuCloud)
+	notifier.UseServices(cucloud)
 
 	return notifier, nil
 }

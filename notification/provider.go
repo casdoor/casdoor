@@ -54,7 +54,7 @@ func GetNotificationProvider(typ string, clientId string, clientSecret string, c
 	} else if typ == "Viber" {
 		return NewViberProvider(clientId, clientSecret, appId, receiver)
 	} else if typ == "CUCloud" {
-		return NewCuCloudProvider(clientId, clientSecret, appId, title, regionId, clientId2, metaData)
+		return NewCucloudProvider(clientId, clientSecret, appId, title, regionId, clientId2, metaData)
 	}
 
 	return nil, nil
