@@ -405,6 +405,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_viber.png`,
       url: "https://www.viber.com/",
     },
+    "CUCloud": {
+      logo: `${StaticBaseUrl}/img/cucloud.png`,
+      url: "https://www.cucloud.cn/",
+    },
   },
 };
 
@@ -1137,6 +1141,7 @@ export function getProviderTypeOptions(category) {
       {id: "Reddit", name: "Reddit"},
       {id: "Rocket Chat", name: "Rocket Chat"},
       {id: "Viber", name: "Viber"},
+      {id: "CUCloud", name: "CUCloud"},
     ]);
   } else {
     return [];
