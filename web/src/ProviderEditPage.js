@@ -993,8 +993,7 @@ class ProviderEditPage extends React.Component {
               {["Custom HTTP", "CUCloud"].includes(this.state.provider.type) ? (
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.state.provider.type === "Custom HTTP" ? Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip")) : null}
-                    {this.state.provider.type === "CUCloud" ? Setting.getLabel(i18next.t("user:Title"), i18next.t("provider:title - Tooltip")) : null}:
+                    {Setting.getLabel(i18next.t("provider:Parameter"), i18next.t("provider:Parameter - Tooltip"))} :
                   </Col>
                   <Col span={22} >
                     <Input value={this.state.provider.title} onChange={e => {
@@ -1006,8 +1005,7 @@ class ProviderEditPage extends React.Component {
               {["Google Chat", "CUCloud"].includes(this.state.provider.type) ? (
                 <Row style={{marginTop: "20px"}} >
                   <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {this.state.provider.type === "CUCloud" ? Setting.getLabel(i18next.t("provider:Notify type"), i18next.t("provider:Notify type - Tooltip")) : null}
-                    {this.state.provider.type === "Google Chat" ? Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip")) : null} :
+                    {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
                   </Col>
                   <Col span={22}>
                     <TextArea rows={4} value={this.state.provider.metadata} onChange={e => {
