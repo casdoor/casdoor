@@ -15,6 +15,9 @@
 package object
 
 import (
+	"crypto/rand"
+	"crypto/sha1"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -373,6 +376,21 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
+func GenerateSSHA(password string) (string, error) {
+	salt := make([]byte, 4)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return "", err
+	}
+
+	combined := append([]byte(password), salt...)
+	hash := sha1.Sum(combined)
+	hashWithSalt := append(hash[:], salt...)
+	encoded := base64.StdEncoding.EncodeToString(hashWithSalt)
+
+	return "{SSHA}" + encoded, nil
+}
+
 func ResetLdapPassword(user *User, newPassword string, lang string) error {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
@@ -417,7 +435,11 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else {
-			pwdEncoded = newPassword
+			pwdEncoded, err = GenerateSSHA(newPassword)
+			if err != nil {
+				conn.Close()
+				return err
+			}
 			modifyPasswordRequest.Replace("userPassword", []string{pwdEncoded})
 		}
 
