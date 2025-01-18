@@ -133,6 +133,11 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
+	err := appendThemeCookie(ctx, urlPath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	if strings.Contains(path, "/../") || !util.FileExist(path) {
 		path = webBuildFolder + "/index.html"
 	}

@@ -36,6 +36,7 @@ const {Footer, Content} = Layout;
 
 import {setTwoToneColor} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
+import * as Cookie from "cookie";
 
 setTwoToneColor("rgb(87,52,211)");
 
@@ -360,11 +361,19 @@ class App extends Component {
 
   renderPage() {
     if (this.isDoorPages()) {
+      let themeData = this.state.themeData;
+      if (this.state.organization === undefined) {
+        const curCookie = Cookie.parse(document.cookie);
+        if (curCookie["organizationTheme"] && curCookie["organizationTheme"] !== "null") {
+          themeData = JSON.parse(curCookie["organizationTheme"]);
+        }
+      }
+
       return (
         <ConfigProvider theme={{
           token: {
-            colorPrimary: this.state.themeData.colorPrimary,
-            borderRadius: this.state.themeData.borderRadius,
+            colorPrimary: themeData.colorPrimary,
+            borderRadius: themeData.borderRadius,
           },
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
