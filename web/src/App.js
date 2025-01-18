@@ -369,8 +369,6 @@ class App extends Component {
         }
       }
 
-      window.console.log(themeData);
-
       return (
         <ConfigProvider theme={{
           token: {
