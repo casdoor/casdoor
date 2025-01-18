@@ -16,7 +16,6 @@ package routers
 
 import (
 	"compress/gzip"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -96,41 +95,6 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 	return res, nil
 }
 
-func InsertOrganizationTheme(ctx *context.Context, urlPath string) {
-	if urlPath == "/login" {
-		organization, err := object.GetOrganization(fmt.Sprintf("admin/built-in"))
-		if err == nil && organization != nil {
-			themeDataString, err := json.Marshal(organization.ThemeData)
-			if err == nil {
-				ctx.SetCookie("organizationTheme", string(themeDataString))
-			}
-		}
-	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
-		clientId := ctx.Input.Query("client_id")
-		application, err := object.GetApplicationByClientId(clientId)
-		if err == nil && application != nil {
-			organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", application.Organization))
-			if err == nil && organization != nil {
-				themeDataString, err := json.Marshal(organization.ThemeData)
-				if err == nil {
-					ctx.SetCookie("organizationTheme", string(themeDataString))
-				}
-			}
-		}
-	} else if strings.HasPrefix(urlPath, "/login/") {
-		owner := strings.Replace(urlPath, "/login/", "", -1)
-		if owner != "undefined" && owner != "oauth/undefined" {
-			organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", owner))
-			if err == nil && organization != nil {
-				themeDataString, err := json.Marshal(organization.ThemeData)
-				if err == nil {
-					ctx.SetCookie("organizationTheme", string(themeDataString))
-				}
-			}
-		}
-	}
-}
-
 func StaticFilter(ctx *context.Context) {
 	urlPath := ctx.Request.URL.Path
 
@@ -169,9 +133,7 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
-	if conf.GetConfigBool("addOrganizationThemeInCookie") {
-		InsertOrganizationTheme(ctx, urlPath)
-	}
+	appendThemeCookie(ctx, urlPath)
 
 	if strings.Contains(path, "/../") || !util.FileExist(path) {
 		path = webBuildFolder + "/index.html"
