@@ -25,6 +25,13 @@ import (
 
 func appendThemeCookie(ctx *context.Context, urlPath string) error {
 	if urlPath == "/login" {
+		application, err := object.GetDefaultApplication(fmt.Sprintf("admin/built-in"))
+		if err != nil {
+			return err
+		}
+		if application.ThemeData != nil {
+			return setThemeDataCookie(ctx, application.ThemeData)
+		}
 		organization, err := object.GetOrganization(fmt.Sprintf("admin/built-in"))
 		if err != nil {
 			return err
@@ -46,6 +53,9 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 			if err != nil {
 				return err
 			}
+			if application.ThemeData != nil {
+				return setThemeDataCookie(ctx, application.ThemeData)
+			}
 			if organization != nil {
 				return setThemeDataCookie(ctx, organization.ThemeData)
 			}
@@ -53,6 +63,13 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 	} else if strings.HasPrefix(urlPath, "/login/") {
 		owner := strings.Replace(urlPath, "/login/", "", -1)
 		if owner != "undefined" && owner != "oauth/undefined" {
+			application, err := object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
+			if err != nil {
+				return err
+			}
+			if application.ThemeData != nil {
+				return setThemeDataCookie(ctx, application.ThemeData)
+			}
 			organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", owner))
 			if err != nil {
 				return err
