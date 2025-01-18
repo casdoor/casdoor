@@ -39,7 +39,9 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 				return err
 			}
 		}
-		return setThemeDataCookie(ctx, organization.ThemeData)
+		if organization != nil {
+			return setThemeDataCookie(ctx, organization.ThemeData)
+		}
 	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
 		clientId := ctx.Input.Query("client_id")
 		if clientId == "" {
@@ -78,7 +80,9 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 					return err
 				}
 			}
-			return setThemeDataCookie(ctx, organization.ThemeData)
+			if organization != nil {
+				return setThemeDataCookie(ctx, organization.ThemeData)
+			}
 		}
 	}
 
