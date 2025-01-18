@@ -32,13 +32,14 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 		if application.ThemeData != nil {
 			return setThemeDataCookie(ctx, application.ThemeData)
 		}
-		organization, err := object.GetOrganization(fmt.Sprintf("admin/built-in"))
-		if err != nil {
-			return err
+		organization := application.OrganizationObj
+		if organization == nil {
+			organization, err = object.GetOrganization(fmt.Sprintf("admin/built-in"))
+			if err != nil {
+				return err
+			}
 		}
-		if organization != nil {
-			return setThemeDataCookie(ctx, organization.ThemeData)
-		}
+		return setThemeDataCookie(ctx, organization.ThemeData)
 	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
 		clientId := ctx.Input.Query("client_id")
 		if clientId == "" {
@@ -70,13 +71,14 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 			if application.ThemeData != nil {
 				return setThemeDataCookie(ctx, application.ThemeData)
 			}
-			organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", owner))
-			if err != nil {
-				return err
+			organization := application.OrganizationObj
+			if organization == nil {
+				organization, err = object.GetOrganization(fmt.Sprintf("admin/%s", owner))
+				if err != nil {
+					return err
+				}
 			}
-			if organization != nil {
-				return setThemeDataCookie(ctx, organization.ThemeData)
-			}
+			return setThemeDataCookie(ctx, organization.ThemeData)
 		}
 	}
 
