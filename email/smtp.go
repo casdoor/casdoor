@@ -16,7 +16,9 @@ package email
 
 import (
 	"crypto/tls"
+	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/gomail/v2"
 )
 
@@ -32,6 +34,13 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 	}
 
 	dialer.SSL = !disableSsl
+
+	if strings.HasSuffix(host, ".amazonaws.com") {
+		socks5Proxy := conf.GetConfigString("socks5Proxy")
+		if socks5Proxy != "" {
+			dialer.SetSocks5Proxy(socks5Proxy)
+		}
+	}
 
 	return &SmtpEmailProvider{Dialer: dialer}
 }
