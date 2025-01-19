@@ -30,7 +30,7 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 			return err
 		}
 		if application.ThemeData != nil {
-			return setThemeDataCookie(ctx, application.ThemeData, application.Logo)
+			return setThemeDataCookie(ctx, application.ThemeData, application.Logo, application.FooterHtml)
 		}
 		organization := application.OrganizationObj
 		if organization == nil {
@@ -40,7 +40,7 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 			}
 		}
 		if organization != nil {
-			return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo)
+			return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo, application.FooterHtml)
 		}
 	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
 		clientId := ctx.Input.Query("client_id")
@@ -57,10 +57,10 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 				return err
 			}
 			if application.ThemeData != nil {
-				return setThemeDataCookie(ctx, application.ThemeData, application.Logo)
+				return setThemeDataCookie(ctx, application.ThemeData, application.Logo, application.FooterHtml)
 			}
 			if organization != nil {
-				return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo)
+				return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo, application.FooterHtml)
 			}
 		}
 	} else if strings.HasPrefix(urlPath, "/login/") {
@@ -71,7 +71,7 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 				return err
 			}
 			if application.ThemeData != nil {
-				return setThemeDataCookie(ctx, application.ThemeData, application.Logo)
+				return setThemeDataCookie(ctx, application.ThemeData, application.Logo, application.FooterHtml)
 			}
 			organization := application.OrganizationObj
 			if organization == nil {
@@ -81,7 +81,7 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 				}
 			}
 			if organization != nil {
-				return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo)
+				return setThemeDataCookie(ctx, organization.ThemeData, organization.Logo, application.FooterHtml)
 			}
 		}
 	}
@@ -89,12 +89,13 @@ func appendThemeCookie(ctx *context.Context, urlPath string) error {
 	return nil
 }
 
-func setThemeDataCookie(ctx *context.Context, themeData *object.ThemeData, logoUrl string) error {
+func setThemeDataCookie(ctx *context.Context, themeData *object.ThemeData, logoUrl string, footerHtml string) error {
 	themeDataString, err := json.Marshal(themeData)
 	if err != nil {
 		return err
 	}
 	ctx.SetCookie("organizationTheme", string(themeDataString))
 	ctx.SetCookie("organizationLogo", logoUrl)
+	ctx.SetCookie("organizationFootHtml", footerHtml)
 	return nil
 }

@@ -270,7 +270,9 @@ class App extends Component {
     });
   }
 
-  renderFooter(logo) {
+  renderFooter(logo, footerHtml) {
+    logo = logo ?? this.state.logo;
+    footerHtml = footerHtml ?? this.state.application?.footerHtml;
     return (
       <React.Fragment>
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
@@ -281,14 +283,14 @@ class App extends Component {
           }
         }>
           {
-            this.state.application?.footerHtml && this.state.application.footerHtml !== "" ?
+            footerHtml && footerHtml !== "" ?
               <React.Fragment>
-                <div dangerouslySetInnerHTML={{__html: this.state.application.footerHtml}} />
+                <div dangerouslySetInnerHTML={{__html: footerHtml}} />logo
               </React.Fragment>
               : (
                 Conf.CustomFooter !== null ? Conf.CustomFooter : (
                   <React.Fragment>
-                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo ?? this.state.logo} /></a>
+                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo} /></a>
                   </React.Fragment>
                 )
               )
@@ -363,6 +365,7 @@ class App extends Component {
     if (this.isDoorPages()) {
       let themeData = this.state.themeData;
       let logo = this.state.logo;
+      let footerHtml = null;
       if (this.state.organization === undefined) {
         const curCookie = Cookie.parse(document.cookie);
         if (curCookie["organizationTheme"] && curCookie["organizationTheme"] !== "null") {
@@ -370,6 +373,9 @@ class App extends Component {
         }
         if (curCookie["organizationLogo"] && curCookie["organizationLogo"] !== "") {
           logo = curCookie["organizationLogo"];
+        }
+        if (curCookie["organizationFootHtml"] && curCookie["organizationFootHtml"] !== "") {
+          footerHtml = curCookie["organizationFootHtml"];
         }
       }
 
@@ -414,7 +420,7 @@ class App extends Component {
                 }
               </Content>
               {
-                this.renderFooter(logo)
+                this.renderFooter(logo, footerHtml)
               }
               {
                 this.renderAiAssistant()
