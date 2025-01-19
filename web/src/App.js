@@ -285,7 +285,7 @@ class App extends Component {
           {
             footerHtml && footerHtml !== "" ?
               <React.Fragment>
-                <div dangerouslySetInnerHTML={{__html: footerHtml}} />logo
+                <div dangerouslySetInnerHTML={{__html: footerHtml}} />
               </React.Fragment>
               : (
                 Conf.CustomFooter !== null ? Conf.CustomFooter : (
