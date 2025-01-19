@@ -111,7 +111,7 @@ class EntryPage extends React.Component {
         <div className={`${isDarkMode ? "loginBackgroundDark" : "loginBackground"}`}
           style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
           <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
-            style={{margin: "0 auto"}} />
+            style={{width: "100%", margin: "0 auto", position: "absolute"}} />
           <Switch>
             <Route exact path="/signup" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} applicationName={authConfig.appName} onUpdateApplication={onUpdateApplication} {...props} />)} />
             <Route exact path="/signup/:applicationName" render={(props) => this.renderHomeIfLoggedIn(<SignupPage {...this.props} application={this.state.application} onUpdateApplication={onUpdateApplication} {...props} />)} />
