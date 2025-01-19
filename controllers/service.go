@@ -93,7 +93,7 @@ func (c *ApiController) SendEmail() {
 
 	// when receiver is the reserved keyword: "TestSmtpServer", it means to test the SMTP server instead of sending a real Email
 	if len(emailForm.Receivers) == 1 && emailForm.Receivers[0] == "TestSmtpServer" {
-		err = object.DailSmtpServer(provider)
+		err = object.TestSmtpServer(provider)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
