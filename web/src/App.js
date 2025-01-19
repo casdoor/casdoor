@@ -270,7 +270,7 @@ class App extends Component {
     });
   }
 
-  renderFooter() {
+  renderFooter(logo) {
     return (
       <React.Fragment>
         {!this.state.account ? null : <div style={{display: "none"}} id="CasdoorApplicationName" value={this.state.account.signupApplication} />}
@@ -288,7 +288,7 @@ class App extends Component {
               : (
                 Conf.CustomFooter !== null ? Conf.CustomFooter : (
                   <React.Fragment>
-                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+                  Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={logo ?? this.state.logo} /></a>
                   </React.Fragment>
                 )
               )
@@ -362,10 +362,14 @@ class App extends Component {
   renderPage() {
     if (this.isDoorPages()) {
       let themeData = this.state.themeData;
+      let logo = this.state.logo;
       if (this.state.organization === undefined) {
         const curCookie = Cookie.parse(document.cookie);
         if (curCookie["organizationTheme"] && curCookie["organizationTheme"] !== "null") {
           themeData = JSON.parse(curCookie["organizationTheme"]);
+        }
+        if (curCookie["organizationLogo"] && curCookie["organizationLogo"] !== "") {
+          logo = curCookie["organizationLogo"];
         }
       }
 
@@ -410,7 +414,7 @@ class App extends Component {
                 }
               </Content>
               {
-                this.renderFooter()
+                this.renderFooter(logo)
               }
               {
                 this.renderAiAssistant()
