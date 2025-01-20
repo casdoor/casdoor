@@ -145,21 +145,6 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 	return isMicrosoft, err
 }
 
-func generateSSHA(password string) (string, error) {
-	salt := make([]byte, 4)
-	_, err := rand.Read(salt)
-	if err != nil {
-		return "", err
-	}
-
-	combined := append([]byte(password), salt...)
-	hash := sha1.Sum(combined)
-	hashWithSalt := append(hash[:], salt...)
-	encoded := base64.StdEncoding.EncodeToString(hashWithSalt)
-
-	return "{SSHA}" + encoded, nil
-}
-
 func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
@@ -436,7 +421,7 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else {
-			switch ldapServer.PasswordEncryptionType {
+			switch ldapServer.PasswordType {
 			case "SSHA":
 				pwdEncoded, err = generateSSHA(newPassword)
 				break
