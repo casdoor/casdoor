@@ -423,7 +423,7 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			case "SSHA":
 				pwdEncoded, err = generateSSHA(newPassword)
 				break
-			case "Md5":
+			case "MD5":
 				md5Byte := md5.Sum([]byte(newPassword))
 				md5Password := base64.StdEncoding.EncodeToString(md5Byte[:])
 				pwdEncoded = "{MD5}" + md5Password
