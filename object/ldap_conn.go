@@ -15,6 +15,8 @@
 package object
 
 import (
+	"crypto/md5"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"strings"
@@ -417,7 +419,22 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else {
-			pwdEncoded = newPassword
+			switch ldapServer.PasswordType {
+			case "SSHA":
+				pwdEncoded, err = generateSSHA(newPassword)
+				break
+			case "MD5":
+				md5Byte := md5.Sum([]byte(newPassword))
+				md5Password := base64.StdEncoding.EncodeToString(md5Byte[:])
+				pwdEncoded = "{MD5}" + md5Password
+				break
+			case "Plain":
+				pwdEncoded = newPassword
+				break
+			default:
+				pwdEncoded = newPassword
+				break
+			}
 			modifyPasswordRequest.Replace("userPassword", []string{pwdEncoded})
 		}
 
