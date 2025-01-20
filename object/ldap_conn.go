@@ -16,8 +16,6 @@ package object
 
 import (
 	"crypto/md5"
-	"crypto/rand"
-	"crypto/sha1"
 	"encoding/base64"
 	"errors"
 	"fmt"
