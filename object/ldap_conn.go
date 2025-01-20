@@ -375,7 +375,7 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
-func ResetLdapPassword(user *User, newPassword string, lang string) error {
+func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang string) error {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
 		return err
@@ -418,6 +418,15 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			}
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
+		} else if oldPassword != "" {
+			modifyPasswordRequestWithOldPassword := goldap.NewPasswordModifyRequest(userDn, oldPassword, newPassword)
+			_, err = conn.Conn.PasswordModify(modifyPasswordRequestWithOldPassword)
+			if err != nil {
+				conn.Close()
+				return err
+			}
+			conn.Close()
+			return nil
 		} else {
 			switch ldapServer.PasswordType {
 			case "SSHA":
@@ -443,50 +452,6 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			conn.Close()
 			return err
 		}
-		conn.Close()
-	}
-	return nil
-}
-
-func UserResetLdapPassword(user *User, oldPassword string, newPassword string, lang string) error {
-	ldaps, err := GetLdaps(user.Owner)
-	if err != nil {
-		return err
-	}
-
-	for _, ldapServer := range ldaps {
-		conn, err := ldapServer.GetLdapConn()
-		if err != nil {
-			continue
-		}
-
-		searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
-			0, 0, false, ldapServer.buildAuthFilterString(user), []string{}, nil)
-
-		searchResult, err := conn.Conn.Search(searchReq)
-		if err != nil {
-			conn.Close()
-			return err
-		}
-
-		if len(searchResult.Entries) == 0 {
-			conn.Close()
-			continue
-		}
-		if len(searchResult.Entries) > 1 {
-			conn.Close()
-			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
-		}
-
-		userDn := searchResult.Entries[0].DN
-
-		modifyPasswordRequest := goldap.NewPasswordModifyRequest(userDn, oldPassword, newPassword)
-		_, err = conn.Conn.PasswordModify(modifyPasswordRequest)
-		if err != nil {
-			conn.Close()
-			return err
-		}
-
 		conn.Close()
 	}
 	return nil
