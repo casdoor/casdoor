@@ -435,10 +435,15 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
 		} else {
-			pwdEncoded, err = GenerateSSHA(newPassword)
-			if err != nil {
-				conn.Close()
-				return err
+			passwordEncryptionType := conf.GetConfigString("ldapUserPasswordEncryptionType")
+			if passwordEncryptionType == "ssha" {
+				pwdEncoded, err = GenerateSSHA(newPassword)
+				if err != nil {
+					conn.Close()
+					return err
+				}
+			} else {
+				pwdEncoded = newPassword
 			}
 			modifyPasswordRequest.Replace("userPassword", []string{pwdEncoded})
 		}
