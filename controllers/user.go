@@ -574,7 +574,11 @@ func (c *ApiController) SetPassword() {
 	if user.Ldap == "" {
 		_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
 	} else {
-		err = object.ResetLdapPassword(targetUser, newPassword, c.GetAcceptLanguage())
+		if isAdmin {
+			err = object.ResetLdapPassword(targetUser, "", newPassword, c.GetAcceptLanguage())
+		} else {
+			err = object.ResetLdapPassword(targetUser, oldPassword, newPassword, c.GetAcceptLanguage())
+		}
 	}
 
 	if err != nil {

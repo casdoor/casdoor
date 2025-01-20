@@ -375,7 +375,7 @@ func GetExistUuids(owner string, uuids []string) ([]string, error) {
 	return existUuids, nil
 }
 
-func ResetLdapPassword(user *User, newPassword string, lang string) error {
+func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang string) error {
 	ldaps, err := GetLdaps(user.Owner)
 	if err != nil {
 		return err
@@ -418,6 +418,15 @@ func ResetLdapPassword(user *User, newPassword string, lang string) error {
 			}
 			modifyPasswordRequest.Replace("unicodePwd", []string{pwdEncoded})
 			modifyPasswordRequest.Replace("userAccountControl", []string{"512"})
+		} else if oldPassword != "" {
+			modifyPasswordRequestWithOldPassword := goldap.NewPasswordModifyRequest(userDn, oldPassword, newPassword)
+			_, err = conn.Conn.PasswordModify(modifyPasswordRequestWithOldPassword)
+			if err != nil {
+				conn.Close()
+				return err
+			}
+			conn.Close()
+			return nil
 		} else {
 			switch ldapServer.PasswordType {
 			case "SSHA":
