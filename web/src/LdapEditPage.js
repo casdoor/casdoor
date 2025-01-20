@@ -230,6 +230,21 @@ class LdapEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Password encryption"), i18next.t("ldap:Password encryption - Tooltip"))} :
+          </Col>
+          <Col span={21}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.ldap.passwordEncryptionType ?? []} onChange={(value => {
+              this.updateLdapField("passwordEncryptionType", value);
+            })}
+            >
+              <Option key={""} value={""}>{i18next.t("general:Plain")}</Option>
+              <Option key={"SSHA"} value={"SSHA"} >SSHA</Option>
+              <Option key={"Md5"} value={"Md5"} >Md5</Option>
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
           </Col>
           <Col span={21}>
