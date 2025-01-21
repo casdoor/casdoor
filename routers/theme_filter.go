@@ -130,7 +130,5 @@ func setThemeDataCookie(ctx *context.Context, organizationThemeCookie *Organizat
 	ctx.SetCookie("organizationTheme", string(themeDataString))
 	ctx.SetCookie("organizationLogo", organizationThemeCookie.LogoUrl)
 	ctx.SetCookie("organizationFootHtml", organizationThemeCookie.FooterHtml)
-	ctx.SetCookie("organizationFavicon", organizationThemeCookie.Favicon)
-	ctx.SetCookie("organizationDisplayName", organizationThemeCookie.DisplayName)
 	return nil
 }
