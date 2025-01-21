@@ -9,11 +9,11 @@ export function MfaEnableForm({user, mfaType, secret, recoveryCodes, dest, count
     const data = {
       mfaType,
       secret,
-      recoveryCodes,
       dest,
       countryCode,
       ...user,
     };
+    data["recoveryCodes"] = recoveryCodes[0];
     setLoading(true);
     MfaBackend.MfaSetupEnable(data).then(res => {
       if (res.status === "ok") {
