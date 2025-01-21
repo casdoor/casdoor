@@ -37,6 +37,7 @@ import RedirectForm from "../common/RedirectForm";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
+import {EmailMfaType, SmsMfaType, TotpMfaType} from "./MfaSetupPage";
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class LoginPage extends React.Component {
@@ -440,19 +441,12 @@ class LoginPage extends React.Component {
         if (res.status === "ok") {
           if (res.data === NextMfa) {
             this.setState({
-              getVerifyTotp: () => {
-                return (
-                  <MfaAuthVerifyForm
-                    mfaProps={res.data2}
-                    formValues={values}
-                    authParams={casParams}
-                    application={this.getApplicationObj()}
-                    onFail={(errorMessage) => {
-                      Setting.showMessage("error", errorMessage);
-                    }}
-                    onSuccess={(res) => loginHandler(res)}
-                  />);
-              },
+              mfaProps: res.data2,
+              selectedMfaProp: this.getPreferredMfaProp(res.data2),
+            }, () => {
+              this.setState({
+                getVerifyTotp: () => this.renderMfaAuthVerifyForm(values, casParams, loginHandler),
+              });
             });
           } else {
             loginHandler(res);
@@ -513,19 +507,12 @@ class LoginPage extends React.Component {
           if (res.status === "ok") {
             if (res.data === NextMfa) {
               this.setState({
-                getVerifyTotp: () => {
-                  return (
-                    <MfaAuthVerifyForm
-                      mfaProps={res.data2}
-                      formValues={values}
-                      authParams={oAuthParams}
-                      application={this.getApplicationObj()}
-                      onFail={(errorMessage) => {
-                        Setting.showMessage("error", errorMessage);
-                      }}
-                      onSuccess={(res) => loginHandler(res)}
-                    />);
-                },
+                mfaProps: res.data2,
+                selectedMfaProp: this.getPreferredMfaProp(res.data2),
+              }, () => {
+                this.setState({
+                  getVerifyTotp: () => this.renderMfaAuthVerifyForm(values, oAuthParams, loginHandler),
+                });
               });
             } else if (res.data === "SelectPlan") {
               // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
@@ -543,6 +530,49 @@ class LoginPage extends React.Component {
           }
         });
     }
+  }
+
+  renderMfaAuthVerifyForm(values, authParams, onSuccess) {
+    return (
+      <div>
+        <MfaAuthVerifyForm
+          mfaProps={this.state.selectedMfaProp}
+          formValues={values}
+          authParams={authParams}
+          application={this.getApplicationObj()}
+          onFail={(errorMessage) => {
+            Setting.showMessage("error", errorMessage);
+          }}
+          onSuccess={(res) => onSuccess(res)}
+        />
+        <div>
+          {
+            this.state.mfaProps.map((mfa) => {
+              if (this.state.selectedMfaProp.mfaType === mfa.mfaType) {return null;}
+              let mfaI18n = "";
+              switch (mfa.mfaType) {
+              case SmsMfaType: mfaI18n = i18next.t("mfa:Use SMS"); break;
+              case TotpMfaType: mfaI18n = i18next.t("mfa:Use Authenticator App"); break ;
+              case EmailMfaType: mfaI18n = i18next.t("mfa:Use Email") ;break;
+              }
+              return <div key={mfa.mfaType}><Button type={"link"} onClick={() => {
+                this.setState({
+                  selectedMfaProp: mfa,
+                });
+              }}>{mfaI18n}</Button></div>;
+            })
+          }
+        </div>
+      </div>);
+  }
+
+  getPreferredMfaProp(mfaProps) {
+    for (const i in mfaProps) {
+      if (mfaProps[i].isPreffered) {
+        return mfaProps[i];
+      }
+    }
+    return mfaProps[0];
   }
 
   isProviderVisible(providerItem) {
