@@ -88,6 +88,8 @@ func appendThemeCookie(ctx *context.Context, urlPath string) (*OrganizationTheme
 			}
 			return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
 		}
+	} else if strings.HasPrefix(urlPath, "/login/saml") {
+		return nil, nil
 	} else if strings.HasPrefix(urlPath, "/login/") {
 		owner := strings.Replace(urlPath, "/login/", "", -1)
 		if owner != "undefined" && owner != "oauth/undefined" {
