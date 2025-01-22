@@ -151,7 +151,10 @@ func getOrganization(owner string, name string) (*Organization, error) {
 }
 
 func GetOrganization(id string) (*Organization, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getOrganization(owner, name)
 }
 

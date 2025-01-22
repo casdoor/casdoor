@@ -89,6 +89,32 @@ func appendThemeCookie(ctx *context.Context, urlPath string) (*OrganizationTheme
 			return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
 		}
 	} else if strings.HasPrefix(urlPath, "/login/saml") {
+		owner := strings.Replace(urlPath, "/login/saml/authorize", "", -1)
+		application, err := object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
+		if err != nil {
+			return nil, err
+		}
+		organization := application.OrganizationObj
+		if organization == nil {
+			organization, err = object.GetOrganization(fmt.Sprintf("admin/%s", owner))
+			if err != nil {
+				return nil, err
+			}
+		}
+		if organization != nil {
+			organizationThemeCookie := &OrganizationThemeCookie{
+				application.ThemeData,
+				application.Logo,
+				application.FooterHtml,
+				organization.Favicon,
+				organization.DisplayName,
+			}
+
+			if application.ThemeData != nil {
+				organizationThemeCookie.ThemeData = organization.ThemeData
+			}
+			return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
+		}
 		return nil, nil
 	} else if strings.HasPrefix(urlPath, "/login/") {
 		owner := strings.Replace(urlPath, "/login/", "", -1)
