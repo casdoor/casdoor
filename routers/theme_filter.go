@@ -32,94 +32,79 @@ type OrganizationThemeCookie struct {
 }
 
 func appendThemeCookie(ctx *context.Context, urlPath string) (*OrganizationThemeCookie, error) {
+	organizationThemeCookie, err := getOrganizationThemeCookieFromUrlPath(ctx, urlPath)
+	if err != nil {
+		return nil, err
+	}
+	if organizationThemeCookie != nil {
+		return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
+	}
+
+	return nil, nil
+}
+
+func getOrganizationThemeCookieFromUrlPath(ctx *context.Context, urlPath string) (*OrganizationThemeCookie, error) {
+	var application *object.Application
+	var organization *object.Organization
+	var err error
 	if urlPath == "/login" {
-		application, err := object.GetDefaultApplication(fmt.Sprintf("admin/built-in"))
+		application, err = object.GetDefaultApplication(fmt.Sprintf("admin/built-in"))
 		if err != nil {
 			return nil, err
-		}
-		organization := application.OrganizationObj
-		if organization == nil {
-			organization, err = object.GetOrganization(fmt.Sprintf("admin/built-in"))
-			if err != nil {
-				return nil, err
-			}
-		}
-		if organization != nil {
-			organizationThemeCookie := &OrganizationThemeCookie{
-				application.ThemeData,
-				application.Logo,
-				application.FooterHtml,
-				organization.Favicon,
-				organization.DisplayName,
-			}
-
-			if application.ThemeData != nil {
-				organizationThemeCookie.ThemeData = organization.ThemeData
-			}
-			return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
 		}
 	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
 		clientId := ctx.Input.Query("client_id")
 		if clientId == "" {
 			return nil, nil
 		}
-		application, err := object.GetApplicationByClientId(clientId)
+		application, err = object.GetApplicationByClientId(clientId)
 		if err != nil {
 			return nil, err
 		}
-		if application != nil {
-			organization := application.OrganizationObj
-			if organization == nil {
-				organization, err = object.GetOrganization(fmt.Sprintf("admin/%s", application.Owner))
-				if err != nil {
-					return nil, err
-				}
-			}
-			organizationThemeCookie := &OrganizationThemeCookie{
-				application.ThemeData,
-				application.Logo,
-				application.FooterHtml,
-				organization.Favicon,
-				organization.DisplayName,
-			}
-
-			if application.ThemeData != nil {
-				organizationThemeCookie.ThemeData = organization.ThemeData
-			}
-			return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
+	} else if strings.HasPrefix(urlPath, "/login/saml") {
+		owner, _ := strings.CutPrefix(urlPath, "/login/saml/authorize/")
+		application, err = object.GetApplication(owner)
+		if err != nil {
+			return nil, err
 		}
 	} else if strings.HasPrefix(urlPath, "/login/") {
-		owner := strings.Replace(urlPath, "/login/", "", -1)
-		if owner != "undefined" && owner != "oauth/undefined" {
-			application, err := object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
-			if err != nil {
-				return nil, err
-			}
-			organization := application.OrganizationObj
-			if organization == nil {
-				organization, err = object.GetOrganization(fmt.Sprintf("admin/%s", owner))
-				if err != nil {
-					return nil, err
-				}
-			}
-			if organization != nil {
-				organizationThemeCookie := &OrganizationThemeCookie{
-					application.ThemeData,
-					application.Logo,
-					application.FooterHtml,
-					organization.Favicon,
-					organization.DisplayName,
-				}
-
-				if application.ThemeData != nil {
-					organizationThemeCookie.ThemeData = organization.ThemeData
-				}
-				return organizationThemeCookie, setThemeDataCookie(ctx, organizationThemeCookie)
-			}
+		owner, _ := strings.CutPrefix(urlPath, "/login/")
+		if owner == "undefined" || strings.Count(owner, "/") > 0 {
+			return nil, nil
+		}
+		application, err = object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
+		if err != nil {
+			return nil, err
+		}
+	} else if strings.HasPrefix(urlPath, "/cas/") && strings.HasSuffix(urlPath, "/login") {
+		owner, _ := strings.CutPrefix(urlPath, "/cas/")
+		owner, _ = strings.CutSuffix(owner, "/login")
+		application, err = object.GetApplication(owner)
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	return nil, nil
+	if application == nil {
+		return nil, nil
+	}
+	organization = application.OrganizationObj
+	if organization == nil {
+		organization, err = object.GetOrganization(fmt.Sprintf("admin/%s", application.Organization))
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	organizationThemeCookie := &OrganizationThemeCookie{
+		application.ThemeData,
+		application.Logo,
+		application.FooterHtml,
+		organization.Favicon,
+		organization.DisplayName,
+	}
+
+	return organizationThemeCookie, nil
 }
 
 func setThemeDataCookie(ctx *context.Context, organizationThemeCookie *OrganizationThemeCookie) error {
