@@ -481,7 +481,10 @@ func GetApplicationByClientId(clientId string) (*Application, error) {
 }
 
 func GetApplication(id string) (*Application, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getApplication(owner, name)
 }
 
