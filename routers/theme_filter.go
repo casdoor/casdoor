@@ -32,7 +32,6 @@ type OrganizationThemeCookie struct {
 }
 
 func appendThemeCookie(ctx *context.Context, urlPath string) (*OrganizationThemeCookie, error) {
-
 	organizationThemeCookie, err := getOrganizationThemeCookieFromUrlPath(ctx, urlPath)
 	if err != nil {
 		return nil, err
