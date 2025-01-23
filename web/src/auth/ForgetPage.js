@@ -264,6 +264,9 @@ class ForgetPage extends React.Component {
             )
           }
           onValuesChange={(changedValues, allValues) => {
+            if (!changedValues.dest) {
+              return;
+            }
             const verifyType = changedValues.dest?.indexOf("@") === -1 ? "phone" : "email";
             this.setState({
               dest: changedValues.dest,
