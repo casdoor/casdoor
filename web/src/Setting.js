@@ -1614,6 +1614,8 @@ export function checkLoginMfa(res, body, params, handleLogin, componentThis) {
         getVerifyTotp: () => renderMfaAuthVerifyForm(body, params, handleLogin, componentThis),
       });
     });
+  } else {
+    handleLogin(res);
   }
 }
 
