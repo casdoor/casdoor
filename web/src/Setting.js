@@ -1600,9 +1600,13 @@ function getPreferredMfaProp(mfaProps) {
   return mfaProps[0];
 }
 
-export function checkLoginMfa(res, body, params, handleLogin, componentThis) {
+export function checkLoginMfa(res, body, params, handleLogin, componentThis, requireRedirect = null) {
   if (res.data === RequiredMfa) {
-    componentThis.props.onLoginSuccess(window.location.href);
+    if (!requireRedirect) {
+      componentThis.props.onLoginSuccess(window.location.href);
+    } else {
+      componentThis.props.onLoginSuccess(requireRedirect);
+    }
   } else if (res.data === NextMfa) {
     componentThis.setState({
       mfaProps: res.data2,
@@ -1614,6 +1618,14 @@ export function checkLoginMfa(res, body, params, handleLogin, componentThis) {
         getVerifyTotp: () => renderMfaAuthVerifyForm(body, params, handleLogin, componentThis),
       });
     });
+  } else if (res.data === "SelectPlan") {
+    // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
+    const pricing = res.data2;
+    goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${body.username}`);
+  } else if (res.data === "BuyPlanResult") {
+    // paid-user has pending subscription, go to buy-plan/result apge to notify payment result
+    const sub = res.data2;
+    goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
   } else {
     handleLogin(res);
   }

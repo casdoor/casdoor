@@ -361,6 +361,14 @@ class App extends Component {
     }
   };
 
+  onLoginSuccess(redirectUrl) {
+    window.google?.accounts?.id?.cancel();
+    if (redirectUrl) {
+      localStorage.setItem("mfaRedirectUrl", redirectUrl);
+    }
+    this.getAccount();
+  }
+
   renderPage() {
     if (this.isDoorPages()) {
       let themeData = this.state.themeData;
@@ -401,19 +409,13 @@ class App extends Component {
                           application: application,
                         });
                       }}
-                      onLoginSuccess={(redirectUrl) => {
-                        window.google?.accounts?.id?.cancel();
-                        if (redirectUrl) {
-                          localStorage.setItem("mfaRedirectUrl", redirectUrl);
-                        }
-                        this.getAccount();
-                      }}
+                      onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}}
                       onUpdateAccount={(account) => this.onUpdateAccount(account)}
                       updataThemeData={this.setTheme}
                     /> :
                     <Switch>
-                      <Route exact path="/callback" render={(props) => <AuthCallback {...this.props} application={this.state.application} />} />
-                      <Route exact path="/callback/saml" render={(props) => <SamlCallback {...this.props} application={this.state.application} />} />
+                      <Route exact path="/callback" render={(props) => <AuthCallback {...props} {...this.props} application={this.state.application} onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}} />} />
+                      <Route exact path="/callback/saml" render={(props) => <SamlCallback {...props} {...this.props} application={this.state.application} onLoginSuccess={(redirectUrl) => {this.onLoginSuccess(redirectUrl);}} />} />
                       <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                         extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
                     </Switch>

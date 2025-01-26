@@ -132,19 +132,23 @@ class AuthCallback extends React.Component {
       // user is using casdoor as cas sso server, and wants the ticket to be acquired
       AuthBackend.loginCas(body, {"service": casService}).then((res) => {
         if (res.status === "ok") {
-          let msg = "Logged in successfully.";
-          if (casService === "") {
-            // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
-            msg += "Now you can visit apps protected by Casdoor.";
-          }
-          Setting.showMessage("success", msg);
+          const handleCasLogin = (res) => {
+            let msg = "Logged in successfully.";
+            if (casService === "") {
+              // If service was not specified, Casdoor must display a message notifying the client that it has successfully initiated a single sign-on session.
+              msg += "Now you can visit apps protected by Casdoor.";
+            }
+            Setting.showMessage("success", msg);
 
-          if (casService !== "") {
-            const st = res.data;
-            const newUrl = new URL(casService);
-            newUrl.searchParams.append("ticket", st);
-            window.location.href = newUrl.toString();
-          }
+            if (casService !== "") {
+              const st = res.data;
+              const newUrl = new URL(casService);
+              newUrl.searchParams.append("ticket", st);
+              window.location.href = newUrl.toString();
+            }
+          };
+
+          Setting.checkLoginMfa(res, body, {"service": casService}, handleCasLogin, this);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
@@ -211,7 +215,7 @@ class AuthCallback extends React.Component {
             }
           };
 
-          Setting.checkLoginMfa(res, body, oAuthParams, handleLogin, this);
+          Setting.checkLoginMfa(res, body, oAuthParams, handleLogin, this, window.location.origin);
         } else {
           this.setState({
             msg: res.msg,
