@@ -412,8 +412,8 @@ class App extends Component {
                       updataThemeData={this.setTheme}
                     /> :
                     <Switch>
-                      <Route exact path="/callback" component={AuthCallback} />
-                      <Route exact path="/callback/saml" component={SamlCallback} />
+                      <Route exact path="/callback" render={(props) => <AuthCallback {...this.props} application={this.state.application} />} />
+                      <Route exact path="/callback/saml" render={(props) => <SamlCallback {...this.props} application={this.state.application} />} />
                       <Route path="" render={() => <Result status="404" title="404 NOT FOUND" subTitle={i18next.t("general:Sorry, the page you visited does not exist.")}
                         extra={<a href="/"><Button type="primary">{i18next.t("general:Back Home")}</Button></a>} />} />
                     </Switch>

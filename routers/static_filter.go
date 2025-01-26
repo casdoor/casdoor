@@ -133,6 +133,9 @@ func StaticFilter(ctx *context.Context) {
 		path += urlPath
 	}
 
+	// Preventing synchronization problems from concurrency
+	ctx.Input.CruSession = nil
+
 	organizationThemeCookie, err := appendThemeCookie(ctx, urlPath)
 	if err != nil {
 		fmt.Println(err)

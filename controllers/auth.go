@@ -306,6 +306,35 @@ func isProxyProviderType(providerType string) bool {
 	return false
 }
 
+func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
+	if object.IsNeedPromptMfa(organization, user) {
+		// The prompt page needs the user to be srigned in
+		c.SetSessionUsername(user.GetId())
+		c.ResponseOk(object.RequiredMfa)
+		return true
+	}
+
+	if user.IsMfaEnabled() {
+		c.setMfaUserSession(user.GetId())
+		mfaList := object.GetAllMfaProps(user, true)
+		mfaAllowList := []*object.MfaProps{}
+		for _, prop := range mfaList {
+			if prop.MfaType == verificationType || !prop.Enabled {
+				continue
+			}
+			mfaAllowList = append(mfaAllowList, prop)
+		}
+		if len(mfaAllowList) >= 1 {
+			c.SetSession("verificationCodeType", verificationType)
+			c.Ctx.Input.CruSession.SessionRelease(c.Ctx.ResponseWriter)
+			c.ResponseOk(object.NextMfa, mfaAllowList)
+			return true
+		}
+	}
+
+	return true
+}
+
 // Login ...
 // @Title Login
 // @Tag Login API
@@ -523,28 +552,8 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 			}
 
-			if object.IsNeedPromptMfa(organization, user) {
-				// The prompt page needs the user to be signed in
-				c.SetSessionUsername(user.GetId())
-				c.ResponseOk(object.RequiredMfa)
+			if checkMfaEnable(c, user, organization, verificationType) {
 				return
-			}
-
-			if user.IsMfaEnabled() {
-				c.setMfaUserSession(user.GetId())
-				mfaList := object.GetAllMfaProps(user, true)
-				mfaAllowList := []*object.MfaProps{}
-				for _, prop := range mfaList {
-					if prop.MfaType == verificationType || !prop.Enabled {
-						continue
-					}
-					mfaAllowList = append(mfaAllowList, prop)
-				}
-				if len(mfaAllowList) >= 1 {
-					c.SetSession("verificationCodeType", verificationType)
-					c.ResponseOk(object.NextMfa, mfaAllowList)
-					return
-				}
 			}
 
 			resp = c.HandleLoggedIn(application, user, &authForm)
@@ -679,6 +688,11 @@ func (c *ApiController) Login() {
 					c.ResponseError(err.Error())
 					return
 				}
+
+				if checkMfaEnable(c, user, organization, verificationType) {
+					return
+				}
+
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
@@ -914,7 +928,11 @@ func (c *ApiController) Login() {
 		}
 
 		var application *object.Application
-		application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		if authForm.ClientId == "" {
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		} else {
+			application, err = object.GetApplicationByClientId(authForm.ClientId)
+		}
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -942,6 +960,10 @@ func (c *ApiController) Login() {
 			if application == nil {
 				c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 				return
+			}
+
+			if authForm.Provider == "" {
+				authForm.Provider = authForm.ProviderBack
 			}
 
 			user := c.getCurrentUser()
