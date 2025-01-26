@@ -332,7 +332,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 		}
 	}
 
-	return true
+	return false
 }
 
 // Login ...
