@@ -176,6 +176,29 @@ func getUrlPath(urlPath string) string {
 	return urlPath
 }
 
+func checkPermission(ctx *context.Context) (bool, error) {
+	subOwner, subName := getSubject(ctx)
+	method := ctx.Request.Method
+	urlPath := getUrlPath(ctx.Request.URL.Path)
+
+	objOwner, objName := "", ""
+	if urlPath != "/api/get-app-login" && urlPath != "/api/get-resource" {
+		var err error
+		objOwner, objName, err = getObject(ctx)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	if strings.HasPrefix(urlPath, "/api/notify-payment") {
+		urlPath = "/api/notify-payment"
+	}
+
+	isAllowed := authz.IsAllowed(subOwner, subName, method, urlPath, objOwner, objName)
+
+	return isAllowed, nil
+}
+
 func ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
