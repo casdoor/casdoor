@@ -20,6 +20,7 @@ import * as Util from "./Util";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import {authConfig} from "./Auth";
+import {renderLoginPanel} from "../Setting";
 
 class SamlCallback extends React.Component {
   constructor(props) {
@@ -81,13 +82,26 @@ class SamlCallback extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const responseType = this.getResponseType(redirectUri);
-          if (responseType === "login") {
-            Setting.showMessage("success", "Logged in successfully");
-            Setting.goToLink("/");
-          } else if (responseType === "code") {
-            const code = res.data;
-            Setting.goToLink(`${redirectUri}?code=${code}&state=${state}`);
-          }
+          const handleLogin = (res2) => {
+            if (responseType === "login") {
+              Setting.showMessage("success", "Logged in successfully");
+              Setting.goToLink("/");
+            } else if (responseType === "code") {
+              const code = res2.data;
+              Setting.goToLink(`${redirectUri}?code=${code}&state=${state}`);
+            }
+          };
+          Setting.checkLoginMfa(res, body, {
+            clientId: clientId,
+            responseType: responseType,
+            redirectUri: messages[3],
+            state: state,
+            nonce: "",
+            scope: "read",
+            challengeMethod: "",
+            codeChallenge: "",
+            type: "code",
+          }, handleLogin, this);
         } else {
           this.setState({
             msg: res.msg,
@@ -97,6 +111,11 @@ class SamlCallback extends React.Component {
   }
 
   render() {
+    if (this.state.getVerifyTotp !== undefined) {
+      const application = Setting.getApplicationObj(this);
+      return renderLoginPanel(application, this.state.getVerifyTotp, this, window.location.origin);
+    }
+
     return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
         {

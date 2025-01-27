@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Select, Tag, Tooltip, message, theme} from "antd";
+import {Button, Select, Tag, Tooltip, message, theme} from "antd";
 import {QuestionCircleTwoTone} from "@ant-design/icons";
 import {isMobile as isMobileDevice} from "react-device-detect";
 import "./i18n";
@@ -25,6 +25,8 @@ import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
 import moment from "moment";
+import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./auth/mfa/MfaAuthVerifyForm";
+import {EmailMfaType, SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
 
 const {Option} = Select;
 
@@ -1587,4 +1589,115 @@ export function getCurrencyText(product) {
 
 export function isDarkTheme(themeAlgorithm) {
   return themeAlgorithm && themeAlgorithm.includes("dark");
+}
+
+function getPreferredMfaProp(mfaProps) {
+  for (const i in mfaProps) {
+    if (mfaProps[i].isPreffered) {
+      return mfaProps[i];
+    }
+  }
+  return mfaProps[0];
+}
+
+export function checkLoginMfa(res, body, params, handleLogin, componentThis, requireRedirect = null) {
+  if (res.data === RequiredMfa) {
+    if (!requireRedirect) {
+      componentThis.props.onLoginSuccess(window.location.href);
+    } else {
+      componentThis.props.onLoginSuccess(requireRedirect);
+    }
+  } else if (res.data === NextMfa) {
+    componentThis.setState({
+      mfaProps: res.data2,
+      selectedMfaProp: getPreferredMfaProp(res.data2),
+    }, () => {
+      body["providerBack"] = body["provider"];
+      body["provider"] = "";
+      componentThis.setState({
+        getVerifyTotp: () => renderMfaAuthVerifyForm(body, params, handleLogin, componentThis),
+      });
+    });
+  } else if (res.data === "SelectPlan") {
+    // paid-user does not have active or pending subscription, go to application default pricing page to select-plan
+    const pricing = res.data2;
+    goToLink(`/select-plan/${pricing.owner}/${pricing.name}?user=${body.username}`);
+  } else if (res.data === "BuyPlanResult") {
+    // paid-user has pending subscription, go to buy-plan/result apge to notify payment result
+    const sub = res.data2;
+    goToLink(`/buy-plan/${sub.owner}/${sub.pricing}/result?subscription=${sub.name}`);
+  } else {
+    handleLogin(res);
+  }
+}
+
+export function getApplicationObj(componentThis) {
+  return componentThis.props.application;
+}
+
+export function parseOffset(offset) {
+  if (offset === 2 || offset === 4 || inIframe() || isMobile()) {
+    return "0 auto";
+  }
+  if (offset === 1) {
+    return "0 10%";
+  }
+  if (offset === 3) {
+    return "0 60%";
+  }
+}
+
+function renderMfaAuthVerifyForm(values, authParams, onSuccess, componentThis) {
+  return (
+    <div>
+      <MfaAuthVerifyForm
+        mfaProps={componentThis.state.selectedMfaProp}
+        formValues={values}
+        authParams={authParams}
+        application={getApplicationObj(componentThis)}
+        onFail={(errorMessage) => {
+          showMessage("error", errorMessage);
+        }}
+        onSuccess={(res) => onSuccess(res)}
+      />
+      <div>
+        {
+          componentThis.state.mfaProps.map((mfa) => {
+            if (componentThis.state.selectedMfaProp.mfaType === mfa.mfaType) {return null;}
+            let mfaI18n = "";
+            switch (mfa.mfaType) {
+            case SmsMfaType: mfaI18n = i18next.t("mfa:Use SMS"); break;
+            case TotpMfaType: mfaI18n = i18next.t("mfa:Use Authenticator App"); break ;
+            case EmailMfaType: mfaI18n = i18next.t("mfa:Use Email") ;break;
+            }
+            return <div key={mfa.mfaType}><Button type={"link"} onClick={() => {
+              componentThis.setState({
+                selectedMfaProp: mfa,
+              });
+            }}>{mfaI18n}</Button></div>;
+          })
+        }
+      </div>
+    </div>);
+}
+
+export function renderLoginPanel(application, getInnerComponent, componentThis) {
+  return (
+    <div className="login-content" style={{margin: componentThis.props.preview ?? parseOffset(application.formOffset)}}>
+      {inIframe() || isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}
+      {inIframe() || !isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCssMobile}} />}
+      <div className={isDarkTheme(componentThis.props.themeAlgorithm) ? "login-panel-dark" : "login-panel"}>
+        <div className="side-image" style={{display: application.formOffset !== 4 ? "none" : null}}>
+          <div dangerouslySetInnerHTML={{__html: application.formSideHtml}} />
+        </div>
+        <div className="login-form">
+          <div>
+            {
+              getInnerComponent()
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
