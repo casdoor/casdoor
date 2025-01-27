@@ -15,11 +15,13 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 func processArgsToTempFiles(args []string) ([]string, []string, error) {
@@ -57,6 +59,12 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
+	identifier := c.Input().Get("identifier")
+	if err := validateIdentifier(identifier); err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	language := c.Input().Get("language")
 	argString := c.Input().Get("args")
 
@@ -111,4 +119,31 @@ func (c *ApiController) RunCasbinCommand() {
 	output := string(outputBytes)
 	output = strings.TrimSuffix(output, "\n")
 	c.ResponseOk(output)
+}
+
+// validateIdentifier
+// @Title validateIdentifier
+// @Description Validate the request identifier for security purposes
+// @Param identifier string The Base64 encoded identifier string
+// @Return error Returns error if validation fails, nil if successful
+func validateIdentifier(identifier string) error {
+	invalidErr := fmt.Errorf("invalid identifier")
+
+	decoded, err := base64.StdEncoding.DecodeString(identifier)
+	if err != nil {
+		return invalidErr
+	}
+
+	parts := strings.Split(string(decoded), "|")
+	if len(parts) != 2 ||
+		parts[0] != "casbin-editor-v1" {
+		return invalidErr
+	}
+
+	timestamp, err := time.Parse(time.RFC3339, parts[1])
+	if err != nil || time.Since(timestamp) > 5*time.Minute {
+		return invalidErr
+	}
+
+	return nil
 }
