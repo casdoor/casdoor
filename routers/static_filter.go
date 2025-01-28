@@ -80,7 +80,7 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
-	isAllowed, err := checkPermission(ctx)
+	isAllowed, err := object.CheckLoginPermission(userId, application)
 	if err != nil {
 		return "", err
 	}
