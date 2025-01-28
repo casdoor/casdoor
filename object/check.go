@@ -241,6 +241,10 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
 	}
 
+	if password == "" {
+		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
+	}
+
 	passwordType := user.PasswordType
 	if passwordType == "" {
 		passwordType = organization.PasswordType
