@@ -531,8 +531,7 @@ class OrganizationEditPage extends React.Component {
               checkable
               checkedKeys={this.state.organization.navItems ?? ["all"]}
               defaultExpandedKeys={["all"]}
-              onCheck={(checked, obj) => {
-                window.console.log(checked);
+              onCheck={(checked, _) => {
                 this.updateOrganizationField("navItems", checked);
               }}
               treeData={Setting.NavItemNodes}
