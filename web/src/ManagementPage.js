@@ -241,7 +241,7 @@ function ManagementPage(props) {
             <Link to="/">
               <img className="logo" src={logo ?? props.logo} alt="logo" />
             </Link>,
-      disabled: true,
+      disabled: true, key: "logo",
       style: {
         padding: 0,
         height: "auto",
@@ -323,7 +323,35 @@ function ManagementPage(props) {
       }
     }
 
-    return res;
+    const navItems = props.account.organization.navItems;
+
+    if (!Array.isArray(navItems)) {
+      return res;
+    }
+
+    if (navItems.includes("all")) {
+      return res;
+    }
+
+    const resFiltered = res.map(item => {
+      if (!Array.isArray(item.children)) {
+        return item;
+      }
+      const filteredChildren = [];
+      item.children.forEach(itemChild => {
+        if (navItems.includes(itemChild.key)) {
+          filteredChildren.push(itemChild);
+        }
+      });
+
+      item.children = filteredChildren;
+      return item;
+    });
+
+    return resFiltered.filter(item => {
+      if (item.key === "#" || item.key === "logo") {return true;}
+      return Array.isArray(item.children) && item.children.length > 0;
+    });
   }
 
   function renderLoginIfNotLoggedIn(component) {

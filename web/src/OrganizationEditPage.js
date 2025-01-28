@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch, Tree} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -520,6 +520,23 @@ class OrganizationEditPage extends React.Component {
             <Switch checked={this.state.organization.enableTour} onChange={checked => {
               this.updateOrganizationField("enableTour", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Navbar items"), i18next.t("general:Navbar items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Tree
+              checkable
+              checkedKeys={this.state.organization.navItems ?? ["all"]}
+              defaultExpandedKeys={["all"]}
+              onCheck={(checked, obj) => {
+                window.console.log(checked);
+                this.updateOrganizationField("navItems", checked);
+              }}
+              treeData={Setting.NavItemNodes}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
