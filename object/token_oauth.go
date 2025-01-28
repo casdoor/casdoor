@@ -500,7 +500,7 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 // Resource Owner Password Credentials flow
 func GetPasswordToken(application *Application, username string, password string, scope string, host string) (*Token, *TokenError, error) {
 	if username == "" || password == "" {
-		return &TokenError{
+		return nil, &TokenError{
 			Error:            InvalidGrant,
 			ErrorDescription: "username and password fields must not be empty",
 		}, nil
