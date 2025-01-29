@@ -15,11 +15,13 @@
 package controllers
 
 import (
-	"encoding/base64"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
 	"time"
 )
@@ -59,8 +61,7 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @Success 200 {object} controllers.Response The Response object
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
-	identifier := c.Input().Get("identifier")
-	if err := validateIdentifier(identifier); err != nil {
+	if err := validateIdentifier(c); err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
@@ -123,26 +124,54 @@ func (c *ApiController) RunCasbinCommand() {
 
 // validateIdentifier
 // @Title validateIdentifier
-// @Description Validate the request identifier for security purposes
-// @Param identifier string The Base64 encoded identifier string
+// @Description Validate the request hash and timestamp
+// @Param hash string The SHA-256 hash string
 // @Return error Returns error if validation fails, nil if successful
-func validateIdentifier(identifier string) error {
-	invalidErr := fmt.Errorf("invalid identifier")
+func validateIdentifier(c *ApiController) error {
+	language := c.Input().Get("language")
+	args := c.Input().Get("args")
+	hash := c.Input().Get("m")
+	timestamp := c.Input().Get("t")
 
-	decoded, err := base64.StdEncoding.DecodeString(identifier)
+	if hash == "" || timestamp == "" || language == "" || args == "" {
+		return fmt.Errorf("invalid identifier")
+	}
+
+	requestTime, err := time.Parse(time.RFC3339, timestamp)
 	if err != nil {
-		return invalidErr
+		return fmt.Errorf("invalid identifier")
+	}
+	timeDiff := time.Since(requestTime)
+	if timeDiff > 5*time.Minute || timeDiff < -5*time.Minute {
+		return fmt.Errorf("invalid identifier")
 	}
 
-	parts := strings.Split(string(decoded), "|")
-	if len(parts) != 2 ||
-		parts[0] != "casbin-editor-v1" {
-		return invalidErr
+	params := map[string]string{
+		"language": language,
+		"args":     args,
 	}
 
-	timestamp, err := time.Parse(time.RFC3339, parts[1])
-	if err != nil || time.Since(timestamp) > 5*time.Minute {
-		return invalidErr
+	keys := make([]string, 0, len(params))
+	for k := range params {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	var paramParts []string
+	for _, k := range keys {
+		paramParts = append(paramParts, fmt.Sprintf("%s=%s", k, params[k]))
+	}
+	paramString := strings.Join(paramParts, "&")
+
+	version := "casbin-editor-v1"
+	rawString := fmt.Sprintf("%s|%s|%s", version, timestamp, paramString)
+
+	hasher := sha256.New()
+	hasher.Write([]byte(rawString))
+
+	calculatedHash := strings.ToLower(hex.EncodeToString(hasher.Sum(nil)))
+	if calculatedHash != strings.ToLower(hash) {
+		return fmt.Errorf("invalid identifier")
 	}
 
 	return nil
