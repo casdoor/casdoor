@@ -609,6 +609,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Tree
+              disabled={!Setting.isAdminUser(this.props.account)}
               checkable
               checkedKeys={this.state.organization.navItems ?? ["all"]}
               defaultExpandedKeys={["all"]}
