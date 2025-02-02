@@ -965,14 +965,9 @@ func DeleteUser(user *User) (bool, error) {
 		return false, err
 	}
 
-	if len(user.Groups) != 0 {
-		ok, err := userEnforcer.DeleteGroupsForUser(user.GetId())
-		if err != nil {
-			return false, err
-		}
-		if !ok {
-			return false, nil
-		}
+	_, err = userEnforcer.DeleteGroupsForUser(user.GetId())
+	if err != nil {
+		return false, err
 	}
 
 	organization, err := GetOrganizationByUser(user)
