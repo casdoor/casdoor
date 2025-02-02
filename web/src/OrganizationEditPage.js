@@ -26,6 +26,7 @@ import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
 import MfaTable from "./table/MfaTable";
+import {NavItemTree} from "./common/NavItemTree";
 
 const {Option} = Select;
 
@@ -520,6 +521,21 @@ class OrganizationEditPage extends React.Component {
             <Switch checked={this.state.organization.enableTour} onChange={checked => {
               this.updateOrganizationField("enableTour", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Navbar items"), i18next.t("general:Navbar items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <NavItemTree
+              disabled={!Setting.isAdminUser(this.props.account)}
+              checkedKeys={this.state.organization.navItems ?? ["all"]}
+              defaultExpandedKeys={["all"]}
+              onCheck={(checked, _) => {
+                this.updateOrganizationField("navItems", checked);
+              }}
+            />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

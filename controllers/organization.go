@@ -124,7 +124,9 @@ func (c *ApiController) UpdateOrganization() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization))
+	isGlobalAdmin, _ := c.isGlobalAdmin()
+
+	c.Data["json"] = wrapActionResponse(object.UpdateOrganization(id, &organization, isGlobalAdmin))
 	c.ServeJSON()
 }
 
