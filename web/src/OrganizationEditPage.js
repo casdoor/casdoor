@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch, Tree} from "antd";
+import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -26,89 +26,9 @@ import LdapTable from "./table/LdapTable";
 import AccountTable from "./table/AccountTable";
 import ThemeEditor from "./common/theme/ThemeEditor";
 import MfaTable from "./table/MfaTable";
+import {NavItemTree} from "./common/NavItemTree";
 
 const {Option} = Select;
-
-const NavItemNodes = [
-  {
-    title: i18next.t("organization:All"),
-    key: "all",
-    children: [
-      {
-        title: i18next.t("general:Home"),
-        key: "/home-top",
-        children: [
-          {title: i18next.t("general:Dashboard"), key: "/"},
-          {title: i18next.t("general:Shortcuts"), key: "/shortcuts"},
-          {title: i18next.t("general:Apps"), key: "/apps"},
-        ],
-      },
-      {
-        title: i18next.t("general:User Management"),
-        key: "/orgs-top",
-        children: [
-          {title: i18next.t("general:Organizations"), key: "/organizations"},
-          {title: i18next.t("general:Groups"), key: "/groups"},
-          {title: i18next.t("general:Users"), key: "/users"},
-          {title: i18next.t("general:Invitations"), key: "/invitations"},
-        ],
-      },
-      {
-        title: i18next.t("general:Identity"),
-        key: "/applications-top",
-        children: [
-          {title: i18next.t("general:Applications"), key: "/applications"},
-          {title: i18next.t("general:Providers"), key: "/providers"},
-          {title: i18next.t("general:Resources"), key: "/resources"},
-          {title: i18next.t("general:Certs"), key: "/certs"},
-        ],
-      },
-      {
-        title: i18next.t("general:Authorization"),
-        key: "/roles-top",
-        children: [
-          {title: i18next.t("general:Applications"), key: "/roles"},
-          {title: i18next.t("general:Permissions"), key: "/permissions"},
-          {title: i18next.t("general:Models"), key: "/models"},
-          {title: i18next.t("general:Adapters"), key: "/adapters"},
-          {title: i18next.t("general:Enforcers"), key: "/enforcers"},
-        ],
-      },
-      {
-        title: i18next.t("general:Logging & Auditing"),
-        key: "/sessions-top",
-        children: [
-          {title: i18next.t("general:Sessions"), key: "/sessions"},
-          {title: i18next.t("general:Records"), key: "/records"},
-          {title: i18next.t("general:Tokens"), key: "/tokens"},
-          {title: i18next.t("general:Verifications"), key: "/verifications"},
-        ],
-      },
-      {
-        title: i18next.t("general:Business & Payments"),
-        key: "/business-top",
-        children: [
-          {title: i18next.t("general:Products"), key: "/products"},
-          {title: i18next.t("general:Payments"), key: "/payments"},
-          {title: i18next.t("general:Plans"), key: "/plans"},
-          {title: i18next.t("general:Pricings"), key: "/pricings"},
-          {title: i18next.t("general:Subscriptions"), key: "/subscriptions"},
-          {title: i18next.t("general:Transactions"), key: "/transactions"},
-        ],
-      },
-      {
-        title: i18next.t("general:Admin"),
-        key: "/admin-top",
-        children: [
-          {title: i18next.t("general:System Info"), key: "/sysinfo"},
-          {title: i18next.t("general:Syncers"), key: "/syncers"},
-          {title: i18next.t("general:Webhooks"), key: "/webhooks"},
-          {title: i18next.t("general:Swagger"), key: "/swagger"},
-        ],
-      },
-    ],
-  },
-];
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -608,15 +528,13 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Navbar items"), i18next.t("general:Navbar items - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Tree
+            <NavItemTree
               disabled={!Setting.isAdminUser(this.props.account)}
-              checkable
               checkedKeys={this.state.organization.navItems ?? ["all"]}
               defaultExpandedKeys={["all"]}
               onCheck={(checked, _) => {
                 this.updateOrganizationField("navItems", checked);
               }}
-              treeData={NavItemNodes}
             />
           </Col>
         </Row>
