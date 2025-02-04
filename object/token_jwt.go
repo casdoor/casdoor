@@ -311,8 +311,7 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 				if mField.IsValid() {
 					finalField := mField.MapIndex(reflect.ValueOf(fieldName))
 					if finalField.IsValid() {
-						newfield := util.SnakeToCamel(util.CamelToSnakeCase(fieldName))
-						res[newfield] = finalField.Interface()
+						res[fieldName] = finalField.Interface()
 					}
 				}
 			}
