@@ -44,6 +44,7 @@ import KwaiLoginButton from "./KwaiLoginButton";
 import LoginButton from "./LoginButton";
 import * as AuthBackend from "./AuthBackend";
 import {WechatOfficialAccountModal} from "./Util";
+import * as Setting from "../Setting";
 
 function getSigninButton(provider) {
   const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName !== "" ? provider.displayName : provider.type);
@@ -114,10 +115,14 @@ function goToSamlUrl(provider, location) {
 
   const relayState = `${clientId}&${state}&${providerName}&${realRedirectUri}&${redirectUri}`;
   AuthBackend.getSamlLogin(`${provider.owner}/${providerName}`, btoa(relayState)).then((res) => {
-    if (res.data2 === "POST") {
-      document.write(res.data);
+    if (res.status === "ok") {
+      if (res.data2 === "POST") {
+        document.write(res.data);
+      } else {
+        window.location.href = res.data;
+      }
     } else {
-      window.location.href = res.data;
+      Setting.showMessage("error", res.msg);
     }
   });
 }

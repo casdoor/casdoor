@@ -150,6 +150,7 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore
 		}
 	} else if provider.IdP != "" {
 		certEncodedData = provider.IdP
+		certEncodedData = strings.Replace(certEncodedData, " ", "", -1)
 	}
 
 	certData, err := base64.StdEncoding.DecodeString(certEncodedData)
