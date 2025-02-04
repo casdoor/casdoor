@@ -303,10 +303,25 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 	res["scope"] = claims.Scope
 
 	for _, field := range tokenField {
-		userField := userValue.FieldByName(field)
-		if userField.IsValid() {
-			newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
-			res[newfield] = userField.Interface()
+		if strings.HasPrefix(field, "Properties") {
+			parts := strings.Split(field, ".")
+			if len(parts) == 2 {
+				base, fieldName := parts[0], parts[1]
+				mField := userValue.FieldByName(base)
+				if mField.IsValid() {
+					finalField := mField.MapIndex(reflect.ValueOf(fieldName))
+					if finalField.IsValid() {
+						newfield := util.SnakeToCamel(util.CamelToSnakeCase(fieldName))
+						res[newfield] = finalField.Interface()
+					}
+				}
+			}
+		} else {
+			userField := userValue.FieldByName(field)
+			if userField.IsValid() {
+				newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
+				res[newfield] = userField.Interface()
+			}
 		}
 	}
 
