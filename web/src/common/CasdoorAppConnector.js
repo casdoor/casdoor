@@ -27,7 +27,7 @@ export const generateCasdoorAppUrl = (accessToken, forQrCode = true) => {
     return {qrUrl, error};
   }
 
-  qrUrl = `casdoor-app://login?serverUrl=${window.location.origin}&accessToken=${accessToken}`;
+  qrUrl = `casdoor-authenticator://login?serverUrl=${window.location.origin}&accessToken=${accessToken}`;
 
   if (forQrCode && qrUrl.length >= 2000) {
     qrUrl = "";
