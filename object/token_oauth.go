@@ -248,7 +248,10 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 
 	token.CodeIsUsed = true
 
-	go updateUsedByCode(token)
+	_, err = updateUsedByCode(token)
+	if err != nil {
+		return nil, err
+	}
 
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  token.AccessToken,
