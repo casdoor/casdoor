@@ -4,6 +4,8 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -30,6 +32,9 @@ type ReleaseInfo struct {
 	} `json:"assets"`
 }
 
+// @Title getBinaryNames
+// @Description Get binary names for different platforms and architectures
+// @Success 200 {map[string]string} map[string]string "Binary names map"
 func getBinaryNames() map[string]string {
 	arch := runtime.GOARCH
 	var goArch, rustArch string
@@ -71,6 +76,10 @@ func getBinaryNames() map[string]string {
 	}
 }
 
+// @Title getFinalBinaryName
+// @Description Get final binary name for specific language
+// @Param lang string true "Language type (go/java/rust)"
+// @Success 200 {string} string "Final binary name"
 func getFinalBinaryName(lang string) string {
 	switch lang {
 	case "go":
@@ -90,6 +99,11 @@ func getFinalBinaryName(lang string) string {
 	}
 }
 
+// @Title getLatestCLIURL
+// @Description Get latest CLI download URL from GitHub
+// @Param repoURL string true "GitHub repository URL"
+// @Param language string true "Language type"
+// @Success 200 {string} string "Download URL and version"
 func getLatestCLIURL(repoURL string, language string) (string, string, error) {
 	resp, err := http.Get(repoURL)
 	if err != nil {
@@ -117,6 +131,11 @@ func getLatestCLIURL(repoURL string, language string) (string, string, error) {
 	return "", "", fmt.Errorf("no suitable binary found for OS: %s, language: %s", runtime.GOOS, language)
 }
 
+// @Title extractGoCliFile
+// @Description Extract the Go CLI file
+// @Param filePath string true "The file path"
+// @Success 200 {string} string "The extracted file path"
+// @router /extractGoCliFile [post]
 func extractGoCliFile(filePath string) error {
 	tempDir := filepath.Join(downloadFolder, "temp")
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
@@ -159,6 +178,12 @@ func extractGoCliFile(filePath string) error {
 	return os.Remove(filePath)
 }
 
+// @Title unzipFile
+// @Description Unzip the file
+// @Param zipPath string true "The zip file path"
+// @Param destDir string true "The destination directory"
+// @Success 200 {string} string "The extracted file path"
+// @router /unzipFile [post]
 func unzipFile(zipPath, destDir string) error {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
@@ -199,6 +224,12 @@ func unzipFile(zipPath, destDir string) error {
 	return nil
 }
 
+// @Title untarFile
+// @Description Untar the file
+// @Param tarPath string true "The tar file path"
+// @Param destDir string true "The destination directory"
+// @Success 200 {string} string "The extracted file path"
+// @router /untarFile [post]
 func untarFile(tarPath, destDir string) error {
 	file, err := os.Open(tarPath)
 	if err != nil {
@@ -245,6 +276,11 @@ func untarFile(tarPath, destDir string) error {
 	return nil
 }
 
+// @Title createJavaCliWrapper
+// @Description Create the Java CLI wrapper
+// @Param binPath string true "The binary path"
+// @Success 200 {string} string "The created file path"
+// @router /createJavaCliWrapper [post]
 func createJavaCliWrapper(binPath string) error {
 	if runtime.GOOS == "windows" {
 		// Create a Windows CMD file
@@ -254,7 +290,7 @@ java -jar "%s\casbin-java-cli.jar" %%*`, binPath)
 
 		err := os.WriteFile(cmdPath, []byte(cmdContent), 0755)
 		if err != nil {
-			return fmt.Errorf("创建 Java CLI wrapper 失败: %v", err)
+			return fmt.Errorf("failed to create Java CLI wrapper: %v", err)
 		}
 	} else {
 		// Create Unix shell script
@@ -264,31 +300,31 @@ java -jar "%s/casbin-java-cli.jar" "$@"`, binPath)
 
 		err := os.WriteFile(shPath, []byte(shContent), 0755)
 		if err != nil {
-			return fmt.Errorf("创建 Java CLI wrapper 失败: %v", err)
+			return fmt.Errorf("failed to create Java CLI wrapper: %v", err)
 		}
 	}
 	return nil
 }
 
+// @Title downloadCLI
+// @Description Download and setup CLI tools
+// @Success 200 {error} error "Error if any"
 func downloadCLI() error {
-	// 获取系统 PATH 环境变量
 	pathEnv := os.Getenv("PATH")
 	binPath, err := filepath.Abs(downloadFolder)
 	if err != nil {
-		return fmt.Errorf("获取下载目录绝对路径失败: %v", err)
+		return fmt.Errorf("failed to get absolute path to download directory: %v", err)
 	}
 
-	// 检查 bin 目录是否在 PATH 中
 	if !strings.Contains(pathEnv, binPath) {
-		// 将 bin 目录添加到 PATH
 		newPath := fmt.Sprintf("%s%s%s", binPath, string(os.PathListSeparator), pathEnv)
 		if err := os.Setenv("PATH", newPath); err != nil {
-			return fmt.Errorf("更新 PATH 环境变量失败: %v", err)
+			return fmt.Errorf("failed to update PATH environment variable: %v", err)
 		}
 	}
 
 	if err := os.MkdirAll(downloadFolder, 0755); err != nil {
-		return fmt.Errorf("创建下载目录失败: %v", err)
+		return fmt.Errorf("failed to create download directory: %v", err)
 	}
 
 	repos := map[string]string{
@@ -300,16 +336,16 @@ func downloadCLI() error {
 	for lang, repo := range repos {
 		cliURL, version, err := getLatestCLIURL(repo, lang)
 		if err != nil {
-			fmt.Printf("获取 %s CLI URL 失败: %v\n", lang, err)
+			fmt.Printf("failed to get %s CLI URL: %v\n", lang, err)
 			continue
 		}
 
 		originalPath := filepath.Join(downloadFolder, getBinaryNames()[lang])
-		fmt.Printf("正在下载 %s CLI: %s\n", lang, cliURL)
+		fmt.Printf("downloading %s CLI: %s\n", lang, cliURL)
 
 		resp, err := http.Get(cliURL)
 		if err != nil {
-			fmt.Printf("下载 %s CLI 失败: %v\n", lang, err)
+			fmt.Printf("failed to download %s CLI: %v\n", lang, err)
 			continue
 		}
 
@@ -317,45 +353,43 @@ func downloadCLI() error {
 			defer resp.Body.Close()
 			out, err := os.Create(originalPath)
 			if err != nil {
-				fmt.Printf("创建 %s CLI 文件失败: %v\n", lang, err)
+				fmt.Printf("failed to create %s CLI file: %v\n", lang, err)
 				return
 			}
 			defer out.Close()
 
 			if _, err = io.Copy(out, resp.Body); err != nil {
-				fmt.Printf("保存 %s CLI 失败: %v\n", lang, err)
+				fmt.Printf("failed to save %s CLI: %v\n", lang, err)
 				return
 			}
 		}()
 
 		if lang == "go" {
 			if err := extractGoCliFile(originalPath); err != nil {
-				fmt.Printf("解压 Go CLI 失败: %v\n", err)
+				fmt.Printf("failed to extract Go CLI: %v\n", err)
 				continue
 			}
 		} else {
 			finalPath := filepath.Join(downloadFolder, getFinalBinaryName(lang))
 			if err := os.Rename(originalPath, finalPath); err != nil {
-				fmt.Printf("重命名 %s CLI 失败: %v\n", lang, err)
+				fmt.Printf("failed to rename %s CLI: %v\n", lang, err)
 				continue
 			}
 		}
 
-		// 设置可执行权限
 		if runtime.GOOS != "windows" {
 			execPath := filepath.Join(downloadFolder, getFinalBinaryName(lang))
 			if err := os.Chmod(execPath, 0755); err != nil {
-				fmt.Printf("设置 %s CLI 执行权限失败: %v\n", lang, err)
+				fmt.Printf("failed to set %s CLI execution permission: %v\n", lang, err)
 				continue
 			}
 		}
 
-		fmt.Printf("下载 %s CLI 版本: %s\n", lang, version)
+		fmt.Printf("downloaded %s CLI version: %s\n", lang, version)
 
 		if lang == "java" {
-			// 为 Java CLI 创建包装脚本
 			if err := createJavaCliWrapper(binPath); err != nil {
-				fmt.Printf("创建 Java CLI wrapper 失败: %v\n", err)
+				fmt.Printf("failed to create Java CLI wrapper: %v\n", err)
 				continue
 			}
 		}
@@ -364,15 +398,60 @@ func downloadCLI() error {
 	return nil
 }
 
-func RefreshCLIHandler(w http.ResponseWriter, r *http.Request) {
-	err := downloadCLI()
-	if err != nil {
-		http.Error(w, "Failed to refresh CLI: "+err.Error(), http.StatusInternalServerError)
+// @Title RefreshEngines
+// @Tag CLI API
+// @Description Refresh all CLI engines
+// @Param m query string true "Hash for request validation"
+// @Param t query string true "Timestamp for request validation"
+// @Success 200 {object} controllers.Response The Response object
+// @router /refresh-engines [post]
+func (c *ApiController) RefreshEngines() {
+	hash := c.Input().Get("m")
+	timestamp := c.Input().Get("t")
+
+	if hash == "" || timestamp == "" {
+		c.ResponseError("invalid identifier")
 		return
 	}
-	fmt.Fprintln(w, "CLI updated successfully")
+
+	requestTime, err := time.Parse(time.RFC3339, timestamp)
+	if err != nil {
+		c.ResponseError("invalid identifier")
+		return
+	}
+
+	timeDiff := time.Since(requestTime)
+	if timeDiff > 5*time.Minute || timeDiff < -5*time.Minute {
+		c.ResponseError("invalid identifier")
+		return
+	}
+
+	version := "casbin-editor-v1"
+	rawString := fmt.Sprintf("%s|%s", version, timestamp)
+
+	hasher := sha256.New()
+	hasher.Write([]byte(rawString))
+	calculatedHash := strings.ToLower(hex.EncodeToString(hasher.Sum(nil)))
+
+	if calculatedHash != strings.ToLower(hash) {
+		c.ResponseError("invalid identifier")
+		return
+	}
+
+	err = downloadCLI()
+	if err != nil {
+		c.ResponseError(fmt.Sprintf("failed to refresh engines: %v", err))
+		return
+	}
+
+	c.ResponseOk(map[string]string{
+		"status":  "success",
+		"message": "CLI engines updated successfully",
+	})
 }
 
+// @Title ScheduleCLIUpdater
+// @Description Start periodic CLI update scheduler
 func ScheduleCLIUpdater() {
 	ticker := time.NewTicker(1 * time.Hour)
 	defer ticker.Stop()
@@ -380,22 +459,28 @@ func ScheduleCLIUpdater() {
 	for range ticker.C {
 		err := downloadCLI()
 		if err != nil {
-			fmt.Println("Failed to update CLI:", err)
+			fmt.Printf("failed to update CLI: %v\n", err)
+		} else {
+			fmt.Println("CLI updated successfully")
 		}
 	}
 }
 
+// @Title DownloadCLI
+// @Description Download the CLI
+// @Success 200 {string} string "The downloaded file path"
+// @router /downloadCLI [post]
 func DownloadCLI() error {
 	return downloadCLI()
 }
 
+// @Title InitCLIDownloader
+// @Description Initialize CLI downloader and start update scheduler
 func InitCLIDownloader() {
-	// 确保在程序启动时下载并设置 PATH
 	err := DownloadCLI()
 	if err != nil {
-		fmt.Printf("初始 CLI 下载失败: %v\n", err)
+		fmt.Printf("failed to initialize CLI downloader: %v\n", err)
 	}
 
-	// 启动定时更新任务
 	go ScheduleCLIUpdater()
 }
