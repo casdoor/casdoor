@@ -36,40 +36,41 @@ type ReleaseInfo struct {
 // @Description Get binary names for different platforms and architectures
 // @Success 200 {map[string]string} map[string]string "Binary names map"
 func getBinaryNames() map[string]string {
-	arch := runtime.GOARCH
-	var goArch, rustArch string
+	const (
+		golang   = "go"
+		java = "java"
+		rust = "rust"
+	)
 
-	switch arch {
-	case "amd64":
-		goArch = "x86_64"
-		rustArch = "x86_64"
-	case "arm64":
-		goArch = "arm64"
-		rustArch = "aarch64"
-	default:
-		goArch = arch
-		rustArch = arch
+	arch := runtime.GOARCH
+	archMap := map[string]struct{ goArch, rustArch string }{
+		"amd64": {"x86_64", "x86_64"},
+		"arm64": {"arm64", "aarch64"},
+	}
+
+	archNames, ok := archMap[arch]
+	if !ok {
+		archNames = struct{ goArch, rustArch string }{arch, arch}
 	}
 
 	switch runtime.GOOS {
 	case "windows":
 		return map[string]string{
-			"go":   fmt.Sprintf("casbin-go-cli_Windows_%s.zip", goArch),
-			"java": "casbin-java-cli.jar",
-			"rust": fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", rustArch),
+			golang:   fmt.Sprintf("casbin-go-cli_Windows_%s.zip", archNames.goArch),
+			java: "casbin-java-cli.jar",
+			rust: fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", archNames.rustArch),
 		}
 	case "darwin":
-		result := map[string]string{
-			"go":   fmt.Sprintf("casbin-go-cli_Darwin_%s.tar.gz", goArch),
-			"java": "casbin-java-cli.jar",
-			"rust": fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", rustArch),
+		return map[string]string{
+			golang:   fmt.Sprintf("casbin-go-cli_Darwin_%s.tar.gz", archNames.goArch),
+			java: "casbin-java-cli.jar",
+			rust: fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", archNames.rustArch),
 		}
-		return result
 	case "linux":
 		return map[string]string{
-			"go":   fmt.Sprintf("casbin-go-cli_Linux_%s.tar.gz", goArch),
-			"java": "casbin-java-cli.jar",
-			"rust": fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", rustArch),
+			golang:   fmt.Sprintf("casbin-go-cli_Linux_%s.tar.gz", archNames.goArch),
+			java: "casbin-java-cli.jar",
+			rust: fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", archNames.rustArch),
 		}
 	default:
 		return nil
