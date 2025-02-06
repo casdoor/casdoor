@@ -37,9 +37,9 @@ type ReleaseInfo struct {
 // @Success 200 {map[string]string} map[string]string "Binary names map"
 func getBinaryNames() map[string]string {
 	const (
-		golang   = "go"
-		java = "java"
-		rust = "rust"
+		golang = "go"
+		java   = "java"
+		rust   = "rust"
 	)
 
 	arch := runtime.GOARCH
@@ -56,21 +56,21 @@ func getBinaryNames() map[string]string {
 	switch runtime.GOOS {
 	case "windows":
 		return map[string]string{
-			golang:   fmt.Sprintf("casbin-go-cli_Windows_%s.zip", archNames.goArch),
-			java: "casbin-java-cli.jar",
-			rust: fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", archNames.rustArch),
+			golang: fmt.Sprintf("casbin-go-cli_Windows_%s.zip", archNames.goArch),
+			java:   "casbin-java-cli.jar",
+			rust:   fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", archNames.rustArch),
 		}
 	case "darwin":
 		return map[string]string{
-			golang:   fmt.Sprintf("casbin-go-cli_Darwin_%s.tar.gz", archNames.goArch),
-			java: "casbin-java-cli.jar",
-			rust: fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", archNames.rustArch),
+			golang: fmt.Sprintf("casbin-go-cli_Darwin_%s.tar.gz", archNames.goArch),
+			java:   "casbin-java-cli.jar",
+			rust:   fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", archNames.rustArch),
 		}
 	case "linux":
 		return map[string]string{
-			golang:   fmt.Sprintf("casbin-go-cli_Linux_%s.tar.gz", archNames.goArch),
-			java: "casbin-java-cli.jar",
-			rust: fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", archNames.rustArch),
+			golang: fmt.Sprintf("casbin-go-cli_Linux_%s.tar.gz", archNames.goArch),
+			java:   "casbin-java-cli.jar",
+			rust:   fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", archNames.rustArch),
 		}
 	default:
 		return nil
