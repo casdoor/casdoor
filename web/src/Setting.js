@@ -1398,7 +1398,13 @@ export function getTag(color, text, icon) {
 }
 
 export function getApplicationName(application) {
-  return `${application?.owner}/${application?.name}`;
+  let name = `${application?.owner}/${application?.name}`;
+
+  if (application?.isShared && application?.organization) {
+    name += `-org-${application.organization}`;
+  }
+
+  return name;
 }
 
 export function getApplicationDisplayName(application) {
