@@ -44,7 +44,17 @@ func ParseInt(s string) int {
 
 	return i
 }
-
+func ParseIntArray(s string) []int {
+	if s == "" {
+		return []int{0}
+	}
+	parts := strings.Split(s, ",") // 按逗号拆分字符串
+	intArray := make([]int, len(parts))
+	for i, part := range parts {
+		intArray[i] = ParseInt(part)
+	}
+	return intArray
+}
 func ParseIntWithError(s string) (int, error) {
 	if s == "" {
 		return 0, fmt.Errorf("ParseIntWithError() error, empty string")

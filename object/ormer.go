@@ -93,7 +93,11 @@ func InitAdapter() {
 	}
 
 	var err error
-	ormer, err = NewAdapter(conf.GetConfigString("driverName"), conf.GetConfigDataSourceName(), conf.GetConfigString("dbName"))
+	ormer, err = NewAdapter(conf.GetConfigString("driverName"),
+		conf.GetConfigDataSourceName(),
+		conf.GetConfigSlaveDataSourceName(),
+		conf.GetConfigString("dbName"),
+		conf.GetConfigString("driverPolicy"))
 	if err != nil {
 		panic(err)
 	}
@@ -141,10 +145,12 @@ func finalizer(a *Ormer) {
 }
 
 // NewAdapter is the constructor for Ormer.
-func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer, error) {
+func NewAdapter(driverName string, dataSourceName string, slaveDataSourceNames []string, dbName string, driverPolicy string) (*Ormer, error) {
 	a := &Ormer{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
+	a.slaveDataSourceNames = slaveDataSourceNames
+	a.driverPolicy = driverPolicy
 	a.dbName = dbName
 
 	// Open the DB, create it if not existed.
@@ -160,10 +166,16 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer
 }
 
 // NewAdapterFromdb is the constructor for Ormer.
-func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, db *sql.DB) (*Ormer, error) {
+func NewAdapterFromDb(driverName string, dataSourceName string, slaveDataSourceNames []string, dbName string, driverPolicy string, db *sql.DB) (*Ormer, error) {
 	a := &Ormer{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
+	if slaveDataSourceNames == nil {
+		a.slaveDataSourceNames = []string{}
+	} else {
+		a.slaveDataSourceNames = slaveDataSourceNames
+	}
+	a.driverPolicy = driverPolicy
 	a.dbName = dbName
 	a.Db = db
 
@@ -253,6 +265,8 @@ func (a *Ormer) open() error {
 	if err != nil {
 		return err
 	}
+	// set engine driverPolicy
+	engineGroup.SetPolicy(xorm.RandomPolicy())
 	a.Engine = engineGroup
 	return nil
 }
@@ -317,6 +331,36 @@ func (a *Ormer) createEngine(driverName string, dataSourceName string, dbName st
 	return engine, nil
 }
 
+func (a *Ormer) setPolicy(driverPolicy string) error {
+	if driverPolicy == "" {
+		a.Engine.SetPolicy(xorm.RandomPolicy())
+		return nil
+	}
+	weight := conf.GetConfigString("driverPolicyWeight")
+	switch driverPolicy {
+	case "random":
+		a.Engine.SetPolicy(xorm.RandomPolicy())
+	case "weightRandom":
+		if weight == "" {
+			return fmt.Errorf("error: policy weight must be a non-empty string")
+		}
+		weightArray := util.ParseIntArray(weight)
+		a.Engine.SetPolicy(xorm.WeightRandomPolicy(weightArray))
+	case "roundRobin":
+		a.Engine.SetPolicy(xorm.RoundRobinPolicy())
+	case "weightRoundRobin":
+		if weight == "" {
+			return fmt.Errorf("error: policy weight must be a non-empty string")
+		}
+		weightArray := util.ParseIntArray(weight)
+		a.Engine.SetPolicy(xorm.WeightRoundRobinPolicy(weightArray))
+	case "LeastConn":
+		a.Engine.SetPolicy(xorm.LeastConnPolicy())
+	default:
+		a.Engine.SetPolicy(xorm.RandomPolicy())
+	}
+	return nil
+}
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
 	a.Engine = nil

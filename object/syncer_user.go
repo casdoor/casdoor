@@ -187,9 +187,9 @@ func (syncer *Syncer) initAdapter() error {
 	}
 
 	if db != nil {
-		syncer.Ormer, err = NewAdapterFromDb(syncer.DatabaseType, dataSourceName, syncer.Database, db)
+		syncer.Ormer, err = NewAdapterFromDb(syncer.DatabaseType, dataSourceName, nil, syncer.Database, "", db)
 	} else {
-		syncer.Ormer, err = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
+		syncer.Ormer, err = NewAdapter(syncer.DatabaseType, dataSourceName, nil, syncer.Database, "")
 	}
 
 	return err
