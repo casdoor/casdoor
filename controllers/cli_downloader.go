@@ -139,7 +139,7 @@ func getLatestCLIURL(repoURL string, language string) (string, string, error) {
 // @router /extractGoCliFile [post]
 func extractGoCliFile(filePath string) error {
 	tempDir := filepath.Join(downloadFolder, "temp")
-	if err := os.MkdirAll(tempDir, 0755); err != nil {
+	if err := os.MkdirAll(tempDir, 0o755); err != nil {
 		return err
 	}
 	defer os.RemoveAll(tempDir)
@@ -259,7 +259,7 @@ func untarFile(tarPath, destDir string) error {
 
 		switch header.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path, 0755); err != nil {
+			if err := os.MkdirAll(path, 0o755); err != nil {
 				return err
 			}
 		case tar.TypeReg:
@@ -289,7 +289,7 @@ func createJavaCliWrapper(binPath string) error {
 		cmdContent := fmt.Sprintf(`@echo off
 java -jar "%s\casbin-java-cli.jar" %%*`, binPath)
 
-		err := os.WriteFile(cmdPath, []byte(cmdContent), 0755)
+		err := os.WriteFile(cmdPath, []byte(cmdContent), 0o755)
 		if err != nil {
 			return fmt.Errorf("failed to create Java CLI wrapper: %v", err)
 		}
@@ -299,7 +299,7 @@ java -jar "%s\casbin-java-cli.jar" %%*`, binPath)
 		shContent := fmt.Sprintf(`#!/bin/sh
 java -jar "%s/casbin-java-cli.jar" "$@"`, binPath)
 
-		err := os.WriteFile(shPath, []byte(shContent), 0755)
+		err := os.WriteFile(shPath, []byte(shContent), 0o755)
 		if err != nil {
 			return fmt.Errorf("failed to create Java CLI wrapper: %v", err)
 		}
@@ -324,7 +324,7 @@ func downloadCLI() error {
 		}
 	}
 
-	if err := os.MkdirAll(downloadFolder, 0755); err != nil {
+	if err := os.MkdirAll(downloadFolder, 0o755); err != nil {
 		return fmt.Errorf("failed to create download directory: %v", err)
 	}
 
@@ -380,7 +380,7 @@ func downloadCLI() error {
 
 		if runtime.GOOS != "windows" {
 			execPath := filepath.Join(downloadFolder, getFinalBinaryName(lang))
-			if err := os.Chmod(execPath, 0755); err != nil {
+			if err := os.Chmod(execPath, 0o755); err != nil {
 				fmt.Printf("failed to set %s CLI execution permission: %v\n", lang, err)
 				continue
 			}
