@@ -467,6 +467,39 @@ class ProviderEditPage extends React.Component {
     this.updateProviderField("issuerUrl", issuerUrl);
   }
 
+  fetchSamlMetadata() {
+    this.setState({
+      metadataLoading: true,
+    });
+    fetch(this.state.requestUrl, {
+      method: "GET",
+    }).then(res => {
+      if (!res.ok) {
+        return Promise.reject("error");
+      }
+      return res.text();
+    }).then(text => {
+      this.updateProviderField("metadata", text);
+      this.parseSamlMetadata();
+      Setting.showMessage("success", i18next.t("general:Successfully added"));
+    }).catch(err => {
+      Setting.showMessage("error", err.message);
+    }).finally(() => {
+      this.setState({
+        metadataLoading: false,
+      });
+    });
+  }
+
+  parseSamlMetadata() {
+    try {
+      this.loadSamlConfiguration();
+      Setting.showMessage("success", i18next.t("provider:Parse metadata successfully"));
+    } catch (err) {
+      Setting.showMessage("error", i18next.t("provider:Can not parse metadata"));
+    }
+  }
+
   renderProvider() {
     return (
       <Card size="small" title={
@@ -1244,6 +1277,21 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Metadata url"), i18next.t("provider:Metadata url - Tooltip"))} :
+                </Col>
+                <Col span={6} >
+                  <Input value={this.state.requestUrl} onChange={e => {
+                    this.setState({
+                      requestUrl: e.target.value,
+                    });
+                  }} />
+                </Col>
+                <Col span={16} >
+                  <Button type="primary" loading={this.state.metadataLoading} onClick={() => {this.fetchSamlMetadata();}}>{i18next.t("general:Request")}</Button>
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:Metadata"), i18next.t("provider:Metadata - Tooltip"))} :
                 </Col>
                 <Col span={22}>
@@ -1255,14 +1303,7 @@ class ProviderEditPage extends React.Component {
               <Row style={{marginTop: "20px"}}>
                 <Col style={{marginTop: "5px"}} span={2} />
                 <Col span={2}>
-                  <Button type="primary" onClick={() => {
-                    try {
-                      this.loadSamlConfiguration();
-                      Setting.showMessage("success", i18next.t("provider:Parse metadata successfully"));
-                    } catch (err) {
-                      Setting.showMessage("error", i18next.t("provider:Can not parse metadata"));
-                    }
-                  }}>
+                  <Button type="primary" onClick={() => {this.parseSamlMetadata();}}>
                     {i18next.t("provider:Parse")}
                   </Button>
                 </Col>
