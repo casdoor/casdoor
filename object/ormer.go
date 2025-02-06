@@ -116,11 +116,13 @@ func CreateTables() {
 
 // Ormer represents the MySQL adapter for policy storage.
 type Ormer struct {
-	driverName     string
-	dataSourceName string
-	dbName         string
-	Db             *sql.DB
-	Engine         *xorm.Engine
+	driverName           string
+	dataSourceName       string
+	slaveDataSourceNames []string
+	driverPolicy         string
+	dbName               string
+	Db                   *sql.DB
+	Engine               *xorm.EngineGroup
 }
 
 // finalizer is the destructor for Ormer.
@@ -234,49 +236,85 @@ func (a *Ormer) CreateDatabase() error {
 }
 
 func (a *Ormer) open() error {
-	dataSourceName := a.dataSourceName + a.dbName
-	if a.driverName != "mysql" {
-		dataSourceName = a.dataSourceName
-	}
-
-	engine, err := xorm.NewEngine(a.driverName, dataSourceName)
+	engine, err := a.createEngine(a.driverName, a.dataSourceName, a.dbName)
 	if err != nil {
 		return err
 	}
 
-	if a.driverName == "postgres" {
-		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
-		if schema != "" {
-			engine.SetSchema(schema)
+	slaves := make([]*xorm.Engine, 0)
+	for _, slaveDataSourceName := range a.slaveDataSourceNames {
+		slaveEngine, err := a.createEngine(a.driverName, slaveDataSourceName, a.dbName)
+		if err != nil {
+			return err
 		}
+		slaves = append(slaves, slaveEngine)
 	}
-
-	a.Engine = engine
+	engineGroup, err := xorm.NewEngineGroup(engine, slaves)
+	if err != nil {
+		return err
+	}
+	a.Engine = engineGroup
 	return nil
 }
 
 func (a *Ormer) openFromDb(db *sql.DB) error {
-	dataSourceName := a.dataSourceName + a.dbName
-	if a.driverName != "mysql" {
-		dataSourceName = a.dataSourceName
-	}
-
-	xormDb := core.FromDB(db)
-
-	engine, err := xorm.NewEngineWithDB(a.driverName, dataSourceName, xormDb)
+	engine, err := a.createEngineWithDB(a.driverName, a.dataSourceName, a.dbName, db)
 	if err != nil {
 		return err
 	}
 
-	if a.driverName == "postgres" {
+	slaves := make([]*xorm.Engine, 0)
+	for _, slaveDataSourceName := range a.slaveDataSourceNames {
+		slaveEngine, err := a.createEngineWithDB(a.driverName, slaveDataSourceName, a.dbName, db)
+		if err != nil {
+			return err
+		}
+		slaves = append(slaves, slaveEngine)
+	}
+	engineGroup, err := xorm.NewEngineGroup(engine, slaves)
+	if err != nil {
+		return err
+	}
+	a.Engine = engineGroup
+
+	return nil
+}
+
+func (a *Ormer) createEngineWithDB(driverName string, dataSourceName string, dbName string, db *sql.DB) (*xorm.Engine, error) {
+	if driverName == "mysql" {
+		dataSourceName += dbName
+	}
+	xormDb := core.FromDB(db)
+	engine, err := xorm.NewEngineWithDB(driverName, dataSourceName, xormDb)
+	if err != nil {
+		return nil, err
+	}
+
+	if driverName == "postgres" {
 		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
 		if schema != "" {
 			engine.SetSchema(schema)
 		}
 	}
+	return engine, nil
+}
 
-	a.Engine = engine
-	return nil
+func (a *Ormer) createEngine(driverName string, dataSourceName string, dbName string) (*xorm.Engine, error) {
+	if driverName == "mysql" {
+		dataSourceName += dbName
+	}
+	engine, err := xorm.NewEngine(driverName, dataSourceName)
+	if err != nil {
+		return nil, err
+	}
+
+	if driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
+	}
+	return engine, nil
 }
 
 func (a *Ormer) close() {

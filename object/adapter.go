@@ -18,9 +18,9 @@ import (
 	"fmt"
 	"strings"
 
+	xormadapter "github.com/casdoor/casdoor/adapter"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
-	xormadapter "github.com/casdoor/xorm-adapter/v3"
 	"github.com/xorm-io/core"
 	"github.com/xorm-io/xorm"
 )
@@ -146,9 +146,11 @@ func (adapter *Adapter) InitAdapter() error {
 
 	var driverName string
 	var dataSourceName string
+	var slaveDataSourceNames []string
 	if adapter.UseSameDb || adapter.isBuiltIn() {
 		driverName = conf.GetConfigString("driverName")
 		dataSourceName = conf.GetConfigString("dataSourceName")
+		slaveDataSourceNames = conf.GetConfigArray("slaveDataSourceName")
 		if conf.GetConfigString("driverName") == "mysql" {
 			dataSourceName = dataSourceName + conf.GetConfigString("dbName")
 		}
@@ -183,6 +185,27 @@ func (adapter *Adapter) InitAdapter() error {
 	if err != nil {
 		return err
 	}
+	slaves := make([]*xorm.Engine, 0)
+	for _, slaveDataSourceName := range slaveDataSourceNames {
+		if conf.GetConfigString("driverName") == "mysql" {
+			slaveDataSourceName += conf.GetConfigString("dbName")
+		}
+		if !isCloudIntranet {
+			slaveDataSourceName = strings.ReplaceAll(slaveDataSourceName, "dbi.", "db.")
+		}
+		slaveDataSourceName = conf.ReplaceDataSourceNameByDocker(slaveDataSourceName)
+		slaveEngine, err := xorm.NewEngine(driverName, slaveDataSourceName)
+		if err != nil {
+			return err
+		}
+		if (adapter.UseSameDb || adapter.isBuiltIn()) && driverName == "postgres" {
+			schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
+			if schema != "" {
+				slaveEngine.SetSchema(schema)
+			}
+		}
+		slaves = append(slaves, slaveEngine)
+	}
 
 	if (adapter.UseSameDb || adapter.isBuiltIn()) && driverName == "postgres" {
 		schema := util.GetValueFromDataSourceName("search_path", dataSourceName)
@@ -197,8 +220,8 @@ func (adapter *Adapter) InitAdapter() error {
 	} else {
 		tableName = adapter.Table
 	}
-
-	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
+	engineGroup, err := xorm.NewEngineGroup(engine, slaves)
+	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engineGroup, tableName, "")
 	if err != nil {
 		return err
 	}

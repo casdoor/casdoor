@@ -22,9 +22,9 @@ import (
 	"github.com/casbin/casbin/v2/config"
 	"github.com/casbin/casbin/v2/log"
 	"github.com/casbin/casbin/v2/model"
+	xormadapter "github.com/casdoor/casdoor/adapter"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
-	xormadapter "github.com/casdoor/xorm-adapter/v3"
 )
 
 func getPermissionEnforcer(p *Permission, permissionIDs ...string) (*casbin.Enforcer, error) {

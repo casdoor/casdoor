@@ -110,3 +110,16 @@ func GetConfigBatchSize() int {
 	}
 	return res
 }
+
+func GetConfigArray(keyPrefix string) []string {
+	result := make([]string, 0)
+	for i := 0; ; i++ {
+		key := fmt.Sprintf("%s[%d]", keyPrefix, i)
+		value := GetConfigString(key)
+		if value == "" {
+			break
+		}
+		result = append(result, value)
+	}
+	return result
+}
