@@ -910,11 +910,20 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			err = mfaUtil.Verify(authForm.Passcode)
+			passed, err := c.checkOrgMasterVerificationCode(user, authForm.Passcode)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
 			}
+
+			if !passed {
+				err = mfaUtil.Verify(authForm.Passcode)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+			}
+
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
 			err = object.MfaRecover(user, authForm.RecoveryCode)

@@ -510,20 +510,28 @@ func (c *ApiController) VerifyCode() {
 		}
 	}
 
-	result, err := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage())
+	passed, err := c.checkOrgMasterVerificationCode(user, authForm.Code)
 	if err != nil {
 		c.ResponseError(c.T(err.Error()))
 		return
 	}
-	if result.Code != object.VerificationSuccess {
-		c.ResponseError(result.Msg)
-		return
-	}
 
-	err = object.DisableVerificationCode(checkDest)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	if !passed {
+		result, err := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if result.Code != object.VerificationSuccess {
+			c.ResponseError(result.Msg)
+			return
+		}
+
+		err = object.DisableVerificationCode(checkDest)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.SetSession("verifiedCode", authForm.Code)
