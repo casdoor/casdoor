@@ -44,6 +44,7 @@ func ParseInt(s string) int {
 
 	return i
 }
+
 func ParseIntArray(s string) []int {
 	if s == "" {
 		return []int{0}
@@ -55,6 +56,7 @@ func ParseIntArray(s string) []int {
 	}
 	return intArray
 }
+
 func ParseIntWithError(s string) (int, error) {
 	if s == "" {
 		return 0, fmt.Errorf("ParseIntWithError() error, empty string")

@@ -73,10 +73,12 @@ func GetConfigDataSourceName() string {
 	dataSourceName := GetConfigString("dataSourceName")
 	return ReplaceDataSourceNameByDocker(dataSourceName)
 }
+
 func GetConfigSlaveDataSourceName() []string {
 	dataSourceName := GetConfigArray("slaveDataSourceName")
 	return ReplaceSlaveDataSourceNameByDocker(dataSourceName)
 }
+
 func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	runningInDocker := os.Getenv("RUNNING_IN_DOCKER")
 	if runningInDocker == "true" {
@@ -89,6 +91,7 @@ func ReplaceDataSourceNameByDocker(dataSourceName string) string {
 	}
 	return dataSourceName
 }
+
 func ReplaceSlaveDataSourceNameByDocker(slaveDataSourceNames []string) []string {
 	for _, slaveDataSourceName := range slaveDataSourceNames {
 		slaveDataSourceNames[0] = ReplaceDataSourceNameByDocker(slaveDataSourceName)

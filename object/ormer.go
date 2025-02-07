@@ -370,6 +370,7 @@ func (a *Ormer) getGroupPolicy() (xorm.GroupPolicyHandler, error) {
 		return xorm.RandomPolicy(), nil
 	}
 }
+
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
 	a.Engine = nil
