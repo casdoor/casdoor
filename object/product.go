@@ -219,6 +219,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		ProductName:        product.Name,
 		PayerName:          payerName,
 		PayerId:            user.Id,
+		PayerEmail:         user.Email,
 		PaymentName:        paymentName,
 		ProductDisplayName: product.DisplayName,
 		ProductDescription: product.Description,

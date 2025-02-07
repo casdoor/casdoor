@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -205,6 +206,7 @@ func (c *AirwallexClient) CreateIntent(r *PayReq) (*AirWallexIntentResp, error) 
 		"descriptor":        string([]rune(description)[:32]), // display to the customer.
 		"metadata":          map[string]interface{}{"description": description},
 		"order":             map[string]interface{}{"products": []map[string]interface{}{{"name": r.ProductDisplayName, "quantity": 1, "desc": r.ProductDescription, "image_url": r.ProductImage}}},
+		"customer":          map[string]interface{}{"merchant_customer_id": r.PayerId, "email": r.PayerEmail, "first_name": r.PayerName, "last_name": r.PayerName},
 	}
 	intentUrl := fmt.Sprintf("%s/pa/payment_intents/create", c.APIEndpoint)
 	intentRes, err := c.authRequest("POST", intentUrl, intentReq)
@@ -273,12 +275,13 @@ func (c *AirwallexClient) GetIntentByOrderId(orderId string) (*AirWallexIntentIn
 }
 
 func (c *AirwallexClient) GetCheckoutUrl(intent *AirWallexIntentResp, r *PayReq) (string, error) {
-	return fmt.Sprintf("%sintent_id=%s&client_secret=%s&mode=payment&currency=%s&amount=%v&successUrl=%s&failUrl=%s&logoUrl=%s",
+	return fmt.Sprintf("%sintent_id=%s&client_secret=%s&mode=payment&currency=%s&amount=%v&requiredBillingContactFields=%s&successUrl=%s&failUrl=%s&logoUrl=%s",
 		c.APICheckout,
 		intent.Id,
 		intent.ClientSecret,
 		r.Currency,
 		r.Price,
+		url.QueryEscape(`["address"]`),
 		r.ReturnUrl,
 		r.ReturnUrl,
 		"data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=", // replace default logo
