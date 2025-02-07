@@ -250,8 +250,7 @@ func (a *Adapter) dropTable() error {
 }
 
 func loadPolicyLine(line *CasbinRule, model model.Model) {
-	var p = []string{line.Ptype,
-		line.V0, line.V1, line.V2, line.V3, line.V4, line.V5}
+	var p = []string{line.Ptype, line.V0, line.V1, line.V2, line.V3, line.V4, line.V5}
 	var lineText string
 	if line.V5 != "" {
 		lineText = strings.Join(p, ", ")
