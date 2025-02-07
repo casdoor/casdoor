@@ -343,10 +343,8 @@ func (a *Ormer) createEngine(driverName string, dataSourceName string, dbName st
 }
 
 func (a *Ormer) getGroupPolicy() (xorm.GroupPolicyHandler, error) {
-	var groupPolicy xorm.GroupPolicyHandler
 	if a.driverPolicy == "" {
-		groupPolicy = xorm.RoundRobinPolicy()
-		return groupPolicy, nil
+		return xorm.RoundRobinPolicy(), nil
 	}
 	weight := conf.GetConfigString("driverPolicyWeight")
 	switch a.driverPolicy {
@@ -366,7 +364,7 @@ func (a *Ormer) getGroupPolicy() (xorm.GroupPolicyHandler, error) {
 		}
 		weightArray := util.ParseIntArray(weight)
 		return xorm.WeightRoundRobinPolicy(weightArray), nil
-	case "LeastConn":
+	case "leastConn":
 		return xorm.LeastConnPolicy(), nil
 	default:
 		return xorm.RandomPolicy(), nil
