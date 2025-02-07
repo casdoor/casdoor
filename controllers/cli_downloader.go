@@ -15,6 +15,8 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/beego/beego"
 )
 
 const (
@@ -407,6 +409,11 @@ func downloadCLI() error {
 // @Success 200 {object} controllers.Response The Response object
 // @router /refresh-engines [post]
 func (c *ApiController) RefreshEngines() {
+	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+		c.ResponseError("refresh engines is only available in demo mode")
+		return
+	}
+
 	hash := c.Input().Get("m")
 	timestamp := c.Input().Get("t")
 
@@ -454,6 +461,10 @@ func (c *ApiController) RefreshEngines() {
 // @Title ScheduleCLIUpdater
 // @Description Start periodic CLI update scheduler
 func ScheduleCLIUpdater() {
+	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+		return
+	}
+
 	ticker := time.NewTicker(1 * time.Hour)
 	defer ticker.Stop()
 
@@ -478,6 +489,10 @@ func DownloadCLI() error {
 // @Title InitCLIDownloader
 // @Description Initialize CLI downloader and start update scheduler
 func InitCLIDownloader() {
+	if !beego.AppConfig.DefaultBool("isDemoMode", false) {
+		return
+	}
+
 	err := DownloadCLI()
 	if err != nil {
 		fmt.Printf("failed to initialize CLI downloader: %v\n", err)
