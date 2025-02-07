@@ -33,8 +33,11 @@ type PayReq struct {
 	ProductName        string
 	PayerName          string
 	PayerId            string
+	PayerEmail         string
 	PaymentName        string
 	ProductDisplayName string
+	ProductDescription string
+	ProductImage       string
 	Price              float64
 	Currency           string
 

@@ -279,6 +279,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/social_stripe.png`,
       url: "https://stripe.com/",
     },
+    "AirWallex": {
+      logo: `${StaticBaseUrl}/img/payment_airwallex.svg`,
+      url: "https://airwallex.com/",
+    },
     "GC": {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
       url: "https://gc.org",
@@ -1106,6 +1110,7 @@ export function getProviderTypeOptions(category) {
       {id: "WeChat Pay", name: "WeChat Pay"},
       {id: "PayPal", name: "PayPal"},
       {id: "Stripe", name: "Stripe"},
+      {id: "AirWallex", name: "AirWallex"},
       {id: "GC", name: "GC"},
     ]);
   } else if (category === "Captcha") {
