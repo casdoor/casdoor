@@ -149,7 +149,11 @@ func NewAdapter(driverName string, dataSourceName string, slaveDataSourceNames [
 	a := &Ormer{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
-	a.slaveDataSourceNames = slaveDataSourceNames
+	if slaveDataSourceNames == nil {
+		a.slaveDataSourceNames = []string{}
+	} else {
+		a.slaveDataSourceNames = slaveDataSourceNames
+	}
 	a.driverPolicy = driverPolicy
 	a.dbName = dbName
 
@@ -259,14 +263,18 @@ func (a *Ormer) open() error {
 		if err != nil {
 			return err
 		}
+		slaveEngine.ShowSQL(true)
 		slaves = append(slaves, slaveEngine)
 	}
-	engineGroup, err := xorm.NewEngineGroup(engine, slaves)
+	// get group policy
+	groupPolicy, err := a.getGroupPolicy()
 	if err != nil {
 		return err
 	}
-	// set engine driverPolicy
-	engineGroup.SetPolicy(xorm.RandomPolicy())
+	engineGroup, err := xorm.NewEngineGroup(engine, slaves, groupPolicy)
+	if err != nil {
+		return err
+	}
 	a.Engine = engineGroup
 	return nil
 }
@@ -285,12 +293,16 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 		}
 		slaves = append(slaves, slaveEngine)
 	}
-	engineGroup, err := xorm.NewEngineGroup(engine, slaves)
+	// get group policy
+	groupPolicy, err := a.getGroupPolicy()
+	if err != nil {
+		return err
+	}
+	engineGroup, err := xorm.NewEngineGroup(engine, slaves, groupPolicy)
 	if err != nil {
 		return err
 	}
 	a.Engine = engineGroup
-
 	return nil
 }
 
@@ -331,35 +343,35 @@ func (a *Ormer) createEngine(driverName string, dataSourceName string, dbName st
 	return engine, nil
 }
 
-func (a *Ormer) setPolicy(driverPolicy string) error {
-	if driverPolicy == "" {
-		a.Engine.SetPolicy(xorm.RandomPolicy())
-		return nil
+func (a *Ormer) getGroupPolicy() (xorm.GroupPolicyHandler, error) {
+	var groupPolicy xorm.GroupPolicyHandler
+	if a.driverPolicy == "" {
+		groupPolicy = xorm.RoundRobinPolicy()
+		return groupPolicy, nil
 	}
 	weight := conf.GetConfigString("driverPolicyWeight")
-	switch driverPolicy {
+	switch a.driverPolicy {
 	case "random":
-		a.Engine.SetPolicy(xorm.RandomPolicy())
+		return xorm.RandomPolicy(), nil
 	case "weightRandom":
 		if weight == "" {
-			return fmt.Errorf("error: policy weight must be a non-empty string")
+			return nil, fmt.Errorf("error: policy weight must be a non-empty string")
 		}
 		weightArray := util.ParseIntArray(weight)
-		a.Engine.SetPolicy(xorm.WeightRandomPolicy(weightArray))
+		return xorm.WeightRandomPolicy(weightArray), nil
 	case "roundRobin":
-		a.Engine.SetPolicy(xorm.RoundRobinPolicy())
+		return xorm.RoundRobinPolicy(), nil
 	case "weightRoundRobin":
 		if weight == "" {
-			return fmt.Errorf("error: policy weight must be a non-empty string")
+			return nil, fmt.Errorf("error: policy weight must be a non-empty string")
 		}
 		weightArray := util.ParseIntArray(weight)
-		a.Engine.SetPolicy(xorm.WeightRoundRobinPolicy(weightArray))
+		return xorm.WeightRoundRobinPolicy(weightArray), nil
 	case "LeastConn":
-		a.Engine.SetPolicy(xorm.LeastConnPolicy())
+		return xorm.LeastConnPolicy(), nil
 	default:
-		a.Engine.SetPolicy(xorm.RandomPolicy())
+		return xorm.RandomPolicy(), nil
 	}
-	return nil
 }
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
@@ -367,8 +379,8 @@ func (a *Ormer) close() {
 }
 
 func (a *Ormer) createTable() {
-	showSql := conf.GetConfigBool("showSql")
-	a.Engine.ShowSQL(showSql)
+	/*showSql := conf.GetConfigBool("showSql")
+	a.Engine.ShowSQL(showSql)*/
 
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
