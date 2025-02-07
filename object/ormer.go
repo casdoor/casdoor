@@ -263,7 +263,6 @@ func (a *Ormer) open() error {
 		if err != nil {
 			return err
 		}
-		slaveEngine.ShowSQL(true)
 		slaves = append(slaves, slaveEngine)
 	}
 	// get group policy
@@ -379,8 +378,8 @@ func (a *Ormer) close() {
 }
 
 func (a *Ormer) createTable() {
-	/*showSql := conf.GetConfigBool("showSql")
-	a.Engine.ShowSQL(showSql)*/
+	showSql := conf.GetConfigBool("showSql")
+	a.Engine.ShowSQL(showSql)
 
 	err := a.Engine.Sync2(new(Organization))
 	if err != nil {
