@@ -17,6 +17,7 @@ import (
 
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -507,10 +508,12 @@ func InitCLIDownloader() {
 		return
 	}
 
-	err := DownloadCLI()
-	if err != nil {
-		fmt.Printf("failed to initialize CLI downloader: %v\n", err)
-	}
+	util.SafeGoroutine(func() {
+		err := DownloadCLI()
+		if err != nil {
+			fmt.Printf("failed to initialize CLI downloader: %v\n", err)
+		}
 
-	go ScheduleCLIUpdater()
+		ScheduleCLIUpdater()
+	})
 }

@@ -46,7 +46,7 @@ func main() {
 	object.InitCasvisorConfig()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
-	controllers.InitCLIDownloader()
+	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
 
 	// beego.DelStaticPath("/static")
 	// beego.SetStaticPath("/static", "web/build/static")
