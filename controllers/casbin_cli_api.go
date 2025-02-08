@@ -23,8 +23,67 @@ import (
 	"os/exec"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
+
+type CLIVersionInfo struct {
+	Version    string
+	BinaryPath string
+	BinaryTime time.Time
+}
+
+var (
+	cliVersionCache = make(map[string]*CLIVersionInfo)
+	cliVersionMutex sync.RWMutex
+)
+
+// getCLIVersion
+// @Title getCLIVersion
+// @Description Get CLI version with cache mechanism
+// @Param language string The language of CLI (go/java/rust etc.)
+// @Return string The version string of CLI
+// @Return error Error if CLI execution fails
+func getCLIVersion(language string) (string, error) {
+	binaryName := fmt.Sprintf("casbin-%s-cli", language)
+
+	binaryPath, err := exec.LookPath(binaryName)
+	if err != nil {
+		return "", fmt.Errorf("executable file not found: %v", err)
+	}
+
+	fileInfo, err := os.Stat(binaryPath)
+	if err != nil {
+		return "", fmt.Errorf("failed to get binary info: %v", err)
+	}
+
+	cliVersionMutex.RLock()
+	if info, exists := cliVersionCache[language]; exists {
+		if info.BinaryPath == binaryPath && info.BinaryTime == fileInfo.ModTime() {
+			cliVersionMutex.RUnlock()
+			return info.Version, nil
+		}
+	}
+	cliVersionMutex.RUnlock()
+
+	cmd := exec.Command(binaryName, "--version")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to get CLI version: %v", err)
+	}
+
+	version := strings.TrimSpace(string(output))
+
+	cliVersionMutex.Lock()
+	cliVersionCache[language] = &CLIVersionInfo{
+		Version:    version,
+		BinaryPath: binaryPath,
+		BinaryTime: fileInfo.ModTime(),
+	}
+	cliVersionMutex.Unlock()
+
+	return version, nil
+}
 
 func processArgsToTempFiles(args []string) ([]string, []string, error) {
 	tempFiles := []string{}
@@ -90,6 +149,16 @@ func (c *ApiController) RunCasbinCommand() {
 	err = json.Unmarshal([]byte(argString), &args)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if len(args) > 0 && args[0] == "--version" {
+		version, err := getCLIVersion(language)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk(version)
 		return
 	}
 

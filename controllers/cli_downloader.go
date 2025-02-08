@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -17,6 +16,8 @@ import (
 	"time"
 
 	"github.com/beego/beego"
+	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/util"
 )
 
 const (
@@ -108,9 +109,10 @@ func getFinalBinaryName(lang string) string {
 // @Param language string true "Language type"
 // @Success 200 {string} string "Download URL and version"
 func getLatestCLIURL(repoURL string, language string) (string, string, error) {
-	resp, err := http.Get(repoURL)
+	client := proxy.GetHttpClient(repoURL)
+	resp, err := client.Get(repoURL)
 	if err != nil {
-		return "", "", err
+		return "", "", fmt.Errorf("failed to fetch release info: %v", err)
 	}
 	defer resp.Body.Close()
 
@@ -346,7 +348,8 @@ func downloadCLI() error {
 		originalPath := filepath.Join(downloadFolder, getBinaryNames()[lang])
 		fmt.Printf("downloading %s CLI: %s\n", lang, cliURL)
 
-		resp, err := http.Get(cliURL)
+		client := proxy.GetHttpClient(cliURL)
+		resp, err := client.Get(cliURL)
 		if err != nil {
 			fmt.Printf("failed to download %s CLI: %v\n", lang, err)
 			continue
@@ -354,15 +357,27 @@ func downloadCLI() error {
 
 		func() {
 			defer resp.Body.Close()
-			out, err := os.Create(originalPath)
-			if err != nil {
-				fmt.Printf("failed to create %s CLI file: %v\n", lang, err)
+
+			if err := os.MkdirAll(filepath.Dir(originalPath), 0o755); err != nil {
+				fmt.Printf("failed to create directory for %s CLI: %v\n", lang, err)
 				return
 			}
-			defer out.Close()
 
-			if _, err = io.Copy(out, resp.Body); err != nil {
-				fmt.Printf("failed to save %s CLI: %v\n", lang, err)
+			tmpFile := originalPath + ".tmp"
+			out, err := os.Create(tmpFile)
+			if err != nil {
+				fmt.Printf("failed to create or write %s CLI: %v\n", lang, err)
+				return
+			}
+			defer func() {
+				out.Close()
+				os.Remove(tmpFile)
+			}()
+
+			if _, err = io.Copy(out, resp.Body); err != nil ||
+				out.Close() != nil ||
+				os.Rename(tmpFile, originalPath) != nil {
+				fmt.Printf("failed to download %s CLI: %v\n", lang, err)
 				return
 			}
 		}()
@@ -493,10 +508,12 @@ func InitCLIDownloader() {
 		return
 	}
 
-	err := DownloadCLI()
-	if err != nil {
-		fmt.Printf("failed to initialize CLI downloader: %v\n", err)
-	}
+	util.SafeGoroutine(func() {
+		err := DownloadCLI()
+		if err != nil {
+			fmt.Printf("failed to initialize CLI downloader: %v\n", err)
+		}
 
-	go ScheduleCLIUpdater()
+		ScheduleCLIUpdater()
+	})
 }
