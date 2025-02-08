@@ -33,8 +33,10 @@ type CLIVersionInfo struct {
 	BinaryTime time.Time
 }
 
-var cliVersionCache = make(map[string]*CLIVersionInfo)
-var cliVersionMutex sync.RWMutex
+var (
+	cliVersionCache = make(map[string]*CLIVersionInfo)
+	cliVersionMutex sync.RWMutex
+)
 
 // getCLIVersion
 // @Title getCLIVersion
