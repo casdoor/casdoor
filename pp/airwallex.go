@@ -203,7 +203,7 @@ func (c *AirwallexClient) CreateIntent(r *PayReq) (*AirWallexIntentResp, error) 
 		"amount":            r.Price,
 		"merchant_order_id": orderId,
 		"request_id":        orderId,
-		"descriptor":        string([]rune(description)[:32]), // display to the customer.
+		"descriptor":        strings.ReplaceAll(string([]rune(description)[:32]), "\x00", ""),
 		"metadata":          map[string]interface{}{"description": description},
 		"order":             map[string]interface{}{"products": []map[string]interface{}{{"name": r.ProductDisplayName, "quantity": 1, "desc": r.ProductDescription, "image_url": r.ProductImage}}},
 		"customer":          map[string]interface{}{"merchant_customer_id": r.PayerId, "email": r.PayerEmail, "first_name": r.PayerName, "last_name": r.PayerName},
