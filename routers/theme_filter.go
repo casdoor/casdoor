@@ -47,12 +47,12 @@ func getOrganizationThemeCookieFromUrlPath(ctx *context.Context, urlPath string)
 	var application *object.Application
 	var organization *object.Organization
 	var err error
-	if urlPath == "/login" {
+	if urlPath == "/login" || urlPath == "/signup" {
 		application, err = object.GetDefaultApplication(fmt.Sprintf("admin/built-in"))
 		if err != nil {
 			return nil, err
 		}
-	} else if strings.HasPrefix(urlPath, "/login/oauth/authorize") {
+	} else if strings.HasSuffix(urlPath, "/oauth/authorize") {
 		clientId := ctx.Input.Query("client_id")
 		if clientId == "" {
 			return nil, nil
@@ -69,6 +69,15 @@ func getOrganizationThemeCookieFromUrlPath(ctx *context.Context, urlPath string)
 		}
 	} else if strings.HasPrefix(urlPath, "/login/") {
 		owner, _ := strings.CutPrefix(urlPath, "/login/")
+		if owner == "undefined" || strings.Count(owner, "/") > 0 {
+			return nil, nil
+		}
+		application, err = object.GetDefaultApplication(fmt.Sprintf("admin/%s", owner))
+		if err != nil {
+			return nil, err
+		}
+	} else if strings.HasPrefix(urlPath, "/signup/") {
+		owner, _ := strings.CutPrefix(urlPath, "/signup/")
 		if owner == "undefined" || strings.Count(owner, "/") > 0 {
 			return nil, nil
 		}
