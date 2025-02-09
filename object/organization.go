@@ -66,6 +66,7 @@ type Organization struct {
 	CountryCodes           []string   `xorm:"varchar(200)"  json:"countryCodes"`
 	DefaultAvatar          string     `xorm:"varchar(200)" json:"defaultAvatar"`
 	DefaultApplication     string     `xorm:"varchar(100)" json:"defaultApplication"`
+	UserTypes              []string   `xorm:"mediumtext" json:"userTypes"`
 	Tags                   []string   `xorm:"mediumtext" json:"tags"`
 	Languages              []string   `xorm:"varchar(255)" json:"languages"`
 	ThemeData              *ThemeData `xorm:"json" json:"themeData"`

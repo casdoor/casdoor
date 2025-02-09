@@ -397,6 +397,12 @@ class UserEditPage extends React.Component {
         </Row>
       );
     } else if (accountItem.name === "User type") {
+      let userTypes = ["normal-user", "paid-user"];
+      const organization = this.getUserOrganization();
+      if (organization && organization.userTypes && organization.userTypes.length > 0) {
+        userTypes = organization.userTypes;
+      }
+
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -404,7 +410,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.user.type} onChange={(value => {this.updateUserField("type", value);})}
-              options={["normal-user", "paid-user"].map(item => Setting.getOption(item, item))}
+              options={userTypes.map(item => Setting.getOption(item, item))}
             />
           </Col>
         </Row>

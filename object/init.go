@@ -103,6 +103,7 @@ func initBuiltInOrganization() bool {
 		PasswordOptions:    []string{"AtLeast6"},
 		CountryCodes:       []string{"US", "ES", "FR", "DE", "GB", "CN", "JP", "KR", "VN", "ID", "SG", "IN"},
 		DefaultAvatar:      fmt.Sprintf("%s/img/casbin.svg", conf.GetConfigString("staticBaseUrl")),
+		UserTypes:          []string{},
 		Tags:               []string{},
 		Languages:          []string{"en", "zh", "es", "fr", "de", "id", "ja", "ko", "ru", "vi", "pt"},
 		InitScore:          2000,
