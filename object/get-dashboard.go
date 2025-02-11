@@ -17,6 +17,8 @@ package object
 import (
 	"sync"
 	"time"
+
+	"github.com/casdoor/casdoor/conf"
 )
 
 type DashboardDateItem struct {
@@ -40,11 +42,12 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 	time30day := time.Now().AddDate(0, 0, -30)
 	var wg sync.WaitGroup
 	var err error
+	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	wg.Add(len(tableNames))
 	ch := make(chan error, len(tableNames))
 	for _, tableName := range tableNames {
 		dashboard[tableName+"Counts"] = make([]int64, 31)
-		tableName := tableName
+		tableFullName := tableNamePrefix + tableName
 		go func(ch chan error) {
 			defer wg.Done()
 			dashboardDateItems := []DashboardDateItem{}
@@ -58,16 +61,16 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 				dbQueryBefore = dbQueryBefore.And("owner = ?", owner)
 			}
 
-			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableName).Count(); err != nil {
+			if countResult, err = dbQueryBefore.And("created_time < ?", time30day).Table(tableFullName).Count(); err != nil {
 				ch <- err
 				return
 			}
-			if err = dbQueryAfter.And("created_time >= ?", time30day).Table(tableName).Find(&dashboardDateItems); err != nil {
+			if err = dbQueryAfter.And("created_time >= ?", time30day).Table(tableFullName).Find(&dashboardDateItems); err != nil {
 				ch <- err
 				return
 			}
 
-			dashboardMap.Store(tableName, DashboardMapItem{
+			dashboardMap.Store(tableFullName, DashboardMapItem{
 				dashboardDateItems: dashboardDateItems,
 				itemCount:          countResult,
 			})
