@@ -58,7 +58,7 @@ export function checkPasswordComplexity(password, options) {
   }
 
   if (!options || options.length === 0) {
-    options = ["AtLeast6"];
+    return "";
   }
 
   const checkers = {
