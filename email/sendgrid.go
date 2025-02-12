@@ -17,14 +17,16 @@ package email
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"net/http"
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
 
 type SendgridEmailProvider struct {
-	ApiKey string
+	ApiKey   string
+	Host     string
+	Endpoint string
 }
 
 type SendgridResponseBody struct {
@@ -35,23 +37,25 @@ type SendgridResponseBody struct {
 	} `json:"errors"`
 }
 
-func NewSendgridEmailProvider(apiKey string) *SendgridEmailProvider {
-	return &SendgridEmailProvider{ApiKey: apiKey}
+func NewSendgridEmailProvider(apiKey string, host string, endpoint string) *SendgridEmailProvider {
+	return &SendgridEmailProvider{ApiKey: apiKey, Host: host, Endpoint: endpoint}
 }
 
-func (s *SendgridEmailProvider) Send(fromAddress string, fromName, toAddress string, subject string, content string) error {
+func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+	client := s.initSendgridClient()
+
 	from := mail.NewEmail(fromName, fromAddress)
 	to := mail.NewEmail("", toAddress)
 	message := mail.NewSingleEmail(from, subject, to, "", content)
-	client := sendgrid.NewSendClient(s.ApiKey)
-	response, err := client.Send(message)
+
+	resp, err := client.Send(message)
 	if err != nil {
 		return err
 	}
 
-	if response.StatusCode >= 300 {
+	if resp.StatusCode >= 300 {
 		var responseBody SendgridResponseBody
-		err = json.Unmarshal([]byte(response.Body), &responseBody)
+		err = json.Unmarshal([]byte(resp.Body), &responseBody)
 		if err != nil {
 			return err
 		}
@@ -61,8 +65,23 @@ func (s *SendgridEmailProvider) Send(fromAddress string, fromName, toAddress str
 			messages = append(messages, sendgridError.Message)
 		}
 
-		return fmt.Errorf("SendGrid status code: %d, error message: %s", response.StatusCode, strings.Join(messages, " | "))
+		return fmt.Errorf("status code: %d, error message: %s", resp.StatusCode, messages)
+	}
+
+	if resp.StatusCode != http.StatusAccepted {
+		return fmt.Errorf("status code: %d", resp.StatusCode)
 	}
 
 	return nil
+}
+
+func (s *SendgridEmailProvider) initSendgridClient() *sendgrid.Client {
+	if s.Host == "" || s.Endpoint == "" {
+		return sendgrid.NewSendClient(s.ApiKey)
+	}
+
+	request := sendgrid.GetRequest(s.ApiKey, s.Endpoint, s.Host)
+	request.Method = "POST"
+
+	return &sendgrid.Client{Request: request}
 }

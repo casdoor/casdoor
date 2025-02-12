@@ -24,7 +24,7 @@ func GetEmailProvider(typ string, clientId string, clientSecret string, host str
 	} else if typ == "Custom HTTP Email" {
 		return NewHttpEmailProvider(endpoint, method)
 	} else if typ == "SendGrid" {
-		return NewSendgridEmailProvider(clientSecret)
+		return NewSendgridEmailProvider(clientSecret, host, endpoint)
 	} else {
 		return NewSmtpEmailProvider(clientId, clientSecret, host, port, typ, disableSsl)
 	}
