@@ -54,6 +54,11 @@ func tokenToResponse(token *object.Token) *Response {
 
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+	if user.IsForbidden {
+		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
+		return
+	}
+
 	userId := user.GetId()
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
@@ -70,11 +75,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 	if !allowed {
 		c.ResponseError(c.T("auth:Unauthorized operation"))
-		return
-	}
-
-	if user.IsForbidden {
-		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 		return
 	}
 
