@@ -475,7 +475,7 @@ class LoginPage extends React.Component {
                 return;
               }
               if (res.data2.needUpdatePassword) {
-                sessionStorage.setItem("signinUrl", window.location.href);
+                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLink(this, `/forget/${this.state.applicationName}`);
               }
               if (res.data2.method === "POST") {
