@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Controlled as CodeMirror} from "react-codemirror2";
+
 import {Link} from "react-router-dom";
 import {Button, Popover, Table} from "antd";
 import moment from "moment";
@@ -22,6 +22,7 @@ import * as ModelBackend from "./backend/ModelBackend";
 import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import Editor from "./common/Editor";
 
 const rbacModel = `[request_definition]
 r = sub, obj, act
@@ -148,11 +149,7 @@ class ModelListPage extends BaseListPage {
           return (
             <Popover placement="topRight" content={() => {
               return (
-                <CodeMirror
-                  value={text}
-                  options={{mode: "properties", theme: "default"}}
-                  onBeforeChange={(editor, data, value) => {}}
-                />
+                <Editor value={text} />
               );
             }} title="" trigger="hover">
               {

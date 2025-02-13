@@ -17,12 +17,7 @@ import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import {Button, Col, Input, Popover, Row, Select, Switch, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
-
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/htmlmixed/htmlmixed");
+import Editor from "../common/Editor";
 
 const EmailCss = ".signup-email{}\n.signup-email-input{}\n.signup-email-code{}\n.signup-email-code-input{}\n";
 const PhoneCss = ".signup-phone{}\n.signup-phone-input{}\n.phone-code{}\n.signup-phone-code-input{}";
@@ -234,12 +229,9 @@ class SignupTable extends React.Component {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
-                  <CodeMirror value={text}
-                    options={{mode: "htmlmixed", theme: "material-darker"}}
-                    onBeforeChange={(editor, data, value) => {
-                      this.updateField(table, index, "label", value);
-                    }}
-                  />
+                  <Editor value={text} lang="html" fillHeight dark onChange={value => {
+                    this.updateField(table, index, "label", value);
+                  }} />
                 </div>
               } title={i18next.t("signup:Label HTML")} trigger="click">
                 <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
@@ -265,9 +257,12 @@ class SignupTable extends React.Component {
           return (
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}}>
-                <CodeMirror value={text ? text : SignupTableDefaultCssMap[record.name]}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
+                <Editor
+                  value={text ? text : SignupTableDefaultCssMap[record.name]}
+                  lang="css"
+                  fillHeight
+                  dark
+                  onChange={value => {
                     this.updateField(table, index, "customCss", value ? value : SignupTableDefaultCssMap[record.name]);
                   }}
                 />
