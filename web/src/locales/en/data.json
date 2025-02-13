@@ -241,6 +241,7 @@
     "Delete": "Delete",
     "Description": "Description",
     "Description - Tooltip": "Detailed description information for reference, Casdoor itself will not use it",
+    "Detail": "Detail",
     "Disable": "Disable",
     "Display name": "Display name",
     "Display name - Tooltip": "A user-friendly, easily readable name displayed publicly in the UI",

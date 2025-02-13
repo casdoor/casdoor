@@ -73,7 +73,7 @@ class BaseListPage extends React.Component {
     this.fetch({pagination});
   }
 
-  getColumnSearchProps = dataIndex => ({
+  getColumnSearchProps = (dataIndex, customRender = null) => ({
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
       <div style={{padding: 8}}>
         <Input
@@ -126,8 +126,8 @@ class BaseListPage extends React.Component {
         setTimeout(() => this.searchInput.select(), 100);
       }
     },
-    render: text =>
-      this.state.searchedColumn === dataIndex ? (
+    render: (text, record, index) => {
+      const highlightContent = this.state.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{backgroundColor: "#ffc069", padding: 0}}
           searchWords={[this.state.searchText]}
@@ -136,7 +136,10 @@ class BaseListPage extends React.Component {
         />
       ) : (
         text
-      ),
+      );
+
+      return customRender ? customRender({text, record, index}, highlightContent) : highlightContent;
+    },
   });
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
