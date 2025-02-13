@@ -21,11 +21,8 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import SyncerTableColumnTable from "./table/SyncerTableColumnTable";
 
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
 import * as CertBackend from "./backend/CertBackend";
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/javascript/javascript");
+import Editor from "./common/Editor";
 
 const {Option} = Select;
 
@@ -512,10 +509,13 @@ class SyncerEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <div style={{width: "100%", height: "300px"}} >
-              <CodeMirror
+              <Editor
                 value={this.state.syncer.errorText}
-                options={{mode: "javascript", theme: "material-darker"}}
-                onBeforeChange={(editor, data, value) => {
+                fillHeight
+                readOnly
+                dark
+                lang="js"
+                onChange={value => {
                   this.updateSyncerField("errorText", value);
                 }}
               />

@@ -34,14 +34,8 @@ import PromptPage from "./auth/PromptPage";
 import copy from "copy-to-clipboard";
 import ThemeEditor from "./common/theme/ThemeEditor";
 
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
 import SigninTable from "./table/SigninTable";
-
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/htmlmixed/htmlmixed");
-require("codemirror/mode/xml/xml");
-require("codemirror/mode/css/css");
+import Editor from "./common/Editor";
 
 const {Option} = Select;
 
@@ -629,13 +623,9 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.application.signupHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("signupHtml", value);
-                  }}
-                />
+                <Editor value={this.state.application.signupHtml} lang="html" fillHeight dark onChange={value => {
+                  this.updateApplicationField("signupHtml", value);
+                }} />
               </div>
             } title={i18next.t("provider:Signup HTML - Edit")} trigger="click">
               <Input value={this.state.application.signupHtml} style={{marginBottom: "10px"}} onChange={e => {
@@ -651,13 +641,9 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
-                  value={this.state.application.signinHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
-                    this.updateApplicationField("signinHtml", value);
-                  }}
-                />
+                <Editor value={this.state.application.signinHtml} lang="html" fillHeight dark onChange={value => {
+                  this.updateApplicationField("signinHtml", value);
+                }} />
               </div>
             } title={i18next.t("provider:Signin HTML - Edit")} trigger="click">
               <Input value={this.state.application.signinHtml} style={{marginBottom: "10px"}} onChange={e => {
@@ -758,11 +744,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :
           </Col>
           <Col span={22}>
-            <CodeMirror
-              value={this.state.samlMetadata}
-              options={{mode: "xml", theme: "default"}}
-              onBeforeChange={(editor, data, value) => {}}
-            />
+            <Editor value={this.state.samlMetadata?.toString() ?? ""} lang="xml" readOnly />
             <br />
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={() => {
               copy(`${window.location.origin}/api/saml/metadata?application=admin/${encodeURIComponent(this.state.applicationName)}&enablePostBinding=${this.state.application.enableSamlPostBinding}`);
@@ -829,9 +811,12 @@ class ApplicationEditPage extends React.Component {
           <Col span={22}>
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCss === "" ? template : this.state.application.formCss}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
+                <Editor
+                  value={this.state.application.formCss === "" ? template : this.state.application.formCss}
+                  lang="css"
+                  fillHeight
+                  dark
+                  onChange={value => {
                     this.updateApplicationField("formCss", value);
                   }}
                 />
@@ -850,9 +835,12 @@ class ApplicationEditPage extends React.Component {
           <Col span={22}>
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
-                  options={{mode: "css", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
+                <Editor
+                  value={this.state.application.formCssMobile === "" ? template : this.state.application.formCssMobile}
+                  lang="css"
+                  fillHeight
+                  dark
+                  onChange={value => {
                     this.updateApplicationField("formCssMobile", value);
                   }}
                 />
@@ -887,9 +875,12 @@ class ApplicationEditPage extends React.Component {
                 <Col span={21} >
                   <Popover placement="right" content={
                     <div style={{width: "900px", height: "300px"}} >
-                      <CodeMirror value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
-                        options={{mode: "htmlmixed", theme: "material-darker"}}
-                        onBeforeChange={(editor, data, value) => {
+                      <Editor
+                        value={this.state.application.formSideHtml === "" ? sideTemplate : this.state.application.formSideHtml}
+                        lang="html"
+                        fillHeight
+                        dark
+                        onChange={value => {
                           this.updateApplicationField("formSideHtml", value);
                         }}
                       />
@@ -936,10 +927,12 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
+                <Editor
                   value={this.state.application.headerHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
+                  lang="html"
+                  fillHeight
+                  dark
+                  onChange={value => {
                     this.updateApplicationField("headerHtml", value);
                   }}
                 />
@@ -958,10 +951,12 @@ class ApplicationEditPage extends React.Component {
           <Col span={22} >
             <Popover placement="right" content={
               <div style={{width: "900px", height: "300px"}} >
-                <CodeMirror
+                <Editor
                   value={this.state.application.footerHtml}
-                  options={{mode: "htmlmixed", theme: "material-darker"}}
-                  onBeforeChange={(editor, data, value) => {
+                  lang="html"
+                  fillHeight
+                  dark
+                  onChange={value => {
                     this.updateApplicationField("footerHtml", value);
                   }}
                 />

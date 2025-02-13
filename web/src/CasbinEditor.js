@@ -13,13 +13,11 @@
 // limitations under the License.
 
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/properties/properties";
 import * as Setting from "./Setting";
 import IframeEditor from "./IframeEditor";
 import {Tabs} from "antd";
 import i18next from "i18next";
+import Editor from "./common/Editor";
 
 const {TabPane} = Tabs;
 
@@ -81,11 +79,10 @@ const CasbinEditor = ({model, onModelTextChange}) => {
             style={{width: "100%", height: "100%"}}
           />
         ) : (
-          <CodeMirror
+          <Editor
             value={localModelText}
-            className="full-height-editor no-horizontal-scroll-editor"
-            options={{mode: "properties", theme: "default"}}
-            onBeforeChange={(editor, data, value) => {
+            readOnly={Setting.builtInObject(model)}
+            onChange={value => {
               handleModelTextChange(value);
             }}
           />
