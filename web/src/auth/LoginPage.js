@@ -68,7 +68,7 @@ class LoginPage extends React.Component {
       this.state.applicationName = props.match?.params?.casApplicationName;
     }
 
-    localStorage.setItem("signinUrl", window.location.href);
+    localStorage.setItem("signinUrl", window.location.pathname + window.location.search);
 
     this.form = React.createRef();
   }
@@ -314,7 +314,7 @@ class LoginPage extends React.Component {
     }
 
     if (resp.data2) {
-      sessionStorage.setItem("signinUrl", window.location.href);
+      sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
       Setting.goToLinkSoft(ths, `/forget/${application.name}`);
       return;
     }
@@ -454,7 +454,7 @@ class LoginPage extends React.Component {
 
             if (responseType === "login") {
               if (res.data2) {
-                sessionStorage.setItem("signinUrl", window.location.href);
+                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLink(this, `/forget/${this.state.applicationName}`);
               }
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
@@ -463,7 +463,7 @@ class LoginPage extends React.Component {
               this.postCodeLoginAction(res);
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
-                sessionStorage.setItem("signinUrl", window.location.href);
+                sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLink(this, `/forget/${this.state.applicationName}`);
               }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
