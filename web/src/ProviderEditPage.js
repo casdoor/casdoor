@@ -28,14 +28,7 @@ import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
-
-import {Controlled as CodeMirror} from "react-codemirror2";
-import "codemirror/lib/codemirror.css";
-
-require("codemirror/theme/material-darker.css");
-require("codemirror/mode/htmlmixed/htmlmixed");
-require("codemirror/mode/xml/xml");
-require("codemirror/mode/css/css");
+import Editor from "./common/Editor";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -1127,10 +1120,12 @@ class ProviderEditPage extends React.Component {
                   <Row>
                     <Col span={Setting.isMobile() ? 22 : 11}>
                       <div style={{height: "300px", margin: "10px"}}>
-                        <CodeMirror
+                        <Editor
                           value={this.state.provider.content}
-                          options={{mode: "htmlmixed", theme: "material-darker"}}
-                          onBeforeChange={(editor, data, value) => {
+                          fillHeight
+                          dark
+                          lang="html"
+                          onChange={value => {
                             this.updateProviderField("content", value);
                           }}
                         />

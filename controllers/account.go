@@ -458,6 +458,10 @@ func (c *ApiController) GetAccount() {
 		return
 	}
 
+	if organization != nil && len(organization.CountryCodes) == 1 && u != nil && u.CountryCode == "" {
+		u.CountryCode = organization.CountryCodes[0]
+	}
+
 	accessToken := c.GetSessionToken()
 	if accessToken == "" {
 		accessToken, err = object.GetAccessTokenByUser(user, c.Ctx.Request.Host)
