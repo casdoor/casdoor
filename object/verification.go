@@ -86,9 +86,9 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	title := provider.Title
 
 	code := getRandomCode(6)
-	if organization.MasterVerificationCode != "" {
-		code = organization.MasterVerificationCode
-	}
+	// if organization.MasterVerificationCode != "" {
+	//	code = organization.MasterVerificationCode
+	// }
 
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
@@ -124,9 +124,9 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 	}
 
 	code := getRandomCode(6)
-	if organization.MasterVerificationCode != "" {
-		code = organization.MasterVerificationCode
-	}
+	// if organization.MasterVerificationCode != "" {
+	//	code = organization.MasterVerificationCode
+	// }
 
 	err = SendSms(provider, code, dest)
 	if err != nil {
