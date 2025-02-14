@@ -172,12 +172,31 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	for _, user := range users {
 		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
-		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
+		var uidNumberStr string
+
+		// Synology compatibility improvements
+		if conf.GetConfigBool("synologyCompatible") {
+			// Add required objectClass attributes
+			e.AddAttribute("objectClass", message.AttributeValue("inetOrgPerson"), message.AttributeValue("posixAccount"))
+			// Add UNIX system attributes
+			e.AddAttribute("loginShell", message.AttributeValue("/bin/sh"))
+			e.AddAttribute("gecos", message.AttributeValue(user.DisplayName))
+			// Generate RFC 2307 compliant UID/GID
+			uidNumberStr = fmt.Sprintf("%d", 10000+hash(user.Name)%50000) // Ensure 5-digit numeric ID
+		} else {
+			uidNumberStr = fmt.Sprintf("%v", hash(user.Name))
+		}
+
 		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
 		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
+
+		// Standard LDAP attributes
 		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
 		e.AddAttribute("cn", message.AttributeValue(user.Name))
 		e.AddAttribute("uid", message.AttributeValue(user.Id))
+		if user.Email != "" {
+			e.AddAttribute("mail", message.AttributeValue(user.Email))
+		}
 		for _, group := range user.Groups {
 			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
 		}
