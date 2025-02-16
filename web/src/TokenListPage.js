@@ -153,7 +153,7 @@ class TokenListPage extends BaseListPage {
         title: i18next.t("token:Authorization code"),
         dataIndex: "code",
         key: "code",
-        // width: '150px',
+        width: "180px",
         sorter: true,
         ...this.getColumnSearchProps("code"),
         render: (text, record, index) => {
@@ -164,7 +164,7 @@ class TokenListPage extends BaseListPage {
         title: i18next.t("token:Access token"),
         dataIndex: "accessToken",
         key: "accessToken",
-        // width: '150px',
+        width: "220px",
         sorter: true,
         ellipsis: true,
         ...this.getColumnSearchProps("accessToken"),
@@ -225,7 +225,7 @@ class TokenListPage extends BaseListPage {
 
     return (
       <div>
-        <Table scroll={{x: "max-content"}} columns={columns} dataSource={tokens} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
+        <Table scroll={{x: "100%"}} columns={columns} dataSource={tokens} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
           title={() => (
             <div>
               {i18next.t("general:Tokens")}&nbsp;&nbsp;&nbsp;&nbsp;

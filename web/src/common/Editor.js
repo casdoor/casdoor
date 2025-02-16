@@ -22,6 +22,10 @@ export const Editor = (props) => {
     height: "100%",
     style: {height: "100%"},
   } : {};
+  const fillWidth = props.fillWidth ? {
+    width: "100%",
+    style: {width: "100%"},
+  } : {};
   let extensions = [];
   switch (props.lang) {
   case "javascript":
@@ -37,13 +41,17 @@ export const Editor = (props) => {
   case "xml":
     extensions = [langs.xml()];
     break;
+  case "json":
+    extensions = [langs.json()];
+    break;
   }
 
   return (
     <CodeMirror
       value={props.value}
-      height={props.height}
+      {...props}
       {...fillHeight}
+      {...fillWidth}
       readOnly={props.readOnly}
       theme={props.dark ? materialDark : "light"}
       extensions={extensions}
