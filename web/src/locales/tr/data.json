@@ -241,6 +241,7 @@
     "Delete": "Sil",
     "Description": "Açıklama",
     "Description - Tooltip": "Detailed description information for reference, Casdoor itself will not use it",
+    "Detail": "Detail",
     "Disable": "Devre dışı bırak",
     "Display name": "Görünen isim",
     "Display name - Tooltip": "A user-friendly, easily readable name displayed publicly in the UI",
