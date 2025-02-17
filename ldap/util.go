@@ -184,6 +184,16 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	case message.FilterEqualityMatch:
 		attr := string(f.AttributeDesc())
 
+		// Synology compatibility handling (critical modification start)
+		if attr == "objectClass" {
+			// Handle Synology's (objectClass=inetOrgPerson) filter
+			// Return always-true condition while preserving original user filteri
+			return builder.And(
+				builder.Expr("1=1"), // Bypass objectClass filtering
+				//builder.Eq{"type": "normal-user"} // Maintain original user type filter
+			), nil
+		}
+
 		if attr == ldapMemberOfAttr {
 			groupId := string(f.AssertionValue())
 			users, err := object.GetGroupUsers(groupId)
