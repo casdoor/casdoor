@@ -272,6 +272,7 @@ class RecordListPage extends BaseListPage {
                 value={this.getDetailField("response")}
                 fillHeight
                 fillWidth
+                maxWidth={this.getEditorMaxWidth()}
                 dark
                 readOnly
               />
@@ -282,6 +283,7 @@ class RecordListPage extends BaseListPage {
                 lang="json"
                 fillHeight
                 fillWidth
+                maxWidth={this.getEditorMaxWidth()}
                 dark
                 readOnly
               />
@@ -291,6 +293,10 @@ class RecordListPage extends BaseListPage {
       </div>
     );
   }
+
+  getEditorMaxWidth = () => {
+    return Setting.isMobile() ? window.innerWidth - 60 : 475;
+  };
 
   jsonStrFormatter = str => {
     try {
