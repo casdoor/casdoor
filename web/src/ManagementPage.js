@@ -206,11 +206,11 @@ function ManagementPage(props) {
                         <OrganizationSelect
                           initValue={Setting.getOrganization()}
                           withAll={true}
-                          style={{marginRight: "20px", width: "180px", display: !Setting.isMobile() ? "flex" : "none"}}
+                          className="org-select"
+                          style={{display: Setting.isMobile() ? "none" : "flex"}}
                           onChange={(value) => {
                             Setting.setOrganization(value);
                           }}
-                          className="select-box"
                         />
           }
         </React.Fragment>
@@ -459,7 +459,7 @@ function ManagementPage(props) {
       <Header style={{padding: "0", marginBottom: "3px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
         {props.requiredEnableMfa || (Setting.isMobile() ?
           <React.Fragment>
-            <Drawer title={i18next.t("general:Close")} placement="left" visible={menuVisible} onClose={onClose}>
+            <Drawer title={i18next.t("general:Close")} placement="left" open={menuVisible} onClose={onClose}>
               <Menu
                 items={getMenuItems()}
                 mode={"inline"}

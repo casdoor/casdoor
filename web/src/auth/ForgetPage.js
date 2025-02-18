@@ -471,9 +471,12 @@ class ForgetPage extends React.Component {
       <React.Fragment>
         <CustomGithubCorner />
         <div className="forget-content" style={{padding: Setting.isMobile() ? "0" : null, boxShadow: Setting.isMobile() ? "none" : null}}>
-          <Button type="text" style={{position: "relative", left: Setting.isMobile() ? "10px" : "-90px", top: 0}} size={"large"} onClick={() => {this.stepBack();}}>
-            <ArrowLeftOutlined style={{fontSize: "24px"}} />
-          </Button>
+          <Button type="text"
+            style={{position: "relative", left: Setting.isMobile() ? "10px" : "-90px", top: 0}}
+            icon={<ArrowLeftOutlined style={{fontSize: "24px"}} />}
+            size={"large"}
+            onClick={() => {this.stepBack();}}
+          />
           <Row>
             <Col span={24} style={{justifyContent: "center"}}>
               <Row>

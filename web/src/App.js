@@ -327,7 +327,7 @@ class App extends Component {
             isAiAssistantOpen: false,
           });
         }}
-        visible={this.state.isAiAssistantOpen}
+        open={this.state.isAiAssistantOpen}
       >
         <iframe id="iframeHelper" title={"iframeHelper"} src={`${Conf.AiAssistantUrl}/?isRaw=1`} width="100%" height="100%" scrolling="no" frameBorder="no" />
       </Drawer>

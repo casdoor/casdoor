@@ -113,8 +113,8 @@ class PermissionListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button id="upload-button" type="primary" size="small">
-          <UploadOutlined /> {i18next.t("user:Upload (.xlsx)")}
+        <Button icon={<UploadOutlined />} id="upload-button" type="primary" size="small">
+          {i18next.t("user:Upload (.xlsx)")}
         </Button></Upload>
     );
   }

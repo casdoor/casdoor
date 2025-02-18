@@ -121,10 +121,12 @@ class BaseListPage extends React.Component {
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
         : "",
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => this.searchInput.select(), 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: visible => {
+        if (visible) {
+          setTimeout(() => this.searchInput.select(), 100);
+        }
+      },
     },
     render: (text, record, index) => {
       const highlightContent = this.state.searchedColumn === dataIndex ? (

@@ -19,8 +19,6 @@ import {Tabs} from "antd";
 import i18next from "i18next";
 import Editor from "./common/Editor";
 
-const {TabPane} = Tabs;
-
 const CasbinEditor = ({model, onModelTextChange}) => {
   const [activeKey, setActiveKey] = useState("advanced");
   const iframeRef = useRef(null);
@@ -66,10 +64,15 @@ const CasbinEditor = ({model, onModelTextChange}) => {
 
   return (
     <div style={{height: "100%", width: "100%", display: "flex", flexDirection: "column"}}>
-      <Tabs activeKey={activeKey} onChange={handleTabChange} style={{flex: "0 0 auto", marginTop: "-10px"}}>
-        <TabPane tab={i18next.t("model:Basic Editor")} key="basic" />
-        <TabPane tab={i18next.t("model:Advanced Editor")} key="advanced" />
-      </Tabs>
+      <Tabs
+        activeKey={activeKey}
+        onChange={handleTabChange}
+        style={{flex: "0 0 auto", marginTop: "-10px"}}
+        items={[
+          {key: "basic", label: i18next.t("model:Basic Editor")},
+          {key: "advanced", label: i18next.t("model:Advanced Editor")},
+        ]}
+      />
       <div style={{flex: "1 1 auto", overflow: "hidden"}}>
         {activeKey === "advanced" ? (
           <IframeEditor
