@@ -147,7 +147,7 @@ class PricingPage extends React.Component {
 
     if (Setting.isMobile()) {
       return (
-        <Card style={{border: "none"}} bodyStyle={{padding: 0}}>
+        <Card style={{border: "none"}} styles={{body: {padding: 0}}}>
           {
             this.state.plans.map(item => {
               return item.period === this.state.selectedPeriod ? (

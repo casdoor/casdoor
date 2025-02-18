@@ -530,9 +530,11 @@ class LoginPage extends React.Component {
       return null;
     }
 
+    const resultItemKey = `${application.organization}_${application.name}_${signinItem.name}`;
+
     if (signinItem.name === "Logo") {
       return (
-        <div className="login-logo-box">
+        <div key={resultItemKey} className="login-logo-box">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             Setting.renderHelmet(application)
@@ -544,7 +546,7 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Back button") {
       return (
-        <div className="back-button">
+        <div key={resultItemKey} className="back-button">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {
             this.renderBackButton()
@@ -562,14 +564,14 @@ class LoginPage extends React.Component {
       }
 
       return (
-        <div className="login-languages">
+        <div key={resultItemKey} className="login-languages">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <LanguageSelect languages={application.organizationObj.languages} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
       return (
-        <div>
+        <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderMethodChoiceBox()}
         </div>
@@ -577,7 +579,7 @@ class LoginPage extends React.Component {
       ;
     } else if (signinItem.name === "Username") {
       return (
-        <div>
+        <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item
             name="username"
@@ -654,14 +656,14 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name === "Password") {
       return (
-        <div>
+        <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderPasswordOrCodeInput(signinItem)}
         </div>
       );
     } else if (signinItem.name === "Forgot password?") {
       return (
-        <div>
+        <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <div className="login-forget-password">
             <Form.Item name="autoSignin" valuePropName="checked" noStyle>
@@ -679,7 +681,7 @@ class LoginPage extends React.Component {
       return AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null;
     } else if (signinItem.name === "Login button") {
       return (
-        <Form.Item className="login-button-box">
+        <Form.Item key={resultItemKey} className="login-button-box">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
             type="primary"
@@ -723,13 +725,13 @@ class LoginPage extends React.Component {
       }
 
       return (
-        <div>
+        <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
                 return (
-                  <span key ={id} onClick={(e) => {
+                  <span key={id} onClick={(e) => {
                     const agreementChecked = this.form.current.getFieldValue("agreement");
 
                     if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
@@ -752,11 +754,11 @@ class LoginPage extends React.Component {
       );
     } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
-        <div dangerouslySetInnerHTML={{__html: signinItem.customCss}} />
+        <div key={resultItemKey} dangerouslySetInnerHTML={{__html: signinItem.customCss}} />
       );
     } else if (signinItem.name === "Signup link") {
       return (
-        <div style={{width: "100%"}} className="login-signup-link">
+        <div key={resultItemKey} style={{width: "100%"}} className="login-signup-link">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderFooter(application, signinItem)}
         </div>

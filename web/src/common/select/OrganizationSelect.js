@@ -70,6 +70,7 @@ function OrganizationSelect(props) {
     <Select
       options={getOrganizationItems()}
       virtual={false}
+      popupMatchSelectWidth={false}
       placeholder={i18next.t("login:Please select an organization")}
       value={value}
       onChange={handleOnChange}

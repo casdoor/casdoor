@@ -121,10 +121,12 @@ class BaseListPage extends React.Component {
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
         : "",
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => this.searchInput.select(), 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: visible => {
+        if (visible) {
+          setTimeout(() => this.searchInput.select(), 100);
+        }
+      },
     },
     render: (text, record, index) => {
       const highlightContent = this.state.searchedColumn === dataIndex ? (
@@ -173,7 +175,7 @@ class BaseListPage extends React.Component {
     const steps = TourConfig.getSteps();
     steps.map((item, index) => {
       if (!index) {
-        item.target = () => document.querySelector("table");
+        item.target = () => document.querySelector(".ant-table");
       } else {
         item.target = () => document.getElementById(item.id) || null;
       }
