@@ -69,6 +69,23 @@ func GetConfigInt64(key string) (int64, error) {
 	return num, err
 }
 
+func GetConfigStringSlice(key string, separator string) []string {
+	value := GetConfigString(key)
+	if value == "" {
+		return []string{} // Return an empty slice instead of [""].
+	}
+
+	parts := strings.Split(value, separator)
+	result := make([]string, 0, len(parts))
+	for _, part := range parts {
+		trimmed := strings.TrimSpace(part)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}
+
 func GetConfigDataSourceName() string {
 	dataSourceName := GetConfigString("dataSourceName")
 	return ReplaceDataSourceNameByDocker(dataSourceName)
