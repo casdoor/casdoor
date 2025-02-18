@@ -175,7 +175,7 @@ class BaseListPage extends React.Component {
     const steps = TourConfig.getSteps();
     steps.map((item, index) => {
       if (!index) {
-        item.target = () => document.querySelector("table");
+        item.target = () => document.querySelector(".ant-table");
       } else {
         item.target = () => document.getElementById(item.id) || null;
       }
