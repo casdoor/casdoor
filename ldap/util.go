@@ -185,12 +185,9 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		attr := string(f.AttributeDesc())
 
 		if attr == ldapMemberOfAttr {
-			groupId := string(f.AssertionValue())
-			users, err := object.GetGroupUsers(groupId)
-			if err != nil {
-				return nil, err
-			}
 			var names []string
+			groupId := string(f.AssertionValue())
+			users := object.GetGroupUsersWithoutError(groupId)
 			for _, user := range users {
 				names = append(names, user.Name)
 			}
@@ -249,7 +246,7 @@ func buildSafeCondition(filter interface{}) builder.Cond {
 	condition, err := buildUserFilterCondition(filter)
 	if err != nil {
 		log.Printf("err = %v", err.Error())
-		return nil
+		return builder.And(builder.Expr("1 != 1"))
 	}
 	return condition
 }

@@ -302,7 +302,10 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 
 func GetGroupUsers(groupId string) ([]*User, error) {
 	users := []*User{}
-	owner, _ := util.GetOwnerAndNameFromId(groupId)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return nil, err
+	}
 	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
 	if err != nil {
 		return nil, err
@@ -312,6 +315,11 @@ func GetGroupUsers(groupId string) ([]*User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func GetGroupUsersWithoutError(groupId string) []*User {
+	users, _ := GetGroupUsers(groupId)
+	return users
 }
 
 func ExtendGroupWithUsers(group *Group) error {
