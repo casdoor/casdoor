@@ -83,19 +83,23 @@ func GetPaginationGroups(owner string, offset, limit int, field, value, sortFiel
 func GetGroupsHaveChildrenMap(groups []*Group) (map[string]*Group, error) {
 	groupsHaveChildren := []*Group{}
 	resultMap := make(map[string]*Group)
+	groupMap := map[string]*Group{}
 
 	groupIds := []string{}
 	for _, group := range groups {
+		groupMap[group.Name] = group
 		groupIds = append(groupIds, group.Name)
-		groupIds = append(groupIds, group.ParentId)
+		if !group.IsTopGroup {
+			groupIds = append(groupIds, group.ParentId)
+		}
 	}
 
 	err := ormer.Engine.Cols("owner", "name", "parent_id", "display_name").Distinct("parent_id").In("parent_id", groupIds).Find(&groupsHaveChildren)
 	if err != nil {
 		return nil, err
 	}
-	for _, group := range groups {
-		resultMap[group.Name] = group
+	for _, group := range groupsHaveChildren {
+		resultMap[group.ParentId] = groupMap[group.ParentId]
 	}
 	return resultMap, nil
 }
