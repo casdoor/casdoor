@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table} from "antd";
+import {Button, Table, Tooltip} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -202,12 +202,16 @@ class GroupListPage extends BaseListPage {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/groups/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
-              <PopconfirmModal
-                disabled={record.haveChildren}
-                title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deleteGroup(index)}
-              >
-              </PopconfirmModal>
+              {
+                record.haveChildren ? <Tooltip placement="topLeft" title={i18next.t("group:You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page")}>
+                  <Button disabled type="primary" danger>{i18next.t("general:Delete")}</Button>
+                </Tooltip> :
+                  <PopconfirmModal
+                    title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
+                    onConfirm={() => this.deleteGroup(index)}
+                  >
+                  </PopconfirmModal>
+              }
             </div>
           );
         },
