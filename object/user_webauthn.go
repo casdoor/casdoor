@@ -48,6 +48,34 @@ func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 	return webAuthn, nil
 }
 
+func GetWebAuthnObjectByApplication(application *Application) (*webauthn.WebAuthn, error) {
+	localUrl, err := url.Parse(application.HomepageUrl)
+	if err != nil {
+		return nil, fmt.Errorf("error when parsing origin:" + err.Error())
+	}
+
+	rpOrigins := []string{application.HomepageUrl}
+
+	webAuthn, err := webauthn.New(&webauthn.Config{
+		RPDisplayName: application.Name,
+		RPID:          strings.Split(localUrl.Host, ":")[0],
+		RPOrigins:     rpOrigins,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return webAuthn, nil
+}
+
+func GetWebAuthnObjectByUser(user *User) (*webauthn.WebAuthn, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return nil, err
+	}
+	return GetWebAuthnObjectByApplication(application)
+}
+
 // WebAuthnID
 // implementation of webauthn.User interface
 func (user *User) WebAuthnID() []byte {
