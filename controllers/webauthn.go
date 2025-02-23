@@ -39,7 +39,7 @@ func (c *ApiController) WebAuthnSignupBegin() {
 		return
 	}
 
-	webauthnObj, err := object.GetWebAuthnObjectByUser(user)
+	webauthnObj, err := object.GetWebAuthnObjectByUser(user, c.Ctx.Request.Host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -75,7 +75,7 @@ func (c *ApiController) WebAuthnSignupFinish() {
 		return
 	}
 
-	webauthnObj, err := object.GetWebAuthnObjectByUser(user)
+	webauthnObj, err := object.GetWebAuthnObjectByUser(user, c.Ctx.Request.Host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -130,7 +130,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		return
 	}
 
-	webauthnObj, err := object.GetWebAuthnObjectByUser(user)
+	webauthnObj, err := object.GetWebAuthnObjectByUser(user, c.Ctx.Request.Host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -183,7 +183,7 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 
-	webauthnObj, err := object.GetWebAuthnObjectByApplication(application)
+	webauthnObj, err := object.GetWebAuthnObjectByApplication(application, c.Ctx.Request.Host)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

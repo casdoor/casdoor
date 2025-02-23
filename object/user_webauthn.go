@@ -24,32 +24,36 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-func GetWebAuthnObjectByApplication(application *Application) (*webauthn.WebAuthn, error) {
-	localUrl, err := url.Parse(application.HomepageUrl)
+func GetWebAuthnObjectByApplication(application *Application, host string) (*webauthn.WebAuthn, error) {
+	_, originBackend := getOriginFromHost(host)
+	if application.HomepageUrl != "" {
+		originBackend = application.HomepageUrl
+	}
+
+	localUrl, err := url.Parse(originBackend)
 	if err != nil {
 		return nil, fmt.Errorf("error when parsing origin:" + err.Error())
 	}
 
-	rpOrigins := []string{application.HomepageUrl}
-
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: application.Name,
-		RPID:          strings.Split(localUrl.Host, ":")[0],
-		RPOrigins:     rpOrigins,
+		RPDisplayName: application.Name,                     // Display Name for your site
+		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain for your site, it's ok because splits cannot return empty array
+		RPOrigins:     []string{originBackend},              // The origin URL for WebAuthn requests
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return webAuthn, nil
+
 }
 
-func GetWebAuthnObjectByUser(user *User) (*webauthn.WebAuthn, error) {
+func GetWebAuthnObjectByUser(user *User, host string) (*webauthn.WebAuthn, error) {
 	application, err := GetApplicationByUser(user)
 	if err != nil {
 		return nil, err
 	}
-	return GetWebAuthnObjectByApplication(application)
+	return GetWebAuthnObjectByApplication(application, host)
 }
 
 // WebAuthnID
