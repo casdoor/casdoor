@@ -45,7 +45,6 @@ func GetWebAuthnObjectByApplication(application *Application, host string) (*web
 	}
 
 	return webAuthn, nil
-
 }
 
 func GetWebAuthnObjectByUser(user *User, host string) (*webauthn.WebAuthn, error) {
