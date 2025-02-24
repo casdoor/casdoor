@@ -13,6 +13,7 @@ services:
       - db
     environment:
       RUNNING_IN_DOCKER: "true"
+      DB_PORT: "3306"
     volumes:
       - ./conf:/conf/
   db:
