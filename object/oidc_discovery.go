@@ -77,6 +77,7 @@ func getOriginFromHostInternal(host string) (string, string) {
 		return origin, origin
 	}
 
+	isDev := conf.GetConfigString("runmode") == "dev"
 	// "door.casdoor.com"
 	protocol := "https://"
 	if !strings.Contains(host, ".") {
@@ -87,7 +88,7 @@ func getOriginFromHostInternal(host string) (string, string) {
 		protocol = "http://"
 	}
 
-	if host == "localhost:8000" {
+	if host == "localhost:8000" && isDev {
 		return fmt.Sprintf("%s%s", protocol, "localhost:7001"), fmt.Sprintf("%s%s", protocol, "localhost:8000")
 	} else {
 		return fmt.Sprintf("%s%s", protocol, host), fmt.Sprintf("%s%s", protocol, host)
