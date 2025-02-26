@@ -20,15 +20,15 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
-	var err error
-
+func GetWebAuthnObjectByApplication(application *Application, host string) (*webauthn.WebAuthn, error) {
 	_, originBackend := getOriginFromHost(host)
+	if application.HomepageUrl != "" {
+		originBackend = application.HomepageUrl
+	}
 
 	localUrl, err := url.Parse(originBackend)
 	if err != nil {
@@ -36,16 +36,23 @@ func GetWebAuthnObject(host string) (*webauthn.WebAuthn, error) {
 	}
 
 	webAuthn, err := webauthn.New(&webauthn.Config{
-		RPDisplayName: conf.GetConfigString("appname"),      // Display Name for your site
-		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain name for your site, it's ok because splits cannot return empty array
-		RPOrigin:      originBackend,                        // The origin URL for WebAuthn requests
-		// RPIcon:     "https://duo.com/logo.png",           // Optional icon URL for your site
+		RPDisplayName: application.Name,                     // Display Name for your site
+		RPID:          strings.Split(localUrl.Host, ":")[0], // Generally the domain for your site, it's ok because splits cannot return empty array
+		RPOrigins:     []string{originBackend},              // The origin URL for WebAuthn requests
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return webAuthn, nil
+}
+
+func GetWebAuthnObjectByUser(user *User, host string) (*webauthn.WebAuthn, error) {
+	application, err := GetApplicationByUser(user)
+	if err != nil {
+		return nil, err
+	}
+	return GetWebAuthnObjectByApplication(application, host)
 }
 
 // WebAuthnID
