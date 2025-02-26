@@ -162,7 +162,7 @@
     "Submit and complete": "Enviar e concluir"
   },
   "currency": {
-    "AUD": "AUD",
+    "AUD": "",
     "CAD": "CAD",
     "CHF": "CHF",
     "CNY": "CNY",
@@ -241,6 +241,7 @@
     "Delete": "Excluir",
     "Description": "Descrição",
     "Description - Tooltip": "Informações de descrição detalhadas para referência, o Casdoor em si não irá utilizá-las",
+    "Detail": "Detail",
     "Disable": "Desativar",
     "Display name": "Nome de exibição",
     "Display name - Tooltip": "Um nome amigável e facilmente legível exibido publicamente na interface do usuário",
