@@ -146,7 +146,12 @@ func getCertByName(name string) (*Cert, error) {
 
 func GetCert(id string) (*Cert, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	return getCert(owner, name)
+	cert, err := getCert(owner, name)
+	if cert == nil && owner != "admin" {
+		return getCert("admin", name)
+	} else {
+		return cert, err
+	}
 }
 
 func UpdateCert(id string, cert *Cert) (bool, error) {
