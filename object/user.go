@@ -48,7 +48,7 @@ func InitUserManager() {
 
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
-	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
+	Name        string `xorm:"varchar(255) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100) index" json:"createdTime"`
 	UpdatedTime string `xorm:"varchar(100)" json:"updatedTime"`
 	DeletedTime string `xorm:"varchar(100)" json:"deletedTime"`

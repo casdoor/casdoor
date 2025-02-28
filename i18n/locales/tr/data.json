@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Kullanıcı adı bir e-mail adresi olamaz",
     "Username cannot contain white spaces": "Kullanıcı adı boşluk karakteri içeremez",
     "Username cannot start with a digit": "Kullanıcı adı rakamla başlayamaz",
-    "Username is too long (maximum is 39 characters).": "Kullanıcı adı çok uzun (en fazla 39 karakter olmalı).",
+    "Username is too long (maximum is 255 characters).": "Kullanıcı adı çok uzun (en fazla 255 karakter olmalı).",
     "Username must have at least 2 characters": "Kullanıcı adı en az iki karakterden oluşmalı",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Çok fazla hatalı şifre denemesi yaptınız.  %d dakika kadar bekleyip yeniden giriş yapmayı deneyebilirsiniz.",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",

@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Username tidak bisa menjadi alamat email",
     "Username cannot contain white spaces": "Username tidak boleh mengandung spasi",
     "Username cannot start with a digit": "Username tidak dapat dimulai dengan angka",
-    "Username is too long (maximum is 39 characters).": "Nama pengguna terlalu panjang (maksimum 39 karakter).",
+    "Username is too long (maximum is 255 characters).": "Nama pengguna terlalu panjang (maksimum 255 karakter).",
     "Username must have at least 2 characters": "Nama pengguna harus memiliki setidaknya 2 karakter",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Anda telah memasukkan kata sandi atau kode yang salah terlalu banyak kali, mohon tunggu selama %d menit dan coba lagi",
     "Your region is not allow to signup by phone": "Wilayah Anda tidak diizinkan untuk mendaftar melalui telepon",

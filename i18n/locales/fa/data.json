@@ -67,7 +67,7 @@
     "Username cannot be an email address": "نام کاربری نمی‌تواند یک آدرس ایمیل باشد",
     "Username cannot contain white spaces": "نام کاربری نمی‌تواند حاوی فاصله باشد",
     "Username cannot start with a digit": "نام کاربری نمی‌تواند با یک رقم شروع شود",
-    "Username is too long (maximum is 39 characters).": "نام کاربری بیش از حد طولانی است (حداکثر ۳۹ کاراکتر).",
+    "Username is too long (maximum is 255 characters).": "نام کاربری بیش از حد طولانی است (حداکثر ۳۹ کاراکتر).",
     "Username must have at least 2 characters": "نام کاربری باید حداقل ۲ کاراکتر داشته باشد",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "شما رمز عبور یا کد اشتباه را بیش از حد وارد کرده‌اید، لطفاً %d دقیقه صبر کنید و دوباره تلاش کنید",
     "Your region is not allow to signup by phone": "منطقه شما اجازه ثبت‌نام با تلفن را ندارد",

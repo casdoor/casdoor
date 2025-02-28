@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Tên người dùng không thể là địa chỉ email",
     "Username cannot contain white spaces": "Tên người dùng không thể chứa khoảng trắng",
     "Username cannot start with a digit": "Tên người dùng không thể bắt đầu bằng chữ số",
-    "Username is too long (maximum is 39 characters).": "Tên đăng nhập quá dài (tối đa là 39 ký tự).",
+    "Username is too long (maximum is 255 characters).": "Tên đăng nhập quá dài (tối đa là 255 ký tự).",
     "Username must have at least 2 characters": "Tên đăng nhập phải có ít nhất 2 ký tự",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",

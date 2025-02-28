@@ -67,7 +67,7 @@
     "Username cannot be an email address": "ユーザー名には電子メールアドレスを使用できません",
     "Username cannot contain white spaces": "ユーザ名にはスペースを含めることはできません",
     "Username cannot start with a digit": "ユーザー名は数字で始めることはできません",
-    "Username is too long (maximum is 39 characters).": "ユーザー名が長すぎます（最大39文字）。",
+    "Username is too long (maximum is 255 characters).": "ユーザー名が長すぎます（最大255文字）。",
     "Username must have at least 2 characters": "ユーザー名は少なくとも2文字必要です",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "あなたは間違ったパスワードまたはコードを何度も入力しました。%d 分間待ってから再度お試しください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",

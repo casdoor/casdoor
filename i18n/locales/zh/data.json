@@ -67,7 +67,7 @@
     "Username cannot be an email address": "用户名不可以是邮箱地址",
     "Username cannot contain white spaces": "用户名禁止包含空格",
     "Username cannot start with a digit": "用户名禁止使用数字开头",
-    "Username is too long (maximum is 39 characters).": "用户名过长（最大允许长度为39个字符）",
+    "Username is too long (maximum is 255 characters).": "用户名过长（最大允许长度为255个字符）",
     "Username must have at least 2 characters": "用户名至少要有2个字符",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",

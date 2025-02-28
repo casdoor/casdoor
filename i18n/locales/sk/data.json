@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Používateľské meno nemôže byť e-mailová adresa",
     "Username cannot contain white spaces": "Používateľské meno nemôže obsahovať medzery",
     "Username cannot start with a digit": "Používateľské meno nemôže začínať číslicou",
-    "Username is too long (maximum is 39 characters).": "Používateľské meno je príliš dlhé (maximum je 39 znakov).",
+    "Username is too long (maximum is 255 characters).": "Používateľské meno je príliš dlhé (maximum je 255 znakov).",
     "Username must have at least 2 characters": "Používateľské meno musí mať aspoň 2 znaky",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Zadali ste nesprávne heslo alebo kód príliš veľa krát, prosím, počkajte %d minút a skúste to znova",
     "Your region is not allow to signup by phone": "Váš región neumožňuje registráciu cez telefón",

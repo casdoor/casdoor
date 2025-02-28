@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Nombre de usuario no puede ser una dirección de correo electrónico",
     "Username cannot contain white spaces": "Nombre de usuario no puede contener espacios en blanco",
     "Username cannot start with a digit": "El nombre de usuario no puede empezar con un dígito",
-    "Username is too long (maximum is 39 characters).": "El nombre de usuario es demasiado largo (el máximo es de 39 caracteres).",
+    "Username is too long (maximum is 255 characters).": "El nombre de usuario es demasiado largo (el máximo es de 255 caracteres).",
     "Username must have at least 2 characters": "Nombre de usuario debe tener al menos 2 caracteres",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Has ingresado la contraseña o código incorrecto demasiadas veces, por favor espera %d minutos e intenta de nuevo",
     "Your region is not allow to signup by phone": "Tu región no está permitida para registrarse por teléfono",

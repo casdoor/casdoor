@@ -67,7 +67,7 @@
     "Username cannot be an email address": "사용자 이름은 이메일 주소가 될 수 없습니다",
     "Username cannot contain white spaces": "사용자 이름에는 공백이 포함될 수 없습니다",
     "Username cannot start with a digit": "사용자 이름은 숫자로 시작할 수 없습니다",
-    "Username is too long (maximum is 39 characters).": "사용자 이름이 너무 깁니다 (최대 39자).",
+    "Username is too long (maximum is 255 characters).": "사용자 이름이 너무 깁니다 (최대 255자).",
     "Username must have at least 2 characters": "사용자 이름은 적어도 2개의 문자가 있어야 합니다",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "올바르지 않은 비밀번호나 코드를 여러 번 입력했습니다. %d분 동안 기다리신 후 다시 시도해주세요",
     "Your region is not allow to signup by phone": "당신의 지역은 전화로 가입할 수 없습니다",

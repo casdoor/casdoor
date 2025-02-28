@@ -67,7 +67,7 @@
     "Username cannot be an email address": "Имя пользователя не может быть адресом электронной почты",
     "Username cannot contain white spaces": "Имя пользователя не может содержать пробелы",
     "Username cannot start with a digit": "Имя пользователя не может начинаться с цифры",
-    "Username is too long (maximum is 39 characters).": "Имя пользователя слишком длинное (максимальная длина - 39 символов).",
+    "Username is too long (maximum is 255 characters).": "Имя пользователя слишком длинное (максимальная длина - 255 символов).",
     "Username must have at least 2 characters": "Имя пользователя должно содержать не менее 2 символов",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Вы ввели неправильный пароль или код слишком много раз, пожалуйста, подождите %d минут и попробуйте снова",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
