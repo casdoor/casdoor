@@ -109,7 +109,7 @@ class EntryPage extends React.Component {
       <React.Fragment>
         <CustomHead headerHtml={this.state.application?.headerHtml} />
         <div className={`${isDarkMode ? "loginBackgroundDark" : "loginBackground"}`}
-          style={{backgroundImage: Setting.inIframe() || Setting.isMobile() ? null : `url(${this.state.application?.formBackgroundUrl})`}}>
+          style={{backgroundImage: Setting.inIframe() ? null : (Setting.isMobile() ? `url(${this.state.application?.formBackgroundUrlMobile})` : `url(${this.state.application?.formBackgroundUrl})`)}}>
           <Spin size="large" spinning={this.state.application === undefined && this.state.pricing === undefined} tip={i18next.t("login:Loading")}
             style={{width: "100%", margin: "0 auto", position: "absolute"}} />
           <Switch>
