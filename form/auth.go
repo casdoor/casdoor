@@ -34,6 +34,7 @@ type AuthForm struct {
 	Phone          string `json:"phone"`
 	Affiliation    string `json:"affiliation"`
 	IdCard         string `json:"idCard"`
+	Language       string `json:"language"`
 	Region         string `json:"region"`
 	InvitationCode string `json:"invitationCode"`
 

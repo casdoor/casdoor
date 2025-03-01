@@ -986,6 +986,18 @@ func (c *ApiController) Login() {
 		}
 	}
 
+	if authForm.Language != "" {
+		user := c.getCurrentUser()
+		if user != nil {
+			user.Language = authForm.Language
+			_, err = object.UpdateUser(user.GetId(), user, []string{"language"}, user.IsAdmin)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+		}
+	}
+
 	c.Data["json"] = resp
 	c.ServeJSON()
 }

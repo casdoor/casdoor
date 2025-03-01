@@ -61,6 +61,7 @@ class LoginPage extends React.Component {
       isTermsOfUseVisible: false,
       termsOfUseContent: "",
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
+      userLang: null,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -415,6 +416,7 @@ class LoginPage extends React.Component {
 
   login(values) {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
+    values["language"] = this.state.userLang ?? "";
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
@@ -566,7 +568,7 @@ class LoginPage extends React.Component {
       return (
         <div key={resultItemKey} className="login-languages">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          <LanguageSelect languages={application.organizationObj.languages} />
+          <LanguageSelect languages={application.organizationObj.languages} onClick={key => {this.setState({userLang: key});}} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
@@ -805,7 +807,6 @@ class LoginPage extends React.Component {
         <Form
           name="normal_login"
           initialValues={{
-
             organization: application.organization,
             application: application.name,
             autoSignin: true,
