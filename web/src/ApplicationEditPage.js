@@ -13,8 +13,23 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Switch, Upload} from "antd";
-import {CopyOutlined, LinkOutlined, UploadOutlined} from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Col,
+  ConfigProvider,
+  Input,
+  InputNumber,
+  Popover,
+  Radio,
+  Result,
+  Row,
+  Select,
+  Space,
+  Switch,
+  Upload
+} from "antd";
+import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
 import * as Setting from "./Setting";
@@ -36,6 +51,7 @@ import ThemeEditor from "./common/theme/ThemeEditor";
 
 import SigninTable from "./table/SigninTable";
 import Editor from "./common/Editor";
+import * as GroupBackend from "./backend/GroupBackend";
 
 const {Option} = Select;
 
@@ -116,6 +132,7 @@ class ApplicationEditPage extends React.Component {
   UNSAFE_componentWillMount() {
     this.getApplication();
     this.getOrganizations();
+    this.getGroups();
   }
 
   getApplication() {
@@ -162,6 +179,17 @@ class ApplicationEditPage extends React.Component {
         } else {
           this.setState({
             organizations: res.data || [],
+          });
+        }
+      });
+  }
+
+  getGroups() {
+    GroupBackend.getGroups(this.state.organizationName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            groups: res.data,
           });
         }
       });
@@ -467,6 +495,31 @@ class ApplicationEditPage extends React.Component {
             <InputNumber style={{width: "150px"}} value={this.state.application.failedSigninFrozenTime} min={1} step={1} precision={0} addonAfter="Minutes" onChange={value => {
               this.updateApplicationField("failedSigninFrozenTime", value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("ldap:Default group"), i18next.t("ldap:Default group - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Select virtual={false} style={{width: "100%"}} value={this.state.application.defaultGroup ?? []} onChange={(value => {
+              this.updateApplicationField("defaultGroup", value);
+            })}
+            >
+              <Option key={""} value={""}>
+                <Space>
+                  {i18next.t("general:Default")}
+                </Space>
+              </Option>
+              {
+                this.state.groups?.map((group) => <Option key={group.name} value={`${group.owner}/${group.name}`}>
+                  <Space>
+                    {group.type === "Physical" ? <UsergroupAddOutlined /> : <HolderOutlined />}
+                    {group.displayName}
+                  </Space>
+                </Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
