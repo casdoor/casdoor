@@ -13,22 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {
-  Button,
-  Card,
-  Col,
-  ConfigProvider,
-  Input,
-  InputNumber,
-  Popover,
-  Radio,
-  Result,
-  Row,
-  Select,
-  Space,
-  Switch,
-  Upload
-} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
 import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
