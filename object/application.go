@@ -71,6 +71,7 @@ type Application struct {
 	Description           string          `xorm:"varchar(100)" json:"description"`
 	Organization          string          `xorm:"varchar(100)" json:"organization"`
 	Cert                  string          `xorm:"varchar(100)" json:"cert"`
+	DefaultGroup          string          `xorm:"varchar(100)" json:"defaultGroup"`
 	HeaderHtml            string          `xorm:"mediumtext" json:"headerHtml"`
 	EnablePassword        bool            `json:"enablePassword"`
 	EnableSignUp          bool            `json:"enableSignUp"`
