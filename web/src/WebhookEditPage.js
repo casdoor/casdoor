@@ -174,7 +174,16 @@ class WebhookEditPage extends React.Component {
   renderWebhook() {
     const preview = Setting.deepCopy(previewTemplate);
     if (this.state.webhook.isUserExtended) {
-      preview["extendedUser"] = userTemplate;
+      if (this.state.webhook.tokenFields && this.state.webhook.tokenFields.length !== 0) {
+        const extendedUser = {};
+        this.state.webhook.tokenFields.forEach(field => {
+          const fieldTrans = field.replace(field[0], field[0].toLowerCase());
+          extendedUser[fieldTrans] = userTemplate[fieldTrans];
+        });
+        preview["extendedUser"] = extendedUser;
+      } else {
+        preview["extendedUser"] = userTemplate;
+      }
     }
     const previewText = JSON.stringify(preview, null, 2);
 
@@ -293,6 +302,18 @@ class WebhookEditPage extends React.Component {
             <Switch checked={this.state.webhook.isUserExtended} onChange={checked => {
               this.updateWebhookField("isUserExtended", checked);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Extended user fields"), i18next.t("application:Extended user fields - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" showSearch style={{width: "100%"}} value={this.state.webhook.tokenFields} onChange={(value => {this.updateWebhookField("tokenFields", value);})}>
+              {
+                Setting.getUserCommonFields().map((item, index) => <Option key={index} value={item}>{item}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
