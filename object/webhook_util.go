@@ -40,7 +40,17 @@ func sendWebhook(webhook *Webhook, record *casvisorsdk.Record, extendedUser *Use
 			}
 		}
 
-		body = strings.NewReader(util.StructToJson(userMap))
+		type RecordEx struct {
+			casvisorsdk.Record
+			ExtendedUser map[string]interface{} `json:"extendedUser"`
+		}
+
+		recordEx := &RecordEx{
+			Record:       *record,
+			ExtendedUser: userMap,
+		}
+
+		body = strings.NewReader(util.StructToJson(recordEx))
 	} else {
 		type RecordEx struct {
 			casvisorsdk.Record
