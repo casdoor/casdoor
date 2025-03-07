@@ -97,12 +97,16 @@ class FaceIdTable extends React.Component {
         title={() => (
           <div>
             {i18next.t("user:Face IDs")}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true})}>
+            <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: false})}>
               {i18next.t("general:Add Face Id")}
+            </Button>
+            <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: true})}>
+              {i18next.t("general:Add Face Id with image")}
             </Button>
             <Suspense fallback={null}>
               <FaceRecognitionModal
                 visible={this.state.openFaceRecognitionModal}
+                withImage={this.state.withImage}
                 onOk={(faceIdData) => {
                   this.addFaceId(table, faceIdData);
                   this.setState({openFaceRecognitionModal: false});
