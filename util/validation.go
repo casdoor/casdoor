@@ -112,12 +112,5 @@ func IsValidOrigin(origin string) (bool, error) {
 	if urlObj == nil {
 		return false, nil
 	}
-
-	originHostOnly := ""
-	if urlObj.Host != "" {
-		originHostOnly = fmt.Sprintf("%s://%s", urlObj.Scheme, urlObj.Hostname())
-	}
-
-	res := originHostOnly == "http://localhost" || originHostOnly == "https://localhost" || originHostOnly == "http://127.0.0.1" || originHostOnly == "http://casdoor-authenticator" || strings.HasSuffix(originHostOnly, ".chromiumapp.org")
-	return res, nil
+	return true, nil
 }
