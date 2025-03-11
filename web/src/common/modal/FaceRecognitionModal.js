@@ -289,20 +289,20 @@ const FaceRecognitionModal = (props) => {
             <p>{i18next.t("general:Click to Upload")}</p>
           </Dragger >
           {
-            modelsLoaded ? <Button style={{width: "100%"}} onClick={() => {
+            modelsLoaded ? <Button style={{width: "100%"}} onClick={async() => {
               let maxScore = 0;
-              files.forEach((file, fileIndex) => {
+              for (const file of files) {
+                const fileIndex = files.indexOf(file);
                 const img = new Image();
                 img.src = file.base64;
-                faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors().then(res2 => {
-                  if (res2[0]?.detection.score > 0.9 && res2[0]?.detection.score > maxScore) {
-                    maxScore = res2[0]?.detection.score;
-                    setCurrentFaceId(res2[0]);
-                    setCurrentFaceIndex(fileIndex);
-                  }
-                });
-              });
-              if (currentFaceId?.length === 0) {
+                const faceIds = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptors();
+                if (faceIds[0]?.detection.score > 0.9 && faceIds[0]?.detection.score > maxScore) {
+                  maxScore = faceIds[0]?.detection.score;
+                  setCurrentFaceId(faceIds[0]);
+                  setCurrentFaceIndex(fileIndex);
+                }
+              }
+              if (maxScore < 0.9) {
                 message.error(i18next.t("login:Face recognition failed"));
               }
             }}> {i18next.t("application:Generate faceId")}</Button> : null
