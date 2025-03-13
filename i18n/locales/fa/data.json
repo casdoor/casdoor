@@ -61,8 +61,8 @@
     "The user is forbidden to sign in, please contact the administrator": "ورود کاربر ممنوع است، لطفاً با مدیر تماس بگیرید",
     "The user: %s doesn't exist in LDAP server": "کاربر: %s در سرور LDAP وجود ندارد",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "نام کاربری فقط می‌تواند حاوی کاراکترهای الفبایی عددی، زیرخط یا خط تیره باشد، نمی‌تواند خط تیره یا زیرخط متوالی داشته باشد، و نمی‌تواند با خط تیره یا زیرخط شروع یا پایان یابد.",
-    "The value \"%s\" for account field \"%s\" doesn't match the account item regex": "مقدار \"%s\" برای فیلد حساب \"%s\" با عبارت منظم مورد حساب مطابقت ندارد",
-    "The value \"%s\" for signup field \"%s\" doesn't match the signup item regex of the application \"%s\"": "مقدار \"%s\" برای فیلد ثبت‌نام \"%s\" با عبارت منظم مورد ثبت‌نام برنامه \"%s\" مطابقت ندارد",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
     "Username already exists": "نام کاربری قبلاً وجود دارد",
     "Username cannot be an email address": "نام کاربری نمی‌تواند یک آدرس ایمیل باشد",
     "Username cannot contain white spaces": "نام کاربری نمی‌تواند حاوی فاصله باشد",
@@ -101,7 +101,7 @@
     "Unknown modify rule %s.": "قانون تغییر ناشناخته %s."
   },
   "permission": {
-    "The permission: \"%s\" doesn't exist": "مجوز: \"%s\" وجود ندارد"
+    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
   },
   "provider": {
     "Invalid application id": "شناسه برنامه نامعتبر",
@@ -156,8 +156,8 @@
     "Unknown type": "نوع ناشناخته",
     "Wrong verification code!": "کد تأیید اشتباه!",
     "You should verify your code in %d min!": "شما باید کد خود را در %d دقیقه تأیید کنید!",
-    "please add a SMS provider to the \"Providers\" list for the application: %s": "لطفاً یک ارائه‌دهنده پیامک به لیست \"ارائه‌دهندگان\" برای برنامه: %s اضافه کنید",
-    "please add an Email provider to the \"Providers\" list for the application: %s": "لطفاً یک ارائه‌دهنده ایمیل به لیست \"ارائه‌دهندگان\" برای برنامه: %s اضافه کنید",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
     "the user does not exist, please sign up first": "کاربر وجود ندارد، لطفاً ابتدا ثبت‌نام کنید"
   },
   "webauthn": {
