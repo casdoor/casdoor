@@ -598,7 +598,6 @@ func (c *ApiController) Login() {
 			c.ResponseError(err.Error())
 			return
 		}
-
 		if provider == nil {
 			c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), authForm.Provider))
 		}
