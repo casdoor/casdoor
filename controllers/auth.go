@@ -19,6 +19,8 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/casdoor/casdoor/faceId"
+	"github.com/casdoor/casdoor/i18n"
 	"io"
 	"net/http"
 	"net/url"
@@ -402,11 +404,57 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
-				c.ResponseError(err.Error(), nil)
-				return
+			faceIdProvider, err := object.GetFaceIdProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error())
 			}
 
+			if faceIdProvider == nil {
+				if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
+					c.ResponseError(err.Error(), nil)
+					return
+				}
+			} else {
+				faceIdChecker := faceId.GetFaceIdProvider(faceIdProvider.Type, faceIdProvider.ClientId, faceIdProvider.ClientSecret, faceIdProvider.Endpoint)
+				userFaceImgBase64s := []string{}
+				for _, userFaceId := range user.FaceIds {
+					if userFaceId.FaceImageUrl != "" {
+						imgResp, err := http.Get(userFaceId.FaceImageUrl)
+						if err != nil {
+							continue
+						}
+						imgByte, err := io.ReadAll(imgResp.Body)
+						if err != nil {
+							continue
+						}
+
+						base64Img := base64.StdEncoding.EncodeToString(imgByte)
+						userFaceImgBase64s = append(userFaceImgBase64s, base64Img)
+					}
+				}
+				success := false
+				for _, userFaceImgBase64 := range userFaceImgBase64s {
+					for _, imgBase64 := range authForm.FaceIdImage {
+						isSuccess, err := faceIdChecker.Check(imgBase64, userFaceImgBase64)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+						if isSuccess {
+							success = true
+							break
+						}
+					}
+					if success {
+						break
+					}
+				}
+
+				if !success {
+					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
+					return
+				}
+			}
 		} else if authForm.Password == "" {
 			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
 				c.ResponseError(err.Error(), nil)

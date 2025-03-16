@@ -567,6 +567,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "MetaMask");
               } else if (value === "Notification") {
                 this.updateProviderField("type", "Telegram");
+              } else if (value === "FaceId") {
+                this.updateProviderField("type", "Aliyun FaceId");
               }
             })}>
               {
@@ -580,6 +582,7 @@ class ProviderEditPage extends React.Component {
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
+                  {id: "FaceId", name: "FaceId"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -1361,6 +1364,19 @@ class ProviderEditPage extends React.Component {
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "FaceId" ? (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.endpoint} onChange={e => {
+                    this.updateProviderField("endpoint", e.target.value);
+                  }} />
                 </Col>
               </Row>
             </React.Fragment>

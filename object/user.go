@@ -242,8 +242,9 @@ type MfaAccount struct {
 }
 
 type FaceId struct {
-	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
-	FaceIdData []float64 `json:"faceIdData"`
+	Name         string    `xorm:"varchar(100) notnull pk" json:"name"`
+	FaceIdData   []float64 `json:"faceIdData"`
+	FaceImageUrl string    `json:"faceImageUrl"`
 }
 
 func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {

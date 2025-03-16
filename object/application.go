@@ -541,7 +541,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 
 	providerItems := []*ProviderItem{}
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3" || providerItem.Provider.Category == "Captcha" || providerItem.Provider.Category == "SAML") {
+		if providerItem.Provider != nil && (providerItem.Provider.Category == "OAuth" || providerItem.Provider.Category == "Web3" || providerItem.Provider.Category == "Captcha" || providerItem.Provider.Category == "SAML" || providerItem.Provider.Category == "FaceId") {
 			providerItems = append(providerItems, providerItem)
 		}
 	}
