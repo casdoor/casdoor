@@ -16,7 +16,6 @@ package faceId
 
 type FaceIdProvider interface {
 	Check(base64ImageA string, base64ImageB string) (bool, error)
-	//CheckMulti(base64Images []string, base64Image string) (bool, error)
 }
 
 func GetFaceIdProvider(typ string, clientId string, clientSecret string, endPoint string) FaceIdProvider {

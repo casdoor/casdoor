@@ -19,8 +19,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"github.com/casdoor/casdoor/faceId"
-	"github.com/casdoor/casdoor/i18n"
 	"io"
 	"net/http"
 	"net/url"
@@ -30,7 +28,9 @@ import (
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/form"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"

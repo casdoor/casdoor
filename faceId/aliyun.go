@@ -15,11 +15,12 @@
 package faceId
 
 import (
+	"strings"
+
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	facebody20191230 "github.com/alibabacloud-go/facebody-20191230/v5/client"
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
-	"strings"
 )
 
 type AliyunFaceIdProvider struct {
@@ -46,7 +47,6 @@ func (provider *AliyunFaceIdProvider) Check(base64ImageA string, base64ImageB st
 	}
 	config.Endpoint = tea.String(provider.Endpoint)
 	client, err := facebody20191230.NewClient(&config)
-
 	if err != nil {
 		return false, err
 	}
@@ -65,7 +65,6 @@ func (provider *AliyunFaceIdProvider) Check(base64ImageA string, base64ImageB st
 		}
 	}()
 	result, err := client.CompareFaceWithOptions(compareFaceRequest, runtime)
-
 	if err != nil {
 		return false, err
 	}
