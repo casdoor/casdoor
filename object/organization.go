@@ -79,6 +79,7 @@ type Organization struct {
 	IsProfilePublic        bool       `json:"isProfilePublic"`
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
+	EnableAIAssistant      bool       `json:"enableAIAssistant"`
 	IpRestriction          string     `json:"ipRestriction"`
 	NavItems               []string   `xorm:"varchar(500)" json:"navItems"`
 

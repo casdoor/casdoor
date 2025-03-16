@@ -193,15 +193,17 @@ function ManagementPage(props) {
             onChange={props.setLogoAndThemeAlgorithm} />
           <LanguageSelect languages={props.account.organization.languages} />
           {
-            Conf.AiAssistantUrl?.trim() && (
+            props.account.organization.enableAIAssistant ? Conf.AiAssistantUrl?.trim() && (
               <Tooltip title="Click to open AI assistant">
                 <div className="select-box" onClick={props.openAiAssistant}>
                   <DeploymentUnitOutlined style={{fontSize: "24px"}} />
                 </div>
               </Tooltip>
-            )
+            ) : null
           }
-          <OpenTour />
+          {
+            props.account.organization.enableTour ? <OpenTour /> : null
+          }
           {Setting.isAdminUser(props.account) && (props.uri.indexOf("/trees") === -1) &&
                         <OrganizationSelect
                           initValue={Setting.getOrganization()}

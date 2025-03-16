@@ -112,6 +112,7 @@ func initBuiltInOrganization() bool {
 		IsProfilePublic:    false,
 		UseEmailAsUsername: false,
 		EnableTour:         true,
+		EnableAIAssistant:  true,
 	}
 	_, err = AddOrganization(organization)
 	if err != nil {
