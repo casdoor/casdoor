@@ -443,8 +443,6 @@ function ManagementPage(props) {
     return Setting.isMobile() || window.location.pathname.startsWith("/trees");
   }
 
-  const menuStyleRight = Setting.isAdminUser(props.account) && !Setting.isMobile() ? "calc(180px + 280px)" : "320px";
-
   const onClose = () => {
     setMenuVisible(false);
   };
@@ -456,34 +454,40 @@ function ManagementPage(props) {
   return (
     <React.Fragment>
       <EnableMfaNotification account={props.account} />
-      <Header style={{padding: "0", marginBottom: "3px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
-        {props.requiredEnableMfa || (Setting.isMobile() ?
-          <React.Fragment>
-            <Drawer title={i18next.t("general:Close")} placement="left" open={menuVisible} onClose={onClose}>
-              <Menu
-                items={getMenuItems()}
-                mode={"inline"}
-                selectedKeys={[props.selectedMenuKey]}
-                style={{lineHeight: "64px"}}
-                onClick={onClose}
-              >
-              </Menu>
-            </Drawer>
-            <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
-              {i18next.t("general:Menu")}
-            </Button>
-          </React.Fragment> :
-          <Menu
-            onClick={onClose}
-            items={getMenuItems()}
-            mode={"horizontal"}
-            selectedKeys={[props.selectedMenuKey]}
-            style={{position: "absolute", left: 0, right: menuStyleRight, backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}}
-          />
-        )}
+      <Header style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0", marginBottom: "4px", backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}} >
         {
-          renderAccountMenu()
+          props.requiredEnableMfa || (Setting.isMobile() ? (
+            <React.Fragment>
+              <Drawer title={i18next.t("general:Close")} placement="left" open={menuVisible} onClose={onClose}>
+                <Menu
+                  items={getMenuItems()}
+                  mode={"inline"}
+                  selectedKeys={[props.selectedMenuKey]}
+                  style={{lineHeight: "64px"}}
+                  onClick={onClose}
+                >
+                </Menu>
+              </Drawer>
+              <Button icon={<BarsOutlined />} onClick={showMenu} type="text">
+                {i18next.t("general:Menu")}
+              </Button>
+            </React.Fragment>
+          ) : (
+            // Padding 1px for Menu Item Highlight border
+            <div style={{flex: 1, overflow: "hidden", paddingBottom: "1px"}}>
+              <Menu
+                onClick={onClose}
+                items={getMenuItems()}
+                mode={"horizontal"}
+                selectedKeys={[props.selectedMenuKey]}
+                style={{backgroundColor: props.themeAlgorithm.includes("dark") ? "black" : "white"}}
+              />
+            </div>
+          ))
         }
+        <div style={{flexShrink: 0}}>
+          {renderAccountMenu()}
+        </div>
       </Header>
       <Content style={{display: "flex", flexDirection: "column"}} >
         {isWithoutCard() ?
