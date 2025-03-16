@@ -58,30 +58,23 @@ func (provider *AliyunFaceIdProvider) Check(base64ImageA string, base64ImageB st
 	}
 
 	runtime := &util.RuntimeOptions{}
-	res, tryErr := func() (result *facebody20191230.CompareFaceResponse, _e error) {
-		defer func() {
-			if r := tea.Recover(recover()); r != nil {
-				_e = r
-			}
-		}()
-		// 复制代码运行请自行打印 API 的返回值
-		result, err := client.CompareFaceWithOptions(compareFaceRequest, runtime)
-		if err != nil {
-			return nil, err
+
+	defer func() {
+		if r := tea.Recover(recover()); r != nil {
+			err = r
 		}
-
-		return result, nil
 	}()
+	result, err := client.CompareFaceWithOptions(compareFaceRequest, runtime)
 
-	if tryErr != nil {
-		return false, tryErr
+	if err != nil {
+		return false, err
 	}
 
-	if res == nil {
+	if result == nil {
 		return false, nil
 	}
 
-	if *res.Body.Data.Thresholds[0] < *res.Body.Data.Confidence {
+	if *result.Body.Data.Thresholds[0] < *result.Body.Data.Confidence {
 		return true, nil
 	}
 

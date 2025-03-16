@@ -41,11 +41,12 @@ const FaceRecognitionCommonModal = (props) => {
               setPercent(0);
             }
             count2++;
-            setPercent(count2 * 20);
             if (count2 >= 8) {
               clearInterval(interval2);
+              setPercent(0);
               onOk(capturedImageArray);
             } else if (count2 > 3) {
+              setPercent((count2 - 4) * 20);
               const canvas = document.createElement("canvas");
               canvas.width = videoRef.current.videoWidth;
               canvas.height = videoRef.current.videoHeight;
@@ -83,6 +84,7 @@ const FaceRecognitionCommonModal = (props) => {
         });
     } else {
       setIsCameraCaptured(false);
+      setCapturedImageArray([]);
     }
   }, [visible]);
 
