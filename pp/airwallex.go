@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -180,7 +181,11 @@ func (c *AirwallexClient) authRequest(method, url string, body interface{}) (map
 		return nil, err
 	}
 	b, _ := json.Marshal(body)
-	req, _ := http.NewRequest(method, url, bytes.NewBuffer(b))
+	var reqBody io.Reader
+	if method != "GET" {
+		reqBody = bytes.NewBuffer(b)
+	}
+	req, _ := http.NewRequest(method, url, reqBody)
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.client.Do(req)
