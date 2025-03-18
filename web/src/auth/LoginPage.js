@@ -1289,7 +1289,6 @@ class LoginPage extends React.Component {
                 {
                   this.renderLoginPanel(application)
                 }
-                {/* <FaceRecognitionCommonModal></FaceRecognitionCommonModal>*/}
               </div>
             </div>
           </div>
