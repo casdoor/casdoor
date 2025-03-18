@@ -141,14 +141,14 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		return false, err
 	}
 
-	owner, name := util.GetOwnerAndNameFromIdNoCheck(id)
-	oldPermission, err := getPermission(owner, name)
+	oldOwner, oldName := util.GetOwnerAndNameFromIdNoCheck(id)
+	oldPermission, err := getPermission(oldOwner, oldName)
 	if oldPermission == nil {
 		return false, nil
 	}
 
 	if permission.ResourceType == "Application" && permission.Model != "" {
-		model, err := GetModelEx(util.GetId(owner, permission.Model))
+		model, err := GetModelEx(util.GetId(permission.Owner, permission.Model))
 		if err != nil {
 			return false, err
 		} else if model == nil {
@@ -165,7 +165,7 @@ func UpdatePermission(id string, permission *Permission) (bool, error) {
 		}
 	}
 
-	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(permission)
+	affected, err := ormer.Engine.ID(core.PK{oldOwner, oldName}).AllCols().Update(permission)
 	if err != nil {
 		return false, err
 	}
