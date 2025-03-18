@@ -28,7 +28,6 @@ import (
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/faceId"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -415,42 +414,12 @@ func (c *ApiController) Login() {
 					return
 				}
 			} else {
-				faceIdChecker := faceId.GetFaceIdProvider(faceIdProvider.Type, faceIdProvider.ClientId, faceIdProvider.ClientSecret, faceIdProvider.Endpoint)
-				userFaceImgBase64s := []string{}
-				for _, userFaceId := range user.FaceIds {
-					if userFaceId.FaceImageUrl != "" {
-						imgResp, err := http.Get(userFaceId.FaceImageUrl)
-						if err != nil {
-							continue
-						}
-						imgByte, err := io.ReadAll(imgResp.Body)
-						if err != nil {
-							continue
-						}
-
-						base64Img := base64.StdEncoding.EncodeToString(imgByte)
-						userFaceImgBase64s = append(userFaceImgBase64s, base64Img)
-					}
-				}
-				success := false
-				for _, userFaceImgBase64 := range userFaceImgBase64s {
-					for _, imgBase64 := range authForm.FaceIdImage {
-						isSuccess, err := faceIdChecker.Check(imgBase64, userFaceImgBase64)
-						if err != nil {
-							c.ResponseError(err.Error())
-							return
-						}
-						if isSuccess {
-							success = true
-							break
-						}
-					}
-					if success {
-						break
-					}
+				ok, err := user.CheckUserFace(authForm.FaceIdImage, faceIdProvider)
+				if err != nil {
+					c.ResponseError(err.Error(), nil)
 				}
 
-				if !success {
+				if !ok {
 					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
 					return
 				}

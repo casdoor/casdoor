@@ -567,8 +567,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "MetaMask");
               } else if (value === "Notification") {
                 this.updateProviderField("type", "Telegram");
-              } else if (value === "FaceId") {
-                this.updateProviderField("type", "Aliyun FaceId");
+              } else if (value === "Face ID") {
+                this.updateProviderField("type", "Alibaba Cloud Facebody");
               }
             })}>
               {
@@ -582,7 +582,7 @@ class ProviderEditPage extends React.Component {
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
-                  {id: "FaceId", name: "FaceId"},
+                  {id: "Face ID", name: "Face ID"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -904,7 +904,7 @@ class ProviderEditPage extends React.Component {
             </Row>
           )
         }
-        {this.state.provider.category === "Storage" || ["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud"].includes(this.state.provider.type) ? (
+        {["Face ID", "Storage"].includes(this.state.provider.category) || ["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud"].includes(this.state.provider.type) ? (
           <div>
             {["Local File System", "CUCloud"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
@@ -918,7 +918,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "SendGrid", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology", "Casdoor", "CUCloud"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "SendGrid", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -930,7 +930,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "SendGrid", "Local File System", "CUCloud"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "SendGrid", "Local File System", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {["Casdoor"].includes(this.state.provider.type) ?
@@ -944,7 +944,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "SendGrid", "CUCloud"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "SendGrid", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
@@ -956,7 +956,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "SendGrid", "Synology", "Casdoor", "CUCloud"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "SendGrid", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -1364,19 +1364,6 @@ class ProviderEditPage extends React.Component {
                   }}>
                     {i18next.t("provider:Copy")}
                   </Button>
-                </Col>
-              </Row>
-            </React.Fragment>
-          ) : this.state.provider.category === "FaceId" ? (
-            <React.Fragment>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.endpoint} onChange={e => {
-                    this.updateProviderField("endpoint", e.target.value);
-                  }} />
                 </Col>
               </Row>
             </React.Fragment>

@@ -416,8 +416,8 @@ export const OtherProviderInfo = {
       url: "https://www.cucloud.cn/",
     },
   },
-  FaceId: {
-    "Aliyun FaceId": {
+  "Face ID": {
+    "Alibaba Cloud Facebody": {
       logo: `${StaticBaseUrl}/img/social_aliyun.png`,
       url: "https://vision.aliyun.com/facebody",
     },
@@ -1156,9 +1156,9 @@ export function getProviderTypeOptions(category) {
       {id: "Viber", name: "Viber"},
       {id: "CUCloud", name: "CUCloud"},
     ]);
-  } else if (category === "FaceId") {
+  } else if (category === "Face ID") {
     return ([
-      {id: "Aliyun FaceId", name: "Aliyun FaceId"},
+      {id: "Alibaba Cloud Facebody", name: "Alibaba Cloud Facebody"},
     ]);
   } else {
     return [];

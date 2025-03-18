@@ -55,10 +55,10 @@ class FaceIdTable extends React.Component {
     this.updateTable(table);
   }
 
-  addFaceImage(table, faceImageUrl) {
+  addFaceImage(table, imageUrl) {
     const faceId = {
       name: Setting.getRandomName(),
-      faceImageUrl: faceImageUrl,
+      imageUrl: imageUrl,
       faceIdData: [],
     };
     if (table === undefined || table === null) {
@@ -94,9 +94,9 @@ class FaceIdTable extends React.Component {
         },
       },
       {
-        title: i18next.t("general:FaceImageUrl"),
-        dataIndex: "faceImageUrl",
-        key: "faceImageUrl",
+        title: i18next.t("general:ImageUrl"),
+        dataIndex: "imageUrl",
+        key: "imageUrl",
         render: (text, record, index) => {
           return text;
         },

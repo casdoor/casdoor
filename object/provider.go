@@ -386,7 +386,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 
 func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {
 	owner, name := util.GetOwnerAndNameFromId(applicationId)
-	provider := Provider{Owner: owner, Name: name, Category: "FaceId"}
+	provider := Provider{Owner: owner, Name: name, Category: "Face ID"}
 	existed, err := ormer.Engine.Get(&provider)
 	if err != nil {
 		return nil, err
@@ -415,7 +415,7 @@ func GetFaceIdProviderByApplication(applicationId, isCurrentProvider, lang strin
 		if provider.Provider == nil {
 			continue
 		}
-		if provider.Provider.Category == "FaceId" {
+		if provider.Provider.Category == "Face ID" {
 			return GetFaceIdProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}

@@ -266,7 +266,7 @@ class LoginPage extends React.Component {
     this.props.onUpdateApplication(application);
     for (const idx in application.providers) {
       const provider = application.providers[idx];
-      if (provider.provider?.category === "FaceId") {
+      if (provider.provider?.category === "Face ID") {
         this.setState({haveFaceIdProvider: true});
         break;
       }
