@@ -37,6 +37,7 @@ import RedirectForm from "../common/RedirectForm";
 import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
+const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class LoginPage extends React.Component {
@@ -263,6 +264,13 @@ class LoginPage extends React.Component {
 
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
+    for (const idx in application.providers) {
+      const provider = application.providers[idx];
+      if (provider.provider?.category === "Face ID") {
+        this.setState({haveFaceIdProvider: true});
+        break;
+      }
+    }
   }
 
   parseOffset(offset) {
@@ -698,19 +706,25 @@ class LoginPage extends React.Component {
           </Button>
           {
             this.state.loginMethod === "faceId" ?
-              <Suspense fallback={null}>
-                <FaceRecognitionModal
-                  visible={this.state.openFaceRecognitionModal}
-                  onOk={(faceId) => {
-                    const values = this.state.values;
-                    values["faceId"] = faceId;
+              this.state.haveFaceIdProvider ? <Suspense fallback={null}><FaceRecognitionCommonModal visible={this.state.openFaceRecognitionModal} onOk={(FaceIdImage) => {
+                const values = this.state.values;
+                values["FaceIdImage"] = FaceIdImage;
+                this.login(values);
+                this.setState({openFaceRecognitionModal: false});
+              }} onCancel={() => this.setState({openFaceRecognitionModal: false})} /></Suspense> :
+                <Suspense fallback={null}>
+                  <FaceRecognitionModal
+                    visible={this.state.openFaceRecognitionModal}
+                    onOk={(faceId) => {
+                      const values = this.state.values;
+                      values["faceId"] = faceId;
 
-                    this.login(values);
-                    this.setState({openFaceRecognitionModal: false});
-                  }}
-                  onCancel={() => this.setState({openFaceRecognitionModal: false})}
-                />
-              </Suspense>
+                      this.login(values);
+                      this.setState({openFaceRecognitionModal: false});
+                    }}
+                    onCancel={() => this.setState({openFaceRecognitionModal: false})}
+                  />
+                </Suspense>
               :
               <>
               </>

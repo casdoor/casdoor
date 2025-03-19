@@ -384,6 +384,44 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	return nil, nil
 }
 
+func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {
+	owner, name := util.GetOwnerAndNameFromId(applicationId)
+	provider := Provider{Owner: owner, Name: name, Category: "Face ID"}
+	existed, err := ormer.Engine.Get(&provider)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
+	}
+
+	return &provider, nil
+}
+
+func GetFaceIdProviderByApplication(applicationId, isCurrentProvider, lang string) (*Provider, error) {
+	if isCurrentProvider == "true" {
+		return GetFaceIdProviderByOwnerName(applicationId, lang)
+	}
+	application, err := GetApplication(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	if application == nil || len(application.Providers) == 0 {
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
+	}
+	for _, provider := range application.Providers {
+		if provider.Provider == nil {
+			continue
+		}
+		if provider.Provider.Category == "Face ID" {
+			return GetFaceIdProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
+		}
+	}
+	return nil, nil
+}
+
 func providerChangeTrigger(oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()

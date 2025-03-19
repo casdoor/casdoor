@@ -15,13 +15,17 @@
 package object
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/faceId"
+	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/util"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/xorm-io/builder"
@@ -244,6 +248,7 @@ type MfaAccount struct {
 type FaceId struct {
 	Name       string    `xorm:"varchar(100) notnull pk" json:"name"`
 	FaceIdData []float64 `json:"faceIdData"`
+	ImageUrl   string    `json:"ImageUrl"`
 }
 
 func GetUserFieldStringValue(user *User, fieldName string) (bool, string, error) {
@@ -1177,6 +1182,40 @@ func (user *User) IsGlobalAdmin() bool {
 	}
 
 	return user.Owner == "built-in"
+}
+
+func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool, error) {
+	faceIdChecker := faceId.GetFaceIdProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
+	httpClient := proxy.DefaultHttpClient
+	errList := []error{}
+	for _, userFaceId := range user.FaceIds {
+		if userFaceId.ImageUrl != "" {
+			imgResp, err := httpClient.Get(userFaceId.ImageUrl)
+			if err != nil {
+				continue
+			}
+			imgByte, err := io.ReadAll(imgResp.Body)
+			if err != nil {
+				continue
+			}
+
+			base64Img := base64.StdEncoding.EncodeToString(imgByte)
+			for _, imgBase64 := range faceIdImage {
+				isSuccess, err := faceIdChecker.Check(imgBase64, base64Img)
+				if err != nil {
+					errList = append(errList, err)
+					continue
+				}
+				if isSuccess {
+					return true, nil
+				}
+			}
+		}
+	}
+	if len(errList) > 0 {
+		return false, errList[0]
+	}
+	return false, nil
 }
 
 func GenerateIdForNewUser(application *Application) (string, error) {

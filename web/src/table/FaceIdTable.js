@@ -13,9 +13,11 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Col, Input, Row, Table} from "antd";
+import {Button, Col, Input, Row, Table, Upload} from "antd";
 import i18next from "i18next";
 import * as Setting from "../Setting";
+import {UploadOutlined} from "@ant-design/icons";
+import * as ResourceBackend from "../backend/ResourceBackend";
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
 class FaceIdTable extends React.Component {
@@ -53,6 +55,19 @@ class FaceIdTable extends React.Component {
     this.updateTable(table);
   }
 
+  addFaceImage(table, imageUrl) {
+    const faceId = {
+      name: Setting.getRandomName(),
+      imageUrl: imageUrl,
+      faceIdData: [],
+    };
+    if (table === undefined || table === null) {
+      table = [];
+    }
+    table = Setting.addRow(table, faceId);
+    this.updateTable(table);
+  }
+
   renderTable(table) {
     const columns = [
       {
@@ -79,6 +94,14 @@ class FaceIdTable extends React.Component {
         },
       },
       {
+        title: i18next.t("general:ImageUrl"),
+        dataIndex: "imageUrl",
+        key: "imageUrl",
+        render: (text, record, index) => {
+          return text;
+        },
+      },
+      {
         title: i18next.t("general:Action"),
         key: "action",
         width: "100px",
@@ -92,6 +115,24 @@ class FaceIdTable extends React.Component {
       },
     ];
 
+    const handleUpload = (info) => {
+      this.setState({uploading: true});
+      const filename = info.fileList[0].name;
+      const fullFilePath = `resource/${this.props.account.owner}/${this.props.account.name}/${filename}`;
+      ResourceBackend.uploadResource(this.props.account.owner, this.props.account.name, "custom", "ResourceListPage", fullFilePath, info.file)
+        .then(res => {
+          if (res.status === "ok") {
+            Setting.showMessage("success", i18next.t("application:File uploaded successfully"));
+
+            this.addFaceImage(table, res.data);
+          } else {
+            Setting.showMessage("error", res.msg);
+          }
+        }).finally(() => {
+          this.setState({uploading: false});
+        });
+    };
+
     return (
       <Table scroll={{x: "max-content"}} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
         title={() => (
@@ -103,6 +144,12 @@ class FaceIdTable extends React.Component {
             <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: true})}>
               {i18next.t("general:Add Face Id with image")}
             </Button>
+            <Upload maxCount={1} accept="image/*" showUploadList={false}
+              beforeUpload={file => {return false;}} onChange={info => {handleUpload(info);}}>
+              <Button id="upload-button" icon={<UploadOutlined />} loading={this.state.uploading} type="primary" size="small">
+                {i18next.t("resource:Upload a file...")}
+              </Button>
+            </Upload>
             <Suspense fallback={null}>
               <FaceRecognitionModal
                 visible={this.state.openFaceRecognitionModal}

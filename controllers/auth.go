@@ -29,6 +29,7 @@ import (
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
@@ -402,11 +403,27 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
-				c.ResponseError(err.Error(), nil)
-				return
+			faceIdProvider, err := object.GetFaceIdProviderByApplication(util.GetId(application.Owner, application.Name), "false", c.GetAcceptLanguage())
+			if err != nil {
+				c.ResponseError(err.Error())
 			}
 
+			if faceIdProvider == nil {
+				if err := object.CheckFaceId(user, authForm.FaceId, c.GetAcceptLanguage()); err != nil {
+					c.ResponseError(err.Error(), nil)
+					return
+				}
+			} else {
+				ok, err := user.CheckUserFace(authForm.FaceIdImage, faceIdProvider)
+				if err != nil {
+					c.ResponseError(err.Error(), nil)
+				}
+
+				if !ok {
+					c.ResponseError(i18n.Translate(c.GetAcceptLanguage(), "check:Face data does not exist, cannot log in"))
+					return
+				}
+			}
 		} else if authForm.Password == "" {
 			if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
 				c.ResponseError(err.Error(), nil)

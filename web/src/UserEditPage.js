@@ -1054,6 +1054,7 @@ class UserEditPage extends React.Component {
             <FaceIdTable
               title={i18next.t("user:Face IDs")}
               table={this.state.user.faceIds}
+              {...this.props}
               onUpdateTable={(table) => {this.updateUserField("faceIds", table);}}
             />
           </Col>
