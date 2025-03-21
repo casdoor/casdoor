@@ -2,7 +2,7 @@ import i18next from "i18next";
 import {Tree} from "antd";
 import React from "react";
 
-export const NavItemTree = ({disable, checkedKeys, defaultExpandedKeys, onCheck}) => {
+export const NavItemTree = ({disabled, checkedKeys, defaultExpandedKeys, onCheck}) => {
   const NavItemNodes = [
     {
       title: i18next.t("organization:All"),
@@ -86,7 +86,7 @@ export const NavItemTree = ({disable, checkedKeys, defaultExpandedKeys, onCheck}
 
   return (
     <Tree
-      disabled={disable}
+      disabled={disabled}
       checkable
       checkedKeys={checkedKeys}
       defaultExpandedKeys={defaultExpandedKeys}

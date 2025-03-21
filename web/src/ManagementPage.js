@@ -95,8 +95,9 @@ import TransactionEditPage from "./TransactionEditPage";
 import VerificationListPage from "./VerificationListPage";
 
 function ManagementPage(props) {
-
   const [menuVisible, setMenuVisible] = useState(false);
+  const navItems = props.account?.organization?.navItems;
+  const widgetItems = props.account?.organization?.widgetItems;
 
   function logout() {
     AuthBackend.logout()
@@ -175,6 +176,35 @@ function ManagementPage(props) {
     );
   }
 
+  function navItemsIsAll() {
+    return !Array.isArray(navItems) || !!navItems?.includes("all");
+  }
+
+  function widgetItemsIsAll() {
+    return !Array.isArray(widgetItems) || !!widgetItems?.includes("all");
+  }
+
+  function renderWidgets() {
+    const widgets = [
+      Setting.getItem(<ThemeSelect themeAlgorithm={props.themeAlgorithm} onChange={props.setLogoAndThemeAlgorithm} />, "theme"),
+      Setting.getItem(<LanguageSelect languages={props.account.organization.languages} />, "language"),
+      Setting.getItem(Conf.AiAssistantUrl?.trim() && (
+        <Tooltip title="Click to open AI assistant">
+          <div className="select-box" onClick={props.openAiAssistant}>
+            <DeploymentUnitOutlined style={{fontSize: "24px"}} />
+          </div>
+        </Tooltip>
+      ), "ai-assistant"),
+      Setting.getItem(<OpenTour />, "tour"),
+    ];
+
+    if (widgetItemsIsAll()) {
+      return widgets.map(item => item.label);
+    }
+
+    return widgets.filter(item => widgetItems.includes(item.key)).map(item => item.label);
+  }
+
   function renderAccountMenu() {
     if (props.account === undefined) {
       return null;
@@ -188,20 +218,7 @@ function ManagementPage(props) {
       return (
         <React.Fragment>
           {renderRightDropdown()}
-          <ThemeSelect
-            themeAlgorithm={props.themeAlgorithm}
-            onChange={props.setLogoAndThemeAlgorithm} />
-          <LanguageSelect languages={props.account.organization.languages} />
-          {
-            Conf.AiAssistantUrl?.trim() && (
-              <Tooltip title="Click to open AI assistant">
-                <div className="select-box" onClick={props.openAiAssistant}>
-                  <DeploymentUnitOutlined style={{fontSize: "24px"}} />
-                </div>
-              </Tooltip>
-            )
-          }
-          <OpenTour />
+          {renderWidgets()}
           {Setting.isAdminUser(props.account) && (props.uri.indexOf("/trees") === -1) &&
                         <OrganizationSelect
                           initValue={Setting.getOrganization()}
@@ -323,13 +340,7 @@ function ManagementPage(props) {
       }
     }
 
-    const navItems = props.account.organization.navItems;
-
-    if (!Array.isArray(navItems)) {
-      return res;
-    }
-
-    if (navItems.includes("all")) {
+    if (navItemsIsAll()) {
       return res;
     }
 
