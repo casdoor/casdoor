@@ -84,7 +84,7 @@ class FaceIdTable extends React.Component {
         },
       },
       {
-        title: i18next.t("general:FaceIdData"),
+        title: i18next.t("general:Data"),
         dataIndex: "faceIdData",
         key: "faceIdData",
         render: (text, record, index) => {
@@ -94,7 +94,7 @@ class FaceIdTable extends React.Component {
         },
       },
       {
-        title: i18next.t("general:ImageUrl"),
+        title: i18next.t("general:URL"),
         dataIndex: "imageUrl",
         key: "imageUrl",
         render: (text, record, index) => {
@@ -139,10 +139,10 @@ class FaceIdTable extends React.Component {
           <div>
             {i18next.t("user:Face IDs")}&nbsp;&nbsp;&nbsp;&nbsp;
             <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: false})}>
-              {i18next.t("general:Add Face Id")}
+              {i18next.t("application:Add Face ID")}
             </Button>
             <Button disabled={this.props.table?.length >= 5} style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.setState({openFaceRecognitionModal: true, withImage: true})}>
-              {i18next.t("general:Add Face Id with image")}
+              {i18next.t("application:Add Face ID with Image")}
             </Button>
             <Upload maxCount={1} accept="image/*" showUploadList={false}
               beforeUpload={file => {return false;}} onChange={info => {handleUpload(info);}}>

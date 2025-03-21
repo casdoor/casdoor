@@ -288,10 +288,8 @@ class ProviderEditPage extends React.Component {
     default:
       if (provider.type === "Aliyun Captcha") {
         return Setting.getLabel(i18next.t("provider:Scene"), i18next.t("provider:Scene - Tooltip"));
-      } else if (provider.type === "WeChat Pay") {
+      } else if (provider.type === "WeChat Pay" || provider.type === "CUCloud") {
         return Setting.getLabel(i18next.t("provider:App ID"), i18next.t("provider:App ID - Tooltip"));
-      } else if (provider.type === "CUCloud") {
-        return Setting.getLabel(i18next.t("provider:Account ID"), i18next.t("provider:Account ID - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client ID 2"), i18next.t("provider:Client ID 2 - Tooltip"));
       }
@@ -389,8 +387,8 @@ class ProviderEditPage extends React.Component {
         text = i18next.t("provider:App Key");
         tooltip = i18next.t("provider:App Key - Tooltip");
       } else if (provider.type === "CUCloud") {
-        text = i18next.t("provider:Topic name");
-        tooltip = i18next.t("provider:Topic name - Tooltip");
+        text = "Topic name";
+        tooltip = "Topic name - Tooltip";
       }
     }
 
@@ -1283,7 +1281,7 @@ class ProviderEditPage extends React.Component {
                   }} />
                 </Col>
                 <Col span={16} >
-                  <Button type="primary" loading={this.state.metadataLoading} onClick={() => {this.fetchSamlMetadata();}}>{i18next.t("general:Request")}</Button>
+                  <Button style={{marginLeft: "10px"}} type="primary" loading={this.state.metadataLoading} onClick={() => {this.fetchSamlMetadata();}}>{i18next.t("general:Request")}</Button>
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >

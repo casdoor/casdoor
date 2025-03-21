@@ -114,7 +114,7 @@ class InvitationEditPage extends React.Component {
       const selectedOrganization = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner);
       defaultApplication = selectedOrganization.defaultApplication;
       if (!defaultApplication) {
-        Setting.showMessage("error", i18next.t("invitation:You need to specify a default application for ") + selectedOrganization.name);
+        Setting.showMessage("error", i18next.t("invitation:You need to first specify a default application for organization: ") + selectedOrganization.name);
         return;
       }
     }
