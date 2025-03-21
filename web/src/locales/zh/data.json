@@ -194,6 +194,7 @@
     "Verify": "验证"
   },
   "general": {
+    "AI Assistant": "AI助理",
     "API key": "API 密钥",
     "API key - Tooltip": "API 密钥",
     "Access key": "访问密钥",
@@ -321,8 +322,6 @@
     "Name": "名称",
     "Name - Tooltip": "唯一的、字符串式的ID",
     "Name format": "名称格式",
-    "Navbar items": "顶部栏条目",
-    "Navbar items - Tooltip": "设置顶部栏的各个条目是否开启",
     "Non-LDAP": "禁用LDAP",
     "None": "无",
     "OAuth providers": "OAuth提供方",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "这是一个只读演示站点！",
     "Timestamp": "时间",
     "Tokens": "令牌",
+    "Tour": "引导",
     "Transactions": "交易",
     "Type": "类型",
     "Type - Tooltip": "类型",
@@ -616,6 +616,8 @@
     "Is profile public": "是否公开用户个人页",
     "Is profile public - Tooltip": "关闭后只有全局管理员或同组织用户才能访问用户主页",
     "Modify rule": "修改规则",
+    "Navbar items": "顶部栏条目",
+    "Navbar items - Tooltip": "设置顶部栏的各个条目是否开启",
     "New Organization": "添加组织",
     "Optional": "可选",
     "Password expire days": "密码过期天数",
@@ -633,7 +635,9 @@
     "View rule": "查看规则",
     "Visible": "是否可见",
     "Website URL": "主页地址",
-    "Website URL - Tooltip": "组织的主页地址URL，该字段在Casdoor平台中未被使用"
+    "Website URL - Tooltip": "组织的主页地址URL，该字段在Casdoor平台中未被使用",
+    "Widget items": "功能按钮",
+    "Widget items - Tooltip": "设置顶部的各个功能按钮是否开启"
   },
   "payment": {
     "Confirm your invoice information": "确认您的发票信息",

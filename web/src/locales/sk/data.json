@@ -194,6 +194,7 @@
     "Verify": "Overiť"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "API kľúč",
     "API key - Tooltip": "API kľúč",
     "Access key": "Prístupový kľúč",
@@ -321,8 +322,6 @@
     "Name": "Názov",
     "Name - Tooltip": "Jedinečný ID reťazec",
     "Name format": "Formát názvu",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "Žiadne",
     "OAuth providers": "OAuth poskytovatelia",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Toto je stránka len na čítanie!",
     "Timestamp": "Časová značka",
     "Tokens": "Tokeny",
+    "Tour": "Tour",
     "Transactions": "Transakcie",
     "Type": "Typ",
     "Type - Tooltip": "Typ",
@@ -616,6 +616,8 @@
     "Is profile public": "Je profil verejný",
     "Is profile public - Tooltip": "Po zatvorení môžu prístup k profilu používateľa získať iba globálni administrátori alebo používatelia v rovnakej organizácii",
     "Modify rule": "Upraviť pravidlo",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Nová organizácia",
     "Optional": "Voliteľné",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Zobraziť pravidlo",
     "Visible": "Viditeľné",
     "Website URL": "URL webovej stránky",
-    "Website URL - Tooltip": "URL domovskej stránky organizácie. Toto pole sa v Casdoor nepoužíva"
+    "Website URL - Tooltip": "URL domovskej stránky organizácie. Toto pole sa v Casdoor nepoužíva",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Potvrďte svoje fakturačné údaje",

@@ -80,7 +80,8 @@ type Organization struct {
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
 	IpRestriction          string     `json:"ipRestriction"`
-	NavItems               []string   `xorm:"varchar(500)" json:"navItems"`
+	NavItems               []string   `xorm:"varchar(1000)" json:"navItems"`
+	WidgetItems            []string   `xorm:"varchar(1000)" json:"widgetItems"`
 
 	MfaItems     []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	AccountItems []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
@@ -227,6 +228,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 
 	if !isGlobalAdmin {
 		organization.NavItems = org.NavItems
+		organization.WidgetItems = org.WidgetItems
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()

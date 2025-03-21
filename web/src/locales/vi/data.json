@@ -194,6 +194,7 @@
     "Verify": "Xác thực"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "API key",
     "API key - Tooltip": "API key - Tooltip",
     "Access key": "Access key",
@@ -321,8 +322,6 @@
     "Name": "Tên",
     "Name - Tooltip": "ID duy nhất dựa trên chuỗi",
     "Name format": "Name format",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "None",
     "OAuth providers": "Nhà cung cấp OAuth",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
     "Timestamp": "Timestamp",
     "Tokens": "Mã thông báo",
+    "Tour": "Tour",
     "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -616,6 +616,8 @@
     "Is profile public": "Hồ sơ có công khai không?",
     "Is profile public - Tooltip": "Sau khi đóng lại, chỉ các quản trị viên toàn cầu hoặc người dùng trong cùng tổ chức mới có thể truy cập trang hồ sơ người dùng",
     "Modify rule": "Sửa đổi quy tắc",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Tổ chức mới",
     "Optional": "Optional",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Xem quy tắc",
     "Visible": "Rõ ràng",
     "Website URL": "Địa chỉ trang web",
-    "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor"
+    "Website URL - Tooltip": "Địa chỉ trang chủ của tổ chức. Trường này không được sử dụng trong Casdoor",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Xác nhận thông tin hóa đơn của bạn",

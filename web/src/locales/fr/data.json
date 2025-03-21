@@ -194,6 +194,7 @@
     "Verify": "Vérifier"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "Clé API",
     "API key - Tooltip": "Clé API - Info-bulle",
     "Access key": "Clé d'accès",
@@ -321,8 +322,6 @@
     "Name": "Nom",
     "Name - Tooltip": "Identifiant unique à base de chaîne",
     "Name format": "Name format",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "Aucun",
     "OAuth providers": "Fournisseurs OAuth",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Ceci est un site de démonstration en lecture seule !",
     "Timestamp": "Timestamp",
     "Tokens": "Jetons",
+    "Tour": "Tour",
     "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Infobulle",
@@ -616,6 +616,8 @@
     "Is profile public": "Est-ce que le profil est public ?",
     "Is profile public - Tooltip": "Après sa fermeture, seuls les administrateurs et administratrices globales ou les comptes de la même organisation peuvent accéder à la page de profil de l'utilisateur",
     "Modify rule": "Règle de modification",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Nouvelle organisation",
     "Optional": "Optionnel",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Règle de visibilité",
     "Visible": "Visible",
     "Website URL": "URL du site web",
-    "Website URL - Tooltip": "URL du site web l'organisation. Ce champ n'est pas utilisé dans Casdoor"
+    "Website URL - Tooltip": "URL du site web l'organisation. Ce champ n'est pas utilisé dans Casdoor",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Confirmez les informations de votre facture",

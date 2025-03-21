@@ -194,6 +194,7 @@
     "Verify": "Verificar"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "Chave da API",
     "API key - Tooltip": "Chave da API - Tooltip",
     "Access key": "Chave de acesso",
@@ -321,8 +322,6 @@
     "Name": "Nome",
     "Name - Tooltip": "ID único em formato de string",
     "Name format": "Name format",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "None",
     "OAuth providers": "Provedores OAuth",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Este é um site de demonstração apenas para leitura!",
     "Timestamp": "Timestamp",
     "Tokens": "Tokens",
+    "Tour": "Tour",
     "Transactions": "Transactions",
     "Type": "Tipo",
     "Type - Tooltip": "Type - Tooltip",
@@ -616,6 +616,8 @@
     "Is profile public": "Perfil é público",
     "Is profile public - Tooltip": "Após ser fechado, apenas administradores globais ou usuários na mesma organização podem acessar a página de perfil do usuário",
     "Modify rule": "Modificar regra",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Nova Organização",
     "Optional": "Optional",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Ver regra",
     "Visible": "Visível",
     "Website URL": "URL do website",
-    "Website URL - Tooltip": "A URL da página inicial da organização. Este campo não é utilizado no Casdoor"
+    "Website URL - Tooltip": "A URL da página inicial da organização. Este campo não é utilizado no Casdoor",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Confirme as informações da sua fatura",
