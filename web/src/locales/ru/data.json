@@ -194,6 +194,7 @@
     "Verify": "Проверить"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "ключ API",
     "API key - Tooltip": "API key - Tooltip",
     "Access key": "Access key",
@@ -321,8 +322,6 @@
     "Name": "Имя",
     "Name - Tooltip": "Уникальный идентификатор на основе строки",
     "Name format": "Name format",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "None",
     "OAuth providers": "Провайдеры OAuth",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Это демонстрационный сайт только для чтения!",
     "Timestamp": "Timestamp",
     "Tokens": "Токены",
+    "Tour": "Tour",
     "Transactions": "Transactions",
     "Type": "Type",
     "Type - Tooltip": "Type - Tooltip",
@@ -616,6 +616,8 @@
     "Is profile public": "Профиль является публичным?",
     "Is profile public - Tooltip": "После закрытия страницы профиля, только глобальные администраторы или пользователи из той же организации могут получить к ней доступ",
     "Modify rule": "Изменить правило",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Новая организация",
     "Optional": "Опционально",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Правило просмотра",
     "Visible": "Видимый",
     "Website URL": "Веб-адрес сайта",
-    "Website URL - Tooltip": "Главная страница URL организации. Это поле не используется в Casdoor"
+    "Website URL - Tooltip": "Главная страница URL организации. Это поле не используется в Casdoor",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Подтвердите информацию в вашем счете-фактуре",

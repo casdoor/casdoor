@@ -194,6 +194,7 @@
     "Verify": "Підтвердити"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "Ключ API",
     "API key - Tooltip": "Ключ API – підказка",
     "Access key": "Ключ доступу",
@@ -321,8 +322,6 @@
     "Name": "Ім'я",
     "Name - Tooltip": "Унікальний ідентифікатор на основі рядка",
     "Name format": "Формат імені",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Не LDAP",
     "None": "Жодного",
     "OAuth providers": "Постачальники OAuth",
@@ -421,6 +420,7 @@
     "This is a read-only demo site!": "Це демо-сайт лише для читання!",
     "Timestamp": "Мітка часу",
     "Tokens": "Жетони",
+    "Tour": "Tour",
     "Transactions": "транзакції",
     "Type": "Тип",
     "Type - Tooltip": "Тип - підказка",
@@ -616,6 +616,8 @@
     "Is profile public": "Профіль загальнодоступний",
     "Is profile public - Tooltip": "Після закриття лише глобальні адміністратори або користувачі в одній організації можуть отримати доступ до сторінки профілю користувача",
     "Modify rule": "Змінити правило",
+    "Navbar items": "Navbar items",
+    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "New Organization": "Нова організація",
     "Optional": "Додатково",
     "Password expire days": "Password expire days",
@@ -633,7 +635,9 @@
     "View rule": "Переглянути правило",
     "Visible": "Видно",
     "Website URL": "адреса вебсайту",
-    "Website URL - Tooltip": "URL-адреса домашньої сторінки організації. "
+    "Website URL - Tooltip": "URL-адреса домашньої сторінки організації. ",
+    "Widget items": "Widget items",
+    "Widget items - Tooltip": "Widget items - Tooltip"
   },
   "payment": {
     "Confirm your invoice information": "Підтвердьте інформацію про рахунок",

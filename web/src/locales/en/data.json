@@ -194,6 +194,7 @@
     "Verify": "Verify"
   },
   "general": {
+    "AI Assistant": "AI Assistant",
     "API key": "API key",
     "API key - Tooltip": "API key - Tooltip",
     "Access key": "Access key",
@@ -210,7 +211,6 @@
     "Admin": "Admin",
     "Affiliation URL": "Affiliation URL",
     "Affiliation URL - Tooltip": "The homepage URL for the affiliation",
-    "AI Assistant": "AI Assistant",
     "All": "All",
     "Application": "Application",
     "Application - Tooltip": "Application - Tooltip",
@@ -322,8 +322,6 @@
     "Name": "Name",
     "Name - Tooltip": "Unique, string-based ID",
     "Name format": "Name format",
-    "Navbar items": "Navbar items",
-    "Navbar items - Tooltip": "Navbar items - Tooltip",
     "Non-LDAP": "Non-LDAP",
     "None": "None",
     "OAuth providers": "OAuth providers",
