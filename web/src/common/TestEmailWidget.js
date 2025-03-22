@@ -51,6 +51,8 @@ function testEmailProvider(provider, email = "") {
     receivers: email === "" ? ["TestSmtpServer"] : [email],
     provider: provider.name,
     providerObject: provider,
+    owner: provider.owner,
+    name: provider.name,
   };
 
   return fetch(`${Setting.ServerUrl}/api/send-email`, {
