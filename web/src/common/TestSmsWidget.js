@@ -33,6 +33,8 @@ function testSmsProvider(provider, phone = "") {
   const SmsForm = {
     content: "123456",
     receivers: [phone],
+    owner: provider.owner,
+    name: provider.name,
   };
 
   return fetch(`${Setting.ServerUrl}/api/send-sms?provider=` + provider.name, {
