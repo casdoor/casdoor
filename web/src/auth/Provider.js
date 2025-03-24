@@ -387,7 +387,8 @@ export function getAuthUrl(application, provider, method, code) {
   }
 
   let endpoint = authInfo[provider.type].endpoint;
-  let redirectUri = `${window.location.origin}/callback`;
+  const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin;
+  let redirectUri = `${redirectOrigin}/callback`;
   let scope = authInfo[provider.type].scope;
   const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
   const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
@@ -398,7 +399,7 @@ export function getAuthUrl(application, provider, method, code) {
       endpoint = endpoint.replace("common", provider.domain);
     }
   } else if (provider.type === "Apple") {
-    redirectUri = `${window.location.origin}/api/callback`;
+    redirectUri = `${redirectOrigin}/api/callback`;
   } else if (provider.type === "Google" && provider.disableSsl) {
     scope += "+https://www.googleapis.com/auth/user.phonenumbers.read";
   }
@@ -426,7 +427,7 @@ export function getAuthUrl(application, provider, method, code) {
       return `${authInfo[provider.type].mpEndpoint}?appid=${provider.clientId2}&redirect_uri=${redirectUri}&state=${state}&scope=${authInfo[provider.type].mpScope}&response_type=code#wechat_redirect`;
     } else {
       if (provider.clientId2 && provider?.disableSsl && provider?.signName === "media") {
-        return `${window.location.origin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
+        return `${redirectOrigin}/callback?state=${state}&code=${"wechat_oa:" + code}`;
       }
       return `${endpoint}?appid=${provider.clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code&state=${state}#wechat_redirect`;
     }
@@ -469,7 +470,7 @@ export function getAuthUrl(application, provider, method, code) {
   } else if (provider.type === "Apple") {
     return `${endpoint}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code%20id_token&scope=${scope}&response_mode=form_post`;
   } else if (provider.type === "Steam") {
-    return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${window.location.origin}&openid.return_to=${redirectUri}?state=${state}`;
+    return `${endpoint}?openid.claimed_id=http://specs.openid.net/auth/2.0/identifier_select&openid.identity=http://specs.openid.net/auth/2.0/identifier_select&openid.mode=checkid_setup&openid.ns=http://specs.openid.net/auth/2.0&openid.realm=${redirectOrigin}&openid.return_to=${redirectUri}?state=${state}`;
   } else if (provider.type === "Okta") {
     return `${provider.domain}/v1/authorize?client_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Douyin" || provider.type === "TikTok") {

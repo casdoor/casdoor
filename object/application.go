@@ -101,6 +101,7 @@ type Application struct {
 	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
 	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
 	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
+	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
 	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
