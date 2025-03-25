@@ -191,12 +191,7 @@ func (adapter *Adapter) InitAdapter() error {
 		}
 	}
 
-	var tableName string
-	if driverName == "mssql" {
-		tableName = fmt.Sprintf("[%s]", adapter.Table)
-	} else {
-		tableName = adapter.Table
-	}
+	tableName := adapter.Table
 
 	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
 	if err != nil {
