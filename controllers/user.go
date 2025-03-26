@@ -457,10 +457,10 @@ func (c *ApiController) SetPassword() {
 	newPassword := c.Ctx.Request.Form.Get("newPassword")
 	code := c.Ctx.Request.Form.Get("code")
 
-	//if userOwner == "built-in" && userName == "admin" {
+	// if userOwner == "built-in" && userName == "admin" {
 	//	c.ResponseError(c.T("auth:Unauthorized operation"))
 	//	return
-	//}
+	// }
 
 	if strings.Contains(newPassword, " ") {
 		c.ResponseError(c.T("user:New password cannot contain blank space."))
@@ -602,7 +602,11 @@ func (c *ApiController) CheckUserPassword() {
 		return
 	}
 
-	_, err = object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage())
+	/*
+	 * Verified password with user as subject, if field ldap not empty,
+	 * then `isPasswordWithLdapEnabled` is true
+	 */
+	_, err = object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage(), false, false, user.Ldap != "")
 	if err != nil {
 		c.ResponseError(err.Error())
 	} else {
