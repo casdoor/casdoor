@@ -1,4 +1,5 @@
 import React from "react";
+import * as Setting from "./Setting";
 
 export const TourObj = {
   home: [
@@ -8,7 +9,7 @@ export const TourObj = {
       cover: (
         <img
           alt="casdoor.png"
-          src="https://cdn.casbin.org/img/casdoor-logo_1185x256.png"
+          src={`${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`}
         />
       ),
     },

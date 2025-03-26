@@ -37,7 +37,6 @@ const FaceRecognitionModal = (props) => {
     const loadModels = async() => {
       // const MODEL_URL = process.env.PUBLIC_URL + "/models";
       // const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
-      // const MODEL_URL = "https://cdn.casbin.org/site/casdoor/models";
       const MODEL_URL = "https://cdn.casdoor.com/casdoor/models";
 
       Promise.all([
