@@ -139,6 +139,8 @@ func (c *ApiController) Signup() {
 		invitationName = invitation.Name
 	}
 
+	userEmailVerified := false
+
 	if application.IsSignupItemVisible("Email") && application.GetSignupItemRule("Email") != "No verification" && authForm.Email != "" {
 		var checkResult *object.VerifyResult
 		checkResult, err = object.CheckVerificationCode(authForm.Email, authForm.EmailCode, c.GetAcceptLanguage())
@@ -150,6 +152,8 @@ func (c *ApiController) Signup() {
 			c.ResponseError(checkResult.Msg)
 			return
 		}
+
+		userEmailVerified = true
 	}
 
 	var checkPhone string
@@ -228,6 +232,7 @@ func (c *ApiController) Signup() {
 		Karma:             0,
 		Invitation:        invitationName,
 		InvitationCode:    authForm.InvitationCode,
+		EmailVerified:     userEmailVerified,
 	}
 
 	if len(organization.Tags) > 0 {
