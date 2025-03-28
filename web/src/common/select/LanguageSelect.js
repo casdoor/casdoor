@@ -32,10 +32,6 @@ class LanguageSelect extends React.Component {
       languages: props.languages ?? Setting.Countries.map(item => item.key),
       onClick: props.onClick,
     };
-
-    Setting.Countries.forEach((country) => {
-      new Image().src = `${Setting.StaticBaseUrl}/flag-icons/${country.country}.svg`;
-    });
   }
 
   items = Setting.Countries.map((country) => Setting.getItem(country.label, country.key, flagIcon(country.country, country.alt)));
