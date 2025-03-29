@@ -27,10 +27,10 @@ type LdapResp struct {
 	ExistUuids []string          `json:"existUuids"`
 }
 
-//type LdapRespGroup struct {
+// type LdapRespGroup struct {
 //	GroupId   string
 //	GroupName string
-//}
+// }
 
 type LdapSyncResp struct {
 	Exist  []object.LdapUser `json:"exist"`
@@ -61,18 +61,18 @@ func (c *ApiController) GetLdapUsers() {
 	}
 	defer conn.Close()
 
-	//groupsMap, err := conn.GetLdapGroups(ldapServer.BaseDn)
-	//if err != nil {
+	// groupsMap, err := conn.GetLdapGroups(ldapServer.BaseDn)
+	// if err != nil {
 	//  c.ResponseError(err.Error())
 	//	return
-	//}
+	// }
 
-	//for _, group := range groupsMap {
+	// for _, group := range groupsMap {
 	//	resp.Groups = append(resp.Groups, LdapRespGroup{
 	//		GroupId:   group.GidNumber,
 	//		GroupName: group.Cn,
 	//	})
-	//}
+	// }
 
 	users, err := conn.GetLdapUsers(ldapServer)
 	if err != nil {
@@ -269,7 +269,11 @@ func (c *ApiController) SyncLdapUsers() {
 		return
 	}
 
-	exist, failed, _ := object.SyncLdapUsers(owner, users, ldapId)
+	exist, failed, err := object.SyncLdapUsers(owner, users, ldapId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	c.ResponseOk(&LdapSyncResp{
 		Exist:  exist,
