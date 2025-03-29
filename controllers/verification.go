@@ -436,7 +436,8 @@ func (c *ApiController) ResetEmailOrPhone() {
 	switch destType {
 	case object.VerifyTypeEmail:
 		user.Email = dest
-		_, err = object.SetUserField(user, "email", user.Email)
+		user.EmailVerified = true
+		_, err = object.UpdateUser(user.GetId(), user, []string{"email", "email_verified"}, false)
 	case object.VerifyTypePhone:
 		user.Phone = dest
 		_, err = object.SetUserField(user, "phone", user.Phone)
