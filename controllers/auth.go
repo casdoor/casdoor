@@ -483,6 +483,14 @@ func (c *ApiController) Login() {
 				verificationType = "sms"
 			} else {
 				verificationType = "email"
+				if !user.EmailVerified {
+					user.EmailVerified = true
+					_, err = object.UpdateUser(user.GetId(), user, []string{"email_verified"}, false)
+					if err != nil {
+						c.ResponseError(err.Error(), nil)
+						return
+					}
+				}
 			}
 		} else {
 			var application *object.Application

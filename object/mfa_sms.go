@@ -60,7 +60,8 @@ func (mfa *SmsMfa) Enable(user *User) error {
 		columns = append(columns, "mfa_phone_enabled", "phone", "country_code")
 	} else if mfa.MfaType == EmailType {
 		user.MfaEmailEnabled = true
-		columns = append(columns, "mfa_email_enabled", "email")
+		user.EmailVerified = true
+		columns = append(columns, "mfa_email_enabled", "email", "email_verified")
 	}
 
 	_, err := UpdateUser(user.GetId(), user, columns, false)
