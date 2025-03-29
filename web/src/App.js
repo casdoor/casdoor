@@ -393,6 +393,7 @@ class App extends Component {
             colorPrimary: themeData.colorPrimary,
             borderRadius: themeData.borderRadius,
           },
+          components: Conf.ThemeGlobal.components,
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
@@ -532,6 +533,7 @@ class App extends Component {
             colorInfo: this.state.themeData.colorPrimary,
             borderRadius: this.state.themeData.borderRadius,
           },
+          components: Conf.ThemeGlobal.components,
           algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
         }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
