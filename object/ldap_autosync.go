@@ -106,6 +106,12 @@ func (l *LdapAutoSynchronizer) syncRoutine(ldap *Ldap, stopChan chan struct{}) e
 		}
 
 		existed, failed, err := SyncLdapUsers(ldap.Owner, AutoAdjustLdapUser(users), ldap.Id)
+		if err != nil {
+			conn.Close()
+			logs.Warning(fmt.Sprintf("autoSync failed for %s, error %s", ldap.Id, err))
+			continue
+		}
+
 		if len(failed) != 0 {
 			logs.Warning(fmt.Sprintf("ldap autosync,%d new users,but %d user failed during :", len(users)-len(existed)-len(failed), len(failed)), failed)
 			logs.Warning(err.Error())
