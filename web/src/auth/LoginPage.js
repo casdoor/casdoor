@@ -63,6 +63,7 @@ class LoginPage extends React.Component {
       termsOfUseContent: "",
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
       userLang: null,
+      loginLoading: false,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -423,6 +424,7 @@ class LoginPage extends React.Component {
   }
 
   login(values) {
+    this.setState({loginLoading: true});
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     if (this.state.type === "cas") {
@@ -452,6 +454,7 @@ class LoginPage extends React.Component {
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
+        this.setState({loginLoading: false});
       });
     } else {
       // OAuth
@@ -507,6 +510,7 @@ class LoginPage extends React.Component {
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
+          this.setState({loginLoading: false});
         });
     }
   }
@@ -694,6 +698,7 @@ class LoginPage extends React.Component {
         <Form.Item key={resultItemKey} className="login-button-box">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
+            loading={this.state.loginLoading}
             type="primary"
             htmlType="submit"
             className="login-button"
