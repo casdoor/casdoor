@@ -37,6 +37,7 @@ import RedirectForm from "../common/RedirectForm";
 import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
+import {goToLink} from "../Setting";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -747,6 +748,8 @@ class LoginPage extends React.Component {
       if (signinItem.rule === "None" || signinItem.rule === "") {
         signinItem.rule = showForm ? "small" : "big";
       }
+      const searchParams = new URLSearchParams(window.location.search);
+      const providerHint = searchParams.get("provider_hint");
 
       return (
         <div key={resultItemKey}>
@@ -754,6 +757,10 @@ class LoginPage extends React.Component {
           <Form.Item>
             {
               application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
+                if (providerHint === providerItem.provider.name) {
+                  goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
+                  return;
+                }
                 return (
                   <span key={id} onClick={(e) => {
                     const agreementChecked = this.form.current.getFieldValue("agreement");
