@@ -365,6 +365,7 @@ class LoginPage extends React.Component {
   }
 
   onFinish(values) {
+    this.setState({loginLoading: true});
     if (this.state.loginMethod === "webAuthn") {
       let username = this.state.username;
       if (username === null || username === "") {
@@ -424,7 +425,6 @@ class LoginPage extends React.Component {
   }
 
   login(values) {
-    this.setState({loginLoading: true});
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     if (this.state.type === "cas") {
@@ -931,7 +931,7 @@ class LoginPage extends React.Component {
         this.login(values);
         this.setState({openCaptchaModal: false});
       }}
-      onCancel={() => this.setState({openCaptchaModal: false})}
+      onCancel={() => this.setState({openCaptchaModal: false, loginLoading: false})}
       isCurrentProvider={true}
     />;
   }
