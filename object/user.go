@@ -459,6 +459,20 @@ func GetUserByEmail(owner string, email string) (*User, error) {
 	}
 }
 
+func GetUserByWebauthID(webauthId string) (*User, error) {
+	user := User{}
+	existed, err := ormer.Engine.Where("webauthnCredentials LIKE ?", "%"+webauthId+"%").Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		return nil, fmt.Errorf("user not exist")
+	}
+
+	return &user, err
+}
+
 func GetUserByEmailOnly(email string) (*User, error) {
 	if email == "" {
 		return nil, nil
