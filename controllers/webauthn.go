@@ -16,7 +16,7 @@ package controllers
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/base64"
 	"io"
 
 	"github.com/casdoor/casdoor/form"
@@ -118,24 +118,7 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		return
 	}
 
-	userOwner := c.Input().Get("owner")
-	userName := c.Input().Get("name")
-	user, err := object.GetUserByFields(userOwner, userName)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(userOwner, userName)))
-		return
-	}
-	if len(user.WebauthnCredentials) == 0 {
-		c.ResponseError(c.T("webauthn:Found no credentials for this user"))
-		return
-	}
-
-	options, sessionData, err := webauthnObj.BeginLogin(user)
+	options, sessionData, err := webauthnObj.BeginDiscoverableLogin()
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -168,20 +151,23 @@ func (c *ApiController) WebAuthnSigninFinish() {
 		return
 	}
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
-	userId := string(sessionData.UserID)
-	user, err := object.GetUser(userId)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+
+	var user *object.User
+	handler := func(rawID, userHandle []byte) (webauthn.User, error) {
+		user, err = object.GetUserByWebauthID(base64.StdEncoding.EncodeToString(rawID))
+		if err != nil {
+			return nil, err
+		}
+		return user, nil
 	}
 
-	_, err = webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
+	_, err = webauthnObj.FinishDiscoverableLogin(handler, sessionData, c.Ctx.Request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	c.SetSessionUsername(userId)
-	util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
+	c.SetSessionUsername(user.GetId())
+	util.LogInfo(c.Ctx, "API: [%s] signed in", user.GetId())
 
 	var application *object.Application
 
