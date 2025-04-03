@@ -242,7 +242,7 @@ func (c *ApiController) SendVerificationCode() {
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferredMfaProps(false)
+			mfaProps := user.GetMfaProps(object.EmailType, false)
 			if user != nil && util.GetMaskedEmail(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
@@ -281,7 +281,7 @@ func (c *ApiController) SendVerificationCode() {
 				}
 			}
 		} else if vform.Method == MfaAuthVerification {
-			mfaProps := user.GetPreferredMfaProps(false)
+			mfaProps := user.GetMfaProps(object.SmsType, false)
 			if user != nil && util.GetMaskedPhone(mfaProps.Secret) == vform.Dest {
 				vform.Dest = mfaProps.Secret
 			}
