@@ -340,7 +340,7 @@ func (c *ApiController) IntrospectToken() {
 
 	if application.TokenFormat == "JWT-Standard" {
 		jwtToken, err := object.ParseStandardJwtTokenByApplication(tokenValue, application)
-		if err != nil || jwtToken.Valid() != nil {
+		if err != nil {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
@@ -365,7 +365,7 @@ func (c *ApiController) IntrospectToken() {
 		}
 	} else {
 		jwtToken, err := object.ParseJwtTokenByApplication(tokenValue, application)
-		if err != nil || jwtToken.Valid() != nil {
+		if err != nil {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009

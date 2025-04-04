@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"github.com/casdoor/casdoor/util"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type Claims struct {
