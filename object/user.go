@@ -834,6 +834,16 @@ func AddUser(user *User) (bool, error) {
 		return false, fmt.Errorf("the organization: %s is not found", user.Owner)
 	}
 
+	if user.Owner != "built-in" {
+		applicationCount, err := GetOrganizationApplicationCount(organization.Owner, organization.Name, "", "")
+		if err != nil {
+			return false, err
+		}
+		if applicationCount == 0 {
+			return false, fmt.Errorf("The organization: %s should have one application at least", organization.Owner)
+		}
+	}
+
 	if organization.DefaultPassword != "" && user.Password == "123" {
 		user.Password = organization.DefaultPassword
 	}
