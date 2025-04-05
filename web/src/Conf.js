@@ -30,6 +30,14 @@ export const ThemeDefault = {
   isCompact: false,
 };
 
+export const ThemeGlobal = {
+  components: {
+    Form: {
+      itemMarginBottom: 20,
+    },
+  },
+};
+
 export const CustomFooter = null;
 
 // Blank or null to hide Ai Assistant button
