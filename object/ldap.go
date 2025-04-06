@@ -23,17 +23,18 @@ type Ldap struct {
 	Owner       string `xorm:"varchar(100)" json:"owner"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
-	ServerName   string   `xorm:"varchar(100)" json:"serverName"`
-	Host         string   `xorm:"varchar(100)" json:"host"`
-	Port         int      `xorm:"int" json:"port"`
-	EnableSsl    bool     `xorm:"bool" json:"enableSsl"`
-	Username     string   `xorm:"varchar(100)" json:"username"`
-	Password     string   `xorm:"varchar(100)" json:"password"`
-	BaseDn       string   `xorm:"varchar(100)" json:"baseDn"`
-	Filter       string   `xorm:"varchar(200)" json:"filter"`
-	FilterFields []string `xorm:"varchar(100)" json:"filterFields"`
-	DefaultGroup string   `xorm:"varchar(100)" json:"defaultGroup"`
-	PasswordType string   `xorm:"varchar(100)" json:"passwordType"`
+	ServerName          string   `xorm:"varchar(100)" json:"serverName"`
+	Host                string   `xorm:"varchar(100)" json:"host"`
+	Port                int      `xorm:"int" json:"port"`
+	EnableSsl           bool     `xorm:"bool" json:"enableSsl"`
+	AllowSelfSignedCert bool     `xorm:"bool" json:"allowSelfSignedCert"`
+	Username            string   `xorm:"varchar(100)" json:"username"`
+	Password            string   `xorm:"varchar(100)" json:"password"`
+	BaseDn              string   `xorm:"varchar(100)" json:"baseDn"`
+	Filter              string   `xorm:"varchar(200)" json:"filter"`
+	FilterFields        []string `xorm:"varchar(100)" json:"filterFields"`
+	DefaultGroup        string   `xorm:"varchar(100)" json:"defaultGroup"`
+	PasswordType        string   `xorm:"varchar(100)" json:"passwordType"`
 
 	AutoSync int    `json:"autoSync"`
 	LastSync string `xorm:"varchar(100)" json:"lastSync"`
@@ -150,7 +151,7 @@ func UpdateLdap(ldap *Ldap) (bool, error) {
 	}
 
 	affected, err := ormer.Engine.ID(ldap.Id).Cols("owner", "server_name", "host",
-		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "password_type").Update(ldap)
+		"port", "enable_ssl", "username", "password", "base_dn", "filter", "filter_fields", "auto_sync", "default_group", "password_type", "allow_self_signed_cert").Update(ldap)
 	if err != nil {
 		return false, nil
 	}
