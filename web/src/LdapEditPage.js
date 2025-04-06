@@ -170,6 +170,16 @@ class LdapEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Allow self-signed certificate"), i18next.t("ldap:Allow self-signed certificate - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <Switch checked={this.state.ldap.allowSelfSignedCert} onChange={checked => {
+              this.updateLdapField("allowSelfSignedCert", checked);
+            }} />
+          </Col>
+        </Row>
         <Row style={{marginTop: "20px"}}>
           <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
             {Setting.getLabel(i18next.t("ldap:Base DN"), i18next.t("ldap:Base DN - Tooltip"))} :

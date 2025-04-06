@@ -16,6 +16,7 @@ package object
 
 import (
 	"crypto/md5"
+	"crypto/tls"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -64,8 +65,11 @@ type LdapUser struct {
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
 	var conn *goldap.Conn
+	tlsConfig := tls.Config{
+		InsecureSkipVerify: ldap.AllowSelfSignedCert,
+	}
 	if ldap.EnableSsl {
-		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), nil)
+		conn, err = goldap.DialTLS("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port), &tlsConfig)
 	} else {
 		conn, err = goldap.Dial("tcp", fmt.Sprintf("%s:%d", ldap.Host, ldap.Port))
 	}
