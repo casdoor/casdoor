@@ -461,7 +461,16 @@ func GetUserByEmail(owner string, email string) (*User, error) {
 
 func GetUserByWebauthID(webauthId string) (*User, error) {
 	user := User{}
-	existed, err := ormer.Engine.Where("webauthnCredentials LIKE ?", "%"+webauthId+"%").Get(&user)
+	existed := false
+	var err error
+
+	if ormer.driverName == "postgres" {
+		existed, err = ormer.Engine.Where(builder.Like{"\"webauthnCredentials\"", webauthId}).Get(&user)
+	} else if ormer.driverName == "mssql" {
+		existed, err = ormer.Engine.Where("CAST(webauthnCredentials AS VARCHAR(MAX)) like ?", "%"+webauthId+"%").Get(&user)
+	} else {
+		existed, err = ormer.Engine.Where("webauthnCredentials like ?", "%"+webauthId+"%").Get(&user)
+	}
 	if err != nil {
 		return nil, err
 	}
