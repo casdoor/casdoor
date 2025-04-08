@@ -334,7 +334,7 @@ func (c *ApiController) IntrospectToken() {
 			c.ResponseTokenError(err.Error())
 			return
 		}
-		if token == nil || token.ExpiresIn == 0 {
+		if token == nil || token.ExpiresIn <= 0 {
 			respondWithInactiveToken()
 			return
 		}
@@ -398,7 +398,7 @@ func (c *ApiController) IntrospectToken() {
 			c.ResponseTokenError(err.Error())
 			return
 		}
-		if token == nil || token.ExpiresIn == 0 {
+		if token == nil || token.ExpiresIn <= 0 {
 			respondWithInactiveToken()
 			return
 		}
