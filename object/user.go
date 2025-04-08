@@ -464,9 +464,6 @@ func GetUserByWebauthID(webauthId string) (*User, error) {
 	existed := false
 	var err error
 
-	//res, err := ormer.Engine.Query("select * from [user] where CAST(webauthnCredentials AS VARCHAR(MAX)) like ?", "%"+webauthId+"%")
-	//print(res)
-
 	if ormer.driverName == "postgres" {
 		existed, err = ormer.Engine.Where(builder.Like{"\"webauthnCredentials\"", webauthId}).Get(&user)
 	} else if ormer.driverName == "mssql" {
