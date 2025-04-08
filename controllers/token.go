@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -330,6 +329,12 @@ func (c *ApiController) IntrospectToken() {
 			return
 		}
 		if token == nil {
+			c.Data["json"] = &object.IntrospectionResponse{Active: false}
+			c.ServeJSON()
+			return
+		}
+
+		if token.ExpiresIn <= 0 {
 			c.Data["json"] = &object.IntrospectionResponse{Active: false}
 			c.ServeJSON()
 			return
