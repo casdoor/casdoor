@@ -321,6 +321,11 @@ func (c *ApiController) IntrospectToken() {
 		return
 	}
 
+	respondWithInactiveToken := func() {
+		c.Data["json"] = &object.IntrospectionResponse{Active: false}
+		c.ServeJSON()
+	}
+
 	tokenTypeHint := c.Input().Get("token_type_hint")
 	var token *object.Token
 	if tokenTypeHint != "" {
@@ -329,9 +334,8 @@ func (c *ApiController) IntrospectToken() {
 			c.ResponseTokenError(err.Error())
 			return
 		}
-		if token == nil {
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
+		if token == nil || token.ExpiresIn == 0 {
+			respondWithInactiveToken()
 			return
 		}
 	}
@@ -344,8 +348,7 @@ func (c *ApiController) IntrospectToken() {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
+			respondWithInactiveToken()
 			return
 		}
 
@@ -369,8 +372,7 @@ func (c *ApiController) IntrospectToken() {
 			// and token revoked case. but we not implement
 			// TODO: 2022-03-03 add token revoked check, when we implemented the Token Revocation(rfc7009) Specs.
 			// refs: https://tools.ietf.org/html/rfc7009
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
+			respondWithInactiveToken()
 			return
 		}
 
@@ -396,13 +398,15 @@ func (c *ApiController) IntrospectToken() {
 			c.ResponseTokenError(err.Error())
 			return
 		}
-		if token == nil {
-			c.Data["json"] = &object.IntrospectionResponse{Active: false}
-			c.ServeJSON()
+		if token == nil || token.ExpiresIn == 0 {
+			respondWithInactiveToken()
 			return
 		}
 	}
-	introspectionResponse.TokenType = token.TokenType
+
+	if token != nil {
+		introspectionResponse.TokenType = token.TokenType
+	}
 
 	c.Data["json"] = introspectionResponse
 	c.ServeJSON()
