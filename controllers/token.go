@@ -334,6 +334,12 @@ func (c *ApiController) IntrospectToken() {
 			c.ServeJSON()
 			return
 		}
+
+		if token.ExpiresIn <= 0 {
+			c.Data["json"] = &object.IntrospectionResponse{Active: false}
+			c.ServeJSON()
+			return
+		}
 	}
 
 	var introspectionResponse object.IntrospectionResponse
