@@ -383,14 +383,15 @@ func (c *ApiController) IntrospectToken() {
 		}
 
 		introspectionResponse = object.IntrospectionResponse{
-			Active: true,
-			Exp:    jwtToken.ExpiresAt.Unix(),
-			Iat:    jwtToken.IssuedAt.Unix(),
-			Nbf:    jwtToken.NotBefore.Unix(),
-			Sub:    jwtToken.Subject,
-			Aud:    jwtToken.Audience,
-			Iss:    jwtToken.Issuer,
-			Jti:    jwtToken.ID,
+			Active:   true,
+			ClientId: clientId,
+			Exp:      jwtToken.ExpiresAt.Unix(),
+			Iat:      jwtToken.IssuedAt.Unix(),
+			Nbf:      jwtToken.NotBefore.Unix(),
+			Sub:      jwtToken.Subject,
+			Aud:      jwtToken.Audience,
+			Iss:      jwtToken.Issuer,
+			Jti:      jwtToken.ID,
 		}
 
 		if jwtToken.Scope != "" {
@@ -402,7 +403,6 @@ func (c *ApiController) IntrospectToken() {
 		if jwtToken.TokenType != "" {
 			introspectionResponse.TokenType = jwtToken.TokenType
 		}
-		introspectionResponse.ClientId = clientId
 	}
 
 	if tokenTypeHint == "" {
