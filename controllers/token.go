@@ -383,18 +383,25 @@ func (c *ApiController) IntrospectToken() {
 		}
 
 		introspectionResponse = object.IntrospectionResponse{
-			Active:    true,
-			Scope:     jwtToken.Scope,
-			ClientId:  clientId,
-			Username:  jwtToken.Name,
-			TokenType: jwtToken.TokenType,
-			Exp:       jwtToken.ExpiresAt.Unix(),
-			Iat:       jwtToken.IssuedAt.Unix(),
-			Nbf:       jwtToken.NotBefore.Unix(),
-			Sub:       jwtToken.Subject,
-			Aud:       jwtToken.Audience,
-			Iss:       jwtToken.Issuer,
-			Jti:       jwtToken.ID,
+			Active:   true,
+			ClientId: clientId,
+			Exp:      jwtToken.ExpiresAt.Unix(),
+			Iat:      jwtToken.IssuedAt.Unix(),
+			Nbf:      jwtToken.NotBefore.Unix(),
+			Sub:      jwtToken.Subject,
+			Aud:      jwtToken.Audience,
+			Iss:      jwtToken.Issuer,
+			Jti:      jwtToken.ID,
+		}
+
+		if jwtToken.Scope != "" {
+			introspectionResponse.Scope = jwtToken.Scope
+		}
+		if jwtToken.Name != "" {
+			introspectionResponse.Username = jwtToken.Name
+		}
+		if jwtToken.TokenType != "" {
+			introspectionResponse.TokenType = jwtToken.TokenType
 		}
 	}
 
