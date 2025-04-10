@@ -70,11 +70,11 @@ func InitFromFile() {
 		for _, provider := range initData.Providers {
 			initDefinedProvider(provider)
 		}
-		for _, user := range initData.Users {
-			initDefinedUser(user)
-		}
 		for _, application := range initData.Applications {
 			initDefinedApplication(application)
+		}
+		for _, user := range initData.Users {
+			initDefinedUser(user)
 		}
 		for _, cert := range initData.Certs {
 			initDefinedCert(cert)
