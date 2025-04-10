@@ -37,17 +37,35 @@ class SystemInfo extends React.Component {
   UNSAFE_componentWillMount() {
     SystemBackend.getSystemInfo("").then(res => {
       this.setState({
-        systemInfo: res.data,
         loading: false,
       });
+
+      if (res.status === "ok") {
+        this.setState({
+          systemInfo: res.data,
+        });
+      } else {
+        Setting.showMessage("error", res.msg);
+        this.stopTimer();
+      }
 
       const id = setInterval(() => {
         SystemBackend.getSystemInfo("").then(res => {
           this.setState({
-            systemInfo: res.data,
+            loading: false,
           });
+
+          if (res.status === "ok") {
+            this.setState({
+              systemInfo: res.data,
+            });
+          } else {
+            Setting.showMessage("error", res.msg);
+            this.stopTimer();
+          }
         }).catch(error => {
           Setting.showMessage("error", `System info failed to get: ${error}`);
+          this.stopTimer();
         });
         SystemBackend.getPrometheusInfo().then(res => {
           this.setState({
@@ -55,17 +73,25 @@ class SystemInfo extends React.Component {
           });
         });
       }, 1000 * 2);
+
       this.setState({intervalId: id});
     }).catch(error => {
       Setting.showMessage("error", `System info failed to get: ${error}`);
+      this.stopTimer();
     });
 
     SystemBackend.getVersionInfo().then(res => {
-      this.setState({
-        versionInfo: res.data,
-      });
+      if (res.status === "ok") {
+        this.setState({
+          versionInfo: res.data,
+        });
+      } else {
+        Setting.showMessage("error", res.msg);
+        this.stopTimer();
+      }
     }).catch(err => {
       Setting.showMessage("error", `Version info failed to get: ${err}`);
+      this.stopTimer();
     });
   }
 
@@ -77,10 +103,14 @@ class SystemInfo extends React.Component {
     this.setState({isTourVisible: TourConfig.getTourVisible()});
   };
 
-  componentWillUnmount() {
+  stopTimer() {
     if (this.state.intervalId !== null) {
       clearInterval(this.state.intervalId);
     }
+  }
+
+  componentWillUnmount() {
+    this.stopTimer();
     window.removeEventListener("storageTourChanged", this.handleTourChange);
   }
 
@@ -125,9 +155,9 @@ class SystemInfo extends React.Component {
         <br /> <br />
         <Progress type="circle" percent={Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2))} />
       </div>;
-    const latencyUi = this.state.prometheusInfo.apiLatency === null || this.state.prometheusInfo.apiLatency?.length <= 0 ? <Spin size="large" /> :
+    const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Spin size="large" /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
-    const throughputUi = this.state.prometheusInfo.apiThroughput === null || this.state.prometheusInfo.apiThroughput?.length <= 0 ? <Spin size="large" /> :
+    const throughputUi = this.state.prometheusInfo?.apiThroughput === null || this.state.prometheusInfo?.apiThroughput?.length <= 0 ? <Spin size="large" /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"throughput"} />;
     const link = this.state.versionInfo?.version !== "" ? `https://github.com/casdoor/casdoor/releases/tag/${this.state.versionInfo?.version}` : "";
     let versionText = this.state.versionInfo?.version !== "" ? this.state.versionInfo?.version : i18next.t("system:Unknown version");
