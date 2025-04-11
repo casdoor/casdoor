@@ -1603,6 +1603,8 @@ export function getCurrencyText(product) {
     return i18next.t("currency:HKD");
   } else if (product?.currency === "SGD") {
     return i18next.t("currency:SGD");
+  } else if (product?.currency === "BRL") {
+    return i18next.t("currency:BRL");
   } else {
     return "(Unknown currency)";
   }

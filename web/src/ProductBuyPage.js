@@ -139,6 +139,8 @@ class ProductBuyPage extends React.Component {
       return "HK$";
     } else if (product?.currency === "SGD") {
       return "S$";
+    } else if (product?.currency === "BRL") {
+      return "R$";
     } else {
       return "(Unknown currency)";
     }
