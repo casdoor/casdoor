@@ -310,10 +310,31 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 	res["azp"] = claims.Azp
 
 	for _, field := range tokenField {
-		userField := userValue.FieldByName(field)
-		if userField.IsValid() {
-			newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
-			res[newfield] = userField.Interface()
+		if strings.HasPrefix(field, "Properties") {
+			/*
+				Use selected properties fields as custom claims.
+				Converts `Properties.my_field` to custom claim with name `my_field`.
+			*/
+			parts := strings.Split(field, ".")
+			if len(parts) != 2 || parts[0] != "Properties" { // Either too many segments, or not properly scoped to `Properties`, so skip.
+				continue
+			}
+			base, fieldName := parts[0], parts[1]
+			mField := userValue.FieldByName(base)
+			if !mField.IsValid() { // Can't find `Properties` field, so skip.
+				continue
+			}
+			finalField := mField.MapIndex(reflect.ValueOf(fieldName))
+			if finalField.IsValid() { // // Provided field within `Properties` exists, add claim.
+				res[fieldName] = finalField.Interface()
+			}
+
+		} else { // Use selected user field as claims.
+			userField := userValue.FieldByName(field)
+			if userField.IsValid() {
+				newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
+				res[newfield] = userField.Interface()
+			}
 		}
 	}
 
