@@ -1121,7 +1121,7 @@ class ProviderEditPage extends React.Component {
                   {Setting.getLabel(i18next.t("provider:HTTP header"), i18next.t("provider:HTTP header - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <HttpHeaderTable httpHeader={this.state.provider.httpHeader} onUpdateTable={(value) => {this.updateProviderField("httpHeader", value);}} />
+                  <HttpHeaderTable httpHeaders={this.state.provider.httpHeaders} onUpdateTable={(value) => {this.updateProviderField("httpHeaders", value);}} />
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >

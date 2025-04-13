@@ -22,28 +22,28 @@ class HttpHeaderTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      httpHeader: [],
+      httpHeaders: [],
     };
 
     // transfer the Object to object[]
-    if (this.props.httpHeader !== null) {
-      Object.entries(this.props.httpHeader).map((item, index) => {
-        this.state.httpHeader.push({key: index, name: item[0], value: item[1]});
+    if (this.props.httpHeaders !== null) {
+      Object.entries(this.props.httpHeaders).map((item, index) => {
+        this.state.httpHeaders.push({key: index, name: item[0], value: item[1]});
       });
     }
   }
 
   page = 1;
   pageSize = 10;
-  count = this.props.httpHeader !== null ? Object.entries(this.props.httpHeader).length : 0;
+  count = this.props.httpHeaders !== null ? Object.entries(this.props.httpHeaders).length : 0;
 
   updateTable(table) {
-    this.setState({httpHeader: table});
-    const httpHeader = {};
+    this.setState({httpHeaders: table});
+    const httpHeaders = {};
     table.map((item) => {
-      httpHeader[item.name] = item.value;
+      httpHeaders[item.name] = item.value;
     });
-    this.props.onUpdateTable(httpHeader);
+    this.props.onUpdateTable(httpHeaders);
   }
 
   addRow(table) {
@@ -128,7 +128,7 @@ class HttpHeaderTable extends React.Component {
     return (
       <React.Fragment>
         {
-          this.renderTable(this.state.httpHeader)
+          this.renderTable(this.state.httpHeaders)
         }
       </React.Fragment>
     );
