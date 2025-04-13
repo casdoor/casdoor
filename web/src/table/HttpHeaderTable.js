@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,32 +18,32 @@ import i18next from "i18next";
 import {DeleteOutlined} from "@ant-design/icons";
 import * as Setting from "../Setting";
 
-class HttpHeadersTable extends React.Component {
+class HttpHeaderTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      httpHeaders: [],
+      httpHeader: [],
     };
 
     // transfer the Object to object[]
-    if (this.props.httpHeaders !== null) {
-      Object.entries(this.props.httpHeaders).map((item, index) => {
-        this.state.httpHeaders.push({key: index, name: item[0], value: item[1]});
+    if (this.props.httpHeader !== null) {
+      Object.entries(this.props.httpHeader).map((item, index) => {
+        this.state.httpHeader.push({key: index, name: item[0], value: item[1]});
       });
     }
   }
 
   page = 1;
   pageSize = 10;
-  count = this.props.httpHeaders !== null ? Object.entries(this.props.httpHeaders).length : 0;
+  count = this.props.httpHeader !== null ? Object.entries(this.props.httpHeader).length : 0;
 
   updateTable(table) {
-    this.setState({httpHeaders: table});
-    const httpHeaders = {};
+    this.setState({httpHeader: table});
+    const httpHeader = {};
     table.map((item) => {
-      httpHeaders[item.name] = item.value;
+      httpHeader[item.name] = item.value;
     });
-    this.props.onUpdateTable(httpHeaders);
+    this.props.onUpdateTable(httpHeader);
   }
 
   addRow(table) {
@@ -128,11 +128,11 @@ class HttpHeadersTable extends React.Component {
     return (
       <React.Fragment>
         {
-          this.renderTable(this.state.httpHeaders)
+          this.renderTable(this.state.httpHeader)
         }
       </React.Fragment>
     );
   }
 }
 
-export default HttpHeadersTable;
+export default HttpHeaderTable;

@@ -29,7 +29,7 @@ import {CaptchaPreview} from "./common/CaptchaPreview";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
 import * as Web3Auth from "./auth/Web3Auth";
 import Editor from "./common/Editor";
-import HttpHeadersTable from "./table/HttpHeadersTable";
+import HttpHeaderTable from "./table/HttpHeaderTable";
 
 const {Option} = Select;
 const {TextArea} = Input;
@@ -1109,6 +1109,8 @@ class ProviderEditPage extends React.Component {
                       [
                         {id: "GET", name: "GET"},
                         {id: "POST", name: "POST"},
+                        {id: "PUT", name: "PUT"},
+                        {id: "DELETE", name: "DELETE"},
                       ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
                     }
                   </Select>
@@ -1116,10 +1118,10 @@ class ProviderEditPage extends React.Component {
               </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Http headers"), i18next.t("provider:Http headers title - Tooltip"))} :
+                  {Setting.getLabel(i18next.t("provider:HTTP header"), i18next.t("provider:HTTP header - Tooltip"))} :
                 </Col>
                 <Col span={22} >
-                  <HttpHeadersTable httpHeaders={this.state.provider.httpHeaders} onUpdateTable={(value) => {this.updateProviderField("httpHeaders", value);}} />
+                  <HttpHeaderTable httpHeader={this.state.provider.httpHeader} onUpdateTable={(value) => {this.updateProviderField("httpHeader", value);}} />
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >

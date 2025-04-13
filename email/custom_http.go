@@ -24,16 +24,16 @@ import (
 )
 
 type HttpEmailProvider struct {
-	endpoint    string
-	method      string
-	httpHeaders map[string]string
+	endpoint   string
+	method     string
+	httpHeader map[string]string
 }
 
-func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string) *HttpEmailProvider {
+func NewHttpEmailProvider(endpoint string, method string, httpHeader map[string]string) *HttpEmailProvider {
 	client := &HttpEmailProvider{
-		endpoint:    endpoint,
-		method:      method,
-		httpHeaders: httpHeaders,
+		endpoint:   endpoint,
+		method:     method,
+		httpHeader: httpHeader,
 	}
 	return client
 }
@@ -41,7 +41,7 @@ func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string
 func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
 	var req *http.Request
 	var err error
-	if c.method == "POST" {
+	if c.method == "POST" || c.method == "PUT" || c.method == "DELETE" {
 		formValues := url.Values{}
 		formValues.Set("fromName", fromName)
 		formValues.Set("toAddress", toAddress)
@@ -69,7 +69,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 		return fmt.Errorf("HttpEmailProvider's Send() error, unsupported method: %s", c.method)
 	}
 
-	for k, v := range c.httpHeaders {
+	for k, v := range c.httpHeader {
 		req.Header.Set(k, v)
 	}
 
