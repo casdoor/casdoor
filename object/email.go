@@ -31,7 +31,7 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest string, sender string) error {
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeader)
+	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders)
 
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
