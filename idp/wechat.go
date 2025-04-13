@@ -299,12 +299,12 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 	params := fmt.Sprintf(`{"expire_seconds": 3600, "action_name": "QR_STR_SCENE", "action_info": {"scene": {"scene_str": "%s"}}}`, providerId)
 
 	bodyData := bytes.NewReader([]byte(params))
-	requeset, err := http.NewRequest("POST", qrCodeUrl, bodyData)
+	request, err := http.NewRequest("POST", qrCodeUrl, bodyData)
 	if err != nil {
 		return "", "", err
 	}
 
-	resp, err := client.Do(requeset)
+	resp, err := client.Do(request)
 	if err != nil {
 		return "", "", err
 	}

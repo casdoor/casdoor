@@ -157,7 +157,7 @@ func NewAdapter(driverName string, dataSourceName string, dbName string) (*Ormer
 	return a, nil
 }
 
-// NewAdapterFromdb is the constructor for Ormer.
+// NewAdapterFromDb is the constructor for Ormer.
 func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, db *sql.DB) (*Ormer, error) {
 	a := &Ormer{}
 	a.driverName = driverName
