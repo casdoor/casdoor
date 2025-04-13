@@ -24,14 +24,16 @@ import (
 )
 
 type HttpEmailProvider struct {
-	endpoint string
-	method   string
+	endpoint    string
+	method      string
+	httpHeaders map[string]string
 }
 
-func NewHttpEmailProvider(endpoint string, method string) *HttpEmailProvider {
+func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string) *HttpEmailProvider {
 	client := &HttpEmailProvider{
-		endpoint: endpoint,
-		method:   method,
+		endpoint:    endpoint,
+		method:      method,
+		httpHeaders: httpHeaders,
 	}
 	return client
 }
@@ -65,6 +67,10 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 		req.URL.RawQuery = q.Encode()
 	} else {
 		return fmt.Errorf("HttpEmailProvider's Send() error, unsupported method: %s", c.method)
+	}
+
+	for k, v := range c.httpHeaders {
+		req.Header.Set(k, v)
 	}
 
 	httpClient := proxy.DefaultHttpClient
