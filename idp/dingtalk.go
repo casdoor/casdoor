@@ -136,12 +136,12 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	dtUserInfo := &DingTalkUserResponse{}
 	accessToken := token.AccessToken
 
-	reqest, err := http.NewRequest("GET", idp.Config.Endpoint.AuthURL, nil)
+	request, err := http.NewRequest("GET", idp.Config.Endpoint.AuthURL, nil)
 	if err != nil {
 		return nil, err
 	}
-	reqest.Header.Add("x-acs-dingtalk-access-token", accessToken)
-	resp, err := idp.Client.Do(reqest)
+	request.Header.Add("x-acs-dingtalk-access-token", accessToken)
+	resp, err := idp.Client.Do(request)
 	if err != nil {
 		return nil, err
 	}
