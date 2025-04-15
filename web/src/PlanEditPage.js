@@ -232,6 +232,15 @@ class PlanEditPage extends React.Component {
                 [
                   {id: "USD", name: "USD"},
                   {id: "CNY", name: "CNY"},
+                  {id: "EUR", name: "EUR"},
+                  {id: "JPY", name: "JPY"},
+                  {id: "GBP", name: "GBP"},
+                  {id: "AUD", name: "AUD"},
+                  {id: "CAD", name: "CAD"},
+                  {id: "CHF", name: "CHF"},
+                  {id: "HKD", name: "HKD"},
+                  {id: "SGD", name: "SGD"},
+                  {id: "BRL", name: "BRL"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>
