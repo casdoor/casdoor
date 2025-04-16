@@ -34,7 +34,6 @@ type HttpEmailProvider struct {
 }
 
 func NewHttpEmailProvider(endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string) *HttpEmailProvider {
-
 	if contentType == "" {
 		contentType = "application/x-www-form-urlencoded"
 	}
