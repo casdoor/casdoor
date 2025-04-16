@@ -42,6 +42,13 @@ const defaultUserMapping = {
   avatarUrl: "avatarUrl",
 };
 
+const defaultEmailMapping = {
+  fromName: "fromName",
+  toAddress: "toAddress",
+  subject: "subject",
+  content: "content",
+};
+
 class ProviderEditPage extends React.Component {
   constructor(props) {
     super(props);
@@ -72,7 +79,16 @@ class ProviderEditPage extends React.Component {
 
         if (res.status === "ok") {
           const provider = res.data;
-          provider.userMapping = provider.userMapping || defaultUserMapping;
+          if (provider.type === "Custom HTTP Email") {
+            if (!provider.userMapping) {
+              provider.userMapping = provider.userMapping || defaultEmailMapping;
+            }
+            if (!provider.userMapping?.fromName) {
+              provider.userMapping = defaultEmailMapping;
+            }
+          } else {
+            provider.userMapping = provider.userMapping || defaultUserMapping;
+          }
           this.setState({
             provider: provider,
           });
@@ -146,9 +162,16 @@ class ProviderEditPage extends React.Component {
     const requiredKeys = ["id", "username", "displayName"];
     const provider = this.state.provider;
 
-    if (value === "" && requiredKeys.includes(key)) {
-      Setting.showMessage("error", i18next.t("provider:This field is required"));
-      return;
+    if (provider.type === "Custom HTTP Email") {
+      if (value === "") {
+        Setting.showMessage("error", i18next.t("provider:This field is required"));
+        return;
+      }
+    } else {
+      if (value === "" && requiredKeys.includes(key)) {
+        Setting.showMessage("error", i18next.t("provider:This field is required"));
+        return;
+      }
     }
 
     provider.userMapping[key] = value;
@@ -184,6 +207,30 @@ class ProviderEditPage extends React.Component {
       </React.Fragment>
     );
   }
+
+  renderEmailMappingInput() {
+    return (
+      <React.Fragment>
+        {Setting.getLabel(i18next.t("provider:From name"), i18next.t("provider:From name - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.fromName} onChange={e => {
+          this.updateUserMappingField("fromName", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.toAddress} onChange={e => {
+          this.updateUserMappingField("toAddress", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("provider:Subject"), i18next.t("provider:Subject - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.subject} onChange={e => {
+          this.updateUserMappingField("subject", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.content} onChange={e => {
+          this.updateUserMappingField("content", e.target.value);
+        }} />
+      </React.Fragment>
+    );
+  }
+
   getClientIdLabel(provider) {
     switch (provider.category) {
     case "OAuth":
@@ -1116,12 +1163,39 @@ class ProviderEditPage extends React.Component {
                   </Select>
                 </Col>
               </Row>
+              {
+                this.state.provider.method !== "GET" ? (<Row style={{marginTop: "20px"}} >
+                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                    {Setting.getLabel(i18next.t("webhook:Content type"), i18next.t("webhook:Content type - Tooltip"))} :
+                  </Col>
+                  <Col span={22} >
+                    <Select virtual={false} style={{width: "100%"}} value={this.state.provider.issuerUrl === "" ? "application/x-www-form-urlencoded" : this.state.provider.issuerUrl} onChange={value => {
+                      this.updateProviderField("issuerUrl", value);
+                    }}>
+                      {
+                        [
+                          {id: "application/json", name: "application/json"},
+                          {id: "application/x-www-form-urlencoded", name: "application/x-www-form-urlencoded"},
+                        ].map((method, index) => <Option key={index} value={method.id}>{method.name}</Option>)
+                      }
+                    </Select>
+                  </Col>
+                </Row>) : null
+              }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:HTTP header"), i18next.t("provider:HTTP header - Tooltip"))} :
                 </Col>
                 <Col span={22} >
                   <HttpHeaderTable httpHeaders={this.state.provider.httpHeaders} onUpdateTable={(value) => {this.updateProviderField("httpHeaders", value);}} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:HTTP body mapping"), i18next.t("provider:HTTP body mapping - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  {this.renderEmailMappingInput()}
                 </Col>
               </Row>
               <Row style={{marginTop: "20px"}} >
