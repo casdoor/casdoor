@@ -17,6 +17,7 @@ import React, {useState} from "react";
 import {Button, Modal, Progress, Space, Spin, message} from "antd";
 import i18next from "i18next";
 import Dragger from "antd/es/upload/Dragger";
+import * as Setting from "../../Setting";
 
 const FaceRecognitionModal = (props) => {
   const {visible, onOk, onCancel, withImage} = props;
@@ -35,9 +36,8 @@ const FaceRecognitionModal = (props) => {
 
   React.useEffect(() => {
     const loadModels = async() => {
-      // const MODEL_URL = process.env.PUBLIC_URL + "/models";
       // const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
-      const MODEL_URL = "https://cdn.casdoor.com/casdoor/models";
+      const MODEL_URL = `${Setting.StaticBaseUrl}/casdoor/models`;
 
       Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
