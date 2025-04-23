@@ -837,6 +837,10 @@ func AddUser(user *User) (bool, error) {
 		return false, fmt.Errorf("the user's owner and name should not be empty")
 	}
 
+	if CheckUsername(user.Name, "en") != "" {
+		user.Name = util.GetRandomName()
+	}
+
 	organization, err := GetOrganizationByUser(user)
 	if err != nil {
 		return false, err
