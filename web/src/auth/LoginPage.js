@@ -326,7 +326,7 @@ class LoginPage extends React.Component {
 
     if (resp.data2) {
       sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-      Setting.goToLinkSoft(ths, `/forget/${application.name}`);
+      Setting.goToLinkSoft(this, "/account");
       return;
     }
 
@@ -469,7 +469,7 @@ class LoginPage extends React.Component {
             if (responseType === "login") {
               if (res.data2) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                Setting.goToLinkSoft(this, "/account");
               }
               Setting.showMessage("success", i18next.t("application:Logged in successfully"));
               this.props.onLoginSuccess();
@@ -478,7 +478,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                Setting.goToLinkSoft(this, "/account");
               }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
@@ -490,7 +490,7 @@ class LoginPage extends React.Component {
               }
               if (res.data2.needUpdatePassword) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
-                Setting.goToLink(this, `/forget/${this.state.applicationName}`);
+                Setting.goToLinkSoft(this, "/account");
               }
               if (res.data2.method === "POST") {
                 this.setState({

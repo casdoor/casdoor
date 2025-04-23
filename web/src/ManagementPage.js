@@ -372,7 +372,12 @@ function ManagementPage(props) {
     } else if (props.account === undefined) {
       return null;
     } else if (props.account.needUpdatePassword) {
-      return <Redirect to={"/forget/" + props.application.name} />;
+      if (window.location.pathname === "/account") {
+        Setting.showMessage("info", `${i18next.t("user:Need update password")}`);
+        return component;
+      } else {
+        return <Redirect to="/account" />;
+      }
     } else {
       return component;
     }
