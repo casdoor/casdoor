@@ -391,6 +391,9 @@ class LoginPage extends React.Component {
       }).then(res => res.json())
         .then((res) => {
           if (res.status === "error") {
+            this.setState({
+              loginLoading: false,
+            });
             Setting.showMessage("error", res.msg);
             return;
           }
@@ -455,6 +458,7 @@ class LoginPage extends React.Component {
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
         }
+      }).finally(() => {
         this.setState({loginLoading: false});
       });
     } else {
@@ -511,6 +515,7 @@ class LoginPage extends React.Component {
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
           }
+        }).finally(() => {
           this.setState({loginLoading: false});
         });
     }
@@ -720,7 +725,7 @@ class LoginPage extends React.Component {
                 values["FaceIdImage"] = FaceIdImage;
                 this.login(values);
                 this.setState({openFaceRecognitionModal: false});
-              }} onCancel={() => this.setState({openFaceRecognitionModal: false})} /></Suspense> :
+              }} onCancel={() => this.setState({openFaceRecognitionModal: false, loginLoading: false})} /></Suspense> :
                 <Suspense fallback={null}>
                   <FaceRecognitionModal
                     visible={this.state.openFaceRecognitionModal}
@@ -731,7 +736,7 @@ class LoginPage extends React.Component {
                       this.login(values);
                       this.setState({openFaceRecognitionModal: false});
                     }}
-                    onCancel={() => this.setState({openFaceRecognitionModal: false})}
+                    onCancel={() => this.setState({openFaceRecognitionModal: false, loginLoading: false})}
                   />
                 </Suspense>
               :
@@ -1065,6 +1070,10 @@ class LoginPage extends React.Component {
           .catch(error => {
             Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}${error}`);
           });
+      }).finally(() => {
+        this.setState({
+          loginLoading: false,
+        });
       });
   }
 
