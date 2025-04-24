@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   casdoor:
-    # restart: always
+    restart: always
     build:
       context: ./
       dockerfile: Dockerfile
@@ -9,19 +9,19 @@ services:
     entrypoint: /bin/sh -c './server --createDatabase=true'
     ports:
       - "8000:8000"
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
     environment:
       RUNNING_IN_DOCKER: "true"
     volumes:
       - ./conf:/conf/
-  # db:
-  #   restart: always
-  #   image: mysql:8.0.25
-  #   platform: linux/amd64
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: 123456
-  #   volumes:
-  #     - /usr/local/docker/mysql:/var/lib/mysql
+  db:
+    restart: always
+    image: mysql:8.0.25
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - /usr/local/docker/mysql:/var/lib/mysql
