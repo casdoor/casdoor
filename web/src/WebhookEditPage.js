@@ -144,6 +144,9 @@ class WebhookEditPage extends React.Component {
     if (["port"].includes(key)) {
       value = Setting.myParseInt(value);
     }
+    if (key === "objectFields") {
+      value = value.includes("All") ? ["All"] : value;
+    }
     return value;
   }
 
@@ -290,6 +293,19 @@ class WebhookEditPage extends React.Component {
                     );
                   })
                 )
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("webhook:Object fields"), i18next.t("webhook:Object fields - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} mode="tags" showSearch style={{width: "100%"}} value={this.state.webhook.objectFields} onChange={(value => {this.updateWebhookField("objectFields", value);})}>
+              <Option key="All" value="All">{i18next.t("general:All")}</Option>
+              {
+                ["owner", "name", "createdTime", "updatedTime", "deletedTime", "id", "displayName"].map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>
