@@ -269,9 +269,26 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 		return err
 	}
 
+	var rawObject map[string]interface{}
+	_ = json.Unmarshal([]byte(record.Object), &rawObject)
+
 	errs := []error{}
 	webhooks = getFilteredWebhooks(webhooks, record.Organization, record.Action)
 	for _, webhook := range webhooks {
+		filteredObject := make(map[string]interface{})
+
+		if len(webhook.ObjectFields) != 0 && rawObject != nil && webhook.ObjectFields[0] != "all" {
+			for _, field := range webhook.ObjectFields {
+				fieldValue, ok := rawObject[field]
+				if !ok {
+					continue
+				}
+				filteredObject[field] = fieldValue
+			}
+		}
+
+		record.Object = util.StructToJson(filteredObject)
+
 		var user *User
 		if webhook.IsUserExtended {
 			user, err = getUser(record.Organization, record.User)
