@@ -296,7 +296,7 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 	record2 := *record
 	for _, webhook := range webhooks {
 
-		if len(webhook.ObjectFields) != 0 && webhook.ObjectFields[0] != "all" {
+		if len(webhook.ObjectFields) != 0 && webhook.ObjectFields[0] != "All" {
 			record2.Object = filterRecordObject(record.Object, webhook.ObjectFields)
 		}
 

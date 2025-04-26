@@ -145,7 +145,7 @@ class WebhookEditPage extends React.Component {
       value = Setting.myParseInt(value);
     }
     if (key === "objectFields") {
-      value = value.includes("all") ? ["all"] : value;
+      value = value.includes("All") ? ["All"] : value;
     }
     return value;
   }
@@ -303,7 +303,7 @@ class WebhookEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} mode="tags" showSearch style={{width: "100%"}} value={this.state.webhook.objectFields} onChange={(value => {this.updateWebhookField("objectFields", value);})}>
-              <Option key="all" value="all">{"All"}</Option>
+              <Option key="All" value="All">{i18next.t("general:All")}</Option>
               {
                 ["owner", "name", "createdTime", "updatedTime", "deletedTime", "id", "displayName"].map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
