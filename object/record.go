@@ -263,31 +263,42 @@ func addWebhookRecord(webhook *Webhook, record *casvisorsdk.Record, statusCode i
 	return err
 }
 
+func filterRecordObject(object string, objectFields []string) string {
+	var rawObject map[string]interface{}
+	_ = json.Unmarshal([]byte(object), &rawObject)
+
+	if rawObject == nil {
+		return object
+	}
+
+	filteredObject := make(map[string]interface{})
+
+	for _, field := range objectFields {
+		fieldValue, ok := rawObject[field]
+		if !ok {
+			continue
+		}
+		filteredObject[field] = fieldValue
+	}
+
+	return util.StructToJson(filteredObject)
+}
+
 func SendWebhooks(record *casvisorsdk.Record) error {
 	webhooks, err := getWebhooksByOrganization("")
 	if err != nil {
 		return err
 	}
 
-	var rawObject map[string]interface{}
-	_ = json.Unmarshal([]byte(record.Object), &rawObject)
-
 	errs := []error{}
 	webhooks = getFilteredWebhooks(webhooks, record.Organization, record.Action)
+
+	record2 := *record
 	for _, webhook := range webhooks {
-		filteredObject := make(map[string]interface{})
 
-		if len(webhook.ObjectFields) != 0 && rawObject != nil && webhook.ObjectFields[0] != "all" {
-			for _, field := range webhook.ObjectFields {
-				fieldValue, ok := rawObject[field]
-				if !ok {
-					continue
-				}
-				filteredObject[field] = fieldValue
-			}
+		if len(webhook.ObjectFields) != 0 && webhook.ObjectFields[0] != "all" {
+			record2.Object = filterRecordObject(record.Object, webhook.ObjectFields)
 		}
-
-		record.Object = util.StructToJson(filteredObject)
 
 		var user *User
 		if webhook.IsUserExtended {
@@ -304,12 +315,12 @@ func SendWebhooks(record *casvisorsdk.Record) error {
 			}
 		}
 
-		statusCode, respBody, err := sendWebhook(webhook, record, user)
+		statusCode, respBody, err := sendWebhook(webhook, &record2, user)
 		if err != nil {
 			errs = append(errs, err)
 		}
 
-		err = addWebhookRecord(webhook, record, statusCode, respBody, err)
+		err = addWebhookRecord(webhook, &record2, statusCode, respBody, err)
 		if err != nil {
 			errs = append(errs, err)
 		}
