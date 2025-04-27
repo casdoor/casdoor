@@ -138,7 +138,7 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 
 func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	jwks := jose.JSONWebKeySet{}
-	certs, err := GetCerts("admin")
+	certs, err := GetCerts("")
 	if err != nil {
 		return jwks, err
 	}
