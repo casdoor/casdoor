@@ -66,7 +66,7 @@ class LoginPage extends React.Component {
       userLang: null,
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
-      userCodeStatus: "success",
+      userCodeStatus: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
