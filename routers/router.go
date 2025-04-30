@@ -66,6 +66,7 @@ func initAPI() {
 	beego.Router("/api/get-webhook-event", &controllers.ApiController{}, "GET:GetWebhookEventType")
 	beego.Router("/api/get-captcha-status", &controllers.ApiController{}, "GET:GetCaptchaStatus")
 	beego.Router("/api/callback", &controllers.ApiController{}, "POST:Callback")
+	beego.Router("/api/device-auth", &controllers.ApiController{}, "POST:DeviceAuth")
 
 	beego.Router("/api/get-organizations", &controllers.ApiController{}, "GET:GetOrganizations")
 	beego.Router("/api/get-organization", &controllers.ApiController{}, "GET:GetOrganization")

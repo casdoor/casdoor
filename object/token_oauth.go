@@ -18,6 +18,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -36,6 +37,8 @@ const (
 	InvalidScope         = "invalid_scope"
 	EndpointError        = "endpoint_error"
 )
+
+var DeviceAuthMap = sync.Map{}
 
 type Code struct {
 	Message string `xorm:"varchar(100)" json:"message"`
@@ -69,6 +72,22 @@ type IntrospectionResponse struct {
 	Aud       []string `json:"aud,omitempty"`
 	Iss       string   `json:"iss,omitempty"`
 	Jti       string   `json:"jti,omitempty"`
+}
+
+type DeviceAuthCache struct {
+	UserSignIn    bool
+	UserName      string
+	ApplicationId string
+	Scope         string
+	RequestAt     time.Time
+}
+
+type DeviceAuthResponse struct {
+	DeviceCode      string `json:"device_code"`
+	UserCode        string `json:"user_code"`
+	VerificationUri string `json:"verification_uri"`
+	ExpiresIn       int    `json:"expires_in"`
+	Interval        int    `json:"interval"`
 }
 
 func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, error) {
@@ -221,6 +240,8 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 	case "client_credentials": // Client Credentials Grant
 		token, tokenError, err = GetClientCredentialsToken(application, clientSecret, scope, host)
 	case "token", "id_token": // Implicit Grant
+		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
+	case "urn:ietf:params:oauth:grant-type:device_code":
 		token, tokenError, err = GetImplicitToken(application, username, scope, nonce, host)
 	case "refresh_token":
 		refreshToken2, err := RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)

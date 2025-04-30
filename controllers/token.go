@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -170,12 +171,17 @@ func (c *ApiController) GetOAuthToken() {
 	tag := c.Input().Get("tag")
 	avatar := c.Input().Get("avatar")
 	refreshToken := c.Input().Get("refresh_token")
+	deviceCode := c.Input().Get("device_code")
 
 	if clientId == "" && clientSecret == "" {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
 
-	if len(c.Ctx.Input.RequestBody) != 0 {
+	if grantType == "urn:ietf:params:oauth:grant-type:device_code" {
+		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
+	}
+
+	if len(c.Ctx.Input.RequestBody) != 0 && grantType != "urn:ietf:params:oauth:grant-type:device_code" {
 		// If clientId is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
 		err := json.Unmarshal(c.Ctx.Input.RequestBody, &tokenRequest)
@@ -217,6 +223,40 @@ func (c *ApiController) GetOAuthToken() {
 				refreshToken = tokenRequest.RefreshToken
 			}
 		}
+	}
+
+	if deviceCode != "" {
+		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
+		if !ok {
+			c.Data["json"] = object.TokenError{
+				Error:            "expired_token",
+				ErrorDescription: "token is expired",
+			}
+			c.ServeJSON()
+			return
+		}
+
+		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
+		if !deviceAuthCacheCast.UserSignIn {
+			c.Data["json"] = object.TokenError{
+				Error:            "authorization_pending",
+				ErrorDescription: "authorization pending",
+			}
+			c.ServeJSON()
+			return
+		}
+
+		if deviceAuthCacheCast.RequestAt.Add(time.Second * 120).Before(time.Now()) {
+			c.Data["json"] = object.TokenError{
+				Error:            "expired_token",
+				ErrorDescription: "token is expired",
+			}
+			c.ServeJSON()
+			return
+		}
+		object.DeviceAuthMap.Delete(deviceCode)
+
+		username = deviceAuthCacheCast.UserName
 	}
 
 	host := c.Ctx.Request.Host

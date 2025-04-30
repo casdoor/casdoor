@@ -65,6 +65,8 @@ class LoginPage extends React.Component {
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
       userLang: null,
       loginLoading: false,
+      userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
+      userCodeStatus: "",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -81,7 +83,7 @@ class LoginPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.type === "login" || this.state.type === "saml") {
         this.getApplication();
-      } else if (this.state.type === "code" || this.state.type === "cas") {
+      } else if (this.state.type === "code" || this.state.type === "cas" || this.state.type === "device") {
         this.getApplicationLogin();
       } else {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
@@ -155,13 +157,25 @@ class LoginPage extends React.Component {
   }
 
   getApplicationLogin() {
-    const loginParams = (this.state.type === "cas") ? Util.getCasLoginParameters("admin", this.state.applicationName) : Util.getOAuthGetParameters();
+    let loginParams;
+    if (this.state.type === "cas") {
+      loginParams = Util.getCasLoginParameters("admin", this.state.applicationName);
+    } else if (this.state.type === "device") {
+      loginParams = {userCode: this.state.userCode, type: this.state.type};
+    } else {
+      loginParams = Util.getOAuthGetParameters();
+    }
     AuthBackend.getApplicationLogin(loginParams)
       .then((res) => {
         if (res.status === "ok") {
           const application = res.data;
           this.onUpdateApplication(application);
         } else {
+          if (this.state.type === "device") {
+            this.setState({
+              userCodeStatus: "expired",
+            });
+          }
           this.onUpdateApplication(null);
           this.setState({
             msg: res.msg,
@@ -266,6 +280,9 @@ class LoginPage extends React.Component {
 
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
+    if (application === null) {
+      return;
+    }
     for (const idx in application.providers) {
       const provider = application.providers[idx];
       if (provider.provider?.category === "Face ID") {
@@ -296,6 +313,9 @@ class LoginPage extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
+    if (this.state.userCode) {
+      values["userCode"] = this.state.userCode;
+    }
 
     if (oAuthParams?.samlRequest) {
       values["samlRequest"] = oAuthParams.samlRequest;
@@ -479,6 +499,11 @@ class LoginPage extends React.Component {
               this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
+            } else if (responseType === "device") {
+              Setting.showMessage("success", "Successful login");
+              this.setState({
+                userCodeStatus: "success",
+              });
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
@@ -826,6 +851,16 @@ class LoginPage extends React.Component {
       );
     }
 
+    if (this.state.userCode && this.state.userCodeStatus === "success") {
+      return (
+        <Result
+          status="success"
+          title={i18next.t("application:Logged in successfully")}
+        >
+        </Result>
+      );
+    }
+
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
       let loginWidth = 320;
@@ -983,6 +1018,10 @@ class LoginPage extends React.Component {
 
     const application = this.getApplicationObj();
     if (this.props.account.owner !== application?.organization) {
+      return null;
+    }
+
+    if (this.state.userCode && this.state.userCodeStatus === "success") {
       return null;
     }
 
@@ -1268,6 +1307,15 @@ class LoginPage extends React.Component {
   }
 
   render() {
+    if (this.state.userCodeStatus === "expired") {
+      return <Result
+        style={{width: "100%"}}
+        status="error"
+        title={`Code ${i18next.t("subscription:Expired")}`}
+      >
+      </Result>;
+    }
+
     const application = this.getApplicationObj();
     if (application === undefined) {
       return null;

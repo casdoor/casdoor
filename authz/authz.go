@@ -47,6 +47,7 @@ p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, POST, /api/callback, *, *
+p, *, *, POST, /api/device-auth, *, *
 p, *, *, GET, /api/get-account, *, *
 p, *, *, GET, /api/userinfo, *, *
 p, *, *, GET, /api/user, *, *

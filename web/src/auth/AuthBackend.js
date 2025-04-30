@@ -61,7 +61,14 @@ export function oAuthParamsToQuery(oAuthParams) {
 }
 
 export function getApplicationLogin(params) {
-  const queryParams = (params?.type === "cas") ? casLoginParamsToQuery(params) : oAuthParamsToQuery(params);
+  let queryParams = "";
+  if (params?.type === "cas") {
+    queryParams = casLoginParamsToQuery(params);
+  } else if (params?.type === "device") {
+    queryParams = `?userCode=${params.userCode}&type=device`;
+  } else {
+    queryParams = oAuthParamsToQuery(params);
+  }
   return fetch(`${authConfig.serverUrl}/api/get-app-login${queryParams}`, {
     method: "GET",
     credentials: "include",

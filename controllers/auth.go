@@ -25,6 +25,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
@@ -169,6 +170,32 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 			resp.Data2 = user.NeedUpdatePassword
 		}
+	} else if form.Type == ResponseTypeDevice {
+		authCache, ok := object.DeviceAuthMap.LoadAndDelete(form.UserCode)
+		if !ok {
+			c.ResponseError(c.T("auth:UserCode Expired"))
+			return
+		}
+
+		authCacheCast := authCache.(object.DeviceAuthCache)
+		if authCacheCast.RequestAt.Add(time.Second * 120).Before(time.Now()) {
+			c.ResponseError(c.T("auth:UserCode Expired"))
+			return
+		}
+
+		deviceAuthCacheDeviceCode, ok := object.DeviceAuthMap.Load(authCacheCast.UserName)
+		if !ok {
+			c.ResponseError(c.T("auth:DeviceCode Invalid"))
+			return
+		}
+
+		deviceAuthCacheDeviceCodeCast := deviceAuthCacheDeviceCode.(object.DeviceAuthCache)
+		deviceAuthCacheDeviceCodeCast.UserName = user.Name
+		deviceAuthCacheDeviceCodeCast.UserSignIn = true
+
+		object.DeviceAuthMap.Store(authCacheCast.UserName, deviceAuthCacheDeviceCodeCast)
+
+		resp = &Response{Status: "ok", Msg: "", Data: userId, Data2: user.NeedUpdatePassword}
 	} else if form.Type == ResponseTypeSaml { // saml flow
 		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
 		if err != nil {
@@ -242,6 +269,7 @@ func (c *ApiController) GetApplicationLogin() {
 	state := c.Input().Get("state")
 	id := c.Input().Get("id")
 	loginType := c.Input().Get("type")
+	userCode := c.Input().Get("userCode")
 
 	var application *object.Application
 	var msg string
@@ -264,6 +292,19 @@ func (c *ApiController) GetApplicationLogin() {
 		}
 
 		err = object.CheckCasLogin(application, c.GetAcceptLanguage(), redirectUri)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else if loginType == "device" {
+		deviceAuthCache, ok := object.DeviceAuthMap.Load(userCode)
+		if !ok {
+			c.ResponseError(c.T("auth:UserCode Invalid"))
+			return
+		}
+
+		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
+		application, err = object.GetApplication(deviceAuthCacheCast.ApplicationId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -1214,4 +1255,76 @@ func (c *ApiController) Callback() {
 
 	frontendCallbackUrl := fmt.Sprintf("/callback?code=%s&state=%s", code, state)
 	c.Ctx.Redirect(http.StatusFound, frontendCallbackUrl)
+}
+
+// DeviceAuth
+// @Title DeviceAuth
+// @Tag Device Authorization Endpoint
+// @Description Endpoint for the device authorization flow
+// @router /device-auth [post]
+// @Success 200 {object} object.DeviceAuthResponse The Response object
+func (c *ApiController) DeviceAuth() {
+	clientId := c.Input().Get("client_id")
+	scope := c.Input().Get("scope")
+	application, err := object.GetApplicationByClientId(clientId)
+	if err != nil {
+		c.Data["json"] = object.TokenError{
+			Error:            err.Error(),
+			ErrorDescription: err.Error(),
+		}
+		c.ServeJSON()
+		return
+	}
+
+	if application == nil {
+		c.Data["json"] = object.TokenError{
+			Error:            c.T("token:Invalid client_id"),
+			ErrorDescription: c.T("token:Invalid client_id"),
+		}
+		c.ServeJSON()
+		return
+	}
+
+	deviceCode := util.GenerateId()
+	userCode := util.GetRandomName()
+
+	generateTime := 0
+	for {
+		if generateTime > 5 {
+			c.Data["json"] = object.TokenError{
+				Error:            "userCode gen",
+				ErrorDescription: c.T("token:Invalid client_id"),
+			}
+			c.ServeJSON()
+			return
+		}
+		_, ok := object.DeviceAuthMap.Load(userCode)
+		if !ok {
+			break
+		}
+
+		generateTime++
+	}
+
+	deviceAuthCache := object.DeviceAuthCache{
+		UserSignIn:    false,
+		UserName:      "",
+		Scope:         scope,
+		ApplicationId: application.GetId(),
+		RequestAt:     time.Now(),
+	}
+
+	userAuthCache := object.DeviceAuthCache{
+		UserSignIn:    false,
+		UserName:      deviceCode,
+		Scope:         scope,
+		ApplicationId: application.GetId(),
+		RequestAt:     time.Now(),
+	}
+
+	object.DeviceAuthMap.Store(deviceCode, deviceAuthCache)
+	object.DeviceAuthMap.Store(userCode, userAuthCache)
+
+	c.Data["json"] = object.GetDeviceAuthResponse(deviceCode, userCode, c.Ctx.Request.Host)
+	c.ServeJSON()
 }
