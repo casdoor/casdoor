@@ -65,6 +65,7 @@ class LoginPage extends React.Component {
       orgChoiceMode: new URLSearchParams(props.location?.search).get("orgChoiceMode") ?? null,
       userLang: null,
       loginLoading: false,
+      userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -81,7 +82,7 @@ class LoginPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.type === "login" || this.state.type === "saml") {
         this.getApplication();
-      } else if (this.state.type === "code" || this.state.type === "cas") {
+      } else if (this.state.type === "code" || this.state.type === "cas" || this.state.type === "device") {
         this.getApplicationLogin();
       } else {
         Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
@@ -155,7 +156,14 @@ class LoginPage extends React.Component {
   }
 
   getApplicationLogin() {
-    const loginParams = (this.state.type === "cas") ? Util.getCasLoginParameters("admin", this.state.applicationName) : Util.getOAuthGetParameters();
+    let loginParams = null;
+    if (this.state.type === "cas") {
+      loginParams = Util.getCasLoginParameters("admin", this.state.applicationName);
+    } else if (this.state.type === "device") {
+      loginParams = {userCode: this.state.userCode, type: this.state.type};
+    } else {
+      loginParams = Util.getOAuthGetParameters();
+    }
     AuthBackend.getApplicationLogin(loginParams)
       .then((res) => {
         if (res.status === "ok") {
@@ -296,6 +304,9 @@ class LoginPage extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
 
     values["type"] = oAuthParams?.responseType ?? this.state.type;
+    if (this.state.userCode) {
+      values["userCode"] = this.state.userCode;
+    }
 
     if (oAuthParams?.samlRequest) {
       values["samlRequest"] = oAuthParams.samlRequest;
@@ -479,6 +490,8 @@ class LoginPage extends React.Component {
               this.props.onLoginSuccess();
             } else if (responseType === "code") {
               this.postCodeLoginAction(res);
+            } else if (responseType === "device") {
+              Setting.showMessage("success", "Successful login");
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);

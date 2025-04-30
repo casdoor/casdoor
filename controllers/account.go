@@ -32,6 +32,7 @@ const (
 	ResponseTypeIdToken = "id_token"
 	ResponseTypeSaml    = "saml"
 	ResponseTypeCas     = "cas"
+	ResponseTypeDevice  = "device"
 )
 
 type Response struct {
