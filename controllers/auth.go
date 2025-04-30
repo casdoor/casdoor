@@ -1261,7 +1261,7 @@ func (c *ApiController) Callback() {
 // @Title DeviceAuth
 // @Tag Device Authorization Endpoint
 // @Description Endpoint for the device authorization flow
-// @router /device_auth [post]
+// @router /device-auth [post]
 // @Success 200 {object} object.DeviceAuthResponse The Response object
 func (c *ApiController) DeviceAuth() {
 	clientId := c.Input().Get("client_id")
