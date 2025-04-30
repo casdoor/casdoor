@@ -502,7 +502,7 @@ class LoginPage extends React.Component {
             } else if (responseType === "device") {
               Setting.showMessage("success", "Successful login");
               this.setState({
-                userCodeSuccess: true,
+                userCodeStatus: "success",
               });
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
