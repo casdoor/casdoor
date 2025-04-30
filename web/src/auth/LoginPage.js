@@ -66,6 +66,7 @@ class LoginPage extends React.Component {
       userLang: null,
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
+      userCodeStatus: "success",
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -156,7 +157,7 @@ class LoginPage extends React.Component {
   }
 
   getApplicationLogin() {
-    let loginParams = null;
+    let loginParams;
     if (this.state.type === "cas") {
       loginParams = Util.getCasLoginParameters("admin", this.state.applicationName);
     } else if (this.state.type === "device") {
@@ -170,6 +171,11 @@ class LoginPage extends React.Component {
           const application = res.data;
           this.onUpdateApplication(application);
         } else {
+          if (this.state.type === "device") {
+            this.setState({
+              userCodeStatus: "expired",
+            });
+          }
           this.onUpdateApplication(null);
           this.setState({
             msg: res.msg,
@@ -274,6 +280,9 @@ class LoginPage extends React.Component {
 
   onUpdateApplication(application) {
     this.props.onUpdateApplication(application);
+    if (application === null) {
+      return;
+    }
     for (const idx in application.providers) {
       const provider = application.providers[idx];
       if (provider.provider?.category === "Face ID") {
@@ -492,6 +501,9 @@ class LoginPage extends React.Component {
               this.postCodeLoginAction(res);
             } else if (responseType === "device") {
               Setting.showMessage("success", "Successful login");
+              this.setState({
+                userCodeSuccess: true,
+              });
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data2) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
@@ -839,6 +851,16 @@ class LoginPage extends React.Component {
       );
     }
 
+    if (this.state.userCode && this.state.userCodeStatus === "success") {
+      return (
+        <Result
+          status="success"
+          title={i18next.t("application:Logged in successfully")}
+        >
+        </Result>
+      );
+    }
+
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
       let loginWidth = 320;
@@ -996,6 +1018,10 @@ class LoginPage extends React.Component {
 
     const application = this.getApplicationObj();
     if (this.props.account.owner !== application?.organization) {
+      return null;
+    }
+
+    if (this.state.userCode && this.state.userCodeStatus === "success") {
       return null;
     }
 
@@ -1281,6 +1307,15 @@ class LoginPage extends React.Component {
   }
 
   render() {
+    if (this.state.userCodeStatus === "expired") {
+      return <Result
+        style={{width: "100%"}}
+        status="error"
+        title={`Code ${i18next.t("subscription:Expired")}`}
+      >
+      </Result>;
+    }
+
     const application = this.getApplicationObj();
     if (application === undefined) {
       return null;
