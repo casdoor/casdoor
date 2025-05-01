@@ -123,7 +123,7 @@ func SpaceToCamel(name string) string {
 }
 
 func GetOwnerAndNameFromId(id string) (string, string) {
-	tokens := strings.Split(id, "/")
+	tokens := strings.SplitN(id, "/", 2)
 	if len(tokens) != 2 {
 		panic(errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id))
 	}
