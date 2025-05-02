@@ -17,6 +17,7 @@ package object
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
@@ -210,6 +211,12 @@ func DeleteGroup(group *Group) (bool, error) {
 }
 
 func checkGroupName(name string) error {
+	if name == "" {
+		return errors.New("group name can't be empty")
+	}
+	if strings.Contains(name, "/") {
+		return errors.New("group name can't contain \"/\"")
+	}
 	exist, err := ormer.Engine.Exist(&Organization{Owner: "admin", Name: name})
 	if err != nil {
 		return err
