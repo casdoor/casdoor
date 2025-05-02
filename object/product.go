@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/casdoor/casdoor/idp"
 
@@ -136,12 +137,7 @@ func (product *Product) GetId() string {
 }
 
 func (product *Product) isValidProvider(provider *Provider) bool {
-	for _, providerName := range product.Providers {
-		if providerName == provider.Name {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(product.Providers, provider.Name)
 }
 
 func (product *Product) getProvider(providerName string) (*Provider, error) {

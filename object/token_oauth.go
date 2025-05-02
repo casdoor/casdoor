@@ -18,6 +18,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -436,12 +437,7 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	if method == "authorization_code" {
 		return true
 	}
-	for _, m := range grantTypes {
-		if m == method {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(grantTypes, method)
 }
 
 // GetAuthorizationCodeToken

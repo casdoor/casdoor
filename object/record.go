@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/beego/beego/context"
@@ -214,13 +215,7 @@ func getFilteredWebhooks(webhooks []*Webhook, organization string, action string
 			}
 		}
 
-		matched := false
-		for _, event := range webhook.Events {
-			if action == event {
-				matched = true
-				break
-			}
-		}
+		matched := slices.Contains(webhook.Events, action)
 
 		if matched {
 			res = append(res, webhook)
