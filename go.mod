@@ -16,7 +16,7 @@ require (
 	github.com/casdoor/go-sms-sender v0.25.0
 	github.com/casdoor/gomail/v2 v2.1.0
 	github.com/casdoor/ldapserver v1.2.0
-	github.com/casdoor/notify v1.0.0
+	github.com/casdoor/notify v1.0.1
 	github.com/casdoor/oss v1.8.0
 	github.com/casdoor/xorm-adapter/v3 v3.1.0
 	github.com/casvisor/casvisor-go-sdk v1.4.0
@@ -101,7 +101,7 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v2.2.2+incompatible // indirect
 	github.com/aliyun/credentials-go v1.3.10 // indirect
 	github.com/apistd/uni-go-sdk v0.0.2 // indirect
-	github.com/atc0005/go-teams-notify/v2 v2.6.1 // indirect
+	github.com/atc0005/go-teams-notify/v2 v2.13.0 // indirect
 	github.com/baidubce/bce-sdk-go v0.9.156 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blinkbean/dingtalk v0.0.0-20210905093040-7d935c0f7e19 // indirect
