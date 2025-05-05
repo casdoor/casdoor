@@ -179,6 +179,7 @@ func NewAdapterFromDb(driverName string, dataSourceName string, dbName string, d
 
 func refineDataSourceNameForPostgres(dataSourceName string) string {
 	reg := regexp.MustCompile(`dbname=[^ ]+\s*`)
+
 	return reg.ReplaceAllString(dataSourceName, "dbname=postgres")
 }
 
