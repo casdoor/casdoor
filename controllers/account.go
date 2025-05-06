@@ -204,13 +204,31 @@ func (c *ApiController) Signup() {
 		userType = "paid-user"
 	}
 
+	password := authForm.Password
+	if application.OrganizationObj == nil {
+		application.OrganizationObj = organization
+	}
+
+	if application.OrganizationObj != nil && password != "" {
+		processedPassword, err := util.GetUnobfuscatedPassword(
+			application.OrganizationObj.PasswordObfuscatorType,
+			application.OrganizationObj.PasswordObfuscatorKey,
+			password,
+		)
+		if err != nil {
+			c.ResponseError(fmt.Sprintf("Password processing error: %s", err.Error()))
+			return
+		}
+		password = processedPassword
+	}
+
 	user := &object.User{
 		Owner:             authForm.Organization,
 		Name:              username,
 		CreatedTime:       util.GetCurrentTime(),
 		Id:                id,
 		Type:              userType,
-		Password:          authForm.Password,
+		Password:          password,
 		DisplayName:       authForm.Name,
 		Gender:            authForm.Gender,
 		Bio:               authForm.Bio,

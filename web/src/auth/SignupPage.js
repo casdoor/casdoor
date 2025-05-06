@@ -30,6 +30,7 @@ import {withRouter} from "react-router-dom";
 import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 import * as PasswordChecker from "../common/PasswordChecker";
 import * as InvitationBackend from "../backend/InvitationBackend";
+import * as Obfuscator from "./Obfuscator";
 
 const formItemLayout = {
   labelCol: {
@@ -229,6 +230,16 @@ class SignupPage extends React.Component {
 
   onFinish(values) {
     const application = this.getApplicationObj();
+    const organization = application?.organizationObj;
+    if (values["password"]) {
+      const [passwordCipher, errorMessage] = Obfuscator.encryptByPasswordObfuscator(organization?.passwordObfuscatorType, organization?.passwordObfuscatorKey, values["password"]);
+      if (errorMessage.length > 0) {
+        Setting.showMessage("error", errorMessage);
+        return;
+      } else {
+        values["password"] = passwordCipher;
+      }
+    }
 
     if (Array.isArray(values.gender)) {
       values.gender = values.gender.join(", ");
