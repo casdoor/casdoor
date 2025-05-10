@@ -454,6 +454,7 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} disabled={this.state.application.tokenFormat !== "JWT-Custom"} mode="tags" showSearch style={{width: "100%"}} value={this.state.application.tokenFields} onChange={(value => {this.updateApplicationField("tokenFields", value);})}>
+              <Option key={"provider"} value={"provider"}>{"Provider"}</Option>)
               {
                 Setting.getUserCommonFields().map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
