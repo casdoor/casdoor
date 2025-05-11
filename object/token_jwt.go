@@ -30,9 +30,9 @@ type Claims struct {
 	Nonce     string `json:"nonce,omitempty"`
 	Tag       string `json:"tag"`
 	Scope     string `json:"scope,omitempty"`
-	Provider  string `json:"provider,omitempty"`
 	// the `azp` (Authorized Party) claim. Optional. See https://openid.net/specs/openid-connect-core-1_0.html#IDToken
-	Azp string `json:"azp,omitempty"`
+	Azp      string `json:"azp,omitempty"`
+	Provider string `json:"provider,omitempty"`
 	jwt.RegisteredClaims
 }
 
