@@ -77,7 +77,15 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	err := logs.SetLogger(logs.AdapterFile, conf.GetConfigString("logConfig"))
+	logAdapter := conf.GetConfigString("logAdapter")
+	if logAdapter == "" {
+		logAdapter = logs.AdapterFile
+	}
+
+	var err error
+	if logAdapter != "console" {
+		err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
+	}
 	if err != nil {
 		panic(err)
 	}
