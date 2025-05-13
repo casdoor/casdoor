@@ -15,6 +15,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/beego/beego"
@@ -77,18 +78,26 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
 	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
 
-	logAdapter := conf.GetConfigString("logAdapter")
-	if logAdapter == "" {
-		logAdapter = logs.AdapterFile
-	}
-
-	if logAdapter == "console" {
-		logs.Reset()
-	}
-	err := logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
+	var logAdapter string
+	logConfigMap := make(map[string]interface{})
+	err := json.Unmarshal([]byte(conf.GetConfigString("logConfig")), &logConfigMap)
 	if err != nil {
 		panic(err)
 	}
+	_, ok := logConfigMap["adapter"]
+	if !ok {
+		logAdapter = "file"
+	} else {
+		logAdapter = logConfigMap["adapter"].(string)
+	}
+	if logAdapter == "console" {
+		logs.Reset()
+	}
+	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
+	if err != nil {
+		panic(err)
+	}
+
 	port := beego.AppConfig.DefaultInt("httpport", 8000)
 	// logs.SetLevel(logs.LevelInformational)
 	logs.SetLogFuncCall(false)
