@@ -83,9 +83,10 @@ func main() {
 	}
 
 	var err error
-	if logAdapter != "console" {
-		err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
+	if logAdapter == "console" {
+		logs.Reset()
 	}
+	err = logs.SetLogger(logAdapter, conf.GetConfigString("logConfig"))
 	if err != nil {
 		panic(err)
 	}
