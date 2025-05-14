@@ -129,6 +129,7 @@ func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
         "open_id": "ou-caecc734c2e3328a62489fe0648c4b98779515d3",
         "union_id": "on-d89jhsdhjsajkda7828enjdj328ydhhw3u43yjhdj",
         "email": "zhangsan@feishu.cn",
+        "enterprise_email": "zhangsan@feishu.com",
         "user_id": "5d9bdxxx",
         "mobile": "+86130002883xx",
         "tenant_key": "736588c92lxf175d",
@@ -210,12 +211,19 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		countryCode = phonenumbers.GetRegionCodeForNumber(phoneNumberParsed)
 		phoneNumber = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
 	}
-
+	
+        var email string
+        if len(larkUserInfo.Data.Email) == 0 {
+                email = larkUserInfo.Data.EnterpriseEmail
+        } else {
+                email = larkUserInfo.Data.Email
+        }
+	
 	userInfo := UserInfo{
 		Id:          larkUserInfo.Data.OpenId,
 		DisplayName: larkUserInfo.Data.Name,
 		Username:    larkUserInfo.Data.UserId,
-		Email:       larkUserInfo.Data.Email,
+		Email:       email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
 		Phone:       phoneNumber,
 		CountryCode: countryCode,
