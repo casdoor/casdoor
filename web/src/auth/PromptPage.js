@@ -194,8 +194,11 @@ class PromptPage extends React.Component {
     const redirectUri = params.get("redirectUri");
     const code = params.get("code");
     const state = params.get("state");
-    if (redirectUri === null || code === null || state === null) {
+    if (redirectUri === null) {
       return "";
+    }
+    if (code === null || state === null) {
+      return redirectUri;
     }
     return `${redirectUri}?code=${code}&state=${state}`;
   }
