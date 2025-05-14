@@ -1616,7 +1616,7 @@ export function isDarkTheme(themeAlgorithm) {
 
 function getPreferredMfaProp(mfaProps) {
   for (const i in mfaProps) {
-    if (mfaProps[i].isPreffered) {
+    if (mfaProps[i].isPreferred) {
       return mfaProps[i];
     }
   }
