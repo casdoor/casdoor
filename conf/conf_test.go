@@ -115,7 +115,7 @@ func TestGetConfigLogs(t *testing.T) {
 		description string
 		expected    string
 	}{
-		{"Default log config", `{"filename": "logs/casdoor.log", "maxdays":99999, "perm":"0770"}`},
+		{"Default log config", `{"adapter":"file", "filename": "logs/casdoor.log", "maxdays":99999, "perm":"0770"}`},
 	}
 
 	err := beego.LoadAppConfig("ini", "app.conf")
