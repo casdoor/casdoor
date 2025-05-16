@@ -35,7 +35,6 @@ import (
 	"github.com/markbates/goth/providers/dailymotion"
 	"github.com/markbates/goth/providers/deezer"
 	"github.com/markbates/goth/providers/digitalocean"
-	"github.com/markbates/goth/providers/discord"
 	"github.com/markbates/goth/providers/dropbox"
 	"github.com/markbates/goth/providers/eveonline"
 	"github.com/markbates/goth/providers/facebook"
@@ -171,11 +170,6 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		idp = GothIdProvider{
 			Provider: digitalocean.New(clientId, clientSecret, redirectUrl),
 			Session:  &digitalocean.Session{},
-		}
-	case "Discord":
-		idp = GothIdProvider{
-			Provider: discord.New(clientId, clientSecret, redirectUrl),
-			Session:  &discord.Session{},
 		}
 	case "Dropbox":
 		idp = GothIdProvider{
