@@ -29,13 +29,16 @@ import (
 type WeComInternalIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
+
+	UseIdAsName bool
 }
 
-func NewWeComInternalIdProvider(clientId string, clientSecret string, redirectUrl string) *WeComInternalIdProvider {
+func NewWeComInternalIdProvider(clientId string, clientSecret string, redirectUrl string, useIdAsName bool) *WeComInternalIdProvider {
 	idp := &WeComInternalIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
+	idp.UseIdAsName = useIdAsName
 
 	return idp
 }
@@ -167,6 +170,10 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 
 	if userInfo.Id == "" {
 		userInfo.Id = userInfo.Username
+	}
+
+	if idp.UseIdAsName {
+		userInfo.Username = userInfo.Id
 	}
 
 	return &userInfo, nil
