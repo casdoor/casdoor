@@ -44,6 +44,7 @@ type ProviderInfo struct {
 	AppId         string
 	HostUrl       string
 	RedirectUrl   string
+	DisableSsl    bool
 
 	TokenURL    string
 	AuthURL     string
@@ -79,9 +80,9 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewLinkedInIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeCom":
 		if idpInfo.SubType == "Internal" {
-			return NewWeComInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+			return NewWeComInternalIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.DisableSsl), nil
 		} else if idpInfo.SubType == "Third-party" {
-			return NewWeComIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+			return NewWeComIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.DisableSsl), nil
 		} else {
 			return nil, fmt.Errorf("WeCom provider subType: %s is not supported", idpInfo.SubType)
 		}
