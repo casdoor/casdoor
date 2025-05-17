@@ -42,6 +42,7 @@ type Product struct {
 	IsRecharge  bool     `json:"isRecharge"`
 	Providers   []string `xorm:"varchar(255)" json:"providers"`
 	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
+	SuccessUrl  string   `xorm:"varchar(1000)" json:"successUrl"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 
@@ -245,6 +246,16 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	if err != nil {
 		return nil, nil, err
 	}
+
+	var successRedirectUrl string
+	if product.SuccessUrl != "" {
+		successRedirectUrl = product.SuccessUrl
+	} else if product.ReturnUrl != "" {
+		successRedirectUrl = product.ReturnUrl
+	} else {
+		successRedirectUrl = ""
+	}
+
 	// Create a Payment linked with Product and Order
 	payment = &Payment{
 		Owner:       product.Owner,
@@ -266,7 +277,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 		User:       user.Name,
 		PayUrl:     payResp.PayUrl,
-		SuccessUrl: returnUrl,
+		SuccessUrl: successRedirectUrl,
 		State:      pp.PaymentStateCreated,
 		OutOrderId: payResp.OrderId,
 	}

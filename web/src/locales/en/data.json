@@ -133,7 +133,11 @@
     "Token signing method - Tooltip": "Signing method of JWT token, needs to be the same algorithm as the certificate",
     "Use Email as NameID": "Use Email as NameID",
     "Use Email as NameID - Tooltip": "Use Email as NameID - Tooltip",
-    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page"
+    "You are unexpected to see this prompt page": "You are unexpected to see this prompt page",
+    "Return URL": "Return URL",
+    "Return URL - Tooltip": "URL to return to after successful purchase",
+    "Success URL": "Success URL",
+    "Success URL - Tooltip": "URL to redirect to after successful payment"
   },
   "cert": {
     "Bit size": "Bit size",
