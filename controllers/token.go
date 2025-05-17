@@ -177,10 +177,6 @@ func (c *ApiController) GetOAuthToken() {
 		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
 	}
 
-	if grantType == "urn:ietf:params:oauth:grant-type:device_code" {
-		clientId, clientSecret, _ = c.Ctx.Request.BasicAuth()
-	}
-
 	if len(c.Ctx.Input.RequestBody) != 0 && grantType != "urn:ietf:params:oauth:grant-type:device_code" {
 		// If clientId is empty, try to read data from RequestBody
 		var tokenRequest TokenRequest
