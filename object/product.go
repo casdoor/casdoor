@@ -247,13 +247,6 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, nil, err
 	}
 
-	var successRedirectUrl string
-	if product.SuccessUrl != "" {
-		successRedirectUrl = product.SuccessUrl
-	} else {
-		successRedirectUrl = ""
-	}
-
 	// Create a Payment linked with Product and Order
 	payment = &Payment{
 		Owner:       product.Owner,
@@ -275,7 +268,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 		User:       user.Name,
 		PayUrl:     payResp.PayUrl,
-		SuccessUrl: successRedirectUrl,
+		SuccessUrl: product.SuccessUrl,
 		State:      pp.PaymentStateCreated,
 		OutOrderId: payResp.OrderId,
 	}
