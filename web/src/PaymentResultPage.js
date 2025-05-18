@@ -150,7 +150,7 @@ class PaymentResultPage extends React.Component {
   getJumpLink(payment) {
     if (payment.state === "Paid" && payment.successUrl) {
       return payment.successUrl;
-    } else if (payment.returnUrl === undefined || payment.returnUrl === null || payment.returnUrl === "") {
+    } else if (payment.returnUrl) {
       return `${window.location.origin}/products/${payment.owner}/${payment.productName}/buy`;
     } else {
       return payment.returnUrl;
