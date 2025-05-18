@@ -68,6 +68,14 @@ class PaymentResultPage extends React.Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.payment?.state !== "Paid" && this.state.payment?.state === "Paid" &&
+        this.state.payment.successUrl !== undefined && this.state.payment.successUrl !== null &&
+        this.state.payment.successUrl !== "") {
+      this.goToPaymentUrl(this.state.payment);
+    }
+  }
+
   setStateAsync(state) {
     return new Promise((resolve, reject) => {
       this.setState(state, () => {
@@ -165,6 +173,16 @@ class PaymentResultPage extends React.Component {
     }
 
     if (payment.state === "Paid") {
+      if (payment.successUrl !== undefined && payment.successUrl !== null && payment.successUrl !== "") {
+        setTimeout(() => this.goToPaymentUrl(payment), 50);
+        return <div className="login-content">
+          {Setting.renderHelmet(payment)}
+          <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100vh"}}>
+            <Spin size="large" tip={i18next.t("payment:Redirecting...")} />
+          </div>
+        </div>;
+      }
+
       if (payment.isRecharge) {
         return (
           <div className="login-content">

@@ -250,8 +250,6 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	var successRedirectUrl string
 	if product.SuccessUrl != "" {
 		successRedirectUrl = product.SuccessUrl
-	} else if product.ReturnUrl != "" {
-		successRedirectUrl = product.ReturnUrl
 	} else {
 		successRedirectUrl = ""
 	}
