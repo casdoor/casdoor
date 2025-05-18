@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Quantity of product",
     "Return URL": "Return URL",
     "Return URL - Tooltip": "URL to return to after successful purchase",
+    "Success URL": "כתובת URL להצלחה",
+    "Success URL - Tooltip": "כתובת URL להפניה לאחר תשלום מוצלח",
     "SKU": "SKU",
     "Sold": "Sold",
     "Sold - Tooltip": "Quantity sold",

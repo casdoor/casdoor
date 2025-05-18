@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "제품의 양",
     "Return URL": "리턴 URL",
     "Return URL - Tooltip": "성공적인 구매 후 돌아갈 URL:",
+    "Success URL": "성공 URL",
+    "Success URL - Tooltip": "결제 성공 후 리디렉션할 URL",
     "SKU": "SKU",
     "Sold": "팔렸습니다",
     "Sold - Tooltip": "판매량",

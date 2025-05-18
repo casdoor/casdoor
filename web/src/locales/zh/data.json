@@ -771,7 +771,7 @@
     "Quantity - Tooltip": "库存的数量",
     "Return URL": "返回URL",
     "Return URL - Tooltip": "购买成功后返回的URL",
-    "Success URL": "成功URL",
+    "Success URL": "成功页面URL",
     "Success URL - Tooltip": "支付成功后重定向的URL",
     "SKU": "货号",
     "Sold": "售出",

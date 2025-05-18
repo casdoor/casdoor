@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Množství produktu",
     "Return URL": "URL návratu",
     "Return URL - Tooltip": "URL pro návrat po úspěšném nákupu",
+    "Success URL": "URL úspěchu",
+    "Success URL - Tooltip": "URL pro přesměrování po úspěšné platbě",
     "SKU": "SKU",
     "Sold": "Prodáno",
     "Sold - Tooltip": "Prodávané množství",

@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "製品の量",
     "Return URL": "戻りURL",
     "Return URL - Tooltip": "成功した購入後に戻るURL",
+    "Success URL": "成功URL",
+    "Success URL - Tooltip": "支払い成功後にリダイレクトするURL",
     "SKU": "SKU",
     "Sold": "売れました",
     "Sold - Tooltip": "販売数量",

@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Kuantitas produk",
     "Return URL": "URL Kembali",
     "Return URL - Tooltip": "URL untuk kembali setelah pembelian sukses",
+    "Success URL": "URL Sukses",
+    "Success URL - Tooltip": "URL untuk dialihkan setelah pembayaran berhasil",
     "SKU": "SKU",
     "Sold": "Terjual",
     "Sold - Tooltip": "Jumlah terjual",

@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Quantité de produit",
     "Return URL": "URL de retour",
     "Return URL - Tooltip": "URL de retour après l'achat réussi",
+    "Success URL": "Success URL",
+    "Success URL - Tooltip": "URL de redirection après un paiement réussi",
     "SKU": "Référence",
     "Sold": "Vendu",
     "Sold - Tooltip": "Quantité vendue",
@@ -1045,7 +1047,7 @@
   },
   "subscription": {
     "Active": "Active",
-    "Edit Subscription": "Modifier l’abonnement",
+    "Edit Subscription": "Modifier l'abonnement",
     "End time": "End time",
     "End time - Tooltip": "End time - Tooltip",
     "Error": "Error",

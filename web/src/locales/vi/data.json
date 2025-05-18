@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Số lượng sản phẩm",
     "Return URL": "Địa chỉ URL trở lại",
     "Return URL - Tooltip": "URL để quay lại sau khi mua hàng thành công",
+    "Success URL": "URL thành công",
+    "Success URL - Tooltip": "URL để chuyển hướng sau khi thanh toán thành công",
     "SKU": "SKU",
     "Sold": "Đã bán",
     "Sold - Tooltip": "Số lượng bán ra",

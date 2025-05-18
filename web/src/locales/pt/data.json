@@ -771,6 +771,8 @@
     "Quantity - Tooltip": "Quantidade do produto",
     "Return URL": "URL de Retorno",
     "Return URL - Tooltip": "URL para retornar após a compra bem-sucedida",
+    "Success URL": "Success URL",
+    "Success URL - Tooltip": "URL para redirecionar após o pagamento bem-sucedido",
     "SKU": "SKU",
     "Sold": "Vendido",
     "Sold - Tooltip": "Quantidade vendida",
