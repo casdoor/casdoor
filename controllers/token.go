@@ -233,6 +233,7 @@ func (c *ApiController) GetOAuthToken() {
 				ErrorDescription: "token is expired",
 			}
 			c.ServeJSON()
+			c.SetTokenErrorHttpStatus()
 			return
 		}
 
@@ -243,6 +244,7 @@ func (c *ApiController) GetOAuthToken() {
 				ErrorDescription: "authorization pending",
 			}
 			c.ServeJSON()
+			c.SetTokenErrorHttpStatus()
 			return
 		}
 
@@ -252,6 +254,7 @@ func (c *ApiController) GetOAuthToken() {
 				ErrorDescription: "token is expired",
 			}
 			c.ServeJSON()
+			c.SetTokenErrorHttpStatus()
 			return
 		}
 		object.DeviceAuthMap.Delete(deviceCode)
