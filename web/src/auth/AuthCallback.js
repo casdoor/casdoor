@@ -196,7 +196,7 @@ class AuthCallback extends React.Component {
               const from = innerParams.get("from");
               const redirectUri = innerParams.get("redirectUri");
               if (redirectUri === null) {
-                Setting.goToLinkSoftOrJumpSelf(this, `${from}`);
+                Setting.goToLinkSoftOrJumpSelf(this, from);
               } else {
                 Setting.goToLinkSoftOrJumpSelf(this, `${from}?redirectUri=${redirectUri}`);
               }
