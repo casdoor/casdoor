@@ -224,10 +224,11 @@ func (c *ApiController) GetOAuthToken() {
 	if deviceCode != "" {
 		deviceAuthCache, ok := object.DeviceAuthMap.Load(deviceCode)
 		if !ok {
-			c.Data["json"] = object.TokenError{
+			c.Data["json"] = &object.TokenError{
 				Error:            "expired_token",
 				ErrorDescription: "token is expired",
 			}
+			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
 			c.SetTokenErrorHttpStatus()
 			return
@@ -235,20 +236,22 @@ func (c *ApiController) GetOAuthToken() {
 
 		deviceAuthCacheCast := deviceAuthCache.(object.DeviceAuthCache)
 		if !deviceAuthCacheCast.UserSignIn {
-			c.Data["json"] = object.TokenError{
+			c.Data["json"] = &object.TokenError{
 				Error:            "authorization_pending",
 				ErrorDescription: "authorization pending",
 			}
+			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
 			c.SetTokenErrorHttpStatus()
 			return
 		}
 
 		if deviceAuthCacheCast.RequestAt.Add(time.Second * 120).Before(time.Now()) {
-			c.Data["json"] = object.TokenError{
+			c.Data["json"] = &object.TokenError{
 				Error:            "expired_token",
 				ErrorDescription: "token is expired",
 			}
+			c.SetTokenErrorHttpStatus()
 			c.ServeJSON()
 			c.SetTokenErrorHttpStatus()
 			return
