@@ -47,6 +47,17 @@ type UserShort struct {
 	Phone       string `xorm:"varchar(100) index" json:"phone"`
 }
 
+type UserStandard struct {
+	Owner string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name  string `xorm:"varchar(100) notnull pk" json:"preferred_username,omitempty"`
+
+	Id          string `xorm:"varchar(100) index" json:"id"`
+	DisplayName string `xorm:"varchar(100)" json:"name,omitempty"`
+	Avatar      string `xorm:"varchar(500)" json:"picture,omitempty"`
+	Email       string `xorm:"varchar(100) index" json:"email,omitempty"`
+	Phone       string `xorm:"varchar(100) index" json:"phone,omitempty"`
+}
+
 type UserWithoutThirdIdp struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -167,6 +178,20 @@ type ClaimsWithoutThirdIdp struct {
 
 func getShortUser(user *User) *UserShort {
 	res := &UserShort{
+		Owner: user.Owner,
+		Name:  user.Name,
+
+		Id:          user.Id,
+		DisplayName: user.DisplayName,
+		Avatar:      user.Avatar,
+		Email:       user.Email,
+		Phone:       user.Phone,
+	}
+	return res
+}
+
+func getStandardUser(user *User) *UserStandard {
+	res := &UserStandard{
 		Owner: user.Owner,
 		Name:  user.Name,
 
