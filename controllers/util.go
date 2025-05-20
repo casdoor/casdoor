@@ -88,7 +88,6 @@ func (c *ApiController) SetTokenErrorHttpStatus() {
 		} else {
 			c.Ctx.Output.SetStatus(400)
 		}
-		return
 	}
 	_, ok = c.Data["json"].(*object.TokenWrapper)
 	if ok {
