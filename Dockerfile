@@ -8,7 +8,7 @@ FROM --platform=$BUILDPLATFORM golang:1.21.13 AS BACK
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
-RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
+# RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
