@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -268,8 +269,9 @@ func (c *ApiController) SendVerificationCode() {
 			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
 				c.ResponseError(err.Error())
 				return
-			} 
-
+			} else if user == nil {
+				log.Println(c.T("verification:the user does not exist, please sign up first"))
+			}
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
 			if vform.CountryCode == "" {
