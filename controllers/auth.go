@@ -470,71 +470,8 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error(), nil)
 				return
 			} else if user == nil {
-
-				application, err := object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
-				if err != nil {
-					c.ResponseError(err.Error(), nil)
-					return
-				}
-
-				if !application.EnableSignUp {
-					c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
-					return
-				}
-
-				// 获取组织信息
-				organization, err := object.GetOrganization(util.GetId("admin", authForm.Organization))
-				if err != nil {
-					c.ResponseError(c.T(err.Error()))
-					return
-				}
-
-				// 生成用户ID
-				id, err := object.GenerateIdForNewUser(application)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-
-				// 获取初始分数
-				initScore, err := organization.GetInitScore()
-				if err != nil {
-					c.ResponseError(fmt.Errorf(c.T("account:Get init score failed, error: %w"), err).Error())
-					return
-				}
-
-				// 创建新用户
-				user = &object.User{
-					Owner:             authForm.Organization,
-					Name:              authForm.Username, // 使用手机号作为用户名
-					CreatedTime:       util.GetCurrentTime(),
-					Id:                id,
-					Type:              "normal-user",
-					Phone:             authForm.Username, // 设置手机号
-					CountryCode:       authForm.CountryCode,
-					Score:             initScore,
-					SignupApplication: application.Name,
-					IsAdmin:           false,
-					IsForbidden:       false,
-					IsDeleted:         false,
-				}
-
-				// 如果应用有默认用户组，设置用户组
-				if application.DefaultGroup != "" {
-					user.Groups = []string{application.DefaultGroup}
-				}
-
-				// 添加用户
-				affected, err := object.AddUser(user)
-				if err != nil {
-					c.ResponseError(err.Error())
-					return
-				}
-
-				if !affected {
-					c.ResponseError(c.T("account:Failed to add user"), util.StructToJson(user))
-					return
-				}
+				c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
+				return
 			}
 
 			var application *object.Application
