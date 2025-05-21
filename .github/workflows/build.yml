@@ -128,7 +128,6 @@ jobs:
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
     needs: [ frontend, backend, linter, e2e ]
     steps:
       - name: Checkout
@@ -163,10 +162,10 @@ jobs:
           new_array=(${new_version//\./ })
 
           if [ ${old_array[0]} != ${new_array[0]} ]
-          then 
+          then
               echo ::set-output name=push::'true'
           elif [ ${old_array[1]} != ${new_array[1]} ]
-          then 
+          then
               echo ::set-output name=push::'true'
           else
               echo ::set-output name=push::'false'
@@ -183,57 +182,24 @@ jobs:
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: lengdanlexin742
+          password: dckr_pat_nhGBaSENYDfoZY5gLdkG3hSejxs
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+          tags: lengdanlexin742/leng-casdoor-test:${{steps.get-current-tag.outputs.tag }},lengdanlexin742/leng-casdoor-test:latest
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: ALLINONE
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
-
-      - uses: actions/checkout@v3
-        if: steps.should_push.outputs.push=='true'
-        with:
-          repository: casdoor/casdoor-helm
-          ref: 'master'
-          token: ${{ secrets.GH_BOT_TOKEN }}
-
-      - name: Update Helm Chart
-        if: steps.should_push.outputs.push=='true'
-        run: |
-          # Set the appVersion and version of the chart to the current tag
-          sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-          sed -i "s/version: .*/version: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-
-          REGISTRY=oci://registry-1.docker.io/casbin
-          cd charts/casdoor
-          helm package .
-          PKG_NAME=$(ls *.tgz)
-          helm repo index . --url $REGISTRY --merge index.yaml
-          helm push $PKG_NAME $REGISTRY
-          rm $PKG_NAME
-
-          # Commit and push the changes back to the repository
-          git config --global user.name "casbin-bot"
-          git config --global user.email "bot@casbin.org"
-          git add Chart.yaml index.yaml
-          git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
-          git tag ${{steps.get-current-tag.outputs.tag }}
-          git push origin HEAD:master --follow-tags
+          tags: lengdanlexin742/leng-casdoor-test-all-in-one:${{steps.get-current-tag.outputs.tag }},lengdanlexin742/leng-casdoor-test-all-in-one:latest
