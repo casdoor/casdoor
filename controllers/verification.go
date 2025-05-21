@@ -268,10 +268,7 @@ func (c *ApiController) SendVerificationCode() {
 			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
 				c.ResponseError(err.Error())
 				return
-			} else if user == nil {
-				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
-				return
-			}
+			} 
 
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
 		} else if vform.Method == ResetVerification || vform.Method == MfaSetupVerification {
