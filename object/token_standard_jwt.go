@@ -23,7 +23,7 @@ import (
 )
 
 type ClaimsStandard struct {
-	*UserShort
+	*UserStandard
 	EmailVerified       bool        `json:"email_verified,omitempty"`
 	PhoneNumber         string      `json:"phone_number,omitempty"`
 	PhoneNumberVerified bool        `json:"phone_number_verified,omitempty"`
@@ -48,7 +48,7 @@ func getStreetAddress(user *User) string {
 
 func getStandardClaims(claims Claims) ClaimsStandard {
 	res := ClaimsStandard{
-		UserShort:        getShortUser(claims.User),
+		UserStandard:     getStandardUser(claims.User),
 		EmailVerified:    claims.User.EmailVerified,
 		TokenType:        claims.TokenType,
 		Nonce:            claims.Nonce,
