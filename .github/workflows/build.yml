@@ -184,7 +184,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: lengdanlexin742
-          password: dckr_pat_nhGBaSENYDfoZY5gLdkG3hSejxs
+          password: dckr_pat_lDC-8K1LX2WtuBciZY5w9CtSeNQ
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
