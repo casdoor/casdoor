@@ -194,8 +194,10 @@ class PromptPage extends React.Component {
     const redirectUri = params.get("redirectUri");
     const code = params.get("code");
     const state = params.get("state");
+    const oauth = params.get("oauth");
     if (redirectUri === null || code === null || state === null) {
-      return "";
+      const signInUrl = sessionStorage.getItem("signinUrl");
+      return oauth === "true" ? signInUrl : "";
     }
     return `${redirectUri}?code=${code}&state=${state}`;
   }

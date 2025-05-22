@@ -193,7 +193,11 @@ class AuthCallback extends React.Component {
               const token = res.data;
               Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
             } else if (responseType === "link") {
-              const from = innerParams.get("from");
+              let from = innerParams.get("from");
+              const oauth = innerParams.get("oauth");
+              if (oauth) {
+                from += `?oauth=${oauth}`;
+              }
               Setting.goToLinkSoftOrJumpSelf(this, from);
             } else if (responseType === "saml") {
               if (res.data2.method === "POST") {
