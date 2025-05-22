@@ -301,8 +301,7 @@ func (c *ApiController) SendVerificationCode() {
 				c.ResponseError(err.Error())
 				return
 			} else if user == nil {
-				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
-				return
+				log.Println(c.T("verification:the user does not exist, sign up first"))
 			}
 
 			vform.CountryCode = user.GetCountryCode(vform.CountryCode)
