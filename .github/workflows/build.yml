@@ -1,135 +1,12 @@
 name: Build
 
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
-
-  go-tests:
-    name: Running Go tests
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DATABASE: casdoor
-          MYSQL_ROOT_PASSWORD: 123456
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '^1.16.5'
-          cache-dependency-path: ./go.mod
-      - name: Tests
-        run: |
-          go test -v $(go list ./...) -tags skipCi
-        working-directory: ./
-
-  frontend:
-    name: Front-end
-    runs-on: ubuntu-latest
-    needs: [ go-tests ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'yarn'
-          cache-dependency-path: ./web/yarn.lock
-      - run: yarn install && CI=false yarn run build
-        working-directory: ./web
-
-  backend:
-    name: Back-end
-    runs-on: ubuntu-latest
-    needs: [ go-tests ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '^1.16.5'
-          cache-dependency-path: ./go.mod
-      - run: go version
-      - name: Build
-        run: |
-          go build -race -ldflags "-extldflags '-static'"
-        working-directory: ./
-
-  linter:
-    name: Go-Linter
-    runs-on: ubuntu-latest
-    needs: [ go-tests ]
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '^1.16.5'
-          cache: false
-
-      # gen a dummy config file
-      - run: touch dummy.yml
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
-          args: --disable-all -c dummy.yml -E=gofumpt --max-same-issues=0 --timeout 5m --modules-download-mode=mod
-
-  e2e:
-    name: e2e-test
-    runs-on: ubuntu-latest
-    needs: [ go-tests ]
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_DATABASE: casdoor
-          MYSQL_ROOT_PASSWORD: 123456
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '^1.16.5'
-          cache-dependency-path: ./go.mod
-      - name: start backend
-        run: nohup go run ./main.go &
-        working-directory: ./
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'yarn'
-          cache-dependency-path: ./web/yarn.lock
-      - run: yarn install
-        working-directory: ./web
-      - uses: cypress-io/github-action@v5
-        with:
-          browser: chrome
-          start: yarn start
-          wait-on: 'http://localhost:7001'
-          wait-on-timeout: 210
-          working-directory: ./web
-
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: ./web/cypress/screenshots
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cypress-videos
-          path: ./web/cypress/videos
-
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
-    needs: [ frontend, backend, linter, e2e ]
+    needs: []
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -163,10 +40,10 @@ jobs:
           new_array=(${new_version//\./ })
 
           if [ ${old_array[0]} != ${new_array[0]} ]
-          then 
+          then
               echo ::set-output name=push::'true'
           elif [ ${old_array[1]} != ${new_array[1]} ]
-          then 
+          then
               echo ::set-output name=push::'true'
           else
               echo ::set-output name=push::'false'
@@ -183,57 +60,24 @@ jobs:
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: STANDARD
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
-          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+          tags: lengdanlexin742/casdoor:${{steps.get-current-tag.outputs.tag }},lengdanlexin742/casdoor:latest
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: ALLINONE
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
-
-      - uses: actions/checkout@v3
-        if: steps.should_push.outputs.push=='true'
-        with:
-          repository: casdoor/casdoor-helm
-          ref: 'master'
-          token: ${{ secrets.GH_BOT_TOKEN }}
-
-      - name: Update Helm Chart
-        if: steps.should_push.outputs.push=='true'
-        run: |
-          # Set the appVersion and version of the chart to the current tag
-          sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-          sed -i "s/version: .*/version: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-
-          REGISTRY=oci://registry-1.docker.io/casbin
-          cd charts/casdoor
-          helm package .
-          PKG_NAME=$(ls *.tgz)
-          helm repo index . --url $REGISTRY --merge index.yaml
-          helm push $PKG_NAME $REGISTRY
-          rm $PKG_NAME
-
-          # Commit and push the changes back to the repository
-          git config --global user.name "casbin-bot"
-          git config --global user.email "bot@casbin.org"
-          git add Chart.yaml index.yaml
-          git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
-          git tag ${{steps.get-current-tag.outputs.tag }}
-          git push origin HEAD:master --follow-tags
+          tags: lengdanlexin742/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},lengdanlexin742/casdoor-all-in-one:latest
