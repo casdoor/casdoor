@@ -78,6 +78,7 @@ jobs:
         with:
           context: .
           target: ALLINONE
+          
           platforms: linux/amd64
           push: true
           tags: lengdanlexin742/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},lengdanlexin742/casdoor-all-in-one:latest
