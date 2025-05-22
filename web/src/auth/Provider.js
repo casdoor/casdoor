@@ -403,8 +403,8 @@ export function getAuthUrl(application, provider, method, code) {
   } else if (provider.type === "Google" && provider.disableSsl) {
     scope += "+https://www.googleapis.com/auth/user.phonenumbers.read";
   } else if (provider.type === "Nextcloud") {
-    if (provider.host) {
-      endpoint = `${provider.host}/apps/oauth2/authorize`;
+    if (provider.domain) {
+      endpoint = `${provider.domain}/apps/oauth2/authorize`;
     }
   }
 
