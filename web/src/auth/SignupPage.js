@@ -195,8 +195,9 @@ class SignupPage extends React.Component {
     if (authConfig.appName === application.name) {
       return "/result";
     } else {
+      const oAuthParams = Util.getOAuthGetParameters();
       if (Setting.hasPromptPage(application)) {
-        return `/prompt/${application.name}`;
+        return `/prompt/${application.name}?oauth=${oAuthParams !== null}`;
       } else {
         return `/result/${application.name}`;
       }
