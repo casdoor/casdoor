@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/beego/beego/utils/pagination"
@@ -118,6 +119,38 @@ func (c *ApiController) GetVerification() {
 	}
 
 	c.ResponseOk(payment)
+}
+
+// SignUpWithPhone it's used to sign up a user with phone number
+// @Title SignUpWithPhone
+// @Tag Verification API
+func SignUpWithPhone(phoneNum, CountryCode string) error {
+	user := &object.User{
+		Owner:       "built-in",
+		Name:        phoneNum,
+		CreatedTime: util.GetCurrentTime(),
+		Id:          phoneNum,
+		DisplayName: phoneNum,
+		Type:        "normal-user",
+		Phone:       phoneNum,
+		CountryCode: CountryCode,
+		Address:     []string{},
+		IsAdmin:     false,
+		IsForbidden: false,
+		IsDeleted:   false,
+		Properties:  map[string]string{},
+		Karma:       0,
+	}
+
+	affected, err := object.AddUser(user)
+	if err != nil {
+		return err
+	}
+
+	if !affected {
+		return fmt.Errorf(new(ApiController).T("account:Failed to add user"))
+	}
+	return nil
 }
 
 // SendVerificationCode ...
@@ -236,8 +269,7 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			if user == nil {
-				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
-				return
+				log.Println(c.T("verification:the user does not exist, sign up first"))
 			}
 		} else if vform.Method == ResetVerification {
 			user = c.getCurrentUser()
@@ -296,8 +328,22 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 		if provider == nil {
-			c.ResponseError(fmt.Sprintf(c.T("verification:please add a SMS provider to the \"Providers\" list for the application: %s"), application.Name))
-			return
+			if vform.CountryCode == "" {
+				vform.CountryCode = "CN"
+			}
+			err_ := SignUpWithPhone(vform.Dest, "CN")
+
+			if err_ != nil {
+				c.ResponseError(err_.Error())
+				return
+			}
+
+			provider, err = application.GetSmsProvider(vform.Method, vform.CountryCode)
+
+			if err != nil || provider == nil {
+				c.ResponseError(fmt.Sprintf(c.T("verification:please add a SMS provider to the \"Providers\" list for the application: %s"), application.Name))
+				return
+			}
 		}
 
 		if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
