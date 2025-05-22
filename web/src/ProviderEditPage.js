@@ -660,6 +660,8 @@ class ProviderEditPage extends React.Component {
               } else if (value === "Custom HTTP") {
                 this.updateProviderField("method", "GET");
                 this.updateProviderField("title", "");
+              } else if (value === "Nextcloud" && this.state.provider.category === "OAuth") {
+                this.updateProviderField("host", "");
               }
             })}>
               {
@@ -734,20 +736,6 @@ class ProviderEditPage extends React.Component {
               <Col span={22}>
                 <TextArea rows={4} value={this.state.provider.emailRegex} onChange={e => {
                   this.updateProviderField("emailRegex", e.target.value);
-                }} />
-              </Col>
-            </Row>
-          ) : null
-        }
-        {
-          this.state.provider.category === "OAuth" && this.state.provider.type === "Nextcloud" ? (
-            <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
-              </Col>
-              <Col span={22}>
-                <Input prefix={<LinkOutlined />} value={this.state.provider.host} onChange={e => {
-                  this.updateProviderField("host", e.target.value);
                 }} />
               </Col>
             </Row>
@@ -1134,7 +1122,7 @@ class ProviderEditPage extends React.Component {
                 </Button>
               </Row>
             </React.Fragment>
-          ) : this.state.provider.category === "Email" ? (
+          ) : this.state.provider.category === "Email" || (this.state.provider.category === "OAuth" && this.state.provider.type === "Nextcloud") ? (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -1146,32 +1134,36 @@ class ProviderEditPage extends React.Component {
                   }} />
                 </Col>
               </Row>
-              {["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
-                <Row style={{marginTop: "20px"}} >
-                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
-                  </Col>
-                  <Col span={22} >
-                    <InputNumber value={this.state.provider.port} onChange={value => {
-                      this.updateProviderField("port", value);
-                    }} />
-                  </Col>
-                </Row>
+              {this.state.provider.category === "Email" && ["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
+                this.state.provider.category === "Email" ? (
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                    </Col>
+                    <Col span={22} >
+                      <InputNumber value={this.state.provider.port} onChange={value => {
+                        this.updateProviderField("port", value);
+                      }} />
+                    </Col>
+                  </Row>
+                ) : null
               )}
-              {["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
-                <Row style={{marginTop: "20px"}} >
-                  <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                    {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
-                  </Col>
-                  <Col span={1} >
-                    <Switch checked={this.state.provider.disableSsl} onChange={checked => {
-                      this.updateProviderField("disableSsl", checked);
-                    }} />
-                  </Col>
-                </Row>
+              {this.state.provider.category === "Email" && ["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
+                this.state.provider.category === "Email" ? (
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("provider:Disable SSL"), i18next.t("provider:Disable SSL - Tooltip"))} :
+                    </Col>
+                    <Col span={1} >
+                      <Switch checked={this.state.provider.disableSsl} onChange={checked => {
+                        this.updateProviderField("disableSsl", checked);
+                      }} />
+                    </Col>
+                  </Row>
+                ) : null
               )}
               {
-                !["Custom HTTP Email"].includes(this.state.provider.type) ? null : (
+                this.state.provider.category === "Email" && ["Custom HTTP Email"].includes(this.state.provider.type) ? (
                   <React.Fragment>
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={2}>
@@ -1228,75 +1220,79 @@ class ProviderEditPage extends React.Component {
                       </Col>
                     </Row> : null}
                   </React.Fragment>
-                )
+                ) : null
               }
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  <Input value={this.state.provider.title} onChange={e => {
-                    this.updateProviderField("title", e.target.value);
-                  }} />
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
-                </Col>
-                <Col span={22} >
+              {this.state.provider.category === "Email" ? (
+                <React.Fragment>
                   <Row style={{marginTop: "20px"}} >
-                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
-                      {i18next.t("provider:Reset to Default Text")}
-                    </Button>
-                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
-                      {i18next.t("provider:Reset to Default HTML")}
-                    </Button>
-                  </Row>
-                  <Row>
-                    <Col span={Setting.isMobile() ? 22 : 11}>
-                      <div style={{height: "300px", margin: "10px"}}>
-                        <Editor
-                          value={this.state.provider.content}
-                          fillHeight
-                          dark
-                          lang="html"
-                          onChange={value => {
-                            this.updateProviderField("content", value);
-                          }}
-                        />
-                      </div>
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
                     </Col>
-                    <Col span={1} />
-                    <Col span={Setting.isMobile() ? 22 : 11}>
-                      <div style={{margin: "10px"}}>
-                        <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
-                      </div>
+                    <Col span={22} >
+                      <Input value={this.state.provider.title} onChange={e => {
+                        this.updateProviderField("title", e.target.value);
+                      }} />
                     </Col>
                   </Row>
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}}>
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
-                </Col>
-                <Col span={4}>
-                  <Input value={this.state.provider.receiver} placeholder={i18next.t("user:Input your email")}
-                    onChange={e => {
-                      this.updateProviderField("receiver", e.target.value);
-                    }} />
-                </Col>
-                {["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
-                  <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
-                    {i18next.t("provider:Test SMTP Connection")}
-                  </Button>
-                )}
-                <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
-                  disabled={!Setting.isValidEmail(this.state.provider.receiver)}
-                  onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
-                  {i18next.t("provider:Send Testing Email")}
-                </Button>
-              </Row>
+                  <Row style={{marginTop: "20px"}} >
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
+                    </Col>
+                    <Col span={22} >
+                      <Row style={{marginTop: "20px"}} >
+                        <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
+                          {i18next.t("provider:Reset to Default Text")}
+                        </Button>
+                        <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >
+                          {i18next.t("provider:Reset to Default HTML")}
+                        </Button>
+                      </Row>
+                      <Row>
+                        <Col span={Setting.isMobile() ? 22 : 11}>
+                          <div style={{height: "300px", margin: "10px"}}>
+                            <Editor
+                              value={this.state.provider.content}
+                              fillHeight
+                              dark
+                              lang="html"
+                              onChange={value => {
+                                this.updateProviderField("content", value);
+                              }}
+                            />
+                          </div>
+                        </Col>
+                        <Col span={1} />
+                        <Col span={Setting.isMobile() ? 22 : 11}>
+                          <div style={{margin: "10px"}}>
+                            <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
+                          </div>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  <Row style={{marginTop: "20px"}}>
+                    <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                      {Setting.getLabel(i18next.t("provider:Test Email"), i18next.t("provider:Test Email - Tooltip"))} :
+                    </Col>
+                    <Col span={4}>
+                      <Input value={this.state.provider.receiver} placeholder={i18next.t("user:Input your email")}
+                        onChange={e => {
+                          this.updateProviderField("receiver", e.target.value);
+                        }} />
+                    </Col>
+                    {["Azure ACS", "SendGrid"].includes(this.state.provider.type) ? null : (
+                      <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => ProviderEditTestEmail.connectSmtpServer(this.state.provider)} >
+                        {i18next.t("provider:Test SMTP Connection")}
+                      </Button>
+                    )}
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
+                      disabled={!Setting.isValidEmail(this.state.provider.receiver)}
+                      onClick={() => ProviderEditTestEmail.sendTestEmail(this.state.provider, this.state.provider.receiver)} >
+                      {i18next.t("provider:Send Testing Email")}
+                    </Button>
+                  </Row>
+                </React.Fragment>
+              ) : null}
             </React.Fragment>
           ) : ["SMS"].includes(this.state.provider.category) ? (
             <React.Fragment>
