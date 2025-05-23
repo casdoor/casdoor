@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import React, {Suspense, lazy} from "react";
-import {Button, Checkbox, Col, Form, Input, Result, Spin, Tabs, message} from "antd";
-import {ArrowLeftOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
+import {Button, Checkbox, Col, Divider, Form, Input, Result, Space, Spin, Tabs, message} from "antd";
+import {ArrowLeftOutlined, LockOutlined} from "@ant-design/icons";
 import {withRouter} from "react-router-dom";
 import * as UserWebauthnBackend from "../backend/UserWebauthnBackend";
 import OrganizationSelect from "../common/select/OrganizationSelect";
@@ -27,7 +27,7 @@ import * as Provider from "./Provider";
 import * as Util from "./Util";
 import * as Setting from "../Setting";
 import * as AgreementModal from "../common/modal/AgreementModal";
-import SelfLoginButton from "./SelfLoginButton";
+// import SelfLoginButton from "./SelfLoginButton";
 import i18next from "i18next";
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {SendCodeInput} from "../common/SendCodeInput";
@@ -608,10 +608,22 @@ class LoginPage extends React.Component {
         return null;
       }
 
+      const showLangs = ["en", "zh"];
+      const langs = application.organizationObj.languages
+        .filter((item) => showLangs.includes(item))
+        .sort((a, b) => {
+          if (a === "zh") {
+            return -1;
+          }
+          if (b === "zh") {
+            return 1;
+          }
+          return 0;
+        });
       return (
         <div key={resultItemKey} className="login-languages">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          <LanguageSelect languages={application.organizationObj.languages} onClick={key => {this.setState({userLang: key});}} />
+          <LanguageSelect languages={langs} onClick={key => {this.setState({userLang: key});}} />
         </div>
       );
     } else if (signinItem.name === "Signin methods") {
@@ -633,6 +645,7 @@ class LoginPage extends React.Component {
             name="username"
             className="login-username"
             label={signinItem.label ? signinItem.label : null}
+            style={{textAlign: "left"}}
             rules={[
               {
                 required: true,
@@ -675,7 +688,7 @@ class LoginPage extends React.Component {
                       this.setState({validEmail: true});
                     }
                   } else if (this.state.loginMethod === "verificationCodePhone") {
-                    if (!Setting.isValidPhone(value)) {
+                    if (!Setting.isValidPhone(value, "CN")) {
                       this.setState({validEmailOrPhone: false});
                       return Promise.reject(i18next.t("login:The input is not valid phone number!"));
                     }
@@ -687,18 +700,19 @@ class LoginPage extends React.Component {
               },
             ]}
           >
-
-            <Input
-              id="input"
-              className="login-username-input"
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={this.getPlaceholder(signinItem.placeholder)}
-              onChange={e => {
-                this.setState({
-                  username: e.target.value,
-                });
-              }}
-            />
+            <Space.Compact>
+              <Input style={{width: "20%"}} defaultValue="+86" readOnly />
+              <Input
+                id="input"
+                className="login-username-input"
+                placeholder={this.getPlaceholder(signinItem.placeholder)}
+                onChange={e => {
+                  this.setState({
+                    username: e.target.value,
+                  });
+                }}
+              />
+            </Space.Compact>
           </Form.Item>
         </div>
       );
@@ -713,23 +727,25 @@ class LoginPage extends React.Component {
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          <div className="login-forget-password">
-            <Form.Item name="autoSignin" valuePropName="checked" noStyle>
-              <Checkbox style={{float: "left"}}>
-                {i18next.t("login:Auto sign in")}
-              </Checkbox>
-            </Form.Item>
-            {
-              signinItem.visible ? Setting.renderForgetLink(application, signinItem.label ? signinItem.label : i18next.t("login:Forgot password?")) : null
-            }
-          </div>
+          {
+            signinItem.visible && (<div className="login-forget-password">
+              <Form.Item name="autoSignin" valuePropName="checked" noStyle>
+                <Checkbox style={{float: "left"}}>
+                  {i18next.t("login:Auto sign in")}
+                </Checkbox>
+              </Form.Item>
+              {
+                signinItem.visible ? Setting.renderForgetLink(application, signinItem.label ? signinItem.label : i18next.t("login:Forgot password?")) : null
+              }
+            </div>)
+          }
         </div>
       );
     } else if (signinItem.name === "Agreement") {
       return AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null;
     } else if (signinItem.name === "Login button") {
       return (
-        <Form.Item key={resultItemKey} className="login-button-box">
+        <Form.Item key={resultItemKey} className="login-button-box" style={{marginBottom: "0"}}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Button
             loading={this.state.loginLoading}
@@ -792,18 +808,21 @@ class LoginPage extends React.Component {
                   return;
                 }
                 return (
-                  <span key={id} onClick={(e) => {
-                    const agreementChecked = this.form.current.getFieldValue("agreement");
+                  <>
+                    <Divider style={{fontSize: "14px", margin: "32px 0"}}>{i18next.t("login:Other login methods")}</Divider>
+                    <span key={id} onClick={(e) => {
+                      const agreementChecked = this.form.current.getFieldValue("agreement");
 
-                    if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
-                      e.preventDefault();
-                      message.error(i18next.t("signup:Please accept the agreement!"));
-                    }
-                  }}>
-                    {
-                      ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
-                    }
-                  </span>
+                      if (agreementChecked !== undefined && typeof agreementChecked === "boolean" && !agreementChecked) {
+                        e.preventDefault();
+                        message.error(i18next.t("signup:Please accept the agreement!"));
+                      }
+                    }}>
+                      {
+                        ProviderButton.renderProviderLogo(providerItem.provider, application, null, null, signinItem.rule, this.props.location)
+                      }
+                    </span>
+                  </>
                 );
               })
             }
@@ -863,7 +882,7 @@ class LoginPage extends React.Component {
 
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     if (showForm) {
-      let loginWidth = 320;
+      let loginWidth = 350;
       if (Setting.getLanguage() === "fr") {
         loginWidth += 20;
       } else if (Setting.getLanguage() === "es") {
@@ -1010,40 +1029,40 @@ class LoginPage extends React.Component {
     }
   }
 
-  renderSignedInBox() {
-    if (this.props.account === undefined || this.props.account === null) {
-      this.sendSilentSigninData("user-not-logged-in");
-      return null;
-    }
+  // renderSignedInBox() {
+  //   if (this.props.account === undefined || this.props.account === null) {
+  //     this.sendSilentSigninData("user-not-logged-in");
+  //     return null;
+  //   }
 
-    const application = this.getApplicationObj();
-    if (this.props.account.owner !== application?.organization) {
-      return null;
-    }
+  //   const application = this.getApplicationObj();
+  //   if (this.props.account.owner !== application?.organization) {
+  //     return null;
+  //   }
 
-    if (this.state.userCode && this.state.userCodeStatus === "success") {
-      return null;
-    }
+  //   if (this.state.userCode && this.state.userCodeStatus === "success") {
+  //     return null;
+  //   }
 
-    return (
-      <div>
-        <div style={{fontSize: 16, textAlign: "left"}}>
-          {i18next.t("login:Continue with")}&nbsp;:
-        </div>
-        <br />
-        <SelfLoginButton account={this.props.account} onClick={() => {
-          const values = {};
-          values["application"] = application.name;
-          this.login(values);
-        }} />
-        <br />
-        <br />
-        <div style={{fontSize: 16, textAlign: "left"}}>
-          {i18next.t("login:Or sign in with another account")}&nbsp;:
-        </div>
-      </div>
-    );
-  }
+  //   return (
+  //     <div>
+  //       <div style={{fontSize: 16, textAlign: "left"}}>
+  //         {i18next.t("login:Continue with")}&nbsp;:
+  //       </div>
+  //       <br />
+  //       <SelfLoginButton account={this.props.account} onClick={() => {
+  //         const values = {};
+  //         values["application"] = application.name;
+  //         this.login(values);
+  //       }} />
+  //       <br />
+  //       <br />
+  //       <div style={{fontSize: 16, textAlign: "left"}}>
+  //         {i18next.t("login:Or sign in with another account")}&nbsp;:
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   signInWithWebAuthn(username, values) {
     const oAuthParams = Util.getOAuthGetParameters();
@@ -1148,6 +1167,7 @@ class LoginPage extends React.Component {
             <Form.Item
               name="code"
               rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+              style={{textAlign: "left"}}
             >
               <SendCodeInput
                 disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
@@ -1223,7 +1243,7 @@ class LoginPage extends React.Component {
     } else {
       return (
         <React.Fragment>
-          {this.renderSignedInBox()}
+          {/* {this.renderSignedInBox()} */}
           {this.renderForm(application)}
         </React.Fragment>
       );

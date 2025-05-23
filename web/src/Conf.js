@@ -25,7 +25,7 @@ export const DefaultLanguage = "en";
 export const InitThemeAlgorithm = true;
 export const ThemeDefault = {
   themeType: "default",
-  colorPrimary: "#5734d3",
+  colorPrimary: "#1770E6",
   borderRadius: 6,
   isCompact: false,
 };

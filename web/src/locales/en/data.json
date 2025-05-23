@@ -563,7 +563,15 @@
     "Verification code": "Verification code",
     "WebAuthn": "WebAuthn",
     "sign up now": "sign up now",
-    "username, Email or phone": "username, Email or phone"
+    "username, Email or phone": "username, Email or phone",
+    "Other login methods": "Other login methods",
+    "Welcome to Shenma": "Welcome to Shenma🎉🎉",
+    "Login by acceptance": "Login by acceptance",
+    "Terms of Service": "《Terms of Service》",
+    "Privacy Policy": "《Privacy Policy》",
+    "Login success": "Login to Zhuge Shenma was successful. Please return to your IDE client to get started.",
+    "Log in with GitHub": "Log in with GitHub",
+    "Log in to Zhuge Shenma": "Log in to Zhuge Shenma"
   },
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",
