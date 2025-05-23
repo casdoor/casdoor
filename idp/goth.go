@@ -278,9 +278,16 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 			Session:  &naver.Session{},
 		}
 	case "Nextcloud":
-		idp = GothIdProvider{
-			Provider: nextcloud.New(clientId, clientSecret, redirectUrl),
-			Session:  &nextcloud.Session{},
+		if hostUrl != "" {
+			idp = GothIdProvider{
+				Provider: nextcloud.NewCustomisedDNS(clientId, clientSecret, redirectUrl, hostUrl),
+				Session:  &nextcloud.Session{},
+			}
+		} else {
+			idp = GothIdProvider{
+				Provider: nextcloud.New(clientId, clientSecret, redirectUrl),
+				Session:  &nextcloud.Session{},
+			}
 		}
 	case "OneDrive":
 		idp = GothIdProvider{
