@@ -37,7 +37,7 @@ export function signup(values) {
 }
 
 export function getEmailAndPhone(organization, username) {
-  return fetch(`${authConfig.serverUrl}/api/get-email-and-phone?organization=${organization}&username=${username}`, {
+  return fetch(`${authConfig.serverUrl}/api/get-email-and-phone?organization=${organization}&username=${encodeURIComponent(username)}`, {
     method: "GET",
     credentials: "include",
     headers: {
