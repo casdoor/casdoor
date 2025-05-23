@@ -1186,13 +1186,22 @@ export function renderLogo(application) {
 
   if (application.homepageUrl !== "") {
     return (
-      <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
-        <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
-      </a>
+      <>
+        <a target="_blank" rel="noreferrer" href={application.homepageUrl}>
+          <img className="panel-logo" width={60} src={application.logo} alt={application.displayName} />
+        </a>
+        <div style={{
+          marginBottom: "55px",
+          fontSize: "16px",
+          fontWeight: 600,
+        }}>
+          {i18next.t("login:Log in to Zhuge Shenma")}
+        </div>
+      </>
     );
   } else {
     return (
-      <img className="panel-logo" width={250} src={application.logo} alt={application.displayName} />
+      <img className="panel-logo" width={60} src={application.logo} alt={application.displayName} />
     );
   }
 }
