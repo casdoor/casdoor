@@ -19,12 +19,14 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
+	"github.com/go-webauthn/webauthn/webauthn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
 )
@@ -688,4 +690,104 @@ func IsAppUser(userId string) bool {
 		return true
 	}
 	return false
+}
+
+func setReflectAttr[T any](fieldValue *reflect.Value, fieldString string) error {
+	unmarshalValue := new(T)
+	err := json.Unmarshal([]byte(fieldString), unmarshalValue)
+	if err != nil {
+		return err
+	}
+
+	fvElem := fieldValue
+	fvElem.Set(reflect.ValueOf(*unmarshalValue))
+	return nil
+}
+
+func StringArrayToUser(stringArray [][]string) ([]*User, error) {
+	fieldNames := stringArray[0]
+	excelMap := []map[string]string{}
+	userFieldMap := map[string]int{}
+
+	reflectedUser := reflect.TypeOf(User{})
+	for i := 0; i < reflectedUser.NumField(); i++ {
+		userFieldMap[strings.ToLower(reflectedUser.Field(i).Name)] = i
+	}
+
+	for idx, field := range stringArray {
+		if idx == 0 {
+			continue
+		}
+
+		tempMap := map[string]string{}
+		for idx, val := range field {
+			tempMap[fieldNames[idx]] = val
+		}
+		excelMap = append(excelMap, tempMap)
+	}
+
+	users := []*User{}
+	var err error
+
+	for _, u := range excelMap {
+		user := User{}
+		reflectedUser := reflect.ValueOf(&user).Elem()
+		for k, v := range u {
+			if v == "" || v == "null" || v == "[]" || v == "{}" {
+				continue
+			}
+			fName := strings.ToLower(strings.ReplaceAll(k, "_", ""))
+			fieldIdx, ok := userFieldMap[fName]
+			if !ok {
+				continue
+			}
+			fv := reflectedUser.Field(fieldIdx)
+			if !fv.IsValid() {
+				continue
+			}
+			switch fv.Kind() {
+			case reflect.String:
+				fv.SetString(v)
+				continue
+			case reflect.Bool:
+				fv.SetBool(v == "1")
+				continue
+			case reflect.Int:
+				intVal, err := strconv.Atoi(v)
+				if err != nil {
+					return nil, err
+				}
+				fv.SetInt(int64(intVal))
+				continue
+			}
+
+			switch fv.Type() {
+			case reflect.TypeOf([]string{}):
+				err = setReflectAttr[[]string](&fv, v)
+			case reflect.TypeOf([]*string{}):
+				err = setReflectAttr[[]*string](&fv, v)
+			case reflect.TypeOf([]*FaceId{}):
+				err = setReflectAttr[[]*FaceId](&fv, v)
+			case reflect.TypeOf([]*MfaProps{}):
+				err = setReflectAttr[[]*MfaProps](&fv, v)
+			case reflect.TypeOf([]*Role{}):
+				err = setReflectAttr[[]*Role](&fv, v)
+			case reflect.TypeOf([]*Permission{}):
+				err = setReflectAttr[[]*Permission](&fv, v)
+			case reflect.TypeOf([]ManagedAccount{}):
+				err = setReflectAttr[[]ManagedAccount](&fv, v)
+			case reflect.TypeOf([]MfaAccount{}):
+				err = setReflectAttr[[]MfaAccount](&fv, v)
+			case reflect.TypeOf([]webauthn.Credential{}):
+				err = setReflectAttr[[]webauthn.Credential](&fv, v)
+			}
+
+			if err != nil {
+				return nil, err
+			}
+		}
+		users = append(users, &user)
+	}
+
+	return users, nil
 }

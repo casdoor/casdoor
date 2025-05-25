@@ -81,62 +81,12 @@ func UploadUsers(owner string, path string) (bool, error) {
 		return false, err
 	}
 
+	transUsers, err := StringArrayToUser(table)
+	if err != nil {
+		return false, err
+	}
 	newUsers := []*User{}
-	for index, line := range table {
-		line := line
-		if index == 0 || parseLineItem(&line, 0) == "" {
-			continue
-		}
-
-		user := &User{
-			Owner:             parseLineItem(&line, 0),
-			Name:              parseLineItem(&line, 1),
-			CreatedTime:       parseLineItem(&line, 2),
-			UpdatedTime:       parseLineItem(&line, 3),
-			Id:                parseLineItem(&line, 4),
-			Type:              parseLineItem(&line, 5),
-			Password:          parseLineItem(&line, 6),
-			PasswordSalt:      parseLineItem(&line, 7),
-			DisplayName:       parseLineItem(&line, 8),
-			FirstName:         parseLineItem(&line, 9),
-			LastName:          parseLineItem(&line, 10),
-			Avatar:            parseLineItem(&line, 11),
-			PermanentAvatar:   "",
-			Email:             parseLineItem(&line, 12),
-			Phone:             parseLineItem(&line, 13),
-			Location:          parseLineItem(&line, 14),
-			Address:           []string{parseLineItem(&line, 15)},
-			Affiliation:       parseLineItem(&line, 16),
-			Title:             parseLineItem(&line, 17),
-			IdCardType:        parseLineItem(&line, 18),
-			IdCard:            parseLineItem(&line, 19),
-			Homepage:          parseLineItem(&line, 20),
-			Bio:               parseLineItem(&line, 21),
-			Tag:               parseLineItem(&line, 22),
-			Region:            parseLineItem(&line, 23),
-			Language:          parseLineItem(&line, 24),
-			Gender:            parseLineItem(&line, 25),
-			Birthday:          parseLineItem(&line, 26),
-			Education:         parseLineItem(&line, 27),
-			Score:             parseLineItemInt(&line, 28),
-			Karma:             parseLineItemInt(&line, 29),
-			Ranking:           parseLineItemInt(&line, 30),
-			IsDefaultAvatar:   false,
-			IsOnline:          parseLineItemBool(&line, 31),
-			IsAdmin:           parseLineItemBool(&line, 32),
-			IsForbidden:       parseLineItemBool(&line, 33),
-			IsDeleted:         parseLineItemBool(&line, 34),
-			SignupApplication: parseLineItem(&line, 35),
-			Hash:              "",
-			PreHash:           "",
-			CreatedIp:         parseLineItem(&line, 36),
-			LastSigninTime:    parseLineItem(&line, 37),
-			LastSigninIp:      parseLineItem(&line, 38),
-			Ldap:              "",
-			Properties:        map[string]string{},
-			DeletedTime:       parseLineItem(&line, 39),
-		}
-
+	for _, user := range transUsers {
 		if _, ok := oldUserMap[user.GetId()]; !ok {
 			newUsers = append(newUsers, user)
 		}
