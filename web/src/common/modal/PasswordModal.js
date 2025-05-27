@@ -124,7 +124,7 @@ export const PasswordModal = (props) => {
         width={600}
       >
         <Col style={{margin: "0px auto 40px auto", width: 1000, height: 300}}>
-          {(hasOldPassword && !Setting.isAdminUser(account)) ? (
+          {(hasOldPassword && !Setting.isLocalAdminUser(account)) ? (
             <Row style={{width: "100%", marginBottom: "20px"}}>
               <Input.Password addonBefore={i18next.t("user:Old Password")} placeholder={i18next.t("user:input password")} onChange={(e) => setOldPassword(e.target.value)} />
             </Row>
