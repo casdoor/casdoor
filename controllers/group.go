@@ -15,6 +15,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -78,12 +79,12 @@ func (c *ApiController) GetGroups() {
 		}
 
 		for _, group := range groups {
-			_, ok := groupsHaveChildrenMap[group.Name]
+			_, ok := groupsHaveChildrenMap[group.GetId()]
 			if ok {
 				group.HaveChildren = true
 			}
 
-			parent, ok := groupsHaveChildrenMap[group.ParentId]
+			parent, ok := groupsHaveChildrenMap[fmt.Sprintf("%s/%s", group.Owner, group.ParentId)]
 			if ok {
 				group.ParentName = parent.DisplayName
 			}
