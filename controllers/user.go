@@ -703,7 +703,7 @@ func (c *ApiController) RemoveUserFromGroup() {
 		return
 	}
 
-	affected, err := object.DeleteGroupForUser(util.GetId(owner, name), groupName)
+	affected, err := object.DeleteGroupForUser(util.GetId(owner, name), util.GetId(owner, groupName))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

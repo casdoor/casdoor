@@ -1117,6 +1117,17 @@ func ExtendUserWithRolesAndPermissions(user *User) (err error) {
 }
 
 func DeleteGroupForUser(user string, group string) (bool, error) {
+	userObj, err := GetUser(user)
+	if err != nil {
+		return false, err
+	}
+
+	userObj.Groups = util.DeleteVal(userObj.Groups, group)
+	_, err = updateUser(user, userObj, []string{"groups"})
+	if err != nil {
+		return false, err
+	}
+
 	return userEnforcer.DeleteGroupForUser(user, group)
 }
 
