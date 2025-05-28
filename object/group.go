@@ -95,12 +95,13 @@ func GetGroupsHaveChildrenMap(groups []*Group) (map[string]*Group, error) {
 		}
 	}
 
-	err := ormer.Engine.Cols("owner", "name", "parent_id", "display_name").Distinct("parent_id").In("parent_id", groupIds).Find(&groupsHaveChildren)
+	err := ormer.Engine.Cols("owner", "name", "parent_id", "display_name").Distinct("name").In("name", groupIds).Find(&groupsHaveChildren)
 	if err != nil {
 		return nil, err
 	}
+
 	for _, group := range groupsHaveChildren {
-		resultMap[group.ParentId] = groupMap[group.ParentId]
+		resultMap[group.GetId()] = group
 	}
 	return resultMap, nil
 }
