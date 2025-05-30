@@ -257,3 +257,5 @@ jobs:
           git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
           git tag ${{steps.get-current-tag.outputs.tag }}
           git push origin HEAD:master --follow-tags
+
+          
