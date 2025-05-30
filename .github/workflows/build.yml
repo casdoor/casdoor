@@ -198,6 +198,16 @@ jobs:
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
 
+      - name: Scan casdoor image with Trivy
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'casbin/casdoor:${{steps.get-current-tag.outputs.tag }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'HIGH,CRITICAL'
+
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
         if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
@@ -207,6 +217,16 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+
+      - name: Scan casdoor-all-in-one image with Trivy
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'HIGH,CRITICAL'
 
       - uses: actions/checkout@v3
         if: steps.should_push.outputs.push=='true'
