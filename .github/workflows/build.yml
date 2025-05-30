@@ -204,7 +204,7 @@ jobs:
         with:
           image-ref: 'casbin/casdoor:${{steps.get-current-tag.outputs.tag }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           severity: 'HIGH,CRITICAL'
 
@@ -224,7 +224,7 @@ jobs:
         with:
           image-ref: 'casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }}'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           severity: 'HIGH,CRITICAL'
 
