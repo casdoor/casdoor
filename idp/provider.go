@@ -76,6 +76,8 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewWeiBoIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Gitee":
 		return NewGiteeIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+	case "Discord":
+		return NewDiscordIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "LinkedIn":
 		return NewLinkedInIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeCom":
@@ -147,7 +149,6 @@ var gothList = []string{
 	"Dailymotion",
 	"Deezer",
 	"DigitalOcean",
-	"Discord",
 	"Dropbox",
 	"EveOnline",
 	"Fitbit",
