@@ -10,7 +10,7 @@ require (
 	github.com/alibabacloud-go/tea v1.3.2
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7
 	github.com/aws/aws-sdk-go v1.45.5
-	github.com/beego/beego v1.12.14
+	github.com/beego/beego v1.12.12
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.25.0
