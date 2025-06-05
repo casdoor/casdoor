@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Método de desafio deve ser S256",
+    "DeviceCode Invalid": "DeviceCode Invalid",
     "Failed to create user, user information is invalid: %s": "Falha ao criar usuário, informação do usuário inválida: %s",
     "Failed to login in: %s": "Falha ao entrar em: %s",
     "Invalid token": "Token inválido",
@@ -21,17 +22,24 @@
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
     "The organization: %s does not exist": "The organization: %s does not exist",
+    "The provider: %s does not exist": "The provider: %s does not exist",
     "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
     "Unauthorized operation": "Unauthorized operation",
     "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
     "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "UserCode Expired": "UserCode Expired",
+    "UserCode Invalid": "UserCode Invalid",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing",
+    "the application for user %s is not found": "the application for user %s is not found",
+    "the organization: %s is not found": "the organization: %s is not found"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
     "Affiliation cannot be blank": "Affiliation cannot be blank",
+    "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
     "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "DisplayName cannot be blank",
     "DisplayName is not valid real name": "DisplayName is not valid real name",
@@ -41,6 +49,7 @@
     "Empty username.": "Empty username.",
     "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
     "Face data mismatch": "Face data mismatch",
+    "Failed to parse client IP: %s": "Failed to parse client IP: %s",
     "FirstName cannot be blank": "FirstName cannot be blank",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
     "Invitation code exhausted": "Invitation code exhausted",
@@ -50,6 +59,7 @@
     "LastName cannot be blank": "LastName cannot be blank",
     "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
     "Organization does not exist": "Organization does not exist",
+    "Password cannot be empty": "Password cannot be empty",
     "Phone already exists": "Phone already exists",
     "Phone cannot be empty": "Phone cannot be empty",
     "Phone number is invalid": "Phone number is invalid",
@@ -69,17 +79,25 @@
     "Username cannot start with a digit": "O nome de usuário não pode começar com um dígito",
     "Username is too long (maximum is 255 characters).": "Nome de usuário é muito longo (máximo é 255 caracteres).",
     "Username must have at least 2 characters": "Nome de usuário deve ter pelo menos 2 caracteres",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
+    "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
     "password or code is incorrect": "senha ou código incorreto",
     "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
     "unsupported password type: %s": "unsupported password type: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "the adapter: %s is not found"
+  },
   "general": {
     "Missing parameter": "Missing parameter",
+    "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
+    "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
@@ -126,6 +144,9 @@
     "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
     "The provider type: %s is not supported": "The provider type: %s is not supported"
   },
+  "subscription": {
+    "Error": "Error"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
     "Invalid application or wrong clientSecret": "Aplicativo inválido ou clientSecret errado",
@@ -135,6 +156,8 @@
   },
   "user": {
     "Display name cannot be empty": "Nome de exibição não pode ser vazio",
+    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
+    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "New password cannot contain blank space."
   },
   "user_upload": {
@@ -148,8 +171,8 @@
   "verification": {
     "Invalid captcha provider.": "Invalid captcha provider.",
     "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
+    "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Turing test failed.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
@@ -161,7 +184,6 @@
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
   }
 }

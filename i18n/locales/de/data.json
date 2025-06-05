@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Die Challenge-Methode sollte S256 sein",
+    "DeviceCode Invalid": "DeviceCode Invalid",
     "Failed to create user, user information is invalid: %s": "Es konnte kein Benutzer erstellt werden, da die Benutzerinformationen ungültig sind: %s",
     "Failed to login in: %s": "Konnte nicht anmelden: %s",
     "Invalid token": "Ungültiges Token",
@@ -21,17 +22,24 @@
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
     "The organization: %s does not exist": "The organization: %s does not exist",
+    "The provider: %s does not exist": "The provider: %s does not exist",
     "The provider: %s is not enabled for the application": "Der Anbieter: %s ist nicht für die Anwendung aktiviert",
     "Unauthorized operation": "Nicht autorisierte Operation",
     "Unknown authentication type (not password or provider), form = %s": "Unbekannter Authentifizierungstyp (nicht Passwort oder Anbieter), Formular = %s",
     "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "UserCode Expired": "UserCode Expired",
+    "UserCode Invalid": "UserCode Invalid",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing",
+    "the application for user %s is not found": "the application for user %s is not found",
+    "the organization: %s is not found": "the organization: %s is not found"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s und %s stimmen nicht überein"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
     "Affiliation cannot be blank": "Zugehörigkeit darf nicht leer sein",
+    "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
     "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Anzeigename kann nicht leer sein",
     "DisplayName is not valid real name": "DisplayName ist kein gültiger Vorname",
@@ -41,6 +49,7 @@
     "Empty username.": "Leerer Benutzername.",
     "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
     "Face data mismatch": "Face data mismatch",
+    "Failed to parse client IP: %s": "Failed to parse client IP: %s",
     "FirstName cannot be blank": "Vorname darf nicht leer sein",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
     "Invitation code exhausted": "Invitation code exhausted",
@@ -50,6 +59,7 @@
     "LastName cannot be blank": "Nachname darf nicht leer sein",
     "Multiple accounts with same uid, please check your ldap server": "Mehrere Konten mit derselben uid, bitte überprüfen Sie Ihren LDAP-Server",
     "Organization does not exist": "Organisation existiert nicht",
+    "Password cannot be empty": "Password cannot be empty",
     "Phone already exists": "Telefon existiert bereits",
     "Phone cannot be empty": "Das Telefon darf nicht leer sein",
     "Phone number is invalid": "Die Telefonnummer ist ungültig",
@@ -69,17 +79,25 @@
     "Username cannot start with a digit": "Benutzername darf nicht mit einer Ziffer beginnen",
     "Username is too long (maximum is 255 characters).": "Benutzername ist zu lang (das Maximum beträgt 255 Zeichen).",
     "Username must have at least 2 characters": "Benutzername muss mindestens 2 Zeichen lang sein",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Sie haben zu oft das falsche Passwort oder den falschen Code eingegeben. Bitte warten Sie %d Minuten und versuchen Sie es erneut",
+    "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Ihre Region ist nicht berechtigt, sich telefonisch anzumelden",
     "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "Das Passwort oder der Code ist falsch. Du hast noch %d Versuche übrig",
     "unsupported password type: %s": "Nicht unterstützter Passworttyp: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "the adapter: %s is not found"
+  },
   "general": {
     "Missing parameter": "Fehlender Parameter",
+    "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Bitte zuerst einloggen",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
+    "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
@@ -126,6 +144,9 @@
     "The objectKey: %s is not allowed": "Der Objektschlüssel %s ist nicht erlaubt",
     "The provider type: %s is not supported": "Der Anbieter-Typ %s wird nicht unterstützt"
   },
+  "subscription": {
+    "Error": "Error"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s wird von dieser Anwendung nicht unterstützt",
     "Invalid application or wrong clientSecret": "Ungültige Anwendung oder falsches clientSecret",
@@ -135,6 +156,8 @@
   },
   "user": {
     "Display name cannot be empty": "Anzeigename darf nicht leer sein",
+    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
+    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten."
   },
   "user_upload": {
@@ -148,8 +171,8 @@
   "verification": {
     "Invalid captcha provider.": "Ungültiger Captcha-Anbieter.",
     "Phone number is invalid in your region %s": "Die Telefonnummer ist in Ihrer Region %s ungültig",
+    "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Turing-Test fehlgeschlagen.",
     "Unable to get the email modify rule.": "Nicht in der Lage, die E-Mail-Änderungsregel zu erhalten.",
     "Unable to get the phone modify rule.": "Nicht in der Lage, die Telefon-Änderungsregel zu erhalten.",
@@ -161,7 +184,6 @@
     "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"
   },
   "webauthn": {
-    "Found no credentials for this user": "Es wurden keine Anmeldeinformationen für diesen Benutzer gefunden",
     "Please call WebAuthnSigninBegin first": "Bitte rufen Sie zuerst WebAuthnSigninBegin auf"
   }
 }

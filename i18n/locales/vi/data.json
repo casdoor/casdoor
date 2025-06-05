@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Phương pháp thách thức nên là S256",
+    "DeviceCode Invalid": "DeviceCode Invalid",
     "Failed to create user, user information is invalid: %s": "Không thể tạo người dùng, thông tin người dùng không hợp lệ: %s",
     "Failed to login in: %s": "Đăng nhập không thành công: %s",
     "Invalid token": "Mã thông báo không hợp lệ",
@@ -21,17 +22,24 @@
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
     "The organization: %s does not exist": "The organization: %s does not exist",
+    "The provider: %s does not exist": "The provider: %s does not exist",
     "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
     "Unauthorized operation": "Hoạt động không được ủy quyền",
     "Unknown authentication type (not password or provider), form = %s": "Loại xác thực không xác định (không phải mật khẩu hoặc nhà cung cấp), biểu mẫu = %s",
     "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "UserCode Expired": "UserCode Expired",
+    "UserCode Invalid": "UserCode Invalid",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing",
+    "the application for user %s is not found": "the application for user %s is not found",
+    "the organization: %s is not found": "the organization: %s is not found"
   },
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
     "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
+    "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
     "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
     "DisplayName is not valid real name": "DisplayName không phải là tên thật hợp lệ",
@@ -41,6 +49,7 @@
     "Empty username.": "Tên đăng nhập trống.",
     "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
     "Face data mismatch": "Face data mismatch",
+    "Failed to parse client IP: %s": "Failed to parse client IP: %s",
     "FirstName cannot be blank": "Tên không được để trống",
     "Invitation code cannot be blank": "Invitation code cannot be blank",
     "Invitation code exhausted": "Invitation code exhausted",
@@ -50,6 +59,7 @@
     "LastName cannot be blank": "Họ không thể để trống",
     "Multiple accounts with same uid, please check your ldap server": "Nhiều tài khoản với cùng một uid, vui lòng kiểm tra máy chủ ldap của bạn",
     "Organization does not exist": "Tổ chức không tồn tại",
+    "Password cannot be empty": "Password cannot be empty",
     "Phone already exists": "Điện thoại đã tồn tại",
     "Phone cannot be empty": "Điện thoại không thể để trống",
     "Phone number is invalid": "Số điện thoại không hợp lệ",
@@ -69,17 +79,25 @@
     "Username cannot start with a digit": "Tên người dùng không thể bắt đầu bằng chữ số",
     "Username is too long (maximum is 255 characters).": "Tên đăng nhập quá dài (tối đa là 255 ký tự).",
     "Username must have at least 2 characters": "Tên đăng nhập phải có ít nhất 2 ký tự",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
+    "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
     "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %d remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %d lần cơ hội",
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "the adapter: %s is not found"
+  },
   "general": {
     "Missing parameter": "Thiếu tham số",
+    "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Vui lòng đăng nhập trước",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
+    "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
@@ -126,6 +144,9 @@
     "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
     "The provider type: %s is not supported": "Loại nhà cung cấp: %s không được hỗ trợ"
   },
+  "subscription": {
+    "Error": "Error"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
     "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",
@@ -135,6 +156,8 @@
   },
   "user": {
     "Display name cannot be empty": "Tên hiển thị không thể trống",
+    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
+    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng."
   },
   "user_upload": {
@@ -148,8 +171,8 @@
   "verification": {
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
+    "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
     "Turing test failed.": "Kiểm định Turing thất bại.",
     "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
     "Unable to get the phone modify rule.": "Không thể thay đổi quy tắc trên điện thoại.",
@@ -161,7 +184,6 @@
     "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
   },
   "webauthn": {
-    "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
     "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
   }
 }
