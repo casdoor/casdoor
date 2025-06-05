@@ -365,7 +365,7 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddUser(&user, c.GetAcceptLanguage()))
+	c.Data["json"] = wrapActionResponse(object.AddUser(&user, false, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 

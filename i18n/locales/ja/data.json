@@ -117,7 +117,7 @@
     "Only admin can modify the %s.": "管理者のみが%sを変更できます。",
     "The %s is immutable.": "%sは不変です。",
     "Unknown modify rule %s.": "未知の変更ルール%s。",
-    "you need to set HasPrivilegeConsent to true to add user for built-in organization": "you need to set HasPrivilegeConsent to true to add user for built-in organization"
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option."
   },
   "permission": {
     "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"

@@ -154,7 +154,7 @@ func initBuiltInUser() {
 		CreatedIp:         "127.0.0.1",
 		Properties:        make(map[string]string),
 	}
-	_, err = AddUser(user, "en")
+	_, err = AddUser(user, true, "en")
 	if err != nil {
 		panic(err)
 	}

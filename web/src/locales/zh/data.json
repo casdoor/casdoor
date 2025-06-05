@@ -618,6 +618,7 @@
     "Follow global theme": "使用全局默认主题",
     "Has privilege consent": "特权同意",
     "Has privilege consent - Tooltip": "如果为假，则禁止为built-in组织新增用户",
+    "Has privilege consent warning": "目前，向'built-in'组织添加新用户的功能已禁用。请注意：'built-in'组织中的所有用户均为Casdoor的全局管理员。请参阅文档：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。如果您仍希望为'built-in'组织创建用户，请转到该组织的设置页面并启用“具有权限同意”选项。",
     "Init score": "初始积分",
     "Init score - Tooltip": "用户注册后所拥有的初始积分",
     "Is profile public": "是否公开用户个人页",

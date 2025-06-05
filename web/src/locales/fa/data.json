@@ -618,6 +618,7 @@
     "Follow global theme": "پیروی از تم جهانی",
     "Has privilege consent": "Has privilege consent",
     "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
+    "Has privilege consent warning": "Adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.",
     "Init score": "امتیاز اولیه",
     "Init score - Tooltip": "امتیاز اولیه‌ای که به کاربران هنگام ثبت‌نام اعطا می‌شود",
     "Is profile public": "پروفایل عمومی است",

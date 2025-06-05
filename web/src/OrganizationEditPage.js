@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Radio, Row, Select, Switch} from "antd";
+import {Button, Card, Col, Input, InputNumber, Popconfirm, Radio, Row, Select, Switch} from "antd";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as LdapBackend from "./backend/LdapBackend";
@@ -277,9 +277,14 @@ class OrganizationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("organization:Has privilege consent"), i18next.t("organization:Has privilege consent - Tooltip"))} :
               </Col>
               <Col span={1} >
-                <Switch checked={this.state.organization.hasPrivilegeConsent} onChange={checked => {
-                  this.updateOrganizationField("hasPrivilegeConsent", checked);
-                }} />
+                <Popconfirm
+                  title={i18next.t("organization:Has privilege consent warning")}
+                  onConfirm={() => {this.updateOrganizationField("hasPrivilegeConsent", !this.state.organization.hasPrivilegeConsent);}}
+                  okText={i18next.t("general:OK")}
+                  cancelText={i18next.t("general:Cancel")}
+                >
+                  <Switch checked={this.state.organization.hasPrivilegeConsent} />
+                </Popconfirm>
               </Col>
             </Row>
           ) : null

@@ -342,7 +342,7 @@ func initDefinedUser(user *User) {
 	if user.Properties == nil {
 		user.Properties = make(map[string]string)
 	}
-	_, err = AddUser(user, "en")
+	_, err = AddUser(user, true, "en")
 	if err != nil {
 		panic(err)
 	}

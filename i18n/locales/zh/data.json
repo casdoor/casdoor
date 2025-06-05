@@ -117,7 +117,7 @@
     "Only admin can modify the %s.": "仅允许管理员可以修改%s",
     "The %s is immutable.": "%s 是不可变的",
     "Unknown modify rule %s.": "未知的修改规则: %s",
-    "you need to set HasPrivilegeConsent to true to add user for built-in organization": "你需要设置built-in组织的特权同意选项为真才可新增用户"
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "目前，向'built-in'组织添加新用户的功能已禁用。请注意：'built-in'组织中的所有用户均为Casdoor的全局管理员。请参阅文档：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。如果您仍希望为built-in组织创建用户，请转到该组织的设置页面并启用“具有权限同意”选项。"
   },
   "permission": {
     "The permission: \\\"%s\\\" doesn't exist": "权限: \\\"%s\\\" 不存在"
