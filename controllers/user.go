@@ -545,7 +545,7 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("the organization: %s is not found"), targetUser.Owner))
+		c.ResponseError(fmt.Sprintf(c.T("auth:the organization: %s is not found"), targetUser.Owner))
 		return
 	}
 

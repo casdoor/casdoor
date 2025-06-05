@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Metode tantangan harus S256",
+    "DeviceCode Invalid": "DeviceCode Invalid",
     "Failed to create user, user information is invalid: %s": "Gagal membuat pengguna, informasi pengguna tidak valid: %s",
     "Failed to login in: %s": "Gagal masuk: %s",
     "Invalid token": "Token tidak valid",
@@ -21,17 +22,24 @@
     "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
     "The login method: login with password is not enabled for the application": "Metode login: login dengan sandi tidak diaktifkan untuk aplikasi tersebut",
     "The organization: %s does not exist": "The organization: %s does not exist",
+    "The provider: %s does not exist": "The provider: %s does not exist",
     "The provider: %s is not enabled for the application": "Penyedia: %s tidak diaktifkan untuk aplikasi ini",
     "Unauthorized operation": "Operasi tidak sah",
     "Unknown authentication type (not password or provider), form = %s": "Jenis otentikasi tidak diketahui (bukan sandi atau penyedia), formulir = %s",
     "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "UserCode Expired": "UserCode Expired",
+    "UserCode Invalid": "UserCode Invalid",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing",
+    "the application for user %s is not found": "the application for user %s is not found",
+    "the organization: %s is not found": "the organization: %s is not found"
   },
   "cas": {
     "Service %s and %s do not match": "Layanan %s dan %s tidak cocok"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
     "Affiliation cannot be blank": "Keterkaitan tidak boleh kosong",
+    "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
     "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
     "DisplayName cannot be blank": "Nama Pengguna tidak boleh kosong",
     "DisplayName is not valid real name": "DisplayName bukanlah nama asli yang valid",
@@ -41,6 +49,7 @@
     "Empty username.": "Nama pengguna kosong.",
     "Face data does not exist, cannot log in": "Data wajah tidak ada, tidak bisa login",
     "Face data mismatch": "Ketidakcocokan data wajah",
+    "Failed to parse client IP: %s": "Failed to parse client IP: %s",
     "FirstName cannot be blank": "Nama depan tidak boleh kosong",
     "Invitation code cannot be blank": "Kode undangan tidak boleh kosong",
     "Invitation code exhausted": "Kode undangan habis",
@@ -50,6 +59,7 @@
     "LastName cannot be blank": "Nama belakang tidak boleh kosong",
     "Multiple accounts with same uid, please check your ldap server": "Beberapa akun dengan uid yang sama, harap periksa server LDAP Anda",
     "Organization does not exist": "Organisasi tidak ada",
+    "Password cannot be empty": "Password cannot be empty",
     "Phone already exists": "Telepon sudah ada",
     "Phone cannot be empty": "Telepon tidak boleh kosong",
     "Phone number is invalid": "Nomor telepon tidak valid",
@@ -69,17 +79,25 @@
     "Username cannot start with a digit": "Username tidak dapat dimulai dengan angka",
     "Username is too long (maximum is 255 characters).": "Nama pengguna terlalu panjang (maksimum 255 karakter).",
     "Username must have at least 2 characters": "Nama pengguna harus memiliki setidaknya 2 karakter",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Anda telah memasukkan sandi atau kode yang salah terlalu sering, mohon tunggu selama %d menit lalu coba kembali",
+    "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Wilayah Anda tidak diizinkan untuk mendaftar melalui telepon",
     "password or code is incorrect": "kata sandi atau kode salah",
     "password or code is incorrect, you have %d remaining chances": "Sandi atau kode salah, Anda memiliki %d kesempatan tersisa",
     "unsupported password type: %s": "jenis sandi tidak didukung: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "the adapter: %s is not found"
+  },
   "general": {
     "Missing parameter": "Parameter hilang",
+    "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Silahkan login terlebih dahulu",
     "The organization: %s should have one application at least": "Organisasi: %s setidaknya harus memiliki satu aplikasi",
     "The user: %s doesn't exist": "Pengguna: %s tidak ada",
+    "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "Jangan mendukung captchaProvider:",
     "this operation is not allowed in demo mode": "tindakan ini tidak diizinkan pada mode demo",
     "this operation requires administrator to perform": "tindakan ini membutuhkan peran administrator"
@@ -126,6 +144,9 @@
     "The objectKey: %s is not allowed": "Kunci objek: %s tidak diizinkan",
     "The provider type: %s is not supported": "Jenis penyedia: %s tidak didukung"
   },
+  "subscription": {
+    "Error": "Error"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Jenis grant (grant_type) %s tidak didukung dalam aplikasi ini",
     "Invalid application or wrong clientSecret": "Aplikasi tidak valid atau clientSecret salah",
@@ -135,6 +156,8 @@
   },
   "user": {
     "Display name cannot be empty": "Nama tampilan tidak boleh kosong",
+    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
+    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Sandi baru tidak boleh mengandung spasi kosong."
   },
   "user_upload": {
@@ -148,8 +171,8 @@
   "verification": {
     "Invalid captcha provider.": "Penyedia captcha tidak valid.",
     "Phone number is invalid in your region %s": "Nomor telepon tidak valid di wilayah anda %s",
+    "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "Kode verifikasi belum terkirim!",
-    "The verification code has not been sent yet, or has already been used!": "Kode verifikasi belum dikirim atau telah digunakan!",
     "Turing test failed.": "Tes Turing gagal.",
     "Unable to get the email modify rule.": "Tidak dapat memperoleh aturan modifikasi email.",
     "Unable to get the phone modify rule.": "Tidak dapat memodifikasi aturan telepon.",
@@ -161,7 +184,6 @@
     "the user does not exist, please sign up first": "Pengguna tidak ada, silakan daftar terlebih dahulu"
   },
   "webauthn": {
-    "Found no credentials for this user": "Tidak ditemukan kredensial untuk pengguna ini",
     "Please call WebAuthnSigninBegin first": "Harap panggil WebAuthnSigninBegin terlebih dahulu"
   }
 }
