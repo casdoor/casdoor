@@ -616,6 +616,8 @@
     "All": "全て",
     "Edit Organization": "組織の編集",
     "Follow global theme": "グローバルテーマに従ってください",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "イニットスコア",
     "Init score - Tooltip": "登録時にユーザーに与えられる初期スコアポイント",
     "Is profile public": "プロフィールは公開されていますか？",

@@ -270,6 +270,20 @@ class OrganizationEditPage extends React.Component {
             }} />
           </Col>
         </Row>
+        {
+          this.state.organization.name === "built-in" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+                {Setting.getLabel(i18next.t("organization:Has privilege consent"), i18next.t("organization:Has privilege consent - Tooltip"))} :
+              </Col>
+              <Col span={1} >
+                <Switch checked={this.state.organization.hasPrivilegeConsent} onChange={checked => {
+                  this.updateOrganizationField("hasPrivilegeConsent", checked);
+                }} />
+              </Col>
+            </Row>
+          ) : null
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Password type"), i18next.t("general:Password type - Tooltip"))} :

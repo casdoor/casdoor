@@ -616,6 +616,8 @@
     "All": "Vše",
     "Edit Organization": "Upravit organizaci",
     "Follow global theme": "Sledovat globální téma",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "Počáteční skóre",
     "Init score - Tooltip": "Počáteční body udělené uživatelům při registraci",
     "Is profile public": "Je profil veřejný",

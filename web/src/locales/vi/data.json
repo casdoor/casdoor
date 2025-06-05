@@ -616,6 +616,8 @@
     "All": "Tất cả",
     "Edit Organization": "Sửa tổ chức",
     "Follow global theme": "Theo giao diện chung",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "Điểm khởi tạo",
     "Init score - Tooltip": "Điểm số ban đầu được trao cho người dùng khi đăng ký",
     "Is profile public": "Hồ sơ có công khai không?",

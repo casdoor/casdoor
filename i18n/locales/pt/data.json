@@ -116,7 +116,8 @@
   "organization": {
     "Only admin can modify the %s.": "Only admin can modify the %s.",
     "The %s is immutable.": "O %s é imutável.",
-    "Unknown modify rule %s.": "Regra de modificação %s desconhecida."
+    "Unknown modify rule %s.": "Regra de modificação %s desconhecida.",
+    "you need to set HasPrivilegeConsent to true to add user for built-in organization": "you need to set HasPrivilegeConsent to true to add user for built-in organization"
   },
   "permission": {
     "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
@@ -158,7 +159,8 @@
     "Display name cannot be empty": "Nome de exibição não pode ser vazio",
     "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space."
+    "New password cannot contain blank space.": "New password cannot contain blank space.",
+    "the user's owner and name should not be empty": "the user's owner and name should not be empty"
   },
   "user_upload": {
     "Failed to import users": "Falha ao importar usuários"

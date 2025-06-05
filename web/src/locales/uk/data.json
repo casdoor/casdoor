@@ -616,6 +616,8 @@
     "All": "всі",
     "Edit Organization": "Редагувати організацію",
     "Follow global theme": "Дотримуйтеся глобальної теми",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "Початкова оцінка",
     "Init score - Tooltip": "Початкові бали, нараховані користувачам під час реєстрації",
     "Is profile public": "Профіль загальнодоступний",

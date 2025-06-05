@@ -616,6 +616,8 @@
     "All": "全部",
     "Edit Organization": "编辑组织",
     "Follow global theme": "使用全局默认主题",
+    "Has privilege consent": "特权同意",
+    "Has privilege consent - Tooltip": "如果为假，则禁止为built-in组织新增用户",
     "Init score": "初始积分",
     "Init score - Tooltip": "用户注册后所拥有的初始积分",
     "Is profile public": "是否公开用户个人页",

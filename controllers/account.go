@@ -259,7 +259,7 @@ func (c *ApiController) Signup() {
 		user.Groups = []string{application.DefaultGroup}
 	}
 
-	affected, err := object.AddUser(user)
+	affected, err := object.AddUser(user, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

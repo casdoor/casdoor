@@ -616,6 +616,8 @@
     "All": "همه",
     "Edit Organization": "ویرایش سازمان",
     "Follow global theme": "پیروی از تم جهانی",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "امتیاز اولیه",
     "Init score - Tooltip": "امتیاز اولیه‌ای که به کاربران هنگام ثبت‌نام اعطا می‌شود",
     "Is profile public": "پروفایل عمومی است",

@@ -616,6 +616,8 @@
     "All": "모두",
     "Edit Organization": "단체 수정",
     "Follow global theme": "글로벌 테마를 따르세요",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "처음 점수",
     "Init score - Tooltip": "등록 시 초기 점수 부여",
     "Is profile public": "프로필이 공개적으로 되어 있나요?",

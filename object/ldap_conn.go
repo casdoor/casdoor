@@ -351,7 +351,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				newUser.Groups = []string{ldap.DefaultGroup}
 			}
 
-			affected, err := AddUser(newUser)
+			affected, err := AddUser(newUser, "en")
 			if err != nil {
 				return nil, nil, err
 			}

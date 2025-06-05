@@ -616,6 +616,8 @@
     "All": "Tout",
     "Edit Organization": "Modifier l'organisation",
     "Follow global theme": "Suivre le thème global",
+    "Has privilege consent": "Has privilege consent",
+    "Has privilege consent - Tooltip": "Prevent adding users for built-in organization if HasPrivilegeConsent is false",
     "Init score": "Score initial",
     "Init score - Tooltip": "Score initial attribué au compte lors de leur inscription",
     "Is profile public": "Est-ce que le profil est public ?",
