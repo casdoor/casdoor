@@ -132,7 +132,7 @@ func AddScimUser(r *scim.Resource) error {
 		return errors.ScimErrorUniqueness
 	}
 
-	affect, err := object.AddUser(newUser)
+	affect, err := object.AddUser(newUser, "en")
 	if err != nil {
 		return err
 	}

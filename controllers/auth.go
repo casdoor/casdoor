@@ -867,7 +867,7 @@ func (c *ApiController) Login() {
 					}
 
 					var affected bool
-					affected, err = object.AddUser(user)
+					affected, err = object.AddUser(user, c.GetAcceptLanguage())
 					if err != nil {
 						c.ResponseError(err.Error())
 						return
