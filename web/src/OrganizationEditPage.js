@@ -284,7 +284,7 @@ class OrganizationEditPage extends React.Component {
                       onConfirm={() => {this.updateOrganizationField("hasPrivilegeConsent", !this.state.organization.hasPrivilegeConsent);}}
                       okText={i18next.t("general:OK")}
                       cancelText={i18next.t("general:Cancel")}
-                      styles={{root: {maxWidth: "800px"}}}
+                      styles={{root: {width: "800px"}}}
                     >
                       <Switch checked={this.state.organization.hasPrivilegeConsent} />
                     </Popconfirm>
