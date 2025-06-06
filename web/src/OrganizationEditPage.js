@@ -277,15 +277,20 @@ class OrganizationEditPage extends React.Component {
                 {Setting.getLabel(i18next.t("organization:Has privilege consent"), i18next.t("organization:Has privilege consent - Tooltip"))} :
               </Col>
               <Col span={1} >
-                <Popconfirm
-                  title={i18next.t("organization:Has privilege consent warning")}
-                  onConfirm={() => {this.updateOrganizationField("hasPrivilegeConsent", !this.state.organization.hasPrivilegeConsent);}}
-                  okText={i18next.t("general:OK")}
-                  cancelText={i18next.t("general:Cancel")}
-                  styles={{root: {width: "300px"}}}
-                >
-                  <Switch checked={this.state.organization.hasPrivilegeConsent} />
-                </Popconfirm>
+                {
+                  !this.state.organization.hasPrivilegeConsent ? (
+                    <Popconfirm
+                      title={i18next.t("organization:Has privilege consent warning")}
+                      onConfirm={() => {this.updateOrganizationField("hasPrivilegeConsent", !this.state.organization.hasPrivilegeConsent);}}
+                      okText={i18next.t("general:OK")}
+                      cancelText={i18next.t("general:Cancel")}
+                      styles={{root: {maxWidth: "800px"}}}
+                    >
+                      <Switch checked={this.state.organization.hasPrivilegeConsent} />
+                    </Popconfirm>
+                  ) :
+                    <Switch checked={this.state.organization.hasPrivilegeConsent} onChange={() => {this.updateOrganizationField("hasPrivilegeConsent", !this.state.organization.hasPrivilegeConsent);}} />
+                }
               </Col>
             </Row>
           ) : null
