@@ -60,7 +60,7 @@ func getMemoryUsage() (uint64, uint64, error) {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
-	return m.Alloc, virtualMem.Total, nil
+	return m.Sys, virtualMem.Total, nil
 }
 
 func GetSystemInfo() (*SystemInfo, error) {
