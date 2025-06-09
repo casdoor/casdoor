@@ -36,6 +36,7 @@ class PaymentResultPage extends React.Component {
       subscription: props.subscription ?? null,
       timeout: null,
       user: null,
+      source: params.get("source"),
     };
   }
 
@@ -118,6 +119,8 @@ class PaymentResultPage extends React.Component {
         throw new Error(res.msg);
       }
       const payment = res.data;
+      this.processAutoReturn(payment);
+
       await this.setStateAsync({
         payment: payment,
       });
@@ -152,6 +155,28 @@ class PaymentResultPage extends React.Component {
       Setting.goToLink(`${window.location.origin}/products/${payment.owner}/${payment.productName}/buy`);
     } else {
       Setting.goToLink(payment.returnUrl);
+    }
+  }
+
+  processAutoReturn(payment) {
+    // only auto return from pay callback
+    if (this.state.source !== "pay") {
+      return;
+    }
+    const {state, returnType} = payment;
+    if (returnType === "autoClose") {
+      window.close();
+      return;
+    }
+    if (state === "Paid") {
+      if (returnType === "paidAutoRedirect") {
+        this.goToPaymentUrl(payment);
+        return;
+      }
+      if (returnType === "paidAutoClose") {
+        window.close();
+        return;
+      }
     }
   }
 
