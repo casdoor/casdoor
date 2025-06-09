@@ -36,6 +36,7 @@ class PaymentResultPage extends React.Component {
       subscription: props.subscription ?? null,
       timeout: null,
       user: null,
+      source: params.get("source"),
     };
   }
 
@@ -118,6 +119,8 @@ class PaymentResultPage extends React.Component {
         throw new Error(res.msg);
       }
       const payment = res.data;
+      this.processAutoReturn(payment);
+
       await this.setStateAsync({
         payment: payment,
       });
@@ -135,7 +138,6 @@ class PaymentResultPage extends React.Component {
           });
         }
       }
-
       if (payment.state === "Paid") {
         if (this.props.account) {
           this.getUser();
@@ -152,6 +154,29 @@ class PaymentResultPage extends React.Component {
       Setting.goToLink(`${window.location.origin}/products/${payment.owner}/${payment.productName}/buy`);
     } else {
       Setting.goToLink(payment.returnUrl);
+    }
+  }
+
+  processAutoReturn(payment) {
+    // 只处理来自支付页面的返回
+    if (this.state.source !== "pay") {
+      return;
+    }
+    const {state, returnType} = payment;
+    if (returnType === "autoClose") {
+      window.close();
+      return;
+    }
+    // 如果支付已成功
+    if (state === "Paid") {
+      if (returnType === "paidAutoRedirect") {
+        this.goToPaymentUrl(payment);
+        return;
+      }
+      if (returnType === "paidAutoClose") {
+        window.close();
+        return;
+      }
     }
   }
 
