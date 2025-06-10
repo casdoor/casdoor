@@ -263,7 +263,7 @@ func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 	return affected != 0, nil
 }
 
-func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang string) (bool, string) {
+func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, lang string) (bool, string) {
 	organization, err := GetOrganizationByUser(oldUser)
 	if err != nil {
 		return false, err.Error()
@@ -300,6 +300,10 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, lang str
 		if item == nil {
 			newUser.DisplayName = oldUser.DisplayName
 		} else {
+			if !allowDisplayNameEmpty && newUser.DisplayName == "" {
+				return false, i18n.Translate(lang, "user:Display name cannot be empty")
+			}
+
 			itemsChanged = append(itemsChanged, item)
 		}
 	}

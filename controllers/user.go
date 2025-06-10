@@ -282,13 +282,6 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if c.Input().Get("allowEmpty") == "" {
-		if user.DisplayName == "" {
-			c.ResponseError(c.T("user:Display name cannot be empty"))
-			return
-		}
-	}
-
 	if user.MfaEmailEnabled && user.Email == "" {
 		c.ResponseError(c.T("user:MFA email is enabled but email is empty"))
 		return
@@ -310,7 +303,8 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	isAdmin := c.IsAdmin()
-	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, c.GetAcceptLanguage()); !pass {
+	allowDisplayNameEmpty := c.Input().Get("allowEmpty") != ""
+	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
