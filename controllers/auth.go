@@ -504,6 +504,8 @@ func (c *ApiController) Login() {
 					c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), authForm.CountryCode))
 					return
 				}
+			} else if verificationCodeType == object.VerifyTypeEmail {
+				checkDest = authForm.Username
 			}
 
 			// check result through Email or Phone
