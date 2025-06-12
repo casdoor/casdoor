@@ -121,8 +121,8 @@ func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientId, clientSecre
 	if err != nil {
 		return false, err
 	}
-	err = tea.Convert(resBody, &res)
 
+	err = tea.Convert(resBody, &res)
 	if err != nil {
 		return false, err
 	}
