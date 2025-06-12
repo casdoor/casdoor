@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import React, {useEffect} from "react";
+import {Button} from "antd";
+import i18next from "i18next";
 
 export const CaptchaWidget = (props) => {
   const {captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2, onChange} = props;
@@ -91,7 +93,7 @@ export const CaptchaWidget = (props) => {
       };
 
       const AWSCTimer = setInterval(() => {
-        if (!window.AWSC) {
+        if (!window.initAliyunCaptcha) {
           loadScript("https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js");
         }
 
@@ -165,5 +167,9 @@ export const CaptchaWidget = (props) => {
     }
   }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
 
-  return <div id="captcha" />;
+  return <div id="captcha">
+    {
+      captchaType === "Aliyun Captcha" && window.initAliyunCaptcha ? <Button id="captcha-button">{i18next.t("general:Verifications")}</Button> : null
+    }
+  </div>;
 };
