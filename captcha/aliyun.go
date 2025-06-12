@@ -15,32 +15,51 @@
 package captcha
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
-	"net/http"
-	"net/url"
-	"sort"
-	"strconv"
-	"strings"
-	"time"
-
-	"github.com/casdoor/casdoor/util"
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	openapiutil "github.com/alibabacloud-go/openapi-util/service"
+	teaUtil "github.com/alibabacloud-go/tea-utils/v2/service"
+	"github.com/alibabacloud-go/tea/tea"
 )
 
-const AliyunCaptchaVerifyUrl = "http://afs.aliyuncs.com"
+const AliyunCaptchaVerifyUrl = "captcha.cn-shanghai.aliyuncs.com"
 
-type captchaSuccessResponse struct {
-	Code int    `json:"Code"`
-	Msg  string `json:"Msg"`
+type VerifyCaptchaRequest struct {
+	CaptchaVerifyParam *string `json:"CaptchaVerifyParam,omitempty" xml:"CaptchaVerifyParam,omitempty"`
+	SceneId            *string `json:"SceneId,omitempty" xml:"SceneId,omitempty"`
 }
 
-type captchaFailResponse struct {
-	Code    string `json:"Code"`
-	Message string `json:"Message"`
+type VerifyCaptchaResponseBodyResult struct {
+	VerifyResult *bool `json:"VerifyResult,omitempty" xml:"VerifyResult,omitempty"`
 }
 
+type VerifyCaptchaResponseBody struct {
+	Code    *string `json:"Code,omitempty" xml:"Code,omitempty"`
+	Message *string `json:"Message,omitempty" xml:"Message,omitempty"`
+	// Id of the request
+	RequestId *string                          `json:"RequestId,omitempty" xml:"RequestId,omitempty"`
+	Result    *VerifyCaptchaResponseBodyResult `json:"Result,omitempty" xml:"Result,omitempty" type:"Struct"`
+	Success   *bool                            `json:"Success,omitempty" xml:"Success,omitempty"`
+}
+
+type VerifyIntelligentCaptchaResponseBodyResult struct {
+	VerifyCode   *string `json:"VerifyCode,omitempty" xml:"VerifyCode,omitempty"`
+	VerifyResult *bool   `json:"VerifyResult,omitempty" xml:"VerifyResult,omitempty"`
+}
+
+type VerifyIntelligentCaptchaResponseBody struct {
+	Code    *string `json:"Code,omitempty" xml:"Code,omitempty"`
+	Message *string `json:"Message,omitempty" xml:"Message,omitempty"`
+	// Id of the request
+	RequestId *string                                     `json:"RequestId,omitempty" xml:"RequestId,omitempty"`
+	Result    *VerifyIntelligentCaptchaResponseBodyResult `json:"Result,omitempty" xml:"Result,omitempty" type:"Struct"`
+	Success   *bool                                       `json:"Success,omitempty" xml:"Success,omitempty"`
+}
+
+type VerifyIntelligentCaptchaResponse struct {
+	Headers    map[string]*string                    `json:"headers,omitempty" xml:"headers,omitempty" require:"true"`
+	StatusCode *int32                                `json:"statusCode,omitempty" xml:"statusCode,omitempty" require:"true"`
+	Body       *VerifyIntelligentCaptchaResponseBody `json:"body,omitempty" xml:"body,omitempty" require:"true"`
+}
 type AliyunCaptchaProvider struct{}
 
 func NewAliyunCaptchaProvider() *AliyunCaptchaProvider {
@@ -48,68 +67,69 @@ func NewAliyunCaptchaProvider() *AliyunCaptchaProvider {
 	return captcha
 }
 
-func contentEscape(str string) string {
-	str = strings.Replace(str, " ", "%20", -1)
-	str = url.QueryEscape(str)
-	return str
-}
+func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
+	config := &openapi.Config{}
 
-func (captcha *AliyunCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
-	pathData, err := url.ParseQuery(token)
+	config.Endpoint = tea.String(AliyunCaptchaVerifyUrl)
+	config.ConnectTimeout = tea.Int(5000)
+	config.ReadTimeout = tea.Int(5000)
+	config.AccessKeyId = tea.String(clientId)
+	config.AccessKeySecret = tea.String(clientSecret)
+
+	client := new(openapi.Client)
+	err := client.Init(config)
 	if err != nil {
 		return false, err
 	}
 
-	pathData["Action"] = []string{"AuthenticateSig"}
-	pathData["Format"] = []string{"json"}
-	pathData["SignatureMethod"] = []string{"HMAC-SHA1"}
-	pathData["SignatureNonce"] = []string{strconv.FormatInt(time.Now().UnixNano(), 10)}
-	pathData["SignatureVersion"] = []string{"1.0"}
-	pathData["Timestamp"] = []string{time.Now().UTC().Format("2006-01-02T15:04:05Z")}
-	pathData["Version"] = []string{"2018-01-12"}
+	request := VerifyCaptchaRequest{CaptchaVerifyParam: tea.String(token), SceneId: tea.String(clientId2)}
 
-	var keys []string
-	for k := range pathData {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	sortQuery := ""
-	for _, k := range keys {
-		sortQuery += k + "=" + contentEscape(pathData[k][0]) + "&"
-	}
-	sortQuery = strings.TrimSuffix(sortQuery, "&")
-
-	stringToSign := fmt.Sprintf("GET&%s&%s", url.QueryEscape("/"), url.QueryEscape(sortQuery))
-
-	signature := util.GetHmacSha1(clientSecret+"&", stringToSign)
-
-	resp, err := http.Get(fmt.Sprintf("%s?%s&Signature=%s", AliyunCaptchaVerifyUrl, sortQuery, url.QueryEscape(signature)))
+	err = teaUtil.ValidateModel(&request)
 	if err != nil {
 		return false, err
 	}
 
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+	runtime := &teaUtil.RuntimeOptions{}
+
+	body := map[string]interface{}{}
+	if !tea.BoolValue(teaUtil.IsUnset(request.CaptchaVerifyParam)) {
+		body["CaptchaVerifyParam"] = request.CaptchaVerifyParam
+	}
+
+	if !tea.BoolValue(teaUtil.IsUnset(request.SceneId)) {
+		body["SceneId"] = request.SceneId
+	}
+
+	req := &openapi.OpenApiRequest{
+		Body: openapiutil.ParseToMap(body),
+	}
+	params := &openapi.Params{
+		Action:      tea.String("VerifyIntelligentCaptcha"),
+		Version:     tea.String("2023-03-05"),
+		Protocol:    tea.String("HTTPS"),
+		Pathname:    tea.String("/"),
+		Method:      tea.String("POST"),
+		AuthType:    tea.String("AK"),
+		Style:       tea.String("RPC"),
+		ReqBodyType: tea.String("formData"),
+		BodyType:    tea.String("json"),
+	}
+
+	res := &VerifyIntelligentCaptchaResponse{}
+
+	resBody, err := client.CallApi(params, req, runtime)
 	if err != nil {
 		return false, err
 	}
 
-	return handleCaptchaResponse(body)
-}
-
-func handleCaptchaResponse(body []byte) (bool, error) {
-	captchaResp := &captchaSuccessResponse{}
-	err := json.Unmarshal(body, captchaResp)
+	err = tea.Convert(resBody, &res)
 	if err != nil {
-		captchaFailResp := &captchaFailResponse{}
-		err = json.Unmarshal(body, captchaFailResp)
-		if err != nil {
-			return false, err
-		}
-
-		return false, errors.New(captchaFailResp.Message)
+		return false, err
 	}
 
-	return true, nil
+	if res.Body.Result.VerifyResult != nil && *res.Body.Result.VerifyResult {
+		return true, nil
+	}
+
+	return false, nil
 }

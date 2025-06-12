@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import React, {useEffect} from "react";
+import {Button} from "antd";
+import i18next from "i18next";
 
 export const CaptchaWidget = (props) => {
   const {captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2, onChange} = props;
@@ -85,23 +87,34 @@ export const CaptchaWidget = (props) => {
       break;
     }
     case "Aliyun Captcha": {
+      window.AliyunCaptchaConfig = {
+        region: "cn",
+        prefix: clientSecret2,
+      };
+
       const AWSCTimer = setInterval(() => {
-        if (!window.AWSC) {
-          loadScript("https://g.alicdn.com/AWSC/AWSC/awsc.js");
+        if (!window.initAliyunCaptcha) {
+          loadScript("https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js");
         }
 
-        if (window.AWSC) {
+        if (window.initAliyunCaptcha) {
           if (clientSecret2 && clientSecret2 !== "***") {
-            window.AWSC.use(subType, function(state, module) {
-              module.init({
-                appkey: clientSecret2,
-                scene: clientId2,
-                renderTo: "captcha",
-                success: function(data) {
-                  onChange(`SessionId=${data.sessionId}&AccessKeyId=${siteKey}&Scene=${clientId2}&AppKey=${clientSecret2}&Token=${data.token}&Sig=${data.sig}&RemoteIp=192.168.0.1`);
-                },
-              });
+            window.initAliyunCaptcha({
+              SceneId: clientId2,
+              mode: "embed",
+              element: "#captcha",
+              button: "#captcha-button",
+              captchaVerifyCallback: (data) => {
+                onChange(data.toString());
+              },
+              slideStyle: {
+                width: 320,
+                height: 40,
+              },
+              language: "cn",
+              immediate: true,
             });
+
           }
           clearInterval(AWSCTimer);
         }
@@ -154,5 +167,9 @@ export const CaptchaWidget = (props) => {
     }
   }, [captchaType, subType, siteKey, clientSecret, clientId2, clientSecret2]);
 
-  return <div id="captcha" />;
+  return <div id="captcha">
+    {
+      captchaType === "Aliyun Captcha" && window.initAliyunCaptcha ? <Button id="captcha-button">{i18next.t("general:Verifications")}</Button> : null
+    }
+  </div>;
 };

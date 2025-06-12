@@ -44,6 +44,12 @@ export const CaptchaModal = (props) => {
     }
   }, [visible]);
 
+  useEffect(() => {
+    if (captchaToken !== "" && captchaType !== "Default") {
+      handleOk();
+    }
+  }, [captchaToken]);
+
   const handleOk = () => {
     onOk?.(captchaType, captchaToken, clientSecret);
   };
@@ -138,19 +144,18 @@ export const CaptchaModal = (props) => {
       if (!regex.test(captchaToken)) {
         isOkDisabled = true;
       }
-    } else if (captchaToken === "") {
-      isOkDisabled = true;
+      return [
+        null,
+        <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("general:OK")}</Button>,
+      ];
     }
 
-    return [
-      <Button key="cancel" onClick={handleCancel}>{i18next.t("general:Cancel")}</Button>,
-      <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("general:OK")}</Button>,
-    ];
+    return null;
   };
 
   return (
     <Modal
-      closable={false}
+      closable={true}
       maskClosable={false}
       destroyOnClose={true}
       title={i18next.t("general:Captcha")}
@@ -160,6 +165,7 @@ export const CaptchaModal = (props) => {
       width={350}
       footer={renderFooter()}
       onCancel={handleCancel}
+      afterClose={handleCancel}
       onOk={handleOk}
     >
       <div style={{marginTop: "20px", marginBottom: "50px"}}>
