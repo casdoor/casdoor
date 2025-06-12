@@ -144,7 +144,7 @@ export const CaptchaModal = (props) => {
 
     return [
       <Button key="cancel" onClick={handleCancel}>{i18next.t("general:Cancel")}</Button>,
-      <Button key="ok" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("general:OK")}</Button>,
+      <Button key="ok" id="captcha-button" disabled={isOkDisabled} type="primary" onClick={handleOk}>{i18next.t("general:OK")}</Button>,
     ];
   };
 

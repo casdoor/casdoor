@@ -35,7 +35,7 @@ func NewGEETESTCaptchaProvider() *GEETESTCaptchaProvider {
 	return captcha
 }
 
-func (captcha *GEETESTCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *GEETESTCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
 	pathData, err := url.ParseQuery(token)
 	if err != nil {
 		return false, err

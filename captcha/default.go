@@ -23,6 +23,6 @@ func NewDefaultCaptchaProvider() *DefaultCaptchaProvider {
 	return captcha
 }
 
-func (captcha *DefaultCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *DefaultCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
 	return object.VerifyCaptcha(clientSecret, token), nil
 }

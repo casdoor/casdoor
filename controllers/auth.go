@@ -571,7 +571,7 @@ func (c *ApiController) Login() {
 				}
 
 				var isHuman bool
-				isHuman, err = captcha.VerifyCaptchaByCaptchaType(authForm.CaptchaType, authForm.CaptchaToken, authForm.ClientSecret)
+				isHuman, err = captcha.VerifyCaptchaByCaptchaType(authForm.CaptchaType, authForm.CaptchaToken, captchaProvider.ClientId, authForm.ClientSecret, captchaProvider.ClientId2)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
