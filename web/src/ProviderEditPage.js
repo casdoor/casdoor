@@ -371,11 +371,6 @@ class ProviderEditPage extends React.Component {
           {id: "Third-party", name: i18next.t("provider:Third-party")},
         ]
       );
-    } else if (type === "Aliyun Captcha") {
-      return [
-        {id: "nc", name: i18next.t("provider:Sliding Validation")},
-        {id: "ic", name: i18next.t("provider:Intelligent Validation")},
-      ];
     } else {
       return [];
     }
@@ -674,7 +669,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "Aliyun Captcha" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
