@@ -16,11 +16,10 @@ package object
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/casdoor/casdoor/idp"
-
 	"github.com/casdoor/casdoor/pp"
-
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -42,6 +41,7 @@ type Product struct {
 	IsRecharge  bool     `json:"isRecharge"`
 	Providers   []string `xorm:"varchar(255)" json:"providers"`
 	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
+	ReturnType  string   `xorm:"varchar(100)" json:"returnType"`
 
 	State string `xorm:"varchar(100)" json:"state"`
 
@@ -161,7 +161,7 @@ func (product *Product) getProvider(providerName string) (*Provider, error) {
 	return provider, nil
 }
 
-func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64) (payment *Payment, attachInfo map[string]interface{}, err error) {
+func BuyProduct(id string, user *User, providerName, pricingName, planName, host, paymentEnv string, customPrice float64, remark string) (payment *Payment, attachInfo map[string]interface{}, err error) {
 	product, err := GetProduct(id)
 	if err != nil {
 		return nil, nil, err
@@ -193,7 +193,22 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	paymentName := fmt.Sprintf("payment_%v", util.GenerateTimeId())
 
 	originFrontend, originBackend := getOriginFromHost(host)
-	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
+
+	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result?source=pay", originFrontend, owner, paymentName)
+	if product.ReturnType == "directRedirect" {
+		// give some useful callback parameter to SuccessUrl
+		returnUrl = product.ReturnUrl
+		parsedURL, err := url.Parse(returnUrl)
+		// when err != nil, just use original returnUrl
+		if err == nil {
+			params := parsedURL.Query()
+			params.Set("owner", owner)
+			params.Set("paymentName", paymentName)
+			parsedURL.RawQuery = params.Encode()
+			returnUrl = parsedURL.String()
+		}
+	}
+
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
 	if user.Type == "paid-user" {
 		// Create a subscription for `paid-user`
@@ -262,6 +277,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		Currency:           product.Currency,
 		Price:              product.Price,
 		ReturnUrl:          product.ReturnUrl,
+		ReturnType:         product.ReturnType,
 		IsRecharge:         product.IsRecharge,
 
 		User:       user.Name,
@@ -269,6 +285,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		SuccessUrl: returnUrl,
 		State:      pp.PaymentStateCreated,
 		OutOrderId: payResp.OrderId,
+		Remark:     remark,
 	}
 
 	transaction := &Transaction{
@@ -390,4 +407,8 @@ func UpdateProductForPlan(plan *Plan, product *Product) {
 	product.Price = plan.Price
 	product.Currency = plan.Currency
 	product.Providers = plan.PaymentProviders
+}
+
+type BuyProductBody struct {
+	Remark string `json:"remark"`
 }

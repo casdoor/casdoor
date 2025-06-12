@@ -158,6 +158,7 @@ func (c *ApiController) DeleteProduct() {
 // @Description buy product
 // @Param   id     query    string  true        "The id ( owner/name ) of the product"
 // @Param   providerName    query    string  true  "The name of the provider"
+// @Param   body    body    object.BuyProductBody  false  "The remark of the payment"
 // @Success 200 {object} controllers.Response The Response object
 // @router /buy-product [post]
 func (c *ApiController) BuyProduct() {
@@ -174,6 +175,15 @@ func (c *ApiController) BuyProduct() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	var buyProductBody object.BuyProductBody
+	if len(c.Ctx.Input.RequestBody) > 0 {
+		bodyError := json.Unmarshal(c.Ctx.Input.RequestBody, &buyProductBody)
+		if bodyError != nil {
+			c.ResponseError(bodyError.Error())
+			return
+		}
 	}
 
 	// buy `pricingName/planName` for `paidUserName`
@@ -204,7 +214,7 @@ func (c *ApiController) BuyProduct() {
 		return
 	}
 
-	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice)
+	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice, buyProductBody.Remark)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
