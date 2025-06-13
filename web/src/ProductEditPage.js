@@ -290,6 +290,26 @@ class ProductEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Return Type"), i18next.t("product:Return Type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.product.returnType} onChange={(value => {
+              this.updateProductField("returnType", value);
+            })}>
+              {
+                [
+                  {id: "manualRedirect", name: i18next.t("product:Return Type - manualRedirect")},
+                  {id: "directRedirect", name: i18next.t("product:Return Type - directRedirect")},
+                  {id: "paidAutoRedirect", name: i18next.t("product:Return Type - paidAutoRedirect")},
+                  {id: "paidAutoClose", name: i18next.t("product:Return Type - paidAutoClose")},
+                  {id: "autoClose", name: i18next.t("product:Return Type - autoClose")},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:State"), i18next.t("general:State - Tooltip"))} :
           </Col>
           <Col span={22} >
