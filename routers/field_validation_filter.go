@@ -17,8 +17,9 @@ package routers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/beego/beego/context"
 	"strings"
+
+	"github.com/beego/beego/context"
 )
 
 var forbiddenChars = "/"
