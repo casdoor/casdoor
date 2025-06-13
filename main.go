@@ -63,6 +63,7 @@ func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, routers.ApiFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.PrometheusFilter)
 	beego.InsertFilter("*", beego.BeforeRouter, routers.RecordMessage)
+	beego.InsertFilter("*", beego.BeforeRouter, routers.FieldValidationFilter)
 	beego.InsertFilter("*", beego.AfterExec, routers.AfterRecordMessage, false)
 
 	beego.BConfig.WebConfig.Session.SessionOn = true
