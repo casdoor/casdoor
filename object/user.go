@@ -48,7 +48,6 @@ var ThirdPartIdpList = []string{"github", "google", "qq", "wechat", "facebook", 
 	"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 	"spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
 	"yammer", "yandex", "zoom", "custom"}
-
 var UserBaseColumns = []string{
 	"owner", "display_name", "avatar", "first_name", "last_name",
 	"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
