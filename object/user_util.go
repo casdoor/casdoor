@@ -263,17 +263,31 @@ func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 	return affected != 0, nil
 }
 
-func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, lang string) (bool, string) {
+func userVisible(isAdmin bool, item *AccountItem) bool {
+	if item == nil {
+		return false
+	}
+
+	if item.ViewRule == "Admin" && !isAdmin {
+		return false
+	}
+
+	return true
+}
+
+func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, columns *[]string, lang string) (bool, string) {
 	organization, err := GetOrganizationByUser(oldUser)
 	if err != nil {
 		return false, err.Error()
 	}
 
+	*columns = append(*columns, UserBaseColumns...)
+
 	var itemsChanged []*AccountItem
 
 	if oldUser.Owner != newUser.Owner {
 		item := GetAccountItemByName("Organization", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Owner = oldUser.Owner
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -281,7 +295,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Name != newUser.Name {
 		item := GetAccountItemByName("Name", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Name = oldUser.Name
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -289,7 +303,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Id != newUser.Id {
 		item := GetAccountItemByName("ID", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Id = oldUser.Id
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -297,7 +311,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.DisplayName != newUser.DisplayName {
 		item := GetAccountItemByName("Display name", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.DisplayName = oldUser.DisplayName
 		} else {
 			if !allowDisplayNameEmpty && newUser.DisplayName == "" {
@@ -309,7 +323,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Avatar != newUser.Avatar {
 		item := GetAccountItemByName("Avatar", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Avatar = oldUser.Avatar
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -317,7 +331,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Type != newUser.Type {
 		item := GetAccountItemByName("User type", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Type = oldUser.Type
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -326,7 +340,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	// The password is *** when not modified
 	if oldUser.Password != newUser.Password && newUser.Password != "***" {
 		item := GetAccountItemByName("Password", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Password = oldUser.Password
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -334,7 +348,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Email != newUser.Email {
 		item := GetAccountItemByName("Email", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Email = oldUser.Email
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -342,7 +356,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Phone != newUser.Phone {
 		item := GetAccountItemByName("Phone", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Phone = oldUser.Phone
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -350,7 +364,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.CountryCode != newUser.CountryCode {
 		item := GetAccountItemByName("Country code", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.CountryCode = oldUser.CountryCode
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -358,7 +372,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Region != newUser.Region {
 		item := GetAccountItemByName("Country/Region", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Region = oldUser.Region
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -366,7 +380,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Location != newUser.Location {
 		item := GetAccountItemByName("Location", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Location = oldUser.Location
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -374,7 +388,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Affiliation != newUser.Affiliation {
 		item := GetAccountItemByName("Affiliation", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Affiliation = oldUser.Affiliation
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -382,7 +396,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Title != newUser.Title {
 		item := GetAccountItemByName("Title", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Title = oldUser.Title
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -390,7 +404,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Homepage != newUser.Homepage {
 		item := GetAccountItemByName("Homepage", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Homepage = oldUser.Homepage
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -398,7 +412,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Bio != newUser.Bio {
 		item := GetAccountItemByName("Bio", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Bio = oldUser.Bio
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -406,7 +420,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.Tag != newUser.Tag {
 		item := GetAccountItemByName("Tag", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Tag = oldUser.Tag
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -414,7 +428,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.SignupApplication != newUser.SignupApplication {
 		item := GetAccountItemByName("Signup application", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.SignupApplication = oldUser.SignupApplication
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -423,7 +437,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Gender != newUser.Gender {
 		item := GetAccountItemByName("Gender", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Gender = oldUser.Gender
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -432,7 +446,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Birthday != newUser.Birthday {
 		item := GetAccountItemByName("Birthday", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Birthday = oldUser.Birthday
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -441,7 +455,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Education != newUser.Education {
 		item := GetAccountItemByName("Education", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Education = oldUser.Education
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -450,7 +464,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.IdCard != newUser.IdCard {
 		item := GetAccountItemByName("ID card", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IdCard = oldUser.IdCard
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -459,7 +473,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.IdCardType != newUser.IdCardType {
 		item := GetAccountItemByName("ID card type", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IdCardType = oldUser.IdCardType
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -467,10 +481,13 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 
 	oldUserPropertiesJson, _ := json.Marshal(oldUser.Properties)
+	if newUser.Properties == nil {
+		newUser.Properties = make(map[string]string)
+	}
 	newUserPropertiesJson, _ := json.Marshal(newUser.Properties)
 	if string(oldUserPropertiesJson) != string(newUserPropertiesJson) {
 		item := GetAccountItemByName("Properties", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Properties = oldUser.Properties
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -479,7 +496,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.PreferredMfaType != newUser.PreferredMfaType {
 		item := GetAccountItemByName("Multi-factor authentication", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.PreferredMfaType = oldUser.PreferredMfaType
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -490,13 +507,14 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		oldUser.Groups = []string{}
 	}
 	oldUserGroupsJson, _ := json.Marshal(oldUser.Groups)
+
 	if newUser.Groups == nil {
 		newUser.Groups = []string{}
 	}
 	newUserGroupsJson, _ := json.Marshal(newUser.Groups)
 	if string(oldUserGroupsJson) != string(newUserGroupsJson) {
 		item := GetAccountItemByName("Groups", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Groups = oldUser.Groups
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -514,7 +532,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	newUserAddressJson, _ := json.Marshal(newUser.Address)
 	if string(oldUserAddressJson) != string(newUserAddressJson) {
 		item := GetAccountItemByName("Address", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Address = oldUser.Address
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -523,7 +541,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if newUser.FaceIds != nil {
 		item := GetAccountItemByName("Face ID", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.FaceIds = oldUser.FaceIds
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -532,7 +550,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.IsAdmin != newUser.IsAdmin {
 		item := GetAccountItemByName("Is admin", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IsAdmin = oldUser.IsAdmin
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -541,7 +559,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.IsForbidden != newUser.IsForbidden {
 		item := GetAccountItemByName("Is forbidden", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IsForbidden = oldUser.IsForbidden
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -549,7 +567,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.IsDeleted != newUser.IsDeleted {
 		item := GetAccountItemByName("Is deleted", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IsDeleted = oldUser.IsDeleted
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -557,7 +575,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.NeedUpdatePassword != newUser.NeedUpdatePassword {
 		item := GetAccountItemByName("Need update password", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.NeedUpdatePassword = oldUser.NeedUpdatePassword
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -565,7 +583,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 	}
 	if oldUser.IpWhitelist != newUser.IpWhitelist {
 		item := GetAccountItemByName("IP whitelist", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.IpWhitelist = oldUser.IpWhitelist
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -574,7 +592,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Balance != newUser.Balance {
 		item := GetAccountItemByName("Balance", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Balance = oldUser.Balance
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -583,7 +601,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Score != newUser.Score {
 		item := GetAccountItemByName("Score", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Score = oldUser.Score
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -592,7 +610,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Karma != newUser.Karma {
 		item := GetAccountItemByName("Karma", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Karma = oldUser.Karma
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -601,7 +619,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Language != newUser.Language {
 		item := GetAccountItemByName("Language", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Language = oldUser.Language
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -610,7 +628,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Ranking != newUser.Ranking {
 		item := GetAccountItemByName("Ranking", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Ranking = oldUser.Ranking
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -619,7 +637,7 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Currency != newUser.Currency {
 		item := GetAccountItemByName("Currency", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Currency = oldUser.Currency
 		} else {
 			itemsChanged = append(itemsChanged, item)
@@ -628,11 +646,16 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 
 	if oldUser.Hash != newUser.Hash {
 		item := GetAccountItemByName("Hash", organization)
-		if item == nil {
+		if !userVisible(isAdmin, item) {
 			newUser.Hash = oldUser.Hash
 		} else {
 			itemsChanged = append(itemsChanged, item)
 		}
+	}
+
+	item := GetAccountItemByName("3rd-party logins", organization)
+	if userVisible(isAdmin, item) {
+		*columns = append(*columns, ThirdPartIdpList...)
 	}
 
 	for _, accountItem := range itemsChanged {

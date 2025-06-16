@@ -197,8 +197,8 @@ func (c *ApiController) GetUser() {
 		return
 	}
 
+	var organization *object.Organization
 	if user != nil {
-		var organization *object.Organization
 		organization, err = object.GetOrganizationByUser(user)
 		if err != nil {
 			c.ResponseError(err.Error())
@@ -235,6 +235,14 @@ func (c *ApiController) GetUser() {
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
+	}
+
+	if organization != nil && user != nil {
+		user, err = object.GetFilteredUser(user, c.IsAdmin(), c.IsAdminOrSelf(user), organization.AccountItems)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	c.ResponseOk(user)
@@ -302,14 +310,15 @@ func (c *ApiController) UpdateUser() {
 		user.Name = strings.ToLower(user.Name)
 	}
 
+	columns := []string{}
+
 	isAdmin := c.IsAdmin()
 	allowDisplayNameEmpty := c.Input().Get("allowEmpty") != ""
-	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
+	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, &columns, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
 
-	columns := []string{}
 	if columnsStr != "" {
 		columns = strings.Split(columnsStr, ",")
 	}
