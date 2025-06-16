@@ -310,15 +310,14 @@ func (c *ApiController) UpdateUser() {
 		user.Name = strings.ToLower(user.Name)
 	}
 
-	columns := []string{}
-
 	isAdmin := c.IsAdmin()
 	allowDisplayNameEmpty := c.Input().Get("allowEmpty") != ""
-	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, &columns, c.GetAcceptLanguage()); !pass {
+	if pass, err := object.CheckPermissionForUpdateUser(oldUser, &user, isAdmin, allowDisplayNameEmpty, c.GetAcceptLanguage()); !pass {
 		c.ResponseError(err)
 		return
 	}
 
+	columns := []string{}
 	if columnsStr != "" {
 		columns = strings.Split(columnsStr, ",")
 	}

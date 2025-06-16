@@ -275,13 +275,11 @@ func userVisible(isAdmin bool, item *AccountItem) bool {
 	return true
 }
 
-func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, columns *[]string, lang string) (bool, string) {
+func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDisplayNameEmpty bool, lang string) (bool, string) {
 	organization, err := GetOrganizationByUser(oldUser)
 	if err != nil {
 		return false, err.Error()
 	}
-
-	*columns = append(*columns, UserBaseColumns...)
 
 	var itemsChanged []*AccountItem
 
@@ -651,11 +649,6 @@ func CheckPermissionForUpdateUser(oldUser, newUser *User, isAdmin bool, allowDis
 		} else {
 			itemsChanged = append(itemsChanged, item)
 		}
-	}
-
-	item := GetAccountItemByName("3rd-party logins", organization)
-	if userVisible(isAdmin, item) {
-		*columns = append(*columns, ThirdPartIdpList...)
 	}
 
 	for _, accountItem := range itemsChanged {

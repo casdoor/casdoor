@@ -40,29 +40,7 @@ const (
 
 const UserEnforcerId = "built-in/user-enforcer-built-in"
 
-var (
-	userEnforcer     *UserGroupEnforcer
-	ThirdPartIdpList = []string{"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo",
-		"gitee", "linkedin", "wecom", "lark", "gitlab", "adfs", "baidu", "alipay", "casdoor",
-		"infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai",
-		"line", "amazon", "auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer",
-		"digitalocean", "discord", "dropbox", "eveonline", "fitbit", "gitea", "heroku", "influxcloud",
-		"instagram", "intercom", "kakao", "lastfm", "mailru", "meetup", "microsoftonline", "naver",
-		"nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
-		"spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk",
-		"uber", "vk", "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "custom"}
-	UserBaseColumns = []string{
-		"owner", "display_name", "avatar", "first_name", "last_name",
-		"location", "address", "country_code", "region", "language", "affiliation",
-		"title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender",
-		"birthday", "education", "score", "karma", "ranking", "signup_application",
-		"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties",
-		"webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
-		"signin_wrong_times", "last_change_password_time", "last_signin_wrong_time",
-		"groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
-		"need_update_password", "ip_whitelist", "type",
-	}
-)
+var userEnforcer *UserGroupEnforcer
 
 func InitUserManager() {
 	enforcer, err := GetInitializedEnforcer(UserEnforcerId)
@@ -706,18 +684,16 @@ func GetFilteredUser(user *User, isAdmin bool, isAdminOrSelf bool, accountItems 
 			continue
 		}
 
-		lowerCaseAccountItemNames := []string{strings.ToLower(accountItem.Name)}
-		lowerCaseAccountItemNames[0] = strings.ReplaceAll(lowerCaseAccountItemNames[0], " ", "")
+		lowerCaseAccountItemName := strings.ToLower(accountItem.Name)
+		lowerCaseAccountItemName = strings.ReplaceAll(lowerCaseAccountItemName, " ", "")
 
 		switch accountItem.Name {
 		case "Multi-factor authentication":
-			lowerCaseAccountItemNames[0] = strings.ToLower("PreferredMfaType")
-		case "3rd-party logins":
-			lowerCaseAccountItemNames = ThirdPartIdpList
+			lowerCaseAccountItemName = strings.ToLower("PreferredMfaType")
 		case "User type":
-			lowerCaseAccountItemNames[0] = "type"
+			lowerCaseAccountItemName = "type"
 		case "Country/Region":
-			lowerCaseAccountItemNames[0] = "region"
+			lowerCaseAccountItemName = "region"
 		case "ID card info":
 			{
 				infoKeys := []string{"idCardWithPerson", "idCardFront", "idCardWithPerson"}
@@ -730,14 +706,12 @@ func GetFilteredUser(user *User, isAdmin bool, isAdminOrSelf bool, accountItems 
 			}
 		}
 
-		for _, accountItemField := range lowerCaseAccountItemNames {
-			fieldIdx, ok := userFieldMap[accountItemField]
-			if !ok {
-				continue
-			}
-
-			reflectedUser.Field(fieldIdx).SetZero()
+		fieldIdx, ok := userFieldMap[lowerCaseAccountItemName]
+		if !ok {
+			continue
 		}
+
+		reflectedUser.Field(fieldIdx).SetZero()
 	}
 
 	return user, nil
@@ -806,9 +780,19 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	if len(columns) == 0 {
-		columns = []string{}
-		columns = append(columns, UserBaseColumns...)
-		columns = append(columns, ThirdPartIdpList...)
+		columns = []string{
+			"owner", "display_name", "avatar", "first_name", "last_name",
+			"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
+			"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
+			"signin_wrong_times", "last_change_password_time", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
+			"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
+			"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai", "line", "amazon",
+			"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
+			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
+			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
+			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
+		}
 	}
 	if isAdmin {
 		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance")
