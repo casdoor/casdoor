@@ -661,6 +661,62 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 	return user, nil
 }
 
+func GetFilteredUser(user *User, isAdmin bool, isAdminOrSelf bool, accountItems []*AccountItem) (*User, error) {
+	if accountItems == nil || len(accountItems) == 0 {
+		return user, nil
+	}
+
+	userFieldMap := map[string]int{}
+
+	reflectedUserField := reflect.TypeOf(User{})
+	for i := 0; i < reflectedUserField.NumField(); i++ {
+		userFieldMap[strings.ToLower(reflectedUserField.Field(i).Name)] = i
+	}
+
+	reflectedUser := reflect.ValueOf(user).Elem()
+
+	for _, accountItem := range accountItems {
+		if accountItem.ViewRule == "Public" {
+			continue
+		} else if accountItem.ViewRule == "Self" && isAdminOrSelf {
+			continue
+		} else if accountItem.ViewRule == "Admin" && isAdmin {
+			continue
+		}
+
+		lowerCaseAccountItemName := strings.ToLower(accountItem.Name)
+		lowerCaseAccountItemName = strings.ReplaceAll(lowerCaseAccountItemName, " ", "")
+
+		switch accountItem.Name {
+		case "Multi-factor authentication":
+			lowerCaseAccountItemName = strings.ToLower("PreferredMfaType")
+		case "User type":
+			lowerCaseAccountItemName = "type"
+		case "Country/Region":
+			lowerCaseAccountItemName = "region"
+		case "ID card info":
+			{
+				infoKeys := []string{"idCardWithPerson", "idCardFront", "idCardWithPerson"}
+				for _, infoKey := range infoKeys {
+					if _, ok := user.Properties[infoKey]; ok {
+						user.Properties[infoKey] = ""
+					}
+				}
+				continue
+			}
+		}
+
+		fieldIdx, ok := userFieldMap[lowerCaseAccountItemName]
+		if !ok {
+			continue
+		}
+
+		reflectedUser.Field(fieldIdx).SetZero()
+	}
+
+	return user, nil
+}
+
 func GetMaskedUsers(users []*User, errs ...error) ([]*User, error) {
 	if len(errs) > 0 && errs[0] != nil {
 		return nil, errs[0]
