@@ -42,18 +42,25 @@ const UserEnforcerId = "built-in/user-enforcer-built-in"
 
 var (
 	userEnforcer     *UserGroupEnforcer
-	ThirdPartIdpList = []string{"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs",
-		"baidu", "alipay", "casdoor", "infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai", "line", "amazon",
-		"auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
-		"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
-		"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
-		"spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-		"yammer", "yandex", "zoom", "custom"}
+	ThirdPartIdpList = []string{"github", "google", "qq", "wechat", "facebook", "dingtalk", "weibo",
+		"gitee", "linkedin", "wecom", "lark", "gitlab", "adfs", "baidu", "alipay", "casdoor",
+		"infoflow", "apple", "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai",
+		"line", "amazon", "auth0", "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer",
+		"digitalocean", "discord", "dropbox", "eveonline", "fitbit", "gitea", "heroku", "influxcloud",
+		"instagram", "intercom", "kakao", "lastfm", "mailru", "meetup", "microsoftonline", "naver",
+		"nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
+		"spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk",
+		"uber", "vk", "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "custom"}
 	UserBaseColumns = []string{
 		"owner", "display_name", "avatar", "first_name", "last_name",
-		"location", "address", "country_code", "region", "language", "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday", "education", "score", "karma", "ranking", "signup_application",
-		"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties", "webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
-		"signin_wrong_times", "last_change_password_time", "last_signin_wrong_time", "groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled", "need_update_password", "ip_whitelist", "type",
+		"location", "address", "country_code", "region", "language", "affiliation",
+		"title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender",
+		"birthday", "education", "score", "karma", "ranking", "signup_application",
+		"is_admin", "is_forbidden", "is_deleted", "hash", "is_default_avatar", "properties",
+		"webauthnCredentials", "managedAccounts", "face_ids", "mfaAccounts",
+		"signin_wrong_times", "last_change_password_time", "last_signin_wrong_time",
+		"groups", "access_key", "access_secret", "mfa_phone_enabled", "mfa_email_enabled",
+		"need_update_password", "ip_whitelist", "type",
 	}
 )
 
