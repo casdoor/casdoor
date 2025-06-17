@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,40 +17,40 @@ package routers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/beego/beego/context"
 )
 
-var forbiddenChars = "/"
-
-var fieldValidationRules = map[string][]string{
-	"/api/add-application":    {"name"},
-	"/api/update-application": {"name"},
-}
+var forbiddenChars = `/?:@#&%=+;`
 
 func FieldValidationFilter(ctx *context.Context) {
 	if ctx.Input.Method() != "POST" {
 		return
 	}
 
-	fields, ok := fieldValidationRules[ctx.Request.URL.Path]
-	if !ok {
+	urlPath := ctx.Request.URL.Path
+	if !(strings.HasPrefix(urlPath, "/api/add-") || strings.HasPrefix(urlPath, "/api/update-")) {
 		return
 	}
+
+	bodyBytes, err := io.ReadAll(ctx.Request.Body)
+	if err != nil || len(bodyBytes) == 0 {
+		return
+	}
+
+	ctx.Request.Body = io.NopCloser(strings.NewReader(string(bodyBytes)))
 
 	var requestData map[string]interface{}
-	if err := json.NewDecoder(ctx.Request.Body).Decode(&requestData); err != nil {
-		responseError(ctx, "Invalid JSON body")
+	if err := json.Unmarshal(bodyBytes, &requestData); err != nil {
 		return
 	}
 
-	for _, field := range fields {
-		if value, ok := requestData[field].(string); ok {
-			if strings.ContainsAny(value, forbiddenChars) {
-				responseError(ctx, fmt.Sprintf("Field '%s' contains forbidden characters", field))
-				return
-			}
+	if value, ok := requestData["name"].(string); ok {
+		if strings.ContainsAny(value, forbiddenChars) {
+			responseError(ctx, fmt.Sprintf("Field 'name' contains forbidden characters: %q", forbiddenChars))
+			return
 		}
 	}
 }
