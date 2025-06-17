@@ -729,7 +729,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 	excelMap := []map[string]string{}
 	structFieldMap := map[string]int{}
 
-	reflectedStruct := reflect.TypeOf((*T)(nil)).Elem()
+	reflectedStruct := reflect.TypeOf(*new(T))
 	for i := 0; i < reflectedStruct.NumField(); i++ {
 		structFieldMap[strings.ToLower(reflectedStruct.Field(i).Name)] = i
 	}
@@ -750,7 +750,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 	var err error
 
 	for _, m := range excelMap {
-		instance := reflect.New(reflectedStruct).Interface().(*T)
+		instance := new(T)
 		reflectedInstance := reflect.ValueOf(instance).Elem()
 
 		for k, v := range m {
