@@ -181,6 +181,41 @@ func AddGroups(groups []*Group) (bool, error) {
 	return affected != 0, nil
 }
 
+func AddGroupsInBatch(groups []*Group) (bool, error) {
+	if len(groups) == 0 {
+		return false, nil
+	}
+
+	session := ormer.Engine.NewSession()
+	defer session.Close()
+	err := session.Begin()
+	if err != nil {
+		return false, err
+	}
+
+	for _, group := range groups {
+		err = checkGroupName(group.Name)
+		if err != nil {
+			return false, err
+		}
+
+		affected, err := session.Insert(group)
+		if err != nil {
+			return false, err
+		}
+		if affected == 0 {
+			return false, nil
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 func deleteGroup(group *Group) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{group.Owner, group.Name}).Delete(&Group{})
 	if err != nil {
