@@ -724,14 +724,14 @@ func setReflectAttr[T any](fieldValue *reflect.Value, fieldString string) error 
 	return nil
 }
 
-func StringArrayToUser(stringArray [][]string) ([]*User, error) {
+func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 	fieldNames := stringArray[0]
 	excelMap := []map[string]string{}
-	userFieldMap := map[string]int{}
+	structFieldMap := map[string]int{}
 
-	reflectedUser := reflect.TypeOf(User{})
-	for i := 0; i < reflectedUser.NumField(); i++ {
-		userFieldMap[strings.ToLower(reflectedUser.Field(i).Name)] = i
+	reflectedStruct := reflect.TypeOf((*T)(nil)).Elem()
+	for i := 0; i < reflectedStruct.NumField(); i++ {
+		structFieldMap[strings.ToLower(reflectedStruct.Field(i).Name)] = i
 	}
 
 	for idx, field := range stringArray {
@@ -746,22 +746,23 @@ func StringArrayToUser(stringArray [][]string) ([]*User, error) {
 		excelMap = append(excelMap, tempMap)
 	}
 
-	users := []*User{}
+	instances := []*T{}
 	var err error
 
-	for _, u := range excelMap {
-		user := User{}
-		reflectedUser := reflect.ValueOf(&user).Elem()
-		for k, v := range u {
+	for _, m := range excelMap {
+		instance := reflect.New(reflectedStruct).Interface().(*T)
+		reflectedInstance := reflect.ValueOf(instance).Elem()
+
+		for k, v := range m {
 			if v == "" || v == "null" || v == "[]" || v == "{}" {
 				continue
 			}
 			fName := strings.ToLower(strings.ReplaceAll(k, "_", ""))
-			fieldIdx, ok := userFieldMap[fName]
+			fieldIdx, ok := structFieldMap[fName]
 			if !ok {
 				continue
 			}
-			fv := reflectedUser.Field(fieldIdx)
+			fv := reflectedInstance.Field(fieldIdx)
 			if !fv.IsValid() {
 				continue
 			}
@@ -806,8 +807,8 @@ func StringArrayToUser(stringArray [][]string) ([]*User, error) {
 				return nil, err
 			}
 		}
-		users = append(users, &user)
+		instances = append(instances, instance)
 	}
 
-	return users, nil
+	return instances, nil
 }

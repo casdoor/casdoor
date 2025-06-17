@@ -81,7 +81,7 @@ func UploadUsers(owner string, path string) (bool, error) {
 		return false, err
 	}
 
-	transUsers, err := StringArrayToUser(table)
+	transUsers, err := StringArrayToStruct[User](table)
 	if err != nil {
 		return false, err
 	}
