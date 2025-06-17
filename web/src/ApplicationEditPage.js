@@ -281,7 +281,8 @@ class ApplicationEditPage extends React.Component {
             <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
               const value = e.target.value;
               if (/[/?:@#&%=+;]/.test(value)) {
-                message.error(i18next.t("application:Invalid characters in application name: / ? : @ # & % = + ;"));
+                const invalidChars = "/ ? : @ # & % = + ;";
+                message.error(i18next.t("application:Invalid characters in application name:") + " " + invalidChars);
                 return;
               }
               this.updateApplicationField("name", e.target.value);
