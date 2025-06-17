@@ -282,7 +282,8 @@ class ApplicationEditPage extends React.Component {
               const value = e.target.value;
               if (/[/?:@#&%=+;]/.test(value)) {
                 const invalidChars = "/ ? : @ # & % = + ;";
-                message.error(i18next.t("application:Invalid characters in application name:") + " " + invalidChars);
+                const messageText = i18next.t("application:Invalid characters in application name") + ":" + " " + invalidChars;
+                message.error(messageText);
                 return;
               }
               this.updateApplicationField("name", e.target.value);
