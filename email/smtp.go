@@ -17,7 +17,7 @@ package email
 import (
 	"context"
 	"crypto/tls"
-	"log"
+	"fmt"
 	"net"
 	"strings"
 
@@ -30,24 +30,21 @@ type SmtpEmailProvider struct {
 	Client *mail.Client
 }
 
-func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) *SmtpEmailProvider {
+func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) (*SmtpEmailProvider, error) {
 	client, err := mail.NewClient(host, mail.WithSMTPAuth(mail.SMTPAuthPlain),
 		mail.WithUsername(userName), mail.WithPassword(password), mail.WithPort(port))
 	if err != nil {
-		log.Println(err.Error())
-		return nil
+		return nil, err
 	}
 
 	if client == nil {
-		log.Println("client is nil")
-		return nil
+		return nil, fmt.Errorf("client is nil")
 	}
 
 	if typ == "SUBMAIL" {
 		err = client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 		if err != nil {
-			log.Println(err.Error())
-			return nil
+			return nil, err
 		}
 	}
 
@@ -58,8 +55,7 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 		if socks5Proxy != "" {
 			dialSocksProxy, err := proxy.SOCKS5("tcp", socks5Proxy, nil, proxy.Direct)
 			if err != nil {
-				log.Println(err.Error())
-				return nil
+				return nil, err
 			}
 
 			dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
@@ -68,12 +64,12 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 
 			err = mail.WithDialContextFunc(dialContext)(client)
 			if err != nil {
-				log.Println(err.Error())
+				return nil, err
 			}
 		}
 	}
 
-	return &SmtpEmailProvider{Client: client}
+	return &SmtpEmailProvider{Client: client}, nil
 }
 
 func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {

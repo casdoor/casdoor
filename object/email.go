@@ -24,9 +24,12 @@ import (
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
-	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl)
+	smtpEmailProvider, err := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl)
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
-	err := smtpEmailProvider.Client.DialWithContext(ctx)
+	err = smtpEmailProvider.Client.DialWithContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -35,8 +38,10 @@ func TestSmtpServer(provider *Provider) error {
 }
 
 func SendEmail(provider *Provider, title string, content string, dest string, sender string) error {
-	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl)
-
+	emailProvider, err := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl)
+	if err != nil {
+		return err
+	}
 	fromAddress := provider.ClientId2
 	if fromAddress == "" {
 		fromAddress = provider.ClientId
