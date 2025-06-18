@@ -56,16 +56,17 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 	if strings.HasSuffix(host, ".amazonaws.com") {
 		socks5Proxy := conf.GetConfigString("socks5Proxy")
 		if socks5Proxy != "" {
-			customDialer := func(_ context.Context, network, address string) (net.Conn, error) {
-				dialSocksProxy, err := proxy.SOCKS5(network, socks5Proxy, nil, proxy.Direct)
-				if err != nil {
-					return nil, err
-				}
-				conn, err := dialSocksProxy.Dial(network, address)
-				return conn, err
+			dialSocksProxy, err := proxy.SOCKS5("tcp", socks5Proxy, nil, proxy.Direct)
+			if err != nil {
+				log.Println(err.Error())
+				return nil
 			}
 
-			err = mail.WithDialContextFunc(customDialer)(client)
+			dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
+				return dialSocksProxy.Dial(network, addr)
+			}
+
+			err = mail.WithDialContextFunc(dialContext)(client)
 			if err != nil {
 				log.Println(err.Error())
 			}
