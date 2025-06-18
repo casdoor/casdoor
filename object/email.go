@@ -16,16 +16,20 @@
 
 package object
 
-import "github.com/casdoor/casdoor/email"
+import (
+	"context"
+
+	"github.com/casdoor/casdoor/email"
+)
 
 // TestSmtpServer Test the SMTP server
 func TestSmtpServer(provider *Provider) error {
 	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl)
-	sender, err := smtpEmailProvider.Dialer.Dial()
+	ctx := context.Background()
+	err := smtpEmailProvider.Client.DialWithContext(ctx)
 	if err != nil {
 		return err
 	}
-	defer sender.Close()
 
 	return nil
 }

@@ -15,7 +15,6 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.25.0
-	github.com/casdoor/gomail/v2 v2.1.0
 	github.com/casdoor/ldapserver v1.2.0
 	github.com/casdoor/notify v1.0.1
 	github.com/casdoor/oss v1.8.0
@@ -57,13 +56,14 @@ require (
 	github.com/stripe/stripe-go/v74 v74.29.0
 	github.com/tealeg/xlsx v1.0.5
 	github.com/thanhpk/randstr v1.0.4
+	github.com/wneessen/go-mail v0.6.2
 	github.com/xorm-io/builder v0.3.13
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
-	golang.org/x/crypto v0.32.0
+	golang.org/x/crypto v0.33.0
 	golang.org/x/net v0.34.0
 	golang.org/x/oauth2 v0.17.0
-	golang.org/x/text v0.21.0
+	golang.org/x/text v0.22.0
 	google.golang.org/api v0.150.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
@@ -219,8 +219,8 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
 	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
@@ -230,7 +230,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231030173426-d783a09b4405 // indirect
 	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
