@@ -15,43 +15,76 @@
 package email
 
 import (
+	"context"
 	"crypto/tls"
+	"fmt"
+	"net"
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/gomail/v2"
+	"github.com/wneessen/go-mail"
+	"golang.org/x/net/proxy"
 )
 
 type SmtpEmailProvider struct {
-	Dialer *gomail.Dialer
+	Client *mail.Client
 }
 
-func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) *SmtpEmailProvider {
-	dialer := gomail.NewDialer(host, port, userName, password)
-	if typ == "SUBMAIL" {
-		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) (*SmtpEmailProvider, error) {
+	client, err := mail.NewClient(host, mail.WithSMTPAuth(mail.SMTPAuthPlain),
+		mail.WithUsername(userName), mail.WithPassword(password), mail.WithPort(port))
+	if err != nil {
+		return nil, err
 	}
 
-	dialer.SSL = !disableSsl
+	if client == nil {
+		return nil, fmt.Errorf("client is nil")
+	}
+
+	if typ == "SUBMAIL" {
+		err = client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	client.SetSSL(!disableSsl)
 
 	if strings.HasSuffix(host, ".amazonaws.com") {
 		socks5Proxy := conf.GetConfigString("socks5Proxy")
 		if socks5Proxy != "" {
-			dialer.SetSocks5Proxy(socks5Proxy)
+			dialSocksProxy, err := proxy.SOCKS5("tcp", socks5Proxy, nil, proxy.Direct)
+			if err != nil {
+				return nil, err
+			}
+
+			dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
+				return dialSocksProxy.Dial(network, addr)
+			}
+
+			err = mail.WithDialContextFunc(dialContext)(client)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	return &SmtpEmailProvider{Dialer: dialer}
+	return &SmtpEmailProvider{Client: client}, nil
 }
 
 func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
-	message := gomail.NewMessage()
+	message := mail.NewMsg()
 
-	message.SetAddressHeader("From", fromAddress, fromName)
-	message.SetHeader("To", toAddress)
-	message.SetHeader("Subject", subject)
-	message.SetBody("text/html", content)
+	err := message.SetAddrHeader("From", fromAddress, fromName)
+	if err != nil {
+		return err
+	}
+	err = message.To(toAddress)
+	if err != nil {
+		return err
+	}
+	message.Subject(subject)
+	message.SetBodyString(mail.TypeTextHTML, content)
 
-	message.SkipUsernameCheck = true
-	return s.Dialer.DialAndSend(message)
+	return s.Client.DialAndSend(message)
 }
