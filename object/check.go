@@ -251,14 +251,17 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	}
 	credManager := cred.GetCredManager(passwordType)
 	if credManager != nil {
-		pepperedPassword := util.ApplyPepper(password, organization.PasswordPepper, organization.PasswordPepperMode)
+		input := password
+		if passwordType == "argon2id" {
+			input = util.ApplyPepper(password, organization.PasswordPepper, organization.PasswordPepperMode)
+		}
 		if organization.MasterPassword != "" {
-			if password == organization.MasterPassword || credManager.IsPasswordCorrect(pepperedPassword, organization.MasterPassword, "", organization.PasswordSalt) {
+			if password == organization.MasterPassword || credManager.IsPasswordCorrect(input, organization.MasterPassword, "", organization.PasswordSalt) {
 				return resetUserSigninErrorTimes(user)
 			}
 		}
 
-		if credManager.IsPasswordCorrect(pepperedPassword, user.Password, user.PasswordSalt, organization.PasswordSalt) {
+		if credManager.IsPasswordCorrect(input, user.Password, user.PasswordSalt, organization.PasswordSalt) {
 			return resetUserSigninErrorTimes(user)
 		}
 
