@@ -31,8 +31,7 @@ type SmtpEmailProvider struct {
 }
 
 func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) (*SmtpEmailProvider, error) {
-	client, err := mail.NewClient(host, mail.WithSMTPAuth(mail.SMTPAuthPlain),
-		mail.WithUsername(userName), mail.WithPassword(password), mail.WithPort(port))
+	client, err := mail.NewClient(host, mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover), mail.WithUsername(userName), mail.WithPassword(password), mail.WithPort(port))
 	if err != nil {
 		return nil, err
 	}
