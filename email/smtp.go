@@ -75,14 +75,16 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
 	message := mail.NewMsg()
 
-	err := message.SetAddrHeader("From", fromAddress, fromName)
+	err := message.FromFormat(fromName, fromAddress)
 	if err != nil {
 		return err
 	}
+
 	err = message.To(toAddress)
 	if err != nil {
 		return err
 	}
+
 	message.Subject(subject)
 	message.SetBodyString(mail.TypeTextHTML, content)
 
