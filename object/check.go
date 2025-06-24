@@ -249,22 +249,35 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	if passwordType == "" {
 		passwordType = organization.PasswordType
 	}
-	credManager := cred.GetCredManager(passwordType)
-	if credManager != nil {
-		if organization.MasterPassword != "" {
-			if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
-				return resetUserSigninErrorTimes(user)
-			}
-		}
 
-		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
-			return resetUserSigninErrorTimes(user)
-		}
+	isOutdated := passwordType != organization.PasswordType || (organization.PasswordSalt != "" && user.PasswordOrganizationSaltSnapshot != organization.PasswordSalt)
 
-		return recordSigninErrorInfo(user, lang, enableCaptcha)
-	} else {
-		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
+	orgSalt := organization.PasswordSalt
+	if isOutdated {
+		orgSalt = user.PasswordOrganizationSaltSnapshot
 	}
+
+	credManager := cred.GetCredManager(passwordType)
+	if credManager == nil {
+		return fmt.Errorf(i18n.Translate(lang, "check:Unsupported password type: %s"), passwordType)
+	}
+
+	if !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, orgSalt) {
+		return recordSigninErrorInfo(user, lang, enableCaptcha)
+	}
+
+	if isOutdated {
+		// password is correct, update user's password to new password type
+		user.Password = password
+		user.UpdateUserPassword(organization)
+		user.PasswordOrganizationSaltSnapshot = organization.PasswordSalt
+		_, err = UpdateUser(user.GetId(), user, []string{"password", "password_type", "password_organization_salt_snapshot"}, true)
+		if err != nil {
+			return err
+		}
+	}
+
+	return resetUserSigninErrorTimes(user)
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string) string {

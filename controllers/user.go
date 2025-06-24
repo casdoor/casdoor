@@ -573,8 +573,13 @@ func (c *ApiController) SetPassword() {
 	targetUser.NeedUpdatePassword = false
 	targetUser.LastChangePasswordTime = util.GetCurrentTime()
 
+	// Set organization salt snapshot for password validation
+	if organization.PasswordSalt != "" {
+		targetUser.PasswordOrganizationSaltSnapshot = organization.PasswordSalt
+	}
+
 	if user.Ldap == "" {
-		_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time"}, false)
+		_, err = object.UpdateUser(userId, targetUser, []string{"password", "need_update_password", "password_type", "last_change_password_time", "password_organization_salt_snapshot"}, false)
 	} else {
 		if isAdmin {
 			err = object.ResetLdapPassword(targetUser, "", newPassword, c.GetAcceptLanguage())
