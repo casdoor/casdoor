@@ -16,6 +16,8 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/conf"
+	"strconv"
 	"time"
 
 	"github.com/casdoor/casdoor/util"
@@ -62,12 +64,20 @@ func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
 	return nil
 }
 
+func getTokenRetentionInterval() int {
+	days, err := strconv.Atoi(conf.GetConfigString("tokenRetentionIntervalAfterExpiry"))
+	if err != nil || days <= 0 {
+		days = 30
+	}
+	return days * 24 * 3600
+}
+
 func InitCleanupTokens() {
 	schedule := "0 0 0 * * ?"
 	cronJob := cron.New()
-	tokenRetentionIntervalAfterExpiry := 6 // 6s
 	_, err := cronJob.AddFunc(schedule, func() {
-		if err := CleanupTokens(tokenRetentionIntervalAfterExpiry); err != nil {
+		interval := getTokenRetentionInterval()
+		if err := CleanupTokens(interval); err != nil {
 			fmt.Printf("Error cleaning up tokens: %v\n", err)
 		}
 	})
