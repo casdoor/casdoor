@@ -45,6 +45,7 @@ func main() {
 	object.InitUserManager()
 	object.InitFromFile()
 	object.InitCasvisorConfig()
+	object.InitCleanupTokens()
 
 	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
