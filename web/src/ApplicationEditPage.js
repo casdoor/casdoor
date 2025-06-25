@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload, message} from "antd";
 import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -279,6 +279,13 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
+              const value = e.target.value;
+              if (/[/?:@#&%=+;]/.test(value)) {
+                const invalidChars = "/ ? : @ # & % = + ;";
+                const messageText = i18next.t("application:Invalid characters in application name") + ":" + " " + invalidChars;
+                message.error(messageText);
+                return;
+              }
               this.updateApplicationField("name", e.target.value);
             }} />
           </Col>

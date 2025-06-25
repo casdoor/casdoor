@@ -278,7 +278,7 @@ const authInfo = {
     endpoint: "https://www.tiktok.com/auth/authorize/",
   },
   Tumblr: {
-    scope: "email",
+    scope: "basic",
     endpoint: "https://www.tumblr.com/oauth2/authorize",
   },
   Twitch: {
