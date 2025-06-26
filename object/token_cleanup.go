@@ -18,19 +18,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/casdoor/casdoor/util"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/robfig/cron/v3"
 )
 
 func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
 	var sessions []*Token
-	err := ormer.Engine.Where("expires_in = ?", 0).Find(&sessions)
+	err := ormer.Engine.Find(&sessions)
 	if err != nil {
 		return fmt.Errorf("failed to query expired tokens: %w", err)
 	}
 
-	currentTime := util.String2Time(util.GetCurrentUnixTime())
+	currentTime := time.Now()
+	deletedCount := 0
 
 	for _, session := range sessions {
 		tokenString := session.AccessToken
@@ -53,7 +53,9 @@ func CleanupTokens(tokenRetentionIntervalAfterExpiry int) error {
 				if err != nil {
 					return fmt.Errorf("failed to delete expired token %s: %w", session.Name, err)
 				}
-				fmt.Printf("Deleted expired token: %s\n", session.Name)
+				fmt.Printf("[%d] Deleted expired token: %s | Created: %s | Org: %s | App: %s | User: %s\n",
+					deletedCount, session.Name, session.CreatedTime, session.Organization, session.Application, session.User)
+				deletedCount++
 			}
 		} else {
 			fmt.Printf("Token %s is not valid\n", session.Name)
@@ -70,10 +72,15 @@ func getTokenRetentionInterval(days int) int {
 }
 
 func InitCleanupTokens() {
-	schedule := "0 0 0 * * ?"
+	schedule := "0 0 * * *"
+	interval := getTokenRetentionInterval(30)
+
+	if err := CleanupTokens(interval); err != nil {
+		fmt.Printf("Error cleaning up tokens at startup: %v\n", err)
+	}
+
 	cronJob := cron.New()
 	_, err := cronJob.AddFunc(schedule, func() {
-		interval := getTokenRetentionInterval(30)
 		if err := CleanupTokens(interval); err != nil {
 			fmt.Printf("Error cleaning up tokens: %v\n", err)
 		}
