@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "عدم موفقیت در وارد کردن کاربران",
     "Missing parameter": "پارامتر گمشده",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "لطفاً ابتدا وارد شوید",
@@ -101,9 +103,6 @@
     "don't support captchaProvider: ": "از captchaProvider پشتیبانی نمی‌شود: ",
     "this operation is not allowed in demo mode": "این عملیات در حالت دمو مجاز نیست",
     "this operation requires administrator to perform": "این عملیات نیاز به مدیر برای انجام دارد"
-  },
-  "group_upload": {
-    "Failed to import groups": "Failed to import groups"
   },
   "ldap": {
     "Ldap server exist": "سرور LDAP وجود دارد"
@@ -164,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "رمز عبور جدید نمی‌تواند حاوی فاصله خالی باشد.",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "عدم موفقیت در وارد کردن کاربران"
   },
   "util": {
     "No application is found for userId: %s": "هیچ برنامه‌ای برای userId: %s یافت نشد",

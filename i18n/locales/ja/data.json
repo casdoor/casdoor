@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "ユーザーのインポートに失敗しました",
     "Missing parameter": "不足しているパラメーター",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "最初にログインしてください",
@@ -101,9 +103,6 @@
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
-  },
-  "group_upload": {
-    "Failed to import groups": "Failed to import groups"
   },
   "ldap": {
     "Ldap server exist": "LDAPサーバーは存在します"
@@ -164,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "新しいパスワードにはスペースを含めることはできません。",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "ユーザーのインポートに失敗しました"
   },
   "util": {
     "No application is found for userId: %s": "ユーザーIDに対するアプリケーションが見つかりません： %s",

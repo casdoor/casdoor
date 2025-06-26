@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "Fehler beim Importieren von Benutzern",
     "Missing parameter": "Fehlender Parameter",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Bitte zuerst einloggen",
@@ -101,9 +103,6 @@
     "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
-  },
-  "group_upload": {
-    "Failed to import groups": "Failed to import groups"
   },
   "ldap": {
     "Ldap server exist": "Es gibt einen LDAP-Server"
@@ -164,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "Fehler beim Importieren von Benutzern"
   },
   "util": {
     "No application is found for userId: %s": "Es wurde keine Anwendung für die Benutzer-ID gefunden: %s",
