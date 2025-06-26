@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "Не удалось импортировать пользователей",
     "Missing parameter": "Отсутствующий параметр",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Пожалуйста, сначала войдите в систему",
@@ -161,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Новый пароль не может содержать пробелы.",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "Не удалось импортировать пользователей"
   },
   "util": {
     "No application is found for userId: %s": "Не найдено заявки для пользователя с идентификатором: %s",

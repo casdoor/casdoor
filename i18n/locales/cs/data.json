@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "Nepodařilo se importovat uživatele",
     "Missing parameter": "Chybějící parametr",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Prosím, přihlaste se nejprve",
@@ -161,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "Nové heslo nemůže obsahovat prázdné místo.",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "Nepodařilo se importovat uživatele"
   },
   "util": {
     "No application is found for userId: %s": "Pro userId: %s nebyla nalezena žádná aplikace",

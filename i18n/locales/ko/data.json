@@ -92,6 +92,8 @@
     "the adapter: %s is not found": "the adapter: %s is not found"
   },
   "general": {
+    "Failed to import groups": "Failed to import groups",
+    "Failed to import users": "사용자 가져오기를 실패했습니다",
     "Missing parameter": "누락된 매개변수",
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "먼저 로그인 하십시오",
@@ -161,9 +163,6 @@
     "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
     "New password cannot contain blank space.": "새 비밀번호에는 공백이 포함될 수 없습니다.",
     "the user's owner and name should not be empty": "the user's owner and name should not be empty"
-  },
-  "user_upload": {
-    "Failed to import users": "사용자 가져오기를 실패했습니다"
   },
   "util": {
     "No application is found for userId: %s": "어플리케이션을 찾을 수 없습니다. userId: %s",

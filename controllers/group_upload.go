@@ -51,6 +51,6 @@ func (c *ApiController) UploadGroups() {
 	if affected {
 		c.ResponseOk()
 	} else {
-		c.ResponseError(c.T("group_upload:Failed to import groups"))
+		c.ResponseError(c.T("general:Failed to import groups"))
 	}
 }
