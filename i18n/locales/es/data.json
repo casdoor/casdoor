@@ -102,6 +102,9 @@
     "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
     "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
+  "group_upload": {
+    "Failed to import groups": "Failed to import groups"
+  },
   "ldap": {
     "Ldap server exist": "El servidor LDAP existe"
   },

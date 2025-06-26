@@ -102,6 +102,9 @@
     "this operation is not allowed in demo mode": "این عملیات در حالت دمو مجاز نیست",
     "this operation requires administrator to perform": "این عملیات نیاز به مدیر برای انجام دارد"
   },
+  "group_upload": {
+    "Failed to import groups": "Failed to import groups"
+  },
   "ldap": {
     "Ldap server exist": "سرور LDAP وجود دارد"
   },

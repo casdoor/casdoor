@@ -102,6 +102,9 @@
     "this operation is not allowed in demo mode": "demo模式下不允许该操作",
     "this operation requires administrator to perform": "只有管理员才能进行此操作"
   },
+  "group_upload": {
+    "Failed to import groups": "导入群组失败"
+  },
   "ldap": {
     "Ldap server exist": "LDAP服务器已存在"
   },
