@@ -23,7 +23,7 @@ import (
 	"github.com/beego/beego/context"
 )
 
-var forbiddenChars = `/?:@#&%=+;`
+var forbiddenChars = `/?:#&%=+;`
 
 func FieldValidationFilter(ctx *context.Context) {
 	if ctx.Input.Method() != "POST" {
