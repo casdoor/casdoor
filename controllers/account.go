@@ -309,6 +309,11 @@ func (c *ApiController) Signup() {
 	c.Ctx.Input.SetParam("recordUserId", user.GetId())
 	c.Ctx.Input.SetParam("recordSignup", "true")
 
+	// Store the registered user's ID into session to simulate login.
+	// This allows BuyProduct and other APIs to recognize the current user,
+	// even though the user hasn't gone through a separate login process.
+	c.SetSessionUsername(user.GetId())
+
 	userId := user.GetId()
 	util.LogInfo(c.Ctx, "API: [%s] is signed up as new user", userId)
 
