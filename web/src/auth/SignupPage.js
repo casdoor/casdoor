@@ -614,6 +614,7 @@ class SignupPage extends React.Component {
           rules={[
             {
               required: required,
+              validateTrigger: "onChange",
               validator: (rule, value) => {
                 const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
                 if (errorMsg === "") {
