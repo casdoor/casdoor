@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Form, Input, Row, Select, Steps} from "antd";
+import {Button, Col, Form, Input, Popover, Row, Select, Steps} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
@@ -385,30 +385,48 @@ class ForgetPage extends React.Component {
                 },
               ]}
             />
-            <Form.Item
-              name="newPassword"
-              hidden={this.state.current !== 2}
-              rules={[
-                {
-                  required: true,
-                  validateTrigger: "onChange",
-                  validator: (rule, value) => {
-                    const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-                    if (errorMsg === "") {
-                      return Promise.resolve();
-                    } else {
-                      return Promise.reject(errorMsg);
-                    }
+            <Popover placement="right" content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+              <Form.Item
+                name="newPassword"
+                hidden={this.state.current !== 2}
+                rules={[
+                  {
+                    required: true,
+                    validateTrigger: "onChange",
+                    validator: (rule, value) => {
+                      const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                      if (errorMsg === "") {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject(errorMsg);
+                      }
+                    },
                   },
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder={i18next.t("general:Password")}
-              />
-            </Form.Item>
+                ]}
+                hasFeedback
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder={i18next.t("general:Password")}
+                  onChange={(e) => {
+                    this.setState({
+                      passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, e.target.value),
+                    });
+                  }}
+                  onFocus={() => {
+                    this.setState({
+                      passwordPopoverOpen: true,
+                      passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.form.current?.getFieldValue("newPassword") ?? ""),
+                    });
+                  }}
+                  onBlur={() => {
+                    this.setState({
+                      passwordPopoverOpen: false,
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Popover>
             <Form.Item
               name="confirm"
               dependencies={["newPassword"]}
