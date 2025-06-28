@@ -609,7 +609,6 @@ class SignupPage extends React.Component {
       return (
         <Form.Item
           name="password"
-          key="password"
           className="signup-password"
           label={signupItem.label ? signupItem.label : i18next.t("general:Password")}
           rules={[
