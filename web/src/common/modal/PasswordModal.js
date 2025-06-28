@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Button, Col, Input, Modal, Row} from "antd";
+import {Button, Col, Input, Modal, Popover, Row} from "antd";
 import i18next from "i18next";
 import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
@@ -35,6 +35,8 @@ export const PasswordModal = (props) => {
   const [rePasswordValid, setRePasswordValid] = React.useState(false);
   const [newPasswordErrorMessage, setNewPasswordErrorMessage] = React.useState("");
   const [rePasswordErrorMessage, setRePasswordErrorMessage] = React.useState("");
+  const [passwordPopoverOpen, setPasswordPopoverOpen] = React.useState(false);
+  const [passwordPopover, setPasswordPopover] = React.useState();
 
   React.useEffect(() => {
     if (organization) {
@@ -130,12 +132,26 @@ export const PasswordModal = (props) => {
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Input.Password
-              addonBefore={i18next.t("user:New Password")}
-              placeholder={i18next.t("user:input password")}
-              onChange={(e) => {handleNewPassword(e.target.value);}}
-              status={(!newPasswordValid && newPasswordErrorMessage) ? "error" : undefined}
-            />
+            <Popover placement="right" content={passwordPopover} open={passwordPopoverOpen}>
+              <Input.Password
+                addonBefore={i18next.t("user:New Password")}
+                placeholder={i18next.t("user:input password")}
+                onChange={(e) => {
+                  handleNewPassword(e.target.value);
+                  setPasswordPopoverOpen(true);
+                  setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, e.target.value));
+
+                }}
+                onFocus={() => {
+                  setPasswordPopoverOpen(true);
+                  setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, newPassword));
+                }}
+                onBlur={() => {
+                  setPasswordPopoverOpen(false);
+                }}
+                status={(!newPasswordValid && newPasswordErrorMessage) ? "error" : undefined}
+              />
+            </Popover>
           </Row>
           {!newPasswordValid && newPasswordErrorMessage && <div style={{color: "red", marginTop: "-20px"}}>{newPasswordErrorMessage}</div>}
           <Row style={{width: "100%", marginBottom: "20px"}}>
