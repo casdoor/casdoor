@@ -607,37 +607,36 @@ class SignupPage extends React.Component {
       }
     } else if (signupItem.name === "Password") {
       return (
-        <Form.Item
-          name="password"
-          className="signup-password"
-          label={signupItem.label ? signupItem.label : i18next.t("general:Password")}
-          rules={[
-            {
-              required: required,
-              validateTrigger: "onChange",
-              validator: (rule, value) => {
-                const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-                if (errorMsg === "") {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(errorMsg);
-                }
+        <Popover placement="right" content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+          <Form.Item
+            name="password"
+            className="signup-password"
+            label={signupItem.label ? signupItem.label : i18next.t("general:Password")}
+            rules={[
+              {
+                required: required,
+                validateTrigger: "onChange",
+                validator: (rule, value) => {
+                  const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                  if (errorMsg === "") {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(errorMsg);
+                  }
+                },
               },
-            },
-          ]}
-          hasFeedback
-        >
-          <Popover placement="right" content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+            ]}
+            hasFeedback
+          >
             <Input.Password className="signup-password-input" placeholder={signupItem.placeholder} onChange={(e) => {
               this.setState({
                 passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, e.target.value),
-                password: e.target.value,
               });
             }}
             onFocus={() => {
               this.setState({
                 passwordPopoverOpen: true,
-                passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.state.password ?? ""),
+                passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.form.current?.getFieldValue("password") ?? ""),
               });
             }}
             onBlur={() => {
@@ -645,8 +644,8 @@ class SignupPage extends React.Component {
                 passwordPopoverOpen: false,
               });
             }} />
-          </Popover>
-        </Form.Item>
+          </Form.Item>
+        </Popover>
       );
     } else if (signupItem.name === "Confirm password") {
       return (
