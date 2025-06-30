@@ -186,5 +186,8 @@
   },
   "webauthn": {
     "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+  },
+  "mfa": {
+    "mfa": "Keep MFA verification valid for 12 hours"
   }
 }
