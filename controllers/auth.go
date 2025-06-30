@@ -362,7 +362,8 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	}
 
 	if user.IsMfaEnabled() {
-		lastMfaVerifiedAt, ok := c.GetSession("mfaVerifiedAt").(int64)
+		mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+		lastMfaVerifiedAt, ok := c.GetSession(mfaVerifiedAtKey).(int64)
 		if ok && lastMfaVerifiedAt > 0 {
 			if time.Now().Unix()-lastMfaVerifiedAt < 12*3600 {
 				return false
@@ -1006,7 +1007,8 @@ func (c *ApiController) Login() {
 			}
 
 			if authForm.EnableMfaExpiry {
-				c.SetSession("mfaVerifiedAt", time.Now().Unix())
+				mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+				c.SetSession(mfaVerifiedAtKey, time.Now().Unix())
 			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
@@ -1017,7 +1019,8 @@ func (c *ApiController) Login() {
 			}
 
 			if authForm.EnableMfaExpiry {
-				c.SetSession("mfaVerifiedAt", time.Now().Unix())
+				mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+				c.SetSession(mfaVerifiedAtKey, time.Now().Unix())
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
