@@ -599,30 +599,35 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 	}
 
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider == nil {
+		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
 			continue
 		}
-		if providerItem.Provider.Category == "Captcha" {
-			if providerItem.Rule == "Internet-Only" {
-				if util.IsInternetIp(clientIp) {
-					return true, nil
-				}
+
+    if providerItem.Rule == "Internet-Only" {
+      if util.IsInternetIp(clientIp) {
+        return true, nil
+      }
+    }
+
+		if providerItem.Rule == "Dynamic" {
+			user, err := GetUserByFields(organization, username)
+			if err != nil {
+				return false, err
 			}
-			if providerItem.Rule == "Dynamic" {
-				user, err := GetUserByFields(organization, username)
+
+			if user != nil {
+				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
 				if err != nil {
 					return false, err
 				}
 
-				failedSigninLimit := application.FailedSigninLimit
-				if failedSigninLimit == 0 {
-					failedSigninLimit = DefaultFailedSigninLimit
-				}
-
-				return user != nil && user.SigninWrongTimes >= failedSigninLimit, nil
+				return user.SigninWrongTimes >= failedSigninLimit, nil
 			}
-			return providerItem.Rule == "Always", nil
+
+			return false, nil
 		}
+
+		return providerItem.Rule == "Always", nil
 	}
 
 	return false, nil

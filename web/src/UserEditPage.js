@@ -42,6 +42,7 @@ import * as MfaBackend from "./backend/MfaBackend";
 import AccountAvatar from "./account/AccountAvatar";
 import FaceIdTable from "./table/FaceIdTable";
 import MfaAccountTable from "./table/MfaAccountTable";
+import MfaTable from "./table/MfaTable";
 
 const {Option} = Select;
 
@@ -926,6 +927,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "MFA items") {
+      return (<Row style={{marginTop: "20px"}} >
+        <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          {Setting.getLabel(i18next.t("general:MFA items"), i18next.t("general:MFA items - Tooltip"))} :
+        </Col>
+        <Col span={22} >
+          <MfaTable
+            title={i18next.t("general:MFA items")}
+            table={this.state.user.mfaItems ?? []}
+            onUpdateTable={(value) => {this.updateUserField("mfaItems", value);}}
+          />
+        </Col>
+      </Row>);
     } else if (accountItem.name === "Multi-factor authentication") {
       return (
         !this.isSelfOrAdmin() ? null : (
