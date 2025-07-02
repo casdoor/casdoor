@@ -212,6 +212,7 @@ type User struct {
 
 	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
+	MfaItems           []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
 	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }
@@ -795,7 +796,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "mfa_items")
 	}
 
 	columns = append(columns, "updated_time")

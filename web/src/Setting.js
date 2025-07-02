@@ -696,18 +696,27 @@ export const MfaRulePrompted = "Prompted";
 export const MfaRuleOptional = "Optional";
 
 export function isRequiredEnableMfa(user, organization) {
-  if (!user || !organization || !organization.mfaItems) {
+  if (!user || !organization || (!organization.mfaItems && !user.mfaItems)) {
     return false;
   }
   return getMfaItemsByRules(user, organization, [MfaRuleRequired]).length > 0;
 }
 
 export function getMfaItemsByRules(user, organization, mfaRules = []) {
-  if (!user || !organization || !organization.mfaItems) {
+  if (!user || !organization || (!organization.mfaItems && !user.mfaItems)) {
     return [];
   }
 
-  return organization.mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
+  let mfaItems = organization.mfaItems;
+  if (user.mfaItems && user.mfaItems.length !== 0) {
+    mfaItems = user.mfaItems;
+  }
+
+  if (mfaItems === null) {
+    return [];
+  }
+
+  return mfaItems.filter((mfaItem) => mfaRules.includes(mfaItem.rule))
     .filter((mfaItem) => user.multiFactorAuths.some((mfa) => mfa.mfaType === mfaItem.name && !mfa.enabled));
 }
 
