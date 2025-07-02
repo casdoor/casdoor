@@ -556,8 +556,8 @@ func (c *ApiController) Login() {
 				return
 			}
 			var enableCaptcha bool
+
 			clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-			//clientIp := "123.1.1.1"
 			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1239,7 +1239,6 @@ func (c *ApiController) GetCaptchaStatus() {
 		}
 
 		clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-		//clientIp := "123.1.1.1"
 		captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
 		if err != nil {
 			c.ResponseError(err.Error())
