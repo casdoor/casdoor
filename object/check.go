@@ -603,11 +603,11 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 			continue
 		}
 
-    if providerItem.Rule == "Internet-Only" {
-      if util.IsInternetIp(clientIp) {
-        return true, nil
-      }
-    }
+		if providerItem.Rule == "Internet-Only" {
+			if util.IsInternetIp(clientIp) {
+				return true, nil
+			}
+		}
 
 		if providerItem.Rule == "Dynamic" {
 			user, err := GetUserByFields(organization, username)
