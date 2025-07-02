@@ -255,6 +255,7 @@ class ProviderTable extends React.Component {
                 <Option key="None" value="None">{i18next.t("general:None")}</Option>
                 <Option key="Dynamic" value="Dynamic">{i18next.t("application:Dynamic")}</Option>
                 <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
+                <Option key="Internet-Only" value="Internet-Only">{i18next.t("application:Internet-Only")}</Option>
               </Select>
             );
           } else if (record.provider?.category === "SMS" || record.provider?.category === "Email") {

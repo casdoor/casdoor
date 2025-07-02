@@ -593,7 +593,7 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 	return ""
 }
 
-func CheckToEnableCaptcha(application *Application, organization, username string) (bool, error) {
+func CheckToEnableCaptcha(application *Application, organization, username string, clientIp string) (bool, error) {
 	if len(application.Providers) == 0 {
 		return false, nil
 	}
@@ -601,6 +601,12 @@ func CheckToEnableCaptcha(application *Application, organization, username strin
 	for _, providerItem := range application.Providers {
 		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
 			continue
+		}
+
+		if providerItem.Rule == "Internet-Only" {
+			if util.IsInternetIp(clientIp) {
+				return true, nil
+			}
 		}
 
 		if providerItem.Rule == "Dynamic" {

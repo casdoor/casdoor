@@ -555,8 +555,11 @@ func (c *ApiController) Login() {
 				c.ResponseError(c.T("auth:The login method: login with LDAP is not enabled for the application"))
 				return
 			}
+
+			clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+
 			var enableCaptcha bool
-			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username); err != nil {
+			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
 				c.ResponseError(err.Error())
 				return
 			} else if enableCaptcha {
@@ -1222,27 +1225,26 @@ func (c *ApiController) GetQRCode() {
 func (c *ApiController) GetCaptchaStatus() {
 	organization := c.Input().Get("organization")
 	userId := c.Input().Get("userId")
-	user, err := object.GetUserByFields(organization, userId)
+	applicationName := c.Input().Get("application")
+
+	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	captchaEnabled := false
-	if user != nil {
-		var failedSigninLimit int
-		failedSigninLimit, _, err = object.GetFailedSigninConfigByUser(user)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		if user.SigninWrongTimes >= failedSigninLimit {
-			captchaEnabled = true
-		}
+	if application == nil {
+		c.ResponseError("application not found")
+		return
 	}
 
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	c.ResponseOk(captchaEnabled)
+	return
 }
 
 // Callback
