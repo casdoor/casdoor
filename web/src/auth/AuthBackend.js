@@ -171,13 +171,3 @@ export function getCaptchaStatus(values) {
     },
   }).then(res => res.json());
 }
-
-export function getInternetOnlyCaptchaStatus(values) {
-  return fetch(`${Setting.ServerUrl}/api/get-internet-only-captcha-status?organization=${values["organization"]}&userId=${values["username"]}&application=${values["application"]}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}
