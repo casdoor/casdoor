@@ -1227,49 +1227,24 @@ func (c *ApiController) GetCaptchaStatus() {
 	applicationName := c.Input().Get("application")
 
 	// If application is provided, use CheckToEnableCaptcha for all rules
-	if applicationName != "" {
-		application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		if application == nil {
-			c.ResponseError("application not found")
-			return
-		}
-
-		clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
-		captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		c.ResponseOk(captchaEnabled)
-		return
-	}
-
-	// Legacy behavior for Dynamic rule only
-	user, err := object.GetUserByFields(organization, userId)
+	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-
-	captchaEnabled := false
-	if user != nil {
-		var failedSigninLimit int
-		failedSigninLimit, _, err = object.GetFailedSigninConfigByUser(user)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		if user.SigninWrongTimes >= failedSigninLimit {
-			captchaEnabled = true
-		}
+	if application == nil {
+		c.ResponseError("application not found")
+		return
 	}
 
+	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+	captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	c.ResponseOk(captchaEnabled)
+	return
 }
 
 // Callback
