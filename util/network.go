@@ -34,6 +34,6 @@ func IsInternetIp(ip string) bool {
 		return false
 	}
 
-	return !parsedIP.IsPrivate() && !parsedIP.IsLoopback() && 
-		   !parsedIP.IsMulticast() && !parsedIP.IsUnspecified()
+	return !parsedIP.IsPrivate() && !parsedIP.IsLoopback() &&
+		!parsedIP.IsMulticast() && !parsedIP.IsUnspecified()
 }
