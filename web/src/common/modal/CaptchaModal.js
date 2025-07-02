@@ -181,4 +181,5 @@ export const CaptchaRule = {
   Always: "Always",
   Never: "Never",
   Dynamic: "Dynamic",
+  InternetOnly: "Internet-Only",
 };

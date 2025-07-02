@@ -557,6 +557,7 @@ func (c *ApiController) Login() {
 			}
 			var enableCaptcha bool
 			clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+			//clientIp := "123.1.1.1"
 			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -1223,6 +1224,32 @@ func (c *ApiController) GetQRCode() {
 func (c *ApiController) GetCaptchaStatus() {
 	organization := c.Input().Get("organization")
 	userId := c.Input().Get("userId")
+	applicationName := c.Input().Get("application")
+
+	// If application is provided, use CheckToEnableCaptcha for all rules
+	if applicationName != "" {
+		application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if application == nil {
+			c.ResponseError("application not found")
+			return
+		}
+
+		clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+		//clientIp := "123.1.1.1"
+		captchaEnabled, err := object.CheckToEnableCaptcha(application, organization, userId, clientIp)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		c.ResponseOk(captchaEnabled)
+		return
+	}
+
+	// Legacy behavior for Dynamic rule only
 	user, err := object.GetUserByFields(organization, userId)
 	if err != nil {
 		c.ResponseError(err.Error())
