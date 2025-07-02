@@ -1226,7 +1226,6 @@ func (c *ApiController) GetCaptchaStatus() {
 	userId := c.Input().Get("userId")
 	applicationName := c.Input().Get("application")
 
-	// If application is provided, use CheckToEnableCaptcha for all rules
 	application, err := object.GetApplication(fmt.Sprintf("admin/%s", applicationName))
 	if err != nil {
 		c.ResponseError(err.Error())
