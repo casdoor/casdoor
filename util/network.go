@@ -18,22 +18,31 @@ import (
 	"net"
 )
 
-// IsPrivateIP checks if the given IP is a private IP address (internal network IP)
-func IsPrivateIP(ip string) bool {
-	parsedIP := net.ParseIP(ip)
-	if parsedIP == nil {
-		return false
-	}
-	return parsedIP.IsPrivate()
-}
-
-// IsInternetIp checks if the given IP is a public IP address (external network IP)
 func IsInternetIp(ip string) bool {
-	parsedIP := net.ParseIP(ip)
+	ipStr, _, err := net.SplitHostPort(ip)
+	if err != nil {
+		ipStr = ip
+	}
+
+	parsedIP := net.ParseIP(ipStr)
 	if parsedIP == nil {
 		return false
 	}
 
 	return !parsedIP.IsPrivate() && !parsedIP.IsLoopback() &&
 		!parsedIP.IsMulticast() && !parsedIP.IsUnspecified()
+}
+
+func IsHostIntranet(ip string) bool {
+	ipStr, _, err := net.SplitHostPort(ip)
+	if err != nil {
+		ipStr = ip
+	}
+
+	parsedIP := net.ParseIP(ipStr)
+	if parsedIP == nil {
+		return false
+	}
+
+	return parsedIP.IsPrivate() || parsedIP.IsLoopback() || parsedIP.IsLinkLocalUnicast() || parsedIP.IsLinkLocalMulticast()
 }
