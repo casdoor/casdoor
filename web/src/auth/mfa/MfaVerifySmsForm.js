@@ -15,7 +15,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   const handleFinish = (values) => {
     onFinish({
       passcode: values.passcode,
-      enableMfaExpiry: values.enableMfaExpiry,
+      enableMfaExpiry: values.enableMfaExpiry ? 12 : 0,
     });
   };
 

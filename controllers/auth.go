@@ -355,7 +355,7 @@ func isProxyProviderType(providerType string) bool {
 
 func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
 	if object.IsNeedPromptMfa(organization, user) {
-		// The prompt page needs the user to be srigned in
+		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 		c.ResponseOk(object.RequiredMfa)
 		return true
@@ -363,9 +363,11 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 
 	if user.IsMfaEnabled() {
 		mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+		mfaExpiryKey := "mfaExpiry_" + user.GetId()
 		lastMfaVerifiedAt, ok := c.GetSession(mfaVerifiedAtKey).(int64)
-		if ok && lastMfaVerifiedAt > 0 {
-			if time.Now().Unix()-lastMfaVerifiedAt < 12*3600 {
+		mfaExpiry, hasExpiry := c.GetSession(mfaExpiryKey).(int)
+		if ok && lastMfaVerifiedAt > 0 && hasExpiry && mfaExpiry > 0 {
+			if time.Now().Unix()-lastMfaVerifiedAt < int64(mfaExpiry*3600) {
 				return false
 			}
 		}
@@ -1006,9 +1008,11 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			if authForm.EnableMfaExpiry {
+			if authForm.EnableMfaExpiry != 0 {
 				mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+				mfaExpiryKey := "mfaExpiry_" + user.GetId()
 				c.SetSession(mfaVerifiedAtKey, time.Now().Unix())
+				c.SetSession(mfaExpiryKey, authForm.EnableMfaExpiry)
 			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
@@ -1018,9 +1022,11 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if authForm.EnableMfaExpiry {
+			if authForm.EnableMfaExpiry != 0 {
 				mfaVerifiedAtKey := "mfaVerifiedAt_" + user.GetId()
+				mfaExpiryKey := "mfaExpiry_" + user.GetId()
 				c.SetSession(mfaVerifiedAtKey, time.Now().Unix())
+				c.SetSession(mfaExpiryKey, authForm.EnableMfaExpiry)
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
