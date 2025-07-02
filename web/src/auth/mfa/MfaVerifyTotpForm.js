@@ -69,7 +69,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
         valuePropName="checked"
       >
         <Checkbox>
-          {i18next.t("mfa:Keep MFA verification valid for 12 hours")}
+          {i18next.t("mfa:Keep MFA verification valid")}
         </Checkbox>
       </Form.Item>
       <Form.Item>
