@@ -555,9 +555,10 @@ func (c *ApiController) Login() {
 				c.ResponseError(c.T("auth:The login method: login with LDAP is not enabled for the application"))
 				return
 			}
-			var enableCaptcha bool
 
 			clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
+
+			var enableCaptcha bool
 			if enableCaptcha, err = object.CheckToEnableCaptcha(application, authForm.Organization, authForm.Username, clientIp); err != nil {
 				c.ResponseError(err.Error())
 				return
