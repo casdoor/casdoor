@@ -21,10 +21,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 )
 
@@ -190,18 +188,9 @@ func (idp *DouyinIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
-	username := douyinUserInfo.Data.Nickname
-	if username == "" {
-		uid, err := uuid.NewRandom()
-		if err != nil {
-			return nil, err
-		}
-		uidStr := strings.Split(uid.String(), "-")
-		username = fmt.Sprintf("douyinuser-%s", uidStr[0])
-	}
 	userInfo := UserInfo{
 		Id:          douyinUserInfo.Data.OpenId,
-		Username:    username,
+		Username:    douyinUserInfo.Data.OpenId,
 		DisplayName: douyinUserInfo.Data.Nickname,
 		AvatarUrl:   douyinUserInfo.Data.Avatar,
 	}
