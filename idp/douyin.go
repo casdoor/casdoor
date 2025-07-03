@@ -190,7 +190,7 @@ func (idp *DouyinIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 	userInfo := UserInfo{
 		Id:          douyinUserInfo.Data.OpenId,
-		Username:    douyinUserInfo.Data.Nickname,
+		Username:    douyinUserInfo.Data.OpenId,
 		DisplayName: douyinUserInfo.Data.Nickname,
 		AvatarUrl:   douyinUserInfo.Data.Avatar,
 	}
