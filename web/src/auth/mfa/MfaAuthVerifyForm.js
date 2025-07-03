@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "../AuthBackend";
@@ -30,6 +30,13 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
   const [loading, setLoading] = useState(false);
   const [mfaType, setMfaType] = useState(mfaProps.mfaType);
   const [recoveryCode, setRecoveryCode] = useState("");
+  const [organization, setOrganization] = useState(null);
+
+  useEffect(() => {
+    if (application?.organizationObj) {
+      setOrganization(application.organizationObj);
+    }
+  }, [application]);
 
   const verify = ({passcode, enableMfaExpiry}) => {
     setLoading(true);
@@ -92,6 +99,7 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
             <MfaVerifyTotpForm
               mfaProps={mfaProps}
               onFinish={verify}
+              organization={organization}
             />
           </Fragment>
         )}

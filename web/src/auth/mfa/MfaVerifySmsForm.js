@@ -8,7 +8,7 @@ import * as Setting from "../../Setting";
 import {EmailMfaType, SmsMfaType} from "../MfaSetupPage";
 import {mfaAuth} from "./MfaVerifyForm";
 
-export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}) => {
+export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user, organization}) => {
   const [dest, setDest] = React.useState("");
   const [form] = Form.useForm();
 
@@ -122,7 +122,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
         valuePropName="checked"
       >
         <Checkbox>
-          {i18next.t("mfa:Keep MFA verification valid")}
+          {i18next.t("mfa:Remember this device for ") + (organization?.mfaRememberInHours || 12) + " hours"}
         </Checkbox>
       </Form.Item>
       <Form.Item>

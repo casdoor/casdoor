@@ -1031,11 +1031,11 @@ func (c *ApiController) Login() {
 			if authForm.EnableMfaExpiry {
 				mfaExpiredAt := object.MfaExpiredAt + user.GetId()
 
-				expiredInSeconds := organization.MfaExpireInHours * 3600
-				if expiredInSeconds == 0 {
-					expiredInSeconds = 12 * 3600
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				if mfaRememberInSeconds == 0 {
+					mfaRememberInSeconds = 12 * 3600
 				}
-				c.SetSession(mfaExpiredAt, time.Now().Unix()+expiredInSeconds)
+				c.SetSession(mfaExpiredAt, time.Now().Unix()+mfaRememberInSeconds)
 			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
@@ -1048,11 +1048,11 @@ func (c *ApiController) Login() {
 			if authForm.EnableMfaExpiry {
 				mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
 
-				expiredInSeconds := organization.MfaExpireInHours * 3600
-				if expiredInSeconds == 0 {
-					expiredInSeconds = 12 * 3600
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				if mfaRememberInSeconds == 0 {
+					mfaRememberInSeconds = 12 * 3600
 				}
-				c.SetSession(mfaVerifiedAtKey, time.Now().Unix()+expiredInSeconds)
+				c.SetSession(mfaVerifiedAtKey, time.Now().Unix()+mfaRememberInSeconds)
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")

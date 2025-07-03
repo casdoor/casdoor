@@ -608,8 +608,8 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Mfa expire"), i18next.t("application:Mfa expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.organization.mfaExpireInHours === 0 ? 12 : this.state.organization.mfaExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
-              this.updateOrganizationField("mfaExpireInHours", value);
+            <InputNumber style={{width: "150px"}} value={this.state.organization.mfaRememberInHours === 0 ? 12 : this.state.organization.mfaRememberInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+              this.updateOrganizationField("mfaRememberInHours", value);
             }} />
           </Col>
         </Row>

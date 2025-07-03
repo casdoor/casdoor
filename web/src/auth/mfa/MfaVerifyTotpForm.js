@@ -5,7 +5,7 @@ import i18next from "i18next";
 import React from "react";
 import * as Setting from "../../Setting";
 
-export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
+export const MfaVerifyTotpForm = ({mfaProps, onFinish, organization}) => {
   const [form] = Form.useForm();
 
   const handleFinish = (values) => {
@@ -69,7 +69,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
         valuePropName="checked"
       >
         <Checkbox>
-          {i18next.t("mfa:Keep MFA verification valid")}
+          {i18next.t("mfa:Remember this device for ") + (organization?.mfaRememberInHours || 12) + " hours"}
         </Checkbox>
       </Form.Item>
       <Form.Item>
