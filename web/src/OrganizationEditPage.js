@@ -609,7 +609,7 @@ class OrganizationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <InputNumber style={{width: "150px"}} value={this.state.organization.mfaExpireInHours === 0 ? 12 : this.state.organization.mfaExpireInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
-              this.updateApplicationField("mfaExpireInHours", value);
+              this.updateOrganizationField("mfaExpireInHours", value);
             }} />
           </Col>
         </Row>

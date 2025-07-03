@@ -11,7 +11,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
   const handleFinish = (values) => {
     onFinish({
       passcode: values.passcode,
-      enableMfaExpiry: values.enableMfaExpiry ? 12 : 0,
+      enableMfaExpiry: values.enableMfaExpiry,
     });
   };
 

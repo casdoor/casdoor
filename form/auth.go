@@ -64,7 +64,7 @@ type AuthForm struct {
 	MfaType         string `json:"mfaType"`
 	Passcode        string `json:"passcode"`
 	RecoveryCode    string `json:"recoveryCode"`
-	EnableMfaExpiry int    `json:"enableMfaExpiry"`
+	EnableMfaExpiry bool   `json:"enableMfaExpiry"`
 
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`

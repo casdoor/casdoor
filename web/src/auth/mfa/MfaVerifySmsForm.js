@@ -15,7 +15,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   const handleFinish = (values) => {
     onFinish({
       passcode: values.passcode,
-      enableMfaExpiry: values.enableMfaExpiry ? 12 : 0,
+      enableMfaExpiry: values.enableMfaExpiry,
     });
   };
 
@@ -122,7 +122,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
         valuePropName="checked"
       >
         <Checkbox>
-          {i18next.t("mfa:Keep MFA verification valid for 12 hours")}
+          {i18next.t("mfa:Keep MFA verification valid")}
         </Checkbox>
       </Form.Item>
       <Form.Item>

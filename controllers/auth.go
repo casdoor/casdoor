@@ -1028,7 +1028,7 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			if authForm.EnableMfaExpiry != 0 {
+			if authForm.EnableMfaExpiry {
 				mfaExpiredAt := object.MfaExpiredAt + user.GetId()
 
 				expiredInSeconds := organization.MfaExpireInHours * 3600
@@ -1045,7 +1045,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			if authForm.EnableMfaExpiry != 0 {
+			if authForm.EnableMfaExpiry {
 				mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
 
 				expiredInSeconds := organization.MfaExpireInHours * 3600
