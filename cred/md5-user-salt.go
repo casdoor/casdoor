@@ -37,14 +37,14 @@ func NewMd5UserSaltCredManager() *Md5UserSaltCredManager {
 	return cm
 }
 
-func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, salt string) string {
 	res := getMd5HexDigest(password)
-	if userSalt != "" {
-		res = getMd5HexDigest(res + userSalt)
+	if salt != "" {
+		res = getMd5HexDigest(res + salt)
 	}
 	return res
 }
 
-func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt, organizationSalt)
+func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

@@ -37,14 +37,14 @@ func NewSha256SaltCredManager() *Sha256SaltCredManager {
 	return cm
 }
 
-func (cm *Sha256SaltCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *Sha256SaltCredManager) GetHashedPassword(password string, salt string) string {
 	res := getSha256HexDigest(password)
-	if organizationSalt != "" {
-		res = getSha256HexDigest(res + organizationSalt)
+	if salt != "" {
+		res = getSha256HexDigest(res + salt)
 	}
 	return res
 }
 
-func (cm *Sha256SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt, organizationSalt)
+func (cm *Sha256SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }
