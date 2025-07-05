@@ -207,7 +207,7 @@ class AuthCallback extends React.Component {
                   relayState: oAuthParams.relayState,
                 });
               } else {
-                if (res.data2.needUpdatePassword) {
+                if (res.data3.needUpdatePassword) {
                   sessionStorage.setItem("signinUrl", signinUrl);
                   Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                   return;

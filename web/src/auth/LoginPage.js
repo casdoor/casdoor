@@ -522,7 +522,7 @@ class LoginPage extends React.Component {
                 this.props.onLoginSuccess(window.location.href);
                 return;
               }
-              if (res.data2.needUpdatePassword) {
+              if (res.data3.needUpdatePassword) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLink(this, `/forget/${this.state.applicationName}`);
               }
