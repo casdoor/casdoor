@@ -1,12 +1,19 @@
 import {CopyOutlined} from "@ant-design/icons";
-import {Button, Col, Form, Input, QRCode, Space} from "antd";
+import {Button, Checkbox, Col, Form, Input, QRCode, Space} from "antd";
 import copy from "copy-to-clipboard";
 import i18next from "i18next";
 import React from "react";
 import * as Setting from "../../Setting";
 
-export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
+export const MfaVerifyTotpForm = ({mfaProps, onFinish, organization}) => {
   const [form] = Form.useForm();
+
+  const handleFinish = (values) => {
+    onFinish({
+      passcode: values.passcode,
+      enableMfaExpiry: values.enableMfaExpiry,
+    });
+  };
 
   const renderSecret = () => {
     if (!mfaProps.secret) {
@@ -40,7 +47,10 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
     <Form
       form={form}
       style={{width: "300px"}}
-      onFinish={onFinish}
+      onFinish={handleFinish}
+      initialValues={{
+        enableMfaExpiry: false,
+      }}
     >
       {renderSecret()}
       <Form.Item
@@ -53,6 +63,14 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
             form.submit();
           }}
         />
+      </Form.Item>
+      <Form.Item
+        name="enableMfaExpiry"
+        valuePropName="checked"
+      >
+        <Checkbox>
+          {i18next.t("mfa:Remember this device for {hour} hours").replace("{hour}", organization?.mfaRememberInHours || 12)}
+        </Checkbox>
       </Form.Item>
       <Form.Item>
         <Button

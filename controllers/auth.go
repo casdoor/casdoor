@@ -355,13 +355,20 @@ func isProxyProviderType(providerType string) bool {
 
 func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
 	if object.IsNeedPromptMfa(organization, user) {
-		// The prompt page needs the user to be srigned in
+		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 		c.ResponseOk(object.RequiredMfa)
 		return true
 	}
 
 	if user.IsMfaEnabled() {
+		mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
+		mfaExpiredAt, ok := c.GetSession(mfaVerifiedAtKey).(int64)
+		if ok && mfaExpiredAt > 0 {
+			if time.Now().Unix() <= mfaExpiredAt {
+				return false
+			}
+		}
 		c.setMfaUserSession(user.GetId())
 		mfaList := object.GetAllMfaProps(user, true)
 		mfaAllowList := []*object.MfaProps{}
@@ -973,6 +980,28 @@ func (c *ApiController) Login() {
 			return
 		}
 
+		var application *object.Application
+		if authForm.ClientId == "" {
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		} else {
+			application, err = object.GetApplicationByClientId(authForm.ClientId)
+		}
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			return
+		}
+
+		var organization *object.Organization
+		organization, err = object.GetOrganization(util.GetId("admin", application.Organization))
+		if err != nil {
+			c.ResponseError(c.T(err.Error()))
+		}
+
 		if authForm.Passcode != "" {
 			if authForm.MfaType == c.GetSession("verificationCodeType") {
 				c.ResponseError("Invalid multi-factor authentication type")
@@ -999,6 +1028,15 @@ func (c *ApiController) Login() {
 				}
 			}
 
+			if authForm.EnableMfaExpiry {
+				mfaExpiredAt := object.MfaExpiredAt + user.GetId()
+
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				if mfaRememberInSeconds == 0 {
+					mfaRememberInSeconds = 12 * 3600
+				}
+				c.SetSession(mfaExpiredAt, time.Now().Unix()+mfaRememberInSeconds)
+			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
 			err = object.MfaRecover(user, authForm.RecoveryCode)
@@ -1006,24 +1044,18 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 				return
 			}
+
+			if authForm.EnableMfaExpiry {
+				mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
+
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				if mfaRememberInSeconds == 0 {
+					mfaRememberInSeconds = 12 * 3600
+				}
+				c.SetSession(mfaVerifiedAtKey, time.Now().Unix()+mfaRememberInSeconds)
+			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
-			return
-		}
-
-		var application *object.Application
-		if authForm.ClientId == "" {
-			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
-		} else {
-			application, err = object.GetApplicationByClientId(authForm.ClientId)
-		}
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
 
