@@ -222,7 +222,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 	if organization.MasterPassword != "" && organization.MasterPassword != "***" {
 		credManager := cred.GetCredManager(organization.PasswordType)
 		if credManager != nil {
-			hashedPassword := credManager.GetHashedPassword(organization.MasterPassword, "", organization.PasswordSalt)
+			hashedPassword := credManager.GetHashedPassword(organization.MasterPassword, organization.PasswordSalt)
 			organization.MasterPassword = hashedPassword
 		}
 	}

@@ -9,7 +9,7 @@ func NewBcryptCredManager() *BcryptCredManager {
 	return cm
 }
 
-func (cm *BcryptCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *BcryptCredManager) GetHashedPassword(password string, salt string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return ""

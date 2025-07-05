@@ -32,12 +32,8 @@ func NewPbkdf2DjangoCredManager() *Pbkdf2DjangoCredManager {
 	return cm
 }
 
-func (m *Pbkdf2DjangoCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (m *Pbkdf2DjangoCredManager) GetHashedPassword(password string, salt string) string {
 	iterations := 260000
-	salt := userSalt
-	if salt == "" {
-		salt = organizationSalt
-	}
 
 	saltBytes := []byte(salt)
 	passwordBytes := []byte(password)
