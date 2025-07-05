@@ -21,7 +21,7 @@ func NewPlainCredManager() *PlainCredManager {
 	return cm
 }
 
-func (cm *PlainCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *PlainCredManager) GetHashedPassword(password string, salt string) string {
 	return password
 }
 

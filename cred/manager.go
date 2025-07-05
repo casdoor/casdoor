@@ -15,7 +15,7 @@
 package cred
 
 type CredManager interface {
-	GetHashedPassword(password string, userSalt string, organizationSalt string) string
+	GetHashedPassword(password string, salt string) string
 	IsPasswordCorrect(password string, passwordHash string, userSalt string, organizationSalt string) bool
 }
 

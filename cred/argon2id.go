@@ -23,7 +23,7 @@ func NewArgon2idCredManager() *Argon2idCredManager {
 	return cm
 }
 
-func (cm *Argon2idCredManager) GetHashedPassword(password string, userSalt string, organizationSalt string) string {
+func (cm *Argon2idCredManager) GetHashedPassword(password string, salt string) string {
 	hash, err := argon2id.CreateHash(password, argon2id.DefaultParams)
 	if err != nil {
 		return ""
