@@ -42,6 +42,7 @@ type Response struct {
 	Name   string      `json:"name"`
 	Data   interface{} `json:"data"`
 	Data2  interface{} `json:"data2"`
+	Data3  interface{} `json:"data3"`
 }
 
 type Captcha struct {
