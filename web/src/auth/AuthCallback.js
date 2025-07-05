@@ -166,7 +166,7 @@ class AuthCallback extends React.Component {
           const responseType = this.getResponseType();
           const handleLogin = (res) => {
             if (responseType === "login") {
-              if (res.data2) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
@@ -176,7 +176,7 @@ class AuthCallback extends React.Component {
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
-              if (res.data2) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
@@ -185,7 +185,7 @@ class AuthCallback extends React.Component {
               Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
-              if (res.data2) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
@@ -207,7 +207,7 @@ class AuthCallback extends React.Component {
                   relayState: oAuthParams.relayState,
                 });
               } else {
-                if (res.data3.needUpdatePassword) {
+                if (res.data3) {
                   sessionStorage.setItem("signinUrl", signinUrl);
                   Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                   return;
