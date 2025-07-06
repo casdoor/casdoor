@@ -73,6 +73,7 @@ type User struct {
 	Email             string   `xorm:"varchar(100) index" json:"email"`
 	EmailVerified     bool     `json:"emailVerified"`
 	Phone             string   `xorm:"varchar(100) index" json:"phone"`
+	FullPhone         string   `xorm:"varchar(100) index" json:"fullPhone"`
 	CountryCode       string   `xorm:"varchar(6)" json:"countryCode"`
 	Region            string   `xorm:"varchar(100)" json:"region"`
 	Location          string   `xorm:"varchar(100)" json:"location"`
@@ -228,6 +229,7 @@ type Userinfo struct {
 	Avatar        string   `json:"picture,omitempty"`
 	Address       string   `json:"address,omitempty"`
 	Phone         string   `json:"phone,omitempty"`
+	FullPhone     string   `json:"full_phone,omitempty"`
 	Groups        []string `json:"groups,omitempty"`
 	Roles         []string `json:"roles,omitempty"`
 	Permissions   []string `json:"permissions,omitempty"`
@@ -540,6 +542,42 @@ func GetUserByPhoneOnly(phone string) (*User, error) {
 	}
 }
 
+func GetUserByFullPhone(owner string, fullPhone string) (*User, error) {
+	if owner == "" || fullPhone == "" {
+		return nil, nil
+	}
+
+	user := User{Owner: owner, FullPhone: fullPhone}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func GetUserByFullPhoneOnly(fullPhone string) (*User, error) {
+	if fullPhone == "" {
+		return nil, nil
+	}
+
+	user := User{Phone: fullPhone}
+	existed, err := ormer.Engine.Get(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &user, nil
+	} else {
+		return nil, nil
+	}
+}
+
 func GetUserByUserId(owner string, userId string) (*User, error) {
 	if owner == "" || userId == "" {
 		return nil, nil
@@ -796,7 +834,14 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "mfa_items")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "full_phone", "type", "balance", "mfa_items")
+	}
+
+	// Generate FullPhone from Phone and CountryCode
+	if user.Phone != "" && user.CountryCode != "" {
+		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
+			user.FullPhone = fullPhone
+		}
 	}
 
 	columns = append(columns, "updated_time")
@@ -866,6 +911,13 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 		}
 	}
 
+	// Generate FullPhone from Phone and CountryCode
+	if user.Phone != "" && user.CountryCode != "" {
+		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
+			user.FullPhone = fullPhone
+		}
+	}
+
 	user.UpdatedTime = util.GetCurrentTime()
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
@@ -931,6 +983,12 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	if user.CreatedTime == "" {
 		user.CreatedTime = util.GetCurrentTime()
+	}
+
+	if user.Phone != "" && user.CountryCode != "" {
+		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
+			user.FullPhone = fullPhone
+		}
 	}
 
 	err = user.UpdateUserHash()
