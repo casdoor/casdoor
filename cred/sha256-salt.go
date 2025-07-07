@@ -41,9 +41,6 @@ func (cm *Sha256SaltCredManager) GetHashedPassword(password string, salt string)
 	return getSha256HexDigest(getSha256HexDigest(password) + salt)
 }
 
-func (cm *Sha256SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	if hashedPwd == cm.GetHashedPassword(plainPwd, organizationSalt) {
-		return true
-	}
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt)
+func (cm *Sha256SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

@@ -17,7 +17,7 @@ func (cm *BcryptCredManager) GetHashedPassword(password string, salt string) str
 	return string(bytes)
 }
 
-func (cm *BcryptCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
+func (cm *BcryptCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(plainPwd))
 	return err == nil
 }
