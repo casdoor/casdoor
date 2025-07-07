@@ -101,15 +101,14 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
 
-	originFrontend, _ := getOriginFromHost(host)
-
-	forgetURL := ""
 	if method == "forget" {
+		originFrontend, _ := getOriginFromHost(host)
+
 		query := url.Values{}
 		query.Add("code", code)
 		query.Add("username", user.Name)
 		query.Add("dest", util.GetMaskedEmail(dest))
-		forgetURL = originFrontend + "/forget/" + applicationName + "?" + query.Encode()
+		forgetURL := originFrontend + "/forget/" + applicationName + "?" + query.Encode()
 
 		content = strings.Replace(content, "%link", forgetURL, -1)
 		content = strings.Replace(content, "<reset-link>", "", -1)
