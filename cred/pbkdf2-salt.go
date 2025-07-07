@@ -35,9 +35,6 @@ func (cm *Pbkdf2SaltCredManager) GetHashedPassword(password string, salt string)
 	return base64.StdEncoding.EncodeToString(res)
 }
 
-func (cm *Pbkdf2SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	if hashedPwd == cm.GetHashedPassword(plainPwd, organizationSalt) {
-		return true
-	}
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt)
+func (cm *Pbkdf2SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

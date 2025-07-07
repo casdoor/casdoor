@@ -25,6 +25,6 @@ func (cm *PlainCredManager) GetHashedPassword(password string, salt string) stri
 	return password
 }
 
-func (cm *PlainCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
+func (cm *PlainCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
 	return hashedPwd == plainPwd
 }

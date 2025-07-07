@@ -41,9 +41,6 @@ func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, salt string
 	return getMd5HexDigest(getMd5HexDigest(password) + salt)
 }
 
-func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, userSalt string, organizationSalt string) bool {
-	if hashedPwd == cm.GetHashedPassword(plainPwd, organizationSalt) {
-		return true
-	}
-	return hashedPwd == cm.GetHashedPassword(plainPwd, userSalt)
+func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

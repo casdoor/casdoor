@@ -42,7 +42,7 @@ func (m *Pbkdf2DjangoCredManager) GetHashedPassword(password string, salt string
 	return "pbkdf2_sha256$" + strconv.Itoa(iterations) + "$" + salt + "$" + hashBase64
 }
 
-func (m *Pbkdf2DjangoCredManager) IsPasswordCorrect(password string, passwordHash string, userSalt string, organizationSalt string) bool {
+func (m *Pbkdf2DjangoCredManager) IsPasswordCorrect(password string, passwordHash string, _salt string) bool {
 	parts := strings.Split(passwordHash, "$")
 	if len(parts) != 4 {
 		return false
