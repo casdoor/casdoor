@@ -19,6 +19,8 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -33,6 +35,8 @@ type VerifyResult struct {
 	Msg  string
 }
 
+var ResetLinkReg *regexp.Regexp
+
 const (
 	VerificationSuccess = iota
 	wrongCodeError
@@ -44,6 +48,10 @@ const (
 	VerifyTypePhone = "phone"
 	VerifyTypeEmail = "email"
 )
+
+func init() {
+	ResetLinkReg = regexp.MustCompile("(?s)<reset-link>(.*?)</reset-link>")
+}
 
 type VerificationRecord struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
@@ -81,7 +89,7 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 	return nil
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string) error {
 	sender := organization.DisplayName
 	title := provider.Title
 
@@ -92,6 +100,24 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 
 	// "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes."
 	content := strings.Replace(provider.Content, "%s", code, 1)
+
+	originFrontend, _ := getOriginFromHost(host)
+
+	forgetURL := ""
+	if method == "forget" {
+		query := url.Values{}
+		query.Add("code", code)
+		query.Add("username", user.Name)
+		query.Add("dest", util.GetMaskedEmail(dest))
+		forgetURL = originFrontend + "/forget/" + applicationName + "?" + query.Encode()
+
+		content = strings.Replace(content, "%link", forgetURL, -1)
+		content = strings.Replace(content, "<reset-link>", "", -1)
+		content = strings.Replace(content, "</reset-link>", "", -1)
+	} else {
+		matchContent := ResetLinkReg.Find([]byte(content))
+		content = strings.Replace(content, string(matchContent), "", -1)
+	}
 
 	userString := "Hi"
 	if user != nil {

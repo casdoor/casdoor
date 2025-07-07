@@ -31,18 +31,21 @@ const {Option} = Select;
 class ForgetPage extends React.Component {
   constructor(props) {
     super(props);
+    const queryParams = new URLSearchParams(location.search);
     this.state = {
       classes: props,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
       msg: null,
-      name: props.account ? props.account.name : "",
+      name: props.account ? props.account.name : queryParams.get("username"),
       username: props.account ? props.account.name : "",
       phone: "",
       email: "",
       dest: "",
       isVerifyTypeFixed: false,
       verifyType: "", // "email", "phone"
-      current: 0,
+      current: queryParams.get("code") ? 2 : 0,
+      code: queryParams.get("code"),
+      queryParams: queryParams,
     };
     this.form = React.createRef();
   }
@@ -148,9 +151,26 @@ class ForgetPage extends React.Component {
     }
   }
 
-  onFinish(values) {
+  async onFinish(values) {
     values.username = this.state.name;
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
+
+    if (this.state.queryParams.get("code")) {
+      const res = await UserBackend.verifyCode({
+        application: this.getApplicationObj().name,
+        organization: values.userOwner,
+        username: this.state.queryParams.get("dest"),
+        name: this.state.name,
+        code: this.state.code,
+        type: "login",
+      });
+
+      if (res.status !== "ok") {
+        Setting.showMessage("error", res.msg);
+        return;
+      }
+    }
+
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword, this.state.code).then(res => {
       if (res.status === "ok") {
         const linkInStorage = sessionStorage.getItem("signinUrl");

@@ -140,6 +140,9 @@ func (c *ApiController) SendEmail() {
 	}
 	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
+	matchContent := object.ResetLinkReg.Find([]byte(content))
+	content = strings.Replace(content, string(matchContent), "", -1)
+
 	for _, receiver := range emailForm.Receivers {
 		err = object.SendEmail(provider, emailForm.Title, content, receiver, emailForm.Sender)
 		if err != nil {
