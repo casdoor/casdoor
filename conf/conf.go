@@ -66,7 +66,11 @@ func GetConfigBool(key string) bool {
 func GetConfigInt64(key string) (int64, error) {
 	value := GetConfigString(key)
 	num, err := strconv.ParseInt(value, 10, 64)
-	return num, err
+	if err != nil {
+		return 0, fmt.Errorf("GetConfigInt64(%s) error, %s", key, err.Error())
+	}
+
+	return num, nil
 }
 
 func GetConfigDataSourceName() string {
