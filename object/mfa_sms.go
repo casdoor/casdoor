@@ -33,7 +33,7 @@ func (mfa *SmsMfa) Initiate(userId string) (*MfaProps, error) {
 
 func (mfa *SmsMfa) SetupVerify(passCode string) error {
 	if !util.IsEmailValid(mfa.Secret) {
-		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
+		mfa.Secret, _, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
 	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")
@@ -74,7 +74,7 @@ func (mfa *SmsMfa) Enable(user *User) error {
 
 func (mfa *SmsMfa) Verify(passCode string) error {
 	if !util.IsEmailValid(mfa.Secret) {
-		mfa.Secret, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
+		mfa.Secret, _, _ = util.GetE164Number(mfa.Secret, mfa.CountryCode)
 	}
 
 	result, err := CheckVerificationCode(mfa.Secret, passCode, "en")

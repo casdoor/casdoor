@@ -300,7 +300,10 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
-		if phone, ok := util.GetE164Number(vform.Dest, vform.CountryCode); !ok {
+		if phone, ok, err := util.GetE164Number(vform.Dest, vform.CountryCode); err != nil {
+			c.ResponseError(c.T("check:Phone number is invalid"))
+			return
+		} else if !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), vform.CountryCode))
 			return
 		} else {
@@ -401,7 +404,10 @@ func (c *ApiController) ResetEmailOrPhone() {
 			c.ResponseError(errMsg)
 			return
 		}
-		if checkDest, ok = util.GetE164Number(dest, user.GetCountryCode("")); !ok {
+		if checkDest, ok, err = util.GetE164Number(dest, user.GetCountryCode("")); err != nil {
+			c.ResponseError(c.T("check:Phone number is invalid"))
+			return
+		} else if !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), user.CountryCode))
 			return
 		}
@@ -505,7 +511,10 @@ func (c *ApiController) VerifyCode() {
 	if verificationCodeType == object.VerifyTypePhone {
 		authForm.CountryCode = user.GetCountryCode(authForm.CountryCode)
 		var ok bool
-		if checkDest, ok = util.GetE164Number(authForm.Username, authForm.CountryCode); !ok {
+		if checkDest, ok, err = util.GetE164Number(authForm.Username, authForm.CountryCode); err != nil {
+			c.ResponseError(c.T("check:Phone number is invalid"))
+			return
+		} else if !ok {
 			c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), authForm.CountryCode))
 			return
 		}

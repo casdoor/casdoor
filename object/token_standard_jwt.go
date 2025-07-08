@@ -74,8 +74,8 @@ func getStandardClaims(claims Claims) ClaimsStandard {
 			res.Gender = claims.User.Gender
 		} else if scope == "phone" && claims.User.Phone != "" {
 			res.PhoneNumberVerified = true
-			phoneNumber, ok := util.GetE164Number(claims.User.Phone, claims.User.CountryCode)
-			if !ok {
+			phoneNumber, ok, err := util.GetE164Number(claims.User.Phone, claims.User.CountryCode)
+			if err != nil || !ok {
 				res.PhoneNumberVerified = false
 			} else {
 				res.PhoneNumber = phoneNumber

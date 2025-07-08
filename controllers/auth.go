@@ -500,7 +500,10 @@ func (c *ApiController) Login() {
 			if verificationCodeType == object.VerifyTypePhone {
 				authForm.CountryCode = user.GetCountryCode(authForm.CountryCode)
 				var ok bool
-				if checkDest, ok = util.GetE164Number(authForm.Username, authForm.CountryCode); !ok {
+				if checkDest, ok, err = util.GetE164Number(authForm.Username, authForm.CountryCode); err != nil {
+					c.ResponseError(c.T("check:Phone number is invalid"))
+					return
+				} else if !ok {
 					c.ResponseError(fmt.Sprintf(c.T("verification:Phone number is invalid in your region %s"), authForm.CountryCode))
 					return
 				}
