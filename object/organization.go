@@ -85,7 +85,7 @@ type Organization struct {
 	WidgetItems            []string   `xorm:"varchar(1000)" json:"widgetItems"`
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
-	MfaRememberInHours int64          `json:"mfaRememberInHours"`
+	MfaRememberInHours int            `xorm:"default 12" json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
 }
 

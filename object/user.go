@@ -213,6 +213,7 @@ type User struct {
 	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
 	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
 	MfaItems           []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
+	MfaExpiredTime     string           `xorm:"varchar(100) default '1970-01-01T00:00:00Z'" json:"mfaExpiredTime"`
 	NeedUpdatePassword bool             `json:"needUpdatePassword"`
 	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }

@@ -605,7 +605,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Mfa expire"), i18next.t("application:Mfa expire - Tooltip"))} :
+            {Setting.getLabel(i18next.t("application:MFA validity hours"), i18next.t("application:Per-account MFA validity, re-login skips MFA"))} :
           </Col>
           <Col span={22} >
             <InputNumber style={{width: "150px"}} value={this.state.organization.mfaRememberInHours === 0 ? 12 : this.state.organization.mfaRememberInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {

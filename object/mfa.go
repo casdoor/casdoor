@@ -21,13 +21,14 @@ import (
 )
 
 type MfaProps struct {
-	Enabled       bool     `json:"enabled"`
-	IsPreferred   bool     `json:"isPreferred"`
-	MfaType       string   `json:"mfaType" form:"mfaType"`
-	Secret        string   `json:"secret,omitempty"`
-	CountryCode   string   `json:"countryCode,omitempty"`
-	URL           string   `json:"url,omitempty"`
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
+	Enabled            bool     `json:"enabled"`
+	IsPreferred        bool     `json:"isPreferred"`
+	MfaType            string   `json:"mfaType" form:"mfaType"`
+	Secret             string   `json:"secret,omitempty"`
+	CountryCode        string   `json:"countryCode,omitempty"`
+	URL                string   `json:"url,omitempty"`
+	RecoveryCodes      []string `json:"recoveryCodes,omitempty"`
+	MfaRememberInHours int      `json:"mfaRememberInHours,omitempty"`
 }
 
 type MfaInterface interface {
@@ -47,7 +48,11 @@ const (
 	MfaSessionUserId = "MfaSessionUserId"
 	NextMfa          = "NextMfa"
 	RequiredMfa      = "RequiredMfa"
-	MfaExpiredAt     = "MfaExpiredAt_"
+)
+
+const (
+	DefaultMfaRememberHours = 12
+	SecondsPerHour          = 3600
 )
 
 func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {

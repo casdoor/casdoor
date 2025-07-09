@@ -362,20 +362,20 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	}
 
 	if user.IsMfaEnabled() {
-		mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
-		mfaExpiredAt, ok := c.GetSession(mfaVerifiedAtKey).(int64)
-		if ok && mfaExpiredAt > 0 {
-			if time.Now().Unix() <= mfaExpiredAt {
-				return false
-			}
+		currentTime := util.String2Time(util.GetCurrentTime())
+		mfaExpiredTime := util.String2Time(user.MfaExpiredTime)
+		if mfaExpiredTime.After(currentTime) {
+			return false
 		}
 		c.setMfaUserSession(user.GetId())
 		mfaList := object.GetAllMfaProps(user, true)
 		mfaAllowList := []*object.MfaProps{}
+		mfaRememberInHours := organization.MfaRememberInHours
 		for _, prop := range mfaList {
 			if prop.MfaType == verificationType || !prop.Enabled {
 				continue
 			}
+			prop.MfaRememberInHours = mfaRememberInHours
 			mfaAllowList = append(mfaAllowList, prop)
 		}
 		if len(mfaAllowList) >= 1 {
@@ -1029,13 +1029,18 @@ func (c *ApiController) Login() {
 			}
 
 			if authForm.EnableMfaExpiry {
-				mfaExpiredAt := object.MfaExpiredAt + user.GetId()
-
-				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				mfaRememberInSeconds := organization.MfaRememberInHours * object.SecondsPerHour
 				if mfaRememberInSeconds == 0 {
-					mfaRememberInSeconds = 12 * 3600
+					mfaRememberInSeconds = object.DefaultMfaRememberHours * object.SecondsPerHour
 				}
-				c.SetSession(mfaExpiredAt, time.Now().Unix()+mfaRememberInSeconds)
+				currentTime := util.String2Time(util.GetCurrentTime())
+				duration := time.Duration(mfaRememberInSeconds) * time.Second
+				user.MfaExpiredTime = util.Time2String(currentTime.Add(duration))
+				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_expired_time"}, user.IsAdmin)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
 			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
@@ -1043,16 +1048,6 @@ func (c *ApiController) Login() {
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
-			}
-
-			if authForm.EnableMfaExpiry {
-				mfaVerifiedAtKey := object.MfaExpiredAt + user.GetId()
-
-				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
-				if mfaRememberInSeconds == 0 {
-					mfaRememberInSeconds = 12 * 3600
-				}
-				c.SetSession(mfaVerifiedAtKey, time.Now().Unix()+mfaRememberInSeconds)
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
