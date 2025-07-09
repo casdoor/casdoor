@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import {Helmet} from "react-helmet";
 import * as Conf from "./Conf";
 import * as phoneNumber from "libphonenumber-js";
+import mobileExamples from "libphonenumber-js/examples.mobile.json";
 import moment from "moment";
 import {MfaAuthVerifyForm, NextMfa, RequiredMfa} from "./auth/mfa/MfaAuthVerifyForm";
 import {EmailMfaType, SmsMfaType, TotpMfaType} from "./auth/MfaSetupPage";
@@ -1442,7 +1443,10 @@ export function getRandomName() {
   return Math.random().toString(36).slice(-6);
 }
 
-export function getRandomNumber() {
+export function getRandomNumber(countryCode) {
+  if (countryCode) {
+    return phoneNumber.getExampleNumber(countryCode, mobileExamples).nationalNumber;
+  }
   return Math.random().toString(10).slice(-11);
 }
 
