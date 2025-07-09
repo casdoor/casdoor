@@ -30,6 +30,7 @@ import {NavItemTree} from "./common/NavItemTree";
 import {WidgetItemTree} from "./common/WidgetItemTree";
 
 const {Option} = Select;
+const DefaultMfaRememberInHours = 12;
 
 class OrganizationEditPage extends React.Component {
   constructor(props) {
@@ -608,7 +609,7 @@ class OrganizationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:MFA validity hours"), i18next.t("application:Per-account MFA validity, re-login skips MFA"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.organization.mfaRememberInHours === 0 ? 12 : this.state.organization.mfaRememberInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
+            <InputNumber style={{width: "150px"}} value={this.state.organization.mfaRememberInHours === 0 ? DefaultMfaRememberInHours : this.state.organization.mfaRememberInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
               this.updateOrganizationField("mfaRememberInHours", value);
             }} />
           </Col>

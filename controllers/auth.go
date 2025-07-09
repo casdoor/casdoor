@@ -364,7 +364,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	if user.IsMfaEnabled() {
 		currentTime := util.String2Time(util.GetCurrentTime())
 		mfaExpiredTime := util.String2Time(user.MfaExpiredTime)
-		if mfaExpiredTime.After(currentTime) {
+		if user.MfaExpiredTime != "" && mfaExpiredTime.After(currentTime) {
 			return false
 		}
 		c.setMfaUserSession(user.GetId())
