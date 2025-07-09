@@ -79,12 +79,7 @@ func GetUserByFields(organization string, field string) (*User, error) {
 		}
 	}
 
-	// check phone (prioritize fullPhone over phone)
-	user, err = GetUserByField(organization, "full_phone", field)
-	if user != nil || err != nil {
-		return user, err
-	}
-
+	// check phone
 	user, err = GetUserByField(organization, "phone", field)
 	if user != nil || err != nil {
 		return user, err
@@ -118,25 +113,6 @@ func SetUserField(user *User, field string, value string) (bool, error) {
 		bean["password_type"] = user.PasswordType
 	} else {
 		bean[strings.ToLower(field)] = value
-
-		// Update the user object with the new field value
-		fieldName := strings.Title(field)
-		if fieldName == "Country_code" {
-			fieldName = "CountryCode"
-		}
-		v := reflect.ValueOf(user).Elem()
-		f := v.FieldByName(fieldName)
-		if f.IsValid() && f.CanSet() && f.Kind() == reflect.String {
-			f.SetString(value)
-		}
-
-		// Generate FullPhone if phone or country_code is updated
-		if (field == "phone" || field == "country_code") && user.Phone != "" && user.CountryCode != "" {
-			if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
-				user.FullPhone = fullPhone
-				bean["full_phone"] = fullPhone
-			}
-		}
 	}
 
 	affected, err := ormer.Engine.Table(user).ID(core.PK{user.Owner, user.Name}).Update(bean)

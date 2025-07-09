@@ -78,14 +78,8 @@ func IsInvitationCodeMatch(pattern string, invitationCode string) (bool, error) 
 }
 
 func GetE164Number(phone string, countryCode string) (string, bool) {
-	phoneNumber, err := phonenumbers.Parse(phone, countryCode)
-	if err != nil {
-		return "", false
-	}
-	e164Format := phonenumbers.Format(phoneNumber, phonenumbers.E164)
-	isValid := phonenumbers.IsValidNumber(phoneNumber)
-
-	return e164Format, isValid
+	phoneNumber, _ := phonenumbers.Parse(phone, countryCode)
+	return phonenumbers.Format(phoneNumber, phonenumbers.E164), phonenumbers.IsValidNumber(phoneNumber)
 }
 
 func GetCountryCode(prefix string, phone string) (string, error) {

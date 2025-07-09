@@ -97,7 +97,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 				return i18n.Translate(lang, "check:Phone cannot be empty")
 			}
 		} else {
-			if HasUserByField(organization.Name, "full_phone", authForm.FullPhone) {
+			if HasUserByField(organization.Name, "phone", authForm.Phone) {
 				return i18n.Translate(lang, "check:Phone already exists")
 			} else if !util.IsPhoneAllowInRegin(authForm.CountryCode, organization.CountryCodes) {
 				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
@@ -582,8 +582,8 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return i18n.Translate(lang, "check:Email already exists")
 		}
 	}
-	if oldUser.FullPhone != user.FullPhone {
-		if HasUserByField(user.Owner, "fullPhone", user.FullPhone) {
+	if oldUser.Phone != user.Phone {
+		if HasUserByField(user.Owner, "Phone", user.Phone) {
 			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
