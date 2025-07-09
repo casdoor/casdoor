@@ -98,7 +98,9 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 				return i18n.Translate(lang, "check:Phone already exists")
 			} else if !util.IsPhoneAllowInRegin(authForm.CountryCode, organization.CountryCodes) {
 				return i18n.Translate(lang, "check:Your region is not allow to signup by phone")
-			} else if !util.IsPhoneValid(authForm.Phone, authForm.CountryCode) {
+			} else if _, valid, err := util.GetE164Number(authForm.Phone, authForm.CountryCode); err != nil {
+				return i18n.Translate(lang, "check:Phone number is invalid")
+			} else if !valid {
 				return i18n.Translate(lang, "check:Phone number is invalid")
 			}
 		}

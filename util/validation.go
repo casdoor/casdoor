@@ -45,14 +45,6 @@ func IsEmailValid(email string) bool {
 	return err == nil
 }
 
-func IsPhoneValid(phone string, countryCode string) bool {
-	phoneNumber, err := phonenumbers.Parse(phone, countryCode)
-	if err != nil {
-		return false
-	}
-	return phonenumbers.IsValidNumber(phoneNumber)
-}
-
 func IsPhoneAllowInRegin(countryCode string, allowRegions []string) bool {
 	if ContainsString(allowRegions, "All") {
 		return true
