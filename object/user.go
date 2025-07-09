@@ -565,7 +565,7 @@ func GetUserByFullPhoneOnly(fullPhone string) (*User, error) {
 		return nil, nil
 	}
 
-	user := User{Phone: fullPhone}
+	user := User{FullPhone: fullPhone}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
 		return nil, err
@@ -837,7 +837,6 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "name", "id", "email", "phone", "country_code", "full_phone", "type", "balance", "mfa_items")
 	}
 
-	// Generate FullPhone from Phone and CountryCode
 	if user.Phone != "" && user.CountryCode != "" {
 		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
 			user.FullPhone = fullPhone
@@ -911,13 +910,6 @@ func UpdateUserForAllFields(id string, user *User) (bool, error) {
 		}
 	}
 
-	// Generate FullPhone from Phone and CountryCode
-	if user.Phone != "" && user.CountryCode != "" {
-		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
-			user.FullPhone = fullPhone
-		}
-	}
-
 	user.UpdatedTime = util.GetCurrentTime()
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(user)
@@ -983,12 +975,6 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	if user.CreatedTime == "" {
 		user.CreatedTime = util.GetCurrentTime()
-	}
-
-	if user.Phone != "" && user.CountryCode != "" {
-		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
-			user.FullPhone = fullPhone
-		}
 	}
 
 	err = user.UpdateUserHash()
