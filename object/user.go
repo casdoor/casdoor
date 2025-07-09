@@ -542,42 +542,6 @@ func GetUserByPhoneOnly(phone string) (*User, error) {
 	}
 }
 
-func GetUserByFullPhone(owner string, fullPhone string) (*User, error) {
-	if owner == "" || fullPhone == "" {
-		return nil, nil
-	}
-
-	user := User{Owner: owner, FullPhone: fullPhone}
-	existed, err := ormer.Engine.Get(&user)
-	if err != nil {
-		return nil, err
-	}
-
-	if existed {
-		return &user, nil
-	} else {
-		return nil, nil
-	}
-}
-
-func GetUserByFullPhoneOnly(fullPhone string) (*User, error) {
-	if fullPhone == "" {
-		return nil, nil
-	}
-
-	user := User{FullPhone: fullPhone}
-	existed, err := ormer.Engine.Get(&user)
-	if err != nil {
-		return nil, err
-	}
-
-	if existed {
-		return &user, nil
-	} else {
-		return nil, nil
-	}
-}
-
 func GetUserByUserId(owner string, userId string) (*User, error) {
 	if owner == "" || userId == "" {
 		return nil, nil
@@ -838,9 +802,8 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	if user.Phone != "" && user.CountryCode != "" {
-		if fullPhone, isValid := util.GetE164Number(user.Phone, user.CountryCode); isValid {
-			user.FullPhone = fullPhone
-		}
+		fullPhone, _ := util.GetE164Number(user.Phone, user.CountryCode)
+		user.FullPhone = fullPhone
 	}
 
 	columns = append(columns, "updated_time")

@@ -148,7 +148,6 @@ func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	email := c.Input().Get("email")
 	phone := c.Input().Get("phone")
-	fullPhone := c.Input().Get("fullPhone")
 	userId := c.Input().Get("userId")
 	owner := c.Input().Get("owner")
 	var err error
@@ -172,8 +171,6 @@ func (c *ApiController) GetUser() {
 		switch {
 		case email != "":
 			user, err = object.GetUserByEmailOnly(email)
-		case fullPhone != "":
-			user, err = object.GetUserByFullPhoneOnly(fullPhone)
 		case phone != "":
 			user, err = object.GetUserByPhoneOnly(phone)
 		case userId != "":
@@ -187,8 +184,6 @@ func (c *ApiController) GetUser() {
 		switch {
 		case email != "":
 			user, err = object.GetUserByEmail(owner, email)
-		case fullPhone != "":
-			user, err = object.GetUserByFullPhone(owner, fullPhone)
 		case phone != "":
 			user, err = object.GetUserByPhone(owner, phone)
 		case userId != "":
