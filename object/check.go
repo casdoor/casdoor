@@ -582,8 +582,8 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return i18n.Translate(lang, "check:Email already exists")
 		}
 	}
-	if oldUser.Phone != user.Phone {
-		if HasUserByField(user.Owner, "Phone", user.Phone) {
+	if oldUser.FullPhone != user.FullPhone {
+		if HasUserByField(user.Owner, "full_phone", user.FullPhone) {
 			return i18n.Translate(lang, "check:Phone already exists")
 		}
 	}
