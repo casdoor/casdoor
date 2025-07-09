@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/beego/beego/utils/pagination"
@@ -460,7 +461,13 @@ func (c *ApiController) IntrospectToken() {
 	}
 
 	if token != nil {
+		application, err = object.GetApplication(fmt.Sprintf("%s/%s", token.Owner, token.Application))
+		if err != nil {
+			c.ResponseTokenError(err.Error())
+			return
+		}
 		introspectionResponse.TokenType = token.TokenType
+		introspectionResponse.ClientId = application.ClientId
 	}
 
 	c.Data["json"] = introspectionResponse
