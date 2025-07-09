@@ -300,6 +300,16 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if user.Phone != "" && user.Phone != oldUser.Phone {
+		if _, valid, err := util.GetE164Number(user.Phone, user.CountryCode); err != nil {
+			c.ResponseError(c.T("check:Phone number is invalid"))
+			return
+		} else if !valid {
+			c.ResponseError(c.T("check:Phone number is invalid"))
+			return
+		}
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return
