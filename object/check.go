@@ -220,10 +220,15 @@ func checkSigninErrorTimes(user *User, lang string) error {
 }
 
 func CheckPassword(user *User, password string, lang string, options ...bool) error {
+	if password == "" {
+		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
+	}
+
 	enableCaptcha := false
 	if len(options) > 0 {
 		enableCaptcha = options[0]
 	}
+
 	// check the login error times
 	if !enableCaptcha {
 		err := checkSigninErrorTimes(user, lang)
@@ -236,35 +241,31 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	if err != nil {
 		return err
 	}
-
 	if organization == nil {
 		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
-	}
-
-	if password == "" {
-		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
 	}
 
 	passwordType := user.PasswordType
 	if passwordType == "" {
 		passwordType = organization.PasswordType
 	}
+
 	credManager := cred.GetCredManager(passwordType)
-	if credManager != nil {
-		if organization.MasterPassword != "" {
-			if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
-				return resetUserSigninErrorTimes(user)
-			}
-		}
-
-		if credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) || credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
-			return resetUserSigninErrorTimes(user)
-		}
-
-		return recordSigninErrorInfo(user, lang, enableCaptcha)
-	} else {
+	if credManager == nil {
 		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
+
+	if organization.MasterPassword != "" {
+		if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
+			return resetUserSigninErrorTimes(user)
+		}
+	}
+
+	if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
+		return recordSigninErrorInfo(user, lang, enableCaptcha)
+	}
+
+	return resetUserSigninErrorTimes(user)
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string) string {
