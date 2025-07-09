@@ -466,6 +466,12 @@ func (c *ApiController) IntrospectToken() {
 			c.ResponseTokenError(err.Error())
 			return
 		}
+
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("token:The application: %s does not exist"), token.Application))
+			return
+		}
+
 		introspectionResponse.TokenType = token.TokenType
 		introspectionResponse.ClientId = application.ClientId
 	}
