@@ -210,12 +210,12 @@ type User struct {
 	LastSigninWrongTime    string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes       int    `json:"signinWrongTimes"`
 
-	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
-	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
-	MfaItems           []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
-	MfaExpiredTime     string           `xorm:"varchar(100)" json:"mfaExpiredTime"`
-	NeedUpdatePassword bool             `json:"needUpdatePassword"`
-	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
+	ManagedAccounts     []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
+	MfaAccounts         []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
+	MfaItems            []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
+	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
+	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
+	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }
 
 type Userinfo struct {

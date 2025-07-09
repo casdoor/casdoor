@@ -363,8 +363,8 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 
 	if user.IsMfaEnabled() {
 		currentTime := util.String2Time(util.GetCurrentTime())
-		mfaExpiredTime := util.String2Time(user.MfaExpiredTime)
-		if user.MfaExpiredTime != "" && mfaExpiredTime.After(currentTime) {
+		mfaRememberDeadline := util.String2Time(user.MfaRememberDeadline)
+		if user.MfaRememberDeadline != "" && mfaRememberDeadline.After(currentTime) {
 			return false
 		}
 		c.setMfaUserSession(user.GetId())
@@ -1028,14 +1028,14 @@ func (c *ApiController) Login() {
 				}
 			}
 
-			if authForm.EnableMfaExpiry {
+			if authForm.EnableMfaRemember {
 				mfaRememberInSeconds := organization.MfaRememberInHours * object.SecondsPerHour
 				if mfaRememberInSeconds == 0 {
 					mfaRememberInSeconds = object.DefaultMfaRememberHours * object.SecondsPerHour
 				}
 				currentTime := util.String2Time(util.GetCurrentTime())
 				duration := time.Duration(mfaRememberInSeconds) * time.Second
-				user.MfaExpiredTime = util.Time2String(currentTime.Add(duration))
+				user.MfaRememberDeadline = util.Time2String(currentTime.Add(duration))
 				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_expired_time"}, user.IsAdmin)
 				if err != nil {
 					c.ResponseError(err.Error())

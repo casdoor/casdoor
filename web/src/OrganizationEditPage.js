@@ -606,7 +606,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:MFA validity hours"), i18next.t("application:Per-account MFA validity, re-login skips MFA"))} :
+            {Setting.getLabel(i18next.t("application:MFA remember time"), i18next.t("application:Configures the duration that a account is remembered as trusted after a successful MFA login"))} :
           </Col>
           <Col span={22} >
             <InputNumber style={{width: "150px"}} value={this.state.organization.mfaRememberInHours === 0 ? DefaultMfaRememberInHours : this.state.organization.mfaRememberInHours} min={1} step={1} precision={0} addonAfter="Hours" onChange={value => {
@@ -678,6 +678,10 @@ class OrganizationEditPage extends React.Component {
     if (passwordObfuscatorErrorMessage.length > 0) {
       Setting.showMessage("error", passwordObfuscatorErrorMessage);
       return;
+    }
+
+    if (organization.mfaRememberInHours === 0) {
+      organization.mfaRememberInHours = DefaultMfaRememberInHours;
     }
 
     OrganizationBackend.updateOrganization(this.state.organization.owner, this.state.organizationName, organization)

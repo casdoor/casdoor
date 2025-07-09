@@ -15,7 +15,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   const handleFinish = (values) => {
     onFinish({
       passcode: values.passcode,
-      enableMfaExpiry: values.enableMfaExpiry,
+      enableMfaRemember: values.enableMfaRemember,
     });
   };
 
@@ -61,7 +61,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
       onFinish={handleFinish}
       initialValues={{
         countryCode: mfaProps.countryCode,
-        enableMfaExpiry: false,
+        enableMfaRemember: false,
       }}
     >
       {isShowText() ?
@@ -118,7 +118,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
         />
       </Form.Item>
       <Form.Item
-        name="enableMfaExpiry"
+        name="enableMfaRemember"
         valuePropName="checked"
       >
         <Checkbox>

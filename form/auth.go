@@ -61,10 +61,10 @@ type AuthForm struct {
 	CaptchaToken string `json:"captchaToken"`
 	ClientSecret string `json:"clientSecret"`
 
-	MfaType         string `json:"mfaType"`
-	Passcode        string `json:"passcode"`
-	RecoveryCode    string `json:"recoveryCode"`
-	EnableMfaExpiry bool   `json:"enableMfaExpiry"`
+	MfaType           string `json:"mfaType"`
+	Passcode          string `json:"passcode"`
+	RecoveryCode      string `json:"recoveryCode"`
+	EnableMfaRemember bool   `json:"enableMfaRemember"`
 
 	Plan    string `json:"plan"`
 	Pricing string `json:"pricing"`

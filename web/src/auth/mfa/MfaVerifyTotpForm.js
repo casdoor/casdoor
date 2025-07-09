@@ -11,7 +11,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
   const handleFinish = (values) => {
     onFinish({
       passcode: values.passcode,
-      enableMfaExpiry: values.enableMfaExpiry,
+      enableMfaRemember: values.enableMfaRemember,
     });
   };
 
@@ -49,7 +49,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
       style={{width: "300px"}}
       onFinish={handleFinish}
       initialValues={{
-        enableMfaExpiry: false,
+        enableMfaRemember: false,
       }}
     >
       {renderSecret()}
@@ -65,7 +65,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
         />
       </Form.Item>
       <Form.Item
-        name="enableMfaExpiry"
+        name="enableMfaRemember"
         valuePropName="checked"
       >
         <Checkbox>
