@@ -28,7 +28,7 @@ type MfaProps struct {
 	CountryCode        string   `json:"countryCode,omitempty"`
 	URL                string   `json:"url,omitempty"`
 	RecoveryCodes      []string `json:"recoveryCodes,omitempty"`
-	MfaRememberInHours int      `json:"mfaRememberInHours,omitempty"`
+	MfaRememberInHours int      `json:"mfaRememberInHours"`
 }
 
 type MfaInterface interface {
@@ -51,8 +51,7 @@ const (
 )
 
 const (
-	DefaultMfaRememberHours = 12
-	SecondsPerHour          = 3600
+	DefaultMfaRememberInHours = 12
 )
 
 func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {

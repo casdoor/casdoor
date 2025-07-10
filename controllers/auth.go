@@ -1029,14 +1029,11 @@ func (c *ApiController) Login() {
 			}
 
 			if authForm.EnableMfaRemember {
-				mfaRememberInSeconds := organization.MfaRememberInHours * object.SecondsPerHour
-				if mfaRememberInSeconds == 0 {
-					mfaRememberInSeconds = object.DefaultMfaRememberHours * object.SecondsPerHour
-				}
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
 				currentTime := util.String2Time(util.GetCurrentTime())
 				duration := time.Duration(mfaRememberInSeconds) * time.Second
 				user.MfaRememberDeadline = util.Time2String(currentTime.Add(duration))
-				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_expired_time"}, user.IsAdmin)
+				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_remember_deadline"}, user.IsAdmin)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return

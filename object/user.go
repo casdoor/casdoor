@@ -793,7 +793,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_items", "mfa_remember_deadline",
 		}
 	}
 	if isAdmin {

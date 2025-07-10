@@ -98,6 +98,15 @@ func (c *ApiController) GetOrganization() {
 		return
 	}
 
+	if organization.MfaRememberInHours == 0 {
+		organization.MfaRememberInHours = object.DefaultMfaRememberInHours
+		_, err := object.UpdateOrganization(id, organization, c.IsGlobalAdmin())
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
 	c.ResponseOk(organization)
 }
 
