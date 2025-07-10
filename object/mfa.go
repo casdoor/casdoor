@@ -21,13 +21,14 @@ import (
 )
 
 type MfaProps struct {
-	Enabled       bool     `json:"enabled"`
-	IsPreferred   bool     `json:"isPreferred"`
-	MfaType       string   `json:"mfaType" form:"mfaType"`
-	Secret        string   `json:"secret,omitempty"`
-	CountryCode   string   `json:"countryCode,omitempty"`
-	URL           string   `json:"url,omitempty"`
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
+	Enabled            bool     `json:"enabled"`
+	IsPreferred        bool     `json:"isPreferred"`
+	MfaType            string   `json:"mfaType" form:"mfaType"`
+	Secret             string   `json:"secret,omitempty"`
+	CountryCode        string   `json:"countryCode,omitempty"`
+	URL                string   `json:"url,omitempty"`
+	RecoveryCodes      []string `json:"recoveryCodes,omitempty"`
+	MfaRememberInHours int      `json:"mfaRememberInHours"`
 }
 
 type MfaInterface interface {

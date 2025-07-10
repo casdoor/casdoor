@@ -31,9 +31,9 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
   const [mfaType, setMfaType] = useState(mfaProps.mfaType);
   const [recoveryCode, setRecoveryCode] = useState("");
 
-  const verify = ({passcode}) => {
+  const verify = ({passcode, enableMfaRemember}) => {
     setLoading(true);
-    const values = {...formValues, passcode};
+    const values = {...formValues, passcode, enableMfaRemember};
     values["mfaType"] = mfaProps.mfaType;
     const loginFunction = formValues.type === "cas" ? AuthBackend.loginCas : AuthBackend.login;
     loginFunction(values, authParams).then((res) => {

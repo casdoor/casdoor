@@ -210,11 +210,12 @@ type User struct {
 	LastSigninWrongTime    string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes       int    `json:"signinWrongTimes"`
 
-	ManagedAccounts    []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
-	MfaAccounts        []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
-	MfaItems           []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
-	NeedUpdatePassword bool             `json:"needUpdatePassword"`
-	IpWhitelist        string           `xorm:"varchar(200)" json:"ipWhitelist"`
+	ManagedAccounts     []ManagedAccount `xorm:"managedAccounts blob" json:"managedAccounts"`
+	MfaAccounts         []MfaAccount     `xorm:"mfaAccounts blob" json:"mfaAccounts"`
+	MfaItems            []*MfaItem       `xorm:"varchar(300)" json:"mfaItems"`
+	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
+	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
+	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
 }
 
 type Userinfo struct {
@@ -792,7 +793,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 			"eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru", "meetup",
 			"microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify", "soundcloud",
 			"spotify", "strava", "stripe", "type", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk", "wepay", "xero", "yahoo",
-			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist",
+			"yammer", "yandex", "zoom", "custom", "need_update_password", "ip_whitelist", "mfa_items", "mfa_remember_deadline",
 		}
 	}
 	if isAdmin {

@@ -58,6 +58,12 @@ func (c *ApiController) MfaSetupInitiate() {
 		return
 	}
 
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	mfaProps, err := MfaUtil.Initiate(user.GetId())
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -66,6 +72,7 @@ func (c *ApiController) MfaSetupInitiate() {
 
 	recoveryCode := uuid.NewString()
 	mfaProps.RecoveryCodes = []string{recoveryCode}
+	mfaProps.MfaRememberInHours = organization.MfaRememberInHours
 
 	resp := mfaProps
 	c.ResponseOk(resp)

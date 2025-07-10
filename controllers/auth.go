@@ -355,20 +355,27 @@ func isProxyProviderType(providerType string) bool {
 
 func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
 	if object.IsNeedPromptMfa(organization, user) {
-		// The prompt page needs the user to be srigned in
+		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
 		c.ResponseOk(object.RequiredMfa)
 		return true
 	}
 
 	if user.IsMfaEnabled() {
+		currentTime := util.String2Time(util.GetCurrentTime())
+		mfaRememberDeadline := util.String2Time(user.MfaRememberDeadline)
+		if user.MfaRememberDeadline != "" && mfaRememberDeadline.After(currentTime) {
+			return false
+		}
 		c.setMfaUserSession(user.GetId())
 		mfaList := object.GetAllMfaProps(user, true)
 		mfaAllowList := []*object.MfaProps{}
+		mfaRememberInHours := organization.MfaRememberInHours
 		for _, prop := range mfaList {
 			if prop.MfaType == verificationType || !prop.Enabled {
 				continue
 			}
+			prop.MfaRememberInHours = mfaRememberInHours
 			mfaAllowList = append(mfaAllowList, prop)
 		}
 		if len(mfaAllowList) >= 1 {
@@ -973,6 +980,28 @@ func (c *ApiController) Login() {
 			return
 		}
 
+		var application *object.Application
+		if authForm.ClientId == "" {
+			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
+		} else {
+			application, err = object.GetApplicationByClientId(authForm.ClientId)
+		}
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
+			return
+		}
+
+		var organization *object.Organization
+		organization, err = object.GetOrganization(util.GetId("admin", application.Organization))
+		if err != nil {
+			c.ResponseError(c.T(err.Error()))
+		}
+
 		if authForm.Passcode != "" {
 			if authForm.MfaType == c.GetSession("verificationCodeType") {
 				c.ResponseError("Invalid multi-factor authentication type")
@@ -999,6 +1028,17 @@ func (c *ApiController) Login() {
 				}
 			}
 
+			if authForm.EnableMfaRemember {
+				mfaRememberInSeconds := organization.MfaRememberInHours * 3600
+				currentTime := util.String2Time(util.GetCurrentTime())
+				duration := time.Duration(mfaRememberInSeconds) * time.Second
+				user.MfaRememberDeadline = util.Time2String(currentTime.Add(duration))
+				_, err = object.UpdateUser(user.GetId(), user, []string{"mfa_remember_deadline"}, user.IsAdmin)
+				if err != nil {
+					c.ResponseError(err.Error())
+					return
+				}
+			}
 			c.SetSession("verificationCodeType", "")
 		} else if authForm.RecoveryCode != "" {
 			err = object.MfaRecover(user, authForm.RecoveryCode)
@@ -1008,22 +1048,6 @@ func (c *ApiController) Login() {
 			}
 		} else {
 			c.ResponseError("missing passcode or recovery code")
-			return
-		}
-
-		var application *object.Application
-		if authForm.ClientId == "" {
-			application, err = object.GetApplication(fmt.Sprintf("admin/%s", authForm.Application))
-		} else {
-			application, err = object.GetApplicationByClientId(authForm.ClientId)
-		}
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		if application == nil {
-			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), authForm.Application))
 			return
 		}
 
