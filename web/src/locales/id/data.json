@@ -83,7 +83,7 @@
     "Logged in successfully": "Berhasil masuk",
     "Logged out successfully": "Berhasil keluar dari sistem",
     "MFA remember time": "MFA remember time",
-    "MFA remember time - Tooltip": "MFA remember time - Tooltip",
+    "MFA remember time - Tooltip": "The duration for which the account is remembered as trusted after a successful MFA login",
     "Multiple Choices": "Multiple Choices",
     "New Application": "Aplikasi Baru",
     "No verification": "No verification",
