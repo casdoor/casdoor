@@ -138,12 +138,12 @@ export const PasswordModal = (props) => {
                 placeholder={i18next.t("user:input password")}
                 onChange={(e) => {
                   handleNewPassword(e.target.value);
-                  setPasswordPopoverOpen(true);
+                  setPasswordPopoverOpen(passwordOptions?.length > 0);
                   setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, e.target.value));
 
                 }}
                 onFocus={() => {
-                  setPasswordPopoverOpen(true);
+                  setPasswordPopoverOpen(passwordOptions?.length > 0);
                   setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, newPassword));
                 }}
                 onBlur={() => {

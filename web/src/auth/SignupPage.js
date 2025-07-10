@@ -635,7 +635,7 @@ class SignupPage extends React.Component {
             }}
             onFocus={() => {
               this.setState({
-                passwordPopoverOpen: true,
+                passwordPopoverOpen: application.organizationObj.passwordOptions?.length > 0,
                 passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.form.current?.getFieldValue("password") ?? ""),
               });
             }}
