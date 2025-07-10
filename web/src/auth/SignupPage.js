@@ -607,7 +607,7 @@ class SignupPage extends React.Component {
       }
     } else if (signupItem.name === "Password") {
       return (
-        <Popover placement="right" content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+        <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
           <Form.Item
             name="password"
             className="signup-password"

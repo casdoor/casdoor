@@ -385,7 +385,7 @@ class ForgetPage extends React.Component {
                 },
               ]}
             />
-            <Popover placement="right" content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+            <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
               <Form.Item
                 name="newPassword"
                 hidden={this.state.current !== 2}
