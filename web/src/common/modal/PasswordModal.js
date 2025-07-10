@@ -132,18 +132,18 @@ export const PasswordModal = (props) => {
             </Row>
           ) : null}
           <Row style={{width: "100%", marginBottom: "20px"}}>
-            <Popover placement="right" content={passwordPopover} open={passwordPopoverOpen}>
+            <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={passwordPopover} open={passwordPopoverOpen}>
               <Input.Password
                 addonBefore={i18next.t("user:New Password")}
                 placeholder={i18next.t("user:input password")}
                 onChange={(e) => {
                   handleNewPassword(e.target.value);
-                  setPasswordPopoverOpen(true);
+                  setPasswordPopoverOpen(passwordOptions?.length > 0);
                   setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, e.target.value));
 
                 }}
                 onFocus={() => {
-                  setPasswordPopoverOpen(true);
+                  setPasswordPopoverOpen(passwordOptions?.length > 0);
                   setPasswordPopover(PasswordChecker.renderPasswordPopover(passwordOptions, newPassword));
                 }}
                 onBlur={() => {
