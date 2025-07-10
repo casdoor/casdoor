@@ -300,6 +300,11 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
+	if user.Phone != "" && user.CountryCode != "" {
+		fullPhone, _ := util.GetE164Number(user.Phone, user.CountryCode)
+		user.FullPhone = fullPhone
+	}
+
 	if msg := object.CheckUpdateUser(oldUser, &user, c.GetAcceptLanguage()); msg != "" {
 		c.ResponseError(msg)
 		return

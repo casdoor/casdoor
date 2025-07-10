@@ -800,12 +800,6 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	if isAdmin {
 		columns = append(columns, "name", "id", "email", "phone", "country_code", "full_phone", "type", "balance", "mfa_items")
 	}
-
-	if user.Phone != "" && user.CountryCode != "" {
-		fullPhone, _ := util.GetE164Number(user.Phone, user.CountryCode)
-		user.FullPhone = fullPhone
-	}
-
 	columns = append(columns, "updated_time")
 	user.UpdatedTime = util.GetCurrentTime()
 
