@@ -50,10 +50,6 @@ const (
 	RequiredMfa      = "RequiredMfa"
 )
 
-const (
-	DefaultMfaRememberInHours = 12
-)
-
 func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 	switch mfaType {
 	case SmsType:
