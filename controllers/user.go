@@ -136,17 +136,19 @@ func (c *ApiController) GetUsers() {
 // @Title GetUser
 // @Tag User API
 // @Description get user
-// @Param   id     query    string  false        "The id ( owner/name ) of the user"
-// @Param   owner  query    string  false        "The owner of the user"
-// @Param   email  query    string  false 	     "The email of the user"
-// @Param   phone  query    string  false 	     "The phone of the user"
-// @Param   userId query    string  false 	     "The userId of the user"
+// @Param   id     query        string  false        "The id ( owner/name ) of the user"
+// @Param   owner  query        string  false        "The owner of the user"
+// @Param   email  query        string  false 	     "The email of the user"
+// @Param   phone  query	    string  false 	     "The phone of the user"
+// @Param   full_phone query	string  false 	     "The full phone number (E164 format) of the user"
+// @Param   userId query        string  false 	     "The userId of the user"
 // @Success 200 {object} object.User The Response object
 // @router /get-user [get]
 func (c *ApiController) GetUser() {
 	id := c.Input().Get("id")
 	email := c.Input().Get("email")
 	phone := c.Input().Get("phone")
+	fullPhone := c.Input().Get("full_phone")
 	userId := c.Input().Get("userId")
 	owner := c.Input().Get("owner")
 	var err error
@@ -172,6 +174,8 @@ func (c *ApiController) GetUser() {
 			user, err = object.GetUserByEmailOnly(email)
 		case phone != "":
 			user, err = object.GetUserByPhoneOnly(phone)
+		case fullPhone != "":
+			user, err = object.GetUserByFullPhoneOnly(fullPhone)
 		case userId != "":
 			user, err = object.GetUserByUserIdOnly(userId)
 		}
@@ -185,6 +189,8 @@ func (c *ApiController) GetUser() {
 			user, err = object.GetUserByEmail(owner, email)
 		case phone != "":
 			user, err = object.GetUserByPhone(owner, phone)
+		case fullPhone != "":
+			user, err = object.GetUserByFullPhone(owner, fullPhone)
 		case userId != "":
 			user = userFromUserId
 		default:
