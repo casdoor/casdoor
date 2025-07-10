@@ -49,17 +49,21 @@ func (plan *Plan) GetId() string {
 	return fmt.Sprintf("%s/%s", plan.Owner, plan.Name)
 }
 
-func GetDuration(period string) (startTime time.Time, endTime time.Time) {
+func getDuration(period string) (string, string, error) {
+	startTime := time.Now()
+	var endTime time.Time
+
 	if period == PeriodYearly {
-		startTime = time.Now()
 		endTime = startTime.AddDate(1, 0, 0)
 	} else if period == PeriodMonthly {
-		startTime = time.Now()
 		endTime = startTime.AddDate(0, 1, 0)
 	} else {
-		panic(fmt.Sprintf("invalid period: %s", period))
+		return "", "", fmt.Errorf("invalid period: %s", period)
 	}
-	return
+
+	startTimeString := startTime.Format(time.RFC3339)
+	endTimeString := endTime.Format(time.RFC3339)
+	return startTimeString, endTimeString, nil
 }
 
 func GetPlanCount(owner, field, value string) (int64, error) {

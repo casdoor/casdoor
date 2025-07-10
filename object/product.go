@@ -206,11 +206,17 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			if plan == nil {
 				return nil, nil, fmt.Errorf("the plan: %s does not exist", planName)
 			}
-			sub := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
+
+			sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
+			if err != nil {
+				return nil, nil, err
+			}
+
 			_, err = AddSubscription(sub)
 			if err != nil {
 				return nil, nil, err
 			}
+
 			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
 		}
 	}
