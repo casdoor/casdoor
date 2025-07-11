@@ -1580,6 +1580,11 @@ export function getDefaultHtmlEmailContent() {
     <div class="code">
         %s
     </div>
+    <reset-link>
+      <div class="link">
+         Or click this <a href="%link">link</a> to reset
+      </div>
+    </reset-link>
     <p>Thanks</p>
     <p>Casbin Team</p>
     <hr>
