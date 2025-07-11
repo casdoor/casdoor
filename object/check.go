@@ -266,7 +266,6 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	}
 
 	isOutdated := passwordType != organization.PasswordType
-
 	if isOutdated {
 		user.Password = password
 		user.UpdateUserPassword(organization)
