@@ -252,7 +252,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	credManager := cred.GetCredManager(passwordType)
 	if credManager == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
+		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), passwordType)
 	}
 
 	if organization.MasterPassword != "" {
@@ -263,6 +263,16 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
 		return recordSigninErrorInfo(user, lang, enableCaptcha)
+	}
+
+	isOutdated := passwordType != organization.PasswordType
+	if isOutdated {
+		user.Password = password
+		user.UpdateUserPassword(organization)
+		_, err = UpdateUser(user.GetId(), user, []string{"password", "password_type", "password_salt"}, true)
+		if err != nil {
+			return err
+		}
 	}
 
 	return resetUserSigninErrorTimes(user)
