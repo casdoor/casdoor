@@ -69,7 +69,6 @@ class App extends Component {
       appName: Conf.DefaultApplication, // the application used in Casdoor root path: "/"
     });
   }
-
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
@@ -431,6 +430,10 @@ class App extends Component {
           </StyleProvider>
         </ConfigProvider>
       );
+    }
+    if (this.state.requiredEnableMfa) {
+      this.props.history.push("/mfa/setup");
+      return null;
     }
     return (
       <React.Fragment>
