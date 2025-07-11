@@ -68,11 +68,28 @@ class App extends Component {
       serverUrl: Setting.ServerUrl,
       appName: Conf.DefaultApplication, // the application used in Casdoor root path: "/"
     });
+    this.unblock = null;
   }
+
   UNSAFE_componentWillMount() {
     this.updateMenuKey();
     this.getAccount();
     this.getApplication();
+  }
+
+  componentDidMount() {
+    this.unblock = this.props.history.block((location) => {
+      if (this.state.requiredEnableMfa && !location.pathname.startsWith("/mfa/setup")) {
+        return false;
+      }
+      return undefined;
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.unblock) {
+      this.unblock();
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -430,12 +447,6 @@ class App extends Component {
           </StyleProvider>
         </ConfigProvider>
       );
-    }
-    if (this.state.requiredEnableMfa) {
-      if (this.props.location.pathname !== "/mfa/setup") {
-        this.props.history.replace("/mfa/setup");
-      }
-      return null;
     }
     return (
       <React.Fragment>
