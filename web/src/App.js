@@ -432,7 +432,9 @@ class App extends Component {
       );
     }
     if (this.state.requiredEnableMfa) {
-      this.props.history.push("/mfa/setup");
+      if (this.props.location.pathname !== "/mfa/setup") {
+        this.props.history.replace("/mfa/setup");
+      }
       return null;
     }
     return (

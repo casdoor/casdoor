@@ -357,7 +357,6 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 	if object.IsNeedPromptMfa(organization, user) {
 		// The prompt page needs the user to be signed in
 		c.SetSessionUsername(user.GetId())
-		c.SetSession(object.MfaCompleted, false)
 		c.ResponseOk(object.RequiredMfa)
 		return true
 	}
@@ -369,7 +368,6 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 			return false
 		}
 		c.setMfaUserSession(user.GetId())
-		c.SetSession(object.MfaCompleted, false)
 		mfaList := object.GetAllMfaProps(user, true)
 		mfaAllowList := []*object.MfaProps{}
 		mfaRememberInHours := organization.MfaRememberInHours
@@ -1053,7 +1051,6 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		c.SetSession(object.MfaCompleted, true)
 		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
