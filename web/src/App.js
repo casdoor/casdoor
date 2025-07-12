@@ -77,21 +77,6 @@ class App extends Component {
     this.getApplication();
   }
 
-  componentDidMount() {
-    this.unblock = this.props.history.block((location) => {
-      if (this.state.requiredEnableMfa && !location.pathname.startsWith("/mfa/setup")) {
-        return false;
-      }
-      return undefined;
-    });
-  }
-
-  componentWillUnmount() {
-    if (this.unblock) {
-      this.unblock();
-    }
-  }
-
   componentDidUpdate(prevProps, prevState, snapshot) {
     const uri = location.pathname;
     if (this.state.uri !== uri) {

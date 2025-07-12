@@ -47,6 +47,10 @@ class EntryPage extends React.Component {
 
   renderHomeIfLoggedIn(component) {
     if (this.props.account !== null && this.props.account !== undefined) {
+      if (this.props.requiredEnableMfa && !window.location.pathname.startsWith("/mfa/setup")) {
+        window.location.replace("/mfa/setup" + window.location.search);
+        return null;
+      }
       return <Redirect to={{pathname: "/", state: {from: "/login"}}} />;
     } else {
       return component;
@@ -59,10 +63,23 @@ class EntryPage extends React.Component {
       return <Redirect to="/login" />;
     } else if (this.props.account === undefined) {
       return null;
+    } else if (this.props.requiredEnableMfa && !window.location.pathname.startsWith("/mfa/setup")) {
+      window.location.replace("/mfa/setup" + window.location.search);
+      return null;
     } else {
       return component;
     }
   }
+
+  enforceStayOnMfaSetup = () => {
+    if (this.props.requiredEnableMfa) {
+      if (!window.location.pathname.startsWith("/mfa/setup")) {
+        window.location.replace("/mfa/setup" + window.location.search);
+      } else {
+        window.history.pushState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+  };
 
   render() {
     const onUpdateApplication = (application) => {
@@ -139,6 +156,28 @@ class EntryPage extends React.Component {
 
       </React.Fragment>
     );
+  }
+
+  componentDidMount() {
+    if (this.props.requiredEnableMfa) {
+      this.enforceStayOnMfaSetup();
+      this._mfaHandler = this.enforceStayOnMfaSetup;
+      window.addEventListener("popstate", this._mfaHandler);
+      window.addEventListener("hashchange", this._mfaHandler);
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.requiredEnableMfa) {
+      this.enforceStayOnMfaSetup();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._mfaHandler) {
+      window.removeEventListener("popstate", this._mfaHandler);
+      window.removeEventListener("hashchange", this._mfaHandler);
+    }
   }
 }
 
