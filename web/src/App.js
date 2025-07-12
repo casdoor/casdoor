@@ -68,7 +68,6 @@ class App extends Component {
       serverUrl: Setting.ServerUrl,
       appName: Conf.DefaultApplication, // the application used in Casdoor root path: "/"
     });
-    this.unblock = null;
   }
 
   UNSAFE_componentWillMount() {
@@ -405,6 +404,7 @@ class App extends Component {
                       account={this.state.account}
                       theme={this.state.themeData}
                       themeAlgorithm={this.state.themeAlgorithm}
+                      requiredEnableMfa={this.state.requiredEnableMfa}
                       updateApplication={(application) => {
                         this.setState({
                           application: application,

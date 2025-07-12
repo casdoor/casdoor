@@ -371,37 +371,12 @@ function ManagementPage(props) {
       return <Redirect to="/login" />;
     } else if (props.account === undefined) {
       return null;
-    } else if (props.requiredEnableMfa && !window.location.pathname.startsWith("/mfa/setup")) {
-      window.location.replace("/mfa/setup" + window.location.search);
-      return null;
     } else if (props.account.needUpdatePassword) {
       return <Redirect to={"/forget/" + props.application.name} />;
     } else {
       return component;
     }
   }
-
-  const enforceStayOnMfaSetup = React.useCallback(() => {
-    if (props.requiredEnableMfa) {
-      if (!window.location.pathname.startsWith("/mfa/setup")) {
-        window.location.replace("/mfa/setup" + window.location.search);
-      } else {
-        window.history.pushState(null, "", window.location.pathname + window.location.search);
-      }
-    }
-  }, [props.requiredEnableMfa]);
-
-  React.useEffect(() => {
-    if (props.requiredEnableMfa) {
-      enforceStayOnMfaSetup();
-      window.addEventListener("popstate", enforceStayOnMfaSetup);
-      window.addEventListener("hashchange", enforceStayOnMfaSetup);
-      return () => {
-        window.removeEventListener("popstate", enforceStayOnMfaSetup);
-        window.removeEventListener("hashchange", enforceStayOnMfaSetup);
-      };
-    }
-  }, [props.requiredEnableMfa, enforceStayOnMfaSetup]);
 
   function renderRouter() {
     const account = props.account;
