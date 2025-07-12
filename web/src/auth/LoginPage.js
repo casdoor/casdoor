@@ -1040,6 +1040,10 @@ class LoginPage extends React.Component {
       return null;
     }
 
+    if (this.props.requiredEnableMfa) {
+      return null;
+    }
+
     if (this.state.userCode && this.state.userCodeStatus === "success") {
       return null;
     }
