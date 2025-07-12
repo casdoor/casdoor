@@ -1,9 +1,9 @@
 {
   "account": {
-    "Failed to add user": "Failed to add user",
-    "Get init score failed, error: %w": "Get init score failed, error: %w",
-    "Please sign out first": "Please sign out first",
-    "The application does not allow to sign up new account": "The application does not allow to sign up new account"
+    "Failed to add user": "Nie udało się dodać użytkownika",
+    "Get init score failed, error: %w": "Błąd inicjowania wyniku, błąd: %w",
+    "Please sign out first": "Proszę najpierw się wylogować",
+    "The application does not allow to sign up new account": "Aplikacja nie pozwala na rejestrację nowych kont"
   },
   "auth": {
     "Challenge method should be S256": "Challenge method should be S256",
@@ -60,12 +60,12 @@
     "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
     "Organization does not exist": "Organization does not exist",
     "Password cannot be empty": "Password cannot be empty",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
-    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
-    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
+    "Phone already exists": "Telefon już istnieje",
+    "Phone cannot be empty": "Numer telefonu nie może być pusty",
+    "Phone number is invalid": "Numer telefonu jest nieprawidłowy",
+    "Please register using the email corresponding to the invitation code": "Zarejestruj się używając adresu e-mail, na który przyszedł kod zaproszenia",
+    "Please register using the phone  corresponding to the invitation code": "Zarejestruj się używając numer telefonu, na który przyszedł kod zaproszenia",
+    "Please register using the username corresponding to the invitation code": "Zarejestruj się używając nazwy użytkownika odpowiadającej kodowi zaproszenia",
     "Session outdated, please login again": "Session outdated, please login again",
     "The invitation code has already been used": "The invitation code has already been used",
     "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
@@ -76,17 +76,17 @@
     "Username already exists": "Username already exists",
     "Username cannot be an email address": "Username cannot be an email address",
     "Username cannot contain white spaces": "Username cannot contain white spaces",
-    "Username cannot start with a digit": "Username cannot start with a digit",
+    "Username cannot start with a digit": "Nazwa użytkownika nie może zaczynać się od cyfry",
     "Username is too long (maximum is 255 characters).": "Username is too long (maximum is 255 characters).",
-    "Username must have at least 2 characters": "Username must have at least 2 characters",
+    "Username must have at least 2 characters": "Nazwa użytkownika musi liczyć co najmniej 2 znaki",
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
     "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "password or code is incorrect": "password or code is incorrect",
+    "Your region is not allow to signup by phone": "Twój region nie może zarejestrować się telefonicznie",
+    "password or code is incorrect": "hasło lub kod są nieprawidłowe",
     "password or code is incorrect, you have %d remaining chances": "password or code is incorrect, you have %d remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "unsupported password type: %s": "nieobsługiwany typ hasła: %s"
   },
   "enforcer": {
     "the adapter: %s is not found": "the adapter: %s is not found"
@@ -94,9 +94,9 @@
   "general": {
     "Failed to import groups": "Failed to import groups",
     "Failed to import users": "Failed to import users",
-    "Missing parameter": "Missing parameter",
+    "Missing parameter": "Brakujący parametr",
     "Only admin user can specify user": "Only admin user can specify user",
-    "Please login first": "Please login first",
+    "Please login first": "Proszę najpierw się zalogować",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "Wrong userId": "Wrong userId",
@@ -105,11 +105,11 @@
     "this operation requires administrator to perform": "this operation requires administrator to perform"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "Serwer Ldap istnieje"
   },
   "link": {
     "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
+    "This application has no providers": "Ta aplikacja nie ma dostawców",
     "This application has no providers of type": "This application has no providers of type",
     "This provider can't be unlinked": "This provider can't be unlinked",
     "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
@@ -153,7 +153,7 @@
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
     "Invalid application or wrong clientSecret": "Invalid application or wrong clientSecret",
-    "Invalid client_id": "Invalid client_id",
+    "Invalid client_id": "Nieprawidłowe ID klienta",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "Redirect URI: %s doesn't exist in the allowed Redirect URI list",
     "Token not found, invalid accessToken": "Token not found, invalid accessToken"
   },
@@ -174,15 +174,15 @@
     "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
     "The verification code has already been used!": "The verification code has already been used!",
     "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "Turing test failed.": "Turing test failed.",
+    "Turing test failed.": "Test Turinga oblany.",
     "Unable to get the email modify rule.": "Unable to get the email modify rule.",
     "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
+    "Unknown type": "Nieznany typ",
+    "Wrong verification code!": "Błędny kod weryfikacyjny!",
+    "You should verify your code in %d min!": "Powinieneś zweryfikować swój kod za %d min!",
     "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
     "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "the user does not exist, please sign up first": "użytkownik nie istnieje, najpierw się zarejestruj"
   },
   "webauthn": {
     "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
