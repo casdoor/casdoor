@@ -38,6 +38,7 @@ import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
 import {goToLink} from "../Setting";
+import WeChatLoginPanel from "./WeChatLoginPanel";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -67,6 +68,7 @@ class LoginPage extends React.Component {
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
+      wechatQrRefreshKey: Date.now(),
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -785,13 +787,19 @@ class LoginPage extends React.Component {
       }
       const searchParams = new URLSearchParams(window.location.search);
       const providerHint = searchParams.get("provider_hint");
+      const hasWeChatProvider = application.providers?.some(p => p.provider?.type === "WeChat");
 
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
-              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
+              application.providers.filter(providerItem => {
+                if (hasWeChatProvider && providerItem.provider?.type === "WeChat") {
+                  return false;
+                }
+                return this.isProviderVisible(providerItem);
+              }).map((providerItem, id) => {
                 if (providerHint === providerItem.provider.name) {
                   goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
                   return;
@@ -875,6 +883,17 @@ class LoginPage extends React.Component {
         loginWidth += 40;
       } else if (Setting.getLanguage() === "ru") {
         loginWidth += 10;
+      }
+
+      if (this.state.loginMethod === "wechat") {
+        return (
+          <WeChatLoginPanel
+            application={application}
+            renderFormItem={this.renderFormItem.bind(this)}
+            getDefaultLoginMethod={this.getDefaultLoginMethod.bind(this)}
+            loginWidth={loginWidth}
+          />
+        );
       }
 
       return (
@@ -1218,10 +1237,15 @@ class LoginPage extends React.Component {
       }
     });
 
+    const wechatProvider = application?.providers?.find(p => p.provider?.type === "WeChat");
+    if (wechatProvider) {
+      items.push({label: i18next.t("login:WeChat"), key: "wechat"});
+    }
+
     if (items.length > 1) {
       return (
         <div>
-          <Tabs className="signin-methods" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} onChange={(key) => {
+          <Tabs className="signin-methods" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} activeKey={this.state.loginMethod} onChange={(key) => {
             this.setState({loginMethod: key});
           }} centered>
           </Tabs>
