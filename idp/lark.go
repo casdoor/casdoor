@@ -27,10 +27,9 @@ import (
 )
 
 type LarkIdProvider struct {
-	Client            *http.Client
-	Config            *oauth2.Config
-	LarkDomain        string
-	UseGlobalEndpoint bool
+	Client     *http.Client
+	Config     *oauth2.Config
+	LarkDomain string
 }
 
 func NewLarkIdProvider(clientId string, clientSecret string, redirectUrl string, useGlobalEndpoint bool) *LarkIdProvider {
@@ -42,7 +41,7 @@ func NewLarkIdProvider(clientId string, clientSecret string, redirectUrl string,
 		idp.LarkDomain = "https://open.feishu.cn"
 	}
 
-	config := idp.getConfig(clientId, clientSecret, redirectUrl, useGlobalEndpoint)
+	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
 	return idp
 }
@@ -52,7 +51,7 @@ func (idp *LarkIdProvider) SetHttpClient(client *http.Client) {
 }
 
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
-func (idp *LarkIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string, useGlobalEndpoint bool) *oauth2.Config {
+func (idp *LarkIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
 	endpoint := oauth2.Endpoint{
 		TokenURL: idp.LarkDomain + "/open-apis/auth/v3/tenant_access_token/internal",
 	}
