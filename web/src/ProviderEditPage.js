@@ -931,10 +931,12 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Google" ? null : (
+          this.state.provider.type !== "Google" && this.state.provider.type !== "Lark" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))} :
+                {this.state.provider.type === "Google" ?
+                  Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))
+                  : Setting.getLabel(i18next.t("provider:Use global endpoint"), i18next.t("provider:Use global endpoint - Tooltip"))} :
               </Col>
               <Col span={1} >
                 <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
