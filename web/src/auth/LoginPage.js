@@ -68,7 +68,6 @@ class LoginPage extends React.Component {
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
-      wechatQrRefreshKey: Date.now(),
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -890,7 +889,6 @@ class LoginPage extends React.Component {
           <WeChatLoginPanel
             application={application}
             renderFormItem={this.renderFormItem.bind(this)}
-            getDefaultLoginMethod={this.getDefaultLoginMethod.bind(this)}
             loginWidth={loginWidth}
           />
         );
@@ -1245,7 +1243,7 @@ class LoginPage extends React.Component {
     if (items.length > 1) {
       return (
         <div>
-          <Tabs className="signin-methods" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} activeKey={this.state.loginMethod} onChange={(key) => {
+          <Tabs className="signin-methods" items={items} size={"small"} activeKey={this.state.loginMethod} onChange={(key) => {
             this.setState({loginMethod: key});
           }} centered>
           </Tabs>

@@ -25,9 +25,9 @@ export default function WeChatLoginPanel({
         <QRCode value={qrUrl} size={200} />
         <div style={{marginTop: 12, color: "#888", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 8}}>
           <span>{i18next.t("login:Scan with WeChat to login")}</span>
-          <a style={{cursor: "pointer", color: "#1890ff", fontSize: 14}} onClick={() => setWechatQrRefreshKey(Date.now())}>
+          <button style={{cursor: "pointer", color: "#1890ff", fontSize: 14, background: "none", border: "none", padding: 0, textDecoration: "underline"}} onClick={() => setWechatQrRefreshKey(Date.now())}>
             {i18next.t("login:Refresh")}
-          </a>
+          </button>
         </div>
       </div>
       {application.signinItems?.map(signinItem => {
