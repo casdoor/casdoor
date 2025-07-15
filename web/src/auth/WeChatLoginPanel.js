@@ -1,41 +1,63 @@
-import React, {useState} from "react";
-import QRCode from "qrcode.react";
+import React from "react";
+import * as AuthBackend from "./AuthBackend";
 import i18next from "i18next";
-import * as Provider from "./Provider";
 
-export default function WeChatLoginPanel({
-  application,
-  renderFormItem,
-  loginWidth,
-}) {
-  const [wechatQrRefreshKey, setWechatQrRefreshKey] = useState(Date.now());
-
-  const wechatProvider = application?.providers?.find(p => p.provider?.type === "WeChat");
-  if (!wechatProvider) {
-    return <div style={{textAlign: "center", color: "red"}}>{i18next.t("login:Please configure WeChat login")}</div>;
+class WeChatLoginPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      qrCode: null,
+    };
   }
 
-  const qrUrl = Provider.getAuthUrl(application, wechatProvider.provider, "login") + `&refreshKey=${wechatQrRefreshKey}`;
+  componentDidMount() {
+    this.fetchQrCode();
+  }
 
-  return (
-    <div style={{width: `${loginWidth}px`, margin: "0 auto"}}>
-      {application.signinItems?.filter(item => item.name === "Logo").map(item => renderFormItem(application, item))}
-      {application.signinItems?.filter(item => item.name === "Signin methods").map(item => renderFormItem(application, item))}
-      <div style={{textAlign: "center", marginTop: 16, marginBottom: 32}}>
-        <QRCode value={qrUrl} size={200} />
-        <div style={{marginTop: 12, color: "#888", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 8}}>
-          <span>{i18next.t("login:Scan with WeChat to login")}</span>
-          <button style={{cursor: "pointer", color: "#1890ff", fontSize: 14, background: "none", border: "none", padding: 0, textDecoration: "underline"}} onClick={() => setWechatQrRefreshKey(Date.now())}>
-            {i18next.t("login:Refresh")}
-          </button>
-        </div>
-      </div>
-      {application.signinItems?.map(signinItem => {
-        if (["Logo", "Username", "Password", "Forgot password?", "Login button", "Signin methods", "Signup link", "Providers"].includes(signinItem.name)) {
-          return null;
+  componentDidUpdate(prevProps) {
+    if (this.props.loginMethod === "wechat" && prevProps.loginMethod !== "wechat") {
+      this.fetchQrCode();
+    }
+    if (prevProps.loginMethod === "wechat" && this.props.loginMethod !== "wechat") {
+      this.setState({qrCode: null});
+    }
+  }
+
+  fetchQrCode() {
+    const {application} = this.props;
+    const wechatProviderItem = application?.providers?.find(p => p.provider?.type === "WeChat");
+    if (wechatProviderItem) {
+      AuthBackend.getWechatQRCode(`${wechatProviderItem.provider.owner}/${wechatProviderItem.provider.name}`).then(res => {
+        if (res.status === "ok" && res.data) {
+          this.setState({qrCode: res.data});
+        } else {
+          this.setState({qrCode: null});
         }
-        return renderFormItem(application, signinItem);
-      })}
-    </div>
-  );
+      });
+    }
+  }
+
+  render() {
+    const {application, loginWidth = 320} = this.props;
+    return (
+      <div style={{width: loginWidth, margin: "0 auto", textAlign: "center", marginTop: 16}}>
+        {application.signinItems?.filter(item => item.name === "Logo").map(signinItem => this.props.renderFormItem(application, signinItem))}
+        {this.props.renderMethodChoiceBox()}
+        {application.signinItems?.filter(item => item.name === "Languages").map(signinItem => this.props.renderFormItem(application, signinItem))}
+        {this.state.qrCode ? (
+          <div style={{marginTop: 2}}>
+            <img src={`data:image/png;base64,${this.state.qrCode}`} alt="WeChat QR code" style={{width: 250, height: 250}} />
+            <div style={{marginTop: 8}}>
+              <div>{i18next.t("login:Please scan the QR code with WeChat to login")}</div>
+              <a onClick={e => {e.preventDefault(); this.fetchQrCode();}}>
+                {i18next.t("login:Refresh")}
+              </a>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 }
+
+export default WeChatLoginPanel;

@@ -883,12 +883,13 @@ class LoginPage extends React.Component {
       } else if (Setting.getLanguage() === "ru") {
         loginWidth += 10;
       }
-
       if (this.state.loginMethod === "wechat") {
         return (
           <WeChatLoginPanel
             application={application}
+            loginMethod={this.state.loginMethod}
             renderFormItem={this.renderFormItem.bind(this)}
+            renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)}
             loginWidth={loginWidth}
           />
         );
