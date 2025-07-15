@@ -41,7 +41,11 @@ class OpenTour extends React.Component {
     return (
       this.canTour() ?
         <Tooltip title="Click to open tour">
-          <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} onClick={this.handleTourClick}>
+          <div
+            className="select-box"
+            style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}}
+            onClick={this.handleTourClick}
+          >
             <QuestionCircleOutlined style={{fontSize: "24px"}} />
           </div>
         </Tooltip>
