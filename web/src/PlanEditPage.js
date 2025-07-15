@@ -241,6 +241,21 @@ class PlanEditPage extends React.Component {
                   {id: "HKD", name: "HKD"},
                   {id: "SGD", name: "SGD"},
                   {id: "BRL", name: "BRL"},
+                  {id: "PLN", name: "PLN"},
+                  {id: "KRW", name: "KRW"},
+                  {id: "INR", name: "INR"},
+                  {id: "RUB", name: "RUB"},
+                  {id: "MXN", name: "MXN"},
+                  {id: "ZAR", name: "ZAR"},
+                  {id: "TRY", name: "TRY"},
+                  {id: "SEK", name: "SEK"},
+                  {id: "NOK", name: "NOK"},
+                  {id: "DKK", name: "DKK"},
+                  {id: "THB", name: "THB"},
+                  {id: "MYR", name: "MYR"},
+                  {id: "TWD", name: "TWD"},
+                  {id: "CZK", name: "CZK"},
+                  {id: "HUF", name: "HUF"},
                 ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
               }
             </Select>

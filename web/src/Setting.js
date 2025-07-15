@@ -1516,6 +1516,54 @@ export function getCurrencySymbol(currency) {
     return "$";
   } else if (currency === "CNY" || currency === "cny") {
     return "¥";
+  } else if (currency === "EUR" || currency === "eur") {
+    return "€";
+  } else if (currency === "JPY" || currency === "jpy") {
+    return "¥";
+  } else if (currency === "GBP" || currency === "gbp") {
+    return "£";
+  } else if (currency === "AUD" || currency === "aud") {
+    return "A$";
+  } else if (currency === "CAD" || currency === "cad") {
+    return "C$";
+  } else if (currency === "CHF" || currency === "chf") {
+    return "CHF";
+  } else if (currency === "HKD" || currency === "hkd") {
+    return "HK$";
+  } else if (currency === "SGD" || currency === "sgd") {
+    return "S$";
+  } else if (currency === "BRL" || currency === "brl") {
+    return "R$";
+  } else if (currency === "PLN" || currency === "pln") {
+    return "zł";
+  } else if (currency === "KRW" || currency === "krw") {
+    return "₩";
+  } else if (currency === "INR" || currency === "inr") {
+    return "₹";
+  } else if (currency === "RUB" || currency === "rub") {
+    return "₽";
+  } else if (currency === "MXN" || currency === "mxn") {
+    return "$";
+  } else if (currency === "ZAR" || currency === "zar") {
+    return "R";
+  } else if (currency === "TRY" || currency === "try") {
+    return "₺";
+  } else if (currency === "SEK" || currency === "sek") {
+    return "kr";
+  } else if (currency === "NOK" || currency === "nok") {
+    return "kr";
+  } else if (currency === "DKK" || currency === "dkk") {
+    return "kr";
+  } else if (currency === "THB" || currency === "thb") {
+    return "฿";
+  } else if (currency === "MYR" || currency === "myr") {
+    return "RM";
+  } else if (currency === "TWD" || currency === "twd") {
+    return "NT$";
+  } else if (currency === "CZK" || currency === "czk") {
+    return "Kč";
+  } else if (currency === "HUF" || currency === "huf") {
+    return "Ft";
   } else {
     return currency;
   }
@@ -1619,6 +1667,36 @@ export function getCurrencyText(product) {
     return i18next.t("currency:SGD");
   } else if (product?.currency === "BRL") {
     return i18next.t("currency:BRL");
+  } else if (product?.currency === "PLN") {
+    return i18next.t("currency:PLN");
+  } else if (product?.currency === "KRW") {
+    return i18next.t("currency:KRW");
+  } else if (product?.currency === "INR") {
+    return i18next.t("currency:INR");
+  } else if (product?.currency === "RUB") {
+    return i18next.t("currency:RUB");
+  } else if (product?.currency === "MXN") {
+    return i18next.t("currency:MXN");
+  } else if (product?.currency === "ZAR") {
+    return i18next.t("currency:ZAR");
+  } else if (product?.currency === "TRY") {
+    return i18next.t("currency:TRY");
+  } else if (product?.currency === "SEK") {
+    return i18next.t("currency:SEK");
+  } else if (product?.currency === "NOK") {
+    return i18next.t("currency:NOK");
+  } else if (product?.currency === "DKK") {
+    return i18next.t("currency:DKK");
+  } else if (product?.currency === "THB") {
+    return i18next.t("currency:THB");
+  } else if (product?.currency === "MYR") {
+    return i18next.t("currency:MYR");
+  } else if (product?.currency === "TWD") {
+    return i18next.t("currency:TWD");
+  } else if (product?.currency === "CZK") {
+    return i18next.t("currency:CZK");
+  } else if (product?.currency === "HUF") {
+    return i18next.t("currency:HUF");
   } else {
     return "(Unknown currency)";
   }
