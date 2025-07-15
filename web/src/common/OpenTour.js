@@ -31,11 +31,21 @@ class OpenTour extends React.Component {
     return TourConfig.TourUrlList.indexOf(path) !== -1 || path === "";
   };
 
+  handleTourClick = () => {
+    TourConfig.setIsTourVisible(true);
+    const event = new Event("storageTourChanged");
+    window.dispatchEvent(event);
+  };
+
   render() {
     return (
       this.canTour() ?
         <Tooltip title="Click to open tour">
-          <div className="select-box" style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}} onClick={() => TourConfig.setIsTourVisible(true)} >
+          <div
+            className="select-box"
+            style={{display: Setting.isMobile() ? "none" : null, ...this.props.style}}
+            onClick={this.handleTourClick}
+          >
             <QuestionCircleOutlined style={{fontSize: "24px"}} />
           </div>
         </Tooltip>
