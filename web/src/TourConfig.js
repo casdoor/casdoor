@@ -208,10 +208,14 @@ let orgIsTourVisible = true;
 
 export function setOrgIsTourVisible(visible) {
   orgIsTourVisible = visible;
+  if (orgIsTourVisible === false) {
+    setIsTourVisible(false);
+  }
 }
 
 export function setIsTourVisible(visible) {
   localStorage.setItem("isTourVisible", visible);
+  window.dispatchEvent(new Event("storageTourChanged"));
 }
 
 export function setTourLogo(tourLogoSrc) {
@@ -221,7 +225,7 @@ export function setTourLogo(tourLogoSrc) {
 }
 
 export function getTourVisible() {
-  return localStorage.getItem("isTourVisible") !== "false" && orgIsTourVisible;
+  return localStorage.getItem("isTourVisible") !== "false";
 }
 
 export function getNextButtonChild(nextPathName) {
