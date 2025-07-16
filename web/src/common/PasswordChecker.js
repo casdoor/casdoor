@@ -82,7 +82,7 @@ export function renderPasswordPopover(options, password) {
 }
 
 export function checkPasswordComplexity(password, options) {
-  if (password.length === 0) {
+  if (!password?.length) {
     return i18next.t("login:Please input your password!");
   }
 
