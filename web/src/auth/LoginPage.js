@@ -786,19 +786,13 @@ class LoginPage extends React.Component {
       }
       const searchParams = new URLSearchParams(window.location.search);
       const providerHint = searchParams.get("provider_hint");
-      const hasWeChatProvider = application.providers?.some(p => p.provider?.type === "WeChat");
 
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           <Form.Item>
             {
-              application.providers.filter(providerItem => {
-                if (hasWeChatProvider && providerItem.provider?.type === "WeChat") {
-                  return false;
-                }
-                return this.isProviderVisible(providerItem);
-              }).map((providerItem, id) => {
+              application.providers.filter(providerItem => this.isProviderVisible(providerItem)).map((providerItem, id) => {
                 if (providerHint === providerItem.provider.name) {
                   goToLink(Provider.getAuthUrl(application, providerItem.provider, "signup"));
                   return;
@@ -883,16 +877,9 @@ class LoginPage extends React.Component {
       } else if (Setting.getLanguage() === "ru") {
         loginWidth += 10;
       }
+
       if (this.state.loginMethod === "wechat") {
-        return (
-          <WeChatLoginPanel
-            application={application}
-            loginMethod={this.state.loginMethod}
-            renderFormItem={this.renderFormItem.bind(this)}
-            renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)}
-            loginWidth={loginWidth}
-          />
-        );
+        return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
       }
 
       return (
@@ -1218,6 +1205,7 @@ class LoginPage extends React.Component {
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
+      [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
@@ -1235,11 +1223,6 @@ class LoginPage extends React.Component {
         items.push({label: label, key: item.key});
       }
     });
-
-    const wechatProvider = application?.providers?.find(p => p.provider?.type === "WeChat");
-    if (wechatProvider) {
-      items.push({label: i18next.t("login:WeChat"), key: "wechat"});
-    }
 
     if (items.length > 1) {
       return (
