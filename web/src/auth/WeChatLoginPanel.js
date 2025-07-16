@@ -1,4 +1,4 @@
-// Copyright 2021 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,6 @@ class WeChatLoginPanel extends React.Component {
           <div style={{marginTop: 2}}>
             <img src={`data:image/png;base64,${this.state.qrCode}`} alt="WeChat QR code" style={{width: 250, height: 250}} />
             <div style={{marginTop: 8}}>
-              <div>{i18next.t("login:Please scan the QR code with WeChat to login")}</div>
               <a onClick={e => {e.preventDefault(); this.fetchQrCode();}}>
                 {i18next.t("login:Refresh")}
               </a>
