@@ -38,6 +38,7 @@ import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
 import {goToLink} from "../Setting";
+import WeChatLoginPanel from "./WeChatLoginPanel";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -877,6 +878,10 @@ class LoginPage extends React.Component {
         loginWidth += 10;
       }
 
+      if (this.state.loginMethod === "wechat") {
+        return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
+      }
+
       return (
         <Form
           name="normal_login"
@@ -1204,6 +1209,7 @@ class LoginPage extends React.Component {
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
+      [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
@@ -1225,7 +1231,7 @@ class LoginPage extends React.Component {
     if (items.length > 1) {
       return (
         <div>
-          <Tabs className="signin-methods" items={items} size={"small"} defaultActiveKey={this.getDefaultLoginMethod(application)} onChange={(key) => {
+          <Tabs className="signin-methods" items={items} size={"small"} activeKey={this.state.loginMethod} onChange={(key) => {
             this.setState({loginMethod: key});
           }} centered>
           </Tabs>

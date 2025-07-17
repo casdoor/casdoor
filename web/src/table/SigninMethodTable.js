@@ -72,6 +72,7 @@ class SigninMethodTable extends React.Component {
       {name: "WebAuthn", displayName: i18next.t("login:WebAuthn")},
       {name: "LDAP", displayName: i18next.t("login:LDAP")},
       {name: "Face ID", displayName: i18next.t("login:Face ID")},
+      {name: "WeChat", displayName: i18next.t("login:WeChat")},
     ];
     const columns = [
       {
