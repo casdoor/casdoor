@@ -35,6 +35,7 @@ const (
 	ResponseTypeDevice  = "device"
 )
 
+// todo 修改结构
 type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`

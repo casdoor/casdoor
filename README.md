@@ -1,102 +1,55 @@
-<h1 align="center" style="border-bottom: none;">📦⚡️ Casdoor</h1>
-<h3 align="center">An open-source UI-first Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML, CAS, LDAP, SCIM, WebAuthn, TOTP, MFA and RADIUS</h3>
-<p align="center">
-  <a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
-  </a>
-  <a href="https://hub.docker.com/r/casbin/casdoor">
-    <img alt="docker pull casbin/casdoor" src="https://img.shields.io/docker/pulls/casbin/casdoor.svg">
-  </a>
-  <a href="https://github.com/casdoor/casdoor/actions/workflows/build.yml">
-    <img alt="GitHub Workflow Status (branch)" src="https://github.com/casdoor/casdoor/workflows/Build/badge.svg?style=flat-square">
-  </a>
-  <a href="https://github.com/casdoor/casdoor/releases/latest">
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/casdoor/casdoor.svg">
-  </a>
-  <a href="https://hub.docker.com/r/casbin/casdoor">
-    <img alt="Docker Image Version (latest semver)" src="https://img.shields.io/badge/Docker%20Hub-latest-brightgreen">
-  </a>
-</p>
+# 基础平台
+Forked from: [Casdoor](https://github.com/casdoor/casdoor)  
+提供基础服务， 包括
+- 用户管理
+- 角色管理
+- 权限管理
+- 对象资源管理(图片、文件、视频)
 
-<p align="center">
-  <a href="https://goreportcard.com/report/github.com/casdoor/casdoor">
-    <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/casdoor/casdoor?style=flat-square">
-  </a>
-  <a href="https://github.com/casdoor/casdoor/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/casdoor/casdoor?style=flat-square" alt="license">
-  </a>
-  <a href="https://github.com/casdoor/casdoor/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/casdoor/casdoor?style=flat-square">
-  </a>
-  <a href="#">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/casdoor/casdoor?style=flat-square">
-  </a>
-  <a href="https://github.com/casdoor/casdoor/network">
-    <img alt="GitHub forks" src="https://img.shields.io/github/forks/casdoor/casdoor?style=flat-square">
-  </a>
-  <a href="https://crowdin.com/project/casdoor-site">
-    <img alt="Crowdin" src="https://badges.crowdin.net/casdoor-site/localized.svg">
-  </a>
-  <a href="https://discord.gg/5rPsrAzK7S">
-    <img alt="Discord" src="https://img.shields.io/discord/1022748306096537660?style=flat-square&logo=discord&label=discord&color=5865F2">
-  </a>
-</p>
 
-<p align="center">
-  <sup>Sponsored by</sup>
-  <br>
-  <a href="https://stytch.com/docs?utm_source=oss-sponsorship&utm_medium=paid_sponsorship&utm_campaign=casbin">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.casbin.org/img/stytch-white.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://cdn.casbin.org/img/stytch-charcoal.png">
-      <img src="https://cdn.casbin.org/img/stytch-charcoal.png" width="275">
-    </picture>
-  </a><br/>
-  <a href="https://stytch.com/docs?utm_source=oss-sponsorship&utm_medium=paid_sponsorship&utm_campaign=casbin"><b>Build auth with fraud prevention, faster.</b><br/> Try Stytch for API-first authentication, user & org management, multi-tenant SSO, MFA, device fingerprinting, and more.</a>
-  <br>
-</p>
+## 用户管理
+### 新增用户
+前提：
+1. 已创建[组织](#组织管理-1)
+2. 组织内存在[APP](#app管理)（商城、后台管理）
 
-## Online demo
+接口定义:
 
-- Read-only site: https://door.casdoor.com (any modification operation will fail)
-- Writable site: https://demo.casdoor.com (original data will be restored for every 5 minutes)
 
-## Documentation
 
-https://casdoor.org
 
-## Install
+## 组织管理
+### 组织管理
+- 每个组织代表一个公司、企业。
+- 组织间资源完全隔离。
+- 组织内存在多个分组group
+#### 新增组织
 
-- By source code: https://casdoor.org/docs/basic/server-installation
-- By Docker: https://casdoor.org/docs/basic/try-with-docker
-- By Kubernetes Helm: https://casdoor.org/docs/basic/try-with-helm
 
-## How to connect to Casdoor?
 
-https://casdoor.org/docs/how-to-connect/overview
 
-## Casdoor Public API
 
-- Docs: https://casdoor.org/docs/basic/public-api
-- Swagger: https://door.casdoor.com/swagger
 
-## Integrations
+### group管理
+ - 每个分组代表一个部门、子公司
+ - 分组用于用户管理，group:user= n:n
 
-https://casdoor.org/docs/category/integrations
 
-## How to contact?
+## app管理
+- 每个APP代表组织的一个应用。
+- 当前一个组织至少存在两个APP： 后台和商城
 
-- Discord: https://discord.gg/5rPsrAzK7S
-- Contact: https://casdoor.org/help
 
-## Contribute
 
-For casdoor, if you have any questions, you can give Issues, or you can also directly start Pull Requests(but we recommend giving issues first to communicate with the community).
 
-### I18n translation
 
-If you are contributing to casdoor, please note that we use [Crowdin](https://crowdin.com/project/casdoor-site) as translating platform and i18next as translating tool. When you add some words using i18next in the `web/` directory, please remember to add what you have added to the `web/src/locales/en/data.json` file.
+## 商城管理
+在商城系统中
+- 商城:app:group= 1:1:1
+- app记录商城自身的属性：商城url、图标、登录方式
+- group记录商城的用户信息
 
-## License
 
-[Apache-2.0](https://github.com/casdoor/casdoor/blob/master/LICENSE)
+
+## 权限管理
+## 角色管理

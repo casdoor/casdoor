@@ -40,6 +40,7 @@ func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
 	resp := &Response{Status: "ok"}
+	// resp := &
 	c.ResponseJsonData(resp, data...)
 }
 

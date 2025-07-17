@@ -51,6 +51,24 @@ func InitUserManager() {
 	userEnforcer = NewUserGroupEnforcer(enforcer.Enforcer)
 }
 
+type AddUseParams struct {
+	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
+	Name        string `xorm:"varchar(255) notnull pk" json:"name"`
+	DisplayName       string   `xorm:"varchar(100)" json:"displayName"`
+	Password          string   `xorm:"varchar(150)" json:"password"`
+	Avatar            string   `xorm:"varchar(500)" json:"avatar"`   // 头像url
+	Email             string   `xorm:"varchar(100) index" json:"email"`
+	Gender            string   `xorm:"varchar(100)" json:"gender"`
+	Birthday          string   `xorm:"varchar(100)" json:"birthday"`
+	ExternalId        string   `xorm:"varchar(100) index" json:"externalId"`
+}
+
+type DeleteUserParams struct {
+	Id             string   `xorm:"varchar(100) index" json:"id"`
+	Owner          string `xorm:"varchar(100) notnull pk" json:"owner"`
+}
+
+
 type User struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(255) notnull pk" json:"name"`
@@ -314,11 +332,16 @@ func GetPaginationGlobalUsers(offset, limit int, field, value, sortField, sortOr
 	return users, nil
 }
 
-func GetUserCount(owner, field, value string, groupName string) (int64, error) {
-	session := GetSession(owner, -1, -1, field, value, "", "")
+func GetUserCount(owner, query string, groupName string) (int64, error) {
+	filters := make(map[string]any)
+	fields := []string{"name", "display_name", "phone", "email", "external_id"}
+	for _, field := range fields {
+		filters[field] = query
+	}
+	session := GetFilterSession(owner, -1, -1, "", "",filters)
 
 	if groupName != "" {
-		return GetGroupUserCount(util.GetId(owner, groupName), field, value)
+		return GetGroupUserCount(util.GetId(owner, groupName), query)
 	}
 
 	return session.Count(&User{})
@@ -962,7 +985,7 @@ func AddUser(user *User, lang string) (bool, error) {
 		user.Ranking = int(count + 1)
 	}
 
-	if user.Groups != nil && len(user.Groups) > 0 {
+	if len(user.Groups) > 0 {
 		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
 		if err != nil {
 			return false, err

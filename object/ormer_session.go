@@ -22,6 +22,40 @@ import (
 	"github.com/xorm-io/xorm"
 )
 
+func GetFilterSessionByField(owner string, offset, limit int, sortField, sortOrder string, fields []string, query string) *xorm.Session {
+	filters := make(map[string]any)
+	for _, field := range fields {
+		filters[field] = query
+	}
+	session := GetFilterSession(owner, -1, -1, "", "", filters)
+	return session
+}
+
+func GetFilterSession(owner string, offset, limit int, sortField, sortOrder string, filters map[string]any) *xorm.Session {
+	session := ormer.Engine.Prepare()
+	if offset != -1 && limit != -1 {
+		session.Limit(limit, offset)
+	}
+	if owner != "" {
+		session = session.And("owner=?", owner)
+	}
+	for field, value := range filters {
+		if util.FilterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%v%%", value))
+		}
+	}
+
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "ascend" {
+		session = session.Asc(util.SnakeString(sortField))
+	} else {
+		session = session.Desc(util.SnakeString(sortField))
+	}
+	return session
+}
+
 func GetSession(owner string, offset, limit int, field, value, sortField, sortOrder string) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {

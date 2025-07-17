@@ -25,22 +25,28 @@ import (
 // GetGroups
 // @Title GetGroups
 // @Tag Group API
-// @Description get groups
-// @Param   owner     query    string  true        "The owner of groups"
+// @Description 获取分组列表
+// @Param   owner     query    string  true        "组织ID"
+// @Param   pageSize  query    int     false        "分页大小"
+// @Param   p         query    int     false        "分页"
+// @Param   query     query    string     false        "查询内容（名称）"
+// @Param   sortField     query    string     false        "排序字段"
+// @Param   sortOrder     query    string     false        "排序方式: asc, desc"
 // @Success 200 {array} object.Group The Response object
-// @router /get-groups [get]
+// @router /api/groups [get]
 func (c *ApiController) GetGroups() {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
+	// owner := c.Input().Get("owner")
+	// limit := c.Input().Get("pageSize")
+	// page := c.Input().Get("p")
+	// query := c.Input().Get("query")
+	// sortField := c.Input().Get("sortField")
+	// sortOrder := c.Input().Get("sortOrder")
+
+	params := c.GetQueryParams()
 	withTree := c.Input().Get("withTree")
 
-	if limit == "" || page == "" {
-		groups, err := object.GetGroups(owner)
+	if params.Limit == 0 || params.Page == 0 {
+		groups, err := object.GetGroups(params.Owner)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -53,21 +59,22 @@ func (c *ApiController) GetGroups() {
 		}
 
 		if withTree == "true" {
-			c.ResponseOk(object.ConvertToTreeData(groups, owner))
+			c.ResponseOk(object.ConvertToTreeData(groups, params.Owner))
 			return
 		}
 
 		c.ResponseOk(groups)
 	} else {
-		limit := util.ParseInt(limit)
-		count, err := object.GetGroupCount(owner, field, value)
+		limit := params.Limit
+		count, err := object.GetGroupCount(params.Owner, params.Query)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-
+		
+		// todo
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		groups, err := object.GetPaginationGroups(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		groups, err := object.GetPaginationGroups(params.Owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

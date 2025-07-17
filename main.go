@@ -24,7 +24,6 @@ import (
 	"github.com/casdoor/casdoor/authz"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/controllers"
-	"github.com/casdoor/casdoor/ldap"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/proxy"
 	"github.com/casdoor/casdoor/radius"
@@ -44,10 +43,10 @@ func main() {
 	authz.InitApi()
 	object.InitUserManager()
 	object.InitFromFile()
-	object.InitCasvisorConfig()
+	// object.InitCasvisorConfig()
 	object.InitCleanupTokens()
 
-	util.SafeGoroutine(func() { object.RunSyncUsersJob() })
+	// util.SafeGoroutine(func() { object.RunSyncUsersJob() })
 	util.SafeGoroutine(func() { controllers.InitCLIDownloader() })
 
 	// beego.DelStaticPath("/static")
@@ -109,7 +108,7 @@ func main() {
 		panic(err)
 	}
 
-	go ldap.StartLdapServer()
+	// go ldap.StartLdapServer()
 	go radius.StartRadiusServer()
 	go object.ClearThroughputPerSecond()
 

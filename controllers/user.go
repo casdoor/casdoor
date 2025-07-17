@@ -76,18 +76,49 @@ func (c *ApiController) GetGlobalUsers() {
 // @Title GetUsers
 // @Tag User API
 // @Description
-// @Param   owner     query    string  true        "The owner of users"
+// @Param   owner     query    string  false        "用户所属组织"
+// @Param   group     query    string  false        "用户所属分组"
+// @Param   pageSize  query    int     false        "分页大小"
+// @Param   p         query    int     false        "分页"
+// @Param   query     query    string     false        "查询内容（名称、手机号、邮箱、工号包含查询内容）"
+// @Param   sortField     query    string     false        "排序字段"
+// @Param   sortOrder     query    string     false        "排序方式: asc, desc"
 // @Success 200 {array} object.User The Response object
-// @router /get-users [get]
+// @router /users [get]
 func (c *ApiController) GetUsers() {
 	owner := c.Input().Get("owner")
-	groupName := c.Input().Get("groupName")
+	groupName := c.Input().Get("group")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
+	query := c.Input().Get("query")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+
+	if limit != "" && page != "" {
+		limit := util.ParseInt(limit)
+		count, err := object.GetUserCount(owner, query, groupName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		paginator := pagination.SetPaginator(c.Ctx, limit, count)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		users, err = object.GetMaskedUsers(users)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		c.ResponseOk(users, paginator.Nums())
+	}
+
+
 
 	if limit == "" || page == "" {
 		if groupName != "" {
@@ -108,27 +139,7 @@ func (c *ApiController) GetUsers() {
 
 		c.ResponseOk(users)
 	} else {
-		limit := util.ParseInt(limit)
-		count, err := object.GetUserCount(owner, field, value, groupName)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		users, err = object.GetMaskedUsers(users)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-
-		c.ResponseOk(users, paginator.Nums())
 	}
 }
 
@@ -252,6 +263,7 @@ func (c *ApiController) GetUser() {
 // @Title UpdateUser
 // @Tag User API
 // @Description update user
+
 // @Param   id     query    string  true        "The id ( owner/name ) of the user"
 // @Param   body    body   object.User  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
@@ -344,7 +356,7 @@ func (c *ApiController) UpdateUser() {
 // @Title AddUser
 // @Tag User API
 // @Description add user
-// @Param   body    body   object.User  true        "The details of the user"
+// @Param   body    body   object.AddUseParams  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-user [post]
 func (c *ApiController) AddUser() {
@@ -375,7 +387,7 @@ func (c *ApiController) AddUser() {
 // @Title DeleteUser
 // @Tag User API
 // @Description delete user
-// @Param   body    body   object.User  true        "The details of the user"
+// @Param   body    body   object.DeleteUserParams  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /delete-user [post]
 func (c *ApiController) DeleteUser() {
@@ -446,8 +458,6 @@ func (c *ApiController) GetEmailAndPhone() {
 // @Title SetPassword
 // @Tag Account API
 // @Description set password
-// @Param   userOwner   formData    string  true        "The owner of the user"
-// @Param   userName   formData    string  true        "The name of the user"
 // @Param   oldPassword   formData    string  true        "The old password of the user"
 // @Param   newPassword   formData    string  true        "The new password of the user"
 // @Success 200 {object} controllers.Response The Response object

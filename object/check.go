@@ -600,6 +600,8 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 			return err.Error()
 		}
 	}
+	// todo gonghao
+
 
 	return ""
 }

@@ -50,8 +50,9 @@ type Group struct {
 
 type GroupNode struct{}
 
-func GetGroupCount(owner, field, value string) (int64, error) {
-	session := GetSession(owner, -1, -1, field, value, "", "")
+func GetGroupCount(owner, query string) (int64, error) {
+	fields := []string{"name", "display_name"}
+	session := GetFilterSessionByField(owner, -1, -1, "", "",fields, query)
 	count, err := session.Count(&Group{})
 	if err != nil {
 		return 0, err
@@ -333,7 +334,7 @@ func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, so
 
 	orderQuery := fmt.Sprintf("%s.%s", prefixedUserTable, util.SnakeString(sortField))
 
-	if sortOrder == "ascend" {
+	if sortOrder == "asc" {
 		session = session.Asc(orderQuery)
 	} else {
 		session = session.Desc(orderQuery)
