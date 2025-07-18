@@ -437,18 +437,26 @@ class LoginPage extends React.Component {
         values["password"] = passwordCipher;
       }
       const captchaRule = this.getCaptchaRule(this.getApplicationObj());
-      if (captchaRule === CaptchaRule.Always) {
-        this.setState({
-          openCaptchaModal: true,
-          values: values,
-        });
-        return;
-      } else if (captchaRule === CaptchaRule.Dynamic) {
-        this.checkCaptchaStatus(values);
-        return;
-      } else if (captchaRule === CaptchaRule.InternetOnly) {
-        this.checkCaptchaStatus(values);
-        return;
+      const application = this.getApplicationObj();
+      const noModal = application?.signinItems.map(signinItem => signinItem.name === "Captcha").includes(true);
+      if (!noModal) {
+        if (captchaRule === CaptchaRule.Always) {
+          this.setState({
+            openCaptchaModal: true,
+            values: values,
+          });
+          return;
+        } else if (captchaRule === CaptchaRule.Dynamic) {
+          this.checkCaptchaStatus(values);
+          return;
+        } else if (captchaRule === CaptchaRule.InternetOnly) {
+          this.checkCaptchaStatus(values);
+          return;
+        }
+      } else {
+        values["captchaType"] = this.state?.captchaValues?.captchaType;
+        values["captchaToken"] = this.state?.captchaValues?.captchaToken;
+        values["clientSecret"] = this.state?.captchaValues?.clientSecret;
       }
     }
     this.login(values);
@@ -775,7 +783,7 @@ class LoginPage extends React.Component {
               </>
           }
           {
-            this.renderCaptchaModal(application)
+            application?.signinItems.map(signinItem => signinItem.name === "Captcha").includes(true) ? null : this.renderCaptchaModal(application, false)
           }
         </Form.Item>
       );
@@ -819,6 +827,8 @@ class LoginPage extends React.Component {
           </Form.Item>
         </div>
       );
+    } else if (signinItem.name === "Captcha") {
+      return this.renderCaptchaModal(application, true);
     } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
         <div key={resultItemKey} dangerouslySetInnerHTML={{__html: signinItem.customCss}} />
@@ -964,7 +974,7 @@ class LoginPage extends React.Component {
     });
   }
 
-  renderCaptchaModal(application) {
+  renderCaptchaModal(application, noModal) {
     if (this.getCaptchaRule(this.getApplicationObj()) === CaptchaRule.Never) {
       return null;
     }
@@ -993,6 +1003,12 @@ class LoginPage extends React.Component {
       owner={provider.owner}
       name={provider.name}
       visible={this.state.openCaptchaModal}
+      noModal={noModal}
+      onUpdateToken={(captchaType, captchaToken, clientSecret) => {
+        this.setState({captchaValues: {
+          captchaType, captchaToken, clientSecret,
+        }});
+      }}
       onOk={(captchaType, captchaToken, clientSecret) => {
         const values = this.state.values;
         values["captchaType"] = captchaType;
