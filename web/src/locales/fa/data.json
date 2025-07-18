@@ -475,7 +475,7 @@
     "Show all": "نمایش همه",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",
@@ -550,7 +550,7 @@
     "Logging out...": "در حال خروج...",
     "MetaMask plugin not detected": "پلاگین MetaMask شناسایی نشد",
     "Model loading failure": "بارگذاری مدل ناموفق بود",
-    "No account?": "",
+    "No account?": "No account?",
     "Or sign in with another account": "یا با حساب دیگری وارد شوید",
     "Phone": "تلفن",
     "Please ensure sufficient lighting and align your face in the center of the recognition box": "لطفاً از نور کافی اطمینان حاصل کنید و صورت خود را در مرکز جعبه تشخیص قرار دهید",
