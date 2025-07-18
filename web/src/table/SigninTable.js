@@ -49,6 +49,9 @@ class SigninTable extends React.Component {
 
   updateField(table, index, key, value) {
     table[index][key] = value;
+    if (key === "name" && value === "Captcha") {
+      table[index]["rule"] = "pop up";
+    }
     this.updateTable(table);
   }
 
@@ -114,6 +117,7 @@ class SigninTable extends React.Component {
             {name: "Forgot password?", displayName: i18next.t("login:Forgot password?")},
             {name: "Login button", displayName: i18next.t("login:Signin button")},
             {name: "Signup link", displayName: i18next.t("general:Signup link")},
+            {name: "Captcha", displayName: i18next.t("general:Captcha")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -247,6 +251,12 @@ class SigninTable extends React.Component {
             options = [
               {id: "big", name: i18next.t("application:Big icon")},
               {id: "small", name: i18next.t("application:Small icon")},
+            ];
+          }
+          if (record.name === "Captcha") {
+            options = [
+              {id: "pop up", name: i18next.t("application:Pop up")},
+              {id: "inline", name: i18next.t("application:Inline")},
             ];
           }
           if (options.length === 0) {
