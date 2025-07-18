@@ -438,7 +438,7 @@ class LoginPage extends React.Component {
       }
       const captchaRule = this.getCaptchaRule(this.getApplicationObj());
       const application = this.getApplicationObj();
-      const noModal = application?.signinItems.map(signinItem => signinItem.name === "Captcha").includes(true);
+      const noModal = application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true);
       if (!noModal) {
         if (captchaRule === CaptchaRule.Always) {
           this.setState({
@@ -783,7 +783,7 @@ class LoginPage extends React.Component {
               </>
           }
           {
-            application?.signinItems.map(signinItem => signinItem.name === "Captcha").includes(true) ? null : this.renderCaptchaModal(application, false)
+            application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true) ? null : this.renderCaptchaModal(application, false)
           }
         </Form.Item>
       );
@@ -827,7 +827,7 @@ class LoginPage extends React.Component {
           </Form.Item>
         </div>
       );
-    } else if (signinItem.name === "Captcha") {
+    } else if (signinItem.name === "Captcha" && signinItem.rule === "inline") {
       return this.renderCaptchaModal(application, true);
     } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
