@@ -111,32 +111,34 @@ export const CaptchaModal = (props) => {
         </Row>
       );
     }
-    return <Col style={{textAlign: "center"}}>
-      <div style={{display: "inline-block"}}>
-        <Row
-          style={{
-            backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
-            backgroundRepeat: "no-repeat",
-            height: "80px",
-            width: "200px",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-            marginBottom: "20px",
-          }}
-        />
-        <Row>
-          <Input
-            ref={defaultInputRef}
-            style={{width: "200px"}}
-            value={captchaToken}
-            prefix={<SafetyOutlined />}
-            placeholder={i18next.t("general:Captcha")}
-            onPressEnter={handleOk}
-            onChange={(e) => setCaptchaToken(e.target.value)}
+    return (
+      <Col style={{textAlign: "center"}}>
+        <div style={{display: "inline-block"}}>
+          <Row
+            style={{
+              backgroundImage: `url('data:image/png;base64,${captchaImg}')`,
+              backgroundRepeat: "no-repeat",
+              height: "80px",
+              width: "200px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              marginBottom: "20px",
+            }}
           />
-        </Row>
-      </div>
-    </Col>;
+          <Row>
+            <Input
+              ref={defaultInputRef}
+              style={{width: "200px"}}
+              value={captchaToken}
+              prefix={<SafetyOutlined />}
+              placeholder={i18next.t("general:Captcha")}
+              onPressEnter={handleOk}
+              onChange={(e) => setCaptchaToken(e.target.value)}
+            />
+          </Row>
+        </div>
+      </Col>
+    );
   };
 
   const onChange = (token) => {
