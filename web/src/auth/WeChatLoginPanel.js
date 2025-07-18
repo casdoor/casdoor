@@ -63,7 +63,7 @@ class WeChatLoginPanel extends React.Component {
           this.setState({qrCode: res.data, loading: false, ticket: res.data2});
           this.clearPolling();
           this.pollingTimer = setInterval(() => {
-            Util.getEvent(application, wechatProviderItem.provider, res.data2, "login");
+            Util.getEvent(application, wechatProviderItem.provider, res.data2, "signup");
           }, 1000);
         } else {
           this.setState({qrCode: null, loading: false, ticket: null});
