@@ -183,7 +183,8 @@ func (c *ApiController) WebAuthnSigninFinish() {
 
 	var authForm form.AuthForm
 	authForm.Type = responseType
-	resp := c.HandleLoggedIn(application, user, &authForm)
+	responseMode := c.Input().Get("response_mode")
+	resp := c.HandleLoggedIn(application, user, &authForm, responseMode)
 	c.Data["json"] = resp
 	c.ServeJSON()
 }

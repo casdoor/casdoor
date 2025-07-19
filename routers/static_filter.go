@@ -89,7 +89,8 @@ func fastAutoSignin(ctx *context.Context) (string, error) {
 		return "", nil
 	}
 
-	code, err := object.GetOAuthCode(userId, clientId, "", responseType, redirectUri, scope, state, nonce, codeChallenge, ctx.Request.Host, getAcceptLanguage(ctx))
+	responseMode := ctx.Input.Query("response_mode")
+	code, err := object.GetOAuthCode(userId, clientId, "", responseType, redirectUri, scope, state, nonce, codeChallenge, responseMode, ctx.Request.Host, getAcceptLanguage(ctx))
 	if err != nil {
 		return "", err
 	} else if code.Message != "" {
