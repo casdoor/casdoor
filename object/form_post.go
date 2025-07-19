@@ -34,8 +34,8 @@ const formPostTemplate = `<!DOCTYPE html>
         .loading { font-size: 18px; color: #666; }
     </style>
 </head>
-<body onload="javascript:document.forms[0].submit()">
-    <form method="post" action="{{.RedirectUri}}">
+<body onload="javascript:document.getElementById('form').submit()">
+    <form id="form" method="post" action="{{.RedirectUri}}">
         {{range $key, $value := .Parameters}}
         <input type="hidden" name="{{$key}}" value="{{$value}}" />
         {{end}}
