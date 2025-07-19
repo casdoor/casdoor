@@ -21,10 +21,10 @@ import (
 
 func TestGenerateFormPostResponse(t *testing.T) {
 	tests := []struct {
-		name         string
-		redirectUri  string
-		parameters   map[string]string
-		expectError  bool
+		name          string
+		redirectUri   string
+		parameters    map[string]string
+		expectError   bool
 		expectContain []string
 	}{
 		{
@@ -89,30 +89,30 @@ func TestGenerateFormPostResponse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := GenerateFormPostResponse(tt.redirectUri, tt.parameters)
-			
+
 			if tt.expectError {
 				if err == nil {
 					t.Errorf("Expected error but got none")
 				}
 				return
 			}
-			
+
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 				return
 			}
-			
+
 			for _, expected := range tt.expectContain {
 				if !strings.Contains(result, expected) {
 					t.Errorf("Expected result to contain '%s', but it didn't. Result: %s", expected, result)
 				}
 			}
-			
+
 			// Check that result is valid HTML
 			if !strings.Contains(result, "<html>") || !strings.Contains(result, "</html>") {
 				t.Errorf("Result should be valid HTML")
 			}
-			
+
 			// Check security headers are mentioned in comments/docs
 			if !strings.Contains(result, "no-cache") {
 				t.Errorf("Result should include cache control measures")

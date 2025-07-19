@@ -156,7 +156,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		resp = codeToResponse(code)
 		resp.Data3 = user.NeedUpdatePassword
-		
+
 		if responseMode == "form_post" {
 			redirectUri := c.Input().Get("redirectUri")
 			state := c.Input().Get("state")
