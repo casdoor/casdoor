@@ -142,7 +142,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		nonce := c.Input().Get("nonce")
 		challengeMethod := c.Input().Get("code_challenge_method")
 		codeChallenge := c.Input().Get("code_challenge")
-		responseMode := c.Input().Get("response_mode")
 
 		if challengeMethod != "S256" && challengeMethod != "null" && challengeMethod != "" {
 			c.ResponseError(c.T("auth:Challenge method should be S256"))

@@ -122,7 +122,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 		return fmt.Sprintf(i18n.Translate(lang, "token:Response mode: %s is not supported"), responseMode), nil, nil
 	}
 
-	if responseMode == "form_post" && responseType != "code" && responseType != "token" && responseType != "id_token" {
+	if responseMode == "form_post" && !(responseType == "code" || responseType == "token" || responseType == "id_token") {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Response mode 'form_post' is not compatible with response type: %s"), responseType), nil, nil
 	}
 
