@@ -159,25 +159,12 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		if responseMode == "form_post" {
 			redirectUri := c.Input().Get("redirectUri")
 			state := c.Input().Get("state")
-
-			parameters := make(map[string]string)
-			parameters["code"] = code.Code
-			if state != "" {
-				parameters["state"] = state
+			resp.Data2 = map[string]interface{}{
+				"redirectUri":  redirectUri,
+				"code":         code.Code,
+				"state":        state,
+				"responseMode": "form_post",
 			}
-
-			htmlResponse, err := object.GenerateFormPostResponse(redirectUri, parameters)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-
-			c.Ctx.Output.Header("Content-Type", "text/html; charset=utf-8")
-			c.Ctx.Output.Header("Cache-Control", "no-cache, no-store, must-revalidate")
-			c.Ctx.Output.Header("Pragma", "no-cache")
-			c.Ctx.Output.Header("Expires", "0")
-			c.Ctx.WriteString(htmlResponse)
-			return
 		}
 
 		if application.EnableSigninSession || application.HasPromptPage() {
