@@ -39,9 +39,14 @@ func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
-	resp := &Response{Status: "ok"}
-	// resp := &
-	c.ResponseJsonData(resp, data...)
+	// resp := &Response{Status: "ok"}
+	resp := &MsgResponse{
+		Code: 0,
+		Msg:  "成功",
+		Data: data,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
 
 // ResponseError ...
@@ -62,8 +67,13 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 		}
 	}
 
-	resp := &Response{Status: "error", Msg: error}
-	c.ResponseJsonData(resp, data...)
+	resp := &MsgResponse{
+		Code: 101_00_00000,
+		Msg:  error,
+		Data: data,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
 
 func (c *ApiController) T(error string) string {
@@ -323,13 +333,11 @@ func getInvalidSmsReceivers(smsForm SmsForm) []string {
 	return invalidReceivers
 }
 
-
-
 // ResponseSuccess ...
 func (c *ApiController) ResponseSuccess(data interface{}) {
 	resp := &MsgResponse{
 		Code: 0,
-		Msg: "成功",
+		Msg:  "成功",
 		Data: data,
 	}
 	c.Data["json"] = resp

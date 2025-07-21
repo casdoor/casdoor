@@ -69,23 +69,6 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Group'
-  /api/api/login-info:
-    get:
-      tags:
-      - Auth API
-      description: get default application
-      operationId: ApiController.GetLoginInfo
-      parameters:
-      - in: query
-        name: id
-        description: organization id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.MsgResponse'
   /api/delete-group:
     post:
       tags:
@@ -121,6 +104,23 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Group'
+  /api/login-info:
+    get:
+      tags:
+      - Auth API
+      description: get default application
+      operationId: ApiController.GetLoginInfo
+      parameters:
+      - in: query
+        name: id
+        description: organization id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.MsgResponse'
   /api/old-login:
     post:
       tags:

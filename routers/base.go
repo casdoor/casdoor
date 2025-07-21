@@ -27,6 +27,13 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+
+type MsgResponse struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"message"`
+	Data interface{} `json:"data"`
+}
+
 type Response struct {
 	Status string      `json:"status"`
 	Msg    string      `json:"msg"`
@@ -37,15 +44,7 @@ type Response struct {
 func responseError(ctx *context.Context, error string, data ...interface{}) {
 	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 
-	resp := Response{Status: "error", Msg: error}
-	switch len(data) {
-	case 2:
-		resp.Data2 = data[1]
-		fallthrough
-	case 1:
-		resp.Data = data[0]
-	}
-
+	resp := MsgResponse{Code:  101_02_00001, Msg: error, Data: data}
 	err := ctx.Output.JSON(resp, true, false)
 	if err != nil {
 		panic(err)

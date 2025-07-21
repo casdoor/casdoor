@@ -276,7 +276,7 @@ func (c *ApiController) Login2() {
 // @Description get default application
 // @Param   id     query    string  true        "organization id"
 // @Success 200 {object} controllers.MsgResponse The Response object
-// @router /api/login-info [get]
+// @router /login-info [get]
 func (c *ApiController) GetLoginInfo() {
 	id := c.Input().Get("id")
 
