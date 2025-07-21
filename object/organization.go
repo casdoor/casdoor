@@ -81,12 +81,12 @@ type Organization struct {
 	UseEmailAsUsername     bool       `json:"useEmailAsUsername"`
 	EnableTour             bool       `json:"enableTour"`
 	IpRestriction          string     `json:"ipRestriction"`
-	NavItems               []string   `xorm:"varchar(1000)" json:"navItems"`
-	WidgetItems            []string   `xorm:"varchar(1000)" json:"widgetItems"`
+	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
+	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"`
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
-	AccountItems       []*AccountItem `xorm:"varchar(5000)" json:"accountItems"`
+	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {
