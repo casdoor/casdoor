@@ -203,6 +203,7 @@ class AuthCallback extends React.Component {
 
                 document.body.appendChild(form);
                 form.submit();
+                form.remove();
               } else {
                 const code = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
