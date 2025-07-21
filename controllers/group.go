@@ -19,7 +19,6 @@ import (
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
 )
 
 // GetGroups
@@ -72,9 +71,8 @@ func (c *ApiController) GetGroups() {
 			return
 		}
 		
-		// todo
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		groups, err := object.GetPaginationGroups(params.Owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		groups, err := object.GetPaginationGroups(params.Owner, params)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -191,4 +189,11 @@ func (c *ApiController) DeleteGroup() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteGroup(&group))
 	c.ServeJSON()
+}
+
+
+
+
+func (c *ApiController)UpdateGroupUser(){
+
 }

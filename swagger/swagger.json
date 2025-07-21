@@ -754,7 +754,7 @@
                         "description": "The details of the user",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.User"
+                            "$ref": "#/definitions/object.AddUseParams"
                         }
                     }
                 ],
@@ -807,6 +807,67 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/api/groups": {
+            "get": {
+                "tags": [
+                    "Group API"
+                ],
+                "description": "获取分组列表",
+                "operationId": "ApiController.GetGroups",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "组织ID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "分页大小",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "p",
+                        "description": "分页",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "查询内容（名称）",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortField",
+                        "description": "排序字段",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortOrder",
+                        "description": "排序方式: asc, desc",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Group"
+                            }
                         }
                     }
                 }
@@ -1557,7 +1618,7 @@
                         "description": "The details of the user",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.User"
+                            "$ref": "#/definitions/object.DeleteUserParams"
                         }
                     }
                 ],
@@ -2194,35 +2255,6 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.Group"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/get-groups": {
-            "get": {
-                "tags": [
-                    "Group API"
-                ],
-                "description": "get groups",
-                "operationId": "ApiController.GetGroups",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "The owner of groups",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Group"
-                            }
                         }
                     }
                 }
@@ -3731,71 +3763,6 @@
                 }
             }
         },
-        "/api/get-users": {
-            "get": {
-                "tags": [
-                    "User API"
-                ],
-                "operationId": "ApiController.GetUsers",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "用户所属组织",
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "group",
-                        "description": "用户所属分组",
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "pageSize",
-                        "description": "分页大小",
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "query",
-                        "name": "p",
-                        "description": "分页",
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "in": "query",
-                        "name": "query",
-                        "description": "查询内容（名称、手机号、邮箱、工号包含查询内容）",
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "sortField",
-                        "description": "排序字段",
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "sortOrder",
-                        "description": "排序方式: asc, desc",
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.User"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/get-version-info": {
             "get": {
                 "tags": [
@@ -4573,20 +4540,6 @@
                 "description": "set password",
                 "operationId": "ApiController.SetPassword",
                 "parameters": [
-                    {
-                        "in": "formData",
-                        "name": "userOwner",
-                        "description": "The owner of the user",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "formData",
-                        "name": "userName",
-                        "description": "The name of the user",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "in": "formData",
                         "name": "oldPassword",
@@ -5463,11 +5416,6 @@
         },
         "/api/update-user": {
             "post": {
-                "tags": [
-                    "User API"
-                ],
-                "description": "update user",
-                "operationId": "ApiController.UpdateUser",
                 "parameters": [
                     {
                         "in": "query",
@@ -5638,6 +5586,71 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.Userinfo"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "User API"
+                ],
+                "operationId": "ApiController.GetUsers",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "用户所属组织",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "group",
+                        "description": "用户所属分组",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pageSize",
+                        "description": "分页大小",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "p",
+                        "description": "分页",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    {
+                        "in": "query",
+                        "name": "query",
+                        "description": "查询内容（名称、手机号、邮箱、工号包含查询内容）",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortField",
+                        "description": "排序字段",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "sortOrder",
+                        "description": "排序方式: asc, desc",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.User"
+                            }
                         }
                     }
                 }
@@ -5825,11 +5838,11 @@
         }
     },
     "definitions": {
-        "187016.\u003cnil\u003e.string": {
+        "187804.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "187074.string.string": {
+        "187862.string.string": {
             "title": "string",
             "type": "object"
         },
@@ -6067,6 +6080,39 @@
                     "type": "boolean"
                 },
                 "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.AddUseParams": {
+            "title": "AddUseParams",
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "externalId": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
@@ -6332,6 +6378,18 @@
                     "type": "string"
                 },
                 "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.DeleteUserParams": {
+            "title": "DeleteUserParams",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "owner": {
                     "type": "string"
                 }
             }
@@ -8766,7 +8824,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/187016.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/187804.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -8775,7 +8833,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/187074.string.string"
+                    "$ref": "#/definitions/187862.string.string"
                 },
                 "subject": {
                     "type": "string"

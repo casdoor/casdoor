@@ -31,6 +31,32 @@ func GetFilterSessionByField(owner string, offset, limit int, sortField, sortOrd
 	return session
 }
 
+func GetFilterSessionByQueryParams(owner string, params *QueryParams, fields []string) *xorm.Session {
+	session := ormer.Engine.Prepare()
+	if params.Page > 0 && params.Limit > 0 {
+		session.Limit(params.Limit, (params.Page-1)*params.Limit)
+	}
+	if owner != "" {
+		session = session.And("owner=?", owner)
+	}
+	for _, field := range fields {
+		if util.FilterField(field) {
+			session = session.And(fmt.Sprintf("%s like ?", util.SnakeString(field)), fmt.Sprintf("%%%v%%", params.Query))
+		}
+	}
+	
+	sortField, sortOrder := params.SortField, params.SortOrder
+	if sortField == "" || sortOrder == "" {
+		sortField = "created_time"
+	}
+	if sortOrder == "asc" {
+		session = session.Asc(util.SnakeString(sortField))
+	} else {
+		session = session.Desc(util.SnakeString(sortField))
+	}
+	return session
+}
+
 func GetFilterSession(owner string, offset, limit int, sortField, sortOrder string, filters map[string]any) *xorm.Session {
 	session := ormer.Engine.Prepare()
 	if offset != -1 && limit != -1 {

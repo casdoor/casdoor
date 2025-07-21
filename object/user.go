@@ -341,7 +341,7 @@ func GetUserCount(owner, query string, groupName string) (int64, error) {
 	session := GetFilterSession(owner, -1, -1, "", "",filters)
 
 	if groupName != "" {
-		return GetGroupUserCount(util.GetId(owner, groupName), query)
+		return GetGroupUserCount(util.GetId(owner, groupName), query, fields)
 	}
 
 	return session.Count(&User{})
@@ -978,7 +978,7 @@ func AddUser(user *User, lang string) (bool, error) {
 
 	rankingItem := GetAccountItemByName("Ranking", organization)
 	if rankingItem != nil {
-		count, err := GetUserCount(user.Owner, "", "", "")
+		count, err := GetUserCount(user.Owner, "", "")
 		if err != nil {
 			return false, err
 		}

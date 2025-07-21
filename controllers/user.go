@@ -103,7 +103,7 @@ func (c *ApiController) GetUsers() {
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder, groupName)
+		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, "", query, sortField, sortOrder, groupName)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -664,7 +664,7 @@ func (c *ApiController) GetUserCount() {
 	var count int64
 	var err error
 	if isOnline == "" {
-		count, err = object.GetUserCount(owner, "", "", "")
+		count, err = object.GetUserCount(owner, "", "")
 	} else {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}
@@ -722,4 +722,13 @@ func (c *ApiController) RemoveUserFromGroup() {
 	}
 
 	c.ResponseOk(affected)
+}
+
+
+func (c *ApiController)UpdateUserGroup(){
+
+}
+
+func (c *ApiController)ImportUsers(){
+
 }
