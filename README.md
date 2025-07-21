@@ -62,7 +62,7 @@ Forked from: [Casdoor](https://github.com/casdoor/casdoor)
 ## 重新生成swagger
 https://casdoor.org/zh/docs/developer-guide/swagger/
 ```bash
-mybee generate docs --tags "Group API"
+mybee generate docs --tags "Group API,Auth API"
 ```
 
 

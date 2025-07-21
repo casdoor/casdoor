@@ -103,6 +103,32 @@
                 }
             }
         },
+        "/api/api/login-info": {
+            "get": {
+                "tags": [
+                    "Auth API"
+                ],
+                "description": "get default application",
+                "operationId": "ApiController.GetLoginInfo",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "organization id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.MsgResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/delete-group": {
             "post": {
                 "tags": [
@@ -157,6 +183,85 @@
                 }
             }
         },
+        "/api/old-login": {
+            "post": {
+                "tags": [
+                    "Auth API"
+                ],
+                "description": "login",
+                "operationId": "ApiController.Login",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "clientId",
+                        "description": "clientId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "responseType",
+                        "description": "responseType",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "redirectUri",
+                        "description": "redirectUri",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "scope",
+                        "description": "scope",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "state",
+                        "description": "state",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "nonce",
+                        "description": "nonce",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code_challenge_method",
+                        "description": "code_challenge_method",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "code_challenge",
+                        "description": "code_challenge",
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "form",
+                        "description": "Login information",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.AuthForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/update-group": {
             "post": {
                 "tags": [
@@ -194,11 +299,11 @@
         }
     },
     "definitions": {
-        "188273.\u003cnil\u003e.string": {
+        "189152.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "188331.string.string": {
+        "189210.string.string": {
             "title": "string",
             "type": "object"
         },
@@ -298,6 +403,25 @@
                     "items": {
                         "$ref": "#/definitions/object.LdapUser"
                     }
+                }
+            }
+        },
+        "controllers.MsgResponse": {
+            "title": "MsgResponse",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "data": {
+                    "additionalProperties": {
+                        "description": "support string, struct or []struct",
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
                 }
             }
         },
@@ -3180,7 +3304,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/188273.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/189152.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -3189,7 +3313,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/188331.string.string"
+                    "$ref": "#/definitions/189210.string.string"
                 },
                 "subject": {
                     "type": "string"

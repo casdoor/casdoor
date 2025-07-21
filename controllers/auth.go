@@ -250,6 +250,52 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	return resp
 }
 
+
+// Login ...
+// @Title Login
+// @Tag Auth API
+// @Description login
+// @Param clientId        query    string  true clientId
+// @Param responseType    query    string  true responseType
+// @Param redirectUri     query    string  true redirectUri
+// @Param scope     query    string  false  scope
+// @Param state     query    string  false  state
+// @Param nonce     query    string  false nonce
+// @Param code_challenge_method   query    string  false code_challenge_method
+// @Param code_challenge          query    string  false code_challenge
+// @Param   form   body   controllers.AuthForm  true        "Login information"
+// @Success 200 {object} controllers.Response The Response object
+// @router /old-login [post]
+func (c *ApiController) Login2() {
+	c.Login()
+}
+
+// GetLoginInfo ...
+// @Title GetLoginInfo
+// @Tag Auth API
+// @Description get default application
+// @Param   id     query    string  true        "organization id"
+// @Success 200 {object} controllers.MsgResponse The Response object
+// @router /api/login-info [get]
+func (c *ApiController) GetLoginInfo() {
+	id := c.Input().Get("id")
+
+	application, err := object.GetDefaultApplication(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// application = object.GetMaskedApplication(application, userId)
+	resp := object.GetLoginInfo(application)
+
+	c.ResponseSuccess(resp)
+}
+
+
+
+
+
 // GetApplicationLogin ...
 // @Title GetApplicationLogin
 // @Tag Login API

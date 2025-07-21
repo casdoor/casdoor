@@ -35,6 +35,12 @@ const (
 	ResponseTypeDevice  = "device"
 )
 
+type MsgResponse struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"message"`
+	Data interface{} `json:"data"`
+}
+
 // todo 修改结构
 type Response struct {
 	Status string      `json:"status"`

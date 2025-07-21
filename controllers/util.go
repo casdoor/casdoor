@@ -322,3 +322,16 @@ func getInvalidSmsReceivers(smsForm SmsForm) []string {
 	}
 	return invalidReceivers
 }
+
+
+
+// ResponseSuccess ...
+func (c *ApiController) ResponseSuccess(data interface{}) {
+	resp := &MsgResponse{
+		Code: 0,
+		Msg: "成功",
+		Data: data,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}

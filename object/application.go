@@ -922,3 +922,30 @@ func applicationChangeTrigger(oldName string, newName string) error {
 
 	return session.Commit()
 }
+
+type LoginInfo struct {
+	Logo                   string          `json:"logo"`
+	HomepageUrl            string          `json:"homepageUrl"`
+	Providers              []*ProviderItem `json:"providers"`
+	PasswordObfuscatorKey  string          `json:"passwordObfuscatorKey"`   // 密钥，用于密码加密传输
+	PasswordObfuscatorType string          `json:"passwordObfuscatorType"`  // 密码加密方式，当前固定为 AES
+}
+
+
+
+func GetLoginInfo(application *Application) *LoginInfo {
+	if application == nil {
+		return nil 
+	}
+
+	info := &LoginInfo{
+		Logo: application.Logo,
+		HomepageUrl: application.HomepageUrl,
+		Providers: application.Providers,
+	}
+	if application.OrganizationObj != nil {
+		info.PasswordObfuscatorKey = application.OrganizationObj.PasswordObfuscatorKey
+		info.PasswordObfuscatorType = application.OrganizationObj.PasswordObfuscatorType
+	}
+	return info
+}
