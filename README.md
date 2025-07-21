@@ -58,10 +58,14 @@ Forked from: [Casdoor](https://github.com/casdoor/casdoor)
 
 
 
-# 项目命令
+# 服务部署
 ## 重新生成swagger
 https://casdoor.org/zh/docs/developer-guide/swagger/
 ```bash
 mybee generate docs --tags "Group API"
 ```
+
+
+## 初始化服务
+根据`init_data.json`生成默认组织、角色
 

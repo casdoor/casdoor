@@ -34,3 +34,5 @@ server
 
 # include helm-chart
 !manifests/casdoor
+
+init_data.json
