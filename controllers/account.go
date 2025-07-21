@@ -286,8 +286,7 @@ func (c *ApiController) Signup() {
 		}
 	}
 
-	if application.HasPromptPage() && user.Type == "normal-user" {
-		// The prompt page needs the user to be signed in
+	if user.Type == "normal-user" {
 		c.SetSessionUsername(user.GetId())
 	}
 
