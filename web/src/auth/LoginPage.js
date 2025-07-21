@@ -347,7 +347,7 @@ class LoginPage extends React.Component {
       return;
     }
 
-    if (resp.data2) {
+    if (resp.data3) {
       sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
       Setting.goToLinkSoft(ths, `/forget/${application.name}`);
       return;
