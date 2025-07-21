@@ -7,6 +7,8 @@ Forked from: [Casdoor](https://github.com/casdoor/casdoor)
 - 对象资源管理(图片、文件、视频)
 
 
+
+
 ## 用户管理
 ### 新增用户
 前提：
@@ -53,3 +55,13 @@ Forked from: [Casdoor](https://github.com/casdoor/casdoor)
 
 ## 权限管理
 ## 角色管理
+
+
+
+# 项目命令
+## 重新生成swagger
+https://casdoor.org/zh/docs/developer-guide/swagger/
+```bash
+mybee generate docs --tags "Group API"
+```
+

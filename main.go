@@ -36,11 +36,14 @@ func main() {
 	object.InitAdapter()
 	object.CreateTables()
 
+	// 初始化内置组织对象
 	object.InitDb()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()
-	authz.InitApi()
+	// 初始化接口权限
+	authz.InitApi()	
+	// 初始化enforcer
 	object.InitUserManager()
 	object.InitFromFile()
 	// object.InitCasvisorConfig()

@@ -1385,3 +1385,4 @@ func UpdateUserBalance(owner string, name string, balance float64) error {
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
 }
+

@@ -59,8 +59,8 @@ func getConfigFlag() string {
 	res := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
 	flag.Parse()
 	return *res
+	
 }
-
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
 	if err != nil {

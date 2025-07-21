@@ -732,3 +732,8 @@ func (c *ApiController)UpdateUserGroup(){
 func (c *ApiController)ImportUsers(){
 
 }
+
+
+func (c *ApiController)ResetPassword(){
+
+}
