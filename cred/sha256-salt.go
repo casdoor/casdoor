@@ -38,6 +38,9 @@ func NewSha256SaltCredManager() *Sha256SaltCredManager {
 }
 
 func (cm *Sha256SaltCredManager) GetHashedPassword(password string, salt string) string {
+	if salt == "" {
+		return getSha256HexDigest(password)
+	}
 	return getSha256HexDigest(getSha256HexDigest(password) + salt)
 }
 
