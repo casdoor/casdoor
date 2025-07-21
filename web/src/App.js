@@ -247,7 +247,9 @@ class App extends Component {
           account.organization = res.data2;
           accessToken = res.data.accessToken;
 
-          this.setLanguage(account);
+          if (!localStorage.getItem("language")) {
+            this.setLanguage(account);
+          }
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
           setTourLogo(account.organization.logo);
           setOrgIsTourVisible(account.organization.enableTour);
