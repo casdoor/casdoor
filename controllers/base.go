@@ -259,20 +259,3 @@ func (c *ApiController) Finish() {
 	}
 	c.Controller.Finish()
 }
-
-func (c *ApiController) GetQueryParams() *object.QueryParams {
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	query := c.Input().Get("query")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	return &object.QueryParams{
-		Owner:     owner,
-		Limit:     util.ParseInt(limit),
-		Page:      util.ParseInt(page),
-		Query:     query,
-		SortField: sortField,
-		SortOrder: sortOrder,
-	}
-}

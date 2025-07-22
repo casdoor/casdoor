@@ -14,6 +14,34 @@
         "http"
     ],
     "paths": {
+        "/coral/api/add-application": {
+            "post": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "add an application",
+                "operationId": "ApiController.AddApplication",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the application",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/coral/api/add-group": {
             "post": {
                 "tags": [
@@ -103,6 +131,34 @@
                 }
             }
         },
+        "/coral/api/delete-application": {
+            "post": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "delete an application",
+                "operationId": "ApiController.DeleteApplication",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the application",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/coral/api/delete-group": {
             "post": {
                 "tags": [
@@ -131,6 +187,61 @@
                 }
             }
         },
+        "/coral/api/get-application": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get the detail of an application",
+                "operationId": "ApiController.GetApplication",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the application.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/get-applications": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get all applications",
+                "operationId": "ApiController.GetApplications",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of applications.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Application"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/coral/api/get-group": {
             "get": {
                 "tags": [
@@ -152,6 +263,61 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.Group"
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/get-organization-applications": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get the detail of the organization's application",
+                "operationId": "ApiController.GetOrganizationApplications",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "organization",
+                        "description": "The organization name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.Application"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/get-user-application": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get the detail of the user's application",
+                "operationId": "ApiController.GetUserApplication",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
                         }
                     }
                 }
@@ -269,6 +435,41 @@
                 ],
                 "description": "logout the current user",
                 "operationId": "ApiController.退出登录",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/update-application": {
+            "post": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "update an application",
+                "operationId": "ApiController.UpdateApplication",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the application",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the application",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "The Response object",

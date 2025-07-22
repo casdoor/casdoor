@@ -22,4 +22,5 @@ type QueryParams struct {
 	Query     string
 	SortField string
 	SortOrder string
+	Organization string
 }

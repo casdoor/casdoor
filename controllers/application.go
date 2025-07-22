@@ -29,17 +29,10 @@ import (
 // @Description get all applications
 // @Param   owner     query    string  true        "The owner of applications."
 // @Success 200 {array} object.Application The Response object
-// @router /get-applications [get]
+// @router /applications [get]
 func (c *ApiController) GetApplications() {
+	params := c.GetQueryParams()
 	userId := c.GetSessionUsername()
-	owner := c.Input().Get("owner")
-	limit := c.Input().Get("pageSize")
-	page := c.Input().Get("p")
-	field := c.Input().Get("field")
-	value := c.Input().Get("value")
-	sortField := c.Input().Get("sortField")
-	sortOrder := c.Input().Get("sortOrder")
-	organization := c.Input().Get("organization")
 	var err error
 	if limit == "" || page == "" {
 		var applications []*object.Application
@@ -79,7 +72,7 @@ func (c *ApiController) GetApplications() {
 // @Description get the detail of an application
 // @Param   id     query    string  true        "The id ( owner/name ) of the application."
 // @Success 200 {object} object.Application The Response object
-// @router /get-application [get]
+// @router applications/:appId [get]
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Input().Get("id")
@@ -221,7 +214,7 @@ func (c *ApiController) GetOrganizationApplications() {
 // @Param   id     query    string  true        "The id ( owner/name ) of the application"
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object
-// @router /update-application [post]
+// @router applications/:appId [put]
 func (c *ApiController) UpdateApplication() {
 	id := c.Input().Get("id")
 
@@ -247,7 +240,7 @@ func (c *ApiController) UpdateApplication() {
 // @Description add an application
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object
-// @router /add-application [post]
+// @router /applications [post]
 func (c *ApiController) AddApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)
@@ -282,7 +275,7 @@ func (c *ApiController) AddApplication() {
 // @Description delete an application
 // @Param   body    body   object.Application  true        "The details of the application"
 // @Success 200 {object} controllers.Response The Response object
-// @router /delete-application [post]
+// @router /applications [delete]
 func (c *ApiController) DeleteApplication() {
 	var application object.Application
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &application)

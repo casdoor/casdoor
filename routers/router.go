@@ -57,32 +57,30 @@ func initAPI() {
 	// 组织管理
 
 	// 分组管理
-	beego.Router("/groups", &controllers.ApiController{}, "GET:GetGroups")
-	beego.Router("/groups/:groupId", &controllers.ApiController{}, "GET:GetGroup")
-	beego.Router("/groups", &controllers.ApiController{}, "POST:AddGroup")
-	beego.Router("/groups/:groupId", &controllers.ApiController{}, "PUT:UpdateGroup")
-	beego.Router("/groups/:groupId", &controllers.ApiController{}, "POST:DeleteGroup")
-	beego.Router("/groups/:groupId/users", &controllers.ApiController{}, "PUT:UpdateGroupUser")
-	beego.Router("/groups/import", &controllers.ApiController{}, "POST:UploadGroups")
+	beego.Router("/coral/api/groups", &controllers.ApiController{}, "GET:GetGroups")
+	beego.Router("/coral/api/groups/:groupId", &controllers.ApiController{}, "GET:GetGroup")
+	beego.Router("/coral/api/groups", &controllers.ApiController{}, "POST:AddGroup")
+	beego.Router("/coral/api/groups/:groupId", &controllers.ApiController{}, "PUT:UpdateGroup")
+	beego.Router("/coral/api/groups/:groupId", &controllers.ApiController{}, "POST:DeleteGroup")
+	beego.Router("/coral/api/groups/:groupId/users", &controllers.ApiController{}, "PUT:UpdateGroupUser")
+	beego.Router("/coral/api/groups/import", &controllers.ApiController{}, "POST:UploadGroups")
 
-	// fixme 当前一个分组只对应一个app， app在创建分组时自动创建
 	// 应用管理
-	beego.Router("/api/applications", &controllers.ApiController{}, "GET:GetApplications")
-	beego.Router("/api/applications/:appId", &controllers.ApiController{}, "PUT:UpdateApplication")
-	beego.Router("/api/applications/:appId", &controllers.ApiController{}, "GET:GetApplication")
-
-	// beego.Router("/coral/api/applications", &controllers.ApiController{}, "DELETE:DeleteApplication")
-	// beego.Router("/coral/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
+	beego.Router("/coral/api/applications", &controllers.ApiController{}, "GET:GetApplications")
+	beego.Router("/coral/api/applications", &controllers.ApiController{}, "POST:AddApplication")
+	beego.Router("/coral/api/applications", &controllers.ApiController{}, "DELETE:DeleteApplication")
+	beego.Router("/coral/api/applications/:appId", &controllers.ApiController{}, "PUT:UpdateApplication")
+	beego.Router("/coral/api/applications/:appId", &controllers.ApiController{}, "GET:GetApplication")
 
 	// 用户管理
-	beego.Router("/api/users", &controllers.ApiController{}, "POST:AddUser")
-	beego.Router("/api/users/import", &controllers.ApiController{}, "POST:ImportUsers")
-	beego.Router("/api/users", &controllers.ApiController{}, "DELETE:DeleteUser")
-	beego.Router("/api/users", &controllers.ApiController{}, "PUT:UpdateUser")
-	beego.Router("/api/users", &controllers.ApiController{}, "GET:GetUsers")
-	beego.Router("/api/users/:userId", &controllers.ApiController{}, "GET:GetUser")
-	beego.Router("/api/users/:userId/groups", &controllers.ApiController{}, "PUT:UpdateUserGroup")
-	beego.Router("/api/users/:userId/password/reset", &controllers.ApiController{}, "POST:ResetPassword")
+	beego.Router("/coral/api/users", &controllers.ApiController{}, "POST:AddUser")
+	beego.Router("/coral/api/users/import", &controllers.ApiController{}, "POST:ImportUsers")
+	beego.Router("/coral/api/users", &controllers.ApiController{}, "DELETE:DeleteUser")
+	beego.Router("/coral/api/users", &controllers.ApiController{}, "PUT:UpdateUser")
+	beego.Router("/coral/api/users", &controllers.ApiController{}, "GET:GetUsers")
+	beego.Router("/coral/api/users/:userId", &controllers.ApiController{}, "GET:GetUser")
+	beego.Router("/coral/api/users/:userId/groups", &controllers.ApiController{}, "PUT:UpdateUserGroup")
+	beego.Router("/coral/api/users/:userId/password/reset", &controllers.ApiController{}, "POST:ResetPassword")
 
 	// beego.Router("/api/signup", &controllers.ApiController{}, "POST:Signup")
 	// beego.Router("/api/login", &controllers.ApiController{}, "POST:Login")
