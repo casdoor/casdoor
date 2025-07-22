@@ -48,7 +48,6 @@ class SigninTable extends React.Component {
   }
 
   updateField(table, index, key, value) {
-    window.console.log(key, value);
     table[index][key] = value;
     if (key === "name" && value === "Captcha") {
       table[index]["rule"] = "pop up";
