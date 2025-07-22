@@ -29,6 +29,7 @@ import (
 
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/errorx"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
@@ -39,23 +40,31 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func codeToResponse(code *object.Code) *Response {
+func (c *ApiController) codeToResponse(code *object.Code, needUpdatePassword bool) *MsgResponse {
 	if code.Code == "" {
-		return &Response{Status: "error", Msg: code.Message, Data: code.Code}
+		return c.WrapResponse(code.Code, errorx.LoginErrFunc(code.Message))
 	}
+	data := make(map[string]any)
+	data["code"] = code.Code
+	data["needUpdatePassword"] = needUpdatePassword
 
-	return &Response{Status: "ok", Msg: "", Data: code.Code}
+	return c.WrapResponse(data, nil)
 }
 
-func tokenToResponse(token *object.Token) *Response {
+func (c *ApiController) tokenToResponse(token *object.Token, needUpdatePassword bool) *MsgResponse {
 	if token.AccessToken == "" {
-		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
+		return c.WrapResponse(token.AccessToken, errorx.LoginErrFunc("获取令牌失败"))
 	}
-	return &Response{Status: "ok", Msg: "", Data: token.AccessToken, Data2: token.RefreshToken}
+	data := make(map[string]any)
+	data["accessToken"] = token.AccessToken
+	data["refreshToken"] = token.RefreshToken
+	data["needUpdatePassword"] = needUpdatePassword
+
+	return c.WrapResponse(data, nil)
 }
 
 // HandleLoggedIn ...
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *MsgResponse) {
 	if user.IsForbidden {
 		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 		return
@@ -132,7 +141,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	if form.Type == ResponseTypeLogin {
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
-		resp = &Response{Status: "ok", Msg: "", Data: userId, Data3: user.NeedUpdatePassword}
+		data := make(map[string]any)
+		data["userId"] = userId
+		data["needUpdatePassword"] = user.NeedUpdatePassword
+		resp = c.WrapResponse(data, nil)
 	} else if form.Type == ResponseTypeCode {
 		clientId := c.Input().Get("clientId")
 		responseType := c.Input().Get("responseType")
@@ -153,22 +165,20 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			return
 		}
 
-		resp = codeToResponse(code)
-		resp.Data3 = user.NeedUpdatePassword
+		resp = c.codeToResponse(code, user.NeedUpdatePassword)
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
 			c.SetSessionUsername(userId)
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
-			resp = &Response{Status: "error", Msg: fmt.Sprintf("error: grant_type: %s is not supported in this application", form.Type), Data: ""}
+			resp = c.WrapResponse(nil, errorx.GrantTypeErrFunc(form.Type))
+
 		} else {
 			scope := c.Input().Get("scope")
 			nonce := c.Input().Get("nonce")
 			token, _ := object.GetTokenByUser(application, user, scope, nonce, c.Ctx.Request.Host)
-			resp = tokenToResponse(token)
-
-			resp.Data3 = user.NeedUpdatePassword
+			resp = c.tokenToResponse(token, user.NeedUpdatePassword)
 		}
 	} else if form.Type == ResponseTypeDevice {
 		authCache, ok := object.DeviceAuthMap.LoadAndDelete(form.UserCode)
@@ -195,14 +205,23 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		object.DeviceAuthMap.Store(authCacheCast.UserName, deviceAuthCacheDeviceCodeCast)
 
-		resp = &Response{Status: "ok", Msg: "", Data: userId, Data3: user.NeedUpdatePassword}
+		data := make(map[string]any)
+		data["userId"] = userId
+		data["needUpdatePassword"] = user.NeedUpdatePassword
+		resp = c.WrapResponse(data, nil)
 	} else if form.Type == ResponseTypeSaml { // saml flow
 		res, redirectUrl, method, err := object.GetSamlResponse(application, user, form.SamlRequest, c.Ctx.Request.Host)
 		if err != nil {
 			c.ResponseErr(err, nil)
 			return
 		}
-		resp = &Response{Status: "ok", Msg: "", Data: res, Data2: map[string]interface{}{"redirectUrl": redirectUrl, "method": method}, Data3: user.NeedUpdatePassword}
+		data := make(map[string]any)
+		data["saml"] = res
+		data["redirectUrl"] = redirectUrl
+		data["method"] = method
+		data["needUpdatePassword"] = user.NeedUpdatePassword
+
+		resp = c.WrapResponse(data, nil)
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
@@ -211,11 +230,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	} else if form.Type == ResponseTypeCas {
 		// not oauth but CAS SSO protocol
 		service := c.Input().Get("service")
-		resp = wrapErrorResponse(nil)
+		resp = c.WrapResponse(nil, nil)
 		if service != "" {
 			st, err := object.GenerateCasToken(userId, service)
 			if err != nil {
-				resp = wrapErrorResponse(err)
+				resp = c.WrapResponse(nil, err)
 			} else {
 				resp.Data = st
 			}
@@ -226,15 +245,16 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.SetSessionUsername(userId)
 		}
 	} else {
-		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
+		resp = c.WrapResponse(nil, errorx.GrantTypeErrFunc(form.Type))
+
 	}
 
 	// if user did not check auto signin
-	if resp.Status == "ok" && !form.AutoSignin {
+	if resp.Code == 0 && !form.AutoSignin {
 		c.setExpireForSession()
 	}
 
-	if resp.Status == "ok" {
+	if resp.Code == 0 {
 		_, err = object.AddSession(&object.Session{
 			Owner:       user.Owner,
 			Name:        user.Name,
@@ -274,7 +294,7 @@ func (c *ApiController) Login2() {
 // @Tag Auth API
 // @Description 获取登录信息
 // @Param   id     query    string  true        "organization id"
-// @Success 200 {object} controllers.MsgResponse The Response object
+// @Success 200 {object} object.MsgResponse The Response object
 // @router /login-info [get]
 func (c *ApiController) GetLoginInfo() {
 	id := c.Input().Get("id")
@@ -446,7 +466,7 @@ func checkMfaEnable(c *ApiController, user *object.User, organization *object.Or
 // @Success 200 {object} controllers.Response The Response object
 // @router /old-login [post]
 func (c *ApiController) Login() {
-	resp := &Response{}
+	resp := &MsgResponse{}
 
 	var authForm form.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
@@ -960,7 +980,7 @@ func (c *ApiController) Login() {
 				c.Ctx.Input.SetParam("recordSignup", "true")
 			} else if provider.Category == "SAML" {
 				// TODO: since we get the user info from SAML response, we can try to create the user
-				resp = &Response{Status: "error", Msg: fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(application.Organization, userInfo.Id))}
+				resp = c.WrapResponse(nil,errorx.UserUnexistErrFunc(util.GetId(application.Organization, userInfo.Id)))
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // authForm.Method != "signup"
@@ -1004,9 +1024,9 @@ func (c *ApiController) Login() {
 			}
 
 			if isLinked {
-				resp = &Response{Status: "ok", Msg: "", Data: isLinked}
+				resp = c.WrapResponse(isLinked, nil)
 			} else {
-				resp = &Response{Status: "error", Msg: "Failed to link user account", Data: isLinked}
+				resp = c.WrapResponse(isLinked, errorx.LinkUserErr)
 			}
 		}
 	} else if c.getMfaUserSession() != "" {

@@ -39,6 +39,31 @@ func (c *ApiController) ResponseJsonData(resp *Response, data ...interface{}) {
 	c.ServeJSON()
 }
 
+func (c *ApiController) WrapResponse(data interface{}, err error) *MsgResponse {
+	resp := &MsgResponse{
+		Code: 0,
+		Msg:  "成功",
+		Data: data,
+	}
+
+	if err != nil {
+		enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
+		enableErrorMask := conf.GetConfigBool("enableErrorMask")
+		if enableErrorMask2 {
+			err = errorx.DefaultErr
+		} else if enableErrorMask {
+			errStr := errcode.Unwrap(err).Error()
+			if strings.HasPrefix(errStr, "The user: ") && strings.HasSuffix(errStr, " doesn't exist") || strings.HasPrefix(errStr, "用户: ") && strings.HasSuffix(errStr, "不存在") {
+				err = errorx.LoginErr
+			}
+		}
+		resp.Code = errcode.Code(err)
+		resp.Msg = err.Error()
+
+	}
+	return resp
+}
+
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
 	// resp := &Response{Status: "ok"}
@@ -95,12 +120,7 @@ func (c *ApiController) ResponseErr(err error, data ...interface{}) {
 			err = errorx.LoginErr
 		}
 	}
-
-	resp := &MsgResponse{
-		Code: errcode.Code(err),
-		Msg:  c.T(errcode.Unwrap(err).Error()),
-		Data: data,
-	}
+	resp := c.WrapResponse(data, err)
 	c.Data["json"] = resp
 	c.ServeJSON()
 }

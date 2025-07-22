@@ -173,7 +173,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/controllers.MsgResponse'
+            $ref: '#/definitions/object.MsgResponse'
   /coral/api/update-group:
     post:
       tags:
@@ -271,19 +271,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/object.LdapUser'
-  controllers.MsgResponse:
-    title: MsgResponse
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int64
-      data:
-        additionalProperties:
-          description: support string, struct or []struct
-          type: string
-      message:
-        type: string
   controllers.NotificationForm:
     title: NotificationForm
     type: object
@@ -937,6 +924,9 @@ definitions:
         type: string
       owner:
         type: string
+  object.MsgResponse:
+    title: MsgResponse
+    type: object
   object.OidcDiscovery:
     title: OidcDiscovery
     type: object

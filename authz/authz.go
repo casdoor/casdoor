@@ -42,7 +42,7 @@ p, built-in, *, *, *, *, *
 p, app, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *
 p, *, *, GET, /api/get-email-and-phone, *, *
-p, *, *, POST, /api/login, *, *
+p, *, *, POST, /coral/api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *
