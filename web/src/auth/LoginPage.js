@@ -898,7 +898,7 @@ class LoginPage extends React.Component {
           initialValues={{
             organization: application.organization,
             application: application.name,
-            autoSignin: true,
+            autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
             username: Conf.ShowGithubCorner ? "admin" : "",
             password: Conf.ShowGithubCorner ? "123" : "",
           }}

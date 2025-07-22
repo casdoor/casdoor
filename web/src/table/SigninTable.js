@@ -48,6 +48,7 @@ class SigninTable extends React.Component {
   }
 
   updateField(table, index, key, value) {
+    window.console.log(key, value);
     table[index][key] = value;
     if (key === "name" && value === "Captcha") {
       table[index]["rule"] = "pop up";
@@ -118,6 +119,7 @@ class SigninTable extends React.Component {
             {name: "Login button", displayName: i18next.t("login:Signin button")},
             {name: "Signup link", displayName: i18next.t("general:Signup link")},
             {name: "Captcha", displayName: i18next.t("general:Captcha")},
+            {name: "Auto sign in", displayName: i18next.t("login:Auto sign in")},
           ];
 
           const getItemDisplayName = (text) => {
@@ -259,6 +261,13 @@ class SigninTable extends React.Component {
               {id: "inline", name: i18next.t("application:Inline")},
             ];
           }
+          if (record.name === "Forgot password?") {
+            options = [
+              {id: "None", name: `${i18next.t("login:Auto sign in")} - ${i18next.t("general:True")}`},
+              {id: "Auto sign in - False", name: `${i18next.t("login:Auto sign in")} - ${i18next.t("general:False")}`},
+            ];
+          }
+
           if (options.length === 0) {
             return null;
           }
