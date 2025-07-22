@@ -19,9 +19,11 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/errorx"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/zdzh/errorx/errcode"
 )
 
 // ResponseJsonData ...
@@ -55,8 +57,13 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	if enableErrorMask2 {
 		error = c.T("subscription:Error")
 
-		resp := &Response{Status: "error", Msg: error}
-		c.ResponseJsonData(resp, data...)
+		resp := &MsgResponse{
+			Code: 101_00_00000,
+			Msg:  error,
+			Data: data,
+		}
+		c.Data["json"] = resp
+		c.ServeJSON()
 		return
 	}
 
@@ -70,6 +77,28 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	resp := &MsgResponse{
 		Code: 101_00_00000,
 		Msg:  error,
+		Data: data,
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+// ResponseError ...
+func (c *ApiController) ResponseErr(err error, data ...interface{}) {
+	enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
+	enableErrorMask := conf.GetConfigBool("enableErrorMask")
+	if enableErrorMask2 {
+		err = errorx.DefaultErr
+	} else if enableErrorMask {
+		errStr := errcode.Unwrap(err).Error()
+		if strings.HasPrefix(errStr, "The user: ") && strings.HasSuffix(errStr, " doesn't exist") || strings.HasPrefix(errStr, "用户: ") && strings.HasSuffix(errStr, "不存在") {
+			err = errorx.LoginErr
+		}
+	}
+
+	resp := &MsgResponse{
+		Code: errcode.Code(err),
+		Msg:  c.T(errcode.Unwrap(err).Error()),
 		Data: data,
 	}
 	c.Data["json"] = resp
@@ -132,7 +161,7 @@ func (c *ApiController) RequireSignedInUser() (*object.User, bool) {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return nil, false
 	}
 	if user == nil {
@@ -175,7 +204,7 @@ func (c *ApiController) IsOrgAdmin() (bool, bool) {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return false, false
 	}
 	if user == nil {

@@ -212,13 +212,13 @@ func (c *RootController) SamlValidate() {
 
 	err := xml.Unmarshal(body, &envelopRequest)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	response, service, err := object.GetValidationBySaml(envelopRequest.Body.Content, c.Ctx.Request.Host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -240,7 +240,7 @@ func (c *RootController) SamlValidate() {
 
 	data, err := xml.Marshal(envelopResponse)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.Ctx.Output.Body(data)

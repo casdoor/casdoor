@@ -45,7 +45,7 @@ func (c *ApiController) GetTokens() {
 	if limit == "" || page == "" {
 		token, err := object.GetTokens(owner, organization)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -54,14 +54,14 @@ func (c *ApiController) GetTokens() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetTokenCount(owner, organization, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		tokens, err := object.GetPaginationTokens(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -80,7 +80,7 @@ func (c *ApiController) GetToken() {
 	id := c.Input().Get("id")
 	token, err := object.GetToken(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (c *ApiController) UpdateToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -120,7 +120,7 @@ func (c *ApiController) AddToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -139,7 +139,7 @@ func (c *ApiController) DeleteToken() {
 	var token object.Token
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &token)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -265,7 +265,7 @@ func (c *ApiController) GetOAuthToken() {
 	host := c.Ctx.Request.Host
 	token, err := object.GetOAuthToken(grantType, clientId, clientSecret, code, verifier, scope, nonce, username, password, host, refreshToken, tag, avatar, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -309,7 +309,7 @@ func (c *ApiController) RefreshToken() {
 
 	refreshToken2, err := object.RefreshToken(grantType, refreshToken, scope, clientId, clientSecret, host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

@@ -32,7 +32,7 @@ func (c *ApiController) GetSystemInfo() {
 
 	systemInfo, err := util.GetSystemInfo()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

@@ -47,13 +47,13 @@ func (c *ApiController) GetGroups() {
 	if params.Limit == 0 || params.Page == 0 {
 		groups, err := object.GetGroups(params.Owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		err = object.ExtendGroupsWithUsers(groups)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -67,19 +67,19 @@ func (c *ApiController) GetGroups() {
 		limit := params.Limit
 		count, err := object.GetGroupCount(params.Owner, params.Query)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
-		
+
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		groups, err := object.GetPaginationGroups(params.Owner, params)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		groupsHaveChildrenMap, err := object.GetGroupsHaveChildrenMap(groups)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -97,7 +97,7 @@ func (c *ApiController) GetGroups() {
 
 		err = object.ExtendGroupsWithUsers(groups)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -118,13 +118,13 @@ func (c *ApiController) GetGroup() {
 
 	group, err := object.GetGroup(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	err = object.ExtendGroupWithUsers(group)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (c *ApiController) UpdateGroup() {
 	var group object.Group
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (c *ApiController) AddGroup() {
 	var group object.Group
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -183,7 +183,7 @@ func (c *ApiController) DeleteGroup() {
 	var group object.Group
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &group)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -191,9 +191,6 @@ func (c *ApiController) DeleteGroup() {
 	c.ServeJSON()
 }
 
-
-
-
-func (c *ApiController)UpdateGroupUser(){
+func (c *ApiController) UpdateGroupUser() {
 
 }

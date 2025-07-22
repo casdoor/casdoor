@@ -41,7 +41,7 @@ func (c *ApiController) GetCerts() {
 	if limit == "" || page == "" {
 		certs, err := object.GetMaskedCerts(object.GetCerts(owner))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetCerts() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetCertCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		certs, err := object.GetMaskedCerts(object.GetPaginationCerts(owner, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -82,7 +82,7 @@ func (c *ApiController) GetGlobalCerts() {
 	if limit == "" || page == "" {
 		certs, err := object.GetMaskedCerts(object.GetGlobalCerts())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -91,14 +91,14 @@ func (c *ApiController) GetGlobalCerts() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalCertsCount(field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		certs, err := object.GetMaskedCerts(object.GetPaginationGlobalCerts(paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -117,7 +117,7 @@ func (c *ApiController) GetCert() {
 	id := c.Input().Get("id")
 	cert, err := object.GetCert(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -138,7 +138,7 @@ func (c *ApiController) UpdateCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -157,7 +157,7 @@ func (c *ApiController) AddCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -176,7 +176,7 @@ func (c *ApiController) DeleteCert() {
 	var cert object.Cert
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &cert)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

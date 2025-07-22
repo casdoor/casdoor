@@ -41,7 +41,7 @@ func (c *ApiController) GetAdapters() {
 	if limit == "" || page == "" {
 		adapters, err := object.GetAdapters(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetAdapters() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetAdapterCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		adapters, err := object.GetPaginationAdapters(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetAdapter() {
 
 	adapter, err := object.GetAdapter(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (c *ApiController) UpdateAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -117,7 +117,7 @@ func (c *ApiController) AddAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -136,7 +136,7 @@ func (c *ApiController) DeleteAdapter() {
 	var adapter object.Adapter
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &adapter)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

@@ -31,7 +31,7 @@ func (c *ApiController) GetPrometheusInfo() {
 	}
 	prometheusInfo, err := object.GetPrometheusInfo()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

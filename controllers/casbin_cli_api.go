@@ -121,7 +121,7 @@ func processArgsToTempFiles(args []string) ([]string, []string, error) {
 // @router /run-casbin-command [get]
 func (c *ApiController) RunCasbinCommand() {
 	if err := validateIdentifier(c); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -148,14 +148,14 @@ func (c *ApiController) RunCasbinCommand() {
 	var args []string
 	err = json.Unmarshal([]byte(argString), &args)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if len(args) > 0 && args[0] == "--version" {
 		version, err := getCLIVersion(language)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		c.ResponseOk(version)
@@ -169,7 +169,7 @@ func (c *ApiController) RunCasbinCommand() {
 		}
 	}()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

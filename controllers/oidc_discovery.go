@@ -40,7 +40,7 @@ func (c *RootController) GetOidcDiscovery() {
 func (c *RootController) GetJwks() {
 	jwks, err := object.GetJsonWebKeySet()
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.Data["json"] = jwks
@@ -66,7 +66,7 @@ func (c *RootController) GetWebFinger() {
 
 	webfinger, err := object.GetWebFinger(resource, rels, host)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

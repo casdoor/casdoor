@@ -49,7 +49,7 @@ func (c *ApiController) GetRecords() {
 	if limit == "" || page == "" {
 		records, err := object.GetRecords()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -62,14 +62,14 @@ func (c *ApiController) GetRecords() {
 		filterRecord := &casvisorsdk.Record{Organization: organization}
 		count, err := object.GetRecordCount(field, value, filterRecord)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		records, err := object.GetPaginationRecords(paginator.Offset(), limit, field, value, sortField, sortOrder, filterRecord)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -95,13 +95,13 @@ func (c *ApiController) GetRecordsByFilter() {
 	record := &casvisorsdk.Record{}
 	err := util.JsonToStruct(body, record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	records, err := object.GetRecordsByField(record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (c *ApiController) AddRecord() {
 	var record casvisorsdk.Record
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &record)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

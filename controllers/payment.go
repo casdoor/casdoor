@@ -41,7 +41,7 @@ func (c *ApiController) GetPayments() {
 	if limit == "" || page == "" {
 		payments, err := object.GetPayments(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetPayments() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPaymentCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		payments, err := object.GetPaginationPayments(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -80,7 +80,7 @@ func (c *ApiController) GetUserPayments() {
 
 	payments, err := object.GetUserPayments(owner, user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (c *ApiController) GetPayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -120,7 +120,7 @@ func (c *ApiController) UpdatePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -139,7 +139,7 @@ func (c *ApiController) AddPayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -158,7 +158,7 @@ func (c *ApiController) DeletePayment() {
 	var payment object.Payment
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -181,7 +181,7 @@ func (c *ApiController) NotifyPayment() {
 
 	payment, err := object.NotifyPayment(body, owner, paymentName)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -200,13 +200,13 @@ func (c *ApiController) InvoicePayment() {
 
 	payment, err := object.GetPayment(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	invoiceUrl, err := object.InvoicePayment(payment)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 	}
 	c.ResponseOk(invoiceUrl)
 }

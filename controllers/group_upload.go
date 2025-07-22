@@ -28,7 +28,7 @@ func (c *ApiController) UploadGroups() {
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -38,13 +38,13 @@ func (c *ApiController) UploadGroups() {
 
 	err = saveFile(path, &file)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.UploadGroups(owner, path)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

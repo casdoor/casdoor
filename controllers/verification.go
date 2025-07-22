@@ -55,7 +55,7 @@ func (c *ApiController) GetVerifications() {
 	if limit == "" || page == "" {
 		payments, err := object.GetVerifications(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -64,14 +64,14 @@ func (c *ApiController) GetVerifications() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetVerificationCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		payments, err := object.GetPaginationVerifications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -94,7 +94,7 @@ func (c *ApiController) GetUserVerifications() {
 
 	payments, err := object.GetUserVerifications(owner, user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -113,7 +113,7 @@ func (c *ApiController) GetVerification() {
 
 	payment, err := object.GetVerification(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -129,7 +129,7 @@ func (c *ApiController) SendVerificationCode() {
 	var vform form.VerificationForm
 	err := c.ParseForm(&vform)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -142,7 +142,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	provider, err := object.GetCaptchaProviderByApplication(vform.ApplicationId, "false", c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (c *ApiController) SendVerificationCode() {
 				c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
 				return
 			} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			} else if !isHuman {
 				c.ResponseError(c.T("verification:Turing test failed."))
@@ -172,7 +172,7 @@ func (c *ApiController) SendVerificationCode() {
 
 	application, err := object.GetApplication(vform.ApplicationId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -192,7 +192,7 @@ func (c *ApiController) SendVerificationCode() {
 		owner := application.Organization
 		user, err = object.GetUser(util.GetId(owner, vform.CheckUser))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if user == nil || user.IsDeleted {
@@ -210,7 +210,7 @@ func (c *ApiController) SendVerificationCode() {
 	if mfaUserSession := c.getMfaUserSession(); mfaUserSession != "" {
 		user, err = object.GetUser(mfaUserSession)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}
@@ -231,7 +231,7 @@ func (c *ApiController) SendVerificationCode() {
 
 			user, err = object.GetUserByEmail(organization.Name, vform.Dest)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			}
 
@@ -250,7 +250,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		provider, err = application.GetEmailProvider(vform.Method)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if provider == nil {
@@ -266,7 +266,7 @@ func (c *ApiController) SendVerificationCode() {
 			}
 
 			if user, err = object.GetUserByPhone(organization.Name, vform.Dest); err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			} else if user == nil {
 				c.ResponseError(c.T("verification:the user does not exist, please sign up first"))
@@ -292,7 +292,7 @@ func (c *ApiController) SendVerificationCode() {
 
 		provider, err = application.GetSmsProvider(vform.Method, vform.CountryCode)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if provider == nil {
@@ -324,7 +324,7 @@ func (c *ApiController) VerifyCaptcha() {
 	var vform form.VerificationForm
 	err := c.ParseForm(&vform)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -335,7 +335,7 @@ func (c *ApiController) VerifyCaptcha() {
 
 	captchaProvider, err := object.GetCaptchaProviderByOwnerName(vform.ApplicationId, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -351,7 +351,7 @@ func (c *ApiController) VerifyCaptcha() {
 
 	isValid, err := provider.VerifyCaptcha(vform.CaptchaToken, captchaProvider.ClientId, vform.ClientSecret, captchaProvider.ClientId2)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -446,13 +446,13 @@ func (c *ApiController) ResetEmailOrPhone() {
 		return
 	}
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	err = object.DisableVerificationCode(checkDest)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -468,7 +468,7 @@ func (c *ApiController) VerifyCode() {
 	var authForm form.AuthForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &authForm)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -476,7 +476,7 @@ func (c *ApiController) VerifyCode() {
 	if authForm.Name != "" {
 		user, err = object.GetUserByFields(authForm.Organization, authForm.Name)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}
@@ -494,7 +494,7 @@ func (c *ApiController) VerifyCode() {
 	}
 
 	if user, err = object.GetUserByFields(authForm.Organization, authForm.Username); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	} else if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(authForm.Organization, authForm.Username)))
@@ -520,7 +520,7 @@ func (c *ApiController) VerifyCode() {
 	if !passed {
 		result, err := object.CheckVerificationCode(checkDest, authForm.Code, c.GetAcceptLanguage())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if result.Code != object.VerificationSuccess {
@@ -530,7 +530,7 @@ func (c *ApiController) VerifyCode() {
 
 		err = object.DisableVerificationCode(checkDest)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}

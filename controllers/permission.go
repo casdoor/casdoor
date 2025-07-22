@@ -41,7 +41,7 @@ func (c *ApiController) GetPermissions() {
 	if limit == "" || page == "" {
 		permissions, err := object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetPermissions() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPermissionCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		permissions, err := object.GetPaginationPermissions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -79,7 +79,7 @@ func (c *ApiController) GetPermissionsBySubmitter() {
 
 	permissions, err := object.GetPermissionsBySubmitter(user.Owner, user.Name)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (c *ApiController) GetPermissionsByRole() {
 	id := c.Input().Get("id")
 	permissions, err := object.GetPermissionsByRole(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -116,7 +116,7 @@ func (c *ApiController) GetPermission() {
 
 	permission, err := object.GetPermission(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (c *ApiController) UpdatePermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -156,7 +156,7 @@ func (c *ApiController) AddPermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -175,7 +175,7 @@ func (c *ApiController) DeletePermission() {
 	var permission object.Permission
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &permission)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

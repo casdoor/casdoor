@@ -26,7 +26,7 @@ func (c *ApiController) GetSamlMeta() {
 	paramApp := c.Input().Get("application")
 	application, err := object.GetApplication(paramApp)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -37,13 +37,13 @@ func (c *ApiController) GetSamlMeta() {
 
 	enablePostBinding, err := c.GetBool("enablePostBinding", false)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	metadata, err := object.GetSamlMeta(application, host, enablePostBinding)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

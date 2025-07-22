@@ -88,7 +88,7 @@ p, *, *, *, /cas, *, *
 p, *, *, *, /scim, *, *
 p, *, *, *, /api/webauthn, *, *
 p, *, *, GET, /api/get-release, *, *
-p, *, *, GET, /api/login-info2, *, *
+p, *, *, GET, /coral/api/login-info, *, *
 p, *, *, GET, /api/get-default-application, *, *
 p, *, *, GET, /api/get-prometheus-info, *, *
 p, *, *, *, /api/metrics, *, *

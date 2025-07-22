@@ -1,6 +1,8 @@
 module github.com/casdoor/casdoor
 
-go 1.21
+go 1.23.2
+
+toolchain go1.24.5
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
@@ -60,6 +62,7 @@ require (
 	github.com/xorm-io/builder v0.3.13
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
+	github.com/zdzh/errorx v1.0.3
 	golang.org/x/crypto v0.32.0
 	golang.org/x/net v0.34.0
 	golang.org/x/oauth2 v0.17.0

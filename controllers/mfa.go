@@ -49,7 +49,7 @@ func (c *ApiController) MfaSetupInitiate() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -60,13 +60,13 @@ func (c *ApiController) MfaSetupInitiate() {
 
 	organization, err := object.GetOrganizationByUser(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	mfaProps, err := MfaUtil.Initiate(user.GetId())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -134,7 +134,7 @@ func (c *ApiController) MfaSetupVerify() {
 
 	err := mfaUtil.SetupVerify(passcode)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 	} else {
 		c.ResponseOk(http.StatusText(http.StatusOK))
 	}
@@ -160,7 +160,7 @@ func (c *ApiController) MfaSetupEnable() {
 
 	user, err := object.GetUser(util.GetId(owner, name))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -216,7 +216,7 @@ func (c *ApiController) MfaSetupEnable() {
 
 	err = mfaUtil.Enable(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -238,7 +238,7 @@ func (c *ApiController) DeleteMfa() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if user == nil {
@@ -248,7 +248,7 @@ func (c *ApiController) DeleteMfa() {
 
 	err = object.DisabledMultiFactorAuth(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -272,7 +272,7 @@ func (c *ApiController) SetPreferredMfa() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if user == nil {
@@ -282,7 +282,7 @@ func (c *ApiController) SetPreferredMfa() {
 
 	err = object.SetPreferredMultiFactorAuth(user, mfaType)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.ResponseOk(object.GetAllMfaProps(user, true))

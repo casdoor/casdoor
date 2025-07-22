@@ -28,7 +28,7 @@ func (c *ApiController) UploadPermissions() {
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -37,13 +37,13 @@ func (c *ApiController) UploadPermissions() {
 	defer os.Remove(path)
 	err = saveFile(path, &file)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.UploadPermissions(owner, path)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 	}
 
 	if affected {

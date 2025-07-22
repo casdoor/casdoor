@@ -27,7 +27,7 @@ func (c *ApiController) GetDashboard() {
 
 	data, err := object.GetDashboard(owner)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

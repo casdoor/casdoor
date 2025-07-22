@@ -35,7 +35,7 @@ func init() {
 
 func initAPI() {
 	ns := beego.NewNamespace("/",
-		beego.NSNamespace("/api",
+		beego.NSNamespace("/coral/api",
 			beego.NSInclude(
 				&controllers.ApiController{},
 			),
@@ -48,29 +48,29 @@ func initAPI() {
 	)
 	beego.AddNamespace(ns)
 
-	beego.Router("/api/login-info", &controllers.ApiController{}, "GET:GetLoginInfo")
-	beego.Router("/api/login", &controllers.ApiController{}, "POST:Login2")
-	beego.Router("/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
+	beego.Router("/coral/api/login-info", &controllers.ApiController{}, "GET:GetLoginInfo")
+	beego.Router("/coral/api/login", &controllers.ApiController{}, "POST:Login2")
+	beego.Router("/coral/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
 
 	// 组织管理
 
 	// 分组管理
-	beego.Router("/api/groups", &controllers.ApiController{}, "GET:GetGroups")
-	beego.Router("/api/groups/:groupId", &controllers.ApiController{}, "GET:GetGroup")
-	beego.Router("/api/groups", &controllers.ApiController{}, "POST:AddGroup")
-	beego.Router("/api/groups/:groupId", &controllers.ApiController{}, "PUT:UpdateGroup")
-	beego.Router("/api/groups/:groupId", &controllers.ApiController{}, "POST:DeleteGroup")
-	beego.Router("/api/groups/:groupId/users", &controllers.ApiController{}, "PUT:UpdateGroupUser")
-	beego.Router("/api/groups/import", &controllers.ApiController{}, "POST:UploadGroups")
-	
+	beego.Router("/groups", &controllers.ApiController{}, "GET:GetGroups")
+	beego.Router("/groups/:groupId", &controllers.ApiController{}, "GET:GetGroup")
+	beego.Router("/groups", &controllers.ApiController{}, "POST:AddGroup")
+	beego.Router("/groups/:groupId", &controllers.ApiController{}, "PUT:UpdateGroup")
+	beego.Router("/groups/:groupId", &controllers.ApiController{}, "POST:DeleteGroup")
+	beego.Router("/groups/:groupId/users", &controllers.ApiController{}, "PUT:UpdateGroupUser")
+	beego.Router("/groups/import", &controllers.ApiController{}, "POST:UploadGroups")
+
 	// fixme 当前一个分组只对应一个app， app在创建分组时自动创建
 	// 应用管理
 	beego.Router("/api/applications", &controllers.ApiController{}, "GET:GetApplications")
 	beego.Router("/api/applications/:appId", &controllers.ApiController{}, "PUT:UpdateApplication")
 	beego.Router("/api/applications/:appId", &controllers.ApiController{}, "GET:GetApplication")
 
-	// beego.Router("/api/applications", &controllers.ApiController{}, "DELETE:DeleteApplication")
-	// beego.Router("/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
+	// beego.Router("/coral/api/applications", &controllers.ApiController{}, "DELETE:DeleteApplication")
+	// beego.Router("/coral/api/add-application", &controllers.ApiController{}, "POST:AddApplication")
 
 	// 用户管理
 	beego.Router("/api/users", &controllers.ApiController{}, "POST:AddUser")
@@ -81,10 +81,6 @@ func initAPI() {
 	beego.Router("/api/users/:userId", &controllers.ApiController{}, "GET:GetUser")
 	beego.Router("/api/users/:userId/groups", &controllers.ApiController{}, "PUT:UpdateUserGroup")
 	beego.Router("/api/users/:userId/password/reset", &controllers.ApiController{}, "POST:ResetPassword")
-
-
-
-
 
 	// beego.Router("/api/signup", &controllers.ApiController{}, "POST:Signup")
 	// beego.Router("/api/login", &controllers.ApiController{}, "POST:Login")

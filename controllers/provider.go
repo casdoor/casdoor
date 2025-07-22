@@ -46,7 +46,7 @@ func (c *ApiController) GetProviders() {
 	if limit == "" || page == "" {
 		providers, err := object.GetProviders(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -55,14 +55,14 @@ func (c *ApiController) GetProviders() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetProviderCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		paginationProviders, err := object.GetPaginationProviders(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -93,7 +93,7 @@ func (c *ApiController) GetGlobalProviders() {
 	if limit == "" || page == "" {
 		globalProviders, err := object.GetGlobalProviders()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -102,14 +102,14 @@ func (c *ApiController) GetGlobalProviders() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalProviderCount(field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		paginationGlobalProviders, err := object.GetPaginationGlobalProviders(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -134,7 +134,7 @@ func (c *ApiController) GetProvider() {
 	}
 	provider, err := object.GetProvider(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -169,7 +169,7 @@ func (c *ApiController) UpdateProvider() {
 	var provider object.Provider
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -193,19 +193,19 @@ func (c *ApiController) AddProvider() {
 	var provider object.Provider
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	count, err := object.GetProviderCount("", "", "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	err = checkQuotaForProvider(int(count))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -229,7 +229,7 @@ func (c *ApiController) DeleteProvider() {
 	var provider object.Provider
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

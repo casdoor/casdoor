@@ -43,7 +43,7 @@ func (c *ApiController) GetEnforcers() {
 	if limit == "" || page == "" {
 		enforcers, err := object.GetEnforcers(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -52,14 +52,14 @@ func (c *ApiController) GetEnforcers() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetEnforcerCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		enforcers, err := object.GetPaginationEnforcers(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -80,7 +80,7 @@ func (c *ApiController) GetEnforcer() {
 
 	enforcer, err := object.GetEnforcer(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -108,7 +108,7 @@ func (c *ApiController) UpdateEnforcer() {
 	enforcer := object.Enforcer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -127,7 +127,7 @@ func (c *ApiController) AddEnforcer() {
 	enforcer := object.Enforcer{}
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -146,7 +146,7 @@ func (c *ApiController) DeleteEnforcer() {
 	var enforcer object.Enforcer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &enforcer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -161,7 +161,7 @@ func (c *ApiController) GetPolicies() {
 	if adapterId != "" {
 		adapter, err := object.GetAdapter(adapterId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if adapter == nil {
@@ -171,7 +171,7 @@ func (c *ApiController) GetPolicies() {
 
 		err = adapter.InitAdapter()
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -181,7 +181,7 @@ func (c *ApiController) GetPolicies() {
 
 	policies, err := object.GetPolicies(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -194,13 +194,13 @@ func (c *ApiController) UpdatePolicy() {
 	var policies []xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policies)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.UpdatePolicy(id, policies[0].Ptype, util.CasbinToSlice(policies[0]), util.CasbinToSlice(policies[1]))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)
@@ -213,13 +213,13 @@ func (c *ApiController) AddPolicy() {
 	var policy xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.AddPolicy(id, policy.Ptype, util.CasbinToSlice(policy))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)
@@ -232,13 +232,13 @@ func (c *ApiController) RemovePolicy() {
 	var policy xormadapter.CasbinRule
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &policy)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.RemovePolicy(id, policy.Ptype, util.CasbinToSlice(policy))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	c.Data["json"] = wrapActionResponse(affected)

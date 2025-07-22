@@ -41,7 +41,7 @@ func (c *ApiController) GetSubscriptions() {
 	if limit == "" || page == "" {
 		subscriptions, err := object.GetSubscriptions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetSubscriptions() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSubscriptionCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		subscription, err := object.GetPaginationSubscriptions(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetSubscription() {
 
 	subscription, err := object.GetSubscription(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (c *ApiController) UpdateSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -117,7 +117,7 @@ func (c *ApiController) AddSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -136,7 +136,7 @@ func (c *ApiController) DeleteSubscription() {
 	var subscription object.Subscription
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &subscription)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

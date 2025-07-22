@@ -41,7 +41,7 @@ func (c *ApiController) GetModels() {
 	if limit == "" || page == "" {
 		models, err := object.GetModels(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetModels() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetModelCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		models, err := object.GetPaginationModels(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetModel() {
 
 	model, err := object.GetModel(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (c *ApiController) UpdateModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -117,7 +117,7 @@ func (c *ApiController) AddModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -136,7 +136,7 @@ func (c *ApiController) DeleteModel() {
 	var model object.Model
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &model)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

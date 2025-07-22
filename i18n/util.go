@@ -76,13 +76,15 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 func Translate(language string, errorText string) string {
 	tokens := strings.SplitN(errorText, ":", 2)
 	if !strings.Contains(errorText, ":") || len(tokens) != 2 {
-		return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
+		return errorText
+		// return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
 	}
 
 	if langMap[language] == nil {
 		file, err := f.ReadFile(fmt.Sprintf("locales/%s/data.json", language))
 		if err != nil {
-			return fmt.Sprintf("Translate error: the language \"%s\" is not supported, err = %s", language, err.Error())
+			return errorText
+			// return fmt.Sprintf("Translate error: the language \"%s\" is not supported, err = %s", language, err.Error())
 		}
 
 		data := I18nData{}

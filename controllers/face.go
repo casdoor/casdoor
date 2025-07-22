@@ -38,7 +38,7 @@ func (c *ApiController) FaceIDSigninBegin() {
 
 	user, err := object.GetUserByFields(userOwner, userName)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if user == nil {

@@ -45,7 +45,7 @@ func (c *ApiController) UploadUsers() {
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -54,13 +54,13 @@ func (c *ApiController) UploadUsers() {
 	defer os.Remove(path)
 	err = saveFile(path, &file)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	affected, err := object.UploadUsers(owner, path)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

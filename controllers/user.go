@@ -42,7 +42,7 @@ func (c *ApiController) GetGlobalUsers() {
 	if limit == "" || page == "" {
 		users, err := object.GetMaskedUsers(object.GetGlobalUsers())
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -51,20 +51,20 @@ func (c *ApiController) GetGlobalUsers() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetGlobalUserCount(field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		users, err := object.GetPaginationGlobalUsers(paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		users, err = object.GetMaskedUsers(users)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -98,33 +98,31 @@ func (c *ApiController) GetUsers() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetUserCount(owner, query, groupName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		users, err := object.GetPaginationUsers(owner, paginator.Offset(), limit, "", query, sortField, sortOrder, groupName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		users, err = object.GetMaskedUsers(users)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		c.ResponseOk(users, paginator.Nums())
 	}
 
-
-
 	if limit == "" || page == "" {
 		if groupName != "" {
 			users, err := object.GetMaskedUsers(object.GetGroupUsers(util.GetId(owner, groupName)))
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			}
 			c.ResponseOk(users)
@@ -133,7 +131,7 @@ func (c *ApiController) GetUsers() {
 
 		users, err := object.GetMaskedUsers(object.GetUsers(owner))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -165,7 +163,7 @@ func (c *ApiController) GetUser() {
 	if userId != "" && owner != "" {
 		userFromUserId, err = object.GetUserByUserId(owner, userId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if userFromUserId == nil {
@@ -204,7 +202,7 @@ func (c *ApiController) GetUser() {
 	}
 
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -212,7 +210,7 @@ func (c *ApiController) GetUser() {
 	if user != nil {
 		organization, err = object.GetOrganizationByUser(user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if organization == nil {
@@ -225,7 +223,7 @@ func (c *ApiController) GetUser() {
 			var hasPermission bool
 			hasPermission, err = object.CheckUserPermission(requestUserId, user.GetId(), false, c.GetAcceptLanguage())
 			if !hasPermission {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			}
 		}
@@ -237,21 +235,21 @@ func (c *ApiController) GetUser() {
 
 	err = object.ExtendUserWithRolesAndPermissions(user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	isAdminOrSelf := c.IsAdminOrSelf(user)
 	user, err = object.GetMaskedUser(user, isAdminOrSelf)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if organization != nil && user != nil {
 		user, err = object.GetFilteredUser(user, c.IsAdmin(), c.IsAdminOrSelf(user), organization.AccountItems)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}
@@ -275,7 +273,7 @@ func (c *ApiController) UpdateUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -288,7 +286,7 @@ func (c *ApiController) UpdateUser() {
 	}
 	oldUser, err := object.GetUser(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -336,14 +334,14 @@ func (c *ApiController) UpdateUser() {
 
 	affected, err := object.UpdateUser(id, &user, columns, isAdmin)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if affected {
 		err = object.UpdateUserToOriginalDatabase(&user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}
@@ -363,12 +361,12 @@ func (c *ApiController) AddUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if err := checkQuotaForUser(); err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -394,7 +392,7 @@ func (c *ApiController) DeleteUser() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -427,7 +425,7 @@ func (c *ApiController) GetEmailAndPhone() {
 
 	user, err := object.GetUserByFields(organization, username)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -483,7 +481,7 @@ func (c *ApiController) SetPassword() {
 
 	user, err := object.GetUser(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if user == nil {
@@ -498,7 +496,7 @@ func (c *ApiController) SetPassword() {
 	} else if code == "" {
 		hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
 		if !hasPermission {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else {
@@ -520,7 +518,7 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -529,7 +527,7 @@ func (c *ApiController) SetPassword() {
 		if oldPassword != "" {
 			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			}
 		}
@@ -540,7 +538,7 @@ func (c *ApiController) SetPassword() {
 			err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
 		}
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}
@@ -553,7 +551,7 @@ func (c *ApiController) SetPassword() {
 
 	organization, err := object.GetOrganizationByUser(targetUser)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if organization == nil {
@@ -563,7 +561,7 @@ func (c *ApiController) SetPassword() {
 
 	application, err := object.GetApplicationByUser(targetUser)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if application == nil {
@@ -574,7 +572,7 @@ func (c *ApiController) SetPassword() {
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	err = object.CheckEntryIp(clientIp, targetUser, application, organization, c.GetAcceptLanguage())
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -594,7 +592,7 @@ func (c *ApiController) SetPassword() {
 	}
 
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -610,7 +608,7 @@ func (c *ApiController) CheckUserPassword() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -620,7 +618,7 @@ func (c *ApiController) CheckUserPassword() {
 	 */
 	_, err = object.CheckUserPassword(user.Owner, user.Name, user.Password, c.GetAcceptLanguage(), false, false, user.Ldap != "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 	} else {
 		c.ResponseOk()
 	}
@@ -642,7 +640,7 @@ func (c *ApiController) GetSortedUsers() {
 
 	users, err := object.GetMaskedUsers(object.GetSortedUsers(owner, sorter, limit))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -669,7 +667,7 @@ func (c *ApiController) GetUserCount() {
 		count, err = object.GetOnlineUserCount(owner, util.ParseInt(isOnline))
 	}
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -685,14 +683,14 @@ func (c *ApiController) AddUserKeys() {
 	var user object.User
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &user)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	isAdmin := c.IsAdmin()
 	affected, err := object.AddUserKeys(&user, isAdmin)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -717,23 +715,21 @@ func (c *ApiController) RemoveUserFromGroup() {
 
 	affected, err := object.DeleteGroupForUser(util.GetId(owner, name), util.GetId(owner, groupName))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	c.ResponseOk(affected)
 }
 
-
-func (c *ApiController)UpdateUserGroup(){
-
-}
-
-func (c *ApiController)ImportUsers(){
+func (c *ApiController) UpdateUserGroup() {
 
 }
 
+func (c *ApiController) ImportUsers() {
 
-func (c *ApiController)ResetPassword(){
+}
+
+func (c *ApiController) ResetPassword() {
 
 }

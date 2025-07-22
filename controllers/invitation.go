@@ -41,7 +41,7 @@ func (c *ApiController) GetInvitations() {
 	if limit == "" || page == "" {
 		invitations, err := object.GetInvitations(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetInvitations() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetInvitationCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		invitations, err := object.GetPaginationInvitations(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -77,7 +77,7 @@ func (c *ApiController) GetInvitation() {
 
 	invitation, err := object.GetInvitation(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (c *ApiController) GetInvitationCodeInfo() {
 
 	application, err := object.GetApplication(applicationId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -124,7 +124,7 @@ func (c *ApiController) UpdateInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -143,7 +143,7 @@ func (c *ApiController) AddInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -162,7 +162,7 @@ func (c *ApiController) DeleteInvitation() {
 	var invitation object.Invitation
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &invitation)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -182,7 +182,7 @@ func (c *ApiController) VerifyInvitation() {
 
 	payment, attachInfo, err := object.VerifyInvitation(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

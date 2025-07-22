@@ -10,7 +10,7 @@ schemes:
 - https
 - http
 paths:
-  /api/add-group:
+  /coral/api/add-group:
     post:
       tags:
       - Group API
@@ -28,7 +28,7 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/api/groups:
+  /coral/api/api/groups:
     get:
       tags:
       - Group API
@@ -69,7 +69,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Group'
-  /api/delete-group:
+  /coral/api/delete-group:
     post:
       tags:
       - Group API
@@ -87,7 +87,7 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/get-group:
+  /coral/api/get-group:
     get:
       tags:
       - Group API
@@ -104,29 +104,12 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Group'
-  /api/login-info:
-    get:
-      tags:
-      - Auth API
-      description: get default application
-      operationId: ApiController.GetLoginInfo
-      parameters:
-      - in: query
-        name: id
-        description: organization id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.MsgResponse'
-  /api/old-login:
+  /coral/api/login:
     post:
       tags:
       - Auth API
-      description: login
-      operationId: ApiController.Login
+      description: 登录
+      operationId: ApiController.登录
       parameters:
       - in: query
         name: clientId
@@ -174,7 +157,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/update-group:
+  /coral/api/login-info:
+    get:
+      tags:
+      - Auth API
+      description: 获取登录信息
+      operationId: ApiController.获取登录信息
+      parameters:
+      - in: query
+        name: id
+        description: organization id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.MsgResponse'
+  /coral/api/update-group:
     post:
       tags:
       - Group API

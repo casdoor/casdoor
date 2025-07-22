@@ -48,14 +48,14 @@ func (c *ApiController) Enforce() {
 	var request []string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &request)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -67,7 +67,7 @@ func (c *ApiController) Enforce() {
 
 		enforceResult, err := enforcer.Enforce(interfaceRequest...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -81,7 +81,7 @@ func (c *ApiController) Enforce() {
 	if permissionId != "" {
 		permission, err := object.GetPermission(permissionId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if permission == nil {
@@ -94,7 +94,7 @@ func (c *ApiController) Enforce() {
 
 		enforceResult, err := object.Enforce(permission, request)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -110,19 +110,19 @@ func (c *ApiController) Enforce() {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
 		permissions, err = object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else if resourceId != "" {
 		permissions, err = object.GetPermissionsByResource(resourceId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else {
@@ -136,13 +136,13 @@ func (c *ApiController) Enforce() {
 	for key, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		enforceResult, err := object.Enforce(firstPermission, request, permissionIds...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -172,14 +172,14 @@ func (c *ApiController) BatchEnforce() {
 	var requests [][]string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if enforcerId != "" {
 		enforcer, err := object.GetInitializedEnforcer(enforcerId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -191,7 +191,7 @@ func (c *ApiController) BatchEnforce() {
 
 		enforceResult, err := enforcer.BatchEnforce(interfaceRequests)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -205,7 +205,7 @@ func (c *ApiController) BatchEnforce() {
 	if permissionId != "" {
 		permission, err := object.GetPermission(permissionId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if permission == nil {
@@ -218,7 +218,7 @@ func (c *ApiController) BatchEnforce() {
 
 		enforceResult, err := object.BatchEnforce(permission, requests)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -234,13 +234,13 @@ func (c *ApiController) BatchEnforce() {
 		owner, modelName := util.GetOwnerAndNameFromId(modelId)
 		permissions, err = object.GetPermissionsByModel(owner, modelName)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else if owner != "" {
 		permissions, err = object.GetPermissions(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	} else {
@@ -254,13 +254,13 @@ func (c *ApiController) BatchEnforce() {
 	for _, permissionIds := range listPermissionIdMap {
 		firstPermission, err := object.GetPermission(permissionIds[0])
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		enforceResult, err := object.BatchEnforce(firstPermission, requests, permissionIds...)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -283,7 +283,7 @@ func (c *ApiController) GetAllObjects() {
 
 	objects, err := object.GetAllObjects(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -302,7 +302,7 @@ func (c *ApiController) GetAllActions() {
 
 	actions, err := object.GetAllActions(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -321,7 +321,7 @@ func (c *ApiController) GetAllRoles() {
 
 	roles, err := object.GetAllRoles(userId)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

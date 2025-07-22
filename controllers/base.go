@@ -95,7 +95,7 @@ func (c *ApiController) getCurrentUser() *object.User {
 	} else {
 		user, err = object.GetUser(userId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return nil
 		}
 	}
@@ -138,7 +138,7 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	}
 	application, err := object.GetApplicationByClientId(clientId.(string))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return nil
 	}
 
@@ -259,8 +259,6 @@ func (c *ApiController) Finish() {
 	}
 	c.Controller.Finish()
 }
-
-
 
 func (c *ApiController) GetQueryParams() *object.QueryParams {
 	owner := c.Input().Get("owner")

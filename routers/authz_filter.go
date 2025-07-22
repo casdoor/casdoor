@@ -176,7 +176,7 @@ func getUrlPath(urlPath string) string {
 	return urlPath
 }
 
-func ApiFilter(ctx *context.Context) {
+func 	ApiFilter(ctx *context.Context) {
 	subOwner, subName := getSubject(ctx)
 	method := ctx.Request.Method
 	urlPath := getUrlPath(ctx.Request.URL.Path)

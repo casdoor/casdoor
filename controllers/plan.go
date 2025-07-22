@@ -41,7 +41,7 @@ func (c *ApiController) GetPlans() {
 	if limit == "" || page == "" {
 		plans, err := object.GetPlans(owner)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -50,14 +50,14 @@ func (c *ApiController) GetPlans() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetPlanCount(owner, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		plan, err := object.GetPaginatedPlans(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -79,14 +79,14 @@ func (c *ApiController) GetPlan() {
 
 	plan, err := object.GetPlan(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	if plan != nil && includeOption {
 		options, err := object.GetPermissionsByRole(plan.Role)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -112,21 +112,21 @@ func (c *ApiController) UpdatePlan() {
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if plan.Product != "" {
 		productId := util.GetId(owner, plan.Product)
 		product, err := object.GetProduct(productId)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if product != nil {
 			object.UpdateProductForPlan(&plan, product)
 			_, err = object.UpdateProduct(productId, product)
 			if err != nil {
-				c.ResponseError(err.Error())
+				c.ResponseErr(err)
 				return
 			}
 		}
@@ -146,14 +146,14 @@ func (c *ApiController) AddPlan() {
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	// Create a related product for plan
 	product := object.CreateProductForPlan(&plan)
 	_, err = object.AddProduct(product)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	plan.Product = product.Name
@@ -172,13 +172,13 @@ func (c *ApiController) DeletePlan() {
 	var plan object.Plan
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &plan)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	if plan.Product != "" {
 		_, err = object.DeleteProduct(&object.Product{Owner: plan.Owner, Name: plan.Product})
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 	}

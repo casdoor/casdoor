@@ -39,7 +39,7 @@ func (c *ApiController) Unlink() {
 	var form LinkForm
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 	providerType := form.ProviderType
@@ -57,7 +57,7 @@ func (c *ApiController) Unlink() {
 		// if the user is unlinking themselves, should check the provider can be unlinked, if not, we should return an error.
 		application, err := object.GetApplicationByUser(user)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 		if application == nil {
@@ -96,13 +96,13 @@ func (c *ApiController) Unlink() {
 
 	_, err = object.ClearUserOAuthProperties(&unlinkedUser, providerType)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	_, err = object.LinkUserAccount(&unlinkedUser, providerType, "")
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 

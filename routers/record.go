@@ -59,7 +59,7 @@ func getUserByClientIdSecret(ctx *context.Context) string {
 }
 
 func RecordMessage(ctx *context.Context) {
-	if ctx.Request.URL.Path == "/api/login" || ctx.Request.URL.Path == "/api/signup" {
+	if ctx.Request.URL.Path == "/coral/api/login" || ctx.Request.URL.Path == "/coral/api/signup" {
 		return
 	}
 

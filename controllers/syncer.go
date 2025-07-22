@@ -42,7 +42,7 @@ func (c *ApiController) GetSyncers() {
 	if limit == "" || page == "" {
 		syncers, err := object.GetMaskedSyncers(object.GetOrganizationSyncers(owner, organization))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -51,14 +51,14 @@ func (c *ApiController) GetSyncers() {
 		limit := util.ParseInt(limit)
 		count, err := object.GetSyncerCount(owner, organization, field, value)
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
 		syncers, err := object.GetMaskedSyncers(object.GetPaginationSyncers(owner, organization, paginator.Offset(), limit, field, value, sortField, sortOrder))
 		if err != nil {
-			c.ResponseError(err.Error())
+			c.ResponseErr(err)
 			return
 		}
 
@@ -78,7 +78,7 @@ func (c *ApiController) GetSyncer() {
 
 	syncer, err := object.GetMaskedSyncer(object.GetSyncer(id))
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (c *ApiController) UpdateSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -118,7 +118,7 @@ func (c *ApiController) AddSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -137,7 +137,7 @@ func (c *ApiController) DeleteSyncer() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -156,13 +156,13 @@ func (c *ApiController) RunSyncer() {
 	id := c.Input().Get("id")
 	syncer, err := object.GetSyncer(id)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	err = object.RunSyncer(syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
@@ -173,13 +173,13 @@ func (c *ApiController) TestSyncerDb() {
 	var syncer object.Syncer
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
 	err = object.TestSyncerDb(syncer)
 	if err != nil {
-		c.ResponseError(err.Error())
+		c.ResponseErr(err)
 		return
 	}
 
