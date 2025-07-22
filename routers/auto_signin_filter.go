@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/beego/beego/context"
+	"github.com/casdoor/casdoor/errorx"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -45,29 +46,32 @@ func AutoSigninFilter(ctx *context.Context) {
 	if accessToken != "" {
 		token, err := object.GetTokenByAccessToken(accessToken)
 		if err != nil {
-			responseError(ctx, err.Error())
+			util.LogWarning(ctx, "Get access token failed, err:%s ", err)
+			responseError(ctx, errorx.AuthenticationErr.Error())
 			return
 		}
 
 		if token == nil {
-			responseError(ctx, "Access token doesn't exist in database")
+			responseError(ctx, errorx.UnAuthenticationErr.Error())
 			return
 		}
 
-		isExpired, expireTime := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
+		isExpired, _ := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {
-			responseError(ctx, fmt.Sprintf("Access token has expired, expireTime = %s", expireTime))
+			responseError(ctx, errorx.UnAuthenticationErr.Error())
 			return
 		}
 
 		userId := util.GetId(token.Organization, token.User)
 		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		if err != nil {
-			responseError(ctx, err.Error())
+			util.LogWarning(ctx, "GetApplicationByUserId failed, err:%s ", err)
+			responseError(ctx, errorx.AuthenticationErr.Error())
 			return
 		}
 		if application == nil {
-			responseError(ctx, fmt.Sprintf("No application is found for userId: app/%s", token.Application))
+			util.LogWarning(ctx, fmt.Sprintf("No application is found for userId: app/%s", token.Application))
+			responseError(ctx, errorx.UnauthorizedErrFunc("用户无权限访问该应用").Error())
 			return
 		}
 

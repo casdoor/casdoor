@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -322,13 +323,27 @@ func (c *ApiController) Signup() {
 	c.ResponseOk(userId)
 }
 
+
+func parseBearerToken(ctx *context.Context) string {
+	header := ctx.Request.Header.Get("Authorization")
+	tokens := strings.Split(header, " ")
+	if len(tokens) != 2 {
+		return ""
+	}
+
+	prefix := tokens[0]
+	if prefix != "Bearer" {
+		return ""
+	}
+
+	return tokens[1]
+}
+
+
 // Logout
-// @Title Logout
-// @Tag Login API
+// @Title 退出登录
+// @Tag Auth API
 // @Description logout the current user
-// @Param   id_token_hint   query        string  false        "id_token_hint"
-// @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
-// @Param   state     query    string  false     "state"
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
 func (c *ApiController) Logout() {
@@ -338,6 +353,9 @@ func (c *ApiController) Logout() {
 	state := c.Input().Get("state")
 
 	user := c.GetSessionUsername()
+	if accessToken == ""{
+		accessToken = parseBearerToken(c.Ctx)
+	}
 
 	if accessToken == "" && redirectUri == "" {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265

@@ -156,7 +156,7 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/controllers.Response'
+            $ref: '#/definitions/controllers.MsgResponse'
   /coral/api/login-info:
     get:
       tags:
@@ -174,6 +174,17 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.MsgResponse'
+  /coral/api/logout:
+    post:
+      tags:
+      - Auth API
+      description: logout the current user
+      operationId: ApiController.退出登录
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /coral/api/update-group:
     post:
       tags:
@@ -198,10 +209,10 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  189152.<nil>.string:
+  189421.<nil>.string:
     title: string
     type: object
-  189210.string.string:
+  189479.string.string:
     title: string
     type: object
   casbin.Enforcer:
@@ -271,6 +282,19 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/object.LdapUser'
+  controllers.MsgResponse:
+    title: MsgResponse
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int64
+      data:
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
+      message:
+        type: string
   controllers.NotificationForm:
     title: NotificationForm
     type: object
@@ -2213,13 +2237,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/189152.<nil>.string'
+        $ref: '#/definitions/189421.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/189210.string.string'
+        $ref: '#/definitions/189479.string.string'
       subject:
         type: string
   object.WebFingerLink:

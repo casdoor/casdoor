@@ -230,7 +230,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/controllers.Response"
+                            "$ref": "#/definitions/controllers.MsgResponse"
                         }
                     }
                 }
@@ -257,6 +257,23 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/object.MsgResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth API"
+                ],
+                "description": "logout the current user",
+                "operationId": "ApiController.退出登录",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -299,11 +316,11 @@
         }
     },
     "definitions": {
-        "189152.\u003cnil\u003e.string": {
+        "189421.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "189210.string.string": {
+        "189479.string.string": {
             "title": "string",
             "type": "object"
         },
@@ -403,6 +420,25 @@
                     "items": {
                         "$ref": "#/definitions/object.LdapUser"
                     }
+                }
+            }
+        },
+        "controllers.MsgResponse": {
+            "title": "MsgResponse",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "data": {
+                    "additionalProperties": {
+                        "description": "support string, struct or []struct",
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
                 }
             }
         },
@@ -3289,7 +3325,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/189152.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/189421.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -3298,7 +3334,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/189210.string.string"
+                    "$ref": "#/definitions/189479.string.string"
                 },
                 "subject": {
                     "type": "string"

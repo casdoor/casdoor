@@ -283,7 +283,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 // @Param code_challenge_method   query    string  false code_challenge_method
 // @Param code_challenge          query    string  false code_challenge
 // @Param   form   body   controllers.AuthForm  true        "Login information"
-// @Success 200 {object} controllers.Response The Response object
+// @Success 200 {object} controllers.MsgResponse The Response object
 // @router /login [post]
 func (c *ApiController) Login2() {
 	c.Login()
@@ -980,7 +980,7 @@ func (c *ApiController) Login() {
 				c.Ctx.Input.SetParam("recordSignup", "true")
 			} else if provider.Category == "SAML" {
 				// TODO: since we get the user info from SAML response, we can try to create the user
-				resp = c.WrapResponse(nil,errorx.UserUnexistErrFunc(util.GetId(application.Organization, userInfo.Id)))
+				resp = c.WrapResponse(nil, errorx.UserUnexistErrFunc(util.GetId(application.Organization, userInfo.Id)))
 			}
 			// resp = &Response{Status: "ok", Msg: "", Data: res}
 		} else { // authForm.Method != "signup"

@@ -44,7 +44,7 @@ p, *, *, POST, /api/signup, *, *
 p, *, *, GET, /api/get-email-and-phone, *, *
 p, *, *, POST, /coral/api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
-p, *, *, POST, /api/logout, *, *
+p, *, *, POST, /coral/api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, POST, /api/callback, *, *
 p, *, *, POST, /api/device-auth, *, *

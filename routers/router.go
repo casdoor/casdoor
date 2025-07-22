@@ -51,6 +51,8 @@ func initAPI() {
 	beego.Router("/coral/api/login-info", &controllers.ApiController{}, "GET:GetLoginInfo")
 	beego.Router("/coral/api/login", &controllers.ApiController{}, "POST:Login2")
 	beego.Router("/coral/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
+	beego.Router("/coral/api/refresh-token", &controllers.ApiController{}, "POST:RefreshToken")
+
 
 	// 组织管理
 
