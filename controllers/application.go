@@ -27,57 +27,59 @@ import (
 // @Title GetApplications
 // @Tag Application API
 // @Description get all applications
-// @Param   owner     query    string  true        "The owner of applications."
-// @Success 200 {array} object.Application The Response object
+// @Success 200 {array} object.ApplicationInfo The Response object
 // @router /applications [get]
 func (c *ApiController) GetApplications() {
 	params := c.GetQueryParams()
 	userId := c.GetSessionUsername()
-	var err error
-	if limit == "" || page == "" {
-		var applications []*object.Application
-		if organization == "" {
-			applications, err = object.GetApplications(owner)
-		} else {
-			applications, err = object.GetOrganizationApplications(owner, organization)
-		}
-		if err != nil {
-			c.ResponseErr(err)
-			return
-		}
-		c.ResponseOk(object.GetMaskedApplications(applications, userId))
-	} else {
-		limit := util.ParseInt(limit)
-		count, err := object.GetApplicationCount(owner, field, value)
-		if err != nil {
-			c.ResponseErr(err)
-			return
-		}
 
-		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		application, err := object.GetPaginationApplications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
-		if err != nil {
-			c.ResponseErr(err)
-			return
-		}
+	matchFilters, queryFilters := make(object.And), make(object.Or)
+	matchFilters["organization"] = params.Organization
+	matchFilters["is_shared"] = true
 
-		applications := object.GetMaskedApplications(application, userId)
-		c.ResponseOk(applications, paginator.Nums())
+	queryFilters["displayName"] = params.Query
+	applications, count, err := Query[object.Application](
+		c,
+		matchFilters,
+		queryFilters,
+		params,
+	)
+	if err != nil {
+		c.ResponseErr(err)
+		return
 	}
+	applications = object.GetMaskedApplications(applications, userId)
+	c.ResponseOk(QueryResult(object.GetApplicationInfos(applications), count))
 }
 
+
+// GetApplication
+// @Title GetApplication
+// @Tag Application API old
+// @Description get the detail of an application， 不知道为啥一定要有的一个applications开头的url
+// @Param   id     query    string  true        "The id ( owner/name ) of the application."
+// @Success 200 {object} object.Application The Response object
+// @router applications/:appId [get]
+func (c *ApiController) GetApplication2() {
+
+}
 // GetApplication
 // @Title GetApplication
 // @Tag Application API
 // @Description get the detail of an application
-// @Param   id     query    string  true        "The id ( owner/name ) of the application."
+// @Param   name     path    string  true        "The id ( name ) of the application."
 // @Success 200 {object} object.Application The Response object
-// @router applications/:appId [get]
+// @router /applications/:name [get]
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
-	id := c.Input().Get("id")
+	id := c.Ctx.Input.Param(":name")
+	organization := c.getOrganization()
+	fmt.Println("======================")
+	fmt.Println(organization)
+	fmt.Println(id)
+	fmt.Println("======================")
 
-	application, err := object.GetApplication(id)
+	application, err := object.GetApplicationByOrganization(organization, id)
 	if err != nil {
 		c.ResponseErr(err)
 		return

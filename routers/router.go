@@ -69,8 +69,8 @@ func initAPI() {
 	beego.Router("/coral/api/applications", &controllers.ApiController{}, "GET:GetApplications")
 	beego.Router("/coral/api/applications", &controllers.ApiController{}, "POST:AddApplication")
 	beego.Router("/coral/api/applications", &controllers.ApiController{}, "DELETE:DeleteApplication")
-	beego.Router("/coral/api/applications/:appId", &controllers.ApiController{}, "PUT:UpdateApplication")
-	beego.Router("/coral/api/applications/:appId", &controllers.ApiController{}, "GET:GetApplication")
+	beego.Router("/coral/api/applications/:name", &controllers.ApiController{}, "PUT:UpdateApplication")
+	beego.Router("/coral/api/applications/:name", &controllers.ApiController{}, "GET:GetApplication")
 
 	// 用户管理
 	beego.Router("/coral/api/users", &controllers.ApiController{}, "POST:AddUser")

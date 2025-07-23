@@ -55,7 +55,7 @@ func CorsFilter(ctx *context.Context) {
 	isValid, err := util.IsValidOrigin(origin)
 	if err != nil {
 		ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
-		responseError(ctx, err.Error())
+		responseError(ctx, err)
 		return
 	}
 	if isValid {

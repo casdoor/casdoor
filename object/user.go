@@ -338,7 +338,7 @@ func GetUserCount(owner, query string, groupName string) (int64, error) {
 	for _, field := range fields {
 		filters[field] = query
 	}
-	session := GetFilterSession(owner, -1, -1, "", "",filters)
+	session := GetFilterSession2(owner, -1, -1, "", "",filters, nil) // todo 应该是or查询
 
 	if groupName != "" {
 		return GetGroupUserCount(util.GetId(owner, groupName), query, fields)

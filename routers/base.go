@@ -22,9 +22,11 @@ import (
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/errorx"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
+	"github.com/zdzh/errorx/errcode"
 )
 
 
@@ -41,15 +43,40 @@ type Response struct {
 	Data2  interface{} `json:"data2"`
 }
 
-func responseError(ctx *context.Context, error string, data ...interface{}) {
-	// ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
-
-	resp := MsgResponse{Code:  101_02_00001, Msg: error, Data: data}
-	err := ctx.Output.JSON(resp, true, false)
-	if err != nil {
-		panic(err)
+func responseError(ctx *context.Context, err error, data ...interface{}) {
+	resp := WrapResponse(data, err)
+	err2 := ctx.Output.JSON(resp, true, false)
+	if err2 != nil {
+		panic(err2)
 	}
 }
+
+
+func WrapResponse(data interface{}, err error) *MsgResponse {
+	resp := &MsgResponse{
+		Code: 0,
+		Msg:  "成功",
+		Data: data,
+	}
+
+	if err != nil {
+		enableErrorMask2 := conf.GetConfigBool("enableErrorMask2")
+		enableErrorMask := conf.GetConfigBool("enableErrorMask")
+		if enableErrorMask2 {
+			err = errorx.DefaultErr
+		} else if enableErrorMask {
+			errStr := err.Error()
+			if strings.HasPrefix(errStr, "The user: ") && strings.HasSuffix(errStr, " doesn't exist") || strings.HasPrefix(errStr, "用户: ") && strings.HasSuffix(errStr, "不存在") {
+				err = errorx.LoginErr
+			}
+		}
+		resp.Code = errcode.Code(err)
+		resp.Msg = err.Error()
+
+	}
+	return resp
+}
+
 
 func getAcceptLanguage(ctx *context.Context) string {
 	language := ctx.Request.Header.Get("Accept-Language")
@@ -61,7 +88,8 @@ func T(ctx *context.Context, error string) string {
 }
 
 func denyRequest(ctx *context.Context) {
-	responseError(ctx, T(ctx, "auth:Unauthorized operation"))
+	responseError(ctx, errorx.UnauthorizedErr)
+
 }
 
 func getUsernameByClientIdSecret(ctx *context.Context) (string, error) {

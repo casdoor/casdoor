@@ -14,34 +14,6 @@
         "http"
     ],
     "paths": {
-        "/coral/api/add-application": {
-            "post": {
-                "tags": [
-                    "Application API"
-                ],
-                "description": "add an application",
-                "operationId": "ApiController.AddApplication",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the application",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Application"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/coral/api/add-group": {
             "post": {
                 "tags": [
@@ -131,8 +103,52 @@
                 }
             }
         },
-        "/coral/api/delete-application": {
+        "/coral/api/applications": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get all applications",
+                "operationId": "ApiController.GetApplications",
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/object.ApplicationInfo"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "add an application",
+                "operationId": "ApiController.AddApplication",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The details of the application",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
                 "tags": [
                     "Application API"
                 ],
@@ -154,6 +170,32 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/coral/api/applications/{name}": {
+            "get": {
+                "tags": [
+                    "Application API"
+                ],
+                "description": "get the detail of an application",
+                "operationId": "ApiController.GetApplication",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "name",
+                        "description": "The id ( name ) of the application.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Application"
                         }
                     }
                 }
@@ -182,61 +224,6 @@
                         "description": "The Response object",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/coral/api/get-application": {
-            "get": {
-                "tags": [
-                    "Application API"
-                ],
-                "description": "get the detail of an application",
-                "operationId": "ApiController.GetApplication",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the application.",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/object.Application"
-                        }
-                    }
-                }
-            }
-        },
-        "/coral/api/get-applications": {
-            "get": {
-                "tags": [
-                    "Application API"
-                ],
-                "description": "get all applications",
-                "operationId": "ApiController.GetApplications",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "owner",
-                        "description": "The owner of applications.",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/object.Application"
-                            }
                         }
                     }
                 }
@@ -445,41 +432,6 @@
                 }
             }
         },
-        "/coral/api/update-application": {
-            "post": {
-                "tags": [
-                    "Application API"
-                ],
-                "description": "update an application",
-                "operationId": "ApiController.UpdateApplication",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id ( owner/name ) of the application",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The details of the application",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Application"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "The Response object",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/coral/api/update-group": {
             "post": {
                 "tags": [
@@ -517,11 +469,11 @@
         }
     },
     "definitions": {
-        "189421.\u003cnil\u003e.string": {
+        "196028.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "189479.string.string": {
+        "196086.string.string": {
             "title": "string",
             "type": "object"
         },
@@ -1020,6 +972,9 @@
                     "type": "string"
                 },
                 "themeData": {
+                    "$ref": "#/definitions/object.any"
+                },
+                "themeData2": {
                     "$ref": "#/definitions/object.ThemeData"
                 },
                 "tokenFields": {
@@ -1036,6 +991,68 @@
                 },
                 "useEmailAsSamlNameId": {
                     "type": "boolean"
+                }
+            }
+        },
+        "object.ApplicationInfo": {
+            "title": "ApplicationInfo",
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "expireInHours": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "footerHtml": {
+                    "type": "string"
+                },
+                "formCss": {
+                    "type": "string"
+                },
+                "formCssMobile": {
+                    "type": "string"
+                },
+                "formOffset": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "formSideHtml": {
+                    "type": "string"
+                },
+                "homepageUrl": {
+                    "type": "string"
+                },
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "signinHtml": {
+                    "type": "string"
+                },
+                "signupHtml": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "themeData": {
+                    "$ref": "#/definitions/object.any"
                 }
             }
         },
@@ -3526,7 +3543,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/189421.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/196028.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -3535,7 +3552,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/189479.string.string"
+                    "$ref": "#/definitions/196086.string.string"
                 },
                 "subject": {
                     "type": "string"
@@ -3613,6 +3630,10 @@
                     "type": "string"
                 }
             }
+        },
+        "object.any": {
+            "title": "any",
+            "type": "object"
         },
         "pp.PaymentState": {
             "title": "PaymentState",

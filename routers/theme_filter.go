@@ -106,7 +106,7 @@ func getOrganizationThemeCookieFromUrlPath(ctx *context.Context, urlPath string)
 	}
 
 	organizationThemeCookie := &OrganizationThemeCookie{
-		ThemeData:  application.ThemeData,
+		ThemeData:  application.ThemeData2,
 		LogoUrl:    application.Logo,
 		FooterHtml: application.FooterHtml,
 	}

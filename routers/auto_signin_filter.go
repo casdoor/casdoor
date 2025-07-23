@@ -47,18 +47,18 @@ func AutoSigninFilter(ctx *context.Context) {
 		token, err := object.GetTokenByAccessToken(accessToken)
 		if err != nil {
 			util.LogWarning(ctx, "Get access token failed, err:%s ", err)
-			responseError(ctx, errorx.AuthenticationErr.Error())
+			responseError(ctx, errorx.AuthenticationErr)
 			return
 		}
 
 		if token == nil {
-			responseError(ctx, errorx.UnAuthenticationErr.Error())
+			responseError(ctx, errorx.UnAuthenticationErr)
 			return
 		}
 
 		isExpired, _ := util.IsTokenExpired(token.CreatedTime, token.ExpiresIn)
 		if isExpired {
-			responseError(ctx, errorx.UnAuthenticationErr.Error())
+			responseError(ctx, errorx.AuthenticationExpiredErr)
 			return
 		}
 
@@ -66,12 +66,12 @@ func AutoSigninFilter(ctx *context.Context) {
 		application, err := object.GetApplicationByUserId(fmt.Sprintf("app/%s", token.Application))
 		if err != nil {
 			util.LogWarning(ctx, "GetApplicationByUserId failed, err:%s ", err)
-			responseError(ctx, errorx.AuthenticationErr.Error())
+			responseError(ctx, errorx.AuthenticationErr)
 			return
 		}
 		if application == nil {
 			util.LogWarning(ctx, fmt.Sprintf("No application is found for userId: app/%s", token.Application))
-			responseError(ctx, errorx.UnauthorizedErrFunc("用户无权限访问该应用").Error())
+			responseError(ctx, errorx.UnauthorizedErrFunc("用户无权限访问该应用"))
 			return
 		}
 
@@ -85,7 +85,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	if accessKey != "" && accessSecret != "" {
 		userId, err := getUsernameByKeys(ctx)
 		if err != nil {
-			responseError(ctx, err.Error())
+			responseError(ctx, err)
 		}
 
 		setSessionUser(ctx, userId)
@@ -94,7 +94,7 @@ func AutoSigninFilter(ctx *context.Context) {
 	// "/page?clientId=123&clientSecret=456"
 	userId, err := getUsernameByClientIdSecret(ctx)
 	if err != nil {
-		responseError(ctx, err.Error())
+		responseError(ctx, err)
 		return
 	}
 	if userId != "" {
@@ -109,7 +109,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		owner, name := util.GetOwnerAndNameFromId(userId)
 		_, err = object.CheckUserPassword(owner, name, password, "en")
 		if err != nil {
-			responseError(ctx, err.Error())
+			responseError(ctx, err)
 			return
 		}
 

@@ -29,6 +29,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/errorx"
 	"github.com/google/uuid"
 )
@@ -126,6 +127,7 @@ func SpaceToCamel(name string) string {
 func GetOwnerAndNameFromId(id string) (string, string) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {
+		logs.Warn("id is not <owner>/<name>, id=%s", id)
 		panic(errorx.InvalidParamErr)
 
 	}
@@ -136,6 +138,7 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 func GetOwnerAndNameFromIdWithError(id string) (string, string, error) {
 	tokens := strings.Split(id, "/")
 	if len(tokens) != 2 {
+		logs.Warn("id is not <owner>/<name>, id=%s", id)
 		return "", "", errorx.InvalidParamErr
 		
 	}

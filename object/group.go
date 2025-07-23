@@ -51,8 +51,8 @@ type Group struct {
 type GroupNode struct{}
 
 func GetGroupCount(owner, query string) (int64, error) {
-	fields := []string{"name", "display_name"}
-	session := GetFilterSessionByField(owner, -1, -1, "", "", fields, query)
+	// todo
+	session := GetSession(owner, -1, -1, "", "", "", query)
 	count, err := session.Count(&Group{})
 	if err != nil {
 		return 0, err
@@ -73,8 +73,9 @@ func GetGroups(owner string) ([]*Group, error) {
 
 func GetPaginationGroups(owner string, params *QueryParams) ([]*Group, error) {
 	var groups []*Group
-
-	session := GetFilterSessionByQueryParams(owner, params, []string{"name", "display_name"})
+	session := GetSession(owner, -1, -1, "", "", "", "")
+	//  todo
+	// session := GetFilterSessionByQueryParams(owner, params, []string{"name", "display_name"})
 	err := session.Find(&groups)
 	if err != nil {
 		return nil, err

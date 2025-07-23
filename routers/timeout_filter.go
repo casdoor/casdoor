@@ -15,12 +15,12 @@
 package routers
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/errorx"
 )
 
 var (
@@ -41,7 +41,7 @@ func timeoutLogout(ctx *context.Context, sessionId string) {
 	ctx.Input.CruSession.Set("username", "")
 	ctx.Input.CruSession.Set("accessToken", "")
 	ctx.Input.CruSession.Delete("SessionData")
-	responseError(ctx, fmt.Sprintf(T(ctx, "auth:Timeout for inactivity of %d minutes"), inactiveTimeoutMinutes))
+	responseError(ctx, errorx.RequestTimeoutErr)
 }
 
 func TimeoutFilter(ctx *context.Context) {

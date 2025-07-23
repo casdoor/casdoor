@@ -98,31 +98,32 @@ type Application struct {
 	IsShared              bool            `json:"isShared"`
 	IpRestriction         string          `json:"ipRestriction"`
 
-	ClientId                string     `xorm:"varchar(100)" json:"clientId"`
-	ClientSecret            string     `xorm:"varchar(100)" json:"clientSecret"`
-	RedirectUris            []string   `xorm:"varchar(1000)" json:"redirectUris"`
-	ForcedRedirectOrigin    string     `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
-	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
-	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
-	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
-	ExpireInHours           int        `json:"expireInHours"`
-	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
-	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
-	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
-	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
-	AffiliationUrl          string     `xorm:"varchar(100)" json:"affiliationUrl"`
-	IpWhitelist             string     `xorm:"varchar(200)" json:"ipWhitelist"`
-	TermsOfUse              string     `xorm:"varchar(100)" json:"termsOfUse"`
-	SignupHtml              string     `xorm:"mediumtext" json:"signupHtml"`
-	SigninHtml              string     `xorm:"mediumtext" json:"signinHtml"`
-	ThemeData               *ThemeData `xorm:"json" json:"themeData"`
-	FooterHtml              string     `xorm:"mediumtext" json:"footerHtml"`
-	FormCss                 string     `xorm:"text" json:"formCss"`
-	FormCssMobile           string     `xorm:"text" json:"formCssMobile"`
-	FormOffset              int        `json:"formOffset"`
-	FormSideHtml            string     `xorm:"mediumtext" json:"formSideHtml"`
-	FormBackgroundUrl       string     `xorm:"varchar(200)" json:"formBackgroundUrl"`
-	FormBackgroundUrlMobile string     `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
+	ClientId                string         `xorm:"varchar(100)" json:"clientId"`
+	ClientSecret            string         `xorm:"varchar(100)" json:"clientSecret"`
+	RedirectUris            []string       `xorm:"varchar(1000)" json:"redirectUris"`
+	ForcedRedirectOrigin    string         `xorm:"varchar(100)" json:"forcedRedirectOrigin"`
+	TokenFormat             string         `xorm:"varchar(100)" json:"tokenFormat"`
+	TokenSigningMethod      string         `xorm:"varchar(100)" json:"tokenSigningMethod"`
+	TokenFields             []string       `xorm:"varchar(1000)" json:"tokenFields"`
+	ExpireInHours           int            `json:"expireInHours"`
+	RefreshExpireInHours    int            `json:"refreshExpireInHours"`
+	SignupUrl               string         `xorm:"varchar(200)" json:"signupUrl"`
+	SigninUrl               string         `xorm:"varchar(200)" json:"signinUrl"`
+	ForgetUrl               string         `xorm:"varchar(200)" json:"forgetUrl"`
+	AffiliationUrl          string         `xorm:"varchar(100)" json:"affiliationUrl"`
+	IpWhitelist             string         `xorm:"varchar(200)" json:"ipWhitelist"`
+	TermsOfUse              string         `xorm:"varchar(100)" json:"termsOfUse"`
+	SignupHtml              string         `xorm:"mediumtext" json:"signupHtml"`
+	SigninHtml              string         `xorm:"mediumtext" json:"signinHtml"`
+	ThemeData2              *ThemeData     `xorm:"json" json:"themeData2"`
+	ThemeData               map[string]any `xorm:"mediumtext" json:"themeData"`
+	FooterHtml              string         `xorm:"mediumtext" json:"footerHtml"`
+	FormCss                 string         `xorm:"text" json:"formCss"`
+	FormCssMobile           string         `xorm:"text" json:"formCssMobile"`
+	FormOffset              int            `json:"formOffset"`
+	FormSideHtml            string         `xorm:"mediumtext" json:"formSideHtml"`
+	FormBackgroundUrl       string         `xorm:"varchar(200)" json:"formBackgroundUrl"`
+	FormBackgroundUrlMobile string         `xorm:"varchar(200)" json:"formBackgroundUrlMobile"`
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
@@ -151,17 +152,6 @@ func GetApplications(owner string) ([]*Application, error) {
 func GetOrganizationApplications(owner string, organization string) ([]*Application, error) {
 	applications := []*Application{}
 	err := ormer.Engine.Desc("created_time").Where("organization = ? or is_shared = ? ", organization, true).Find(&applications, &Application{})
-	if err != nil {
-		return applications, err
-	}
-
-	return applications, nil
-}
-
-func GetPaginationApplications(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Application, error) {
-	var applications []*Application
-	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
-	err := session.Find(&applications)
 	if err != nil {
 		return applications, err
 	}
@@ -384,6 +374,50 @@ func getApplication(owner string, name string) (*Application, error) {
 		return nil, nil
 	}
 }
+
+func GetApplicationByOrganization(organization string, name string) (*Application, error) {
+	if organization == "" || name == "" {
+		return nil, nil
+	}
+
+	realApplicationName, sharedOrg := util.GetSharedOrgFromApp(name)
+
+	application := Application{Organization: organization, Name: realApplicationName}
+	existed, err := ormer.Engine.Get(&application)
+	if err != nil {
+		return nil, err
+	}
+
+	if application.IsShared && sharedOrg != "" {
+		application.Organization = sharedOrg
+	}
+
+	if existed {
+		err = extendApplicationWithProviders(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithOrg(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		err = extendApplicationWithSigninMethods(&application)
+		if err != nil {
+			return nil, err
+		}
+		err = extendApplicationWithSigninItems(&application)
+		if err != nil {
+			return nil, err
+		}
+
+		return &application, nil
+	} else {
+		return nil, nil
+	}
+}
+
 
 func GetApplicationByOrganizationName(organization string) (*Application, error) {
 	application := Application{}
@@ -948,6 +982,80 @@ func GetLoginInfo(application *Application) *LoginInfo {
 		info.PasswordObfuscatorKey = application.OrganizationObj.PasswordObfuscatorKey
 		info.PasswordObfuscatorType = application.OrganizationObj.PasswordObfuscatorType
 		info.Organization = application.OrganizationObj.Name
+	}
+	return info
+}
+
+type ApplicationInfo struct {
+	Name         string `json:"name"`        // 应用唯一标识
+	DisplayName  string `json:"displayName"` // 应用名称
+	CreatedTime  string `json:"createdTime"`
+	Logo         string `json:"logo"`
+	HomepageUrl  string `json:"homepageUrl"` // 应用首页
+	Description  string `json:"description"`
+	Organization string `json:"organization"` //对应组织（企业）
+	// HeaderHtml            string          `json:"headerHtml"`
+	// Providers             []*ProviderItem `json:"providers"`       //身份提供商
+	Tags          []string `json:"tags"`
+	ExpireInHours int      `json:"expireInHours"` // token过期时间
+
+	// EnablePassword        bool            `json:"enablePassword"`   // 是否允许密码登录
+	// GrantTypes            []string        `json:"grantTypes"`
+	// OrganizationObj       *Organization   `json:"organizationObj"`
+	// CertPublicKey         string          `json:"certPublicKey"`
+	// SamlAttributes        []*SamlItem     `json:"samlAttributes"`
+	// IsShared              bool            `json:"isShared"`
+	// IpRestriction         string          `json:"ipRestriction"`
+
+	// ClientId                string     `json:"clientId"`
+	// ClientSecret            string     `json:"clientSecret"`
+	// RedirectUris            []string   `json:"redirectUris"`
+	// ForcedRedirectOrigin    string     `json:"forcedRedirectOrigin"`
+	// RefreshExpireInHours    int        `json:"refreshExpireInHours"`
+	// SignupUrl               string     `json:"signupUrl"`
+	// SigninUrl               string     `json:"signinUrl"`
+	// ForgetUrl               string     `json:"forgetUrl"`
+	// AffiliationUrl          string     `json:"affiliationUrl"`
+	// IpWhitelist             string     `json:"ipWhitelist"`
+	// TermsOfUse              string     `json:"termsOfUse"`
+	SignupHtml    string         `json:"signupHtml"`
+	SigninHtml    string         `json:"signinHtml"`
+	ThemeData     map[string]any `json:"themeData"`
+	FooterHtml    string         `json:"footerHtml"`
+	FormCss       string         `json:"formCss"`
+	FormCssMobile string         `json:"formCssMobile"`
+	FormOffset    int            `json:"formOffset"`
+	FormSideHtml  string         `json:"formSideHtml"`
+	// FormBackgroundUrl       string     `json:"formBackgroundUrl"`
+	// FormBackgroundUrlMobile string     `json:"formBackgroundUrlMobile"`
+
+	// FailedSigninLimit      int `json:"failedSigninLimit"`
+	// FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
+	// todo 商城装修字段
+}
+
+func GetApplicationInfos(application []*Application) []*ApplicationInfo {
+	var info []*ApplicationInfo
+	for _, item := range application {
+		info = append(info, &ApplicationInfo{
+			Name:          item.Name,
+			DisplayName:   item.DisplayName,
+			CreatedTime:   item.CreatedTime,
+			Logo:          item.Logo,
+			HomepageUrl:   item.HomepageUrl,
+			Description:   item.Description,
+			Organization:  item.Organization,
+			Tags:          item.Tags,
+			ExpireInHours: item.ExpireInHours,
+			SignupHtml:    item.SignupHtml,
+			SigninHtml:    item.SigninHtml,
+			ThemeData:     item.ThemeData,
+			FooterHtml:    item.FooterHtml,
+			FormCss:       item.FormCss,
+			FormCssMobile: item.FormCssMobile,
+			FormOffset:    item.FormOffset,
+			FormSideHtml:  item.FormSideHtml,
+		})
 	}
 	return info
 }

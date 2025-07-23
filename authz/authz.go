@@ -40,11 +40,12 @@ func InitApi() {
 		ruleText := `
 p, built-in, *, *, *, *, *
 p, app, *, *, *, *, *
+p, *, *, GET, /coral/api/get-applications, *, *
+p, *, *, POST, /coral/api/login, *, *
+p, *, *, POST, /coral/api/logout, *, *
 p, *, *, POST, /api/signup, *, *
 p, *, *, GET, /api/get-email-and-phone, *, *
-p, *, *, POST, /coral/api/login, *, *
 p, *, *, GET, /api/get-app-login, *, *
-p, *, *, POST, /coral/api/logout, *, *
 p, *, *, GET, /api/logout, *, *
 p, *, *, POST, /api/callback, *, *
 p, *, *, POST, /api/device-auth, *, *
@@ -144,7 +145,7 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return false
 		}
 
-		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
+		if user.IsAdmin && (objOwner == "" || subOwner == objOwner || (objOwner == "admin")) {
 			return true
 		}
 	}

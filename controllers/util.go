@@ -67,10 +67,13 @@ func (c *ApiController) WrapResponse(data interface{}, err error) *MsgResponse {
 // ResponseOk ...
 func (c *ApiController) ResponseOk(data ...interface{}) {
 	// resp := &Response{Status: "ok"}
+
 	resp := &MsgResponse{
 		Code: 0,
 		Msg:  "成功",
-		Data: data,
+	}
+	if len(data) > 0 {
+		resp.Data = data[0]
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
@@ -100,7 +103,7 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	}
 
 	resp := &MsgResponse{
-		Code: 101_00_00000,
+		Code: 1010000001,
 		Msg:  error,
 		Data: data,
 	}
@@ -391,4 +394,20 @@ func (c *ApiController) ResponseSuccess(data interface{}) {
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func QueryResult(data any, count int64) map[string]any {
+	result := make(map[string]any)
+	result["data"] = data
+	result["count"] = count
+	return result
+}
+
+func (c *ApiController) getOrganization() string {
+	userId := c.GetSessionUsername()
+	if userId != "" {
+		organization, _ := util.GetOwnerAndNameFromId(userId)
+		return organization
+	}
+	return ""
 }

@@ -1,0 +1,49 @@
+{
+	"files": [
+		{
+			"path": "controllers/auth.go",
+			"bookmarks": [
+				{
+					"line": 298,
+					"column": 0,
+					"label": ""
+				},
+				{
+					"line": 471,
+					"column": 0,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "authz/authz.go",
+			"bookmarks": [
+				{
+					"line": 37,
+					"column": 0,
+					"label": "接口权限"
+				}
+			]
+		},
+		{
+			"path": "routers/router.go",
+			"bookmarks": [
+				{
+					"line": 49,
+					"column": 0,
+					"label": "路由"
+				}
+			]
+		},
+		{
+			"path": "routers/auto_signin_filter.go",
+			"bookmarks": [
+				{
+					"line": 72,
+					"column": 0,
+					"label": "应用授权"
+				}
+			]
+		}
+	]
+}
