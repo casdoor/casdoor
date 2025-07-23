@@ -158,6 +158,7 @@ class AuthCallback extends React.Component {
     // OAuth
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const responseMode = oAuthParams?.responseMode || "query"; // Default to "query" if not specified
     const signinUrl = localStorage.getItem("signinUrl");
 
     AuthBackend.login(body, oAuthParams)
@@ -182,22 +183,22 @@ class AuthCallback extends React.Component {
                 return;
               }
 
-              if (res.data2 && res.data2.responseMode === "form_post") {
+              if (responseMode === "form_post") {
                 const form = document.createElement("form");
                 form.method = "post";
-                form.action = res.data2.redirectUri;
+                form.action = oAuthParams?.redirectUri;
 
                 const codeInput = document.createElement("input");
                 codeInput.type = "hidden";
                 codeInput.name = "code";
-                codeInput.value = res.data2.code;
+                codeInput.value = res.data;
                 form.appendChild(codeInput);
 
-                if (res.data2.state) {
+                if (oAuthParams?.state) {
                   const stateInput = document.createElement("input");
                   stateInput.type = "hidden";
                   stateInput.name = "state";
-                  stateInput.value = res.data2.state;
+                  stateInput.value = oAuthParams.state;
                   form.appendChild(stateInput);
                 }
 

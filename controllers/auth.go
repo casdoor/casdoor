@@ -55,7 +55,7 @@ func tokenToResponse(token *object.Token) *Response {
 }
 
 // HandleLoggedIn ...
-func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm, responseMode string) (resp *Response) {
+func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
 	if user.IsForbidden {
 		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 		return
@@ -147,7 +147,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			c.ResponseError(c.T("auth:Challenge method should be S256"))
 			return
 		}
-		code, err := object.GetOAuthCode(userId, clientId, form.Provider, responseType, redirectUri, scope, state, nonce, codeChallenge, responseMode, c.Ctx.Request.Host, c.GetAcceptLanguage())
+		code, err := object.GetOAuthCode(userId, clientId, form.Provider, responseType, redirectUri, scope, state, nonce, codeChallenge, c.Ctx.Request.Host, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
 			return
@@ -155,15 +155,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		resp = codeToResponse(code)
 		resp.Data3 = user.NeedUpdatePassword
-
-		if responseMode == "form_post" {
-			resp.Data2 = map[string]interface{}{
-				"redirectUri":  redirectUri,
-				"code":         code.Code,
-				"state":        state,
-				"responseMode": "form_post",
-			}
-		}
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
@@ -277,7 +268,6 @@ func (c *ApiController) GetApplicationLogin() {
 	redirectUri := c.Input().Get("redirectUri")
 	scope := c.Input().Get("scope")
 	state := c.Input().Get("state")
-	responseMode := c.Input().Get("response_mode")
 	id := c.Input().Get("id")
 	loginType := c.Input().Get("type")
 	userCode := c.Input().Get("userCode")
@@ -286,7 +276,7 @@ func (c *ApiController) GetApplicationLogin() {
 	var msg string
 	var err error
 	if loginType == "code" {
-		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, responseMode, c.GetAcceptLanguage())
+		msg, application, err = object.CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -425,8 +415,6 @@ func (c *ApiController) Login() {
 		return
 	}
 
-	// Get response_mode parameter for OAuth flows
-	responseMode := c.Input().Get("response_mode")
 	verificationType := ""
 
 	if authForm.Username != "" {
@@ -652,7 +640,7 @@ func (c *ApiController) Login() {
 				return
 			}
 
-			resp = c.HandleLoggedIn(application, user, &authForm, responseMode)
+			resp = c.HandleLoggedIn(application, user, &authForm)
 
 			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		}
@@ -788,7 +776,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				resp = c.HandleLoggedIn(application, user, &authForm, responseMode)
+				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" {
@@ -926,7 +914,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				resp = c.HandleLoggedIn(application, user, &authForm, responseMode)
+				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
 				c.Ctx.Input.SetParam("recordSignup", "true")
@@ -1064,7 +1052,7 @@ func (c *ApiController) Login() {
 			return
 		}
 
-		resp = c.HandleLoggedIn(application, user, &authForm, responseMode)
+		resp = c.HandleLoggedIn(application, user, &authForm)
 		c.setMfaUserSession("")
 
 		c.Ctx.Input.SetParam("recordUserId", user.GetId())
@@ -1088,7 +1076,7 @@ func (c *ApiController) Login() {
 			}
 
 			user := c.getCurrentUser()
-			resp = c.HandleLoggedIn(application, user, &authForm, responseMode)
+			resp = c.HandleLoggedIn(application, user, &authForm)
 
 			c.Ctx.Input.SetParam("recordUserId", user.GetId())
 		} else {

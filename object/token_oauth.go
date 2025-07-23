@@ -113,13 +113,9 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 	return affected != 0, application, token, nil
 }
 
-func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, responseMode string, lang string) (string, *Application, error) {
+func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application, error) {
 	if responseType != "code" && responseType != "token" && responseType != "id_token" {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil, nil
-	}
-
-	if responseMode != "" && !IsValidResponseMode(responseMode) {
-		return fmt.Sprintf(i18n.Translate(lang, "token:Response mode: %s is not supported"), responseMode), nil, nil
 	}
 
 	application, err := GetApplicationByClientId(clientId)
@@ -140,17 +136,7 @@ func CheckOAuthLogin(clientId string, responseType string, redirectUri string, s
 	return "", application, nil
 }
 
-func IsValidResponseMode(responseMode string) bool {
-	supportedModes := []string{"query", "fragment", "form_post"}
-	for _, mode := range supportedModes {
-		if mode == responseMode {
-			return true
-		}
-	}
-	return false
-}
-
-func GetOAuthCode(userId string, clientId string, provider string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, responseMode string, host string, lang string) (*Code, error) {
+func GetOAuthCode(userId string, clientId string, provider string, responseType string, redirectUri string, scope string, state string, nonce string, challenge string, host string, lang string) (*Code, error) {
 	user, err := GetUser(userId)
 	if err != nil {
 		return nil, err
@@ -169,7 +155,7 @@ func GetOAuthCode(userId string, clientId string, provider string, responseType 
 		}, nil
 	}
 
-	msg, application, err := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, responseMode, lang)
+	msg, application, err := CheckOAuthLogin(clientId, responseType, redirectUri, scope, state, lang)
 	if err != nil {
 		return nil, err
 	}
