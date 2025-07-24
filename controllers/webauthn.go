@@ -50,6 +50,11 @@ func (c *ApiController) WebAuthnSignupBegin() {
 		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
 		credCreationOpts.AuthenticatorSelection.ResidentKey = "preferred"
 		credCreationOpts.Attestation = "none"
+
+		ext := map[string]interface{}{
+			"credProps": true,
+		}
+		credCreationOpts.Extensions = ext
 	}
 	options, sessionData, err := webauthnObj.BeginRegistration(
 		user,

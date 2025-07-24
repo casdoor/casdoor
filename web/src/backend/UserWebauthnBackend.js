@@ -32,9 +32,6 @@ export function registerWebauthnCredential() {
         }
       }
 
-      credentialCreationOptions.publicKey.attestation = "none";
-      credentialCreationOptions.publicKey.authenticatorSelection.residentKey = "preferred";
-
       return navigator.credentials.create({
         publicKey: credentialCreationOptions.publicKey,
       });
