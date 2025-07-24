@@ -35,6 +35,30 @@ class AuthCallback extends React.Component {
     };
   }
 
+  submitFormPost(redirectUri, code, state) {
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = redirectUri;
+
+    const codeInput = document.createElement("input");
+    codeInput.type = "hidden";
+    codeInput.name = "code";
+    codeInput.value = code;
+    form.appendChild(codeInput);
+
+    if (state) {
+      const stateInput = document.createElement("input");
+      stateInput.type = "hidden";
+      stateInput.name = "state";
+      stateInput.value = state;
+      form.appendChild(stateInput);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(() => form.remove(), 1000);
+  }
+
   getInnerParams() {
     // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
     // realRedirectUrl = "http://localhost:9000"
@@ -158,6 +182,7 @@ class AuthCallback extends React.Component {
     // OAuth
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const responseMode = oAuthParams?.responseMode || "query"; // Default to "query" if not specified
     const signinUrl = localStorage.getItem("signinUrl");
 
     AuthBackend.login(body, oAuthParams)
@@ -181,8 +206,13 @@ class AuthCallback extends React.Component {
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-              const code = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+
+              if (responseMode === "form_post") {
+                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
+              } else {
+                const code = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+              }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data3) {

@@ -141,6 +141,7 @@ export function getOAuthGetParameters(params) {
   const nonce = getRefinedValue(queries.get("nonce"));
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
+  const responseMode = getRefinedValue(queries.get("response_mode"));
   const samlRequest = getRefinedValue(lowercaseQueries["samlRequest".toLowerCase()]);
   const relayState = getRefinedValue(lowercaseQueries["RelayState".toLowerCase()]);
   const noRedirect = getRefinedValue(lowercaseQueries["noRedirect".toLowerCase()]);
@@ -159,6 +160,7 @@ export function getOAuthGetParameters(params) {
       nonce: nonce,
       challengeMethod: challengeMethod,
       codeChallenge: codeChallenge,
+      responseMode: responseMode,
       samlRequest: samlRequest,
       relayState: relayState,
       noRedirect: noRedirect,
