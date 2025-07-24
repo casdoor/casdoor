@@ -31,6 +31,10 @@ export function registerWebauthnCredential() {
           credentialCreationOptions.publicKey.excludeCredentials[i].id = webAuthnBufferDecode(credentialCreationOptions.publicKey.excludeCredentials[i].id);
         }
       }
+
+      credentialCreationOptions.publicKey.attestation = "none";
+      credentialCreationOptions.publicKey.authenticatorSelection.residentKey = "preferred";
+
       return navigator.credentials.create({
         publicKey: credentialCreationOptions.publicKey,
       });

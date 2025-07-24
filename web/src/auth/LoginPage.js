@@ -637,9 +637,6 @@ class LoginPage extends React.Component {
       )
       ;
     } else if (signinItem.name === "Username") {
-      if (this.state.loginMethod === "webAuthn") {
-        return null;
-      }
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
@@ -649,7 +646,7 @@ class LoginPage extends React.Component {
             label={signinItem.label ? signinItem.label : null}
             rules={[
               {
-                required: true,
+                required: this.state.loginMethod !== "webAuthn",
                 message: () => {
                   switch (this.state.loginMethod) {
                   case "verificationCodeEmail":
@@ -1093,7 +1090,8 @@ class LoginPage extends React.Component {
     const oAuthParams = Util.getOAuthGetParameters();
     this.populateOauthValues(values);
     const application = this.getApplicationObj();
-    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}`, {
+    const usernameParam = `&name=${encodeURIComponent(username)}`;
+    return fetch(`${Setting.ServerUrl}/api/webauthn/signin/begin?owner=${application.organization}${username ? usernameParam : ""}`, {
       method: "GET",
       credentials: "include",
     })
@@ -1104,6 +1102,12 @@ class LoginPage extends React.Component {
           throw credentialRequestOptions.status.msg;
         }
         credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
+
+        if (username) {
+          credentialRequestOptions.publicKey.allowCredentials.forEach(function(listItem) {
+            listItem.id = UserWebauthnBackend.webAuthnBufferDecode(listItem.id);
+          });
+        }
 
         return navigator.credentials.get({
           publicKey: credentialRequestOptions.publicKey,
