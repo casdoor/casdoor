@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 )
 
@@ -26,6 +27,11 @@ import (
 var f embed.FS
 
 var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
+var EnableErrorMask = false
+
+func init() {
+	EnableErrorMask = conf.GetConfigBool("enableErrorMask")
+}
 
 func getI18nFilePath(category string, language string) string {
 	if category == "backend" {
@@ -74,6 +80,15 @@ func applyData(data1 *I18nData, data2 *I18nData) {
 }
 
 func Translate(language string, errorText string) string {
+	modified := false
+	if EnableErrorMask {
+		if errorText == "general:The user: %s doesn't exist" ||
+			errorText == "check:password or code is incorrect, you have %s remaining chances" {
+			modified = true
+			errorText = "check:password or code is incorrect"
+		}
+	}
+
 	tokens := strings.SplitN(errorText, ":", 2)
 	if !strings.Contains(errorText, ":") || len(tokens) != 2 {
 		return fmt.Sprintf("Translate error: the error text doesn't contain \":\", errorText = %s", errorText)
@@ -96,6 +111,10 @@ func Translate(language string, errorText string) string {
 	res := langMap[language][tokens[0]][tokens[1]]
 	if res == "" {
 		res = tokens[1]
+	}
+
+	if modified {
+		res += "%.s"
 	}
 	return res
 }

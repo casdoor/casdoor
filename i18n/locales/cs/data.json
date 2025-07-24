@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Vaše oblast neumožňuje registraci pomocí telefonu",
     "password or code is incorrect": "heslo nebo kód je nesprávné",
-    "password or code is incorrect, you have %d remaining chances": "heslo nebo kód je nesprávné, máte %d zbývajících pokusů",
+    "password or code is incorrect, you have %s remaining chances": "heslo nebo kód je nesprávné, máte %s zbývajících pokusů",
     "unsupported password type: %s": "nepodporovaný typ hesla: %s"
   },
   "enforcer": {

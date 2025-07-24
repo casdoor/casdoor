@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
     "password or code is incorrect": "неправильный пароль или код",
-    "password or code is incorrect, you have %d remaining chances": "Неправильный пароль или код, у вас осталось %d попыток",
+    "password or code is incorrect, you have %s remaining chances": "Неправильный пароль или код, у вас осталось %s попыток",
     "unsupported password type: %s": "неподдерживаемый тип пароля: %s"
   },
   "enforcer": {

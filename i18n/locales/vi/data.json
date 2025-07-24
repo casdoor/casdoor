@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
     "password or code is incorrect": "password or code is incorrect",
-    "password or code is incorrect, you have %d remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %d lần cơ hội",
+    "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
   "enforcer": {

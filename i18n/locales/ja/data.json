@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
     "password or code is incorrect": "password or code is incorrect",
-    "password or code is incorrect, you have %d remaining chances": "パスワードまたはコードが間違っています。あと%d回の試行機会があります",
+    "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと%s回の試行機会があります",
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
   },
   "enforcer": {
