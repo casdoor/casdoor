@@ -110,13 +110,13 @@ class WeChatLoginPanel extends React.Component {
       );
     }
     return (
-      <div style={{width: loginWidth, margin: "0 auto", textAlign: "center", marginTop: 16}}>
+      <div style={{width: loginWidth, margin: "0 auto", textAlign: "center", marginTop: 16, height: 500}}>
         {application.signinItems?.filter(item => item.name === "Logo").map(signinItem => this.props.renderFormItem(application, signinItem))}
         {this.props.renderMethodChoiceBox()}
         {application.signinItems?.filter(item => item.name === "Languages").map(signinItem => this.props.renderFormItem(application, signinItem))}
         {loading ? (
-          <div style={{marginTop: 16}}>
-            <span>{i18next.t("login:Loading")}</span>
+          <div style={{marginTop: 100, fontSize: 16}}>
+            <span>{i18next.t("login:Loading...")}</span>
           </div>
         ) : qrCode ? (
           <div style={{marginTop: 2}}>
