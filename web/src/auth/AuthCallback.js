@@ -35,16 +35,17 @@ class AuthCallback extends React.Component {
     };
   }
 
-  submitFormPost(redirectUri, code, state) {
+  submitFormPost(redirectUri, idToken, state) {
     const form = document.createElement("form");
     form.method = "post";
     form.action = redirectUri;
+    form.enctype = "application/x-www-form-urlencoded";
 
-    const codeInput = document.createElement("input");
-    codeInput.type = "hidden";
-    codeInput.name = "code";
-    codeInput.value = code;
-    form.appendChild(codeInput);
+    const idTokenInput = document.createElement("input");
+    idTokenInput.type = "hidden";
+    idTokenInput.name = "id_token";
+    idTokenInput.value = idToken;
+    form.appendChild(idTokenInput);
 
     if (state) {
       const stateInput = document.createElement("input");
@@ -206,13 +207,8 @@ class AuthCallback extends React.Component {
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-
-              if (responseMode === "form_post") {
-                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
-              } else {
-                const code = res.data;
-                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
-              }
+              const code = res.data;
+              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data3) {
@@ -221,7 +217,11 @@ class AuthCallback extends React.Component {
                 return;
               }
               const token = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+              if (responseMode === "form_post") {
+                this.submitFormPost(oAuthParams?.redirectUri, token, oAuthParams?.state);
+              } else {
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+              }
             } else if (responseType === "link") {
               let from = innerParams.get("from");
               const oauth = innerParams.get("oauth");
