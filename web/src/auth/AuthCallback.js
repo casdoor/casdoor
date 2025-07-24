@@ -56,7 +56,7 @@ class AuthCallback extends React.Component {
 
     document.body.appendChild(form);
     form.submit();
-    form.remove();
+    setTimeout(() => form.remove(), 1000);
   }
 
   getInnerParams() {
