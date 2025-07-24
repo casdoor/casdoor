@@ -418,7 +418,6 @@ func GetApplicationByOrganization(organization string, name string) (*Applicatio
 	}
 }
 
-
 func GetApplicationByOrganizationName(organization string) (*Application, error) {
 	application := Application{}
 	existed, err := ormer.Engine.Where("organization=?", organization).Get(&application)
@@ -986,18 +985,24 @@ func GetLoginInfo(application *Application) *LoginInfo {
 	return info
 }
 
+// ApplicationInfo 
+// swagger:model
 type ApplicationInfo struct {
-	Name         string `json:"name"`        // 应用唯一标识
-	DisplayName  string `json:"displayName"` // 应用名称
-	CreatedTime  string `json:"createdTime"`
-	Logo         string `json:"logo"`
-	HomepageUrl  string `json:"homepageUrl"` // 应用首页
-	Description  string `json:"description"`
-	Organization string `json:"organization"` //对应组织（企业）
+	Name         string   `json:"name" example:"app-casdoor" description:"应用唯一标识"`
+	DisplayName  string   `json:"displayName" example:"Casdoor" description:"应用名称"`
+	CreatedTime  string   `json:"createdTime" example:"2022-01-01T12:00:00Z" description:"创建时间"`
+	Logo         string   `json:"logo" example:"https://cdn.casdoor.com/logo.png" description:"应用Logo"`
+	HomepageUrl  string   `json:"homepageUrl" example:"https://casdoor.org" description:"应用首页URL"`
+	Description  string   `json:"description" example:"A great application" description:"应用描述"`
+	Organization string   `json:"organization" example:"built-in" description:"所属组织"`
 	// HeaderHtml            string          `json:"headerHtml"`
 	// Providers             []*ProviderItem `json:"providers"`       //身份提供商
-	Tags          []string `json:"tags"`
-	ExpireInHours int      `json:"expireInHours"` // token过期时间
+	Tags []string `json:"tags" example:"tag1,tag2" description:"应用标签"`
+}
+
+type ApplicationDetail struct {
+	ApplicationInfo
+	ExpireInHours int `json:"expireInHours" example:"168" description:"Token过期时间（小时）"` // token过期时间
 
 	// EnablePassword        bool            `json:"enablePassword"`   // 是否允许密码登录
 	// GrantTypes            []string        `json:"grantTypes"`
@@ -1018,14 +1023,14 @@ type ApplicationInfo struct {
 	// AffiliationUrl          string     `json:"affiliationUrl"`
 	// IpWhitelist             string     `json:"ipWhitelist"`
 	// TermsOfUse              string     `json:"termsOfUse"`
-	SignupHtml    string         `json:"signupHtml"`
-	SigninHtml    string         `json:"signinHtml"`
-	ThemeData     map[string]any `json:"themeData"`
-	FooterHtml    string         `json:"footerHtml"`
-	FormCss       string         `json:"formCss"`
-	FormCssMobile string         `json:"formCssMobile"`
-	FormOffset    int            `json:"formOffset"`
-	FormSideHtml  string         `json:"formSideHtml"`
+	SignupHtml    string         `json:"signupHtml" example:"<html>...</html>" description:"注册页面HTML"`
+	SigninHtml    string         `json:"signinHtml" example:"<html>...</html>" description:"登录页面HTML"`
+	ThemeData     map[string]any `json:"themeData" description:"主题数据"`
+	FooterHtml    string         `json:"footerHtml" example:"<p>Footer</p>" description:"页脚HTML"`
+	FormCss       string         `json:"formCss" example:"body { color: red; }" description:"表单CSS"`
+	FormCssMobile string         `json:"formCssMobile" example:"body { color: blue; }" description:"移动端表单CSS"`
+	FormOffset    int            `json:"formOffset" example:"2" description:"表单偏移量"`
+	FormSideHtml  string         `json:"formSideHtml" example:"<div>Side</div>" description:"表单侧边HTML"`
 	// FormBackgroundUrl       string     `json:"formBackgroundUrl"`
 	// FormBackgroundUrlMobile string     `json:"formBackgroundUrlMobile"`
 
@@ -1038,24 +1043,40 @@ func GetApplicationInfos(application []*Application) []*ApplicationInfo {
 	var info []*ApplicationInfo
 	for _, item := range application {
 		info = append(info, &ApplicationInfo{
-			Name:          item.Name,
-			DisplayName:   item.DisplayName,
-			CreatedTime:   item.CreatedTime,
-			Logo:          item.Logo,
-			HomepageUrl:   item.HomepageUrl,
-			Description:   item.Description,
-			Organization:  item.Organization,
-			Tags:          item.Tags,
-			ExpireInHours: item.ExpireInHours,
-			SignupHtml:    item.SignupHtml,
-			SigninHtml:    item.SigninHtml,
-			ThemeData:     item.ThemeData,
-			FooterHtml:    item.FooterHtml,
-			FormCss:       item.FormCss,
-			FormCssMobile: item.FormCssMobile,
-			FormOffset:    item.FormOffset,
-			FormSideHtml:  item.FormSideHtml,
+			Name:         item.Name,
+			DisplayName:  item.DisplayName,
+			CreatedTime:  item.CreatedTime,
+			Logo:         item.Logo,
+			HomepageUrl:  item.HomepageUrl,
+			Description:  item.Description,
+			Organization: item.Organization,
+			Tags:         item.Tags,
 		})
 	}
 	return info
+}
+
+func GetApplicationInfo(item *Application) *ApplicationDetail {
+	info := &ApplicationInfo{
+		Name:         item.Name,
+		DisplayName:  item.DisplayName,
+		CreatedTime:  item.CreatedTime,
+		Logo:         item.Logo,
+		HomepageUrl:  item.HomepageUrl,
+		Description:  item.Description,
+		Organization: item.Organization,
+		Tags:         item.Tags,
+	}
+	return &ApplicationDetail{
+		ApplicationInfo: *info,
+		ExpireInHours:   item.ExpireInHours,
+		SignupHtml:      item.SignupHtml,
+		SigninHtml:      item.SigninHtml,
+		ThemeData:       item.ThemeData,
+		FooterHtml:      item.FooterHtml,
+		FormCss:         item.FormCss,
+		FormCssMobile:   item.FormCssMobile,
+		FormOffset:      item.FormOffset,
+		FormSideHtml:    item.FormSideHtml,
+	}
 }

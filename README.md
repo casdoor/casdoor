@@ -66,6 +66,7 @@ mybee generate docs --tags "Group API,Auth API,Application API"
 ```
 
 
+
 ## 初始化服务
 根据`init_data.json`生成默认组织、角色
 

@@ -195,7 +195,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/object.Application"
+                            "$ref": "#/definitions/object.ApplicationDetail"
                         }
                     }
                 }
@@ -469,11 +469,11 @@
         }
     },
     "definitions": {
-        "196028.\u003cnil\u003e.string": {
+        "197340.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "196086.string.string": {
+        "197398.string.string": {
             "title": "string",
             "type": "object"
         },
@@ -994,65 +994,145 @@
                 }
             }
         },
-        "object.ApplicationInfo": {
-            "title": "ApplicationInfo",
+        "object.ApplicationDetail": {
+            "title": "ApplicationDetail",
             "type": "object",
             "properties": {
                 "createdTime": {
-                    "type": "string"
+                    "description": "创建时间",
+                    "type": "string",
+                    "example": "2022-01-01T12:00:00Z"
                 },
                 "description": {
-                    "type": "string"
+                    "description": "应用描述",
+                    "type": "string",
+                    "example": "A great application"
                 },
                 "displayName": {
-                    "type": "string"
+                    "description": "应用名称",
+                    "type": "string",
+                    "example": "Casdoor"
                 },
                 "expireInHours": {
+                    "description": "Token过期时间（小时）",
                     "type": "integer",
+                    "example": 168,
                     "format": "int64"
                 },
                 "footerHtml": {
-                    "type": "string"
+                    "description": "页脚HTML",
+                    "type": "string",
+                    "example": "\u003cp\u003eFooter\u003c/p\u003e"
                 },
                 "formCss": {
-                    "type": "string"
+                    "description": "表单CSS",
+                    "type": "string",
+                    "example": "body { color: red; }"
                 },
                 "formCssMobile": {
-                    "type": "string"
+                    "description": "移动端表单CSS",
+                    "type": "string",
+                    "example": "body { color: blue; }"
                 },
                 "formOffset": {
+                    "description": "表单偏移量",
                     "type": "integer",
+                    "example": 2,
                     "format": "int64"
                 },
                 "formSideHtml": {
-                    "type": "string"
+                    "description": "表单侧边HTML",
+                    "type": "string",
+                    "example": "\u003cdiv\u003eSide\u003c/div\u003e"
                 },
                 "homepageUrl": {
-                    "type": "string"
+                    "description": "应用首页URL",
+                    "type": "string",
+                    "example": "https://casdoor.org"
                 },
                 "logo": {
-                    "type": "string"
+                    "description": "应用Logo",
+                    "type": "string",
+                    "example": "https://cdn.casdoor.com/logo.png"
                 },
                 "name": {
-                    "type": "string"
+                    "description": "应用唯一标识",
+                    "type": "string",
+                    "example": "app-casdoor"
                 },
                 "organization": {
-                    "type": "string"
+                    "description": "所属组织",
+                    "type": "string",
+                    "example": "built-in"
                 },
                 "signinHtml": {
-                    "type": "string"
+                    "description": "登录页面HTML",
+                    "type": "string",
+                    "example": "\u003chtml\u003e...\u003c/html\u003e"
                 },
                 "signupHtml": {
-                    "type": "string"
+                    "description": "注册页面HTML",
+                    "type": "string",
+                    "example": "\u003chtml\u003e...\u003c/html\u003e"
                 },
                 "tags": {
+                    "description": "应用标签",
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "themeData": {
-                    "$ref": "#/definitions/object.any"
+                    "$ref": "#/definitions/object.any",
+                    "description": "主题数据"
+                }
+            }
+        },
+        "object.ApplicationInfo": {
+            "title": "ApplicationInfo",
+            "type": "object",
+            "properties": {
+                "createdTime": {
+                    "description": "创建时间",
+                    "type": "string",
+                    "example": "2022-01-01T12:00:00Z"
+                },
+                "description": {
+                    "description": "应用描述",
+                    "type": "string",
+                    "example": "A great application"
+                },
+                "displayName": {
+                    "description": "应用名称",
+                    "type": "string",
+                    "example": "Casdoor"
+                },
+                "homepageUrl": {
+                    "description": "应用首页URL",
+                    "type": "string",
+                    "example": "https://casdoor.org"
+                },
+                "logo": {
+                    "description": "应用Logo",
+                    "type": "string",
+                    "example": "https://cdn.casdoor.com/logo.png"
+                },
+                "name": {
+                    "description": "应用唯一标识",
+                    "type": "string",
+                    "example": "app-casdoor"
+                },
+                "organization": {
+                    "description": "所属组织",
+                    "type": "string",
+                    "example": "built-in"
+                },
+                "tags": {
+                    "description": "应用标签",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -3543,7 +3623,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/196028.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/197340.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -3552,7 +3632,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/196086.string.string"
+                    "$ref": "#/definitions/197398.string.string"
                 },
                 "subject": {
                     "type": "string"

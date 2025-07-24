@@ -68,16 +68,12 @@ func (c *ApiController) GetApplication2() {
 // @Tag Application API
 // @Description get the detail of an application
 // @Param   name     path    string  true        "The id ( name ) of the application."
-// @Success 200 {object} object.Application The Response object
+// @Success 200 {object} object.ApplicationDetail The Response object
 // @router /applications/:name [get]
 func (c *ApiController) GetApplication() {
 	userId := c.GetSessionUsername()
 	id := c.Ctx.Input.Param(":name")
 	organization := c.getOrganization()
-	fmt.Println("======================")
-	fmt.Println(organization)
-	fmt.Println(id)
-	fmt.Println("======================")
 
 	application, err := object.GetApplicationByOrganization(organization, id)
 	if err != nil {
@@ -107,8 +103,8 @@ func (c *ApiController) GetApplication() {
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
 	object.CheckEntryIp(clientIp, nil, application, nil, c.GetAcceptLanguage())
-
-	c.ResponseOk(object.GetMaskedApplication(application, userId))
+	
+	c.ResponseOk(object.GetApplicationInfo(object.GetMaskedApplication(application, userId)))
 }
 
 // GetUserApplication
