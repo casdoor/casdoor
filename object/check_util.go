@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -100,7 +101,7 @@ func recordSigninErrorInfo(user *User, lang string, options ...bool) error {
 	if leftChances == 0 && enableCaptcha {
 		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
 	} else if leftChances >= 0 {
-		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect, you have %d remaining chances"), leftChances)
+		return fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect, you have %s remaining chances"), strconv.Itoa(leftChances))
 	}
 
 	// don't show the chance error message if the user has no chance left

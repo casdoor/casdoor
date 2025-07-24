@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "منطقه شما اجازه ثبت‌نام با تلفن را ندارد",
     "password or code is incorrect": "رمز عبور یا کد نادرست است",
-    "password or code is incorrect, you have %d remaining chances": "رمز عبور یا کد نادرست است، شما %d فرصت باقی‌مانده دارید",
+    "password or code is incorrect, you have %s remaining chances": "رمز عبور یا کد نادرست است، شما %s فرصت باقی‌مانده دارید",
     "unsupported password type: %s": "نوع رمز عبور پشتیبانی نشده: %s"
   },
   "enforcer": {

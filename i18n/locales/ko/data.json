@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "당신의 지역은 전화로 가입할 수 없습니다",
     "password or code is incorrect": "password or code is incorrect",
-    "password or code is incorrect, you have %d remaining chances": "암호 또는 코드가 올바르지 않습니다. %d번의 기회가 남아 있습니다",
+    "password or code is incorrect, you have %s remaining chances": "암호 또는 코드가 올바르지 않습니다. %s번의 기회가 남아 있습니다",
     "unsupported password type: %s": "지원되지 않는 암호 유형: %s"
   },
   "enforcer": {

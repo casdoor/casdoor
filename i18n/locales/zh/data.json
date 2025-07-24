@@ -85,7 +85,7 @@
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "您的密码已过期。请点击 \\\"忘记密码\\\" 以重置密码",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",
     "password or code is incorrect": "密码错误",
-    "password or code is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会",
+    "password or code is incorrect, you have %s remaining chances": "密码错误，您还有 %s 次尝试的机会",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
   "enforcer": {
