@@ -23,11 +23,12 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+var EnableErrorMask = false
+
 //go:embed locales/*/data.json
 var f embed.FS
 
 var langMap = make(map[string]map[string]map[string]string) // for example : langMap[en][account][Invalid information] = Invalid information
-var EnableErrorMask = false
 
 func init() {
 	EnableErrorMask = conf.GetConfigBool("enableErrorMask")
