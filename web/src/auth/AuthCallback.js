@@ -35,6 +35,30 @@ class AuthCallback extends React.Component {
     };
   }
 
+  submitFormPost(redirectUri, code, state) {
+    const form = document.createElement("form");
+    form.method = "post";
+    form.action = redirectUri;
+
+    const codeInput = document.createElement("input");
+    codeInput.type = "hidden";
+    codeInput.name = "code";
+    codeInput.value = code;
+    form.appendChild(codeInput);
+
+    if (state) {
+      const stateInput = document.createElement("input");
+      stateInput.type = "hidden";
+      stateInput.name = "state";
+      stateInput.value = state;
+      form.appendChild(stateInput);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }
+
   getInnerParams() {
     // For example, for Casbin-OA, realRedirectUri = "http://localhost:9000/login"
     // realRedirectUrl = "http://localhost:9000"
@@ -184,27 +208,7 @@ class AuthCallback extends React.Component {
               }
 
               if (responseMode === "form_post") {
-                const form = document.createElement("form");
-                form.method = "post";
-                form.action = oAuthParams?.redirectUri;
-
-                const codeInput = document.createElement("input");
-                codeInput.type = "hidden";
-                codeInput.name = "code";
-                codeInput.value = res.data;
-                form.appendChild(codeInput);
-
-                if (oAuthParams?.state) {
-                  const stateInput = document.createElement("input");
-                  stateInput.type = "hidden";
-                  stateInput.name = "state";
-                  stateInput.value = oAuthParams.state;
-                  form.appendChild(stateInput);
-                }
-
-                document.body.appendChild(form);
-                form.submit();
-                form.remove();
+                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
               } else {
                 const code = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
