@@ -44,6 +44,7 @@ class WebAuthnCredentialTable extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: "id",
         key: "id",
+        ellipsis: true,
       },
       {
         title: i18next.t("general:Action"),
