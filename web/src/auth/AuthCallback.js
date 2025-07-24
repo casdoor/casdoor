@@ -207,8 +207,13 @@ class AuthCallback extends React.Component {
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-              const code = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+
+              if (responseMode === "form_post") {
+                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
+              } else {
+                const code = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+              }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
             } else if (responseType === "token" || responseType === "id_token") {
               if (res.data3) {

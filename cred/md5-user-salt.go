@@ -38,9 +38,20 @@ func NewMd5UserSaltCredManager() *Md5UserSaltCredManager {
 }
 
 func (cm *Md5UserSaltCredManager) GetHashedPassword(password string, salt string) string {
+	if salt == "" {
+		return getMd5HexDigest(password)
+	}
+
 	return getMd5HexDigest(getMd5HexDigest(password) + salt)
 }
 
 func (cm *Md5UserSaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	// For backward-compatibility
+	if salt == "" {
+		if hashedPwd == cm.GetHashedPassword(getMd5HexDigest(plainPwd), salt) {
+			return true
+		}
+	}
+
 	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

@@ -86,7 +86,7 @@ class WeChatLoginPanel extends React.Component {
         {application.signinItems?.filter(item => item.name === "Languages").map(signinItem => this.props.renderFormItem(application, signinItem))}
         {loading ? (
           <div style={{marginTop: 16}}>
-            <span>{i18next.t("login:Loading...")}</span>
+            <span>{i18next.t("login:Loading")}</span>
           </div>
         ) : qrCode ? (
           <div style={{marginTop: 2}}>

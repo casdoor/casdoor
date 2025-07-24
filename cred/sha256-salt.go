@@ -38,9 +38,20 @@ func NewSha256SaltCredManager() *Sha256SaltCredManager {
 }
 
 func (cm *Sha256SaltCredManager) GetHashedPassword(password string, salt string) string {
+	if salt == "" {
+		return getSha256HexDigest(password)
+	}
+
 	return getSha256HexDigest(getSha256HexDigest(password) + salt)
 }
 
 func (cm *Sha256SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	// For backward-compatibility
+	if salt == "" {
+		if hashedPwd == cm.GetHashedPassword(getSha256HexDigest(plainPwd), salt) {
+			return true
+		}
+	}
+
 	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }

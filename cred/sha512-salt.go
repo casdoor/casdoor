@@ -38,9 +38,20 @@ func NewSha512SaltCredManager() *Sha512SaltCredManager {
 }
 
 func (cm *Sha512SaltCredManager) GetHashedPassword(password string, salt string) string {
+	if salt == "" {
+		return getSha512HexDigest(password)
+	}
+
 	return getSha512HexDigest(getSha512HexDigest(password) + salt)
 }
 
 func (cm *Sha512SaltCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
+	// For backward-compatibility
+	if salt == "" {
+		if hashedPwd == cm.GetHashedPassword(getSha512HexDigest(plainPwd), salt) {
+			return true
+		}
+	}
+
 	return hashedPwd == cm.GetHashedPassword(plainPwd, salt)
 }
