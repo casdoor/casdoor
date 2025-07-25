@@ -35,17 +35,38 @@ class AuthCallback extends React.Component {
     };
   }
 
-  submitFormPost(redirectUri, idToken, state) {
+  submitFormPost(redirectUri, responseType, data, state) {
     const form = document.createElement("form");
     form.method = "post";
     form.action = redirectUri;
     form.enctype = "application/x-www-form-urlencoded";
 
-    const idTokenInput = document.createElement("input");
-    idTokenInput.type = "hidden";
-    idTokenInput.name = "id_token";
-    idTokenInput.value = idToken;
-    form.appendChild(idTokenInput);
+    // 根据 responseType 确定字段名
+    if (responseType === "code") {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "code";
+      input.value = data;
+      form.appendChild(input);
+    } else if (responseType === "id_token") {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "id_token";
+      input.value = data;
+      form.appendChild(input);
+    } else if (responseType === "token") {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "access_token";
+      input.value = data;
+      form.appendChild(input);
+
+      const tokenTypeInput = document.createElement("input");
+      tokenTypeInput.type = "hidden";
+      tokenTypeInput.name = "token_type";
+      tokenTypeInput.value = "bearer";
+      form.appendChild(tokenTypeInput);
+    }
 
     if (state) {
       const stateInput = document.createElement("input");
@@ -208,10 +229,10 @@ class AuthCallback extends React.Component {
                 return;
               }
 
+              const code = res.data;
               if (responseMode === "form_post") {
-                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
+                this.submitFormPost(oAuthParams?.redirectUri, responseType, code, oAuthParams?.state);
               } else {
-                const code = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
               }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
@@ -223,7 +244,7 @@ class AuthCallback extends React.Component {
               }
               const token = res.data;
               if (responseMode === "form_post") {
-                this.submitFormPost(oAuthParams?.redirectUri, token, oAuthParams?.state);
+                this.submitFormPost(oAuthParams?.redirectUri, responseType, token, oAuthParams?.state);
               } else {
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
               }
