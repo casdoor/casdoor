@@ -7,122 +7,122 @@
   },
   "auth": {
     "Challenge method should be S256": "Método de desafio deve ser S256",
-    "DeviceCode Invalid": "DeviceCode Invalid",
+    "DeviceCode Invalid": "Código de dispositivo inválido",
     "Failed to create user, user information is invalid: %s": "Falha ao criar usuário, informação do usuário inválida: %s",
     "Failed to login in: %s": "Falha ao entrar em: %s",
     "Invalid token": "Token inválido",
     "State expected: %s, but got: %s": "Estado esperado: %s, mas recebeu: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta via %%s, por favor, use outra forma de se inscrever",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta entre em contato com seu suporte de TI",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
-    "The application: %s does not exist": "The application: %s does not exist",
-    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
-    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
-    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
-    "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
-    "The login method: login with password is not enabled for the application": "The login method: login with password is not enabled for the application",
-    "The organization: %s does not exist": "The organization: %s does not exist",
-    "The provider: %s does not exist": "The provider: %s does not exist",
-    "The provider: %s is not enabled for the application": "The provider: %s is not enabled for the application",
-    "Unauthorized operation": "Unauthorized operation",
-    "Unknown authentication type (not password or provider), form = %s": "Unknown authentication type (not password or provider), form = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "UserCode Expired": "UserCode Expired",
-    "UserCode Invalid": "UserCode Invalid",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing",
-    "the application for user %s is not found": "the application for user %s is not found",
-    "the organization: %s is not found": "the organization: %s is not found"
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "A conta do provedor: %s e nome de usuário: %s (%s) já está vinculada a outra conta: %s (%s)",
+    "The application: %s does not exist": "O aplicativo: %s não existe",
+    "The login method: login with LDAP is not enabled for the application": "O método de login: login com LDAP não está ativado para a aplicação",
+    "The login method: login with SMS is not enabled for the application": "O método de login: login com SMS não está ativado para a aplicação",
+    "The login method: login with email is not enabled for the application": "O método de login: login com e-mail não está ativado para a aplicação",
+    "The login method: login with face is not enabled for the application": "O método de login: login com reconhecimento facial não está ativado para a aplicação",
+    "The login method: login with password is not enabled for the application": "O método de login: login com senha não está habilitado para o aplicativo",
+    "The organization: %s does not exist": "A organização: %s não existe",
+    "The provider: %s does not exist": "O provedor: %s não existe",
+    "The provider: %s is not enabled for the application": "O provedor: %s não está habilitado para o aplicativo",
+    "Unauthorized operation": "Operação não autorizada",
+    "Unknown authentication type (not password or provider), form = %s": "Tipo de autenticação desconhecido (não é senha ou provedor), formulário = %s",
+    "User's tag: %s is not listed in the application's tags": "A tag do usuário: %s não está listada nas tags da aplicação",
+    "UserCode Expired": "Código de usuário expirado",
+    "UserCode Invalid": "Código de usuário inválido",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "usuário pago %s não possui assinatura ativa ou pendente e a aplicação: %s não possui preço padrão",
+    "the application for user %s is not found": "a aplicação para o usuário %s não foi encontrada",
+    "the organization: %s is not found": "a organização: %s não foi encontrada"
   },
   "cas": {
-    "Service %s and %s do not match": "Service %s and %s do not match"
+    "Service %s and %s do not match": "O serviço %s e %s não correspondem"
   },
   "check": {
-    "%s does not meet the CIDR format requirements: %s": "%s does not meet the CIDR format requirements: %s",
-    "Affiliation cannot be blank": "Affiliation cannot be blank",
-    "CIDR for IP: %s should not be empty": "CIDR for IP: %s should not be empty",
-    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
-    "DisplayName cannot be blank": "DisplayName cannot be blank",
-    "DisplayName is not valid real name": "DisplayName is not valid real name",
-    "Email already exists": "Email already exists",
-    "Email cannot be empty": "Email cannot be empty",
-    "Email is invalid": "Email is invalid",
-    "Empty username.": "Empty username.",
-    "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
-    "Face data mismatch": "Face data mismatch",
-    "Failed to parse client IP: %s": "Failed to parse client IP: %s",
-    "FirstName cannot be blank": "FirstName cannot be blank",
-    "Invitation code cannot be blank": "Invitation code cannot be blank",
-    "Invitation code exhausted": "Invitation code exhausted",
-    "Invitation code is invalid": "Invitation code is invalid",
-    "Invitation code suspended": "Invitation code suspended",
-    "LDAP user name or password incorrect": "LDAP user name or password incorrect",
-    "LastName cannot be blank": "LastName cannot be blank",
-    "Multiple accounts with same uid, please check your ldap server": "Multiple accounts with same uid, please check your ldap server",
-    "Organization does not exist": "Organization does not exist",
-    "Password cannot be empty": "Password cannot be empty",
-    "Phone already exists": "Phone already exists",
-    "Phone cannot be empty": "Phone cannot be empty",
-    "Phone number is invalid": "Phone number is invalid",
-    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
-    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
-    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
-    "Session outdated, please login again": "Session outdated, please login again",
-    "The invitation code has already been used": "The invitation code has already been used",
-    "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
-    "Username already exists": "Username already exists",
-    "Username cannot be an email address": "Username cannot be an email address",
-    "Username cannot contain white spaces": "Username cannot contain white spaces",
+    "%s does not meet the CIDR format requirements: %s": "%s não atende aos requisitos de formato CIDR: %s",
+    "Affiliation cannot be blank": "A filiação não pode estar em branco",
+    "CIDR for IP: %s should not be empty": "CIDR para IP: %s não deve estar vazio",
+    "Default code does not match the code's matching rules": "O código padrão não corresponde às regras de correspondência do código",
+    "DisplayName cannot be blank": "O nome de exibição não pode estar em branco",
+    "DisplayName is not valid real name": "O nome de exibição não é um nome real válido",
+    "Email already exists": "O e-mail já existe",
+    "Email cannot be empty": "O e-mail não pode estar vazio",
+    "Email is invalid": "O e-mail é inválido",
+    "Empty username.": "Nome de usuário vazio.",
+    "Face data does not exist, cannot log in": "Dados faciais não existem, não é possível fazer login",
+    "Face data mismatch": "Incompatibilidade de dados faciais",
+    "Failed to parse client IP: %s": "Falha ao analisar IP do cliente: %s",
+    "FirstName cannot be blank": "O primeiro nome não pode estar em branco",
+    "Invitation code cannot be blank": "O código de convite não pode estar em branco",
+    "Invitation code exhausted": "Código de convite esgotado",
+    "Invitation code is invalid": "Código de convite inválido",
+    "Invitation code suspended": "Código de convite suspenso",
+    "LDAP user name or password incorrect": "Nome de usuário ou senha LDAP incorretos",
+    "LastName cannot be blank": "O sobrenome não pode estar em branco",
+    "Multiple accounts with same uid, please check your ldap server": "Múltiplas contas com o mesmo uid, verifique seu servidor LDAP",
+    "Organization does not exist": "A organização não existe",
+    "Password cannot be empty": "A senha não pode estar vazia",
+    "Phone already exists": "O telefone já existe",
+    "Phone cannot be empty": "O telefone não pode estar vazio",
+    "Phone number is invalid": "O número de telefone é inválido",
+    "Please register using the email corresponding to the invitation code": "Por favor, registre-se usando o e-mail correspondente ao código de convite",
+    "Please register using the phone  corresponding to the invitation code": "Por favor, registre-se usando o telefone correspondente ao código de convite",
+    "Please register using the username corresponding to the invitation code": "Por favor, registre-se usando o nome de usuário correspondente ao código de convite",
+    "Session outdated, please login again": "Sessão expirada, faça login novamente",
+    "The invitation code has already been used": "O código de convite já foi utilizado",
+    "The user is forbidden to sign in, please contact the administrator": "O usuário está proibido de entrar, entre em contato com o administrador",
+    "The user: %s doesn't exist in LDAP server": "O usuário: %s não existe no servidor LDAP",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "O nome de usuário pode conter apenas caracteres alfanuméricos, sublinhados ou hífens, não pode ter hífens ou sublinhados consecutivos e não pode começar ou terminar com hífen ou sublinhado.",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "O valor \\\"%s\\\" para o campo de conta \\\"%s\\\" não corresponde à expressão regular do item de conta",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "O valor \\\"%s\\\" para o campo de registro \\\"%s\\\" não corresponde à expressão regular do item de registro da aplicação \\\"%s\\\"",
+    "Username already exists": "O nome de usuário já existe",
+    "Username cannot be an email address": "O nome de usuário não pode ser um endereço de e-mail",
+    "Username cannot contain white spaces": "O nome de usuário não pode conter espaços em branco",
     "Username cannot start with a digit": "O nome de usuário não pode começar com um dígito",
     "Username is too long (maximum is 255 characters).": "Nome de usuário é muito longo (máximo é 255 caracteres).",
     "Username must have at least 2 characters": "Nome de usuário deve ter pelo menos 2 caracteres",
-    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "You have entered the wrong password or code too many times, please wait for %d minutes and try again",
-    "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
-    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
-    "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "O nome de usuário suporta formato de e-mail. Além disso, o nome de usuário pode conter apenas caracteres alfanuméricos, sublinhados ou hífens, não pode ter hífens ou sublinhados consecutivos e não pode começar ou terminar com hífen ou sublinhado. Preste atenção também ao formato de e-mail.",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Você digitou a senha ou o código incorretos muitas vezes, aguarde %d minutos e tente novamente",
+    "Your IP address: %s has been banned according to the configuration of: ": "Seu endereço IP: %s foi banido de acordo com a configuração de: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Sua senha expirou. Por favor, redefina sua senha clicando em \\\"Esqueci a senha\\\"",
+    "Your region is not allow to signup by phone": "Sua região não permite cadastro por telefone",
     "password or code is incorrect": "senha ou código incorreto",
-    "password or code is incorrect, you have %s remaining chances": "password or code is incorrect, you have %s remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "password or code is incorrect, you have %s remaining chances": "senha ou código está incorreto, você tem %s chances restantes",
+    "unsupported password type: %s": "tipo de senha não suportado: %s"
   },
   "enforcer": {
-    "the adapter: %s is not found": "the adapter: %s is not found"
+    "the adapter: %s is not found": "o adaptador: %s não foi encontrado"
   },
   "general": {
-    "Failed to import groups": "Failed to import groups",
+    "Failed to import groups": "Falha ao importar grupos",
     "Failed to import users": "Falha ao importar usuários",
-    "Missing parameter": "Missing parameter",
-    "Only admin user can specify user": "Only admin user can specify user",
-    "Please login first": "Please login first",
-    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
-    "The user: %s doesn't exist": "The user: %s doesn't exist",
-    "Wrong userId": "Wrong userId",
-    "don't support captchaProvider: ": "don't support captchaProvider: ",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
-    "this operation requires administrator to perform": "this operation requires administrator to perform"
+    "Missing parameter": "Parâmetro faltante",
+    "Only admin user can specify user": "Apenas usuário administrador pode especificar usuário",
+    "Please login first": "Faça login primeiro",
+    "The organization: %s should have one application at least": "A organização: %s deve ter pelo menos uma aplicação",
+    "The user: %s doesn't exist": "O usuário: %s não existe",
+    "Wrong userId": "ID de usuário incorreto",
+    "don't support captchaProvider: ": "não suporta captchaProvider: ",
+    "this operation is not allowed in demo mode": "esta operação não é permitida no modo de demonstração",
+    "this operation requires administrator to perform": "esta operação requer um administrador para executar"
   },
   "ldap": {
-    "Ldap server exist": "Ldap server exist"
+    "Ldap server exist": "Servidor LDAP existe"
   },
   "link": {
-    "Please link first": "Please link first",
-    "This application has no providers": "This application has no providers",
-    "This application has no providers of type": "This application has no providers of type",
-    "This provider can't be unlinked": "This provider can't be unlinked",
-    "You are not the global admin, you can't unlink other users": "You are not the global admin, you can't unlink other users",
-    "You can't unlink yourself, you are not a member of any application": "You can't unlink yourself, you are not a member of any application"
+    "Please link first": "Vincule primeiro",
+    "This application has no providers": "Este aplicativo não tem provedores",
+    "This application has no providers of type": "Este aplicativo não tem provedores do tipo",
+    "This provider can't be unlinked": "Este provedor não pode ser desvinculado",
+    "You are not the global admin, you can't unlink other users": "Você não é o administrador global, não pode desvincular outros usuários",
+    "You can't unlink yourself, you are not a member of any application": "Você não pode se desvincular, não é membro de nenhum aplicativo"
   },
   "organization": {
-    "Only admin can modify the %s.": "Only admin can modify the %s.",
+    "Only admin can modify the %s.": "Apenas o administrador pode modificar o %s.",
     "The %s is immutable.": "O %s é imutável.",
     "Unknown modify rule %s.": "Regra de modificação %s desconhecida.",
-    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option."
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "nte desativada. Observe que todos os usuários na organização 'built-in' são administradores globais no Casdoor. Consulte a documentação: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Se ainda desejar criar um usuário para a organização 'built-in', acesse a página de configurações da organização e habilite a opção 'Possui consentimento de privilégios'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
+    "The permission: \\\"%s\\\" doesn't exist": "A permissão: \\\"%s\\\" não existe"
   },
   "provider": {
     "Invalid application id": "Id do aplicativo inválido",
@@ -130,28 +130,28 @@
   },
   "resource": {
     "User is nil for tag: avatar": "Usuário é nulo para tag: avatar",
-    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Username or fullFilePath is empty: username = %s, fullFilePath = %s"
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Nome de usuário ou fullFilePath está vazio: username = %s, fullFilePath = %s"
   },
   "saml": {
-    "Application %s not found": "Application %s not found"
+    "Application %s not found": "Aplicativo %s não encontrado"
   },
   "saml_sp": {
-    "provider %s's category is not SAML": "provider %s's category is not SAML"
+    "provider %s's category is not SAML": "A categoria do provedor %s não é SAML"
   },
   "service": {
-    "Empty parameters for emailForm: %v": "Empty parameters for emailForm: %v",
-    "Invalid Email receivers: %s": "Invalid Email receivers: %s",
-    "Invalid phone receivers: %s": "Invalid phone receivers: %s"
+    "Empty parameters for emailForm: %v": "Parâmetros vazios para emailForm: %v",
+    "Invalid Email receivers: %s": "Destinatários de e-mail inválidos: %s",
+    "Invalid phone receivers: %s": "Destinatários de telefone inválidos: %s"
   },
   "storage": {
-    "The objectKey: %s is not allowed": "The objectKey: %s is not allowed",
-    "The provider type: %s is not supported": "The provider type: %s is not supported"
+    "The objectKey: %s is not allowed": "O objectKey: %s não é permitido",
+    "The provider type: %s is not supported": "O tipo de provedor: %s não é suportado"
   },
   "subscription": {
-    "Error": "Error"
+    "Error": "Erro"
   },
   "token": {
-    "Grant_type: %s is not supported in this application": "Grant_type: %s is not supported in this application",
+    "Grant_type: %s is not supported in this application": "Grant_type: %s não é suportado neste aplicativo",
     "Invalid application or wrong clientSecret": "Aplicativo inválido ou clientSecret errado",
     "Invalid client_id": "client_id inválido",
     "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "URI de redirecionamento: %s não existe na lista de URI de redirecionamento permitida",
@@ -159,32 +159,33 @@
   },
   "user": {
     "Display name cannot be empty": "Nome de exibição não pode ser vazio",
-    "MFA email is enabled but email is empty": "MFA email is enabled but email is empty",
-    "MFA phone is enabled but phone number is empty": "MFA phone is enabled but phone number is empty",
-    "New password cannot contain blank space.": "New password cannot contain blank space.",
-    "the user's owner and name should not be empty": "the user's owner and name should not be empty"
+    "MFA email is enabled but email is empty": "MFA por e-mail está ativado, mas o e-mail está vazio",
+    "MFA phone is enabled but phone number is empty": "MFA por telefone está ativado, mas o número de telefone está vazio",
+    "New password cannot contain blank space.": "A nova senha não pode conter espaço em branco.",
+    "the user's owner and name should not be empty": "o proprietário e o nome do usuário não devem estar vazios"
   },
   "util": {
-    "No application is found for userId: %s": "No application is found for userId: %s",
-    "No provider for category: %s is found for application: %s": "No provider for category: %s is found for application: %s",
-    "The provider: %s is not found": "The provider: %s is not found"
+    "No application is found for userId: %s": "Nenhum aplicativo encontrado para userId: %s",
+    "No provider for category: %s is found for application: %s": "Nenhum provedor para categoria: %s encontrado para aplicativo: %s",
+    "The provider: %s is not found": "O provedor: %s não foi encontrado"
   },
   "verification": {
-    "Invalid captcha provider.": "Invalid captcha provider.",
-    "Phone number is invalid in your region %s": "Phone number is invalid in your region %s",
-    "The verification code has already been used!": "The verification code has already been used!",
-    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "Turing test failed.": "Turing test failed.",
-    "Unable to get the email modify rule.": "Unable to get the email modify rule.",
-    "Unable to get the phone modify rule.": "Unable to get the phone modify rule.",
-    "Unknown type": "Unknown type",
-    "Wrong verification code!": "Wrong verification code!",
-    "You should verify your code in %d min!": "You should verify your code in %d min!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
-    "the user does not exist, please sign up first": "the user does not exist, please sign up first"
+    "Invalid captcha provider.": "Provedor de captcha inválido.",
+    "Phone number is invalid in your region %s": "Número de telefone é inválido em sua região %s",
+    "The verification code has already been used!": "O código de verificação já foi utilizado!",
+    "The verification code has not been sent yet!": "O código de verificação ainda não foi enviado!",
+    "Turing test failed.": "Teste de Turing falhou.",
+    "Unable to get the email modify rule.": "Não foi possível obter a regra de modificação de e-mail.",
+    "Unable to get the phone modify rule.": "Não foi possível obter a regra de modificação de telefone.",
+    "Unknown type": "Tipo desconhecido",
+    "Wrong verification code!": "Código de verificação incorreto!",
+    "You should verify your code in %d min!": "Você deve verificar seu código em %d min!",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "por favor, adicione um provedor de SMS à lista \\\"Providers\\\" da aplicação: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "por favor, adicione um provedor de e-mail à lista \\\"Providers\\\" da aplicação: %s",
+    "the user does not exist, please sign up first": "o usuário não existe, cadastre-se primeiro"
   },
   "webauthn": {
-    "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
+    "Found no credentials for this user": "Found no credentials for this user",
+    "Please call WebAuthnSigninBegin first": "Por favor, chame WebAuthnSigninBegin primeiro"
   }
 }

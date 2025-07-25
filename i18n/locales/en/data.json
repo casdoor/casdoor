@@ -185,6 +185,7 @@
     "the user does not exist, please sign up first": "the user does not exist, please sign up first"
   },
   "webauthn": {
+    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
   }
 }

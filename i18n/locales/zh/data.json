@@ -27,8 +27,8 @@
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",
-    "UserCode Expired": "UserCode Expired",
-    "UserCode Invalid": "UserCode Invalid",
+    "UserCode Expired": "用户代码已过期",
+    "UserCode Invalid": "用户代码无效",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s 没有激活或正在等待订阅并且应用: %s 没有默认值",
     "the application for user %s is not found": "未找到用户 %s 的应用程序",
     "the organization: %s is not found": "组织: %s 不存在"
@@ -185,6 +185,7 @@
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
+    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
   }
 }
