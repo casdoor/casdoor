@@ -28,7 +28,8 @@ func GetDirectResources(owner string, user string, provider *Provider, prefix st
 	}
 
 	res := []*Resource{}
-	objects, err := storageProvider.List(prefix)
+	fullPathPrefix := util.UrlJoin(provider.PathPrefix, prefix)
+	objects, err := storageProvider.List(fullPathPrefix)
 	for _, obj := range objects {
 		resource := &Resource{
 			Owner:       owner,
