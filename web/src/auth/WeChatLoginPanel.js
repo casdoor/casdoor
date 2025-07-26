@@ -157,38 +157,26 @@ class WeChatLoginPanel extends React.Component {
   }
 
   renderFormContent() {
-    const {loginWidth = 320, formProps, children} = this.props;
+    const {loginWidth = 320, formProps, children, application} = this.props;
     return (
       <Form
         name="normal_login"
-        initialValues={formProps.initialValues}
-        onFinish={formProps.onFinish}
+        initialValues={{
+          ...formProps.initialValues,
+          application: application.name,
+          organization: application.organization,
+        }}
+        onFinish={(values) => {
+          formProps.onFinish({
+            ...values,
+            application: application.name,
+            organization: application.organization,
+          });
+        }}
         style={{width: `${loginWidth}px`, paddingTop: "20px", marginLeft: 70}}
         size="large"
         ref={formProps.formRef}
       >
-        <Form.Item
-          hidden={true}
-          name="application"
-          rules={[
-            {
-              required: true,
-              message: formProps.appMsg || "Please input your application!",
-            },
-          ]}
-        >
-        </Form.Item>
-        <Form.Item
-          hidden={true}
-          name="organization"
-          rules={[
-            {
-              required: true,
-              message: formProps.orgMsg || "Please input your organization!",
-            },
-          ]}
-        >
-        </Form.Item>
         {children}
       </Form>
     );
