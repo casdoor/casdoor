@@ -807,7 +807,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		columns = append(columns, "deleted_time")
 	}
 
-	if util.ContainsString(columns, "groups") {
+	if util.InSlice(columns, "groups") {
 		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
 		if err != nil {
 			return false, err
