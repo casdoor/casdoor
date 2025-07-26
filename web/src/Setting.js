@@ -1816,3 +1816,24 @@ export function renderLoginPanel(application, getInnerComponent, componentThis) 
     </div>
   );
 }
+
+export function createFormAndSubmit(url, params) {
+  const form = document.createElement("form");
+  form.method = "post";
+  form.action = url;
+
+  for (const k in params) {
+    if (!params[k]) {
+      continue;
+    }
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = k;
+    input.value = params[k];
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => {form.remove();}, 500);
+}

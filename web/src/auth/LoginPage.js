@@ -37,7 +37,7 @@ import RedirectForm from "../common/RedirectForm";
 import {RequiredMfa} from "./mfa/MfaAuthVerifyForm";
 import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
-import {goToLink} from "../Setting";
+import {createFormAndSubmit, goToLink} from "../Setting";
 import WeChatLoginPanel from "./WeChatLoginPanel";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
@@ -503,7 +503,8 @@ class LoginPage extends React.Component {
         .then((res) => {
           const loginHandler = (res) => {
             const responseType = values["type"];
-
+            const responseTypes = responseType.split(" ");
+            const responseMode = oAuthParams?.responseMode || "query";
             if (responseType === "login") {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
@@ -518,14 +519,24 @@ class LoginPage extends React.Component {
               this.setState({
                 userCodeStatus: "success",
               });
-            } else if (responseType === "token" || responseType === "id_token") {
+            } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", window.location.pathname + window.location.search);
                 Setting.goToLinkSoft(this, `/forget/${this.state.applicationName}`);
               }
               const amendatoryResponseType = responseType === "token" ? "access_token" : responseType;
               const accessToken = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+              if (responseMode === "form_post") {
+                const params = {
+                  token: responseTypes.includes("token") ? res.data : null,
+                  id_token: responseTypes.includes("id_token") ? res.data : null,
+                  token_type: "bearer",
+                  state: oAuthParams?.state,
+                };
+                createFormAndSubmit(oAuthParams?.redirectUri, params);
+              } else {
+                Setting.goToLink(`${oAuthParams.redirectUri}#${amendatoryResponseType}=${accessToken}&state=${oAuthParams.state}&token_type=bearer`);
+              }
             } else if (responseType === "saml") {
               if (res.data === RequiredMfa) {
                 this.props.onLoginSuccess(window.location.href);

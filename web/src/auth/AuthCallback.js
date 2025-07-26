@@ -21,7 +21,7 @@ import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import RedirectForm from "../common/RedirectForm";
-import {renderLoginPanel} from "../Setting";
+import {createFormAndSubmit, renderLoginPanel} from "../Setting";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -33,30 +33,6 @@ class AuthCallback extends React.Component {
       relayState: "",
       redirectUrl: "",
     };
-  }
-
-  submitFormPost(redirectUri, code, state) {
-    const form = document.createElement("form");
-    form.method = "post";
-    form.action = redirectUri;
-
-    const codeInput = document.createElement("input");
-    codeInput.type = "hidden";
-    codeInput.name = "code";
-    codeInput.value = code;
-    form.appendChild(codeInput);
-
-    if (state) {
-      const stateInput = document.createElement("input");
-      stateInput.type = "hidden";
-      stateInput.name = "state";
-      stateInput.value = state;
-      form.appendChild(stateInput);
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-    setTimeout(() => form.remove(), 1000);
   }
 
   getInnerParams() {
@@ -189,6 +165,7 @@ class AuthCallback extends React.Component {
       .then((res) => {
         if (res.status === "ok") {
           const responseType = this.getResponseType();
+          const responseTypes = responseType.split(" ");
           const handleLogin = (res) => {
             if (responseType === "login") {
               if (res.data3) {
@@ -208,20 +185,35 @@ class AuthCallback extends React.Component {
               }
 
               if (responseMode === "form_post") {
-                this.submitFormPost(oAuthParams?.redirectUri, res.data, oAuthParams?.state);
+                const params = {
+                  code: res.data,
+                  state: oAuthParams?.state,
+                };
+                createFormAndSubmit(oAuthParams?.redirectUri, params);
               } else {
                 const code = res.data;
                 Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
               }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
-            } else if (responseType === "token" || responseType === "id_token") {
+            } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
               if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-              const token = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+
+              if (responseMode === "form_post") {
+                const params = {
+                  token: responseTypes.includes("token") ? res.data : null,
+                  id_token: responseTypes.includes("id_token") ? res.data : null,
+                  token_type: "bearer",
+                  state: oAuthParams?.state,
+                };
+                createFormAndSubmit(oAuthParams?.redirectUri, params);
+              } else {
+                const token = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+              }
             } else if (responseType === "link") {
               let from = innerParams.get("from");
               const oauth = innerParams.get("oauth");
