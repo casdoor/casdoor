@@ -39,7 +39,6 @@ import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
 import {goToLink} from "../Setting";
 import WeChatLoginPanel from "./WeChatLoginPanel";
-import {WeChatLoginWithForm} from "./WeChatLoginPanel";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -894,7 +893,7 @@ class LoginPage extends React.Component {
         return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
       }
       if (wechatLoginPage && this.state.loginMethod === "password") {
-        return (<WeChatLoginWithForm application={application} loginWidth={loginWidth} formProps={{onFinish: (values) => {this.onFinish(values);}, username: Conf.ShowGithubCorner ? "admin" : "", password: Conf.ShowGithubCorner ? "123" : "", formRef: this.form, appMsg: i18next.t("application:Please input your application!"), orgMsg: i18next.t("application:Please input your organization!")}}>{application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))}</WeChatLoginWithForm>);
+        return (<WeChatLoginPanel application={application} mode="loginPage" loginWidth={loginWidth} formProps={{initialValues: {organization: application.organization, application: application.name, autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true), username: Conf.ShowGithubCorner ? "admin" : "", password: Conf.ShowGithubCorner ? "123" : ""}, onFinish: (values) => {this.onFinish(values);}, formRef: this.form, appMsg: i18next.t("application:Please input your application!"), orgMsg: i18next.t("application:Please input your organization!")}} renderFormItem={this.renderFormItem.bind(this)} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)}>{application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))}</WeChatLoginPanel>);
       }
 
       return (
