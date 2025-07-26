@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -718,6 +719,9 @@ func AddApplication(application *Application) (bool, error) {
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
 	}
+	if application.CreatedTime == ""{
+		application.CreatedTime = time.Now().Format("2006-01-02 15:04:05")
+	}
 
 	app, err := GetApplicationByClientId(application.ClientId)
 	if err != nil {
@@ -749,12 +753,28 @@ func deleteApplication(application *Application) (bool, error) {
 	return affected != 0, nil
 }
 
-func DeleteApplication(application *Application) (bool, error) {
-	if application.Name == "app-built-in" {
-		return false, nil
+func deleteApplications(applications []*Application) (bool, error) {
+	totalAffected := int64(0)
+	for _, application := range applications {
+		affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
+		if err != nil {
+			return false, err
+		}
+		totalAffected += affected
 	}
 
-	return deleteApplication(application)
+	return totalAffected > 0, nil
+}
+
+func DeleteApplication(applications []*Application) (bool, error) {
+	// 禁止删除内置应用
+	for _, application := range applications {
+		if application.Name == "app-built-in" {
+			return false, nil
+		}
+	}
+
+	return deleteApplications(applications)
 }
 
 func (application *Application) GetId() string {
@@ -985,16 +1005,16 @@ func GetLoginInfo(application *Application) *LoginInfo {
 	return info
 }
 
-// ApplicationInfo 
+// ApplicationInfo
 // swagger:model
 type ApplicationInfo struct {
-	Name         string   `json:"name" example:"app-casdoor" description:"应用唯一标识"`
-	DisplayName  string   `json:"displayName" example:"Casdoor" description:"应用名称"`
-	CreatedTime  string   `json:"createdTime" example:"2022-01-01T12:00:00Z" description:"创建时间"`
-	Logo         string   `json:"logo" example:"https://cdn.casdoor.com/logo.png" description:"应用Logo"`
-	HomepageUrl  string   `json:"homepageUrl" example:"https://casdoor.org" description:"应用首页URL"`
-	Description  string   `json:"description" example:"A great application" description:"应用描述"`
-	Organization string   `json:"organization" example:"built-in" description:"所属组织"`
+	Name         string `json:"name" example:"app-casdoor" description:"应用唯一标识"`
+	DisplayName  string `json:"displayName" example:"Casdoor" description:"应用名称"`
+	CreatedTime  string `json:"createdTime" example:"2022-01-01T12:00:00Z" description:"创建时间"`
+	Logo         string `json:"logo" example:"https://cdn.casdoor.com/logo.png" description:"应用Logo"`
+	HomepageUrl  string `json:"homepageUrl" example:"https://casdoor.org" description:"应用首页URL"`
+	Description  string `json:"description" example:"A great application" description:"应用描述"`
+	Organization string `json:"organization" example:"built-in" description:"所属组织"`
 	// HeaderHtml            string          `json:"headerHtml"`
 	// Providers             []*ProviderItem `json:"providers"`       //身份提供商
 	Tags []string `json:"tags" example:"tag1,tag2" description:"应用标签"`
@@ -1036,8 +1056,31 @@ type ApplicationDetail struct {
 
 	// FailedSigninLimit      int `json:"failedSigninLimit"`
 	// FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
-	// todo 商城装修字段
 }
+
+type AddApplicationInfo struct {
+	DisplayName   string         `json:"displayName" example:"Casdoor" description:"应用名称"`
+	Tags          []string       `json:"tags" example:"tag1,tag2" description:"应用标签"`
+	Logo          string         `json:"logo" default:"" example:"https://cdn.casdoor.com/logo.png" description:"应用Logo"`
+	HomepageUrl   string         `json:"homepageUrl" default:"" example:"https://casdoor.org" description:"应用首页URL"`
+	Description   string         `json:"description" default:"" example:"A great application" description:"应用描述"`
+	Organization  string         `json:"organization" example:"built-in" validate:"default=built-in" description:"所属组织，非内置平台管理此字段无效"`
+	ExpireInHours int            `json:"expireInHours" default:"12" example:"168" validate:"default=168" description:"Token过期时间（小时）"`
+	SignupHtml    string         `json:"signupHtml" default:"" example:"<html>...</html>" description:"注册页面HTML"`
+	SigninHtml    string         `json:"signinHtml" default:"" example:"<html>...</html>" description:"登录页面HTML"`
+	ThemeData     map[string]any `json:"themeData" default:"" description:"主题数据"`
+	FooterHtml    string         `json:"footerHtml" default:"" example:"<p>Footer</p>" description:"页脚HTML"`
+	FormCss       string         `json:"formCss" default:"" example:"body { color: red; }" description:"表单CSS"`
+	FormCssMobile string         `json:"formCssMobile" default:"" example:"body { color: blue; }" description:"移动端表单CSS"`
+	FormOffset    int            `json:"formOffset" default:"" example:"2" validate:"default=2" description:"表单偏移量"`
+	FormSideHtml  string         `json:"formSideHtml" default:"" example:"<div>Side</div>" description:"表单侧边HTML"`
+}
+
+type DeleteApplicationParams struct {
+	Applications []string `json:"applications" description:"需要商城应用 name 列表"`			
+}
+	
+
 
 func GetApplicationInfos(application []*Application) []*ApplicationInfo {
 	var info []*ApplicationInfo

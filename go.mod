@@ -42,6 +42,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
 	github.com/markbates/goth v1.79.0
+	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nyaruka/phonenumbers v1.1.5
 	github.com/pquerna/otp v1.4.0
@@ -63,10 +64,10 @@ require (
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
 	github.com/zdzh/errorx v1.0.3
-	golang.org/x/crypto v0.32.0
+	golang.org/x/crypto v0.33.0
 	golang.org/x/net v0.34.0
 	golang.org/x/oauth2 v0.17.0
-	golang.org/x/text v0.21.0
+	golang.org/x/text v0.22.0
 	google.golang.org/api v0.150.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
@@ -128,10 +129,14 @@ require (
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.6.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.0 // indirect
 	github.com/go-lark/lark v1.9.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.27.0 // indirect
 	github.com/go-webauthn/x v0.1.9 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -158,6 +163,7 @@ require (
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
@@ -222,8 +228,8 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
 	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect

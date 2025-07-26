@@ -44,6 +44,16 @@
 					"label": "应用授权"
 				}
 			]
+		},
+		{
+			"path": "controllers/util.go",
+			"bookmarks": [
+				{
+					"line": 409,
+					"column": 0,
+					"label": "获取organization"
+				}
+			]
 		}
 	]
 }

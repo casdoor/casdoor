@@ -30,7 +30,8 @@ const (
 	AuthenticationExpired = 1000200009
 	RequestTimeout        = 1000100001
 
-	InvalidParam = 1000600001
+	InvalidParam    = 1000600001
+	NotFoundAppCode = 1000600101
 )
 
 func init() {
@@ -47,6 +48,7 @@ var (
 	AuthenticationExpiredErr = errcode.WithCode(errors.New("认证已过期"), AuthenticationExpired)
 	UnauthorizedErr          = errcode.WithCode(errors.New("未授权"), Unauthorized)
 	RequestTimeoutErr        = errcode.WithCode(errors.New("请求超时"), RequestTimeout)
+	NotFoundAppErr           = errcode.WithCode(errors.New("未找到应用"), NotFoundAppCode)
 )
 
 var (

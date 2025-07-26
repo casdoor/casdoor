@@ -324,12 +324,16 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	return provider, nil
 }
 
-func checkQuotaForApplication(count int) error {
+func checkQuotaForApplication() error {
 	quota := conf.GetConfigQuota().Application
 	if quota == -1 {
 		return nil
 	}
-	if count >= quota {
+	count, err := object.GetApplicationCount("", "", "")
+	if err != nil {
+		return err
+	}
+	if count >= int64(quota) {
 		return fmt.Errorf("application quota is exceeded")
 	}
 	return nil

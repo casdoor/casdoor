@@ -75,6 +75,27 @@ paths:
       - Application API
       description: get all applications
       operationId: ApiController.GetApplications
+      parameters:
+      - in: query
+        name: pageSize
+        description: Page Size
+        type: integer
+      - in: query
+        name: p
+        description: Page Number
+        type: integer
+      - in: query
+        name: query
+        description: Field
+        type: string
+      - in: query
+        name: sortField
+        description: Sort Field
+        type: string
+      - in: query
+        name: sortOrder
+        description: 'Sort Order: asc,desc'
+        type: string
       responses:
         "200":
           description: The Response object
@@ -93,7 +114,7 @@ paths:
         description: The details of the application
         required: true
         schema:
-          $ref: '#/definitions/object.Application'
+          $ref: '#/definitions/object.AddApplicationInfo'
       responses:
         "200":
           description: The Response object
@@ -107,10 +128,33 @@ paths:
       parameters:
       - in: body
         name: body
+        description: application.name 列表
+        required: true
+        schema:
+          $ref: '#/definitions/object.DeleteApplicationParams'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /coral/api/applications/{appId}:
+    put:
+      tags:
+      - Application API
+      description: update an application
+      operationId: ApiController.UpdateApplication
+      parameters:
+      - in: path
+        name: appId
+        description: The id ( owner/name ) of the application
+        required: true
+        type: string
+      - in: body
+        name: body
         description: The details of the application
         required: true
         schema:
-          $ref: '#/definitions/object.Application'
+          $ref: '#/definitions/object.AddApplicationInfo'
       responses:
         "200":
           description: The Response object
@@ -168,42 +212,6 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Group'
-  /coral/api/get-organization-applications:
-    get:
-      tags:
-      - Application API
-      description: get the detail of the organization's application
-      operationId: ApiController.GetOrganizationApplications
-      parameters:
-      - in: query
-        name: organization
-        description: The organization name
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/object.Application'
-  /coral/api/get-user-application:
-    get:
-      tags:
-      - Application API
-      description: get the detail of the user's application
-      operationId: ApiController.GetUserApplication
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of the user
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/object.Application'
   /coral/api/login:
     post:
       tags:
@@ -309,10 +317,10 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  197340.<nil>.string:
+  199806.<nil>.string:
     title: string
     type: object
-  197398.string.string:
+  199864.string.string:
     title: string
     type: object
   casbin.Enforcer:
@@ -489,6 +497,72 @@ definitions:
         type: boolean
       user:
         type: string
+  object.AddApplicationInfo:
+    title: AddApplicationInfo
+    type: object
+    properties:
+      description:
+        description: 应用描述
+        type: string
+        example: A great application
+      displayName:
+        description: 应用名称
+        type: string
+        example: Casdoor
+      expireInHours:
+        description: Token过期时间（小时）
+        type: integer
+        example: 168
+        format: int64
+      footerHtml:
+        description: 页脚HTML
+        type: string
+        example: <p>Footer</p>
+      formCss:
+        description: 表单CSS
+        type: string
+        example: 'body { color: red; }'
+      formCssMobile:
+        description: 移动端表单CSS
+        type: string
+        example: 'body { color: blue; }'
+      formOffset:
+        description: 表单偏移量
+        type: integer
+        example: 2
+        format: int64
+      formSideHtml:
+        description: 表单侧边HTML
+        type: string
+        example: <div>Side</div>
+      homepageUrl:
+        description: 应用首页URL
+        type: string
+        example: https://casdoor.org
+      logo:
+        description: 应用Logo
+        type: string
+        example: https://cdn.casdoor.com/logo.png
+      organization:
+        description: 所属组织，非内置平台管理此字段无效
+        type: string
+        example: built-in
+      signinHtml:
+        description: 登录页面HTML
+        type: string
+        example: <html>...</html>
+      signupHtml:
+        description: 注册页面HTML
+        type: string
+        example: <html>...</html>
+      tags:
+        description: 应用标签
+        type: array
+        items:
+          type: string
+      themeData:
+        $ref: '#/definitions/object.any'
+        description: 主题数据
   object.AddUseParams:
     title: AddUseParams
     type: object
@@ -803,6 +877,15 @@ definitions:
         type: string
       type:
         type: string
+  object.DeleteApplicationParams:
+    title: DeleteApplicationParams
+    type: object
+    properties:
+      applications:
+        description: 需要商城应用 name 列表
+        type: array
+        items:
+          type: string
   object.DeleteUserParams:
     title: DeleteUserParams
     type: object
@@ -2450,13 +2533,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/197340.<nil>.string'
+        $ref: '#/definitions/199806.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/197398.string.string'
+        $ref: '#/definitions/199864.string.string'
       subject:
         type: string
   object.WebFingerLink:
