@@ -13,7 +13,7 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-vendor/
+vendor/go get github.com/joho/godotenv
 bin/
 
 .idea/
@@ -36,3 +36,4 @@ server
 !manifests/casdoor
 
 init_data.json
+.env
