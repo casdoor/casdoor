@@ -886,6 +886,18 @@ class LoginPage extends React.Component {
     }
 
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
+    const wechatLoginPage = application.signinMethods?.some(method => method.name === "WeChat" && method.rule === "Login Page");
+    const formProps = {
+      initialValues: {
+        autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
+        username: Conf.ShowGithubCorner ? "admin" : "",
+        password: Conf.ShowGithubCorner ? "123" : "",
+      },
+      onFinish: (values) => {
+        this.onFinish(values);
+      },
+      formRef: this.form,
+    };
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -896,8 +908,11 @@ class LoginPage extends React.Component {
         loginWidth += 10;
       }
 
-      if (this.state.loginMethod === "wechat") {
+      if (this.state.loginMethod === "wechatTab") {
         return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
+      }
+      if (wechatLoginPage && this.state.loginMethod === "password") {
+        return (<WeChatLoginPanel application={application} mode="loginPage" loginWidth={loginWidth} formProps={formProps} renderFormItem={this.renderFormItem.bind(this)} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)}>{application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))}</WeChatLoginPanel>);
       }
 
       return (
@@ -1240,11 +1255,12 @@ class LoginPage extends React.Component {
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
-      [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],
+      [generateItemKey("WeChat", "Tab"), {label: i18next.t("login:WeChat"), key: "wechatTab"}],
+      [generateItemKey("WeChat", "Login Page"), {label: i18next.t("login:WeChat"), key: "wechatLoginPage"}],
     ]);
 
     application?.signinMethods?.forEach((signinMethod) => {
-      if (signinMethod.rule === "Hide password") {
+      if (signinMethod.rule === "Hide password" || signinMethod.rule === "Login Page") {
         return;
       }
       const item = itemsMap.get(generateItemKey(signinMethod.name, signinMethod.rule));
