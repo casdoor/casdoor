@@ -17,6 +17,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -180,6 +181,32 @@ func (c *ApiController) GetPolicies() {
 	}
 
 	policies, err := object.GetPolicies(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(policies)
+}
+
+func (c *ApiController) GetFilteredPolicies() {
+	id := c.Input().Get("id")
+	ptype := c.Input().Get("ptype")
+	fieldIndexStr := c.Input().Get("fieldIndex")
+	fieldValuesStr := c.Input().Get("fieldValues")
+
+	if ptype == "" {
+		ptype = "p"
+	}
+
+	fieldIndex := util.ParseInt(fieldIndexStr)
+
+	var fieldValues []string
+	if fieldValuesStr != "" {
+		fieldValues = strings.Split(fieldValuesStr, ",")
+	}
+
+	policies, err := object.GetFilteredPolicies(id, ptype, fieldIndex, fieldValues...)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
