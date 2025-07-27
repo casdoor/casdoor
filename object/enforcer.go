@@ -212,7 +212,7 @@ func GetFilteredPolicies(id string, ptype string, fieldIndex int, fieldValues ..
 	}
 
 	var allRules [][]string
-	
+
 	if len(fieldValues) == 0 {
 		if ptype == "g" {
 			allRules = enforcer.GetFilteredGroupingPolicy(fieldIndex)

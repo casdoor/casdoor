@@ -274,6 +274,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: add policy
+      operationId: ApiController.AddPolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The policy to add
+        required: true
+        schema:
+          $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/add-pricing:
     post:
       tags:
@@ -1368,6 +1391,38 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Enforcer'
+  /api/get-filtered-policies:
+    get:
+      tags:
+      - Enforcer API
+      description: get filtered policies
+      operationId: ApiController.GetFilteredPolicies
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: query
+        name: ptype
+        description: Policy type, default is 'p'
+        type: string
+      - in: query
+        name: fieldIndex
+        description: Field index for filtering
+        type: integer
+        format: int64
+      - in: query
+        name: fieldValues
+        description: Field values for filtering, comma-separated
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/xormadapter.CasbinRule'
   /api/get-global-certs:
     get:
       tags:
@@ -1655,9 +1710,9 @@ paths:
   /api/get-payment:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payment
-      operationId: ApiController.GetPayment
+      operationId: ApiController.GetVerification
       parameters:
       - in: query
         name: id
@@ -1668,13 +1723,13 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Payment'
+            $ref: '#/definitions/object.Verification'
   /api/get-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments
-      operationId: ApiController.GetPayments
+      operationId: ApiController.GetVerifications
       parameters:
       - in: query
         name: owner
@@ -1687,7 +1742,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
   /api/get-permission:
     get:
       tags:
@@ -1796,6 +1851,29 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Plan'
+  /api/get-policies:
+    get:
+      tags:
+      - Enforcer API
+      description: get policies
+      operationId: ApiController.GetPolicies
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: query
+        name: adapterId
+        description: The adapter id
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/xormadapter.CasbinRule'
   /api/get-pricing:
     get:
       tags:
@@ -2375,9 +2453,9 @@ paths:
   /api/get-user-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments for a user
-      operationId: ApiController.GetUserPayments
+      operationId: ApiController.GetUserVerifications
       parameters:
       - in: query
         name: owner
@@ -2400,7 +2478,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
   /api/get-user-transactions:
     get:
       tags:
@@ -2831,6 +2909,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/remove-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: remove policy
+      operationId: ApiController.RemovePolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The policy to remove
+        required: true
+        schema:
+          $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/reset-email-or-phone:
     post:
       tags:
@@ -3317,6 +3418,31 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: update policy
+      operationId: ApiController.UpdatePolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Array containing old and new policy
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/update-pricing:
     post:
       tags:
@@ -3781,11 +3907,14 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  187813.<nil>.string:
+  187812.<nil>.string:
     title: string
     type: object
-  187871.string.string:
+  187870.string.string:
     title: string
+    type: object
+  Response:
+    title: Response
     type: object
   casbin.Enforcer:
     title: Enforcer
@@ -5763,13 +5892,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/187813.<nil>.string'
+        $ref: '#/definitions/187812.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/187871.string.string'
+        $ref: '#/definitions/187870.string.string'
       subject:
         type: string
   object.WebFingerLink:
@@ -5879,6 +6008,9 @@ definitions:
     type: object
   xormadapter.Adapter:
     title: Adapter
+    type: object
+  xormadapter.CasbinRule:
+    title: CasbinRule
     type: object
 securityDefinitions:
   AccessToken:
