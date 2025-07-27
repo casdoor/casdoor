@@ -103,11 +103,11 @@ func getFinalBinaryName(lang string) string {
 			return "casbin-rust-cli.exe"
 		}
 		return "casbin-rust-cli"
-	case "python":  
-		if runtime.GOOS == "windows" {  
-			return "casbin-python-cli.exe"  
-		}  
-		return "casbin-python-cli"  
+	case "python":
+		if runtime.GOOS == "windows" {
+			return "casbin-python-cli.exe"
+		}
+		return "casbin-python-cli"
 	default:
 		return ""
 	}
@@ -343,9 +343,9 @@ func downloadCLI() error {
 	}
 
 	repos := map[string]string{
-		"java": javaCliRepo,
-		"go":   goCliRepo,
-		"rust": rustCliRepo,
+		"java":   javaCliRepo,
+		"go":     goCliRepo,
+		"rust":   rustCliRepo,
 		"python": pythonCliRepo,
 	}
 
