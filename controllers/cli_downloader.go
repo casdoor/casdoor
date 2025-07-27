@@ -24,6 +24,7 @@ const (
 	javaCliRepo    = "https://api.github.com/repos/jcasbin/casbin-java-cli/releases/latest"
 	goCliRepo      = "https://api.github.com/repos/casbin/casbin-go-cli/releases/latest"
 	rustCliRepo    = "https://api.github.com/repos/casbin-rs/casbin-rust-cli/releases/latest"
+	pythonCliRepo  = "https://api.github.com/repos/casbin/casbin-python-cli/releases/latest"
 	downloadFolder = "bin"
 )
 
@@ -43,6 +44,7 @@ func getBinaryNames() map[string]string {
 		golang = "go"
 		java   = "java"
 		rust   = "rust"
+		python = "python"
 	)
 
 	arch := runtime.GOARCH
@@ -62,18 +64,21 @@ func getBinaryNames() map[string]string {
 			golang: fmt.Sprintf("casbin-go-cli_Windows_%s.zip", archNames.goArch),
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", archNames.rustArch),
+			python: fmt.Sprintf("casbin-python-cli-windows-%s.exe", archNames.goArch),
 		}
 	case "darwin":
 		return map[string]string{
 			golang: fmt.Sprintf("casbin-go-cli_Darwin_%s.tar.gz", archNames.goArch),
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", archNames.rustArch),
+			python: fmt.Sprintf("casbin-python-cli-darwin-%s", archNames.goArch),
 		}
 	case "linux":
 		return map[string]string{
 			golang: fmt.Sprintf("casbin-go-cli_Linux_%s.tar.gz", archNames.goArch),
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", archNames.rustArch),
+			python: fmt.Sprintf("casbin-python-cli-linux-%s", archNames.goArch),
 		}
 	default:
 		return nil
@@ -98,6 +103,11 @@ func getFinalBinaryName(lang string) string {
 			return "casbin-rust-cli.exe"
 		}
 		return "casbin-rust-cli"
+	case "python":
+		if runtime.GOOS == "windows" {
+			return "casbin-python-cli.exe"
+		}
+		return "casbin-python-cli"
 	default:
 		return ""
 	}
@@ -333,9 +343,10 @@ func downloadCLI() error {
 	}
 
 	repos := map[string]string{
-		"java": javaCliRepo,
-		"go":   goCliRepo,
-		"rust": rustCliRepo,
+		"java":   javaCliRepo,
+		"go":     goCliRepo,
+		"rust":   rustCliRepo,
+		"python": pythonCliRepo,
 	}
 
 	for lang, repo := range repos {
