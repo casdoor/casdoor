@@ -879,17 +879,7 @@ class LoginPage extends React.Component {
 
     const showForm = Setting.isPasswordEnabled(application) || Setting.isCodeSigninEnabled(application) || Setting.isWebAuthnEnabled(application) || Setting.isLdapEnabled(application) || Setting.isFaceIdEnabled(application);
     const wechatLoginPage = application.signinMethods?.some(method => method.name === "WeChat" && method.rule === "Login Page");
-    const formProps = {
-      initialValues: {
-        autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
-        username: Conf.ShowGithubCorner ? "admin" : "",
-        password: Conf.ShowGithubCorner ? "123" : "",
-      },
-      onFinish: (values) => {
-        this.onFinish(values);
-      },
-      formRef: this.form,
-    };
+    const wechatLoginPageStyle = {display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "flex-start", background: "#fff", borderRadius: 8, boxShadow: "0 0 10px rgba(0,0,0,0.1)", width: 800, padding: "40px 60px", margin: "20px auto", position: "relative"};
     if (showForm) {
       let loginWidth = 320;
       if (Setting.getLanguage() === "fr") {
@@ -903,54 +893,54 @@ class LoginPage extends React.Component {
       if (this.state.loginMethod === "wechatTab") {
         return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
       }
-      if (wechatLoginPage && this.state.loginMethod === "password") {
-        return (<WeChatLoginPanel application={application} mode="loginPage" loginWidth={loginWidth} formProps={formProps} renderFormItem={this.renderFormItem.bind(this)} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)}>{application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))}</WeChatLoginPanel>);
-      }
 
       return (
-        <Form
-          name="normal_login"
-          initialValues={{
-            organization: application.organization,
-            application: application.name,
-            autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
-            username: Conf.ShowGithubCorner ? "admin" : "",
-            password: Conf.ShowGithubCorner ? "123" : "",
-          }}
-          onFinish={(values) => {
-            this.onFinish(values);
-          }}
-          style={{width: `${loginWidth}px`}}
-          size="large"
-          ref={this.form}
-        >
-          <Form.Item
-            hidden={true}
-            name="application"
-            rules={[
-              {
-                required: true,
-                message: i18next.t("application:Please input your application!"),
-              },
-            ]}
+        <div style={wechatLoginPage ? wechatLoginPageStyle : {}}>
+          <Form
+            name="normal_login"
+            initialValues={{
+              organization: application.organization,
+              application: application.name,
+              autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
+              username: Conf.ShowGithubCorner ? "admin" : "",
+              password: Conf.ShowGithubCorner ? "123" : "",
+            }}
+            onFinish={(values) => {
+              this.onFinish(values);
+            }}
+            style={{width: `${loginWidth}px`}}
+            size="large"
+            ref={this.form}
           >
-          </Form.Item>
-          <Form.Item
-            hidden={true}
-            name="organization"
-            rules={[
-              {
-                required: true,
-                message: i18next.t("application:Please input your organization!"),
-              },
-            ]}
-          >
-          </Form.Item>
+            <Form.Item
+              hidden={true}
+              name="application"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your application!"),
+                },
+              ]}
+            >
+            </Form.Item>
+            <Form.Item
+              hidden={true}
+              name="organization"
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("application:Please input your organization!"),
+                },
+              ]}
+            >
+            </Form.Item>
 
-          {
-            application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))
-          }
-        </Form>
+            {
+              application.signinItems?.map(signinItem => this.renderFormItem(application, signinItem))
+            }
+          </Form>
+          {wechatLoginPage && (<WeChatLoginPanel application={application} mode="loginPage" loginWidth={200} />)}
+        </div>
       );
     } else {
       return (
