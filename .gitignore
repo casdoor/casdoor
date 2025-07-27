@@ -37,3 +37,4 @@ server
 
 init_data.json
 .env
+.vscode

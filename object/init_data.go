@@ -51,7 +51,8 @@ type InitData struct {
 var initDataNewOnly bool
 
 func InitFromFile() {
-	initDataFile := conf.GetConfigString("initDataFile")
+	initDataFile := initFile
+	// initDataFile := conf.GetConfigString("initDataFile")
 	if initDataFile == "" {
 		return
 	}

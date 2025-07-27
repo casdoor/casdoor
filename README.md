@@ -70,3 +70,21 @@ mybee generate docs --tags "Group API,Auth API,Application API"
 ## 初始化服务
 根据`init_data.json`生成默认组织、角色
 
+### 使用CLI命令进行初始化
+
+可以通过如下命令执行初始化流程（仅初始化数据库和基础数据，不启动Web服务）：
+
+```bash
+./casdoor init --createDatabase  --initFile ./init_data.json 
+```
+
+执行后会自动完成数据库表结构和基础数据的初始化。
+
+# 环境变量配置
+
+本项目支持通过 `.env` 文件加载环境变量。你可以参考 `.env.example` 文件，复制为 `.env` 并根据实际需求修改。
+
+.env 配置内容会覆盖app.conf配置
+
+项目启动时会自动加载 `.env` 文件中的变量。
+

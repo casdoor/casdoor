@@ -41,12 +41,26 @@ import (
 var (
 	ormer          *Ormer = nil
 	createDatabase        = true
+	initFile              = ""
 	configPath            = "conf/app.conf"
 )
 
 func InitFlag() {
 	createDatabase = getCreateDatabaseFlag()
 	configPath = getConfigFlag()
+}
+
+func InitInitFlag() {
+	createDatabase = getCreateDatabaseFlag()
+	configPath = getConfigFlag()
+	initFile = getInitFileFlag()
+	flag.Parse()
+}
+
+func getInitFileFlag() string {
+	res := flag.String("initFile", "", "set it to \"/your/path/init.json\" if you want to initialize the database with a file")
+	flag.Parse()
+	return *res
 }
 
 func getCreateDatabaseFlag() bool {
@@ -59,7 +73,7 @@ func getConfigFlag() string {
 	res := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
 	flag.Parse()
 	return *res
-	
+
 }
 func InitConfig() {
 	err := beego.LoadAppConfig("ini", "../conf/app.conf")
