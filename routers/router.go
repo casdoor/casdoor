@@ -26,7 +26,6 @@ package routers
 import (
 	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/controllers"
-	// "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {

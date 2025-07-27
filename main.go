@@ -55,7 +55,7 @@ func main() {
 	authz.InitApi()
 	// 初始化enforcer
 	object.InitUserManager()
-	// object.InitCasvisorConfig()
+	// object.InitCasvisorConfig() // Disabled: Uncomment if Casvisor integration is required
 	object.InitCleanupTokens()
 
 	if len(os.Args) > 1 && os.Args[1] == "init" {

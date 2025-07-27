@@ -719,7 +719,7 @@ func AddApplication(application *Application) (bool, error) {
 	if application.ClientSecret == "" {
 		application.ClientSecret = util.GenerateClientSecret()
 	}
-	if application.CreatedTime == ""{
+	if application.CreatedTime == "" {
 		application.CreatedTime = time.Now().Format("2006-01-02 15:04:05")
 	}
 
@@ -1077,7 +1077,7 @@ type AddApplicationInfo struct {
 }
 
 type DeleteApplicationParams struct {
-	Applications []string `json:"applications" description:"需要商城应用 name 列表"`			
+	Applications []string `json:"applications" description:"需要删除应用 name 列表"`			
 }
 	
 

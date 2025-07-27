@@ -28,7 +28,7 @@ func unPaddingPkcs7(s []byte) []byte {
 		return s
 	}
 	unPadding := int(s[length-1])
-	if length < unPadding {
+	if unPadding <= 0 || unPadding > length {
 		return nil
 	}
 	return s[:(length - unPadding)]
