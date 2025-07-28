@@ -49,6 +49,7 @@ class OrganizationListPage extends BaseListPage {
       enableSoftDeletion: false,
       isProfilePublic: true,
       enableTour: true,
+      disableSignin: false,
       mfaRememberInHours: DefaultMfaRememberInHours,
       accountItems: [
         {name: "Organization", visible: true, viewRule: "Public", modifyRule: "Admin"},

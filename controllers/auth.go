@@ -56,6 +56,21 @@ func tokenToResponse(token *object.Token) *Response {
 
 // HandleLoggedIn ...
 func (c *ApiController) HandleLoggedIn(application *object.Application, user *object.User, form *form.AuthForm) (resp *Response) {
+	if application.DisableSignin {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s has disabled users to signin"), application.Name))
+		return
+	}
+
+	if application.OrganizationObj == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s does not exist"), application.Organization))
+		return
+	}
+
+	if application.OrganizationObj.DisableSignin {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s has disabled users to signin"), application.Organization))
+		return
+	}
+
 	if user.IsForbidden {
 		c.ResponseError(c.T("check:The user is forbidden to sign in, please contact the administrator"))
 		return
