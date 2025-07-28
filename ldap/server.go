@@ -149,10 +149,6 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	r := m.GetSearchRequest()
-	if r.FilterString() == "(objectClass=*)" {
-		w.Write(res)
-		return
-	}
 
 	// Handle Stop Signal (server stop / client disconnected / Abandoned request....)
 	select {
