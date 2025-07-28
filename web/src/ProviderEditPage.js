@@ -878,9 +878,17 @@ class ProviderEditPage extends React.Component {
                       {this.getClientSecret2Label(this.state.provider)} :
                     </Col>
                     <Col span={22} >
-                      <Input value={this.state.provider.clientSecret2} onChange={e => {
-                        this.updateProviderField("clientSecret2", e.target.value);
-                      }} />
+                      {
+                        (this.state.provider.category === "OAuth" && this.state.provider.type === "Apple") ? (
+                          <TextArea autoSize={{minRows: 1, maxRows: 20}} value={this.state.provider.clientSecret2} onChange={e => {
+                            this.updateProviderField("clientSecret2", e.target.value);
+                          }} />
+                        ) : (
+                          <Input value={this.state.provider.clientSecret2} onChange={e => {
+                            this.updateProviderField("clientSecret2", e.target.value);
+                          }} />
+                        )
+                      }
                     </Col>
                   </Row>
                 )
