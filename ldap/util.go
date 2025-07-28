@@ -200,6 +200,9 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		}
 		return builder.Eq{field: string(f.AssertionValue())}, nil
 	case message.FilterPresent:
+		if strings.EqualFold(string(f), "objectclass") {
+			return builder.Expr("1 = 1"), nil
+		}
 		field, err := getUserFieldFromAttribute(string(f))
 		if err != nil {
 			return nil, err
