@@ -166,35 +166,9 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	if isGroupSearch {
-		name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.FilterString())
+		groups, code := GetFilteredGroups(m, string(r.BaseObject()), r.FilterString())
 		if code != ldap.LDAPResultSuccess {
 			res.SetResultCode(code)
-			w.Write(res)
-			return
-		}
-
-		var groups []*object.Group
-		var err error
-
-		if name == "*" {
-			if m.Client.IsGlobalAdmin && org == "*" {
-				groups = []*object.Group{}
-				groups, err = object.GetGlobalGroups()
-				if err != nil {
-					panic(err)
-				}
-			} else if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
-				groups, err = object.GetGroups(org)
-				if err != nil {
-					panic(err)
-				}
-			} else {
-				res.SetResultCode(ldap.LDAPResultInsufficientAccessRights)
-				w.Write(res)
-				return
-			}
-		} else {
-			res.SetResultCode(ldap.LDAPResultNoSuchObject)
 			w.Write(res)
 			return
 		}
