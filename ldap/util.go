@@ -184,6 +184,10 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	case message.FilterEqualityMatch:
 		attr := string(f.AttributeDesc())
 
+		if strings.EqualFold(attr, "objectclass") && strings.EqualFold(string(f.AssertionValue()), "posixAccount") {
+			return builder.Expr("1 = 1"), nil
+		}
+
 		if attr == ldapMemberOfAttr {
 			var names []string
 			groupId := string(f.AssertionValue())
@@ -322,6 +326,36 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 		filteredUsers = append(filteredUsers, users...)
 		return filteredUsers, ldap.LDAPResultSuccess
 	}
+}
+
+func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*object.Group, int) {
+	name, org, code := getNameAndOrgFromFilter(baseDN, filterStr)
+	if code != ldap.LDAPResultSuccess {
+		return nil, code
+	}
+
+	var groups []*object.Group
+	var err error
+
+	if name == "*" {
+		if m.Client.IsGlobalAdmin && org == "*" {
+			groups, err = object.GetGlobalGroups()
+			if err != nil {
+				panic(err)
+			}
+		} else if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
+			groups, err = object.GetGroups(org)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			return nil, ldap.LDAPResultInsufficientAccessRights
+		}
+	} else {
+		return nil, ldap.LDAPResultNoSuchObject
+	}
+
+	return groups, ldap.LDAPResultSuccess
 }
 
 // get user password with hash type prefix
