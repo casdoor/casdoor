@@ -206,6 +206,36 @@ func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
 	return res, nil
 }
 
+func GetFilteredPolicies(id string, ptype string, fieldIndex int, fieldValues ...string) ([]*xormadapter.CasbinRule, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var allRules [][]string
+
+	if len(fieldValues) == 0 {
+		if ptype == "g" {
+			allRules = enforcer.GetFilteredGroupingPolicy(fieldIndex)
+		} else {
+			allRules = enforcer.GetFilteredPolicy(fieldIndex)
+		}
+	} else {
+		for _, value := range fieldValues {
+			if ptype == "g" {
+				rules := enforcer.GetFilteredGroupingPolicy(fieldIndex, value)
+				allRules = append(allRules, rules...)
+			} else {
+				rules := enforcer.GetFilteredPolicy(fieldIndex, value)
+				allRules = append(allRules, rules...)
+			}
+		}
+	}
+
+	res := util.MatrixToCasbinRules(ptype, allRules)
+	return res, nil
+}
+
 func UpdatePolicy(id string, ptype string, oldPolicy []string, newPolicy []string) (bool, error) {
 	enforcer, err := GetInitializedEnforcer(id)
 	if err != nil {

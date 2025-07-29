@@ -160,6 +160,7 @@ func initAPI() {
 	beego.Router("/api/add-adapter", &controllers.ApiController{}, "POST:AddAdapter")
 	beego.Router("/api/delete-adapter", &controllers.ApiController{}, "POST:DeleteAdapter")
 	beego.Router("/api/get-policies", &controllers.ApiController{}, "GET:GetPolicies")
+	beego.Router("/api/get-filtered-policies", &controllers.ApiController{}, "GET:GetFilteredPolicies")
 	beego.Router("/api/update-policy", &controllers.ApiController{}, "POST:UpdatePolicy")
 	beego.Router("/api/add-policy", &controllers.ApiController{}, "POST:AddPolicy")
 	beego.Router("/api/remove-policy", &controllers.ApiController{}, "POST:RemovePolicy")
