@@ -70,6 +70,16 @@ func GetGroups(owner string) ([]*Group, error) {
 	return groups, nil
 }
 
+func GetGlobalGroups() ([]*Group, error) {
+	groups := []*Group{}
+	err := ormer.Engine.Desc("created_time").Find(&groups)
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
+}
+
 func GetPaginationGroups(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Group, error) {
 	groups := []*Group{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)

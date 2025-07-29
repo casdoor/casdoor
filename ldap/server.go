@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
@@ -156,6 +157,64 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		log.Print("Leaving handleSearch...")
 		return
 	default:
+	}
+
+	var isGroupSearch bool = false
+	filter := r.Filter()
+	if eq, ok := filter.(message.FilterEqualityMatch); ok && strings.EqualFold(string(eq.AttributeDesc()), "objectClass") && strings.EqualFold(string(eq.AssertionValue()), "posixGroup") {
+		isGroupSearch = true
+	}
+
+	if isGroupSearch {
+		name, org, code := getNameAndOrgFromFilter(string(r.BaseObject()), r.FilterString())
+		if code != ldap.LDAPResultSuccess {
+			res.SetResultCode(code)
+			w.Write(res)
+			return
+		}
+
+		var groups []*object.Group
+		var err error
+
+		if name == "*" {
+			if m.Client.IsGlobalAdmin && org == "*" {
+				groups = []*object.Group{}
+				groups, err = object.GetGlobalGroups()
+				if err != nil {
+					panic(err)
+				}
+			} else if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
+				groups, err = object.GetGroups(org)
+				if err != nil {
+					panic(err)
+				}
+			} else {
+				res.SetResultCode(ldap.LDAPResultInsufficientAccessRights)
+				w.Write(res)
+				return
+			}
+		} else {
+			res.SetResultCode(ldap.LDAPResultNoSuchObject)
+			w.Write(res)
+			return
+		}
+
+		for _, group := range groups {
+			dn := fmt.Sprintf("cn=%s,%s", group.Name, string(r.BaseObject()))
+			e := ldap.NewSearchResultEntry(dn)
+			e.AddAttribute("cn", message.AttributeValue(group.Name))
+			gidNumberStr := fmt.Sprintf("%v", hash(group.Name))
+			e.AddAttribute("gidNumber", message.AttributeValue(gidNumberStr))
+			users := object.GetGroupUsersWithoutError(group.GetId())
+			for _, user := range users {
+				e.AddAttribute("memberUid", message.AttributeValue(user.Name))
+			}
+			e.AddAttribute("objectClass", "posixGroup")
+			w.Write(e)
+		}
+
+		w.Write(res)
+		return
 	}
 
 	users, code := GetFilteredUsers(m)

@@ -184,6 +184,10 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	case message.FilterEqualityMatch:
 		attr := string(f.AttributeDesc())
 
+		if strings.EqualFold(attr, "objectclass") && strings.EqualFold(string(f.AssertionValue()), "posixAccount") {
+			return builder.Expr("1 = 1"), nil
+		}
+
 		if attr == ldapMemberOfAttr {
 			var names []string
 			groupId := string(f.AssertionValue())
