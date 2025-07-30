@@ -40,7 +40,7 @@
     "Custom CSS Mobile": "表单CSS（移动端）",
     "Custom CSS Mobile - Edit": "编辑表单CSS（移动端）",
     "Custom CSS Mobile - Tooltip": "注册、登录、忘记密码等表单的CSS样式（如增加边框和阴影）（移动端）",
-    "Disable signin": "禁用登录",
+    "Disable signin": "禁止登录",
     "Disable signin - Tooltip": "禁止用户进行登录操作",
     "Dynamic": "动态开启",
     "Edit Application": "编辑应用",
