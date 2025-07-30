@@ -275,29 +275,6 @@ func handleRootSearch(w ldap.ResponseWriter, r *message.SearchRequest, res *mess
 	w.Write(res)
 }
 
-func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {
-	if m.Client.IsGlobalAdmin {
-		organizations, err := object.GetOrganizations("")
-		if err != nil {
-			panic(err)
-		}
-		return organizations, ldap.LDAPResultSuccess
-	} else if m.Client.IsOrgAdmin {
-		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
-		user, err := object.GetUser(requestUserId)
-		if err != nil {
-			panic(err)
-		}
-		organization, err := object.GetOrganizationByUser(user)
-		if err != nil {
-			panic(err)
-		}
-		return []*object.Organization{organization}, ldap.LDAPResultSuccess
-	} else {
-		return nil, ldap.LDAPResultInsufficientAccessRights
-	}
-}
-
 func hash(s string) uint32 {
 	h := fnv.New32a()
 	h.Write([]byte(s))

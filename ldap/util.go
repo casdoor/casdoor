@@ -358,6 +358,29 @@ func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*obj
 	return groups, ldap.LDAPResultSuccess
 }
 
+func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {
+	if m.Client.IsGlobalAdmin {
+		organizations, err := object.GetOrganizations("")
+		if err != nil {
+			panic(err)
+		}
+		return organizations, ldap.LDAPResultSuccess
+	} else if m.Client.IsOrgAdmin {
+		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
+		user, err := object.GetUser(requestUserId)
+		if err != nil {
+			panic(err)
+		}
+		organization, err := object.GetOrganizationByUser(user)
+		if err != nil {
+			panic(err)
+		}
+		return []*object.Organization{organization}, ldap.LDAPResultSuccess
+	} else {
+		return nil, ldap.LDAPResultInsufficientAccessRights
+	}
+}
+
 // get user password with hash type prefix
 // TODO not handle salt yet
 // @return {md5}5f4dcc3b5aa765d61d8327deb882cf99
