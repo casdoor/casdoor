@@ -25,6 +25,7 @@ import (
 	"github.com/casdoor/casdoor/object"
 	ldap "github.com/casdoor/ldapserver"
 	"github.com/lor00x/goldap/message"
+	"github.com/casdoor/casdoor/util"
 )
 
 func StartLdapServer() {
@@ -159,6 +160,11 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	default:
 	}
 
+	if strings.EqualFold(r.FilterString(), "(objectClass=*)") && (string(r.BaseObject()) == "" || strings.EqualFold(string(r.BaseObject()), "cn=Subschema")) {
+		handleRootSearch(w, &r, &res, m)
+		return
+	}
+
 	var isGroupSearch bool = false
 	filter := r.Filter()
 	if eq, ok := filter.(message.FilterEqualityMatch); ok && strings.EqualFold(string(eq.AttributeDesc()), "objectClass") && strings.EqualFold(string(eq.AssertionValue()), "posixGroup") {
@@ -227,6 +233,69 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 		w.Write(e)
 	}
 	w.Write(res)
+}
+
+func handleRootSearch(w ldap.ResponseWriter, r *message.SearchRequest, res *message.SearchResultDone, m *ldap.Message) {
+	if len(r.Attributes()) == 0 {
+		w.Write(res)
+		return
+	}
+	firstAttr := string(r.Attributes()[0])
+
+	if string(r.BaseObject()) == "" {
+		// Handle special root DSE requests
+		if strings.EqualFold(firstAttr, "namingContexts") {
+			orgs, code := GetFilteredOrganizations(m)
+			if code != ldap.LDAPResultSuccess {
+				res.SetResultCode(code)
+				w.Write(res)
+				return
+			}
+			e := ldap.NewSearchResultEntry(string(r.BaseObject()))
+			dnlist := make([]message.AttributeValue, len(orgs))
+			for i, org := range orgs {
+				dnlist[i] = message.AttributeValue(fmt.Sprintf("ou=%s", org.Name))
+			}
+			e.AddAttribute("namingContexts", dnlist...)
+			w.Write(e)
+		} else if strings.EqualFold(firstAttr, "subschemaSubentry") {
+			e := ldap.NewSearchResultEntry(string(r.BaseObject()))
+			e.AddAttribute("subschemaSubentry", message.AttributeValue("cn=Subschema"))
+			w.Write(e)
+		}
+	} else if strings.EqualFold(firstAttr, "objectclasses") && strings.EqualFold(string(r.BaseObject()), "cn=Subschema") {
+		e := ldap.NewSearchResultEntry(string(r.BaseObject()))
+		e.AddAttribute("objectClasses", []message.AttributeValue{
+			"( 1.3.6.1.1.1.2.0 NAME 'posixAccount' DESC 'Abstraction of an account with POSIX attributes' SUP top AUXILIARY MUST ( cn $ uid $ uidNumber $ gidNumber $ homeDirectory ) MAY ( userPassword $ loginShell $ gecos $ description ) )",
+			"( 1.3.6.1.1.1.2.2 NAME 'posixGroup' DESC 'Abstraction of a group of accounts' SUP top STRUCTURAL MUST ( cn $ gidNumber ) MAY ( userPassword $ memberUid $ description ) )",
+		}...)
+		w.Write(e)
+	}
+
+	w.Write(res)
+}
+
+func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {
+	if m.Client.IsGlobalAdmin {
+		organizations, err := object.GetOrganizations("")
+		if err != nil {
+			panic(err)
+		}
+		return organizations, ldap.LDAPResultSuccess
+	} else if m.Client.IsOrgAdmin {
+		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
+		user, err := object.GetUser(requestUserId)
+		if err != nil {
+			panic(err)
+		}
+		organization, err := object.GetOrganizationByUser(user)
+		if err != nil {
+			panic(err)
+		}
+		return []*object.Organization{organization}, ldap.LDAPResultSuccess
+	} else {
+		return nil, ldap.LDAPResultInsufficientAccessRights
+	}
 }
 
 func hash(s string) uint32 {
