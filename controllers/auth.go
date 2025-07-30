@@ -70,6 +70,16 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
+	if application.DisableSignin {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s has disabled users to signin"), application.Name))
+		return
+	}
+
+	if application.OrganizationObj != nil && application.OrganizationObj.DisableSignin {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The organization: %s has disabled users to signin"), application.Organization))
+		return
+	}
+
 	allowed, err := object.CheckLoginPermission(userId, application)
 	if err != nil {
 		c.ResponseError(err.Error(), nil)

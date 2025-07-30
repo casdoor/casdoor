@@ -75,6 +75,7 @@ type Application struct {
 	HeaderHtml            string          `xorm:"mediumtext" json:"headerHtml"`
 	EnablePassword        bool            `json:"enablePassword"`
 	EnableSignUp          bool            `json:"enableSignUp"`
+	DisableSignin         bool            `json:"disableSignin"`
 	EnableSigninSession   bool            `json:"enableSigninSession"`
 	EnableAutoSignin      bool            `json:"enableAutoSignin"`
 	EnableCodeSignin      bool            `json:"enableCodeSignin"`
