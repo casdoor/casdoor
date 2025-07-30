@@ -23,9 +23,9 @@ import (
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/util"
 	ldap "github.com/casdoor/ldapserver"
 	"github.com/lor00x/goldap/message"
-	"github.com/casdoor/casdoor/util"
 )
 
 func StartLdapServer() {
