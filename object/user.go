@@ -1375,6 +1375,8 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 			}
 		}
 
+		groupPath = curGroup.Owner + "/" + groupPath
+
 		groupFullPath = append(groupFullPath, groupPath)
 	}
 
