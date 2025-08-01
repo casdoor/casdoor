@@ -1336,15 +1336,15 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 		return []string{}, nil
 	}
 
-	var orgGroups []Group
-	err := ormer.Engine.Cols("owner", "name", "parent_id", "is_top_group").Find(&orgGroups, &Group{Owner: user.Owner})
+	var orgGroups []*Group
+	orgGroups, err := GetGroups(user.Owner)
 	if err != nil {
 		return nil, err
 	}
 
 	groupMap := make(map[string]Group)
 	for _, group := range orgGroups {
-		groupMap[group.Name] = group
+		groupMap[group.Name] = *group
 	}
 
 	var groupFullPath []string
