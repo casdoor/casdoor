@@ -447,16 +447,6 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("application:Token group path"), i18next.t("general:Token group path - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Switch prefix={<LinkOutlined />} checked={this.state.application.tokenGroupPath} onChange={e => {
-              this.updateApplicationField("tokenGroupPath", e);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Token signing method"), i18next.t("application:Token signing method - Tooltip"))} :
           </Col>
           <Col span={22} >

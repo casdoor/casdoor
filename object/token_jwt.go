@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"github.com/casdoor/casdoor/conf"
 	"reflect"
 	"strings"
 	"time"
@@ -381,7 +382,7 @@ func generateJwtToken(application *Application, user *User, provider string, non
 		refreshExpireTime = expireTime
 	}
 
-	if application.TokenGroupPath {
+	if conf.GetConfigBool("useGroupPathInToken") {
 		groupPath, err := user.GetUserFullGroupPath()
 		if err != nil {
 			return "", "", "", err

@@ -1350,7 +1350,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 	var groupFullPath []string
 
 	for _, groupId := range user.Groups {
-		groupName := strings.Split(groupId, "/")[1]
+		_, groupName := util.GetOwnerAndNameFromIdNoCheck(groupId)
 		group, ok := groupMap[groupName]
 		if !ok {
 			continue
@@ -1363,8 +1363,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 			return []string{}, fmt.Errorf("group:Group %s not exist", group.ParentId)
 		}
 		for {
-			groupPath = curGroup.Name + "/" + groupPath
-
+			groupPath = util.GetId(curGroup.Name, groupPath)
 			if curGroup.IsTopGroup {
 				break
 			}
@@ -1375,8 +1374,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 			}
 		}
 
-		groupPath = curGroup.Owner + "/" + groupPath
-
+		groupPath = util.GetId(curGroup.Owner, groupPath)
 		groupFullPath = append(groupFullPath, groupPath)
 	}
 
