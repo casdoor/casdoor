@@ -381,6 +381,14 @@ func generateJwtToken(application *Application, user *User, provider string, non
 		refreshExpireTime = expireTime
 	}
 
+	if application.TokenGroupPath {
+		groupPath, err := user.GetUserFullGroupPath()
+		if err != nil {
+			return "", "", "", err
+		}
+
+		user.Groups = groupPath
+	}
 	user = refineUser(user)
 
 	_, originBackend := getOriginFromHost(host)

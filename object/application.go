@@ -105,6 +105,7 @@ type Application struct {
 	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
+	TokenGroupPath          bool       `xorm:"varchar(100)" json:"tokenGroupPath"`
 	ExpireInHours           int        `json:"expireInHours"`
 	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
 	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`

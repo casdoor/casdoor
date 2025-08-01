@@ -1331,6 +1331,56 @@ func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool,
 	return false, nil
 }
 
+func (user *User) GetUserFullGroupPath() ([]string, error) {
+	if len(user.Groups) == 0 {
+		return []string{}, nil
+	}
+
+	var orgGroups []Group
+	err := ormer.Engine.Cols("owner", "name", "parent_id", "is_top_group").Find(&orgGroups, &Group{Owner: user.Owner})
+	if err != nil {
+		return nil, err
+	}
+
+	groupMap := make(map[string]Group)
+	for _, group := range orgGroups {
+		groupMap[group.Name] = group
+	}
+
+	var groupFullPath []string
+
+	for _, groupId := range user.Groups {
+		groupName := strings.Split(groupId, "/")[1]
+		group, ok := groupMap[groupName]
+		if !ok {
+			continue
+		}
+
+		groupPath := groupName
+
+		curGroup, ok := groupMap[group.ParentId]
+		if !ok {
+			return []string{}, fmt.Errorf("group:Group %s not exist", group.ParentId)
+		}
+		for {
+			groupPath = curGroup.Name + "/" + groupPath
+
+			if curGroup.IsTopGroup {
+				break
+			}
+
+			curGroup, ok = groupMap[curGroup.ParentId]
+			if !ok {
+				return []string{}, fmt.Errorf("group:Group %s not exist", curGroup.ParentId)
+			}
+		}
+
+		groupFullPath = append(groupFullPath, groupPath)
+	}
+
+	return groupFullPath, nil
+}
+
 func GenerateIdForNewUser(application *Application) (string, error) {
 	if application == nil || application.GetSignupItemRule("ID") != "Incremental" {
 		return util.GenerateId(), nil
