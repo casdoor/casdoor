@@ -20,6 +20,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/util"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -381,6 +382,14 @@ func generateJwtToken(application *Application, user *User, provider string, non
 		refreshExpireTime = expireTime
 	}
 
+	if conf.GetConfigBool("useGroupPathInToken") {
+		groupPath, err := user.GetUserFullGroupPath()
+		if err != nil {
+			return "", "", "", err
+		}
+
+		user.Groups = groupPath
+	}
 	user = refineUser(user)
 
 	_, originBackend := getOriginFromHost(host)

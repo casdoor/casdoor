@@ -1331,6 +1331,56 @@ func (user *User) CheckUserFace(faceIdImage []string, provider *Provider) (bool,
 	return false, nil
 }
 
+func (user *User) GetUserFullGroupPath() ([]string, error) {
+	if len(user.Groups) == 0 {
+		return []string{}, nil
+	}
+
+	var orgGroups []*Group
+	orgGroups, err := GetGroups(user.Owner)
+	if err != nil {
+		return nil, err
+	}
+
+	groupMap := make(map[string]Group)
+	for _, group := range orgGroups {
+		groupMap[group.Name] = *group
+	}
+
+	var groupFullPath []string
+
+	for _, groupId := range user.Groups {
+		_, groupName := util.GetOwnerAndNameFromIdNoCheck(groupId)
+		group, ok := groupMap[groupName]
+		if !ok {
+			continue
+		}
+
+		groupPath := groupName
+
+		curGroup, ok := groupMap[group.ParentId]
+		if !ok {
+			return []string{}, fmt.Errorf("group:Group %s not exist", group.ParentId)
+		}
+		for {
+			groupPath = util.GetId(curGroup.Name, groupPath)
+			if curGroup.IsTopGroup {
+				break
+			}
+
+			curGroup, ok = groupMap[curGroup.ParentId]
+			if !ok {
+				return []string{}, fmt.Errorf("group:Group %s not exist", curGroup.ParentId)
+			}
+		}
+
+		groupPath = util.GetId(curGroup.Owner, groupPath)
+		groupFullPath = append(groupFullPath, groupPath)
+	}
+
+	return groupFullPath, nil
+}
+
 func GenerateIdForNewUser(application *Application) (string, error) {
 	if application == nil || application.GetSignupItemRule("ID") != "Incremental" {
 		return util.GenerateId(), nil
