@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/casdoor/casdoor/util"
 	"github.com/mitchellh/mapstructure"
@@ -62,6 +63,25 @@ func (idp *CustomIdProvider) SetHttpClient(client *http.Client) {
 func (idp *CustomIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, idp.Client)
 	return idp.Config.Exchange(ctx, code)
+}
+
+func getNestedValue(data map[string]interface{}, path string) (interface{}, error) {
+	keys := strings.Split(path, ".")
+	var val interface{} = data
+
+	for _, key := range keys {
+		m, ok := val.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("path '%s' is not valid: %s is not a map", path, key)
+		}
+
+		val, ok = m[key]
+		if !ok {
+			return nil, fmt.Errorf("key '%s' not found in path '%s'", key, path)
+		}
+	}
+
+	return val, nil
 }
 
 type CustomUserInfo struct {
@@ -108,11 +128,11 @@ func (idp *CustomIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 
 	// map user info
 	for k, v := range idp.UserMapping {
-		_, ok := dataMap[v]
-		if !ok {
-			return nil, fmt.Errorf("cannot find %s in user from custom provider", v)
+		val, err := getNestedValue(dataMap, v)
+		if err != nil {
+			return nil, fmt.Errorf("cannot find %s in user from custom provider: %v", v, err)
 		}
-		dataMap[k] = dataMap[v]
+		dataMap[k] = val
 	}
 
 	// try to parse id to string
