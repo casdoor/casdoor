@@ -1109,8 +1109,7 @@ class LoginPage extends React.Component {
       .then(res => res.json())
       .then((credentialRequestOptions) => {
         if ("status" in credentialRequestOptions) {
-          Setting.showMessage("error", credentialRequestOptions.msg);
-          throw credentialRequestOptions.status.msg;
+          return Promise.reject(new Error(credentialRequestOptions.msg));
         }
         credentialRequestOptions.publicKey.challenge = UserWebauthnBackend.webAuthnBufferDecode(credentialRequestOptions.publicKey.challenge);
 
@@ -1169,7 +1168,7 @@ class LoginPage extends React.Component {
             Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}${error}`);
           });
       }).catch(error => {
-        Setting.showMessage("error", `${error}`);
+        Setting.showMessage(`${error}`);
       }).finally(() => {
         this.setState({
           loginLoading: false,
