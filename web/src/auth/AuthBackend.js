@@ -152,8 +152,8 @@ export function getWechatMessageEvent(ticket) {
   }).then(res => res.json());
 }
 
-export function getWechatQRCode(providerId) {
-  return fetch(`${Setting.ServerUrl}/api/get-qrcode?id=${providerId}`, {
+export function getWechatQRCode(providerId, encodeToPng = true) {
+  return fetch(`${Setting.ServerUrl}/api/get-qrcode?id=${providerId}&encodeToPng=${encodeToPng}`, {
     method: "GET",
     credentials: "include",
     headers: {
