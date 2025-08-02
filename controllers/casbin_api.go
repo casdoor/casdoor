@@ -40,6 +40,18 @@ func (c *ApiController) Enforce() {
 	enforcerId := c.Input().Get("enforcerId")
 	owner := c.Input().Get("owner")
 
+	params := []string{permissionId, modelId, resourceId, enforcerId, owner}
+	nonEmpty := 0
+	for _, param := range params {
+		if param != "" {
+			nonEmpty++
+		}
+	}
+	if nonEmpty > 1 {
+		c.ResponseError("Only one of the parameters (permissionId, modelId, resourceId, enforcerId, owner) should be provided")
+		return
+	}
+
 	if len(c.Ctx.Input.RequestBody) == 0 {
 		c.ResponseError("The request body should not be empty")
 		return
@@ -168,6 +180,18 @@ func (c *ApiController) BatchEnforce() {
 	modelId := c.Input().Get("modelId")
 	enforcerId := c.Input().Get("enforcerId")
 	owner := c.Input().Get("owner")
+
+	params := []string{permissionId, modelId, enforcerId, owner}
+	nonEmpty := 0
+	for _, param := range params {
+		if param != "" {
+			nonEmpty++
+		}
+	}
+	if nonEmpty > 1 {
+		c.ResponseError("Only one of the parameters (permissionId, modelId, enforcerId, owner) should be provided")
+		return
+	}
 
 	var requests [][]string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &requests)
