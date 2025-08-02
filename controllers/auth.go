@@ -1235,13 +1235,12 @@ func (c *ApiController) GetWebhookEventType() {
 // @Success 200 {object} controllers.Response The Response object
 func (c *ApiController) GetQRCode() {
 	providerId := c.Input().Get("id")
-	encodeToPng := c.Input().Get("encodeToPng") == "true"
 	provider, err := object.GetProvider(providerId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
-	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId, encodeToPng)
+	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

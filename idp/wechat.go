@@ -17,7 +17,6 @@ package idp
 import (
 	"bytes"
 	"crypto/sha1"
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -29,7 +28,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/skip2/go-qrcode"
 	"golang.org/x/oauth2"
 )
 
@@ -282,7 +280,7 @@ func GetWechatOfficialAccountAccessToken(clientId string, clientSecret string) (
 	return data.AccessToken, data.Errmsg, nil
 }
 
-func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string, encodeToPng bool) (string, string, error) {
+func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, providerId string) (string, string, error) {
 	accessToken, errMsg, err := GetWechatOfficialAccountAccessToken(clientId, clientSecret)
 	if err != nil {
 		return "", "", err
@@ -324,14 +322,7 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 		return "", "", err
 	}
 
-	base64Image := data.URL
-	if encodeToPng {
-		var png []byte
-		png, err = qrcode.Encode(data.URL, qrcode.Medium, 256)
-		base64Image = base64.StdEncoding.EncodeToString(png)
-	}
-
-	return base64Image, data.Ticket, nil
+	return data.URL, data.Ticket, nil
 }
 
 func VerifyWechatSignature(token string, nonce string, timestamp string, signature string) bool {

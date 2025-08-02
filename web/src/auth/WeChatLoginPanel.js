@@ -59,7 +59,7 @@ class WeChatLoginPanel extends React.Component {
     const wechatProviderItem = application?.providers?.find(p => p.provider?.type === "WeChat");
     if (wechatProviderItem) {
       this.setState({status: "loading", qrCode: null, ticket: null});
-      AuthBackend.getWechatQRCode(`${wechatProviderItem.provider.owner}/${wechatProviderItem.provider.name}`, false).then(res => {
+      AuthBackend.getWechatQRCode(`${wechatProviderItem.provider.owner}/${wechatProviderItem.provider.name}`).then(res => {
         if (res.status === "ok" && res.data) {
           this.setState({qrCode: res.data, status: "active", ticket: res.data2});
           this.clearPolling();
