@@ -1168,7 +1168,7 @@ class LoginPage extends React.Component {
             Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}${error}`);
           });
       }).catch(error => {
-        Setting.showMessage(`${error}`);
+        Setting.showMessage("error", `${error}`);
       }).finally(() => {
         this.setState({
           loginLoading: false,
