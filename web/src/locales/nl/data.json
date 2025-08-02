@@ -272,7 +272,7 @@
     "Delete": "Verwijderen",
     "Description": "Beschrijving",
     "Description - Tooltip": "Gedetailleerde beschrijvingsinformatie ter referentie, Casdoor gebruikt het zelf niet",
-    "Detail": "Detail",
+    "Detail": "详情",
     "Disable": "Uitschakelen",
     "Display name": "Weergavenaam",
     "Display name - Tooltip": "Een gebruiksvriendelijke, gemakkelijk leesbare naam die openbaar wordt weergegeven in de UI",
@@ -481,7 +481,7 @@
     "Show all": "Alles weergeven",
     "Upload (.xlsx)": "Uploaden (.xlsx)",
     "Virtual": "Virtueel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -\u003e [Groepen] pagina"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -> [Groepen] pagina"
   },
   "home": {
     "New users past 30 days": "Nieuwe gebruikers afgelopen 30 dagen",
@@ -881,7 +881,7 @@
     "From name": "Afzendernaam",
     "From name - Tooltip": "Naam van afzender",
     "Get phone number": "Telefoonnummer ophalen",
-    "Get phone number - Tooltip": "Als synchronisatie van telefoonnummer is ingeschakeld, moet je eerst Google People API inschakelen en de scope toevoegen: \u003curl id=\"d20etn18bjvil5sr3djg\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\"\u003ehttps://www.googleapis.com/auth/user.phonenumbers.read\u003c/url\u003e",
+    "Get phone number - Tooltip": "Als synchronisatie van telefoonnummer is ingeschakeld, moet je eerst Google People API inschakelen en de scope toevoegen: <url id=\"d20etn18bjvil5sr3djg\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\">https://www.googleapis.com/auth/user.phonenumbers.read</url>",
     "HTTP body mapping": "HTTP-body-mapping",
     "HTTP body mapping - Tooltip": "HTTP-body-mapping",
     "HTTP header": "HTTP-header",
