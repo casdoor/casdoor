@@ -174,7 +174,11 @@ class ProviderEditPage extends React.Component {
       }
     }
 
-    provider.userMapping[key] = value;
+    if (value === "") {
+      delete provider.userMapping[key];
+    } else {
+      provider.userMapping[key] = value;
+    }
 
     this.setState({
       provider: provider,
