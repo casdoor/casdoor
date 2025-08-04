@@ -17,7 +17,6 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -200,37 +199,28 @@ func (c *ApiController) GetPolicies() {
 // GetFilteredPolicies
 // @Title GetFilteredPolicies
 // @Tag Enforcer API
-// @Description get filtered policies
+// @Description get filtered policies with support for multiple filters via POST body
 // @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
-// @Param   ptype     query    string  false        "Policy type, default is 'p'"
-// @Param   fieldIndex     query    int  false        "Field index for filtering"
-// @Param   fieldValues     query    string  false        "Field values for filtering, comma-separated"
+// @Param   body   body    []object.Filter  true        "Array of filter objects for multiple filters"
 // @Success 200 {array} xormadapter.CasbinRule
-// @router /get-filtered-policies [get]
+// @router /get-filtered-policies [post]
 func (c *ApiController) GetFilteredPolicies() {
 	id := c.Input().Get("id")
-	ptype := c.Input().Get("ptype")
-	fieldIndexStr := c.Input().Get("fieldIndex")
-	fieldValuesStr := c.Input().Get("fieldValues")
 
-	if ptype == "" {
-		ptype = "p"
-	}
-
-	fieldIndex := util.ParseInt(fieldIndexStr)
-
-	var fieldValues []string
-	if fieldValuesStr != "" {
-		fieldValues = strings.Split(fieldValuesStr, ",")
-	}
-
-	policies, err := object.GetFilteredPolicies(id, ptype, fieldIndex, fieldValues...)
+	var filters []object.Filter
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &filters)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
 
-	c.ResponseOk(policies)
+	filteredPolicies, err := object.GetFilteredPoliciesMulti(id, filters)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(filteredPolicies)
 }
 
 // UpdatePolicy
