@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
@@ -262,55 +263,48 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 		for _, policy := range allPolicies {
 			matchesAllFilters := true
 			for _, filter := range filters {
-				// If no policy type is specified, set it to the default policy type
+				// Default policy type if unspecified
 				if filter.Ptype == "" {
 					filter.Ptype = "p"
 				}
-				// Check policy type
+				// Always check policy type
 				if policy.Ptype != filter.Ptype {
 					matchesAllFilters = false
 					break
 				}
 
-				// If field index is nil, only filter by policy type
+				// If FieldIndex is nil, only filter via ptype (skip field-value checks)
 				if filter.FieldIndex == nil {
-					// Only filter by ptype (which is already checked above)
 					continue
 				}
 
-				// If field index is valid (0-5 for V0-V5), check field values
 				fieldIndex := *filter.FieldIndex
-				if fieldIndex >= 0 && fieldIndex <= 5 {
-					fieldValue := ""
-					switch fieldIndex {
-					case 0:
-						fieldValue = policy.V0
-					case 1:
-						fieldValue = policy.V1
-					case 2:
-						fieldValue = policy.V2
-					case 3:
-						fieldValue = policy.V3
-					case 4:
-						fieldValue = policy.V4
-					case 5:
-						fieldValue = policy.V5
-					}
-
-					found := false
-					// Check if field value is in the list of expected values
-					for _, expectedValue := range filter.FieldValues {
-						if fieldValue == expectedValue {
-							found = true
-							break
-						}
-					}
-					if !found {
-						matchesAllFilters = false
-						break
-					}
+				// If FieldIndex is out of range, also only filter via ptype
+				if fieldIndex < 0 || fieldIndex > 5 {
+					continue
 				}
-				// If field index is invalid, we only filter by ptype
+
+				var fieldValue string
+				switch fieldIndex {
+				case 0:
+					fieldValue = policy.V0
+				case 1:
+					fieldValue = policy.V1
+				case 2:
+					fieldValue = policy.V2
+				case 3:
+					fieldValue = policy.V3
+				case 4:
+					fieldValue = policy.V4
+				case 5:
+					fieldValue = policy.V5
+				}
+
+				// When FieldIndex is provided and valid, enforce FieldValues (if any)
+				if len(filter.FieldValues) > 0 && !slices.Contains(filter.FieldValues, fieldValue) {
+					matchesAllFilters = false
+					break
+				}
 			}
 
 			if matchesAllFilters {
