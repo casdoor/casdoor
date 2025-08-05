@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
@@ -209,7 +210,7 @@ func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
 // Filter represents filter criteria with optional policy type
 type Filter struct {
 	Ptype       string   `json:"ptype,omitempty"`
-	FieldIndex  int      `json:"fieldIndex"`
+	FieldIndex  *int     `json:"fieldIndex,omitempty"`
 	FieldValues []string `json:"fieldValues"`
 }
 
@@ -262,24 +263,29 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 		for _, policy := range allPolicies {
 			matchesAllFilters := true
 			for _, filter := range filters {
-				// If no policy type is specified, set it to the default policy type
+				// Default policy type if unspecified
 				if filter.Ptype == "" {
 					filter.Ptype = "p"
 				}
-				// Check policy type
+				// Always check policy type
 				if policy.Ptype != filter.Ptype {
 					matchesAllFilters = false
 					break
 				}
 
-				// Check if field index is valid (0-5 for V0-V5)
-				if filter.FieldIndex < 0 || filter.FieldIndex > 5 {
-					matchesAllFilters = false
-					break
+				// If FieldIndex is nil, only filter via ptype (skip field-value checks)
+				if filter.FieldIndex == nil {
+					continue
 				}
 
-				fieldValue := ""
-				switch filter.FieldIndex {
+				fieldIndex := *filter.FieldIndex
+				// If FieldIndex is out of range, also only filter via ptype
+				if fieldIndex < 0 || fieldIndex > 5 {
+					continue
+				}
+
+				var fieldValue string
+				switch fieldIndex {
 				case 0:
 					fieldValue = policy.V0
 				case 1:
@@ -294,15 +300,8 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 					fieldValue = policy.V5
 				}
 
-				found := false
-				// Check if field value is in the list of expected values
-				for _, expectedValue := range filter.FieldValues {
-					if fieldValue == expectedValue {
-						found = true
-						break
-					}
-				}
-				if !found {
+				// When FieldIndex is provided and valid, enforce FieldValues (if any)
+				if len(filter.FieldValues) > 0 && !slices.Contains(filter.FieldValues, fieldValue) {
 					matchesAllFilters = false
 					break
 				}
