@@ -272,40 +272,38 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 					break
 				}
 
-				// Check if field index is valid (0-5 for V0-V5)
-				if filter.FieldIndex < 0 || filter.FieldIndex > 5 {
-					matchesAllFilters = false
-					break
-				}
+				// If field index is valid (0-5 for V0-V5), check field values
+				if filter.FieldIndex >= 0 && filter.FieldIndex <= 5 {
+					fieldValue := ""
+					switch filter.FieldIndex {
+					case 0:
+						fieldValue = policy.V0
+					case 1:
+						fieldValue = policy.V1
+					case 2:
+						fieldValue = policy.V2
+					case 3:
+						fieldValue = policy.V3
+					case 4:
+						fieldValue = policy.V4
+					case 5:
+						fieldValue = policy.V5
+					}
 
-				fieldValue := ""
-				switch filter.FieldIndex {
-				case 0:
-					fieldValue = policy.V0
-				case 1:
-					fieldValue = policy.V1
-				case 2:
-					fieldValue = policy.V2
-				case 3:
-					fieldValue = policy.V3
-				case 4:
-					fieldValue = policy.V4
-				case 5:
-					fieldValue = policy.V5
-				}
-
-				found := false
-				// Check if field value is in the list of expected values
-				for _, expectedValue := range filter.FieldValues {
-					if fieldValue == expectedValue {
-						found = true
+					found := false
+					// Check if field value is in the list of expected values
+					for _, expectedValue := range filter.FieldValues {
+						if fieldValue == expectedValue {
+							found = true
+							break
+						}
+					}
+					if !found {
+						matchesAllFilters = false
 						break
 					}
 				}
-				if !found {
-					matchesAllFilters = false
-					break
-				}
+				// If field index is invalid, we only filter by ptype (which is already checked above)
 			}
 
 			if matchesAllFilters {
