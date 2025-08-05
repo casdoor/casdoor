@@ -209,7 +209,7 @@ func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
 // Filter represents filter criteria with optional policy type
 type Filter struct {
 	Ptype       string   `json:"ptype,omitempty"`
-	FieldIndex  int      `json:"fieldIndex"`
+	FieldIndex  *int     `json:"fieldIndex,omitempty"`
 	FieldValues []string `json:"fieldValues"`
 }
 
@@ -272,10 +272,17 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 					break
 				}
 
+				// If field index is nil, only filter by policy type
+				if filter.FieldIndex == nil {
+					// Only filter by ptype (which is already checked above)
+					continue
+				}
+
 				// If field index is valid (0-5 for V0-V5), check field values
-				if filter.FieldIndex >= 0 && filter.FieldIndex <= 5 {
+				fieldIndex := *filter.FieldIndex
+				if fieldIndex >= 0 && fieldIndex <= 5 {
 					fieldValue := ""
-					switch filter.FieldIndex {
+					switch fieldIndex {
 					case 0:
 						fieldValue = policy.V0
 					case 1:
@@ -303,7 +310,7 @@ func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.Casbi
 						break
 					}
 				}
-				// If field index is invalid, we only filter by ptype (which is already checked above)
+				// If field index is invalid, we only filter by ptype
 			}
 
 			if matchesAllFilters {
