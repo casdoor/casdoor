@@ -28,16 +28,19 @@ import (
 type WeComIdProvider struct {
 	Client *http.Client
 	Config *oauth2.Config
-
+	EmailSuffix string
+    UseIdToFormEmail bool
 	UseIdAsName bool
 }
 
-func NewWeComIdProvider(clientId string, clientSecret string, redirectUrl string, useIdAsName bool) *WeComIdProvider {
+func NewWeComIdProvider(clientId string, clientSecret string, redirectUrl string, useIdAsName bool, UseIdToFormEmail bool, emailSuffix string) *WeComIdProvider {
 	idp := &WeComIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
 	idp.UseIdAsName = useIdAsName
+    idp.UseIdToFormEmail = UseIdToFormEmail
+	idp.EmailSuffix = emailSuffix
 
 	return idp
 }
@@ -140,6 +143,7 @@ type WeComUserInfo struct {
 		Userid     string `json:"userid"`
 		OpenUserid string `json:"open_userid"`
 		Name       string `json:"name"`
+        Email      string `json:"email"`
 		Avatar     string `json:"avatar"`
 	} `json:"user_info"`
 	CorpInfo struct {
@@ -184,12 +188,20 @@ func (idp *WeComIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) 
 		Id:          wecomUserInfo.UserInfo.OpenUserid,
 		Username:    wecomUserInfo.UserInfo.Name,
 		DisplayName: wecomUserInfo.UserInfo.Name,
+        Email:       wecomUserInfo.UserInfo.Email,
 		AvatarUrl:   wecomUserInfo.UserInfo.Avatar,
 	}
+
+	if userInfo.Email == "" && idp.EmailSuffix != "" {
+		userInfo.Email = userInfo.Id + "@" + idp.EmailSuffix
+	}
+
 
 	if idp.UseIdAsName {
 		userInfo.Username = userInfo.Id
 	}
+
+
 	return &userInfo, nil
 }
 

@@ -719,6 +719,36 @@ class ProviderEditPage extends React.Component {
                         }} />
                       </Col>
                     </Row>
+                    <Row style={{marginTop: "20px"}}>
+                      <Col style={{marginTop: "5px"}} span={2}>
+                        {Setting.getLabel(i18next.t("provider:Use id to form email"), i18next.t("provider:Use id to form email - Tooltip"))} :
+                      </Col>
+                      <Col span={22} style={{display: "flex", alignItems: "center"}}>
+                        <Switch checked={this.state.provider.useIdToFormEmail} onChange={checked => {
+                          this.updateProviderField("useIdToFormEmail", checked);
+                          if (!checked) {
+                            this.updateProviderField("emailSuffix", "");
+                          }
+                        }} />
+                      </Col>
+                    </Row>
+                    {this.state.provider.useIdToFormEmail && (
+                      <Row style={{marginTop: "10px"}}>
+                        <Col style={{marginTop: "5px"}} span={2}>
+                          {Setting.getLabel(i18next.t("provider:Default email suffix"), i18next.t("provider:Default email suffix - Tooltip"))} :
+                        </Col>
+                        <Col span={22}>
+                          <Input
+                            style={{width: "300px"}}
+                            value={this.state.provider.emailSuffix}
+                            placeholder="example.com"
+                            onChange={e => {
+                              this.updateProviderField("emailSuffix", e.target.value);
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    )}
                   </React.Fragment>)
               }
             </React.Fragment>
