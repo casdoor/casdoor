@@ -74,6 +74,9 @@ type Provider struct {
 	EnableSignAuthnRequest bool   `json:"enableSignAuthnRequest"`
 	EmailRegex             string `xorm:"varchar(200)" json:"emailRegex"`
 
+	UseIdToFormEmail bool   `json:"useIdToFormEmail"`
+	EmailSuffix      string `xorm:"varchar(100)" json:"emailSuffix"`
+
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
 }
 
@@ -210,6 +213,13 @@ func UpdateProvider(id string, provider *Provider) (bool, error) {
 		}
 	}
 
+	if provider.EmailSuffix != "" {
+		_, err := regexp.Compile(provider.EmailSuffix)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	if name != provider.Name {
 		err := providerChangeTrigger(name, provider.Name)
 		if err != nil {
@@ -246,6 +256,13 @@ func AddProvider(provider *Provider) (bool, error) {
 
 	if provider.EmailRegex != "" {
 		_, err := regexp.Compile(provider.EmailRegex)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	if provider.EmailSuffix != "" {
+		_, err := regexp.Compile(provider.EmailSuffix)
 		if err != nil {
 			return false, err
 		}
@@ -463,19 +480,21 @@ func providerChangeTrigger(oldName string, newName string) error {
 
 func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.ProviderInfo {
 	providerInfo := &idp.ProviderInfo{
-		Type:          provider.Type,
-		SubType:       provider.SubType,
-		ClientId:      provider.ClientId,
-		ClientSecret:  provider.ClientSecret,
-		ClientId2:     provider.ClientId2,
-		ClientSecret2: provider.ClientSecret2,
-		AppId:         provider.AppId,
-		HostUrl:       provider.Host,
-		TokenURL:      provider.CustomTokenUrl,
-		AuthURL:       provider.CustomAuthUrl,
-		UserInfoURL:   provider.CustomUserInfoUrl,
-		UserMapping:   provider.UserMapping,
-		DisableSsl:    provider.DisableSsl,
+		Type:             provider.Type,
+		SubType:          provider.SubType,
+		ClientId:         provider.ClientId,
+		ClientSecret:     provider.ClientSecret,
+		ClientId2:        provider.ClientId2,
+		ClientSecret2:    provider.ClientSecret2,
+		AppId:            provider.AppId,
+		HostUrl:          provider.Host,
+		TokenURL:         provider.CustomTokenUrl,
+		AuthURL:          provider.CustomAuthUrl,
+		UserInfoURL:      provider.CustomUserInfoUrl,
+		UserMapping:      provider.UserMapping,
+		DisableSsl:       provider.DisableSsl,
+		EmailSuffix:      provider.EmailSuffix,
+		UseIdToFormEmail: provider.UseIdToFormEmail,
 	}
 
 	if provider.Type == "WeChat" {
