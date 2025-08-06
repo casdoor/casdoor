@@ -31,14 +31,18 @@ type WeComInternalIdProvider struct {
 	Config *oauth2.Config
 
 	UseIdAsName bool
+	UseIdToFormEmail bool
+	EmailSuffix string
 }
 
-func NewWeComInternalIdProvider(clientId string, clientSecret string, redirectUrl string, useIdAsName bool) *WeComInternalIdProvider {
+func NewWeComInternalIdProvider(clientId string, clientSecret string, redirectUrl string, useIdAsName bool, UseIdToFormEmail bool, emailSuffix string) *WeComInternalIdProvider {
 	idp := &WeComInternalIdProvider{}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
 	idp.UseIdAsName = useIdAsName
+	idp.UseIdToFormEmail = UseIdToFormEmail
+	idp.EmailSuffix = emailSuffix
 
 	return idp
 }
@@ -166,6 +170,10 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 		DisplayName: infoResp.Name,
 		Email:       infoResp.Email,
 		AvatarUrl:   infoResp.Avatar,
+	}
+
+	if userInfo.Email == "" && idp.EmailSuffix != "" {
+		userInfo.Email = userInfo.Id + "@" + idp.EmailSuffix
 	}
 
 	if userInfo.Id == "" {
