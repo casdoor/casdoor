@@ -288,7 +288,7 @@ func SendInvitationEmail(id string, emailRequest *InvitationEmailRequest, lang s
 	if invitation != nil {
 		content = strings.Replace(content, "%s", invitation.DefaultCode, 1)
 	}
-	
+
 	// Replace %{user.friendlyName} with invitation username or email
 	content = strings.Replace(content, "%{user.friendlyName}", emailRequest.Email, 1)
 
