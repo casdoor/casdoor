@@ -496,9 +496,13 @@
     "Default code": "Código padrão",
     "Default code - Tooltip": "Quando o código de convite for uma expressão regular, digite o código de convite que corresponde à regra como código de convite padrão para o link de convite",
     "Edit Invitation": "Editar Convite",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Novo Convite",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Cota",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Contagem de uso",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Você precisa primeiro especificar uma aplicação padrão para a organização: "

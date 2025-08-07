@@ -496,9 +496,13 @@
     "Default code": "کد پیش‌فرض",
     "Default code - Tooltip": "وقتی کد دعوت یک عبارت منظم است، لطفاً کد دعوتی که با قاعده عبارت منظم مطابقت دارد را به‌عنوان کد دعوت پیش‌فرض برای لینک دعوت وارد کنید",
     "Edit Invitation": "ویرایش دعوت",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "دعوت جدید",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "سهمیه",
     "Quota - Tooltip": "حداکثر تعداد کاربرانی که می‌توانند با استفاده از این کد دعوت ثبت‌نام کنند",
+    "Send invitation email": "Send invitation email",
     "Used count": "تعداد استفاده شده",
     "Used count - Tooltip": "تعداد دفعات استفاده از این کد دعوت",
     "You need to first specify a default application for organization: ": "ابتدا باید یک برنامه پیش‌فرض برای سازمان مشخص کنید: "

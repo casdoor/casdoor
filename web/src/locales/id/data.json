@@ -496,9 +496,13 @@
     "Default code": "Kode default",
     "Default code - Tooltip": "Ketika kode undangan adalah ekspresi reguler, masukkan kode undangan yang sesuai dengan aturan ekspresi reguler sebagai kode undangan default untuk tautan undangan",
     "Edit Invitation": "Edit Undangan",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Undangan Baru",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kuota",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Jumlah digunakan",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Anda perlu menentukan aplikasi default untuk organisasi terlebih dahulu: "

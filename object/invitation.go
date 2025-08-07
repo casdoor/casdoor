@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
@@ -42,7 +43,17 @@ type Invitation struct {
 	SignupGroup string `xorm:"varchar(100)" json:"signupGroup"`
 	DefaultCode string `xorm:"varchar(100)" json:"defaultCode"`
 
+	EmailTitle   string `xorm:"varchar(255)" json:"emailTitle"`
+	EmailContent string `xorm:"text" json:"emailContent"`
+
 	State string `xorm:"varchar(100)" json:"state"`
+}
+
+type InvitationEmailRequest struct {
+	Email        string `json:"email"`
+	SignupLink   string `json:"signupLink"`
+	EmailTitle   string `json:"emailTitle"`
+	EmailContent string `json:"emailContent"`
 }
 
 func GetInvitationCount(owner, field, value string) (int64, error) {
@@ -234,4 +245,66 @@ func (invitation *Invitation) IsInvitationCodeValid(application *Application, in
 		return false, i18n.Translate(lang, "check:Please register using the phone  corresponding to the invitation code")
 	}
 	return true, ""
+}
+
+func SendInvitationEmail(id string, emailRequest *InvitationEmailRequest, lang string) (bool, error) {
+	owner := util.GetOwnerFromId(id)
+
+	organization, err := GetOrganization(util.GetId("admin", owner))
+	if err != nil {
+		return false, err
+	}
+	if organization == nil {
+		return false, fmt.Errorf("organization not found")
+	}
+
+	providers, err := GetProviders(owner)
+	if err != nil {
+		return false, err
+	}
+
+	var emailProvider *Provider
+	for _, provider := range providers {
+		if provider.Category == "Email" {
+			emailProvider = provider
+			break
+		}
+	}
+
+	if emailProvider == nil {
+		return false, fmt.Errorf("no email provider configured for organization: %s", owner)
+	}
+
+	title := emailRequest.EmailTitle
+	content := emailRequest.EmailContent
+
+	invitation, err := GetInvitation(id)
+	if err != nil {
+		return false, err
+	}
+
+	// Replace template variables in content
+	// Replace %s with invitation code (not signup link)
+	if invitation != nil {
+		content = strings.Replace(content, "%s", invitation.DefaultCode, 1)
+	}
+	
+	// Replace %{user.friendlyName} with invitation username or email
+	content = strings.Replace(content, "%{user.friendlyName}", emailRequest.Email, 1)
+
+	// Replace %link with signup link
+	content = strings.Replace(content, "%link", emailRequest.SignupLink, 1)
+
+	// Handle <reset-link> tags if present (replace with signup link)
+	matchContent := ResetLinkReg.Find([]byte(content))
+	if len(matchContent) > 0 {
+		content = strings.Replace(content, string(matchContent), emailRequest.SignupLink, -1)
+	}
+
+	err = SendEmail(emailProvider, title, content, emailRequest.Email, organization.DisplayName)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

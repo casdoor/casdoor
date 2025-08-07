@@ -496,9 +496,13 @@
     "Default code": "Mã mặc định",
     "Default code - Tooltip": "Khi mã mời là biểu thức chính quy, vui lòng nhập mã mời khớp quy tắc biểu thức chính quy làm mã mời mặc định cho liên kết mời",
     "Edit Invitation": "Chỉnh sửa lời mời",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Lời mời mới",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Hạn ngạch",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Số lần đã sử dụng",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Bạn cần chỉ định ứng dụng mặc định cho tổ chức: "

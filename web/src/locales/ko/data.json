@@ -496,9 +496,13 @@
     "Default code": "기본 코드",
     "Default code - Tooltip": "초대 코드가 정규 표현식일 때, 정규 표현식 규칙에 맞는 초대 코드를 기본 초대 코드로 입력하세요.",
     "Edit Invitation": "초대장 편집",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "새 초대장",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "할당량",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "사용된 횟수",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "먼저 조직의 기본 애플리케이션을 지정해야 합니다: "

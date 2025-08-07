@@ -496,9 +496,13 @@
     "Default code": "Kod lalai",
     "Default code - Tooltip": "Apabila kod jemputan adalah ungkapan nalar, sila masukkan kod jemputan yang sepadan dengan peraturan ungkapan nalar sebagai kod jemputan lalai untuk pautan jemputan",
     "Edit Invitation": "Edit Jemputan",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Jemputan Baharu",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kuota",
     "Quota - Tooltip": "Kuota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Kiraan digunakan",
     "Used count - Tooltip": "Kiraan digunakan - Tooltip",
     "You need to first specify a default application for organization: ": "Anda perlu tetapkan aplikasi lalai untuk organisasi terlebih dahulu: "

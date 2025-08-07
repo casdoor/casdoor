@@ -496,9 +496,13 @@
     "Default code": "קוד ברירת מחדל",
     "Default code - Tooltip": "כאשר קוד ההזמנה הוא ביטוי רגולרי, אנא הזן את קוד ההזמנה שתואם לכלל הביטוי הרגולרי כקוד ברירת המחדל לקישור ההזמנה",
     "Edit Invitation": "ערוך הזמנה",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "הזמנה חדשה",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "מכסה",
     "Quota - Tooltip": "מכסה - תיאור",
+    "Send invitation email": "Send invitation email",
     "Used count": "ספירת שימוש",
     "Used count - Tooltip": "ספירת שימוש - תיאור",
     "You need to first specify a default application for organization: ": "עליך להגדיר תחילה יישום ברירת מחדל לארגון: "

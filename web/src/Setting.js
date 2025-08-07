@@ -1644,6 +1644,45 @@ export function getDefaultHtmlEmailContent() {
 </html>`;
 }
 
+export function getDefaultHtmlEmailContentForInvitation() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitation Code Email</title>
+<style>
+    body { font-family: Arial, sans-serif; }
+    .email-container { width: 600px; margin: 0 auto; }
+    .header { text-align: center; }
+    .code { font-size: 24px; margin: 20px 0; text-align: center; }
+    .footer { font-size: 12px; text-align: center; margin-top: 50px; }
+    .footer a { color: #000; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="email-container">
+  <div class="header">
+        <h3>Casbin Organization</h3>
+        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
+    </div>
+    <p><strong>%{user.friendlyName}</strong>, here is your invitation code</p>
+    <p>Use this code for your signup.</p>
+    <div class="code">
+        %s
+    </div>
+    <p>Or click this <a href="%link">link</a> to signup</p>
+    <p>Thanks</p>
+    <p>Casbin Team</p>
+    <hr>
+    <div class="footer">
+        <p>Casdoor is a brand operated by Casbin organization. For more info please refer to <a href="https://casdoor.org">https://casdoor.org</a></p>
+    </div>
+</div>
+</body>
+</html>`;
+}
+
 export function getCurrencyText(product) {
   if (product?.currency === "USD") {
     return i18next.t("currency:USD");

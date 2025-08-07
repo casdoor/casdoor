@@ -496,9 +496,13 @@
     "Default code": "Domyślny kod",
     "Default code - Tooltip": "Gdy kod zaproszenia jest wyrażeniem regularnym, wprowadź kod zaproszenia pasujący do reguły wyrażenia regularnego jako domyślny kod zaproszenia dla linku zaproszenia",
     "Edit Invitation": "Edytuj zaproszenie",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Nowe zaproszenie",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Limit",
     "Quota - Tooltip": "Limit - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Liczba użyć",
     "Used count - Tooltip": "Liczba użyć - Tooltip",
     "You need to first specify a default application for organization: ": "Musisz najpierw określić domyślną aplikację dla organizacji: "

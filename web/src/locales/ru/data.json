@@ -496,9 +496,13 @@
     "Default code": "Код по умолчанию",
     "Default code - Tooltip": "Если код приглашения является регулярным выражением, введите код, соответствующий правилу, как код по умолчанию для ссылки приглашения",
     "Edit Invitation": "Редактировать приглашение",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Новое приглашение",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Квота",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Количество использований",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Сначала укажите приложение по умолчанию для организации: "

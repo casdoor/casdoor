@@ -496,9 +496,13 @@
     "Default code": "Code par défaut",
     "Default code - Tooltip": "Lorsque le code d'invitation est une expression régulière, veuillez entrer le code d'invitation correspondant à la règle regex comme code d'invitation par défaut pour le lien d'invitation",
     "Edit Invitation": "Modifier l'invitation",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Nouvelle invitation",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Quota",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Nombre utilisé",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Vous devez d'abord spécifier une application par défaut pour l'organisation : "

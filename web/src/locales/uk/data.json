@@ -496,9 +496,13 @@
     "Default code": "Код за замовчуванням",
     "Default code - Tooltip": "Якщо код запрошення є регулярним виразом, будь ласка, введіть код запрошення, який відповідає правилу регулярного виразу, як стандартний код запрошення для посилання запрошення",
     "Edit Invitation": "Редагувати запрошення",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Нове запрошення",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Квота",
     "Quota - Tooltip": "Квота – підказка",
+    "Send invitation email": "Send invitation email",
     "Used count": "Кількість використаних",
     "Used count - Tooltip": "Підрахунок використання – підказка",
     "You need to first specify a default application for organization: ": "Спочатку потрібно вказати за замовчуванням програму для організації: "

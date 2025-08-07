@@ -496,9 +496,13 @@
     "Default code": "Oletuskoodi",
     "Default code - Tooltip": "Kun kutsukoodi on säännöllinen lauseke, kirjoita tähän sääntöä vastaava oletuskoodi kutsulinkkiä varten.",
     "Edit Invitation": "Muokkaa kutsua",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Uusi kutsu",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kiintiö",
     "Quota - Tooltip": "Kiintiö – ohje",
+    "Send invitation email": "Send invitation email",
     "Used count": "Käytetty määrä",
     "Used count - Tooltip": "Käytetty määrä – ohje",
     "You need to first specify a default application for organization: ": "Määritä ensin oletussovellus organisaatiolle: "

@@ -496,9 +496,13 @@
     "Default code": "Әдепкі код",
     "Default code - Tooltip": "Шақыру коды толық сәйкестік болса, шақыру сілтемесі үшін әдепкі шақыру коды ретінде толық сәйкестік ережесіне сай шақыру кодын енгізіңіз",
     "Edit Invitation": "Шақыруды өңдеу",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Жаңа шақыру",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Квота",
     "Quota - Tooltip": "Квота - Қысқаша түсінік",
+    "Send invitation email": "Send invitation email",
     "Used count": "Қолданылған саны",
     "Used count - Tooltip": "Қолданылған саны - Қысқаша түсінік",
     "You need to first specify a default application for organization: ": "Алдымен ұйым үшін әдепкі қолданбаны көрсету керек: "

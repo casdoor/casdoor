@@ -496,9 +496,13 @@
     "Default code": "Standaardcode",
     "Default code - Tooltip": "Wanneer de uitnodigingscode een reguliere expressie is, voer dan de uitnodigingscode in die overeenkomt met de regel van de reguliere expressie als de standaard uitnodigingscode voor de uitnodigingslink",
     "Edit Invitation": "Uitnodiging bewerken",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Nieuwe uitnodiging",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Quotum",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Gebruikt aantal",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "U moet eerst een standaardapplicatie opgeven voor organisatie: "

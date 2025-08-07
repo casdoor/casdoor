@@ -496,9 +496,13 @@
     "Default code": "Varsayılan kod",
     "Default code - Tooltip": "Davet kodu bir düzenli ifade ise, lütfen düzenli ifade kuralına uyan davet kodunu varsayılan davet bağlantısı için davet kodu olarak girin",
     "Edit Invitation": "Daveti Düzenle",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Yeni Davet",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kota",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Kullanım sayısı",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Önce organizasyon için varsayılan bir uygulama belirtmeniz gerekiyor: "

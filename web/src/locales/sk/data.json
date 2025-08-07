@@ -496,9 +496,13 @@
     "Default code": "Predvolený kód",
     "Default code - Tooltip": "Keď je pozývací kód regulárny výraz, zadajte pozývací kód, ktorý zodpovedá pravidlu regulárneho výrazu ako predvolený pozývací kód pre pozývací odkaz",
     "Edit Invitation": "Upraviť pozvanie",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Nové pozvanie",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kvóta",
     "Quota - Tooltip": "Maximálny počet používateľov, ktorí sa môžu zaregistrovať pomocou tohto pozývacieho kódu",
+    "Send invitation email": "Send invitation email",
     "Used count": "Počet použití",
     "Used count - Tooltip": "Počet použití tohto pozývacieho kódu",
     "You need to first specify a default application for organization: ": "Najprv musíte určiť predvolenú aplikáciu pre organizáciu: "

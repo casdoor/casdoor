@@ -188,3 +188,25 @@ func (c *ApiController) VerifyInvitation() {
 
 	c.ResponseOk(payment, attachInfo)
 }
+
+// SendInvitationEmail
+// @Title SendInvitationEmail
+// @Tag Invitation API
+// @Description send invitation email
+// @Param   id     query    string  true        "The id ( owner/name ) of the invitation"
+// @Param   body    body   object.InvitationEmailRequest  true        "The email request details"
+// @Success 200 {object} controllers.Response The Response object
+// @router /send-invitation-email [post]
+func (c *ApiController) SendInvitationEmail() {
+	id := c.Input().Get("id")
+
+	var emailRequest object.InvitationEmailRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &emailRequest)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.SendInvitationEmail(id, &emailRequest, c.GetAcceptLanguage()))
+	c.ServeJSON()
+}

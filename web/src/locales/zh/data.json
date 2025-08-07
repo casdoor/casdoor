@@ -496,9 +496,13 @@
     "Default code": "默认邀请码",
     "Default code - Tooltip": "当邀请码为正则表达式时，请输入符合正则表达式规则的邀请码作为邀请链接的默认邀请码",
     "Edit Invitation": "编辑邀请码",
+    "Failed to send invitation email": "发送邀请邮件失败",
+    "Invitation email sent successfully": "邀请邮件发送成功",
     "New Invitation": "新建邀请码",
+    "Please enter email address first": "请先输入邮箱地址",
     "Quota": "配额",
     "Quota - Tooltip": "该邀请码最多能注册多少个用户",
+    "Send invitation email": "发送邀请邮件",
     "Used count": "已使用个数",
     "Used count - Tooltip": "该邀请码已使用次数",
     "You need to first specify a default application for organization: ": "你需要先为组织指定一个默认应用程序: "

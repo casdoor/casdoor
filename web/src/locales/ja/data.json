@@ -496,9 +496,13 @@
     "Default code": "デフォルトコード",
     "Default code - Tooltip": "招待コードが正規表現の場合、正規表現ルールに一致する招待コードをデフォルトの招待コードとして入力してください",
     "Edit Invitation": "招待を編集",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "新しい招待",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "クォータ",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "使用回数",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "組織のデフォルトアプリケーションを最初に指定する必要があります: "

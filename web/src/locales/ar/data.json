@@ -496,9 +496,13 @@
     "Default code": "الرمز الافتراضي",
     "Default code - Tooltip": "عندما يكون رمز الدعوة عبارة عن تعبير منتظم، يرجى إدخال رمز الدعوة الذي يطابق قاعدة التعبير المنتظم كرمز الدعوة الافتراضي لرابط الدعوة",
     "Edit Invitation": "تعديل الدعوة",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "دعوة جديدة",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "الحصة",
     "Quota - Tooltip": "الحصة - تلميح",
+    "Send invitation email": "Send invitation email",
     "Used count": "عدد الاستخدام",
     "Used count - Tooltip": "عدد الاستخدام - تلميح",
     "You need to first specify a default application for organization: ": "يجب عليك أولاً تحديد تطبيق افتراضي للمنظمة: "

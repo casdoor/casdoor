@@ -496,9 +496,13 @@
     "Default code": "Standardcode",
     "Default code - Tooltip": "Wenn der Einladungscode ein regulärer Ausdruck ist, geben Sie bitte den Code ein, der der Regel entspricht, als Standard-Einladungscode für den Einladungslink ein.",
     "Edit Invitation": "Einladung bearbeiten",
+    "Failed to send invitation email": "Failed to send invitation email",
+    "Invitation email sent successfully": "Invitation email sent successfully",
     "New Invitation": "Neue Einladung",
+    "Please enter email address first": "Please enter email address first",
     "Quota": "Kontingent",
     "Quota - Tooltip": "Quota - Tooltip",
+    "Send invitation email": "Send invitation email",
     "Used count": "Verwendete Anzahl",
     "Used count - Tooltip": "Used count - Tooltip",
     "You need to first specify a default application for organization: ": "Sie müssen zuerst eine Standardanwendung für die Organisation angeben: "

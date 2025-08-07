@@ -14,6 +14,8 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
+import Editor from "./common/Editor";
+import {CopyOutlined} from "@ant-design/icons";
 import * as InvitationBackend from "./backend/InvitationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -52,6 +54,14 @@ class InvitationEditPage extends React.Component {
         if (res.data === null) {
           this.props.history.push("/404");
           return;
+        }
+
+        const invitation = res.data;
+        if (!invitation.emailTitle) {
+          invitation.emailTitle = "Casdoor Invitation Code";
+        }
+        if (!invitation.emailContent) {
+          invitation.emailContent = Setting.getDefaultHtmlEmailContentForInvitation();
         }
 
         this.setState({
@@ -122,6 +132,44 @@ class InvitationEditPage extends React.Component {
     Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
   }
 
+  sendInvitationEmail() {
+    if (!this.state.invitation.email) {
+      Setting.showMessage("error", i18next.t("invitation:Please enter email address first"));
+      return;
+    }
+
+    let defaultApplication;
+    if (this.state.invitation.owner === "built-in") {
+      defaultApplication = "app-built-in";
+    } else {
+      const selectedOrganization = Setting.getArrayItem(this.state.organizations, "name", this.state.invitation.owner);
+      defaultApplication = selectedOrganization.defaultApplication;
+      if (!defaultApplication) {
+        Setting.showMessage("error", i18next.t("invitation:You need to first specify a default application for organization: ") + selectedOrganization.name);
+        return;
+      }
+    }
+
+    const signupLink = `${window.location.origin}/signup/${defaultApplication}?invitationCode=${this.state.invitation?.defaultCode}`;
+
+    InvitationBackend.sendInvitationEmail(this.state.organizationName, this.state.invitationName, {
+      email: this.state.invitation.email,
+      signupLink: signupLink,
+      emailTitle: this.state.invitation.emailTitle,
+      emailContent: this.state.invitation.emailContent,
+    })
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("invitation:Invitation email sent successfully"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("invitation:Failed to send invitation email")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   renderInvitation() {
     const isCreatedByPlan = this.state.invitation.tag === "auto_created_invitation_for_plan";
     return (
@@ -130,9 +178,6 @@ class InvitationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("invitation:New Invitation") : i18next.t("invitation:Edit Invitation")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} onClick={_ => this.copySignupLink()}>
-            {i18next.t("application:Copy signup page URL")}
-          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
@@ -190,6 +235,15 @@ class InvitationEditPage extends React.Component {
             <Input value={this.state.invitation.defaultCode} onChange={e => {
               this.updateInvitationField("defaultCode", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          </Col>
+          <Col span={22} >
+            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={_ => this.copySignupLink()}>
+              {i18next.t("application:Copy signup page URL")}
+            </Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -252,13 +306,64 @@ class InvitationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Email title"), i18next.t("provider:Email title - Tooltip"))} :
           </Col>
           <Col span={22} >
+            <Input value={this.state.invitation.emailTitle} onChange={e => {
+              this.updateInvitationField("emailTitle", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("provider:Email content"), i18next.t("provider:Email content - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row style={{marginTop: "20px"}} >
+              <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateInvitationField("emailContent", "You have been invited to join our platform. Please use the signup link to register: %s")} >
+                {i18next.t("provider:Reset to Default Text")}
+              </Button>
+              <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateInvitationField("emailContent", Setting.getDefaultHtmlEmailContentForInvitation())} >
+                {i18next.t("provider:Reset to Default HTML")}
+              </Button>
+            </Row>
+            <Row>
+              <Col span={Setting.isMobile() ? 22 : 11}>
+                <div style={{height: "300px", margin: "10px"}}>
+                  <Editor
+                    value={this.state.invitation.emailContent || ""}
+                    fillHeight
+                    dark
+                    lang="html"
+                    onChange={value => {
+                      this.updateInvitationField("emailContent", value);
+                    }}
+                  />
+                </div>
+              </Col>
+              <Col span={1} />
+              <Col span={Setting.isMobile() ? 22 : 11}>
+                <div style={{margin: "10px"}}>
+                  <div dangerouslySetInnerHTML={{__html: (this.state.invitation.emailContent || "").replace("%s", this.state.invitation?.defaultCode || "").replace("%link", `${window.location.origin}/signup?invitationCode=${this.state.invitation?.defaultCode}`).replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
+                </div>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
+          </Col>
+          <Col span={4} >
             <Input value={this.state.invitation.email} onChange={e => {
               this.updateInvitationField("email", e.target.value);
             }} />
           </Col>
+          <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary"
+            disabled={!Setting.isValidEmail(this.state.invitation.email)}
+            onClick={() => this.sendInvitationEmail()} >
+            {i18next.t("invitation:Send invitation email")}
+          </Button>
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -337,9 +442,6 @@ class InvitationEditPage extends React.Component {
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} size="large" onClick={_ => this.copySignupLink()}>
-            {i18next.t("application:Copy signup page URL")}
-          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>

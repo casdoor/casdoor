@@ -89,3 +89,14 @@ export function verifyInvitation(owner, name) {
     },
   }).then(res => res.json());
 }
+
+export function sendInvitationEmail(owner, name, emailData) {
+  return fetch(`${Setting.ServerUrl}/api/send-invitation-email?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(emailData),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
