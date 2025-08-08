@@ -59,6 +59,9 @@ function initLanguage() {
       case "zh-CN":
         language = "zh";
         break;
+      case "zh-TW":
+        language = "zh-TW";
+        break;
       case "zh":
         language = "zh";
         break;
