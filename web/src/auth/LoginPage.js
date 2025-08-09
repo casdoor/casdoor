@@ -648,6 +648,9 @@ class LoginPage extends React.Component {
       )
       ;
     } else if (signinItem.name === "Username") {
+      if (this.state.loginMethod === "wechat") {
+        return (<WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />);
+      }
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
@@ -750,6 +753,9 @@ class LoginPage extends React.Component {
     } else if (signinItem.name === "Agreement") {
       return AgreementModal.isAgreementRequired(application) ? AgreementModal.renderAgreementFormItem(application, true, {}, this) : null;
     } else if (signinItem.name === "Login button") {
+      if (this.state.loginMethod === "wechat") {
+        return null;
+      }
       return (
         <Form.Item key={resultItemKey} className="login-button-box">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
@@ -894,10 +900,6 @@ class LoginPage extends React.Component {
         loginWidth += 40;
       } else if (Setting.getLanguage() === "ru") {
         loginWidth += 10;
-      }
-
-      if (this.state.loginMethod === "wechat") {
-        return (<WeChatLoginPanel application={application} renderFormItem={this.renderFormItem.bind(this)} loginMethod={this.state.loginMethod} loginWidth={loginWidth} renderMethodChoiceBox={this.renderMethodChoiceBox.bind(this)} />);
       }
 
       return (
@@ -1239,6 +1241,7 @@ class LoginPage extends React.Component {
       [generateItemKey("WebAuthn", "None"), {label: i18next.t("login:WebAuthn"), key: "webAuthn"}],
       [generateItemKey("LDAP", "None"), {label: i18next.t("login:LDAP"), key: "ldap"}],
       [generateItemKey("Face ID", "None"), {label: i18next.t("login:Face ID"), key: "faceId"}],
+      [generateItemKey("WeChat", "Tab"), {label: i18next.t("login:WeChat"), key: "wechat"}],
       [generateItemKey("WeChat", "None"), {label: i18next.t("login:WeChat"), key: "wechat"}],
     ]);
 
@@ -1403,6 +1406,8 @@ class LoginPage extends React.Component {
       );
     }
 
+    const wechatSigninMethods = application.signinMethods?.filter(method => method.name === "WeChat" && method.rule === "Login page");
+
     return (
       <React.Fragment>
         <CustomGithubCorner />
@@ -1420,6 +1425,15 @@ class LoginPage extends React.Component {
                 }
               </div>
             </div>
+            {
+              wechatSigninMethods?.length > 0 ? (<div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <div>
+                  <h3 style={{textAlign: "center", width: 320}}>{i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in")}</h3>
+                  <WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />
+                </div>
+              </div>
+              ) : null
+            }
           </div>
         </div>
       </React.Fragment>
