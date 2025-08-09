@@ -14,6 +14,7 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
+import {CopyOutlined} from "@ant-design/icons";
 import * as InvitationBackend from "./backend/InvitationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
@@ -130,9 +131,6 @@ class InvitationEditPage extends React.Component {
           {this.state.mode === "add" ? i18next.t("invitation:New Invitation") : i18next.t("invitation:Edit Invitation")}&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} onClick={_ => this.copySignupLink()}>
-            {i18next.t("application:Copy signup page URL")}
-          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
@@ -190,6 +188,15 @@ class InvitationEditPage extends React.Component {
             <Input value={this.state.invitation.defaultCode} onChange={e => {
               this.updateInvitationField("defaultCode", e.target.value);
             }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+          </Col>
+          <Col span={22} >
+            <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={_ => this.copySignupLink()}>
+              {i18next.t("application:Copy signup page URL")}
+            </Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -337,9 +344,6 @@ class InvitationEditPage extends React.Component {
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitInvitationEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitInvitationEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          <Button style={{marginLeft: "20px"}} size="large" onClick={_ => this.copySignupLink()}>
-            {i18next.t("application:Copy signup page URL")}
-          </Button>
           {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteInvitation()}>{i18next.t("general:Cancel")}</Button> : null}
         </div>
       </div>
