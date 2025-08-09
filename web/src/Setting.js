@@ -1296,6 +1296,9 @@ export function renderSignupLink(application, text) {
   } else {
     if (application.signupUrl === "") {
       url = `/signup/${application.name}`;
+      if (application.isShared) {
+        url = `/signup/${application.name}-org-${application.organization}`;
+      }
     } else {
       url = application.signupUrl;
     }
