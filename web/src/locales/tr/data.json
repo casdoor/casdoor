@@ -40,8 +40,8 @@
     "Custom CSS Mobile": "Özel CSS (Mobil)",
     "Custom CSS Mobile - Edit": "Özel CSS (Mobil) - Düzenle",
     "Custom CSS Mobile - Tooltip": "Özel CSS (Mobil) - Araç ipucu",
-    "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Disable signin - Tooltip",
+    "Disable signin": "Oturum açmayı devredışı bırak",
+    "Disable signin - Tooltip": "Oturum açmayı devre dışı bırak",
     "Dynamic": "Dinamik",
     "Edit Application": "Uygulamayı düzenle",
     "Enable Email linking": "Eposta bağlantısı aktif",
@@ -243,7 +243,7 @@
     "Applications that require authentication": "Kimlik doğrulaması gerektiren uygulamalar",
     "Apps": "Uygulamalar",
     "Authorization": "Yetkilendirme",
-    "Avatar": "Avatar",
+    "Avatar": "Profil Resmi",
     "Avatar - Tooltip": "Kullanıcı için genel avatar resmi",
     "Back": "Geri",
     "Back Home": "Ana sayfaya geri dön",
@@ -481,7 +481,7 @@
     "Show all": "Tümünü göster",
     "Upload (.xlsx)": "Yükle (.xlsx)",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
