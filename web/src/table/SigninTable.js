@@ -119,6 +119,7 @@ class SigninTable extends React.Component {
             {name: "Signup link", displayName: i18next.t("general:Signup link")},
             {name: "Captcha", displayName: i18next.t("general:Captcha")},
             {name: "Auto sign in", displayName: i18next.t("login:Auto sign in")},
+            {name: "Select organization", displayName: i18next.t("login:Select organization")},
           ];
 
           const getItemDisplayName = (text) => {

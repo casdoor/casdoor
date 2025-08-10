@@ -595,6 +595,32 @@ class LoginPage extends React.Component {
     return null;
   }
 
+  switchLoginOrganization(name) {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    const clientId = searchParams.get("client_id");
+    if (clientId) {
+      const clientIdSplited = clientId.split("-org-");
+      searchParams.set("client_id", `${clientIdSplited[0]}-org-${name}`);
+
+      Setting.goToLink(`/login/oauth/authorize?${searchParams.toString()}`);
+      return;
+    }
+
+    const application = this.getApplicationObj();
+    if (window.location.pathname.startsWith("/login/saml/authorize")) {
+      Setting.goToLink(`/login/saml/authorize/${name}/${application.name}-org-${name}`);
+      return;
+    }
+
+    if (window.location.pathname.startsWith("/cas")) {
+      Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login`);
+      return;
+    }
+
+    Setting.goToLink(`/login/${name}?orgChoiceMode=None`);
+  }
+
   renderFormItem(application, signinItem) {
     if (!signinItem.visible && signinItem.name !== "Forgot password?") {
       return null;
@@ -853,6 +879,17 @@ class LoginPage extends React.Component {
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
           {this.renderFooter(application, signinItem)}
         </div>
+      );
+    } else if (signinItem.name === "Select organization") {
+      return (
+        <Form.Item>
+          <div key={resultItemKey} style={{width: "100%"}} className="login-organization-select">
+            <OrganizationSelect style={{width: "100%"}} initValue={application.organization}
+              onSelect={(value) => {
+                this.switchLoginOrganization(value);
+              }} />
+          </div>
+        </Form.Item>
       );
     }
   }
