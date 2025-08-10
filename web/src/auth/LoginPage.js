@@ -617,8 +617,8 @@ class LoginPage extends React.Component {
       Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login?${searchParams.toString()}`);
       return;
     }
-
-    Setting.goToLink(`/login/${name}?${searchParams.toString()}&orgChoiceMode=None`);
+    searchParams.set("orgChoiceMode", "None");
+    Setting.goToLink(`/login/${name}?${searchParams.toString()}`);
   }
 
   renderFormItem(application, signinItem) {
