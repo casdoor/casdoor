@@ -609,16 +609,16 @@ class LoginPage extends React.Component {
 
     const application = this.getApplicationObj();
     if (window.location.pathname.startsWith("/login/saml/authorize")) {
-      Setting.goToLink(`/login/saml/authorize/${name}/${application.name}-org-${name}`);
+      Setting.goToLink(`/login/saml/authorize/${name}/${application.name}-org-${name}?${searchParams.toString()}`);
       return;
     }
 
     if (window.location.pathname.startsWith("/cas")) {
-      Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login`);
+      Setting.goToLink(`/cas/${application.name}-org-${name}/${name}/login?${searchParams.toString()}`);
       return;
     }
-
-    Setting.goToLink(`/login/${name}?orgChoiceMode=None`);
+    searchParams.set("orgChoiceMode", "None");
+    Setting.goToLink(`/login/${name}?${searchParams.toString()}`);
   }
 
   renderFormItem(application, signinItem) {
