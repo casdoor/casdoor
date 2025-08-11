@@ -808,9 +808,49 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	}
 
 	if util.InSlice(columns, "groups") {
-		_, err := userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		var userGroups []*Group
+		visited := make(map[string]struct{})
+		for _, group := range user.Groups {
+			groups, err := getGroupsInGroup(group, visited)
+			if err != nil {
+				continue
+			}
+			userGroups = append(userGroups, groups...)
+		}
+		permissions, err := getPermissionsByUser(user.GetId())
 		if err != nil {
 			return false, err
+		}
+		for _, permission := range permissions {
+			for _, group := range userGroups {
+				if !permission.isGroupHit(group.GetId()) {
+					continue
+				}
+				err = removeGroupingPolicies(permission)
+				if err != nil {
+					return false, err
+				}
+			}
+		}
+		_, err = userEnforcer.UpdateGroupsForUser(user.GetId(), user.Groups)
+		if err != nil {
+			return false, err
+		}
+		for _, permission := range permissions {
+			for _, group := range userGroups {
+				if !permission.isGroupHit(group.GetId()) {
+					continue
+				}
+				err = addGroupingPolicies(permission)
+				if err != nil {
+					return false, err
+				}
+
+				err = addPolicies(permission)
+				if err != nil {
+					return false, err
+				}
+			}
 		}
 	}
 

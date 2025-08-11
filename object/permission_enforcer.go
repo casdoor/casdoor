@@ -115,11 +115,14 @@ func (p *Permission) setEnforcerModel(enforcer *casbin.Enforcer) error {
 
 func getPolicies(permission *Permission) [][]string {
 	var policies [][]string
-
+	owner := permission.Owner
 	permissionId := permission.GetId()
 	domainExist := len(permission.Domains) > 0
 
 	usersAndRoles := append(permission.Users, permission.Roles...)
+	for _, group := range permission.Groups {
+		usersAndRoles = append(usersAndRoles, GetGroupWithPrefix(util.GetId(owner, group)))
+	}
 	for _, userOrRole := range usersAndRoles {
 		for _, resource := range permission.Resources {
 			for _, action := range permission.Actions {
@@ -173,6 +176,41 @@ func getRolesInRole(roleId string, visited map[string]struct{}) ([]*Role, error)
 	return roles, nil
 }
 
+func getGroupsInGroup(groupId string, visited map[string]struct{}) ([]*Group, error) {
+	if _, ok := visited[groupId]; ok {
+		return []*Group{}, nil
+	}
+	groupOwner, groupName := util.GetOwnerAndNameFromId(groupId)
+	if groupName == "*" {
+		groups, err := GetGroups(groupOwner)
+		if err != nil {
+			return []*Group{}, err
+		}
+
+		return groups, nil
+	}
+
+	group, err := GetGroup(groupId)
+	if err != nil {
+		return []*Group{}, err
+	}
+
+	if group == nil {
+		return []*Group{}, nil
+	}
+	visited[groupId] = struct{}{}
+	if group.IsTopGroup {
+		return []*Group{group}, nil
+	}
+	parentGroupId := group.Owner + "/" + group.ParentId
+	groups, err := getGroupsInGroup(parentGroupId, visited)
+	if err != nil {
+		return []*Group{group}, err
+	}
+	groups = append(groups, group)
+	return groups, nil
+}
+
 func getGroupingPolicies(permission *Permission) ([][]string, error) {
 	var groupingPolicies [][]string
 
@@ -210,6 +248,33 @@ func getGroupingPolicies(permission *Permission) ([][]string, error) {
 					}
 				} else {
 					groupingPolicies = append(groupingPolicies, []string{subRole, roleId, "", "", "", permissionId})
+				}
+			}
+		}
+	}
+	for _, groupId := range permission.Groups {
+		visited := map[string]struct{}{}
+		if groupId == "*" {
+			groupId = util.GetId(permission.Owner, "*")
+		}
+
+		groupsInGroups, err := getGroupsInGroup(groupId, visited)
+		if err != nil {
+			return nil, err
+		}
+		err = ExtendGroupsWithUsers(groupsInGroups)
+		if err != nil {
+			return nil, err
+		}
+		for _, group := range groupsInGroups {
+			groupId = GetGroupWithPrefix(group.GetId())
+			for _, subUser := range group.Users {
+				if domainExist {
+					for _, domain := range permission.Domains {
+						groupingPolicies = append(groupingPolicies, []string{subUser, groupId, domain, "", "", permissionId})
+					}
+				} else {
+					groupingPolicies = append(groupingPolicies, []string{subUser, groupId, "", "", "", permissionId})
 				}
 			}
 		}
