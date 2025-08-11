@@ -30,7 +30,7 @@ type Ldap struct {
 	AllowSelfSignedCert bool     `xorm:"bool" json:"allowSelfSignedCert"`
 	Username            string   `xorm:"varchar(100)" json:"username"`
 	Password            string   `xorm:"varchar(100)" json:"password"`
-	BaseDn              string   `xorm:"varchar(100)" json:"baseDn"`
+	BaseDn              string   `xorm:"varchar(500)" json:"baseDn"`
 	Filter              string   `xorm:"varchar(200)" json:"filter"`
 	FilterFields        []string `xorm:"varchar(100)" json:"filterFields"`
 	DefaultGroup        string   `xorm:"varchar(100)" json:"defaultGroup"`
