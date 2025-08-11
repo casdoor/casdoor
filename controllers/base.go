@@ -180,6 +180,16 @@ func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
 }
 
+func (c *ApiController) SetSessionUsernameWithCustomExpiry(user string, application *object.Application) {
+	c.SetSession("username", user)
+
+	cookieExpireInSeconds := object.GetApplicationCookieExpireInSeconds(application)
+	sessionName := beego.BConfig.WebConfig.Session.SessionName
+	sessionID := c.Ctx.Input.CruSession.SessionID()
+
+	c.Ctx.SetCookie(sessionName, sessionID, cookieExpireInSeconds, "/", "", beego.BConfig.Listen.EnableHTTPS, true)
+}
+
 func (c *ApiController) SetSessionToken(accessToken string) {
 	c.SetSession("accessToken", accessToken)
 }

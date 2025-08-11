@@ -727,6 +727,13 @@ func DeleteApplication(application *Application) (bool, error) {
 	return deleteApplication(application)
 }
 
+func GetApplicationCookieExpireInSeconds(application *Application) int {
+	if application == nil || application.CookieExpireInDays <= 0 {
+		return 3600 * 24 * 30
+	}
+	return application.CookieExpireInDays * 24 * 3600
+}
+
 func (application *Application) GetId() string {
 	return fmt.Sprintf("%s/%s", application.Owner, application.Name)
 }
