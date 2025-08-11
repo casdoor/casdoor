@@ -328,19 +328,12 @@ func DeletePermission(permission *Permission) (bool, error) {
 
 func getPermissionsByUser(userId string) ([]*Permission, error) {
 	permissions := []*Permission{}
-	err := ormer.Engine.Where("users like ? OR JSON_CONTAINS(users, '\"*\"', '$')", "%"+userId+"\"%").Find(&permissions)
+	err := ormer.Engine.Where("users like ? OR users like ?", `%"`+userId+`"%`, `%"*"%`).Find(&permissions)
 	if err != nil {
 		return permissions, err
 	}
 
-	res := []*Permission{}
-	for _, permission := range permissions {
-		if util.InSlice(permission.Users, userId) || util.InSlice(permission.Users, "*") {
-			res = append(res, permission)
-		}
-	}
-
-	return res, nil
+	return permissions, err
 }
 
 func GetPermissionsByRole(roleId string) ([]*Permission, error) {
