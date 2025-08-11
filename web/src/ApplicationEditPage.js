@@ -490,6 +490,16 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Cookie expire"), i18next.t("application:Cookie expire - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.cookieExpireInDays} min={1} step={1} precision={0} addonAfter="Days" onChange={value => {
+              this.updateApplicationField("cookieExpireInDays", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Failed signin limit"), i18next.t("application:Failed signin limit - Tooltip"))} :
           </Col>
           <Col span={22} >

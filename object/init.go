@@ -200,12 +200,13 @@ func initBuiltInApplication() {
 			{Name: "Phone", Visible: true, Required: true, Prompted: false, Rule: "None"},
 			{Name: "Agreement", Visible: true, Required: true, Prompted: false, Rule: "None"},
 		},
-		Tags:          []string{},
-		RedirectUris:  []string{},
-		TokenFormat:   "JWT",
-		TokenFields:   []string{},
-		ExpireInHours: 168,
-		FormOffset:    2,
+		Tags:               []string{},
+		RedirectUris:       []string{},
+		TokenFormat:        "JWT",
+		TokenFields:        []string{},
+		ExpireInHours:      168,
+		CookieExpireInDays: 30,
+		FormOffset:         2,
 	}
 	_, err = AddApplication(application)
 	if err != nil {
