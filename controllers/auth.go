@@ -140,7 +140,8 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 
 	if form.Type == ResponseTypeLogin {
-		c.SetSessionUsernameWithCustomExpiry(userId, application)
+		c.SetSession("autoSignin", form.AutoSignin)
+		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId, Data3: user.NeedUpdatePassword}
 	} else if form.Type == ResponseTypeCode {
@@ -167,7 +168,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		resp.Data3 = user.NeedUpdatePassword
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUsernameWithCustomExpiry(userId, application)
+			c.SetSessionUsername(userId)
 		}
 	} else if form.Type == ResponseTypeToken || form.Type == ResponseTypeIdToken { // implicit flow
 		if !object.IsGrantTypeValid(form.Type, application.GrantTypes) {
@@ -216,7 +217,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUsernameWithCustomExpiry(userId, application)
+			c.SetSessionUsername(userId)
 		}
 	} else if form.Type == ResponseTypeCas {
 		// not oauth but CAS SSO protocol
@@ -233,15 +234,10 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 
 		if application.EnableSigninSession || application.HasPromptPage() {
 			// The prompt page needs the user to be signed in
-			c.SetSessionUsernameWithCustomExpiry(userId, application)
+			c.SetSessionUsername(userId)
 		}
 	} else {
 		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
-	}
-
-	// if user did not check auto signin
-	if resp.Status == "ok" && !form.AutoSignin {
-		c.setExpireForSession()
 	}
 
 	if resp.Status == "ok" {
@@ -363,10 +359,10 @@ func isProxyProviderType(providerType string) bool {
 	return false
 }
 
-func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, application *object.Application, verificationType string) bool {
+func checkMfaEnable(c *ApiController, user *object.User, organization *object.Organization, verificationType string) bool {
 	if object.IsNeedPromptMfa(organization, user) {
 		// The prompt page needs the user to be signed in
-		c.SetSessionUsernameWithCustomExpiry(user.GetId(), application)
+		c.SetSessionUsername(user.GetId())
 		c.ResponseOk(object.RequiredMfa)
 		return true
 	}
@@ -645,7 +641,7 @@ func (c *ApiController) Login() {
 				c.ResponseError(err.Error())
 			}
 
-			if checkMfaEnable(c, user, organization, application, verificationType) {
+			if checkMfaEnable(c, user, organization, verificationType) {
 				return
 			}
 
@@ -781,7 +777,7 @@ func (c *ApiController) Login() {
 					return
 				}
 
-				if checkMfaEnable(c, user, organization, application, verificationType) {
+				if checkMfaEnable(c, user, organization, verificationType) {
 					return
 				}
 

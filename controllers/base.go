@@ -178,16 +178,35 @@ func (c *ApiController) GetSessionOidc() (string, string) {
 // SetSessionUsername ...
 func (c *ApiController) SetSessionUsername(user string) {
 	c.SetSession("username", user)
-}
 
-func (c *ApiController) SetSessionUsernameWithCustomExpiry(user string, application *object.Application) {
-	c.SetSession("username", user)
+	autoSignin := c.GetSession("autoSignin")
+	b, ok := autoSignin.(bool)
+	isAutoSignin := ok && b
 
-	cookieExpireInSeconds := object.GetApplicationCookieExpireInSeconds(application)
-	sessionName := beego.BConfig.WebConfig.Session.SessionName
-	sessionID := c.Ctx.Input.CruSession.SessionID()
+	application, err := object.GetApplicationByUserId(user)
+	if err != nil {
+		return
+	}
 
-	c.Ctx.SetCookie(sessionName, sessionID, cookieExpireInSeconds, "/", "", beego.BConfig.Listen.EnableHTTPS, true)
+	if application != nil {
+		var cookieExpireInSeconds int
+		var timestamp int64
+
+		if isAutoSignin {
+			cookieExpireInSeconds = object.GetApplicationCookieExpireInSeconds(application)
+			timestamp = time.Now().Unix() + int64(cookieExpireInSeconds)
+			c.SetSessionData(&SessionData{
+				ExpireTime: timestamp,
+			})
+		} else {
+			cookieExpireInSeconds = 3600 * 24
+			c.setExpireForSession()
+		}
+
+		sessionName := beego.BConfig.WebConfig.Session.SessionName
+		sessionID := c.Ctx.Input.CruSession.SessionID()
+		c.Ctx.SetCookie(sessionName, sessionID, cookieExpireInSeconds, "/", "", beego.BConfig.Listen.EnableHTTPS, true)
+	}
 }
 
 func (c *ApiController) SetSessionToken(accessToken string) {
