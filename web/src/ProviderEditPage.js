@@ -174,7 +174,11 @@ class ProviderEditPage extends React.Component {
       }
     }
 
-    provider.userMapping[key] = value;
+    if (value === "") {
+      delete provider.userMapping[key];
+    } else {
+      provider.userMapping[key] = value;
+    }
 
     this.setState({
       provider: provider,
@@ -371,11 +375,6 @@ class ProviderEditPage extends React.Component {
           {id: "Third-party", name: i18next.t("provider:Third-party")},
         ]
       );
-    } else if (type === "Aliyun Captcha") {
-      return [
-        {id: "nc", name: i18next.t("provider:Sliding Validation")},
-        {id: "ic", name: i18next.t("provider:Intelligent Validation")},
-      ];
     } else {
       return [];
     }
@@ -674,7 +673,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "Aliyun Captcha" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
@@ -883,9 +882,17 @@ class ProviderEditPage extends React.Component {
                       {this.getClientSecret2Label(this.state.provider)} :
                     </Col>
                     <Col span={22} >
-                      <Input value={this.state.provider.clientSecret2} onChange={e => {
-                        this.updateProviderField("clientSecret2", e.target.value);
-                      }} />
+                      {
+                        (this.state.provider.category === "OAuth" && this.state.provider.type === "Apple") ? (
+                          <TextArea autoSize={{minRows: 1, maxRows: 20}} value={this.state.provider.clientSecret2} onChange={e => {
+                            this.updateProviderField("clientSecret2", e.target.value);
+                          }} />
+                        ) : (
+                          <Input value={this.state.provider.clientSecret2} onChange={e => {
+                            this.updateProviderField("clientSecret2", e.target.value);
+                          }} />
+                        )
+                      }
                     </Col>
                   </Row>
                 )
@@ -936,10 +943,12 @@ class ProviderEditPage extends React.Component {
           )
         }
         {
-          this.state.provider.type !== "Google" ? null : (
+          this.state.provider.type !== "Google" && this.state.provider.type !== "Lark" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))} :
+                {this.state.provider.type === "Google" ?
+                  Setting.getLabel(i18next.t("provider:Get phone number"), i18next.t("provider:Get phone number - Tooltip"))
+                  : Setting.getLabel(i18next.t("provider:Use global endpoint"), i18next.t("provider:Use global endpoint - Tooltip"))} :
               </Col>
               <Col span={1} >
                 <Switch disabled={!this.state.provider.clientId} checked={this.state.provider.disableSsl} onChange={checked => {
@@ -1232,7 +1241,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
                 <Col span={22} >
                   <Row style={{marginTop: "20px"}} >
-                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes.")} >
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("content", "You have requested a verification code at Casdoor. Here is your code: %s, please enter in 5 minutes. <reset-link>Or click %link to reset</reset-link>")} >
                       {i18next.t("provider:Reset to Default Text")}
                     </Button>
                     <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("content", Setting.getDefaultHtmlEmailContent())} >

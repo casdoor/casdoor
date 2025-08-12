@@ -54,10 +54,10 @@ func IsPhoneValid(phone string, countryCode string) bool {
 }
 
 func IsPhoneAllowInRegin(countryCode string, allowRegions []string) bool {
-	if ContainsString(allowRegions, "All") {
+	if InSlice(allowRegions, "All") {
 		return true
 	}
-	return ContainsString(allowRegions, countryCode)
+	return InSlice(allowRegions, countryCode)
 }
 
 func IsRegexp(s string) (bool, error) {

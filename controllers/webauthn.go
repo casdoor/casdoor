@@ -17,6 +17,7 @@ package controllers
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"io"
 
 	"github.com/casdoor/casdoor/form"
@@ -47,6 +48,13 @@ func (c *ApiController) WebAuthnSignupBegin() {
 
 	registerOptions := func(credCreationOpts *protocol.PublicKeyCredentialCreationOptions) {
 		credCreationOpts.CredentialExcludeList = user.CredentialExcludeList()
+		credCreationOpts.AuthenticatorSelection.ResidentKey = "preferred"
+		credCreationOpts.Attestation = "none"
+
+		ext := map[string]interface{}{
+			"credProps": true,
+		}
+		credCreationOpts.Extensions = ext
 	}
 	options, sessionData, err := webauthnObj.BeginRegistration(
 		user,
@@ -118,7 +126,34 @@ func (c *ApiController) WebAuthnSigninBegin() {
 		return
 	}
 
-	options, sessionData, err := webauthnObj.BeginDiscoverableLogin()
+	userOwner := c.Input().Get("owner")
+	userName := c.Input().Get("name")
+
+	var options *protocol.CredentialAssertion
+	var sessionData *webauthn.SessionData
+
+	if userName == "" {
+		options, sessionData, err = webauthnObj.BeginDiscoverableLogin()
+	} else {
+		var user *object.User
+		user, err = object.GetUserByFields(userOwner, userName)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if user == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(userOwner, userName)))
+			return
+		}
+		if len(user.WebauthnCredentials) == 0 {
+			c.ResponseError(c.T("webauthn:Found no credentials for this user"))
+			return
+		}
+
+		options, sessionData, err = webauthnObj.BeginLogin(user)
+	}
+
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -153,15 +188,27 @@ func (c *ApiController) WebAuthnSigninFinish() {
 	c.Ctx.Request.Body = io.NopCloser(bytes.NewBuffer(c.Ctx.Input.RequestBody))
 
 	var user *object.User
-	handler := func(rawID, userHandle []byte) (webauthn.User, error) {
-		user, err = object.GetUserByWebauthID(base64.StdEncoding.EncodeToString(rawID))
+	if sessionData.UserID != nil {
+		userId := string(sessionData.UserID)
+		user, err = object.GetUser(userId)
 		if err != nil {
-			return nil, err
+			c.ResponseError(err.Error())
+			return
 		}
-		return user, nil
+
+		_, err = webauthnObj.FinishLogin(user, sessionData, c.Ctx.Request)
+	} else {
+		handler := func(rawID, userHandle []byte) (webauthn.User, error) {
+			user, err = object.GetUserByWebauthID(base64.StdEncoding.EncodeToString(rawID))
+			if err != nil {
+				return nil, err
+			}
+			return user, nil
+		}
+
+		_, err = webauthnObj.FinishDiscoverableLogin(handler, sessionData, c.Ctx.Request)
 	}
 
-	_, err = webauthnObj.FinishDiscoverableLogin(handler, sessionData, c.Ctx.Request)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

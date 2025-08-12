@@ -154,6 +154,14 @@ func (c *ApiController) DeleteEnforcer() {
 	c.ServeJSON()
 }
 
+// GetPolicies
+// @Title GetPolicies
+// @Tag Enforcer API
+// @Description get policies
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   adapterId     query    string  false        "The adapter id"
+// @Success 200 {array} xormadapter.CasbinRule
+// @router /get-policies [get]
 func (c *ApiController) GetPolicies() {
 	id := c.Input().Get("id")
 	adapterId := c.Input().Get("adapterId")
@@ -165,7 +173,7 @@ func (c *ApiController) GetPolicies() {
 			return
 		}
 		if adapter == nil {
-			c.ResponseError(fmt.Sprintf(c.T("the adapter: %s is not found"), adapterId))
+			c.ResponseError(fmt.Sprintf(c.T("enforcer:the adapter: %s is not found"), adapterId))
 			return
 		}
 
@@ -188,6 +196,41 @@ func (c *ApiController) GetPolicies() {
 	c.ResponseOk(policies)
 }
 
+// GetFilteredPolicies
+// @Title GetFilteredPolicies
+// @Tag Enforcer API
+// @Description get filtered policies with support for multiple filters via POST body
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   body   body    []object.Filter  true        "Array of filter objects for multiple filters"
+// @Success 200 {array} xormadapter.CasbinRule
+// @router /get-filtered-policies [post]
+func (c *ApiController) GetFilteredPolicies() {
+	id := c.Input().Get("id")
+
+	var filters []object.Filter
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &filters)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	filteredPolicies, err := object.GetFilteredPoliciesMulti(id, filters)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(filteredPolicies)
+}
+
+// UpdatePolicy
+// @Title UpdatePolicy
+// @Tag Enforcer API
+// @Description update policy
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   body     body    []xormadapter.CasbinRule  true        "Array containing old and new policy"
+// @Success 200 {object} Response
+// @router /update-policy [post]
 func (c *ApiController) UpdatePolicy() {
 	id := c.Input().Get("id")
 
@@ -207,6 +250,14 @@ func (c *ApiController) UpdatePolicy() {
 	c.ServeJSON()
 }
 
+// AddPolicy
+// @Title AddPolicy
+// @Tag Enforcer API
+// @Description add policy
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   body     body    xormadapter.CasbinRule  true        "The policy to add"
+// @Success 200 {object} Response
+// @router /add-policy [post]
 func (c *ApiController) AddPolicy() {
 	id := c.Input().Get("id")
 
@@ -226,6 +277,14 @@ func (c *ApiController) AddPolicy() {
 	c.ServeJSON()
 }
 
+// RemovePolicy
+// @Title RemovePolicy
+// @Tag Enforcer API
+// @Description remove policy
+// @Param   id     query    string  true        "The id ( owner/name )  of enforcer"
+// @Param   body     body    xormadapter.CasbinRule  true        "The policy to remove"
+// @Success 200 {object} Response
+// @router /remove-policy [post]
 func (c *ApiController) RemovePolicy() {
 	id := c.Input().Get("id")
 

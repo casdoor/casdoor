@@ -66,6 +66,10 @@ func AutoSigninFilter(ctx *context.Context) {
 			responseError(ctx, err.Error())
 			return
 		}
+		if application == nil {
+			responseError(ctx, fmt.Sprintf("No application is found for userId: app/%s", token.Application))
+			return
+		}
 
 		setSessionUser(ctx, userId)
 		setSessionOidc(ctx, token.Scope, application.ClientId)

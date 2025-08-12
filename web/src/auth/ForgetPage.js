@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Col, Form, Input, Row, Select, Steps} from "antd";
+import {Button, Col, Form, Input, Popover, Row, Select, Steps} from "antd";
 import * as AuthBackend from "./AuthBackend";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Util from "./Util";
@@ -31,18 +31,21 @@ const {Option} = Select;
 class ForgetPage extends React.Component {
   constructor(props) {
     super(props);
+    const queryParams = new URLSearchParams(location.search);
     this.state = {
       classes: props,
       applicationName: props.applicationName ?? props.match.params?.applicationName,
       msg: null,
-      name: props.account ? props.account.name : "",
+      name: props.account ? props.account.name : queryParams.get("username"),
       username: props.account ? props.account.name : "",
       phone: "",
       email: "",
       dest: "",
       isVerifyTypeFixed: false,
       verifyType: "", // "email", "phone"
-      current: 0,
+      current: queryParams.get("code") ? 2 : 0,
+      code: queryParams.get("code"),
+      queryParams: queryParams,
     };
     this.form = React.createRef();
   }
@@ -148,9 +151,26 @@ class ForgetPage extends React.Component {
     }
   }
 
-  onFinish(values) {
+  async onFinish(values) {
     values.username = this.state.name;
     values.userOwner = this.getApplicationObj()?.organizationObj.name;
+
+    if (this.state.queryParams.get("code")) {
+      const res = await UserBackend.verifyCode({
+        application: this.getApplicationObj().name,
+        organization: values.userOwner,
+        username: this.state.queryParams.get("dest"),
+        name: this.state.name,
+        code: this.state.code,
+        type: "login",
+      });
+
+      if (res.status !== "ok") {
+        Setting.showMessage("error", res.msg);
+        return;
+      }
+    }
+
     UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword, this.state.code).then(res => {
       if (res.status === "ok") {
         const linkInStorage = sessionStorage.getItem("signinUrl");
@@ -385,30 +405,48 @@ class ForgetPage extends React.Component {
                 },
               ]}
             />
-            <Form.Item
-              name="newPassword"
-              hidden={this.state.current !== 2}
-              rules={[
-                {
-                  required: true,
-                  validateTrigger: "onChange",
-                  validator: (rule, value) => {
-                    const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-                    if (errorMsg === "") {
-                      return Promise.resolve();
-                    } else {
-                      return Promise.reject(errorMsg);
-                    }
+            <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+              <Form.Item
+                name="newPassword"
+                hidden={this.state.current !== 2}
+                rules={[
+                  {
+                    required: true,
+                    validateTrigger: "onChange",
+                    validator: (rule, value) => {
+                      const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                      if (errorMsg === "") {
+                        return Promise.resolve();
+                      } else {
+                        return Promise.reject(errorMsg);
+                      }
+                    },
                   },
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder={i18next.t("general:Password")}
-              />
-            </Form.Item>
+                ]}
+                hasFeedback
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder={i18next.t("general:Password")}
+                  onChange={(e) => {
+                    this.setState({
+                      passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, e.target.value),
+                    });
+                  }}
+                  onFocus={() => {
+                    this.setState({
+                      passwordPopoverOpen: application.organizationObj.passwordOptions?.length > 0,
+                      passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.form.current?.getFieldValue("newPassword") ?? ""),
+                    });
+                  }}
+                  onBlur={() => {
+                    this.setState({
+                      passwordPopoverOpen: false,
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Popover>
             <Form.Item
               name="confirm"
               dependencies={["newPassword"]}

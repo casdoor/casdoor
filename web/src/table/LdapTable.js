@@ -100,7 +100,7 @@ class LdapTable extends React.Component {
         sorter: (a, b) => a.serverName.localeCompare(b.serverName),
         render: (text, record, index) => {
           return (
-            <Link to={`/ldaps/${record.id}`}>
+            <Link to={`/ldap/${record.owner}/${record.id}`}>
               {text}
             </Link>
           );

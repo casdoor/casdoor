@@ -103,7 +103,7 @@ func GetDashboard(owner string) (*map[string][]int64, error) {
 func countCreatedBefore(dashboardMapItem DashboardMapItem, before time.Time) int64 {
 	count := dashboardMapItem.itemCount
 	for _, e := range dashboardMapItem.dashboardDateItems {
-		createdTime, _ := time.Parse("2006-01-02T15:04:05-07:00", e.CreatedTime)
+		createdTime, _ := time.Parse(time.RFC3339, e.CreatedTime)
 		if createdTime.Before(before) {
 			count++
 		}

@@ -27,16 +27,22 @@ import (
 )
 
 type LarkIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
+	Client     *http.Client
+	Config     *oauth2.Config
+	LarkDomain string
 }
 
-func NewLarkIdProvider(clientId string, clientSecret string, redirectUrl string) *LarkIdProvider {
+func NewLarkIdProvider(clientId string, clientSecret string, redirectUrl string, useGlobalEndpoint bool) *LarkIdProvider {
 	idp := &LarkIdProvider{}
+
+	if useGlobalEndpoint {
+		idp.LarkDomain = "https://open.larksuite.com"
+	} else {
+		idp.LarkDomain = "https://open.feishu.cn"
+	}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
-
 	return idp
 }
 
@@ -47,7 +53,7 @@ func (idp *LarkIdProvider) SetHttpClient(client *http.Client) {
 // getConfig return a point of Config, which describes a typical 3-legged OAuth2 flow
 func (idp *LarkIdProvider) getConfig(clientId string, clientSecret string, redirectUrl string) *oauth2.Config {
 	endpoint := oauth2.Endpoint{
-		TokenURL: "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+		TokenURL: idp.LarkDomain + "/open-apis/auth/v3/tenant_access_token/internal",
 	}
 
 	config := &oauth2.Config{
@@ -162,6 +168,7 @@ type LarkUserInfo struct {
 	} `json:"data"`
 }
 
+// GetUserInfo use LarkAccessToken gotten before return LinkedInUserInf
 // GetUserInfo use LarkAccessToken gotten before return LinkedInUserInfo
 // get more detail via: https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin?context=linkedin/consumer/context
 func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
@@ -175,7 +182,7 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", "https://open.feishu.cn/open-apis/authen/v1/access_token", strings.NewReader(string(data)))
+	req, err := http.NewRequest("POST", idp.LarkDomain+"/open-apis/authen/v1/access_token", strings.NewReader(string(data)))
 	if err != nil {
 		return nil, err
 	}

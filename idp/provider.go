@@ -87,7 +87,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 			return nil, fmt.Errorf("WeCom provider subType: %s is not supported", idpInfo.SubType)
 		}
 	case "Lark":
-		return NewLarkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		return NewLarkIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.DisableSsl), nil
 	case "GitLab":
 		return NewGitlabIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "ADFS":

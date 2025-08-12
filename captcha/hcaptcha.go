@@ -32,7 +32,7 @@ func NewHCaptchaProvider() *HCaptchaProvider {
 	return captcha
 }
 
-func (captcha *HCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *HCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
 	reqData := url.Values{
 		"secret":   {clientSecret},
 		"response": {token},

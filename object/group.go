@@ -70,6 +70,16 @@ func GetGroups(owner string) ([]*Group, error) {
 	return groups, nil
 }
 
+func GetGlobalGroups() ([]*Group, error) {
+	groups := []*Group{}
+	err := ormer.Engine.Desc("created_time").Find(&groups)
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
+}
+
 func GetPaginationGroups(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Group, error) {
 	groups := []*Group{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
@@ -95,12 +105,13 @@ func GetGroupsHaveChildrenMap(groups []*Group) (map[string]*Group, error) {
 		}
 	}
 
-	err := ormer.Engine.Cols("owner", "name", "parent_id", "display_name").Distinct("parent_id").In("parent_id", groupIds).Find(&groupsHaveChildren)
+	err := ormer.Engine.Cols("owner", "name", "parent_id", "display_name").Distinct("name").In("name", groupIds).Find(&groupsHaveChildren)
 	if err != nil {
 		return nil, err
 	}
+
 	for _, group := range groupsHaveChildren {
-		resultMap[group.ParentId] = groupMap[group.ParentId]
+		resultMap[group.GetId()] = group
 	}
 	return resultMap, nil
 }
@@ -178,6 +189,41 @@ func AddGroups(groups []*Group) (bool, error) {
 		return false, err
 	}
 	return affected != 0, nil
+}
+
+func AddGroupsInBatch(groups []*Group) (bool, error) {
+	if len(groups) == 0 {
+		return false, nil
+	}
+
+	session := ormer.Engine.NewSession()
+	defer session.Close()
+	err := session.Begin()
+	if err != nil {
+		return false, err
+	}
+
+	for _, group := range groups {
+		err = checkGroupName(group.Name)
+		if err != nil {
+			return false, err
+		}
+
+		affected, err := session.Insert(group)
+		if err != nil {
+			return false, err
+		}
+		if affected == 0 {
+			return false, nil
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func deleteGroup(group *Group) (bool, error) {

@@ -48,8 +48,8 @@ type Subscription struct {
 	Plan    string `xorm:"varchar(100)" json:"plan"`
 	Payment string `xorm:"varchar(100)" json:"payment"`
 
-	StartTime time.Time         `json:"startTime"`
-	EndTime   time.Time         `json:"endTime"`
+	StartTime string            `xorm:"varchar(100)" json:"startTime"`
+	EndTime   string            `xorm:"varchar(100)" json:"endTime"`
 	Period    string            `xorm:"varchar(100)" json:"period"`
 	State     SubscriptionState `xorm:"varchar(100)" json:"state"`
 }
@@ -84,9 +84,19 @@ func (sub *Subscription) UpdateState() error {
 	}
 
 	if sub.State == SubStateActive || sub.State == SubStateUpcoming || sub.State == SubStateExpired {
-		if sub.EndTime.Before(time.Now()) {
+		startTime, err := time.Parse(time.RFC3339, sub.StartTime)
+		if err != nil {
+			return err
+		}
+
+		endTime, err := time.Parse(time.RFC3339, sub.EndTime)
+		if err != nil {
+			return err
+		}
+
+		if endTime.Before(time.Now()) {
 			sub.State = SubStateExpired
-		} else if sub.StartTime.After(time.Now()) {
+		} else if startTime.After(time.Now()) {
 			sub.State = SubStateUpcoming
 		} else {
 			sub.State = SubStateActive
@@ -103,10 +113,15 @@ func (sub *Subscription) UpdateState() error {
 	return nil
 }
 
-func NewSubscription(owner, userName, planName, paymentName, period string) *Subscription {
-	startTime, endTime := GetDuration(period)
+func NewSubscription(owner, userName, planName, paymentName, period string) (*Subscription, error) {
+	startTime, endTime, err := getDuration(period)
+	if err != nil {
+		return nil, err
+	}
+
 	id := util.GenerateId()[:6]
-	return &Subscription{
+
+	res := &Subscription{
 		Owner:       owner,
 		Name:        "sub_" + id,
 		DisplayName: "New Subscription - " + id,
@@ -121,6 +136,7 @@ func NewSubscription(owner, userName, planName, paymentName, period string) *Sub
 		Period:    period,
 		State:     SubStatePending, // waiting for payment complete
 	}
+	return res, nil
 }
 
 func GetSubscriptionCount(owner, field, value string) (int64, error) {

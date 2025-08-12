@@ -260,15 +260,15 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 	res := make([]LdapUser, len(users))
 	for i, user := range users {
 		res[i] = LdapUser{
-			UidNumber:         user.UidNumber,
-			Uid:               user.Uid,
-			Cn:                user.Cn,
-			GroupId:           user.GidNumber,
-			Uuid:              user.GetLdapUuid(),
-			DisplayName:       user.DisplayName,
-			Email:             util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
-			Mobile:            util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
-			RegisteredAddress: util.ReturnAnyNotEmpty(user.PostalAddress, user.RegisteredAddress),
+			UidNumber:   user.UidNumber,
+			Uid:         user.Uid,
+			Cn:          user.Cn,
+			GroupId:     user.GidNumber,
+			Uuid:        user.GetLdapUuid(),
+			DisplayName: user.DisplayName,
+			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
+			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
+			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
 		}
 	}
 	return res
@@ -351,7 +351,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				newUser.Groups = []string{ldap.DefaultGroup}
 			}
 
-			affected, err := AddUser(newUser)
+			affected, err := AddUser(newUser, "en")
 			if err != nil {
 				return nil, nil, err
 			}

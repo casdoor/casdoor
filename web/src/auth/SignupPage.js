@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Form, Input, Radio, Result, Row, Select, message} from "antd";
+import {Button, Form, Input, Popover, Radio, Result, Row, Select, message} from "antd";
 import * as Setting from "../Setting";
 import * as AuthBackend from "./AuthBackend";
 import * as ProviderButton from "./ProviderButton";
@@ -607,28 +607,45 @@ class SignupPage extends React.Component {
       }
     } else if (signupItem.name === "Password") {
       return (
-        <Form.Item
-          name="password"
-          className="signup-password"
-          label={signupItem.label ? signupItem.label : i18next.t("general:Password")}
-          rules={[
-            {
-              required: required,
-              validateTrigger: "onChange",
-              validator: (rule, value) => {
-                const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
-                if (errorMsg === "") {
-                  return Promise.resolve();
-                } else {
-                  return Promise.reject(errorMsg);
-                }
+        <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen}>
+          <Form.Item
+            name="password"
+            className="signup-password"
+            label={signupItem.label ? signupItem.label : i18next.t("general:Password")}
+            rules={[
+              {
+                required: required,
+                validateTrigger: "onChange",
+                validator: (rule, value) => {
+                  const errorMsg = PasswordChecker.checkPasswordComplexity(value, application.organizationObj.passwordOptions);
+                  if (errorMsg === "") {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(errorMsg);
+                  }
+                },
               },
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password className="signup-password-input" placeholder={signupItem.placeholder} />
-        </Form.Item>
+            ]}
+            hasFeedback
+          >
+            <Input.Password className="signup-password-input" placeholder={signupItem.placeholder} onChange={(e) => {
+              this.setState({
+                passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, e.target.value),
+              });
+            }}
+            onFocus={() => {
+              this.setState({
+                passwordPopoverOpen: application.organizationObj.passwordOptions?.length > 0,
+                passwordPopover: PasswordChecker.renderPasswordPopover(application.organizationObj.passwordOptions, this.form.current?.getFieldValue("password") ?? ""),
+              });
+            }}
+            onBlur={() => {
+              this.setState({
+                passwordPopoverOpen: false,
+              });
+            }} />
+          </Form.Item>
+        </Popover>
       );
     } else if (signupItem.name === "Confirm password") {
       return (

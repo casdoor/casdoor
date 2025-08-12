@@ -13,6 +13,8 @@
 // limitations under the License.
 
 import i18next from "i18next";
+import React from "react";
+import {CheckCircleTwoTone, CloseCircleTwoTone} from "@ant-design/icons";
 
 function isValidOption_AtLeast6(password) {
   if (password.length < 6) {
@@ -52,22 +54,41 @@ function isValidOption_NoRepeat(password) {
   return "";
 }
 
+const checkers = {
+  AtLeast6: isValidOption_AtLeast6,
+  AtLeast8: isValidOption_AtLeast8,
+  Aa123: isValidOption_Aa123,
+  SpecialChar: isValidOption_SpecialChar,
+  NoRepeat: isValidOption_NoRepeat,
+};
+
+function getOptionDescription(option, password) {
+  switch (option) {
+  case "AtLeast6": return i18next.t("user:The password must have at least 6 characters");
+  case "AtLeast8": return i18next.t("user:The password must have at least 8 characters");
+  case "Aa123": return i18next.t("user:The password must contain at least one uppercase letter, one lowercase letter and one digit");
+  case "SpecialChar": return i18next.t("user:The password must contain at least one special character");
+  case "NoRepeat": return i18next.t("user:The password must not contain any repeated characters");
+  }
+}
+
+export function renderPasswordPopover(options, password) {
+  return <div style={{width: 240}} >
+    {options.map((option, idx) => {
+      return <div key={idx}>{checkers[option](password) === "" ? <CheckCircleTwoTone twoToneColor={"#52c41a"} /> :
+        <CloseCircleTwoTone twoToneColor={"#ff4d4f"} />} {getOptionDescription(option, password)}</div>;
+    })}
+  </div>;
+}
+
 export function checkPasswordComplexity(password, options) {
-  if (password.length === 0) {
+  if (!password?.length) {
     return i18next.t("login:Please input your password!");
   }
 
   if (!options || options.length === 0) {
     return "";
   }
-
-  const checkers = {
-    AtLeast6: isValidOption_AtLeast6,
-    AtLeast8: isValidOption_AtLeast8,
-    Aa123: isValidOption_Aa123,
-    SpecialChar: isValidOption_SpecialChar,
-    NoRepeat: isValidOption_NoRepeat,
-  };
 
   for (const option of options) {
     const checkerFunc = checkers[option];

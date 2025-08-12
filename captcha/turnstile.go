@@ -32,7 +32,7 @@ func NewCloudflareTurnstileProvider() *CloudflareTurnstileProvider {
 	return captcha
 }
 
-func (captcha *CloudflareTurnstileProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *CloudflareTurnstileProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
 	reqData := url.Values{
 		"secret":   {clientSecret},
 		"response": {token},

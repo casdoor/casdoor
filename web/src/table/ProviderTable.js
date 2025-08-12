@@ -88,7 +88,10 @@ class ProviderTable extends React.Component {
                 }
               }} >
               {
-                Setting.getDeduplicatedArray(this.props.providers, table, "name").map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                Setting.getDeduplicatedArray(this.props.providers, table, "name").filter(provider => provider.category !== "Captcha" || !table.some(tableItem => {
+                  const existingProvider = Setting.getArrayItem(this.props.providers, "name", tableItem.name);
+                  return existingProvider && existingProvider.category === "Captcha";
+                })).map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
             </Select>
           );
@@ -255,6 +258,7 @@ class ProviderTable extends React.Component {
                 <Option key="None" value="None">{i18next.t("general:None")}</Option>
                 <Option key="Dynamic" value="Dynamic">{i18next.t("application:Dynamic")}</Option>
                 <Option key="Always" value="Always">{i18next.t("application:Always")}</Option>
+                <Option key="Internet-Only" value="Internet-Only">{i18next.t("application:Internet-Only")}</Option>
               </Select>
             );
           } else if (record.provider?.category === "SMS" || record.provider?.category === "Email") {

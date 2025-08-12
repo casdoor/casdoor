@@ -83,7 +83,7 @@ func CorsFilter(ctx *context.Context) {
 			setCorsHeaders(ctx, origin)
 		} else if originHostname == host {
 			setCorsHeaders(ctx, origin)
-		} else if isHostIntranet(host) {
+		} else if util.IsHostIntranet(host) {
 			setCorsHeaders(ctx, origin)
 		} else {
 			ok, err := object.IsOriginAllowed(origin)

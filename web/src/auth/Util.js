@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Alert, Button, Modal, Result} from "antd";
+import {Alert, Button, Modal, QRCode, Result} from "antd";
 import i18next from "i18next";
 import {getWechatMessageEvent} from "./AuthBackend";
 import * as Setting from "../Setting";
@@ -141,6 +141,7 @@ export function getOAuthGetParameters(params) {
   const nonce = getRefinedValue(queries.get("nonce"));
   const challengeMethod = getRefinedValue(queries.get("code_challenge_method"));
   const codeChallenge = getRefinedValue(queries.get("code_challenge"));
+  const responseMode = getRefinedValue(queries.get("response_mode"));
   const samlRequest = getRefinedValue(lowercaseQueries["samlRequest".toLowerCase()]);
   const relayState = getRefinedValue(lowercaseQueries["RelayState".toLowerCase()]);
   const noRedirect = getRefinedValue(lowercaseQueries["noRedirect".toLowerCase()]);
@@ -159,6 +160,7 @@ export function getOAuthGetParameters(params) {
       nonce: nonce,
       challengeMethod: challengeMethod,
       codeChallenge: codeChallenge,
+      responseMode: responseMode,
       samlRequest: samlRequest,
       relayState: relayState,
       noRedirect: noRedirect,
@@ -215,7 +217,7 @@ export async function WechatOfficialAccountModal(application, provider, method) 
         title: i18next.t("provider:Please use WeChat to scan the QR code and follow the official account for sign in"),
         content: (
           <div style={{marginRight: "34px"}}>
-            <img src = {"data:image/png;base64," + res.data} alt="Wechat QR code" style={{width: "100%"}} />
+            <QRCode style={{padding: "20px", margin: "auto"}} bordered={false} value={res.data} size={230} />
           </div>
         ),
         onOk() {

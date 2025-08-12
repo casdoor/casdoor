@@ -185,17 +185,3 @@ func removePort(s string) string {
 	}
 	return ipStr
 }
-
-func isHostIntranet(s string) bool {
-	ipStr, _, err := net.SplitHostPort(s)
-	if err != nil {
-		ipStr = s
-	}
-
-	ip := net.ParseIP(ipStr)
-	if ip == nil {
-		return false
-	}
-
-	return ip.IsPrivate() || ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast()
-}

@@ -21,7 +21,7 @@ import {authConfig} from "./Auth";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 import RedirectForm from "../common/RedirectForm";
-import {renderLoginPanel} from "../Setting";
+import {createFormAndSubmit, renderLoginPanel} from "../Setting";
 
 class AuthCallback extends React.Component {
   constructor(props) {
@@ -158,15 +158,17 @@ class AuthCallback extends React.Component {
     // OAuth
     const oAuthParams = Util.getOAuthGetParameters(innerParams);
     const concatChar = oAuthParams?.redirectUri?.includes("?") ? "&" : "?";
+    const responseMode = oAuthParams?.responseMode || "query"; // Default to "query" if not specified
     const signinUrl = localStorage.getItem("signinUrl");
 
     AuthBackend.login(body, oAuthParams)
       .then((res) => {
         if (res.status === "ok") {
           const responseType = this.getResponseType();
+          const responseTypes = responseType.split(" ");
           const handleLogin = (res) => {
             if (responseType === "login") {
-              if (res.data2) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
@@ -176,22 +178,42 @@ class AuthCallback extends React.Component {
               const link = Setting.getFromLink();
               Setting.goToLink(link);
             } else if (responseType === "code") {
-              if (res.data2) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-              const code = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+
+              if (responseMode === "form_post") {
+                const params = {
+                  code: res.data,
+                  state: oAuthParams?.state,
+                };
+                createFormAndSubmit(oAuthParams?.redirectUri, params);
+              } else {
+                const code = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}code=${code}&state=${oAuthParams.state}`);
+              }
             // Setting.showMessage("success", `Authorization code: ${res.data}`);
-            } else if (responseType === "token" || responseType === "id_token") {
-              if (res.data2) {
+            } else if (responseTypes.includes("token") || responseTypes.includes("id_token")) {
+              if (res.data3) {
                 sessionStorage.setItem("signinUrl", signinUrl);
                 Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                 return;
               }
-              const token = res.data;
-              Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+
+              if (responseMode === "form_post") {
+                const params = {
+                  token: responseTypes.includes("token") ? res.data : null,
+                  id_token: responseTypes.includes("id_token") ? res.data : null,
+                  token_type: "bearer",
+                  state: oAuthParams?.state,
+                };
+                createFormAndSubmit(oAuthParams?.redirectUri, params);
+              } else {
+                const token = res.data;
+                Setting.goToLink(`${oAuthParams.redirectUri}${concatChar}${responseType}=${token}&state=${oAuthParams.state}&token_type=bearer`);
+              }
             } else if (responseType === "link") {
               let from = innerParams.get("from");
               const oauth = innerParams.get("oauth");
@@ -207,7 +229,7 @@ class AuthCallback extends React.Component {
                   relayState: oAuthParams.relayState,
                 });
               } else {
-                if (res.data2.needUpdatePassword) {
+                if (res.data3) {
                   sessionStorage.setItem("signinUrl", signinUrl);
                   Setting.goToLinkSoft(this, `/forget/${applicationName}`);
                   return;

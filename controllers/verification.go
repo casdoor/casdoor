@@ -160,7 +160,7 @@ func (c *ApiController) SendVerificationCode() {
 			if captchaProvider := captcha.GetCaptchaProvider(vform.CaptchaType); captchaProvider == nil {
 				c.ResponseError(c.T("general:don't support captchaProvider: ") + vform.CaptchaType)
 				return
-			} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, vform.ClientSecret); err != nil {
+			} else if isHuman, err := captchaProvider.VerifyCaptcha(vform.CaptchaToken, provider.ClientId, vform.ClientSecret, provider.ClientId2); err != nil {
 				c.ResponseError(err.Error())
 				return
 			} else if !isHuman {
@@ -258,7 +258,7 @@ func (c *ApiController) SendVerificationCode() {
 			return
 		}
 
-		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest)
+		sendResp = object.SendVerificationCodeToEmail(organization, user, provider, clientIp, vform.Dest, vform.Method, c.Ctx.Request.Host, application.Name)
 	case object.VerifyTypePhone:
 		if vform.Method == LoginVerification || vform.Method == ForgetVerification {
 			if user != nil && util.GetMaskedPhone(user.Phone) == vform.Dest {
@@ -349,7 +349,7 @@ func (c *ApiController) VerifyCaptcha() {
 		return
 	}
 
-	isValid, err := provider.VerifyCaptcha(vform.CaptchaToken, vform.ClientSecret)
+	isValid, err := provider.VerifyCaptcha(vform.CaptchaToken, captchaProvider.ClientId, vform.ClientSecret, captchaProvider.ClientId2)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

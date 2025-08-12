@@ -184,6 +184,10 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 	case message.FilterEqualityMatch:
 		attr := string(f.AttributeDesc())
 
+		if strings.EqualFold(attr, "objectclass") && strings.EqualFold(string(f.AssertionValue()), "posixAccount") {
+			return builder.Expr("1 = 1"), nil
+		}
+
 		if attr == ldapMemberOfAttr {
 			var names []string
 			groupId := string(f.AssertionValue())
@@ -200,6 +204,9 @@ func buildUserFilterCondition(filter interface{}) (builder.Cond, error) {
 		}
 		return builder.Eq{field: string(f.AssertionValue())}, nil
 	case message.FilterPresent:
+		if strings.EqualFold(string(f), "objectclass") {
+			return builder.Expr("1 = 1"), nil
+		}
 		field, err := getUserFieldFromAttribute(string(f))
 		if err != nil {
 			return nil, err
@@ -318,6 +325,59 @@ func GetFilteredUsers(m *ldap.Message) (filteredUsers []*object.User, code int) 
 
 		filteredUsers = append(filteredUsers, users...)
 		return filteredUsers, ldap.LDAPResultSuccess
+	}
+}
+
+func GetFilteredGroups(m *ldap.Message, baseDN string, filterStr string) ([]*object.Group, int) {
+	name, org, code := getNameAndOrgFromFilter(baseDN, filterStr)
+	if code != ldap.LDAPResultSuccess {
+		return nil, code
+	}
+
+	var groups []*object.Group
+	var err error
+
+	if name == "*" {
+		if m.Client.IsGlobalAdmin && org == "*" {
+			groups, err = object.GetGlobalGroups()
+			if err != nil {
+				panic(err)
+			}
+		} else if m.Client.IsGlobalAdmin || org == m.Client.OrgName {
+			groups, err = object.GetGroups(org)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			return nil, ldap.LDAPResultInsufficientAccessRights
+		}
+	} else {
+		return nil, ldap.LDAPResultNoSuchObject
+	}
+
+	return groups, ldap.LDAPResultSuccess
+}
+
+func GetFilteredOrganizations(m *ldap.Message) ([]*object.Organization, int) {
+	if m.Client.IsGlobalAdmin {
+		organizations, err := object.GetOrganizations("")
+		if err != nil {
+			panic(err)
+		}
+		return organizations, ldap.LDAPResultSuccess
+	} else if m.Client.IsOrgAdmin {
+		requestUserId := util.GetId(m.Client.OrgName, m.Client.UserName)
+		user, err := object.GetUser(requestUserId)
+		if err != nil {
+			panic(err)
+		}
+		organization, err := object.GetOrganizationByUser(user)
+		if err != nil {
+			panic(err)
+		}
+		return []*object.Organization{organization}, ldap.LDAPResultSuccess
+	} else {
+		return nil, ldap.LDAPResultInsufficientAccessRights
 	}
 }
 

@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casdoor/casdoor/util"
@@ -204,6 +205,115 @@ func GetPolicies(id string) ([]*xormadapter.CasbinRule, error) {
 	}
 
 	return res, nil
+}
+
+// Filter represents filter criteria with optional policy type
+type Filter struct {
+	Ptype       string   `json:"ptype,omitempty"`
+	FieldIndex  *int     `json:"fieldIndex,omitempty"`
+	FieldValues []string `json:"fieldValues"`
+}
+
+func GetFilteredPolicies(id string, ptype string, fieldIndex int, fieldValues ...string) ([]*xormadapter.CasbinRule, error) {
+	enforcer, err := GetInitializedEnforcer(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var allRules [][]string
+
+	if len(fieldValues) == 0 {
+		if ptype == "g" {
+			allRules = enforcer.GetFilteredGroupingPolicy(fieldIndex)
+		} else {
+			allRules = enforcer.GetFilteredPolicy(fieldIndex)
+		}
+	} else {
+		for _, value := range fieldValues {
+			if ptype == "g" {
+				rules := enforcer.GetFilteredGroupingPolicy(fieldIndex, value)
+				allRules = append(allRules, rules...)
+			} else {
+				rules := enforcer.GetFilteredPolicy(fieldIndex, value)
+				allRules = append(allRules, rules...)
+			}
+		}
+	}
+
+	res := util.MatrixToCasbinRules(ptype, allRules)
+	return res, nil
+}
+
+// GetFilteredPoliciesMulti applies multiple filters to policies
+// Doing this in our loop is more efficient than using GetFilteredGroupingPolicy / GetFilteredPolicy which
+// iterates over all policies again and again
+func GetFilteredPoliciesMulti(id string, filters []Filter) ([]*xormadapter.CasbinRule, error) {
+	// Get all policies first
+	allPolicies, err := GetPolicies(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter policies based on multiple criteria
+	var filteredPolicies []*xormadapter.CasbinRule
+	if len(filters) == 0 {
+		// No filters, return all policies
+		return allPolicies, nil
+	} else {
+		for _, policy := range allPolicies {
+			matchesAllFilters := true
+			for _, filter := range filters {
+				// Default policy type if unspecified
+				if filter.Ptype == "" {
+					filter.Ptype = "p"
+				}
+				// Always check policy type
+				if policy.Ptype != filter.Ptype {
+					matchesAllFilters = false
+					break
+				}
+
+				// If FieldIndex is nil, only filter via ptype (skip field-value checks)
+				if filter.FieldIndex == nil {
+					continue
+				}
+
+				fieldIndex := *filter.FieldIndex
+				// If FieldIndex is out of range, also only filter via ptype
+				if fieldIndex < 0 || fieldIndex > 5 {
+					continue
+				}
+
+				var fieldValue string
+				switch fieldIndex {
+				case 0:
+					fieldValue = policy.V0
+				case 1:
+					fieldValue = policy.V1
+				case 2:
+					fieldValue = policy.V2
+				case 3:
+					fieldValue = policy.V3
+				case 4:
+					fieldValue = policy.V4
+				case 5:
+					fieldValue = policy.V5
+				}
+
+				// When FieldIndex is provided and valid, enforce FieldValues (if any)
+				if len(filter.FieldValues) > 0 && !slices.Contains(filter.FieldValues, fieldValue) {
+					matchesAllFilters = false
+					break
+				}
+			}
+
+			if matchesAllFilters {
+				filteredPolicies = append(filteredPolicies, policy)
+			}
+		}
+	}
+
+	return filteredPolicies, nil
 }
 
 func UpdatePolicy(id string, ptype string, oldPolicy []string, newPolicy []string) (bool, error) {

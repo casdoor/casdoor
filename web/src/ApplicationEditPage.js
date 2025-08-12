@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload} from "antd";
+import {Button, Card, Col, ConfigProvider, Input, InputNumber, Popover, Radio, Result, Row, Select, Space, Switch, Upload, message} from "antd";
 import {CopyOutlined, HolderOutlined, LinkOutlined, UploadOutlined, UsergroupAddOutlined} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as CertBackend from "./backend/CertBackend";
@@ -279,6 +279,13 @@ class ApplicationEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input value={this.state.application.name} disabled={this.state.application.name === "app-built-in"} onChange={e => {
+              const value = e.target.value;
+              if (/[/?:@#&%=+;]/.test(value)) {
+                const invalidChars = "/ ? : @ # & % = + ;";
+                const messageText = i18next.t("application:Invalid characters in application name") + ":" + " " + invalidChars;
+                message.error(messageText);
+                return;
+              }
               this.updateApplicationField("name", e.target.value);
             }} />
           </Col>
@@ -533,6 +540,16 @@ class ApplicationEditPage extends React.Component {
           <Col span={1} >
             <Switch checked={this.state.application.enableSignUp} onChange={checked => {
               this.updateApplicationField("enableSignUp", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Disable signin"), i18next.t("application:Disable signin - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.disableSignin} onChange={checked => {
+              this.updateApplicationField("disableSignin", checked);
             }} />
           </Col>
         </Row>
@@ -1230,7 +1247,7 @@ class ApplicationEditPage extends React.Component {
   submitApplicationEdit(exitAfterSave) {
     const application = Setting.deepCopy(this.state.application);
     application.providers = application.providers?.filter(provider => this.state.providers.map(provider => provider.name).includes(provider.name));
-    application.signinMethods = application.signinMethods?.filter(signinMethod => ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID"].includes(signinMethod.name));
+    application.signinMethods = application.signinMethods?.filter(signinMethod => ["Password", "Verification code", "WebAuthn", "LDAP", "Face ID", "WeChat"].includes(signinMethod.name));
 
     ApplicationBackend.updateApplication("admin", this.state.applicationName, application)
       .then((res) => {

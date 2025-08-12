@@ -18,6 +18,7 @@ import i18next from "i18next";
 import {authConfig} from "./Auth";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as Setting from "../Setting";
+import * as AuthBackend from "./AuthBackend";
 
 class ResultPage extends React.Component {
   constructor(props) {
@@ -60,6 +61,22 @@ class ResultPage extends React.Component {
     this.props.onUpdateApplication(application);
   }
 
+  handleSignIn = () => {
+    AuthBackend.getAccount()
+      .then((res) => {
+        if (res.status === "ok" && res.data) {
+          const linkInStorage = sessionStorage.getItem("signinUrl");
+          if (linkInStorage !== null && linkInStorage !== "") {
+            window.location.href = linkInStorage;
+          } else {
+            Setting.goToLink("/");
+          }
+        } else {
+          Setting.redirectToLoginPage(this.state.application, this.props.history);
+        }
+      });
+  };
+
   render() {
     const application = this.state.application;
 
@@ -89,14 +106,7 @@ class ResultPage extends React.Component {
               title={i18next.t("signup:Your account has been created!")}
               subTitle={i18next.t("signup:Please click the below button to sign in")}
               extra={[
-                <Button type="primary" key="login" onClick={() => {
-                  const linkInStorage = sessionStorage.getItem("signinUrl");
-                  if (linkInStorage !== null && linkInStorage !== "") {
-                    Setting.goToLinkSoft(this, linkInStorage);
-                  } else {
-                    Setting.redirectToLoginPage(application, this.props.history);
-                  }
-                }}>
+                <Button type="primary" key="login" onClick={this.handleSignIn}>
                   {i18next.t("login:Sign In")}
                 </Button>,
               ]}

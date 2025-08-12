@@ -14,7 +14,8 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Table, Tooltip} from "antd";
+import {Button, Table, Tooltip, Upload} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -85,6 +86,42 @@ class GroupListPage extends BaseListPage {
       .catch(error => {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
+  }
+
+  uploadFile(info) {
+    const {status, response: res} = info.file;
+    if (status === "done") {
+      if (res.status === "ok") {
+        Setting.showMessage("success", "Groups uploaded successfully, refreshing the page");
+        const {pagination} = this.state;
+        this.fetch({pagination});
+      } else {
+        Setting.showMessage("error", `Groups failed to upload: ${res.msg}`);
+      }
+    } else if (status === "error") {
+      Setting.showMessage("error", "File failed to upload");
+    }
+  }
+
+  renderUpload() {
+    const props = {
+      name: "file",
+      accept: ".xlsx",
+      method: "post",
+      action: `${Setting.ServerUrl}/api/upload-groups`,
+      withCredentials: true,
+      onChange: (info) => {
+        this.uploadFile(info);
+      },
+    };
+
+    return (
+      <Upload {...props}>
+        <Button icon={<UploadOutlined />} id="upload-button" type="primary" size="small">
+          {i18next.t("group:Upload (.xlsx)")}
+        </Button>
+      </Upload>
+    );
   }
 
   renderTable(data) {
@@ -231,7 +268,10 @@ class GroupListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Groups")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
+              {
+                this.renderUpload()
+              }
             </div>
           )}
           loading={this.state.loading}

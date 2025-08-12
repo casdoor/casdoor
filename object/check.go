@@ -220,10 +220,15 @@ func checkSigninErrorTimes(user *User, lang string) error {
 }
 
 func CheckPassword(user *User, password string, lang string, options ...bool) error {
+	if password == "" {
+		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
+	}
+
 	enableCaptcha := false
 	if len(options) > 0 {
 		enableCaptcha = options[0]
 	}
+
 	// check the login error times
 	if !enableCaptcha {
 		err := checkSigninErrorTimes(user, lang)
@@ -236,35 +241,41 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	if err != nil {
 		return err
 	}
-
 	if organization == nil {
 		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
-	}
-
-	if password == "" {
-		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
 	}
 
 	passwordType := user.PasswordType
 	if passwordType == "" {
 		passwordType = organization.PasswordType
 	}
-	credManager := cred.GetCredManager(passwordType)
-	if credManager != nil {
-		if organization.MasterPassword != "" {
-			if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, "", organization.PasswordSalt) {
-				return resetUserSigninErrorTimes(user)
-			}
-		}
 
-		if credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt, organization.PasswordSalt) {
+	credManager := cred.GetCredManager(passwordType)
+	if credManager == nil {
+		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), passwordType)
+	}
+
+	if organization.MasterPassword != "" {
+		if password == organization.MasterPassword || credManager.IsPasswordCorrect(password, organization.MasterPassword, organization.PasswordSalt) {
 			return resetUserSigninErrorTimes(user)
 		}
-
-		return recordSigninErrorInfo(user, lang, enableCaptcha)
-	} else {
-		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
+
+	if !credManager.IsPasswordCorrect(password, user.Password, organization.PasswordSalt) && !credManager.IsPasswordCorrect(password, user.Password, user.PasswordSalt) {
+		return recordSigninErrorInfo(user, lang, enableCaptcha)
+	}
+
+	isOutdated := passwordType != organization.PasswordType
+	if isOutdated {
+		user.Password = password
+		user.UpdateUserPassword(organization)
+		_, err = UpdateUser(user.GetId(), user, []string{"password", "password_type", "password_salt"}, true)
+		if err != nil {
+			return err
+		}
+	}
+
+	return resetUserSigninErrorTimes(user)
 }
 
 func CheckPasswordComplexityByOrg(organization *Organization, password string) string {
@@ -593,31 +604,41 @@ func CheckUpdateUser(oldUser, user *User, lang string) string {
 	return ""
 }
 
-func CheckToEnableCaptcha(application *Application, organization, username string) (bool, error) {
+func CheckToEnableCaptcha(application *Application, organization, username string, clientIp string) (bool, error) {
 	if len(application.Providers) == 0 {
 		return false, nil
 	}
 
 	for _, providerItem := range application.Providers {
-		if providerItem.Provider == nil {
+		if providerItem.Provider == nil || providerItem.Provider.Category != "Captcha" {
 			continue
 		}
-		if providerItem.Provider.Category == "Captcha" {
-			if providerItem.Rule == "Dynamic" {
-				user, err := GetUserByFields(organization, username)
+
+		if providerItem.Rule == "Internet-Only" {
+			if util.IsInternetIp(clientIp) {
+				return true, nil
+			}
+		}
+
+		if providerItem.Rule == "Dynamic" {
+			user, err := GetUserByFields(organization, username)
+			if err != nil {
+				return false, err
+			}
+
+			if user != nil {
+				failedSigninLimit, _, err := GetFailedSigninConfigByUser(user)
 				if err != nil {
 					return false, err
 				}
 
-				failedSigninLimit := application.FailedSigninLimit
-				if failedSigninLimit == 0 {
-					failedSigninLimit = DefaultFailedSigninLimit
-				}
-
-				return user != nil && user.SigninWrongTimes >= failedSigninLimit, nil
+				return user.SigninWrongTimes >= failedSigninLimit, nil
 			}
-			return providerItem.Rule == "Always", nil
+
+			return false, nil
 		}
+
+		return providerItem.Rule == "Always", nil
 	}
 
 	return false, nil

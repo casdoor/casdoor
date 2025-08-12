@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Die Challenge-Methode sollte S256 sein",
+    "DeviceCode Invalid": "Gerätecode ungültig",
     "Failed to create user, user information is invalid: %s": "Es konnte kein Benutzer erstellt werden, da die Benutzerinformationen ungültig sind: %s",
     "Failed to login in: %s": "Konnte nicht anmelden: %s",
     "Invalid token": "Ungültiges Token",
@@ -15,74 +16,95 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) existiert nicht und es ist nicht erlaubt, ein neues Konto anzumelden. Bitte wenden Sie sich an Ihren IT-Support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Das Konto für den Anbieter %s und Benutzernamen %s (%s) ist bereits mit einem anderen Konto verknüpft: %s (%s)",
     "The application: %s does not exist": "Die Anwendung: %s existiert nicht",
-    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
-    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
-    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
-    "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
+    "The application: %s has disabled users to signin": "The application: %s has disabled users to signin",
+    "The login method: login with LDAP is not enabled for the application": "Die Anmeldemethode: Anmeldung mit LDAP ist für die Anwendung nicht aktiviert",
+    "The login method: login with SMS is not enabled for the application": "Die Anmeldemethode: Anmeldung per SMS ist für die Anwendung nicht aktiviert",
+    "The login method: login with email is not enabled for the application": "Die Anmeldemethode: Anmeldung per E-Mail ist für die Anwendung nicht aktiviert",
+    "The login method: login with face is not enabled for the application": "Die Anmeldemethode: Anmeldung per Gesicht ist für die Anwendung nicht aktiviert",
     "The login method: login with password is not enabled for the application": "Die Anmeldeart \"Anmeldung mit Passwort\" ist für die Anwendung nicht aktiviert",
-    "The organization: %s does not exist": "The organization: %s does not exist",
+    "The organization: %s does not exist": "Die Organisation: %s existiert nicht",
+    "The organization: %s has disabled users to signin": "The organization: %s has disabled users to signin",
+    "The provider: %s does not exist": "Der Anbieter: %s existiert nicht",
     "The provider: %s is not enabled for the application": "Der Anbieter: %s ist nicht für die Anwendung aktiviert",
     "Unauthorized operation": "Nicht autorisierte Operation",
     "Unknown authentication type (not password or provider), form = %s": "Unbekannter Authentifizierungstyp (nicht Passwort oder Anbieter), Formular = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "User's tag: %s is not listed in the application's tags": "Benutzer-Tag: %s ist nicht in den Tags der Anwendung aufgeführt",
+    "UserCode Expired": "Benutzercode abgelaufen",
+    "UserCode Invalid": "Benutzercode ungültig",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Bezahlter Benutzer %s hat kein aktives oder ausstehendes Abonnement und die Anwendung: %s hat keine Standardpreisgestaltung",
+    "the application for user %s is not found": "Die Anwendung für Benutzer %s wurde nicht gefunden",
+    "the organization: %s is not found": "Die Organisation: %s wurde nicht gefunden"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s und %s stimmen nicht überein"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s erfüllt nicht die CIDR-Formatanforderungen: %s",
     "Affiliation cannot be blank": "Zugehörigkeit darf nicht leer sein",
-    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
+    "CIDR for IP: %s should not be empty": "CIDR für IP: %s darf nicht leer sein",
+    "Default code does not match the code's matching rules": "Standardcode entspricht nicht den Übereinstimmungsregeln des Codes",
     "DisplayName cannot be blank": "Anzeigename kann nicht leer sein",
     "DisplayName is not valid real name": "DisplayName ist kein gültiger Vorname",
     "Email already exists": "E-Mail existiert bereits",
     "Email cannot be empty": "E-Mail darf nicht leer sein",
     "Email is invalid": "E-Mail ist ungültig",
     "Empty username.": "Leerer Benutzername.",
-    "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
-    "Face data mismatch": "Face data mismatch",
+    "Face data does not exist, cannot log in": "Gesichtsdaten existieren nicht, Anmeldung nicht möglich",
+    "Face data mismatch": "Gesichtsdaten stimmen nicht überein",
+    "Failed to parse client IP: %s": "Fehler beim Parsen der Client-IP: %s",
     "FirstName cannot be blank": "Vorname darf nicht leer sein",
-    "Invitation code cannot be blank": "Invitation code cannot be blank",
-    "Invitation code exhausted": "Invitation code exhausted",
-    "Invitation code is invalid": "Invitation code is invalid",
-    "Invitation code suspended": "Invitation code suspended",
+    "Invitation code cannot be blank": "Einladungscode darf nicht leer sein",
+    "Invitation code exhausted": "Einladungscode aufgebraucht",
+    "Invitation code is invalid": "Einladungscode ist ungültig",
+    "Invitation code suspended": "Einladungscode ausgesetzt",
     "LDAP user name or password incorrect": "Ldap Benutzername oder Passwort falsch",
     "LastName cannot be blank": "Nachname darf nicht leer sein",
     "Multiple accounts with same uid, please check your ldap server": "Mehrere Konten mit derselben uid, bitte überprüfen Sie Ihren LDAP-Server",
     "Organization does not exist": "Organisation existiert nicht",
+    "Password cannot be empty": "Passwort darf nicht leer sein",
     "Phone already exists": "Telefon existiert bereits",
     "Phone cannot be empty": "Das Telefon darf nicht leer sein",
     "Phone number is invalid": "Die Telefonnummer ist ungültig",
-    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
-    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
-    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
+    "Please register using the email corresponding to the invitation code": "Bitte registrieren Sie sich mit der E-Mail, die zum Einladungscode gehört",
+    "Please register using the phone  corresponding to the invitation code": "Bitte registrieren Sie sich mit der Telefonnummer, die zum Einladungscode gehört",
+    "Please register using the username corresponding to the invitation code": "Bitte registrieren Sie sich mit dem Benutzernamen, der zum Einladungscode gehört",
     "Session outdated, please login again": "Sitzung abgelaufen, bitte erneut anmelden",
-    "The invitation code has already been used": "The invitation code has already been used",
+    "The invitation code has already been used": "Der Einladungscode wurde bereits verwendet",
     "The user is forbidden to sign in, please contact the administrator": "Dem Benutzer ist der Zugang verboten, bitte kontaktieren Sie den Administrator",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "Der Benutzer: %s existiert nicht im LDAP-Server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Der Wert \\\"%s\\\" für das Kontenfeld \\\"%s\\\" stimmt nicht mit dem Kontenelement-Regex überein",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Der Wert \\\"%s\\\" für das Registrierungsfeld \\\"%s\\\" stimmt nicht mit dem Registrierungselement-Regex der Anwendung \\\"%s\\\" überein",
     "Username already exists": "Benutzername existiert bereits",
     "Username cannot be an email address": "Benutzername kann keine E-Mail-Adresse sein",
     "Username cannot contain white spaces": "Benutzername darf keine Leerzeichen enthalten",
     "Username cannot start with a digit": "Benutzername darf nicht mit einer Ziffer beginnen",
     "Username is too long (maximum is 255 characters).": "Benutzername ist zu lang (das Maximum beträgt 255 Zeichen).",
     "Username must have at least 2 characters": "Benutzername muss mindestens 2 Zeichen lang sein",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Benutzername unterstützt E-Mail-Format. Der Benutzername darf nur alphanumerische Zeichen, Unterstriche oder Bindestriche enthalten, keine aufeinanderfolgenden Bindestriche oder Unterstriche haben und darf nicht mit einem Bindestrich oder Unterstrich beginnen oder enden. Achten Sie auch auf das E-Mail-Format.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Sie haben zu oft das falsche Passwort oder den falschen Code eingegeben. Bitte warten Sie %d Minuten und versuchen Sie es erneut",
+    "Your IP address: %s has been banned according to the configuration of: ": "Ihre IP-Adresse: %s wurde laut Konfiguration gesperrt von: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Ihr Passwort ist abgelaufen. Bitte setzen Sie Ihr Passwort zurück, indem Sie auf \\\"Passwort vergessen\\\" klicken",
     "Your region is not allow to signup by phone": "Ihre Region ist nicht berechtigt, sich telefonisch anzumelden",
-    "password or code is incorrect": "password or code is incorrect",
-    "password or code is incorrect, you have %d remaining chances": "Das Passwort oder der Code ist falsch. Du hast noch %d Versuche übrig",
+    "password or code is incorrect": "Passwort oder Code ist falsch",
+    "password or code is incorrect, you have %s remaining chances": "Das Passwort oder der Code ist falsch. Du hast noch %s Versuche übrig",
     "unsupported password type: %s": "Nicht unterstützter Passworttyp: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "Der Adapter: %s wurde nicht gefunden"
+  },
   "general": {
+    "Failed to import groups": "Gruppen importieren fehlgeschlagen",
+    "Failed to import users": "Fehler beim Importieren von Benutzern",
     "Missing parameter": "Fehlender Parameter",
+    "Only admin user can specify user": "Nur Administrator kann Benutzer angeben",
     "Please login first": "Bitte zuerst einloggen",
-    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
+    "The organization: %s should have one application at least": "Die Organisation: %s sollte mindestens eine Anwendung haben",
     "The user: %s doesn't exist": "Der Benutzer %s existiert nicht",
+    "Wrong userId": "Falsche Benutzer-ID",
     "don't support captchaProvider: ": "Unterstütze captchaProvider nicht:",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
-    "this operation requires administrator to perform": "this operation requires administrator to perform"
+    "this operation is not allowed in demo mode": "Dieser Vorgang ist im Demo-Modus nicht erlaubt",
+    "this operation requires administrator to perform": "Dieser Vorgang erfordert einen Administrator zur Ausführung"
   },
   "ldap": {
     "Ldap server exist": "Es gibt einen LDAP-Server"
@@ -98,10 +120,11 @@
   "organization": {
     "Only admin can modify the %s.": "Nur der Administrator kann das %s ändern.",
     "The %s is immutable.": "Das %s ist unveränderlich.",
-    "Unknown modify rule %s.": "Unbekannte Änderungsregel %s."
+    "Unknown modify rule %s.": "Unbekannte Änderungsregel %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Das Hinzufügen eines neuen Benutzers zur 'eingebauten' Organisation ist derzeit deaktiviert. Bitte beachten Sie: Alle Benutzer in der 'eingebauten' Organisation sind globale Administratoren in Casdoor. Siehe die Docs: https://casdoor.org/docs/basic/core-concepts#how  -does-casdoor-manage-sich selbst. Wenn Sie immer noch einen Benutzer für die 'eingebaute' Organisation erstellen möchten, gehen Sie auf die Einstellungsseite der Organisation und aktivieren Sie die Option 'Habt Berechtigungszustimmung'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
+    "The permission: \\\"%s\\\" doesn't exist": "Die Berechtigung: \\\"%s\\\" existiert nicht"
   },
   "provider": {
     "Invalid application id": "Ungültige Anwendungs-ID",
@@ -126,6 +149,9 @@
     "The objectKey: %s is not allowed": "Der Objektschlüssel %s ist nicht erlaubt",
     "The provider type: %s is not supported": "Der Anbieter-Typ %s wird nicht unterstützt"
   },
+  "subscription": {
+    "Error": "Fehler"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Grant_type: %s wird von dieser Anwendung nicht unterstützt",
     "Invalid application or wrong clientSecret": "Ungültige Anwendung oder falsches clientSecret",
@@ -135,10 +161,10 @@
   },
   "user": {
     "Display name cannot be empty": "Anzeigename darf nicht leer sein",
-    "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten."
-  },
-  "user_upload": {
-    "Failed to import users": "Fehler beim Importieren von Benutzern"
+    "MFA email is enabled but email is empty": "MFA-E-Mail ist aktiviert, aber E-Mail ist leer",
+    "MFA phone is enabled but phone number is empty": "MFA-Telefon ist aktiviert, aber Telefonnummer ist leer",
+    "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
+    "the user's owner and name should not be empty": "Eigentümer und Name des Benutzers dürfen nicht leer sein"
   },
   "util": {
     "No application is found for userId: %s": "Es wurde keine Anwendung für die Benutzer-ID gefunden: %s",
@@ -148,20 +174,20 @@
   "verification": {
     "Invalid captcha provider.": "Ungültiger Captcha-Anbieter.",
     "Phone number is invalid in your region %s": "Die Telefonnummer ist in Ihrer Region %s ungültig",
-    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
+    "The verification code has already been used!": "Der Verifizierungscode wurde bereits verwendet!",
+    "The verification code has not been sent yet!": "Der Verifizierungscode wurde noch nicht gesendet!",
     "Turing test failed.": "Turing-Test fehlgeschlagen.",
     "Unable to get the email modify rule.": "Nicht in der Lage, die E-Mail-Änderungsregel zu erhalten.",
     "Unable to get the phone modify rule.": "Nicht in der Lage, die Telefon-Änderungsregel zu erhalten.",
     "Unknown type": "Unbekannter Typ",
     "Wrong verification code!": "Falscher Bestätigungscode!",
     "You should verify your code in %d min!": "Du solltest deinen Code in %d Minuten verifizieren!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "Bitte fügen Sie einen SMS-Anbieter zur \\\"Providers\\\"-Liste für die Anwendung hinzu: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "Bitte fügen Sie einen E-Mail-Anbieter zur \\\"Providers\\\"-Liste für die Anwendung hinzu: %s",
     "the user does not exist, please sign up first": "Der Benutzer existiert nicht, bitte zuerst anmelden"
   },
   "webauthn": {
-    "Found no credentials for this user": "Es wurden keine Anmeldeinformationen für diesen Benutzer gefunden",
+    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "Bitte rufen Sie zuerst WebAuthnSigninBegin auf"
   }
 }

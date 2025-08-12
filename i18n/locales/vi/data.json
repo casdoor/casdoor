@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Phương pháp thách thức nên là S256",
+    "DeviceCode Invalid": "Mã thiết bị không hợp lệ",
     "Failed to create user, user information is invalid: %s": "Không thể tạo người dùng, thông tin người dùng không hợp lệ: %s",
     "Failed to login in: %s": "Đăng nhập không thành công: %s",
     "Invalid token": "Mã thông báo không hợp lệ",
@@ -15,74 +16,95 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) không tồn tại và không được phép đăng ký như một tài khoản mới, vui lòng liên hệ với bộ phận hỗ trợ công nghệ thông tin của bạn",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tài khoản cho nhà cung cấp: %s và tên người dùng: %s (%s) đã được liên kết với tài khoản khác: %s (%s)",
     "The application: %s does not exist": "Ứng dụng: %s không tồn tại",
-    "The login method: login with LDAP is not enabled for the application": "The login method: login with LDAP is not enabled for the application",
-    "The login method: login with SMS is not enabled for the application": "The login method: login with SMS is not enabled for the application",
-    "The login method: login with email is not enabled for the application": "The login method: login with email is not enabled for the application",
-    "The login method: login with face is not enabled for the application": "The login method: login with face is not enabled for the application",
+    "The application: %s has disabled users to signin": "The application: %s has disabled users to signin",
+    "The login method: login with LDAP is not enabled for the application": "Phương thức đăng nhập bằng LDAP chưa được bật cho ứng dụng",
+    "The login method: login with SMS is not enabled for the application": "Phương thức đăng nhập bằng SMS chưa được bật cho ứng dụng",
+    "The login method: login with email is not enabled for the application": "Phương thức đăng nhập bằng email chưa được bật cho ứng dụng",
+    "The login method: login with face is not enabled for the application": "Phương thức đăng nhập bằng khuôn mặt chưa được bật cho ứng dụng",
     "The login method: login with password is not enabled for the application": "Phương thức đăng nhập: đăng nhập bằng mật khẩu không được kích hoạt cho ứng dụng",
-    "The organization: %s does not exist": "The organization: %s does not exist",
+    "The organization: %s does not exist": "Tổ chức: %s không tồn tại",
+    "The organization: %s has disabled users to signin": "The organization: %s has disabled users to signin",
+    "The provider: %s does not exist": "Nhà cung cấp: %s không tồn tại",
     "The provider: %s is not enabled for the application": "Nhà cung cấp: %s không được kích hoạt cho ứng dụng",
     "Unauthorized operation": "Hoạt động không được ủy quyền",
     "Unknown authentication type (not password or provider), form = %s": "Loại xác thực không xác định (không phải mật khẩu hoặc nhà cung cấp), biểu mẫu = %s",
-    "User's tag: %s is not listed in the application's tags": "User's tag: %s is not listed in the application's tags",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"
+    "User's tag: %s is not listed in the application's tags": "Thẻ của người dùng: %s không nằm trong danh sách thẻ của ứng dụng",
+    "UserCode Expired": "Mã người dùng đã hết hạn",
+    "UserCode Invalid": "Mã người dùng không hợp lệ",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "người dùng trả phí %s không có đăng ký đang hoạt động hoặc đang chờ và ứng dụng: %s không có giá mặc định",
+    "the application for user %s is not found": "không tìm thấy ứng dụng cho người dùng %s",
+    "the organization: %s is not found": "không tìm thấy tổ chức: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s không đáp ứng yêu cầu định dạng CIDR: %s",
     "Affiliation cannot be blank": "Tình trạng liên kết không thể để trống",
-    "Default code does not match the code's matching rules": "Default code does not match the code's matching rules",
+    "CIDR for IP: %s should not be empty": "CIDR cho IP: %s không được để trống",
+    "Default code does not match the code's matching rules": "Mã mặc định không khớp với quy tắc khớp mã",
     "DisplayName cannot be blank": "Tên hiển thị không thể để trống",
     "DisplayName is not valid real name": "DisplayName không phải là tên thật hợp lệ",
     "Email already exists": "Email đã tồn tại",
     "Email cannot be empty": "Email không thể để trống",
     "Email is invalid": "Địa chỉ email không hợp lệ",
     "Empty username.": "Tên đăng nhập trống.",
-    "Face data does not exist, cannot log in": "Face data does not exist, cannot log in",
-    "Face data mismatch": "Face data mismatch",
+    "Face data does not exist, cannot log in": "Dữ liệu khuôn mặt không tồn tại, không thể đăng nhập",
+    "Face data mismatch": "Dữ liệu khuôn mặt không khớp",
+    "Failed to parse client IP: %s": "Không thể phân tích IP khách: %s",
     "FirstName cannot be blank": "Tên không được để trống",
-    "Invitation code cannot be blank": "Invitation code cannot be blank",
-    "Invitation code exhausted": "Invitation code exhausted",
-    "Invitation code is invalid": "Invitation code is invalid",
-    "Invitation code suspended": "Invitation code suspended",
+    "Invitation code cannot be blank": "Mã mời không được để trống",
+    "Invitation code exhausted": "Mã mời đã hết",
+    "Invitation code is invalid": "Mã mời không hợp lệ",
+    "Invitation code suspended": "Mã mời đã bị tạm ngưng",
     "LDAP user name or password incorrect": "Tên người dùng hoặc mật khẩu Ldap không chính xác",
     "LastName cannot be blank": "Họ không thể để trống",
     "Multiple accounts with same uid, please check your ldap server": "Nhiều tài khoản với cùng một uid, vui lòng kiểm tra máy chủ ldap của bạn",
     "Organization does not exist": "Tổ chức không tồn tại",
+    "Password cannot be empty": "Mật khẩu không được để trống",
     "Phone already exists": "Điện thoại đã tồn tại",
     "Phone cannot be empty": "Điện thoại không thể để trống",
     "Phone number is invalid": "Số điện thoại không hợp lệ",
-    "Please register using the email corresponding to the invitation code": "Please register using the email corresponding to the invitation code",
-    "Please register using the phone  corresponding to the invitation code": "Please register using the phone  corresponding to the invitation code",
-    "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
+    "Please register using the email corresponding to the invitation code": "Vui lòng đăng ký bằng email tương ứng với mã mời",
+    "Please register using the phone  corresponding to the invitation code": "Vui lòng đăng ký bằng số điện thoại tương ứng với mã mời",
+    "Please register using the username corresponding to the invitation code": "Vui lòng đăng ký bằng tên người dùng tương ứng với mã mời",
     "Session outdated, please login again": "Phiên làm việc hết hạn, vui lòng đăng nhập lại",
-    "The invitation code has already been used": "The invitation code has already been used",
+    "The invitation code has already been used": "Mã mời đã được sử dụng",
     "The user is forbidden to sign in, please contact the administrator": "Người dùng bị cấm đăng nhập, vui lòng liên hệ với quản trị viên",
-    "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
+    "The user: %s doesn't exist in LDAP server": "Người dùng: %s không tồn tại trên máy chủ LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Tên người dùng chỉ có thể chứa các ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có hai ký tự gạch dưới hoặc gạch ngang liền kề và không được bắt đầu hoặc kết thúc bằng dấu gạch dưới hoặc gạch ngang.",
-    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex",
-    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "Giá trị \\\"%s\\\" cho trường tài khoản \\\"%s\\\" không khớp với biểu thức chính quy của mục tài khoản",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "Giá trị \\\"%s\\\" cho trường đăng ký \\\"%s\\\" không khớp với biểu thức chính quy của mục đăng ký trong ứng dụng \\\"%s\\\"",
     "Username already exists": "Tên đăng nhập đã tồn tại",
     "Username cannot be an email address": "Tên người dùng không thể là địa chỉ email",
     "Username cannot contain white spaces": "Tên người dùng không thể chứa khoảng trắng",
     "Username cannot start with a digit": "Tên người dùng không thể bắt đầu bằng chữ số",
     "Username is too long (maximum is 255 characters).": "Tên đăng nhập quá dài (tối đa là 255 ký tự).",
     "Username must have at least 2 characters": "Tên đăng nhập phải có ít nhất 2 ký tự",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "Tên người dùng hỗ trợ định dạng email. Ngoài ra, tên người dùng chỉ có thể chứa ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có gạch ngang hoặc gạch dưới liên tiếp và không được bắt đầu hoặc kết thúc bằng gạch ngang hoặc gạch dưới. Đồng thời lưu ý định dạng email.",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Bạn đã nhập sai mật khẩu hoặc mã quá nhiều lần, vui lòng đợi %d phút và thử lại",
+    "Your IP address: %s has been banned according to the configuration of: ": "Địa chỉ IP của bạn: %s đã bị cấm theo cấu hình của: ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Mật khẩu của bạn đã hết hạn. Vui lòng đặt lại mật khẩu bằng cách nhấp vào \\\"Quên mật khẩu\\\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
-    "password or code is incorrect": "password or code is incorrect",
-    "password or code is incorrect, you have %d remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %d lần cơ hội",
+    "password or code is incorrect": "mật khẩu hoặc mã không đúng",
+    "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "không tìm thấy adapter: %s"
+  },
   "general": {
+    "Failed to import groups": "Không thể nhập nhóm",
+    "Failed to import users": "Không thể nhập người dùng",
     "Missing parameter": "Thiếu tham số",
+    "Only admin user can specify user": "Chỉ người dùng quản trị mới có thể chỉ định người dùng",
     "Please login first": "Vui lòng đăng nhập trước",
-    "The organization: %s should have one application at least": "The organization: %s should have one application at least",
+    "The organization: %s should have one application at least": "Tổ chức: %s cần có ít nhất một ứng dụng",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
+    "Wrong userId": "ID người dùng sai",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",
-    "this operation is not allowed in demo mode": "this operation is not allowed in demo mode",
-    "this operation requires administrator to perform": "this operation requires administrator to perform"
+    "this operation is not allowed in demo mode": "thao tác này không được phép trong chế độ demo",
+    "this operation requires administrator to perform": "thao tác này yêu cầu quản trị viên thực hiện"
   },
   "ldap": {
     "Ldap server exist": "Máy chủ LDAP tồn tại"
@@ -98,10 +120,11 @@
   "organization": {
     "Only admin can modify the %s.": "Chỉ những người quản trị mới có thể sửa đổi %s.",
     "The %s is immutable.": "%s không thể thay đổi được.",
-    "Unknown modify rule %s.": "Quy tắc thay đổi không xác định %s."
+    "Unknown modify rule %s.": "Quy tắc thay đổi không xác định %s.",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "Thêm người dùng mới vào tổ chức 'built-in' (tích hợp sẵn) hiện đang bị vô hiệu hóa. Lưu ý: Tất cả người dùng trong tổ chức 'built-in' đều là quản trị viên toàn cầu trong Casdoor. Xem tài liệu: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. Nếu bạn vẫn muốn tạo người dùng cho tổ chức 'built-in', hãy truy cập trang cài đặt của tổ chức và bật tùy chọn 'Có đồng ý quyền đặc biệt'."
   },
   "permission": {
-    "The permission: \\\"%s\\\" doesn't exist": "The permission: \\\"%s\\\" doesn't exist"
+    "The permission: \\\"%s\\\" doesn't exist": "Quyền: \\\"%s\\\" không tồn tại"
   },
   "provider": {
     "Invalid application id": "Sai ID ứng dụng",
@@ -126,6 +149,9 @@
     "The objectKey: %s is not allowed": "Khóa đối tượng: %s không được phép",
     "The provider type: %s is not supported": "Loại nhà cung cấp: %s không được hỗ trợ"
   },
+  "subscription": {
+    "Error": "Lỗi"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "Loại cấp phép: %s không được hỗ trợ trong ứng dụng này",
     "Invalid application or wrong clientSecret": "Đơn đăng ký không hợp lệ hoặc sai clientSecret",
@@ -135,10 +161,10 @@
   },
   "user": {
     "Display name cannot be empty": "Tên hiển thị không thể trống",
-    "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng."
-  },
-  "user_upload": {
-    "Failed to import users": "Không thể nhập người dùng"
+    "MFA email is enabled but email is empty": "MFA email đã bật nhưng email trống",
+    "MFA phone is enabled but phone number is empty": "MFA điện thoại đã bật nhưng số điện thoại trống",
+    "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
+    "the user's owner and name should not be empty": "chủ sở hữu và tên người dùng không được để trống"
   },
   "util": {
     "No application is found for userId: %s": "Không tìm thấy ứng dụng cho ID người dùng: %s",
@@ -148,20 +174,20 @@
   "verification": {
     "Invalid captcha provider.": "Nhà cung cấp captcha không hợp lệ.",
     "Phone number is invalid in your region %s": "Số điện thoại không hợp lệ trong vùng của bạn %s",
-    "The verification code has not been sent yet!": "The verification code has not been sent yet!",
-    "The verification code has not been sent yet, or has already been used!": "The verification code has not been sent yet, or has already been used!",
+    "The verification code has already been used!": "Mã xác thực đã được sử dụng!",
+    "The verification code has not been sent yet!": "Mã xác thực chưa được gửi!",
     "Turing test failed.": "Kiểm định Turing thất bại.",
     "Unable to get the email modify rule.": "Không thể lấy quy tắc sửa đổi email.",
     "Unable to get the phone modify rule.": "Không thể thay đổi quy tắc trên điện thoại.",
     "Unknown type": "Loại không xác định",
     "Wrong verification code!": "Mã xác thực sai!",
     "You should verify your code in %d min!": "Bạn nên kiểm tra mã của mình trong %d phút!",
-    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "please add a SMS provider to the \\\"Providers\\\" list for the application: %s",
-    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "please add an Email provider to the \\\"Providers\\\" list for the application: %s",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "vui lòng thêm nhà cung cấp SMS vào danh sách \\\"Providers\\\" cho ứng dụng: %s",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "vui lòng thêm nhà cung cấp Email vào danh sách \\\"Providers\\\" cho ứng dụng: %s",
     "the user does not exist, please sign up first": "Người dùng không tồn tại, vui lòng đăng ký trước"
   },
   "webauthn": {
-    "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
+    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
   }
 }

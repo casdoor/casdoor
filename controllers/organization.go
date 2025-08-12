@@ -98,6 +98,10 @@ func (c *ApiController) GetOrganization() {
 		return
 	}
 
+	if organization != nil && organization.MfaRememberInHours == 0 {
+		organization.MfaRememberInHours = 12
+	}
+
 	c.ResponseOk(organization)
 }
 

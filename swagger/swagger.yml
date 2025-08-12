@@ -31,6 +31,22 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.OidcDiscovery'
+  /.well-known/webfinger:
+    get:
+      tags:
+      - OIDC API
+      operationId: RootController.GetWebFinger
+      parameters:
+      - in: query
+        name: resource
+        description: resource
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object.WebFinger'
   /api/Callback:
     post:
       tags:
@@ -258,6 +274,29 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/add-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: add policy
+      operationId: ApiController.AddPolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The policy to add
+        required: true
+        schema:
+          $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/add-pricing:
     post:
       tags:
@@ -307,6 +346,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Provider'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-record:
+    post:
+      tags:
+      - Record API
+      description: add a record
+      operationId: ApiController.AddRecord
+      parameters:
+      - in: body
+        name: body
+        description: The details of the record
+        required: true
+        schema:
+          $ref: '#/definitions/object.Record'
       responses:
         "200":
           description: The Response object
@@ -420,6 +477,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Token'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: add transaction
+      operationId: ApiController.AddTransaction
+      parameters:
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
       responses:
         "200":
           description: The Response object
@@ -924,6 +999,24 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/delete-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: delete transaction
+      operationId: ApiController.DeleteTransaction
+      parameters:
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-user:
     post:
       tags:
@@ -960,6 +1053,17 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/device-auth:
+    post:
+      tags:
+      - Device Authorization Endpoint
+      description: Endpoint for the device authorization flow
+      operationId: ApiController.DeviceAuth
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.DeviceAuthResponse'
   /api/enforce:
     post:
       tags:
@@ -990,6 +1094,28 @@ paths:
       - in: query
         name: owner
         description: owner
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/faceid-signin-begin:
+    get:
+      tags:
+      - Login API
+      description: FaceId Login Flow 1st stage
+      operationId: ApiController.FaceIDSigninBegin
+      parameters:
+      - in: query
+        name: owner
+        description: owner
+        required: true
+        type: string
+      - in: query
+        name: name
+        description: name
+        required: true
         type: string
       responses:
         "200":
@@ -1265,11 +1391,43 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Enforcer'
+  /api/get-filtered-policies:
+    get:
+      tags:
+      - Enforcer API
+      description: get filtered policies
+      operationId: ApiController.GetFilteredPolicies
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: query
+        name: ptype
+        description: Policy type, default is 'p'
+        type: string
+      - in: query
+        name: fieldIndex
+        description: Field index for filtering
+        type: integer
+        format: int64
+      - in: query
+        name: fieldValues
+        description: Field values for filtering, comma-separated
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/xormadapter.CasbinRule'
   /api/get-global-certs:
     get:
       tags:
       - Cert API
-      description: get globle certs
+      description: get global certs
       operationId: ApiController.GetGlobalCerts
       responses:
         "200":
@@ -1350,6 +1508,23 @@ paths:
       - in: query
         name: id
         description: The id ( owner/name ) of the invitation
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Invitation'
+  /api/get-invitation-info:
+    get:
+      tags:
+      - Invitation API
+      description: get invitation code information
+      operationId: ApiController.GetInvitationCodeInfo
+      parameters:
+      - in: query
+        name: code
+        description: Invitation code
         required: true
         type: string
       responses:
@@ -1535,9 +1710,9 @@ paths:
   /api/get-payment:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payment
-      operationId: ApiController.GetPayment
+      operationId: ApiController.GetVerification
       parameters:
       - in: query
         name: id
@@ -1548,13 +1723,13 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Payment'
+            $ref: '#/definitions/object.Verification'
   /api/get-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments
-      operationId: ApiController.GetPayments
+      operationId: ApiController.GetVerifications
       parameters:
       - in: query
         name: owner
@@ -1567,7 +1742,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
   /api/get-permission:
     get:
       tags:
@@ -1676,6 +1851,29 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Plan'
+  /api/get-policies:
+    get:
+      tags:
+      - Enforcer API
+      description: get policies
+      operationId: ApiController.GetPolicies
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: query
+        name: adapterId
+        description: The adapter id
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/xormadapter.CasbinRule'
   /api/get-pricing:
     get:
       tags:
@@ -1795,6 +1993,63 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Provider'
+  /api/get-qrcode:
+    get:
+      tags:
+      - System API
+      operationId: ApiController.GetWechatQRCode
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/get-records:
+    get:
+      tags:
+      - Record API
+      description: get all records
+      operationId: ApiController.GetRecords
+      parameters:
+      - in: query
+        name: pageSize
+        description: The size of each page
+        required: true
+        type: string
+      - in: query
+        name: p
+        description: The number of the page
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Record'
+  /api/get-records-filter:
+    post:
+      tags:
+      - Record API
+      description: get records by filter
+      operationId: ApiController.GetRecordsByFilter
+      parameters:
+      - in: body
+        name: filter
+        description: filter Record message
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Record'
   /api/get-resource:
     get:
       tags:
@@ -2091,6 +2346,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Token'
+  /api/get-transaction:
+    get:
+      tags:
+      - Transaction API
+      description: get transaction
+      operationId: ApiController.GetTransaction
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the transaction
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Transaction'
+  /api/get-transactions:
+    get:
+      tags:
+      - Transaction API
+      description: get transactions
+      operationId: ApiController.GetTransactions
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of transactions
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Transaction'
   /api/get-user:
     get:
       tags:
@@ -2162,9 +2453,9 @@ paths:
   /api/get-user-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments for a user
-      operationId: ApiController.GetUserPayments
+      operationId: ApiController.GetUserVerifications
       parameters:
       - in: query
         name: owner
@@ -2187,7 +2478,36 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
+  /api/get-user-transactions:
+    get:
+      tags:
+      - Transaction API
+      description: get transactions for a user
+      operationId: ApiController.GetUserTransaction
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of transactions
+        required: true
+        type: string
+      - in: query
+        name: organization
+        description: The organization of the user
+        required: true
+        type: string
+      - in: query
+        name: user
+        description: The username of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Transaction'
   /api/get-users:
     get:
       tags:
@@ -2240,11 +2560,17 @@ paths:
       tags:
       - System API
       operationId: ApiController.GetWebhookEventType
+      parameters:
+      - in: query
+        name: ticket
+        description: The eventId of QRCode
+        required: true
+        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Userinfo'
+            $ref: '#/definitions/controllers.Response'
   /api/get-webhooks:
     get:
       tags:
@@ -2561,6 +2887,51 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/refresh-engines:
+    post:
+      tags:
+      - CLI API
+      description: Refresh all CLI engines
+      operationId: ApiController.RefreshEngines
+      parameters:
+      - in: query
+        name: m
+        description: Hash for request validation
+        required: true
+        type: string
+      - in: query
+        name: t
+        description: Timestamp for request validation
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/remove-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: remove policy
+      operationId: ApiController.RemovePolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The policy to remove
+        required: true
+        schema:
+          $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/reset-email-or-phone:
     post:
       tags:
@@ -2571,6 +2942,17 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
+  /api/run-casbin-command:
+    get:
+      tags:
+      - Enforcer API
+      description: Call Casbin CLI commands
+      operationId: ApiController.RunCasbinCommand
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/run-syncer:
     get:
       tags:
@@ -3036,6 +3418,31 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/update-policy:
+    post:
+      tags:
+      - Enforcer API
+      description: update policy
+      operationId: ApiController.UpdatePolicy
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name )  of enforcer
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Array containing old and new policy
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/xormadapter.CasbinRule'
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
   /api/update-pricing:
     post:
       tags:
@@ -3234,6 +3641,29 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Token'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/update-transaction:
+    post:
+      tags:
+      - Transaction API
+      description: update transaction
+      operationId: ApiController.UpdateTransaction
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the transaction
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the transaction
+        required: true
+        schema:
+          $ref: '#/definitions/object.Transaction'
       responses:
         "200":
           description: The Response object
@@ -3475,10 +3905,22 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Userinfo'
+            $ref: '#/definitions/controllers.Response'
 definitions:
+  187812.<nil>.string:
+    title: string
+    type: object
+  187870.string.string:
+    title: string
+    type: object
+  Response:
+    title: Response
+    type: object
   casbin.Enforcer:
     title: Enforcer
+    type: object
+  casvisorsdk.Record:
+    title: Record
     type: object
   controllers.AuthForm:
     title: AuthForm
@@ -3491,6 +3933,8 @@ definitions:
         type: string
       provider:
         type: string
+      providerObject:
+        $ref: '#/definitions/object.Provider'
       receivers:
         type: array
         items:
@@ -3557,6 +4001,10 @@ definitions:
         additionalProperties:
           description: support string, struct or []struct
           type: string
+      data3:
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       msg:
         type: string
       name:
@@ -3593,6 +4041,8 @@ definitions:
       modifyRule:
         type: string
       name:
+        type: string
+      regex:
         type: string
       viewRule:
         type: string
@@ -3643,6 +4093,8 @@ definitions:
         type: string
       createdTime:
         type: string
+      defaultGroup:
+        type: string
       description:
         type: string
       displayName:
@@ -3659,6 +4111,8 @@ definitions:
         type: boolean
       enableSamlCompress:
         type: boolean
+      enableSamlPostBinding:
+        type: boolean
       enableSignUp:
         type: boolean
       enableSigninSession:
@@ -3674,9 +4128,15 @@ definitions:
       failedSigninLimit:
         type: integer
         format: int64
+      footerHtml:
+        type: string
+      forcedRedirectOrigin:
+        type: string
       forgetUrl:
         type: string
       formBackgroundUrl:
+        type: string
+      formBackgroundUrlMobile:
         type: string
       formCss:
         type: string
@@ -3691,12 +4151,16 @@ definitions:
         type: array
         items:
           type: string
+      headerHtml:
+        type: string
       homepageUrl:
         type: string
-      invitationCodes:
-        type: array
-        items:
-          type: string
+      ipRestriction:
+        type: string
+      ipWhitelist:
+        type: string
+      isShared:
+        type: boolean
       logo:
         type: string
       name:
@@ -3728,6 +4192,10 @@ definitions:
         type: string
       signinHtml:
         type: string
+      signinItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.SigninItem'
       signinMethods:
         type: array
         items:
@@ -3756,6 +4224,10 @@ definitions:
           type: string
       tokenFormat:
         type: string
+      tokenSigningMethod:
+        type: string
+      useEmailAsSamlNameId:
+        type: boolean
   object.Cert:
     title: Cert
     type: object
@@ -3784,6 +4256,22 @@ definitions:
         type: string
       type:
         type: string
+  object.DeviceAuthResponse:
+    title: DeviceAuthResponse
+    type: object
+    properties:
+      device_code:
+        type: string
+      expires_in:
+        type: integer
+        format: int64
+      interval:
+        type: integer
+        format: int64
+      user_code:
+        type: string
+      verification_uri:
+        type: string
   object.Enforcer:
     title: Enforcer
     type: object
@@ -3806,6 +4294,19 @@ definitions:
       owner:
         type: string
       updatedTime:
+        type: string
+  object.FaceId:
+    title: FaceId
+    type: object
+    properties:
+      ImageUrl:
+        type: string
+      faceIdData:
+        type: array
+        items:
+          type: number
+          format: double
+      name:
         type: string
   object.GaugeVecInfo:
     title: GaugeVecInfo
@@ -3832,6 +4333,8 @@ definitions:
         type: string
       displayName:
         type: string
+      haveChildren:
+        type: boolean
       isEnabled:
         type: boolean
       isTopGroup:
@@ -3846,6 +4349,8 @@ definitions:
         type: string
       parentId:
         type: string
+      parentName:
+        type: string
       title:
         type: string
       type:
@@ -3855,7 +4360,7 @@ definitions:
       users:
         type: array
         items:
-          $ref: '#/definitions/object.User'
+          type: string
   object.Header:
     title: Header
     type: object
@@ -3920,10 +4425,14 @@ definitions:
         type: string
       createdTime:
         type: string
+      defaultCode:
+        type: string
       displayName:
         type: string
       email:
         type: string
+      isRegexp:
+        type: boolean
       name:
         type: string
       owner:
@@ -3948,12 +4457,16 @@ definitions:
     title: Ldap
     type: object
     properties:
+      allowSelfSignedCert:
+        type: boolean
       autoSync:
         type: integer
         format: int64
       baseDn:
         type: string
       createdTime:
+        type: string
+      defaultGroup:
         type: string
       enableSsl:
         type: boolean
@@ -3972,6 +4485,8 @@ definitions:
       owner:
         type: string
       password:
+        type: string
+      passwordType:
         type: string
       port:
         type: integer
@@ -4032,6 +4547,18 @@ definitions:
         type: string
       username:
         type: string
+  object.MfaAccount:
+    title: MfaAccount
+    type: object
+    properties:
+      accountName:
+        type: string
+      issuer:
+        type: string
+      origin:
+        type: string
+      secretKey:
+        type: string
   object.MfaItem:
     title: MfaItem
     type: object
@@ -4050,6 +4577,9 @@ definitions:
         type: boolean
       isPreferred:
         type: boolean
+      mfaRememberInHours:
+        type: integer
+        format: int64
       mfaType:
         type: string
       recoveryCodes:
@@ -4086,6 +4616,8 @@ definitions:
         type: array
         items:
           type: string
+      device_authorization_endpoint:
+        type: string
       end_session_endpoint:
         type: string
       grant_types_supported:
@@ -4152,17 +4684,29 @@ definitions:
         type: string
       enableSoftDeletion:
         type: boolean
+      enableTour:
+        type: boolean
       favicon:
         type: string
+      hasPrivilegeConsent:
+        type: boolean
       initScore:
         type: integer
         format: int64
+      ipRestriction:
+        type: string
+      ipWhitelist:
+        type: string
       isProfilePublic:
         type: boolean
       languages:
         type: array
         items:
           type: string
+      logo:
+        type: string
+      logoDark:
+        type: string
       masterPassword:
         type: string
       masterVerificationCode:
@@ -4171,9 +4715,23 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/object.MfaItem'
+      mfaRememberInHours:
+        type: integer
+        format: int64
       name:
         type: string
+      navItems:
+        type: array
+        items:
+          type: string
       owner:
+        type: string
+      passwordExpireDays:
+        type: integer
+        format: int64
+      passwordObfuscatorKey:
+        type: string
+      passwordObfuscatorType:
         type: string
       passwordOptions:
         type: array
@@ -4189,12 +4747,24 @@ definitions:
           type: string
       themeData:
         $ref: '#/definitions/object.ThemeData'
+      useEmailAsUsername:
+        type: boolean
+      userTypes:
+        type: array
+        items:
+          type: string
       websiteUrl:
         type: string
+      widgetItems:
+        type: array
+        items:
+          type: string
   object.Ormer:
     title: Ormer
     type: object
     properties:
+      Db:
+        $ref: '#/definitions/sql.DB'
       Engine:
         $ref: '#/definitions/xorm.Engine'
       dataSourceName:
@@ -4225,6 +4795,8 @@ definitions:
         type: string
       invoiceUrl:
         type: string
+      isRecharge:
+        type: boolean
       message:
         type: string
       name:
@@ -4396,6 +4968,8 @@ definitions:
         type: string
       image:
         type: string
+      isRecharge:
+        type: boolean
       name:
         type: string
       owner:
@@ -4420,6 +4994,8 @@ definitions:
         type: integer
         format: int64
       state:
+        type: string
+      successUrl:
         type: string
       tag:
         type: string
@@ -4476,12 +5052,17 @@ definitions:
         type: string
       domain:
         type: string
+      emailRegex:
+        type: string
       enableSignAuthnRequest:
         type: boolean
       endpoint:
         type: string
       host:
         type: string
+      httpHeaders:
+        additionalProperties:
+          type: string
       idP:
         type: string
       intranetEndpoint:
@@ -4532,6 +5113,10 @@ definitions:
         type: boolean
       canUnlink:
         type: boolean
+      countryCodes:
+        type: array
+        items:
+          type: string
       name:
         type: string
       owner:
@@ -4544,6 +5129,9 @@ definitions:
         type: string
       signupGroup:
         type: string
+  object.Record:
+    title: Record
+    type: object
   object.Resource:
     title: Resource
     type: object
@@ -4619,6 +5207,24 @@ definitions:
         type: string
       value:
         type: string
+  object.SigninItem:
+    title: SigninItem
+    type: object
+    properties:
+      customCss:
+        type: string
+      isCustom:
+        type: boolean
+      label:
+        type: string
+      name:
+        type: string
+      placeholder:
+        type: string
+      rule:
+        type: string
+      visible:
+        type: boolean
   object.SigninMethod:
     title: SigninMethod
     type: object
@@ -4633,10 +5239,16 @@ definitions:
     title: SignupItem
     type: object
     properties:
+      customCss:
+        type: string
       label:
         type: string
       name:
         type: string
+      options:
+        type: array
+        items:
+          type: string
       placeholder:
         type: string
       prompted:
@@ -4646,6 +5258,8 @@ definitions:
       required:
         type: boolean
       rule:
+        type: string
+      type:
         type: string
       visible:
         type: boolean
@@ -4661,7 +5275,6 @@ definitions:
         type: string
       endTime:
         type: string
-        format: datetime
       name:
         type: string
       owner:
@@ -4676,7 +5289,6 @@ definitions:
         type: string
       startTime:
         type: string
-        format: datetime
       state:
         $ref: '#/definitions/object.SubscriptionState'
       user:
@@ -4699,6 +5311,8 @@ definitions:
       affiliationTable:
         type: string
       avatarBaseUrl:
+        type: string
+      cert:
         type: string
       createdTime:
         type: string
@@ -4725,6 +5339,17 @@ definitions:
       port:
         type: integer
         format: int64
+      sshHost:
+        type: string
+      sshPassword:
+        type: string
+      sshPort:
+        type: integer
+        format: int64
+      sshType:
+        type: string
+      sshUser:
+        type: string
       sslMode:
         type: string
       syncInterval:
@@ -4838,6 +5463,47 @@ definitions:
         type: string
       token_type:
         type: string
+  object.Transaction:
+    title: Transaction
+    type: object
+    properties:
+      amount:
+        type: number
+        format: double
+      application:
+        type: string
+      category:
+        type: string
+      createdTime:
+        type: string
+      currency:
+        type: string
+      detail:
+        type: string
+      displayName:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      payment:
+        type: string
+      productDisplayName:
+        type: string
+      productName:
+        type: string
+      provider:
+        type: string
+      returnUrl:
+        type: string
+      state:
+        $ref: '#/definitions/pp.PaymentState'
+      tag:
+        type: string
+      type:
+        type: string
+      user:
+        type: string
   object.User:
     title: User
     type: object
@@ -4845,6 +5511,8 @@ definitions:
       accessKey:
         type: string
       accessSecret:
+        type: string
+      accessToken:
         type: string
       address:
         type: array
@@ -4872,6 +5540,9 @@ definitions:
         type: string
       baidu:
         type: string
+      balance:
+        type: number
+        format: double
       battlenet:
         type: string
       bilibili:
@@ -4893,6 +5564,8 @@ definitions:
       createdIp:
         type: string
       createdTime:
+        type: string
+      currency:
         type: string
       custom:
         type: string
@@ -4924,6 +5597,10 @@ definitions:
         type: string
       externalId:
         type: string
+      faceIds:
+        type: array
+        items:
+          $ref: '#/definitions/object.FaceId'
       facebook:
         type: string
       firstName:
@@ -4966,6 +5643,12 @@ definitions:
         type: string
       intercom:
         type: string
+      invitation:
+        type: string
+      invitationCode:
+        type: string
+      ipWhitelist:
+        type: string
       isAdmin:
         type: boolean
       isDefaultAvatar:
@@ -4986,6 +5669,8 @@ definitions:
       language:
         type: string
       lark:
+        type: string
+      lastChangePasswordTime:
         type: string
       lastName:
         type: string
@@ -5015,10 +5700,20 @@ definitions:
         type: string
       metamask:
         type: string
+      mfaAccounts:
+        type: array
+        items:
+          $ref: '#/definitions/object.MfaAccount'
       mfaEmailEnabled:
         type: boolean
+      mfaItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.MfaItem'
       mfaPhoneEnabled:
         type: boolean
+      mfaRememberDeadline:
+        type: string
       microsoftonline:
         type: string
       multiFactorAuths:
@@ -5029,6 +5724,8 @@ definitions:
         type: string
       naver:
         type: string
+      needUpdatePassword:
+        type: boolean
       nextcloud:
         type: string
       okta:
@@ -5171,13 +5868,46 @@ definitions:
         type: string
       name:
         type: string
+      permissions:
+        type: array
+        items:
+          type: string
       phone:
         type: string
       picture:
         type: string
       preferred_username:
         type: string
+      roles:
+        type: array
+        items:
+          type: string
       sub:
+        type: string
+  object.Verification:
+    title: Verification
+    type: object
+  object.WebFinger:
+    title: WebFinger
+    type: object
+    properties:
+      aliases:
+        $ref: '#/definitions/187812.<nil>.string'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/object.WebFingerLink'
+      properties:
+        $ref: '#/definitions/187870.string.string'
+      subject:
+        type: string
+  object.WebFingerLink:
+    title: WebFingerLink
+    type: object
+    properties:
+      href:
+        type: string
+      rel:
         type: string
   object.Webhook:
     title: Webhook
@@ -5203,10 +5933,20 @@ definitions:
         type: string
       name:
         type: string
+      objectFields:
+        type: array
+        items:
+          type: string
       organization:
         type: string
       owner:
         type: string
+      singleOrgOnly:
+        type: boolean
+      tokenFields:
+        type: array
+        items:
+          type: string
       url:
         type: string
   pp.PaymentState:
@@ -5230,6 +5970,9 @@ definitions:
     type: object
   protocol.CredentialCreationResponse:
     title: CredentialCreationResponse
+    type: object
+  sql.DB:
+    title: DB
     type: object
   util.SystemInfo:
     title: SystemInfo
@@ -5265,6 +6008,9 @@ definitions:
     type: object
   xormadapter.Adapter:
     title: Adapter
+    type: object
+  xormadapter.CasbinRule:
+    title: CasbinRule
     type: object
 securityDefinitions:
   AccessToken:

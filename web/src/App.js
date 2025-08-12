@@ -247,7 +247,9 @@ class App extends Component {
           account.organization = res.data2;
           accessToken = res.data.accessToken;
 
-          this.setLanguage(account);
+          if (!localStorage.getItem("language")) {
+            this.setLanguage(account);
+          }
           this.setTheme(Setting.getThemeData(account.organization), Conf.InitThemeAlgorithm);
           setTourLogo(account.organization.logo);
           setOrgIsTourVisible(account.organization.enableTour);
@@ -404,6 +406,7 @@ class App extends Component {
                       account={this.state.account}
                       theme={this.state.themeData}
                       themeAlgorithm={this.state.themeAlgorithm}
+                      requiredEnableMfa={this.state.requiredEnableMfa}
                       updateApplication={(application) => {
                         this.setState({
                           application: application,

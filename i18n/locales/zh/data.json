@@ -7,6 +7,7 @@
   },
   "auth": {
     "Challenge method should be S256": "Challenge方法应该为S256",
+    "DeviceCode Invalid": "DeviceCode 无效",
     "Failed to create user, user information is invalid: %s": "创建用户失败，用户信息无效: %s",
     "Failed to login in: %s": "登录失败: %s",
     "Invalid token": "无效token",
@@ -15,23 +16,32 @@
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s与用户名: %s (%s)已经与其他账户绑定: %s (%s)",
     "The application: %s does not exist": "应用%s不存在",
+    "The application: %s has disabled users to signin": "应用: %s 禁止用户登录",
     "The login method: login with LDAP is not enabled for the application": "该应用禁止采用LDAP登录方式",
     "The login method: login with SMS is not enabled for the application": "该应用禁止采用短信登录方式",
     "The login method: login with email is not enabled for the application": "该应用禁止采用邮箱登录方式",
     "The login method: login with face is not enabled for the application": "该应用禁止采用人脸登录",
     "The login method: login with password is not enabled for the application": "该应用禁止采用密码登录方式",
     "The organization: %s does not exist": "组织: %s 不存在",
+    "The organization: %s has disabled users to signin": "组织: %s 禁止用户登录",
+    "The provider: %s does not exist": "提供商: %s 不存在",
     "The provider: %s is not enabled for the application": "该应用的提供商: %s未被启用",
     "Unauthorized operation": "未授权的操作",
     "Unknown authentication type (not password or provider), form = %s": "未知的认证类型（非密码或第三方提供商）：%s",
     "User's tag: %s is not listed in the application's tags": "用户的标签: %s不在该应用的标签列表中",
-    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s 没有激活或正在等待订阅并且应用: %s 没有默认值"
+    "UserCode Expired": "用户代码已过期",
+    "UserCode Invalid": "用户代码无效",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "paid-user %s 没有激活或正在等待订阅并且应用: %s 没有默认值",
+    "the application for user %s is not found": "未找到用户 %s 的应用程序",
+    "the organization: %s is not found": "组织: %s 不存在"
   },
   "cas": {
     "Service %s and %s do not match": "服务%s与%s不匹配"
   },
   "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s 不符合 CIDR 的格式要求: %s",
     "Affiliation cannot be blank": "工作单位不可为空",
+    "CIDR for IP: %s should not be empty": "IP 的 CIDR 格式：%s 不能为空",
     "Default code does not match the code's matching rules": "邀请码默认值和邀请码规则不匹配",
     "DisplayName cannot be blank": "显示名称不可为空",
     "DisplayName is not valid real name": "显示名称必须是真实姓名",
@@ -41,6 +51,7 @@
     "Empty username.": "用户名不可为空",
     "Face data does not exist, cannot log in": "未录入人脸数据，无法登录",
     "Face data mismatch": "人脸不匹配",
+    "Failed to parse client IP: %s": "无法解析客户端 IP 地址: %s",
     "FirstName cannot be blank": "名不可以为空",
     "Invitation code cannot be blank": "邀请码不能为空",
     "Invitation code exhausted": "邀请码使用次数已耗尽",
@@ -50,6 +61,7 @@
     "LastName cannot be blank": "姓不可以为空",
     "Multiple accounts with same uid, please check your ldap server": "多个帐户具有相同的uid，请检查您的 LDAP 服务器",
     "Organization does not exist": "组织不存在",
+    "Password cannot be empty": "密码不能为空",
     "Phone already exists": "该手机号已存在",
     "Phone cannot be empty": "手机号不可为空",
     "Phone number is invalid": "无效手机号",
@@ -69,17 +81,27 @@
     "Username cannot start with a digit": "用户名禁止使用数字开头",
     "Username is too long (maximum is 255 characters).": "用户名过长（最大允许长度为255个字符）",
     "Username must have at least 2 characters": "用户名至少要有2个字符",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "用户名支持电子邮件格式。此外，用户名只能包含字母数字字符、下划线或连字符，不能包含连续的连字符或下划线，也不能以连字符或下划线开头或结尾。同时请注意电子邮件格式。",
     "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密码错误次数已达上限，请在 %d 分后重试",
+    "Your IP address: %s has been banned according to the configuration of: ": "您的IP地址：%s 根据以下配置已被禁止： ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "您的密码已过期。请点击 \\\"忘记密码\\\" 以重置密码",
     "Your region is not allow to signup by phone": "所在地区不支持手机号注册",
     "password or code is incorrect": "密码错误",
-    "password or code is incorrect, you have %d remaining chances": "密码错误，您还有 %d 次尝试的机会",
+    "password or code is incorrect, you have %s remaining chances": "密码错误，您还有 %s 次尝试的机会",
     "unsupported password type: %s": "不支持的密码类型: %s"
   },
+  "enforcer": {
+    "the adapter: %s is not found": "适配器: %s 未找到"
+  },
   "general": {
+    "Failed to import groups": "导入群组失败",
+    "Failed to import users": "导入用户失败",
     "Missing parameter": "缺少参数",
+    "Only admin user can specify user": "仅管理员用户可以指定用户",
     "Please login first": "请先登录",
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
     "The user: %s doesn't exist": "用户: %s不存在",
+    "Wrong userId": "错误的 userId",
     "don't support captchaProvider: ": "不支持验证码提供商: ",
     "this operation is not allowed in demo mode": "demo模式下不允许该操作",
     "this operation requires administrator to perform": "只有管理员才能进行此操作"
@@ -98,7 +120,8 @@
   "organization": {
     "Only admin can modify the %s.": "仅允许管理员可以修改%s",
     "The %s is immutable.": "%s 是不可变的",
-    "Unknown modify rule %s.": "未知的修改规则: %s"
+    "Unknown modify rule %s.": "未知的修改规则: %s",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "目前，向'built-in'组织添加新用户的功能已禁用。请注意：'built-in'组织中的所有用户均为Casdoor的全局管理员。请参阅文档：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。如果您仍希望为built-in组织创建用户，请转到该组织的设置页面并启用“特权同意”选项。"
   },
   "permission": {
     "The permission: \\\"%s\\\" doesn't exist": "权限: \\\"%s\\\" 不存在"
@@ -126,6 +149,9 @@
     "The objectKey: %s is not allowed": "objectKey: %s被禁止",
     "The provider type: %s is not supported": "不支持的提供商类型: %s"
   },
+  "subscription": {
+    "Error": "错误"
+  },
   "token": {
     "Grant_type: %s is not supported in this application": "该应用不支持Grant_type: %s",
     "Invalid application or wrong clientSecret": "无效应用或错误的clientSecret",
@@ -135,10 +161,10 @@
   },
   "user": {
     "Display name cannot be empty": "显示名称不可为空",
-    "New password cannot contain blank space.": "新密码不可以包含空格"
-  },
-  "user_upload": {
-    "Failed to import users": "导入用户失败"
+    "MFA email is enabled but email is empty": "MFA 电子邮件已启用，但电子邮件为空",
+    "MFA phone is enabled but phone number is empty": "MFA 电话已启用，但电话号码为空",
+    "New password cannot contain blank space.": "新密码不可以包含空格",
+    "the user's owner and name should not be empty": "用户的组织和名称不能为空"
   },
   "util": {
     "No application is found for userId: %s": "未找到用户: %s的应用",
@@ -148,8 +174,8 @@
   "verification": {
     "Invalid captcha provider.": "非法的验证码提供商",
     "Phone number is invalid in your region %s": "您所在地区的电话号码无效 %s",
+    "The verification code has already been used!": "验证码已使用过!",
     "The verification code has not been sent yet!": "验证码未发送！",
-    "The verification code has not been sent yet, or has already been used!": "验证码未发送或已被使用！",
     "Turing test failed.": "验证码还未发送",
     "Unable to get the email modify rule.": "无法获取邮箱修改规则",
     "Unable to get the phone modify rule.": "无法获取手机号修改规则",
@@ -161,7 +187,7 @@
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
-    "Found no credentials for this user": "该用户没有 WebAuthn 凭据",
+    "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
   }
 }

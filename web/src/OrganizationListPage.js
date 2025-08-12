@@ -25,6 +25,7 @@ import PopconfirmModal from "./common/modal/PopconfirmModal";
 class OrganizationListPage extends BaseListPage {
   newOrganization() {
     const randomName = Setting.getRandomName();
+    const DefaultMfaRememberInHours = 12;
     return {
       owner: "admin", // this.props.account.organizationname,
       name: `organization_${randomName}`,
@@ -48,6 +49,8 @@ class OrganizationListPage extends BaseListPage {
       enableSoftDeletion: false,
       isProfilePublic: true,
       enableTour: true,
+      disableSignin: false,
+      mfaRememberInHours: DefaultMfaRememberInHours,
       accountItems: [
         {name: "Organization", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "ID", visible: true, viewRule: "Public", modifyRule: "Immutable"},

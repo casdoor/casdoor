@@ -42,8 +42,9 @@ class WebAuthnCredentialTable extends React.Component {
     const columns = [
       {
         title: i18next.t("general:Name"),
-        dataIndex: "ID",
-        key: "ID",
+        dataIndex: "id",
+        key: "id",
+        ellipsis: true,
       },
       {
         title: i18next.t("general:Action"),
@@ -60,7 +61,7 @@ class WebAuthnCredentialTable extends React.Component {
     ];
 
     return (
-      <Table rowKey={"ID"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
+      <Table rowKey={"id"} columns={columns} dataSource={this.props.table} size="middle" bordered pagination={false}
         title={() => (
           <div>
             {i18next.t("user:WebAuthn credentials")}&nbsp;&nbsp;&nbsp;&nbsp;

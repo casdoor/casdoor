@@ -32,7 +32,7 @@ func NewReCaptchaProvider() *ReCaptchaProvider {
 	return captcha
 }
 
-func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientSecret string) (bool, error) {
+func (captcha *ReCaptchaProvider) VerifyCaptcha(token, clientId, clientSecret, clientId2 string) (bool, error) {
 	reqData := url.Values{
 		"secret":   {clientSecret},
 		"response": {token},

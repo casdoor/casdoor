@@ -84,6 +84,10 @@ func getAllFilePathsInFolder(folder string, fileSuffix string) []string {
 				return err
 			}
 
+			if strings.HasSuffix(path, "node_modules") {
+				return filepath.SkipDir
+			}
+
 			if !strings.HasSuffix(info.Name(), fileSuffix) {
 				return nil
 			}
