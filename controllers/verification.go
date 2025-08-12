@@ -147,11 +147,6 @@ func (c *ApiController) SendVerificationCode() {
 	}
 
 	if provider != nil {
-		if vform.CaptchaType != provider.Type {
-			c.ResponseError(c.T("verification:Turing test failed."))
-			return
-		}
-
 		if provider.Type != "Default" {
 			vform.ClientSecret = provider.ClientSecret
 		}
