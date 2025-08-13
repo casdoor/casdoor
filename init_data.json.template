@@ -37,7 +37,8 @@
         "UA",
         "KZ",
         "CZ",
-        "SK"
+        "SK",
+        "AZ"
       ],
       "defaultAvatar": "",
       "defaultApplication": "",
@@ -66,7 +67,8 @@
         "kk",
         "fa",
         "cs",
-        "sk"
+        "sk",
+        "az"
       ],
       "masterPassword": "",
       "defaultPassword": "",
