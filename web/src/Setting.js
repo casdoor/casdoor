@@ -60,6 +60,7 @@ export const Countries = [
   {label: "فارسی", key: "fa", country: "IR", alt: "فارسی"},
   {label: "Čeština", key: "cs", country: "CZ", alt: "Čeština"},
   {label: "Slovenčina", key: "sk", country: "SK", alt: "Slovenčina"},
+  {label: "Azərbaycan dili", key: "az", country: "AZ", alt: "Azərbaycan dili"},
 ];
 
 export function getThemeData(organization, application) {

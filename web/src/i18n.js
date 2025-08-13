@@ -133,6 +133,9 @@ function initLanguage() {
       case "sk-SK":
         language = "sk";
         break;
+      case "az":
+        language = "az";
+        break;
       default:
         language = Conf.DefaultLanguage;
       }
