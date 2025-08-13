@@ -1117,6 +1117,32 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "First name") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:First name"), i18next.t("general:First name - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Input value={this.state.user.firstName} onChange={e => {
+              this.updateUserField("firstName", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Last name") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Last name"), i18next.t("general:Last name - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            <Input value={this.state.user.lastName} onChange={e => {
+              this.updateUserField("lastName", e.target.value);
+            }} />
+          </Col>
+        </Row>
+      );
     }
   }
 
