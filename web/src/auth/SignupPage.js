@@ -364,6 +364,40 @@ class SignupPage extends React.Component {
           <Input className="signup-name-input" placeholder={signupItem.placeholder} />
         </Form.Item>
       );
+    } else if (signupItem.name === "First name" && this.state?.displayNameRule !== "First, last") {
+      return (
+        <Form.Item
+          name="firstName"
+          className="signup-first-name"
+          label={signupItem.label ? signupItem.label : i18next.t("general:First name")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your first name!"),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input className="signup-first-name-input" placeholder={signupItem.placeholder} />
+        </Form.Item>
+      );
+    } else if (signupItem.name === "Last name" && this.state?.displayNameRule !== "First, last") {
+      return (
+        <Form.Item
+          name="lastName"
+          className="signup-last-name"
+          label={signupItem.label ? signupItem.label : i18next.t("general:Last name")}
+          rules={[
+            {
+              required: required,
+              message: i18next.t("signup:Please input your last name!"),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input className="signup-last-name-input" placeholder={signupItem.placeholder} />
+        </Form.Item>
+      );
     } else if (signupItem.name === "Affiliation") {
       return (
         <Form.Item
@@ -776,6 +810,12 @@ class SignupPage extends React.Component {
         this.form.current?.setFieldValue("invitationCode", this.state.invitationCode);
       }
     }
+
+    const displayNameItem = application.signupItems?.find(item => item.name === "Display name");
+    if (displayNameItem && !this.state.displayNameRule) {
+      this.setState({displayNameRule: displayNameItem.rule});
+    }
+
     return (
       <Form
         {...formItemLayout}
