@@ -83,7 +83,7 @@ export const CaptchaModal = (props) => {
   const renderDefaultCaptcha = () => {
     if (noModal) {
       return (
-        <Row style={{textAlign: "center"}}>
+        <Row style={{textAlign: "center"}} gutter={10}>
           <Col
             style={{flex: noModal ? "70%" : "100%"}}>
             <Input
