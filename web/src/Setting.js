@@ -157,7 +157,7 @@ export const OtherProviderInfo = {
       url: "https://control.msg91.com/app/",
     },
     "OSON SMS": {
-      logo: "https://osonsms.com/images/osonsms-logo.svg",
+      logo: `${StaticBaseUrl}/img/social_osonsms.svg`,
       url: "https://osonsms.com/",
     },
     "Custom HTTP SMS": {
