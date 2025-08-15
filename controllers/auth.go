@@ -140,6 +140,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 	}
 
 	if form.Type == ResponseTypeLogin {
+		c.SetSession("autoSignin", form.AutoSignin)
 		c.SetSessionUsername(userId)
 		util.LogInfo(c.Ctx, "API: [%s] signed in", userId)
 		resp = &Response{Status: "ok", Msg: "", Data: userId, Data3: user.NeedUpdatePassword}
@@ -237,11 +238,6 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		}
 	} else {
 		resp = wrapErrorResponse(fmt.Errorf("unknown response type: %s", form.Type))
-	}
-
-	// if user did not check auto signin
-	if resp.Status == "ok" && !form.AutoSignin {
-		c.setExpireForSession()
 	}
 
 	if resp.Status == "ok" {

@@ -30,6 +30,8 @@
     "Binding providers": "Fournisseurs de liaison",
     "CSS style": "Style CSS",
     "Center": "Centré",
+    "Cookie expire": "Cookie expire",
+    "Cookie expire - Tooltip": "Cookie expire - Tooltip",
     "Copy SAML metadata URL": "Copiez l'URL de métadonnées SAML",
     "Copy prompt page URL": "Copier l'URL de la page de l'invite",
     "Copy signin page URL": "Copier l'URL de la page de connexion",
