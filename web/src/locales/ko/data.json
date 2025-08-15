@@ -92,6 +92,8 @@
     "No verification": "검증 없음",
     "Normal": "일반",
     "Only signup": "가입만",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "조직 선택 모드",
     "Org choice mode - Tooltip": "조직 선택 모드 - 툴팁",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "\\\"자동 로그인\\\"을 활성화하기 전에 \\\"로그인 세션\\\"을 먼저 활성화하세요.",

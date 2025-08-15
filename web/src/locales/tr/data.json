@@ -92,6 +92,8 @@
     "No verification": "Doğrulama yok",
     "Normal": "Normal",
     "Only signup": "Yalnızca kayıt",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "Organizasyon seçim modu",
     "Org choice mode - Tooltip": "Organizasyon seçim modu - Araç ipucu",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Lütfen \\\"Oturum açma oturumu\\\"nu etkinleştirmeden önce \\\"Otomatik oturum açma\\\"yı etkinleştirin",

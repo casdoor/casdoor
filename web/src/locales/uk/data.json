@@ -92,6 +92,8 @@
     "No verification": "Без підтвердження",
     "Normal": "нормальний",
     "Only signup": "Тільки реєстрація",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "Режим вибору організації",
     "Org choice mode - Tooltip": "Режим вибору організації – підказка",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Спочатку увімкніть \\\"Сесію входу\\\", перш ніж увімкнути \\\"Автоматичний вхід\\\"",
