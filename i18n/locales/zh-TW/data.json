@@ -1,0 +1,191 @@
+{
+  "account": {
+    "Failed to add user": "新增使用者失敗",
+    "Get init score failed, error: %w": "初始化分數失敗: %w",
+    "Please sign out first": "請先登出",
+    "The application does not allow to sign up new account": "此應用程式不允許註冊新帳戶"
+  },
+  "auth": {
+    "Challenge method should be S256": "Challenge方法應為S256",
+    "DeviceCode Invalid": "DeviceCode 無效",
+    "Failed to create user, user information is invalid: %s": "建立使用者失敗，使用者資訊無效: %s",
+    "Failed to login in: %s": "登入失敗: %s",
+    "Invalid token": "無效token",
+    "State expected: %s, but got: %s": "預期狀態為: %s, 實際狀態為: %s",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "提供商帳戶: %s 與使用者名稱: %s (%s) 不存在且不允許透過 %s 註冊新帳戶，請使用其他方式註冊",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商帳戶: %s 與使用者名稱: %s (%s) 不存在且不允許註冊新帳戶，請聯繫IT支援",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商帳戶: %s 與使用者名稱: %s (%s) 已與其他帳戶綁定: %s (%s)",
+    "The application: %s does not exist": "應用程式%s不存在",
+    "The login method: login with LDAP is not enabled for the application": "此應用程式禁止使用LDAP登入方式",
+    "The login method: login with SMS is not enabled for the application": "此應用程式禁止使用簡訊登入方式",
+    "The login method: login with email is not enabled for the application": "此應用程式禁止使用信箱登入方式",
+    "The login method: login with face is not enabled for the application": "此應用程式禁止使用人臉登入",
+    "The login method: login with password is not enabled for the application": "此應用程式禁止使用密碼登入方式",
+    "The organization: %s does not exist": "組織: %s 不存在",
+    "The provider: %s does not exist": "提供商: %s 不存在",
+    "The provider: %s is not enabled for the application": "此應用程式的提供商: %s 未被啟用",
+    "Unauthorized operation": "未授權的操作",
+    "Unknown authentication type (not password or provider), form = %s": "未知的認證類型（非密碼或第三方提供商）：%s",
+    "User's tag: %s is not listed in the application's tags": "使用者的標籤: %s 不在此應用程式的標籤列表中",
+    "UserCode Expired": "使用者代碼已過期",
+    "UserCode Invalid": "使用者代碼無效",
+    "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "付費使用者 %s 沒有已啟用或待處理的訂閱，且應用程式: %s 沒有默認定價",
+    "the application for user %s is not found": "未找到使用者 %s 的應用程式",
+    "the organization: %s is not found": "組織: %s 不存在"
+  },
+  "cas": {
+    "Service %s and %s do not match": "服務%s與%s不匹配"
+  },
+  "check": {
+    "%s does not meet the CIDR format requirements: %s": "%s 不符合 CIDR 的格式要求: %s",
+    "Affiliation cannot be blank": "工作單位不可為空",
+    "CIDR for IP: %s should not be empty": "IP 的 CIDR 格式：%s 不可為空",
+    "Default code does not match the code's matching rules": "邀請碼默認值和邀請碼規則不匹配",
+    "DisplayName cannot be blank": "顯示名稱不可為空",
+    "DisplayName is not valid real name": "顯示名稱必須是真實姓名",
+    "Email already exists": "此信箱已存在",
+    "Email cannot be empty": "信箱不可為空",
+    "Email is invalid": "無效信箱",
+    "Empty username.": "使用者名稱不可為空",
+    "Face data does not exist, cannot log in": "未錄入人臉數據，無法登入",
+    "Face data mismatch": "人臉不匹配",
+    "Failed to parse client IP: %s": "無法解析客戶端 IP 地址: %s",
+    "FirstName cannot be blank": "名不可為空",
+    "Invitation code cannot be blank": "邀請碼不可為空",
+    "Invitation code exhausted": "邀請碼使用次數已耗盡",
+    "Invitation code is invalid": "邀請碼無效",
+    "Invitation code suspended": "邀請碼已被禁止使用",
+    "LDAP user name or password incorrect": "LDAP密碼錯誤",
+    "LastName cannot be blank": "姓不可為空",
+    "Multiple accounts with same uid, please check your ldap server": "多個帳戶具有相同的uid，請檢查您的 LDAP 服務器",
+    "Organization does not exist": "組織不存在",
+    "Password cannot be empty": "密碼不可為空",
+    "Phone already exists": "此手機號已存在",
+    "Phone cannot be empty": "手機號不可為空",
+    "Phone number is invalid": "無效手機號",
+    "Please register using the email corresponding to the invitation code": "請使用邀請碼關聯的信箱註冊",
+    "Please register using the phone  corresponding to the invitation code": "請使用邀請碼關聯的手機號註冊",
+    "Please register using the username corresponding to the invitation code": "請使用邀請碼關聯的使用者名稱註冊",
+    "Session outdated, please login again": "會話已過期，請重新登入",
+    "The invitation code has already been used": "邀請碼已被使用",
+    "The user is forbidden to sign in, please contact the administrator": "此使用者被禁止登入，請聯繫管理員",
+    "The user: %s doesn't exist in LDAP server": "使用者: %s 在LDAP服務器中未找到",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "使用者名稱只能包含字母數字字符、下劃線或連字符，不能有連續的連字符或下劃線，也不能以連字符或下劃線開頭或結尾",
+    "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "帳戶字段\\\"%s\\\"中的值\\\"%s\\\"與應用的帳戶項正則表達式不匹配",
+    "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "註冊字段\\\"%s\\\"中的值\\\"%s\\\"與應用\\\"%s\\\"的註冊項正則表達式不匹配",
+    "Username already exists": "使用者名稱已存在",
+    "Username cannot be an email address": "使用者名稱不可以是信箱地址",
+    "Username cannot contain white spaces": "使用者名稱禁止包含空格",
+    "Username cannot start with a digit": "使用者名稱禁止使用數字開頭",
+    "Username is too long (maximum is 255 characters).": "使用者名稱過長（最大允許長度為255個字符）",
+    "Username must have at least 2 characters": "使用者名稱至少要有2個字符",
+    "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "使用者名稱支持電子郵件格式。此外，使用者名稱只能包含字母數字字符、下劃線或連字符，不能包含連續的連字符或下劃線，也不能以連字符或下劃線開頭或結尾。同時請注意電子郵件格式",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "密碼或驗證碼錯誤次數已達上限，請在 %d 分鐘後重試",
+    "Your IP address: %s has been banned according to the configuration of: ": "您的IP地址：%s 根據以下配置已被禁止： ",
+    "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "您的密碼已過期。請點擊\\\"忘記密碼\\\"以重置密碼",
+    "Your region is not allow to signup by phone": "所在地區不支持手機號註冊",
+    "password or code is incorrect": "密碼錯誤",
+    "password or code is incorrect, you have %s remaining chances": "密碼錯誤，您還有 %s 次嘗試機會",
+    "unsupported password type: %s": "不支持的密碼類型: %s"
+  },
+  "enforcer": {
+    "the adapter: %s is not found": "適配器: %s 未找到"
+  },
+  "general": {
+    "Failed to import groups": "導入群組失敗",
+    "Failed to import users": "導入使用者失敗",
+    "Missing parameter": "缺少參數",
+    "Only admin user can specify user": "僅管理員可以指定使用者",
+    "Please login first": "請先登入",
+    "The organization: %s should have one application at least": "組織: %s 應至少擁有一個應用程式",
+    "The user: %s doesn't exist": "使用者: %s 不存在",
+    "Wrong userId": "錯誤的 userId",
+    "don't support captchaProvider: ": "不支持驗證碼提供商: ",
+    "this operation is not allowed in demo mode": "演示模式下不允許此操作",
+    "this operation requires administrator to perform": "只有管理員才能執行此操作"
+  },
+  "ldap": {
+    "Ldap server exist": "LDAP服務器已存在"
+  },
+  "link": {
+    "Please link first": "請先綁定",
+    "This application has no providers": "此應用程式無可用的提供商",
+    "This application has no providers of type": "應用程式沒有此類型的提供商",
+    "This provider can't be unlinked": "此提供商被禁止解除綁定",
+    "You are not the global admin, you can't unlink other users": "您不是全局管理員，無法解除其他使用者的綁定",
+    "You can't unlink yourself, you are not a member of any application": "您無法自行解除綁定，您不是任何應用程式的成員"
+  },
+  "organization": {
+    "Only admin can modify the %s.": "僅允許管理員修改%s",
+    "The %s is immutable.": "%s 是不可變的",
+    "Unknown modify rule %s.": "未知的修改規則: %s",
+    "adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option.": "目前，向'built-in'組織添加新使用者的功能已禁用。請注意：'built-in'組織中的所有使用者均為Casdoor的全局管理員。請參閱文檔：https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself。如果您仍希望為built-in組織建立使用者，請前往該組織的設定頁面並開啟「權限同意」選項。"
+  },
+  "permission": {
+    "The permission: \\\"%s\\\" doesn't exist": "權限: \\\"%s\\\" 不存在"
+  },
+  "provider": {
+    "Invalid application id": "無效的應用ID",
+    "the provider: %s does not exist": "提供商: %s 不存在"
+  },
+  "resource": {
+    "User is nil for tag: avatar": "上傳頭像時使用者為空",
+    "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "username或fullFilePath為空: username = %s, fullFilePath = %s"
+  },
+  "saml": {
+    "Application %s not found": "未找到應用: %s"
+  },
+  "saml_sp": {
+    "provider %s's category is not SAML": "提供商: %s 類別不是SAML"
+  },
+  "service": {
+    "Empty parameters for emailForm: %v": "郵件參數為空: %v",
+    "Invalid Email receivers: %s": "無效的信箱收件人: %s",
+    "Invalid phone receivers: %s": "無效的手機簡訊收件人: %s"
+  },
+  "storage": {
+    "The objectKey: %s is not allowed": "objectKey: %s 被禁止",
+    "The provider type: %s is not supported": "不支持的提供商類型: %s"
+  },
+  "subscription": {
+    "Error": "錯誤"
+  },
+  "token": {
+    "Grant_type: %s is not supported in this application": "此應用程式不支持Grant_type: %s",
+    "Invalid application or wrong clientSecret": "無效應用或錯誤的clientSecret",
+    "Invalid client_id": "無效的ClientId",
+    "Redirect URI: %s doesn't exist in the allowed Redirect URI list": "重新導向 URI：%s 在允許的重新導向 URI 列表中未找到",
+    "Token not found, invalid accessToken": "未查詢到對應token，accessToken無效"
+  },
+  "user": {
+    "Display name cannot be empty": "顯示名稱不可為空",
+    "MFA email is enabled but email is empty": "MFA 電子郵件已啟用，但電子郵件為空",
+    "MFA phone is enabled but phone number is empty": "MFA 電話已啟用，但電話號碼為空",
+    "New password cannot contain blank space.": "新密碼不可以包含空格",
+    "the user's owner and name should not be empty": "使用者的組織和名稱不可為空"
+  },
+  "util": {
+    "No application is found for userId: %s": "未找到使用者: %s 的應用程式",
+    "No provider for category: %s is found for application: %s": "未找到類別為: %s 的提供商來對應應用: %s",
+    "The provider: %s is not found": "未找到提供商: %s"
+  },
+  "verification": {
+    "Invalid captcha provider.": "非法的驗證碼提供商",
+    "Phone number is invalid in your region %s": "您所在地區的電話號碼無效 %s",
+    "The verification code has already been used!": "驗證碼已使用過!",
+    "The verification code has not been sent yet!": "驗證碼未發送！",
+    "Turing test failed.": "驗證碼未發送",
+    "Unable to get the email modify rule.": "無法獲取信箱修改規則",
+    "Unable to get the phone modify rule.": "無法獲取手機號修改規則",
+    "Unknown type": "未知類型",
+    "Wrong verification code!": "驗證碼錯誤!",
+    "You should verify your code in %d min!": "請在 %d 分鐘內輸入正確驗證碼",
+    "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "請添加一個SMS提供商到應用： %s 的 \\\"提供商\\\"列表",
+    "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "請添加一個Email提供商到應用： %s 的 \\\"提供商\\\"列表",
+    "the user does not exist, please sign up first": "使用者不存在，請先註冊"
+  },
+  "webauthn": {
+    "Found no credentials for this user": "未找到此使用者的憑據",
+    "Please call WebAuthnSigninBegin first": "請先調用WebAuthnSigninBegin函數"
+  }
+}
