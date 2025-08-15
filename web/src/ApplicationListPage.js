@@ -150,6 +150,16 @@ class ApplicationListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
+        title: i18next.t("general:Order"),
+        dataIndex: "order",
+        key: "order",
+        width: "80px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text;
+        },
+      },
+      {
         title: "Logo",
         dataIndex: "logo",
         key: "logo",

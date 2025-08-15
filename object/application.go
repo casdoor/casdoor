@@ -127,6 +127,7 @@ type Application struct {
 
 	FailedSigninLimit      int `json:"failedSigninLimit"`
 	FailedSigninFrozenTime int `json:"failedSigninFrozenTime"`
+	Order                  int `json:"order"`
 }
 
 func GetApplicationCount(owner, field, value string) (int64, error) {
