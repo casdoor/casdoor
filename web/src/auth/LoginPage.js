@@ -758,7 +758,7 @@ class LoginPage extends React.Component {
                 },
               },
               {
-                validator: (_, value, {getFieldValue}) => {
+                validator: (_, value) => {
                   if (value === "") {
                     return Promise.resolve();
                   }
@@ -783,7 +783,7 @@ class LoginPage extends React.Component {
                       this.setState({validEmail: true});
                     }
                   } else if (this.state.loginMethod === "verificationCodePhone") {
-                    if (!Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                    if (!Setting.isValidPhone(value)) {
                       this.setState({validEmailOrPhone: false});
                       return Promise.reject(i18next.t("login:The input is not valid phone number!"));
                     }
@@ -795,26 +795,17 @@ class LoginPage extends React.Component {
               },
             ]}
           >
-            {
-              this.state.loginMethod === "verificationCodePhone" ?
-                <Input
-                  id="input"
-                  className="login-username-input"
-                  placeholder={signinItem.placeholder}
-                  onChange={e => this.setState({username: e.target.value})}
-                />
-                : <Input
-                  id="input"
-                  className="login-username-input"
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder={this.getPlaceholder(signinItem.placeholder)}
-                  onChange={e => {
-                    this.setState({
-                      username: e.target.value,
-                    });
-                  }}
-                />
-            }
+            <Input
+              id="input"
+              className="login-username-input"
+              prefix={<UserOutlined className="site-form-item-icon" />}
+              placeholder={this.getPlaceholder(signinItem.placeholder)}
+              onChange={e => {
+                this.setState({
+                  username: e.target.value,
+                });
+              }}
+            />
           </Form.Item>
         </div>
       );
