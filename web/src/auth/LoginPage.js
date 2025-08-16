@@ -39,6 +39,7 @@ import {GoogleOneTapLoginVirtualButton} from "./GoogleLoginButton";
 import * as ProviderButton from "./ProviderButton";
 import {createFormAndSubmit, goToLink} from "../Setting";
 import WeChatLoginPanel from "./WeChatLoginPanel";
+import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 const FaceRecognitionCommonModal = lazy(() => import("../common/modal/FaceRecognitionCommonModal"));
 const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionModal"));
 
@@ -677,6 +678,62 @@ class LoginPage extends React.Component {
       if (this.state.loginMethod === "wechat") {
         return (<WeChatLoginPanel application={application} loginMethod={this.state.loginMethod} />);
       }
+
+      if (this.state.loginMethod === "verificationCodePhone") {
+        return <Form.Item className="signin-phone" required={true}>
+          <Input.Group compact>
+            <Form.Item
+              name="countryCode"
+              noStyle
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("signup:Please select your country code!"),
+                },
+              ]}
+            >
+              <CountryCodeSelect
+                style={{width: "35%"}}
+                countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+              />
+            </Form.Item>
+            <Form.Item
+              name="username"
+              dependencies={["countryCode"]}
+              noStyle
+              rules={[
+                {
+                  required: true,
+                  message: i18next.t("signup:Please input your phone number!"),
+                },
+                ({getFieldValue}) => ({
+                  validator: (_, value) => {
+                    if (!value) {
+                      return Promise.resolve();
+                    }
+
+                    if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                      this.setState({validEmailOrPhone: false});
+                      return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                    }
+
+                    this.setState({validEmailOrPhone: true});
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
+            >
+              <Input
+                className="signup-phone-input"
+                placeholder={signinItem.placeholder}
+                style={{width: "65%", textAlign: "left"}}
+                onChange={e => this.setState({username: e.target.value})}
+              />
+            </Form.Item>
+          </Input.Group>
+        </Form.Item>;
+      }
+
       return (
         <div key={resultItemKey}>
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
@@ -701,7 +758,7 @@ class LoginPage extends React.Component {
                 },
               },
               {
-                validator: (_, value) => {
+                validator: (_, value, {getFieldValue}) => {
                   if (value === "") {
                     return Promise.resolve();
                   }
@@ -726,7 +783,7 @@ class LoginPage extends React.Component {
                       this.setState({validEmail: true});
                     }
                   } else if (this.state.loginMethod === "verificationCodePhone") {
-                    if (!Setting.isValidPhone(value)) {
+                    if (!Setting.isValidPhone(value, getFieldValue("countryCode"))) {
                       this.setState({validEmailOrPhone: false});
                       return Promise.reject(i18next.t("login:The input is not valid phone number!"));
                     }
@@ -738,18 +795,26 @@ class LoginPage extends React.Component {
               },
             ]}
           >
-
-            <Input
-              id="input"
-              className="login-username-input"
-              prefix={<UserOutlined className="site-form-item-icon" />}
-              placeholder={this.getPlaceholder(signinItem.placeholder)}
-              onChange={e => {
-                this.setState({
-                  username: e.target.value,
-                });
-              }}
-            />
+            {
+              this.state.loginMethod === "verificationCodePhone" ?
+                <Input
+                  id="input"
+                  className="login-username-input"
+                  placeholder={signinItem.placeholder}
+                  onChange={e => this.setState({username: e.target.value})}
+                />
+                : <Input
+                  id="input"
+                  className="login-username-input"
+                  prefix={<UserOutlined className="site-form-item-icon" />}
+                  placeholder={this.getPlaceholder(signinItem.placeholder)}
+                  onChange={e => {
+                    this.setState({
+                      username: e.target.value,
+                    });
+                  }}
+                />
+            }
           </Form.Item>
         </div>
       );
