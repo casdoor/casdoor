@@ -1179,11 +1179,13 @@ class LoginPage extends React.Component {
           {i18next.t("login:Continue with")}&nbsp;:
         </div>
         <br />
-        <SelfLoginButton account={this.props.account} onClick={() => {
+        <div onClick={() => {
           const values = {};
           values["application"] = application.name;
           this.login(values);
-        }} />
+        }}>
+          <SelfLoginButton account={this.props.account} />
+        </div>
         <br />
         <br />
         <div style={{fontSize: 16, textAlign: "left"}}>
