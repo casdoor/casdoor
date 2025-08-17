@@ -719,7 +719,8 @@ func (c *ApiController) Login() {
 
 			setHttpClient(idProvider, provider.Type)
 
-			if authForm.State != conf.GetConfigString("authState") && authForm.State != application.Name {
+			stateApplicationName := strings.Split(authForm.State, "-org-")[0]
+			if authForm.State != conf.GetConfigString("authState") && stateApplicationName != application.Name {
 				c.ResponseError(fmt.Sprintf(c.T("auth:State expected: %s, but got: %s"), conf.GetConfigString("authState"), authForm.State))
 				return
 			}
