@@ -93,7 +93,7 @@
     "Normal": "Normal",
     "Only signup": "Only signup",
     "Order": "Order",
-    "Order - Tooltip": "The larger the value, the higher it ranks in the apps page",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Org choice mode",
     "Org choice mode - Tooltip": "Org choice mode - Tooltip",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"",
