@@ -253,7 +253,7 @@ function getWeb3OnboardWallets(options) {
     if (walletType && web3Wallets[walletType]?.wallet) {
       return web3Wallets[walletType]?.wallet;
     }
-  });
+  }).filter(wallet => wallet !== undefined);
 }
 
 export function initWeb3Onboard(application, provider) {
@@ -300,6 +300,12 @@ export function initWeb3Onboard(application, provider) {
       token: "ARB-ETH",
       label: "Arbitrum",
       rpcUrl: "https://rpc.ankr.com/arbitrum",
+    },
+    {
+      id: "0x1",
+      token: "SOL",
+      label: "Solana Mainnet",
+      rpcUrl: "https://api.mainnet-beta.solana.com",
     },
   ];
 
