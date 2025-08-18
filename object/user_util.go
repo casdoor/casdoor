@@ -80,7 +80,8 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	}
 
 	// check phone
-	user, err = GetUserByField(organization, "phone", field)
+	phone := util.GetSeperatedPhone(field)
+	user, err = GetUserByField(organization, "phone", phone)
 	if user != nil || err != nil {
 		return user, err
 	}
