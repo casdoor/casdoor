@@ -27,6 +27,7 @@ import frontierModule from "@web3-onboard/frontier";
 import tahoModule from "@web3-onboard/taho";
 import coinbaseModule from "@web3-onboard/coinbase";
 import gnosisModule from "@web3-onboard/gnosis";
+import phantomModule from "@web3-onboard/phantom";
 // import keystoneModule from "@web3-onboard/keystone";
 // import keepkeyModule from "@web3-onboard/keepkey";
 // import dcentModule from "@web3-onboard/dcent";
@@ -172,6 +173,10 @@ const web3Wallets = {
     label: "Injected",
     wallet: injectedModule(),
   },
+  phantom: {
+    label: "Phantom",
+    wallet: phantomModule(),
+  },
   // sdk wallets
   coinbase: {
     label: "Coinbase",
@@ -304,6 +309,7 @@ export function initWeb3Onboard(application, provider) {
     recommendedInjectedWallets: [
       {name: "MetaMask", url: "https://metamask.io"},
       {name: "Coinbase", url: "https://www.coinbase.com/wallet"},
+      {name: "Phantom", url: "https://phantom.app"},
     ],
   };
 
