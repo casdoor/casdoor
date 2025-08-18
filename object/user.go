@@ -510,6 +510,8 @@ func GetUserByPhone(owner string, phone string) (*User, error) {
 		return nil, nil
 	}
 
+	phone = util.GetSeperatedPhone(phone)
+
 	user := User{Owner: owner, Phone: phone}
 	existed, err := ormer.Engine.Get(&user)
 	if err != nil {
@@ -527,6 +529,8 @@ func GetUserByPhoneOnly(phone string) (*User, error) {
 	if phone == "" {
 		return nil, nil
 	}
+
+	phone = util.GetSeperatedPhone(phone)
 
 	user := User{Phone: phone}
 	existed, err := ormer.Engine.Get(&user)
