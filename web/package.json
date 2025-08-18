@@ -19,6 +19,7 @@
     "@web3-onboard/gnosis": "^2.1.10",
     "@web3-onboard/infinity-wallet": "^2.0.4",
     "@web3-onboard/injected-wallets": "^2.10.4",
+    "@web3-onboard/phantom": "^2.1.1",
     "@web3-onboard/react": "^2.8.10",
     "@web3-onboard/sequence": "^2.0.8",
     "@web3-onboard/taho": "^2.0.5",
