@@ -4,7 +4,7 @@
 
 "@0xsequence/abi@^0.43.34":
   version "0.43.34"
-  resolved "https://registry.npmjs.org/@0xsequence/abi/-/abi-0.43.34.tgz"
+  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-0.43.34.tgz#e6faa715b3adcff22ae69ea086c17b986d76e10f"
   integrity sha512-wZ3JLA4kw2em8A7gFW5oESdo+F3G/WjIhCp/aZ0x3UgayBxrQjwBURoqDQPrY5k/BJ4R68LIEabLTrpSXesh1g==
 
 "@0xsequence/api@^0.43.34":

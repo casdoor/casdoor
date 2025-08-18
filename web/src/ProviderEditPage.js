@@ -1538,13 +1538,13 @@ class ProviderEditPage extends React.Component {
               <Col span={22}>
                 <Checkbox.Group
                   options={Web3Auth.getWeb3OnboardWalletsOptions()}
-                  value={(() => {
+                  value={() => {
                     try {
                       return JSON.parse(this.state.provider.metadata);
                     } catch {
                       return ["injected"];
                     }
-                  })()}
+                  }}
                   onChange={options => {
                     this.updateProviderField("metadata", JSON.stringify(options));
                   }}
