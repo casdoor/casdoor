@@ -470,6 +470,16 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:Order"), i18next.t("application:Order - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber style={{width: "150px"}} value={this.state.application.order} min={0} step={1} precision={0} addonAfter="" onChange={value => {
+              this.updateApplicationField("order", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >

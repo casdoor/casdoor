@@ -92,6 +92,8 @@
     "No verification": "Ei vahvistusta",
     "Normal": "Normaali",
     "Only signup": "Vain rekisteröityminen",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "Organisaation valintatila",
     "Org choice mode - Tooltip": "Organisaation valintatila - työkalupala",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Ota \\\"Kirjautumisession\\\" käyttöön ennen \\\"Automaattisen kirjautumisen\\\" ottamista käyttöön",

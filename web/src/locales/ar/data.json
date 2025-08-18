@@ -92,6 +92,8 @@
     "No verification": "لا توجد مصادقة",
     "Normal": "عادي",
     "Only signup": "التسجيل فقط",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "وضع اختيار المنظمة",
     "Org choice mode - Tooltip": "وضع اختيار المنظمة - تلميح",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "يرجى تشغيل \\\"جلسة الدخول\\\" أولاً قبل تشغيل \\\"الدخول التلقائي\\\"",

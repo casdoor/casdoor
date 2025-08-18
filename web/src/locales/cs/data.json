@@ -92,6 +92,8 @@
     "No verification": "Žádná verifikace",
     "Normal": "Normální",
     "Only signup": "Pouze registrace",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "Režim výběru organizace",
     "Org choice mode - Tooltip": "Režim výběru organizace - popisek",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Nejprve povolte \\\"Přihlašovací relaci\\\" před povolením \\\"Automatického přihlášení\\\"",

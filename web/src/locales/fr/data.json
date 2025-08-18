@@ -92,6 +92,8 @@
     "No verification": "Aucune vérification",
     "Normal": "Normal",
     "Only signup": "Inscription uniquement",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "Mode de choix d'organisation",
     "Org choice mode - Tooltip": "Mode de choix d'organisation - Infobulle",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Veuillez activer \\\"Session de connexion\\\" avant d'activer \\\"Connexion automatique\\\"",

@@ -92,6 +92,8 @@
     "No verification": "検証なし",
     "Normal": "通常",
     "Only signup": "サインアップのみ",
+    "Order": "Order",
+    "Order - Tooltip": "Order - Tooltip",
     "Org choice mode": "組織選択モード",
     "Org choice mode - Tooltip": "組織選択モード - ツールチップ",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "\\\"自動サインイン\\\"を有効にする前に、まず\\\"サインインセッション\\\"を有効にしてください",
