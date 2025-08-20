@@ -16,6 +16,7 @@ package email
 
 type EmailProvider interface {
 	Send(fromAddress string, fromName, toAddress string, subject string, content string) error
+	SendMulti(fromAddress string, fromName string, toAddress []string, subject string, content string) error
 }
 
 func GetEmailProvider(typ string, clientId string, clientSecret string, host string, port int, disableSsl bool, endpoint string, method string, httpHeaders map[string]string, bodyMapping map[string]string, contentType string) EmailProvider {

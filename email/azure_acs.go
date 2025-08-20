@@ -116,9 +116,41 @@ func newEmail(fromAddress string, toAddress string, subject string, content stri
 	}
 }
 
+func newEmailMulti(fromAddress string, toAddress []string, subject string, content string) *Email {
+	var to []EmailAddress
+	for _, addr := range toAddress {
+		to = append(to, EmailAddress{
+			DisplayName: addr,
+			Address:     addr,
+		})
+	}
+	return &Email{
+		Recipients: Recipients{
+			To: to,
+		},
+		SenderAddress: fromAddress,
+		Content: Content{
+			Subject: subject,
+			HTML:    content,
+		},
+		Importance:  importanceNormal,
+		Attachments: []Attachment{},
+	}
+}
+
 func (a *AzureACSEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
 	email := newEmail(fromAddress, toAddress, subject, content)
 
+	return a.send(email)
+}
+
+func (a *AzureACSEmailProvider) SendMulti(fromAddress string, fromName string, toAddress []string, subject string, content string) error {
+	email := newEmailMulti(fromAddress, toAddress, subject, content)
+
+	return a.send(email)
+}
+
+func (a *AzureACSEmailProvider) send(email *Email) error {
 	postBody, err := json.Marshal(email)
 	if err != nil {
 		return err

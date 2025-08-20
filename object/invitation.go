@@ -235,3 +235,8 @@ func (invitation *Invitation) IsInvitationCodeValid(application *Application, in
 	}
 	return true, ""
 }
+
+func (invitation *Invitation) GetInvitationLink(host string, application string) string {
+	frontEnd, _ := getOriginFromHost(host)
+	return fmt.Sprintf("%s/signup/%s?invitationCode=%s", frontEnd, application, invitation.Code)
+}

@@ -597,6 +597,7 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("disableSsl", false);
                 this.updateProviderField("title", "Casdoor Verification Code");
                 this.updateProviderField("content", Setting.getDefaultHtmlEmailContent());
+                this.updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent());
                 this.updateProviderField("receiver", this.props.account.email);
               } else if (value === "SMS") {
                 this.updateProviderField("type", "Twilio SMS");
@@ -1266,6 +1267,42 @@ class ProviderEditPage extends React.Component {
                     <Col span={Setting.isMobile() ? 22 : 11}>
                       <div style={{margin: "10px"}}>
                         <div dangerouslySetInnerHTML={{__html: this.state.provider.content.replace("%s", "123456").replace("%{user.friendlyName}", Setting.getFriendlyUserName(this.props.account))}} />
+                      </div>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Email invitation content"), i18next.t("provider:Email invitation content - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Row style={{marginTop: "20px"}} >
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateProviderField("metadata", "You have invited to join Casdoor. Here is your invitation code: %s, please enter in 5 minutes. Or click %link to signup")} >
+                      {i18next.t("provider:Reset to Default Text")}
+                    </Button>
+                    <Button style={{marginLeft: "10px", marginBottom: "5px"}} type="primary" onClick={() => this.updateProviderField("metadata", Setting.getDefaultInvitationHtmlEmailContent())} >
+                      {i18next.t("provider:Reset to Default HTML")}
+                    </Button>
+                  </Row>
+                  <Row>
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{height: "300px", margin: "10px"}}>
+                        <Editor
+                          value={this.state.provider.metadata}
+                          fillHeight
+                          dark
+                          lang="html"
+                          onChange={value => {
+                            this.updateProviderField("metadata", value);
+                          }}
+                        />
+                      </div>
+                    </Col>
+                    <Col span={1} />
+                    <Col span={Setting.isMobile() ? 22 : 11}>
+                      <div style={{margin: "10px"}}>
+                        <div dangerouslySetInnerHTML={{__html: this.state.provider.metadata.replace("%code", "123456")}} />
                       </div>
                     </Col>
                   </Row>

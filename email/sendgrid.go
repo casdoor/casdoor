@@ -41,13 +41,8 @@ func NewSendgridEmailProvider(apiKey string, host string, endpoint string) *Send
 	return &SendgridEmailProvider{ApiKey: apiKey, Host: host, Endpoint: endpoint}
 }
 
-func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+func (s *SendgridEmailProvider) send(message *mail.SGMailV3) error {
 	client := s.initSendgridClient()
-
-	from := mail.NewEmail(fromName, fromAddress)
-	to := mail.NewEmail("", toAddress)
-	message := mail.NewSingleEmail(from, subject, to, "", content)
-
 	resp, err := client.Send(message)
 	if err != nil {
 		return err
@@ -73,6 +68,31 @@ func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddr
 	}
 
 	return nil
+}
+
+func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+	from := mail.NewEmail(fromName, fromAddress)
+	to := mail.NewEmail("", toAddress)
+	message := mail.NewSingleEmail(from, subject, to, "", content)
+	return s.send(message)
+}
+
+func (s *SendgridEmailProvider) SendMulti(fromAddress string, fromName string, toAddresses []string, subject string, content string) error {
+	from := mail.NewEmail(fromName, fromAddress)
+	message := mail.NewV3Mail()
+	message.SetFrom(from)
+	message.AddContent(mail.NewContent("text/html", content))
+
+	personalization := mail.NewPersonalization()
+
+	for _, toAddress := range toAddresses {
+		to := mail.NewEmail(toAddress, toAddress)
+		personalization.AddTos(to)
+	}
+
+	message.AddPersonalizations(personalization)
+
+	return s.send(message)
 }
 
 func (s *SendgridEmailProvider) initSendgridClient() *sendgrid.Client {

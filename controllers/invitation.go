@@ -16,6 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -187,4 +189,51 @@ func (c *ApiController) VerifyInvitation() {
 	}
 
 	c.ResponseOk(payment, attachInfo)
+}
+
+// SendInvitation
+// @Title VerifyInvitation
+// @Tag Invitation API
+// @Description verify invitation
+// @Param   id     query    string	true        "The id ( owner/name ) of the invitation"
+// @Param   body    body	[]string  true        "The details of the invitation"
+// @Success 200 {object} controllers.Response The Response object
+// @router /send-invitation [post]
+func (c *ApiController) SendInvitation() {
+	id := c.Input().Get("id")
+
+	var destinations []string
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &destinations)
+
+	invitation, err := object.GetInvitation(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", invitation.Owner))
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+
+	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+
+	provider, err := application.GetEmailProvider("Invitation")
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+	content := provider.Metadata
+
+	content = strings.ReplaceAll(content, "%code", invitation.Code)
+	content = strings.ReplaceAll(content, "%link", invitation.GetInvitationLink(c.Ctx.Request.Host, application.Name))
+
+	err = object.SendEmailMulti(provider, provider.Title, content, destinations, organization.DisplayName)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+
+	c.ResponseOk()
 }

@@ -55,3 +55,19 @@ func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	message.SkipUsernameCheck = true
 	return s.Dialer.DialAndSend(message)
 }
+
+func (s *SmtpEmailProvider) SendMulti(fromAddress string, fromName string, toAddresses []string, subject string, content string) error {
+	message := gomail.NewMessage()
+
+	message.SetAddressHeader("From", fromAddress, fromName)
+	var addresses []string
+	for _, address := range toAddresses {
+		addresses = append(addresses, message.FormatAddress(address, ""))
+	}
+	message.SetHeader("To", addresses...)
+	message.SetHeader("Subject", subject)
+	message.SetBody("text/html", content)
+
+	message.SkipUsernameCheck = true
+	return s.Dialer.DialAndSend(message)
+}
