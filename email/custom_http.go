@@ -53,7 +53,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	var err error
 
 	fromNameField := "fromName"
-	toAddressField := "toAddresses"
+	toAddressField := "toAddress"
 	toAddressesField := "toAddresses"
 	subjectField := "subject"
 	contentField := "content"
