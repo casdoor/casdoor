@@ -25,6 +25,7 @@ const (
 	goCliRepo      = "https://api.github.com/repos/casbin/casbin-go-cli/releases/latest"
 	rustCliRepo    = "https://api.github.com/repos/casbin-rs/casbin-rust-cli/releases/latest"
 	pythonCliRepo  = "https://api.github.com/repos/casbin/casbin-python-cli/releases/latest"
+	dotnetCliRepo  = "https://api.github.com/repos/casbin-net/casbin-dotnet-cli/releases/latest"
 	downloadFolder = "bin"
 )
 
@@ -45,6 +46,7 @@ func getBinaryNames() map[string]string {
 		java   = "java"
 		rust   = "rust"
 		python = "python"
+		dotnet = "dotnet"
 	)
 
 	arch := runtime.GOARCH
@@ -65,6 +67,7 @@ func getBinaryNames() map[string]string {
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-pc-windows-gnu", archNames.rustArch),
 			python: fmt.Sprintf("casbin-python-cli-windows-%s.exe", archNames.goArch),
+			dotnet: fmt.Sprintf("casbin-dotnet-cli-windows-%s.exe", archNames.goArch),
 		}
 	case "darwin":
 		return map[string]string{
@@ -72,6 +75,7 @@ func getBinaryNames() map[string]string {
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-apple-darwin", archNames.rustArch),
 			python: fmt.Sprintf("casbin-python-cli-darwin-%s", archNames.goArch),
+			dotnet: fmt.Sprintf("casbin-dotnet-cli-darwin-%s", archNames.goArch),
 		}
 	case "linux":
 		return map[string]string{
@@ -79,6 +83,7 @@ func getBinaryNames() map[string]string {
 			java:   "casbin-java-cli.jar",
 			rust:   fmt.Sprintf("casbin-rust-cli-%s-unknown-linux-gnu", archNames.rustArch),
 			python: fmt.Sprintf("casbin-python-cli-linux-%s", archNames.goArch),
+			dotnet: fmt.Sprintf("casbin-dotnet-cli-linux-%s", archNames.goArch),
 		}
 	default:
 		return nil
@@ -108,6 +113,11 @@ func getFinalBinaryName(lang string) string {
 			return "casbin-python-cli.exe"
 		}
 		return "casbin-python-cli"
+	case "dotnet":
+		if runtime.GOOS == "windows" {
+			return "casbin-dotnet-cli.exe"
+		}
+		return "casbin-dotnet-cli"
 	default:
 		return ""
 	}
@@ -347,6 +357,7 @@ func downloadCLI() error {
 		"go":     goCliRepo,
 		"rust":   rustCliRepo,
 		"python": pythonCliRepo,
+		"dotnet": dotnetCliRepo,
 	}
 
 	for lang, repo := range repos {
