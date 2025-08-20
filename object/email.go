@@ -43,7 +43,7 @@ func SendEmail(provider *Provider, title string, content string, dest string, se
 		fromName = sender
 	}
 
-	return emailProvider.Send(fromAddress, fromName, dest, title, content)
+	return emailProvider.Send(fromAddress, fromName, []string{dest}, title, content)
 }
 
 func SendEmailMulti(provider *Provider, title string, content string, dest []string, sender string) error {
@@ -59,5 +59,5 @@ func SendEmailMulti(provider *Provider, title string, content string, dest []str
 		fromName = sender
 	}
 
-	return emailProvider.SendMulti(fromAddress, fromName, dest, title, content)
+	return emailProvider.Send(fromAddress, fromName, dest, title, content)
 }

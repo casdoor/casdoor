@@ -44,19 +44,7 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 	return &SmtpEmailProvider{Dialer: dialer}
 }
 
-func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
-	message := gomail.NewMessage()
-
-	message.SetAddressHeader("From", fromAddress, fromName)
-	message.SetHeader("To", toAddress)
-	message.SetHeader("Subject", subject)
-	message.SetBody("text/html", content)
-
-	message.SkipUsernameCheck = true
-	return s.Dialer.DialAndSend(message)
-}
-
-func (s *SmtpEmailProvider) SendMulti(fromAddress string, fromName string, toAddresses []string, subject string, content string) error {
+func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddresses []string, subject string, content string) error {
 	message := gomail.NewMessage()
 
 	message.SetAddressHeader("From", fromAddress, fromName)
