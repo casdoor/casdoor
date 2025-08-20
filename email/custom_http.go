@@ -53,6 +53,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	var err error
 
 	fromNameField := "fromName"
+	toAddressField := "toAddresses"
 	toAddressesField := "toAddresses"
 	subjectField := "subject"
 	contentField := "content"
@@ -60,6 +61,8 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 		switch k {
 		case "fromName":
 			fromNameField = v
+		case "toAddress":
+			toAddressField = v
 		case "toAddresses":
 			toAddressesField = v
 		case "subject":
@@ -87,8 +90,12 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 			for k, v := range bodyMap {
 				formValues.Add(k, v)
 			}
-			for _, addr := range toAddress {
-				formValues.Add(toAddressesField, addr)
+			if len(toAddress) == 1 {
+				formValues.Add(toAddressField, toAddress[0])
+			} else {
+				for _, addr := range toAddress {
+					formValues.Add(toAddressesField, addr)
+				}
 			}
 			req, err = http.NewRequest(c.method, c.endpoint, strings.NewReader(formValues.Encode()))
 		}
@@ -106,8 +113,12 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 
 		q := req.URL.Query()
 		q.Add(fromNameField, fromName)
-		for _, address := range toAddress {
-			q.Add(toAddressesField, address)
+		if len(toAddress) == 1 {
+			q.Add(toAddressField, toAddress[0])
+		} else {
+			for _, addr := range toAddress {
+				q.Add(toAddressesField, addr)
+			}
 		}
 		q.Add(subjectField, subject)
 		q.Add(contentField, content)
