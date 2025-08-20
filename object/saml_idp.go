@@ -122,21 +122,11 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 
 		valueList := []string{item.Value}
 		if strings.Contains(item.Value, "$user.roles") {
-			var roles []string
-			for _, userRole := range user.Roles {
-				roles = append(roles, userRole.Name)
-			}
-
-			valueList = replaceSamlAttributeValuesWithList("$user.roles", roles, valueList)
+			valueList = replaceSamlAttributeValuesWithList("$user.roles", getUserRoleNames(user), valueList)
 		}
 
 		if strings.Contains(item.Value, "$user.permissions") {
-			var permissions []string
-			for _, permission := range user.Permissions {
-				permissions = append(permissions, permission.Name)
-			}
-
-			valueList = replaceSamlAttributeValuesWithList("$user.permissions", permissions, valueList)
+			valueList = replaceSamlAttributeValuesWithList("$user.permissions", getUserPermissionNames(user), valueList)
 		}
 
 		if strings.Contains(item.Value, "$user.groups") {
