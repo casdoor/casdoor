@@ -70,7 +70,9 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	if application.UseEmailAsSamlNameId {
 		nameIDValue = user.Email
 	}
-	subject.CreateElement("saml:NameID").SetText(nameIDValue)
+	nameId := subject.CreateElement("saml:NameID")
+	nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent")
+	nameId.SetText(nameIDValue)
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateAttr("Method", "urn:oasis:names:tc:SAML:2.0:cm:bearer")
 	subjectConfirmationData := subjectConfirmation.CreateElement("saml:SubjectConfirmationData")
@@ -108,26 +110,82 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
+	err := ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, item := range application.SamlAttributes {
 		role := attributes.CreateElement("saml:Attribute")
 		role.CreateAttr("Name", item.Name)
 		role.CreateAttr("NameFormat", item.NameFormat)
-		role.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
+
+		valueList := []string{item.Value}
+		if strings.Contains(item.Value, "$user.roles") {
+			var roles []string
+			for _, userRole := range user.Roles {
+				roles = append(roles, userRole.Name)
+			}
+
+			valueList = replaceSamlAttributeValuesWithList("$user.roles", roles, valueList)
+		}
+
+		if strings.Contains(item.Value, "$user.permissions") {
+			var permissions []string
+			for _, permission := range user.Permissions {
+				permissions = append(permissions, permission.Name)
+			}
+
+			valueList = replaceSamlAttributeValuesWithList("$user.permissions", permissions, valueList)
+		}
+
+		if strings.Contains(item.Value, "$user.groups") {
+			valueList = replaceSamlAttributeValuesWithList("$user.groups", user.Groups, valueList)
+		}
+
+		valueList = replaceSamlAttributeValues("$user.owner", user.Owner, valueList)
+		valueList = replaceSamlAttributeValues("$user.name", user.Name, valueList)
+		valueList = replaceSamlAttributeValues("$user.email", user.Email, valueList)
+		valueList = replaceSamlAttributeValues("$user.id", user.Id, valueList)
+		valueList = replaceSamlAttributeValues("$user.phone", user.Phone, valueList)
+
+		for _, value := range valueList {
+			av := role.CreateElement("saml:AttributeValue")
+			av.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
+			av.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+			av.CreateAttr("xsi:type", "xs:string").Element().SetText(value)
+		}
 	}
 
 	roles := attributes.CreateElement("saml:Attribute")
 	roles.CreateAttr("Name", "Roles")
 	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
-	err := ExtendUserWithRolesAndPermissions(user)
-	if err != nil {
-		return nil, err
-	}
 
 	for _, role := range user.Roles {
 		roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(role.Name)
 	}
 
 	return samlResponse, nil
+}
+
+func replaceSamlAttributeValues(val string, replaceVal string, values []string) []string {
+	newValues := []string{}
+	for _, value := range values {
+		newValues = append(newValues, strings.ReplaceAll(value, val, replaceVal))
+	}
+
+	return newValues
+}
+
+func replaceSamlAttributeValuesWithList(val string, replaceVals []string, values []string) []string {
+	newValues := []string{}
+	for _, value := range values {
+		for _, rVal := range replaceVals {
+			newValues = append(newValues, strings.ReplaceAll(value, val, rVal))
+		}
+	}
+
+	return newValues
 }
 
 type X509Key struct {
