@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Kan jezelf niet ontkoppelen; geen lid van een app"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Alleen beheerder kan %s wijzigen.",
     "The %s is immutable.": "%s kan niet gewijzigd worden.",
     "Unknown modify rule %s.": "Onbekende wijzigingsregel %s.",

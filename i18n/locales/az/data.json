@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Öz əlaqənizi kəsə bilməzsiniz, heç bir tətbiqin üzvü deyilsiniz"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Yalnız admin %s-ni dəyişdirə bilər.",
     "The %s is immutable.": "%s dəyişilməzdir.",
     "Unknown modify rule %s.": "Naməlum dəyişdirmə qaydası %s.",

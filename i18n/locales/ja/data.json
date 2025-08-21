@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "あなたは自分自身をアンリンクすることはできません、あなたはどのアプリケーションのメンバーでもありません"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "管理者のみが%sを変更できます。",
     "The %s is immutable.": "%sは不変です。",
     "Unknown modify rule %s.": "未知の変更ルール%s。",

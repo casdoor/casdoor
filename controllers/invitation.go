@@ -233,7 +233,7 @@ func (c *ApiController) SendInvitation() {
 	}
 
 	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("organization:No application is found for organization: %s"), invitation.Owner))
+		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
 		return
 	}
 

@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "شما نمی‌توانید خودتان را لغو پیوند کنید، شما عضو هیچ برنامه‌ای نیستید"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "فقط مدیر می‌تواند %s را تغییر دهد.",
     "The %s is immutable.": "%s غیرقابل تغییر است.",
     "Unknown modify rule %s.": "قانون تغییر ناشناخته %s.",

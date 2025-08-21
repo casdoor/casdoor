@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Bạn không thể hủy liên kết của mình, bởi vì bạn không phải là thành viên của bất kỳ ứng dụng nào"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Chỉ những người quản trị mới có thể sửa đổi %s.",
     "The %s is immutable.": "%s không thể thay đổi được.",
     "Unknown modify rule %s.": "Quy tắc thay đổi không xác định %s.",

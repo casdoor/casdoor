@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Et voi irrottaa itseäsi, et ole minkään sovelluksen jäsen"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Vain ylläpitäjä voi muokata %s.",
     "The %s is immutable.": "%s on muuttumaton.",
     "Unknown modify rule %s.": "Tuntematon muokkaussääntö %s.",

@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Non puoi scollegarti, non sei membro di alcuna app"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Solo admin può modificare %s.",
     "The %s is immutable.": "%s è immutabile.",
     "Unknown modify rule %s.": "Regola modifica %s sconosciuta.",

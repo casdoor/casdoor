@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "당신은 어떤 애플리케이션의 회원이 아니기 때문에 스스로 링크를 해제할 수 없습니다"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "관리자만 %s을(를) 수정할 수 있습니다.",
     "The %s is immutable.": "%s 는 변경할 수 없습니다.",
     "Unknown modify rule %s.": "미확인 수정 규칙 %s.",

@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Anda tidak dapat memutuskan tautan diri sendiri, karena Anda bukan anggota dari aplikasi apa pun"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Hanya admin yang dapat memodifikasi %s.",
     "The %s is immutable.": "%s tidak dapat diubah.",
     "Unknown modify rule %s.": "Aturan modifikasi tidak diketahui %s.",

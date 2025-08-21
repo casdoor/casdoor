@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Nemůžete odpojit sami sebe, nejste členem žádné aplikace"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Pouze administrátor může upravit %s.",
     "The %s is immutable.": "%s je neměnný.",
     "Unknown modify rule %s.": "Neznámé pravidlo úpravy %s.",

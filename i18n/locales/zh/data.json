@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "您无法自行解绑，您不是任何应用程序的成员"
   },
   "organization": {
-    "No application is found for organization: %s": "组织: %s 中找不到应用",
     "Only admin can modify the %s.": "仅允许管理员可以修改%s",
     "The %s is immutable.": "%s 是不可变的",
     "Unknown modify rule %s.": "未知的修改规则: %s",

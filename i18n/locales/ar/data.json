@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "لا يمكنك فصل نفسك، أنت لست عضواً في أي تطبيق"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "فقط المسؤول يمكنه تعديل %s.",
     "The %s is immutable.": "%s غير قابل للتعديل.",
     "Unknown modify rule %s.": "قاعدة تعديل غير معروفة %s.",

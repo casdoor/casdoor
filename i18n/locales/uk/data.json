@@ -121,7 +121,6 @@
     "You can't unlink yourself, you are not a member of any application": "Ви не можете від’єднати себе, ви не є учасником жодного додатка"
   },
   "organization": {
-    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "Лише адміністратор може змінити %s.",
     "The %s is immutable.": "%s незмінний.",
     "Unknown modify rule %s.": "Невідоме правило зміни %s.",
