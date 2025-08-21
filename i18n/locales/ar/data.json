@@ -106,6 +106,9 @@
     "this operation is not allowed in demo mode": "هذه العملية غير مسموح بها في وضع العرض التوضيحي",
     "this operation requires administrator to perform": "هذه العملية تتطلب مسؤولاً لتنفيذها"
   },
+  "invitation": {
+    "Invitation %s does not exist": "Invitation %s does not exist"
+  },
   "ldap": {
     "Ldap server exist": "خادم LDAP موجود"
   },
@@ -118,6 +121,7 @@
     "You can't unlink yourself, you are not a member of any application": "لا يمكنك فصل نفسك، أنت لست عضواً في أي تطبيق"
   },
   "organization": {
+    "No application is found for organization: %s": "No application is found for organization: %s",
     "Only admin can modify the %s.": "فقط المسؤول يمكنه تعديل %s.",
     "The %s is immutable.": "%s غير قابل للتعديل.",
     "Unknown modify rule %s.": "قاعدة تعديل غير معروفة %s.",
