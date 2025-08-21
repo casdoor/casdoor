@@ -1654,7 +1654,7 @@ export function getDefaultInvitationHtmlEmailContent() {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verification Code Email</title>
+<title>Invitation Code Email</title>
 <style>
     body { font-family: Arial, sans-serif; }
     .email-container { width: 600px; margin: 0 auto; }
@@ -1670,7 +1670,7 @@ export function getDefaultInvitationHtmlEmailContent() {
         <h3>Casbin Organization</h3>
         <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
     </div>
-    <p>You have been invited into casdoor</p>
+    <p>You have been invited into Casdoor</p>
     <div class="code">
         %code
     </div>

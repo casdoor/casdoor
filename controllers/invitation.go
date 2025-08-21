@@ -205,34 +205,57 @@ func (c *ApiController) SendInvitation() {
 	var destinations []string
 	err := json.Unmarshal(c.Ctx.Input.RequestBody, &destinations)
 
+	if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	invitation, err := object.GetInvitation(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if invitation == nil {
+		c.ResponseError(fmt.Sprintf(c.T("invitation:Invitation %s does not exist"), id))
 		return
 	}
 
 	organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", invitation.Owner))
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("organization:No application is found for organization: %s"), invitation.Owner))
+		return
 	}
 
 	provider, err := application.GetEmailProvider("Invitation")
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("verification:please add an Email provider to the \"Providers\" list for the application: %s"), invitation.Owner))
+		return
+	}
+
 	content := provider.Metadata
 
 	content = strings.ReplaceAll(content, "%code", invitation.Code)
 	content = strings.ReplaceAll(content, "%link", invitation.GetInvitationLink(c.Ctx.Request.Host, application.Name))
 
-	err = object.SendEmailMulti(provider, provider.Title, content, destinations, organization.DisplayName)
+	err = object.SendEmail(provider, provider.Title, content, destinations, organization.DisplayName)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	c.ResponseOk()

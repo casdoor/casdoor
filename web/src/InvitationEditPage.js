@@ -22,8 +22,6 @@ import * as Setting from "./Setting";
 import i18next from "i18next";
 import copy from "copy-to-clipboard";
 import * as GroupBackend from "./backend/GroupBackend";
-import {isValidEmail} from "./Setting";
-import {sendInvitation} from "./backend/InvitationBackend";
 
 const {Option} = Select;
 
@@ -130,7 +128,7 @@ class InvitationEditPage extends React.Component {
     const emailColumns = [
       {title: "email", dataIndex: "email"},
     ];
-    const emails = this.state.emails?.split("\n")?.filter(email => isValidEmail(email));
+    const emails = this.state.emails?.split("\n")?.filter(email => Setting.isValidEmail(email));
     const emailData = emails?.map((email) => {return {email: email};});
 
     return <Modal title={i18next.t("general:Send")}
@@ -141,9 +139,9 @@ class InvitationEditPage extends React.Component {
         <Button key={1} loading={this.state.sendLoading} type="primary"
           onClick={() => {
             this.setState({sendLoading: true});
-            sendInvitation(this.state.invitation, emails).then(() => {
+            InvitationBackend.sendInvitation(this.state.invitation, emails).then(() => {
               this.setState({sendLoading: false});
-              Setting.showMessage("success", "Successfully sent");
+              Setting.showMessage("success", i18next.t("general:Successfully sent"));
             }).catch(err => Setting.showMessage("success", err.message));
           }}>{i18next.t("general:Send")}</Button>,
       ]}
