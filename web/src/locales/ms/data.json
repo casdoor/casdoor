@@ -30,6 +30,8 @@
     "Binding providers": "Penyedia pengikatan",
     "CSS style": "Gaya CSS",
     "Center": "Tengah",
+    "Cookie expire": "Cookie expire",
+    "Cookie expire - Tooltip": "Cookie expire - Tooltip",
     "Copy SAML metadata URL": "Salin URL metadata SAML",
     "Copy prompt page URL": "Salin URL halaman segera",
     "Copy signin page URL": "Salin URL halaman log masuk",
