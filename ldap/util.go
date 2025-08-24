@@ -70,6 +70,15 @@ var ldapAttributesMapping = map[string]FieldRelation{
 	"title": {userField: "tag", fieldMapper: func(user *object.User) message.AttributeValue {
 		return message.AttributeValue(user.Tag)
 	}},
+	"loginShell": {userField: "loginShell", notSearchable: true, fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue("/bin/bash")
+	}},
+	"gecos": {userField: "displayName", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.DisplayName)
+	}},
+	"objectClass": {userField: "objectClass", notSearchable: true, fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue("posixAccount")
+	}},
 	"userPassword": {
 		userField:     "userPassword",
 		notSearchable: true,

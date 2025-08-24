@@ -204,28 +204,40 @@ func handleSearch(w ldap.ResponseWriter, m *ldap.Message) {
 	}
 
 	for _, user := range users {
-		dn := fmt.Sprintf("uid=%s,cn=%s,%s", user.Id, user.Name, string(r.BaseObject()))
+		dn := fmt.Sprintf("uid=%s,%s", user.Name, string(r.BaseObject()))
 		e := ldap.NewSearchResultEntry(dn)
 		uidNumberStr := fmt.Sprintf("%v", hash(user.Name))
 		e.AddAttribute("uidNumber", message.AttributeValue(uidNumberStr))
 		e.AddAttribute("gidNumber", message.AttributeValue(uidNumberStr))
 		e.AddAttribute("homeDirectory", message.AttributeValue("/home/"+user.Name))
 		e.AddAttribute("cn", message.AttributeValue(user.Name))
-		e.AddAttribute("uid", message.AttributeValue(user.Id))
+		e.AddAttribute("uid", message.AttributeValue(user.Name))
+		e.AddAttribute("objectClass", "posixAccount")
+		e.AddAttribute("loginShell", message.AttributeValue("/bin/bash"))
+		e.AddAttribute("gecos", message.AttributeValue(user.DisplayName))
 		for _, group := range user.Groups {
 			e.AddAttribute(ldapMemberOfAttr, message.AttributeValue(group))
 		}
 		attrs := r.Attributes()
-		for _, attr := range attrs {
-			if string(attr) == "*" {
-				attrs = AdditionalLdapAttributes
-				break
+		if len(attrs) > 0 && !(len(attrs) == 1 && string(attrs[0]) == "*") {
+			for _, attr := range attrs {
+				attrName := string(attr)
+				if attrName == "cn" || attrName == "uid" || attrName == "objectClass" ||
+					attrName == "uidNumber" || attrName == "gidNumber" ||
+					attrName == "homeDirectory" || attrName == "loginShell" || attrName == "gecos" {
+					continue
+				}
+				e.AddAttribute(message.AttributeDescription(attr), getAttribute(attrName, user))
 			}
-		}
-		for _, attr := range attrs {
-			e.AddAttribute(message.AttributeDescription(attr), getAttribute(string(attr), user))
-			if string(attr) == "title" {
-				e.AddAttribute(message.AttributeDescription(attr), getAttribute("title", user))
+		} else {
+			for _, attr := range AdditionalLdapAttributes {
+				attrName := string(attr)
+				if attrName == "cn" || attrName == "uid" || attrName == "objectClass" ||
+					attrName == "uidNumber" || attrName == "gidNumber" ||
+					attrName == "homeDirectory" || attrName == "loginShell" || attrName == "gecos" {
+					continue
+				}
+				e.AddAttribute(message.AttributeDescription(attr), getAttribute(attrName, user))
 			}
 		}
 
