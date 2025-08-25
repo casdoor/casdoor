@@ -71,7 +71,11 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 		nameIDValue = user.Email
 	}
 	nameId := subject.CreateElement("saml:NameID")
-	nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent")
+	if application.UseEmailAsSamlNameId {
+		nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
+	} else {
+		nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
+	}
 	nameId.SetText(nameIDValue)
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateAttr("Method", "urn:oasis:names:tc:SAML:2.0:cm:bearer")
