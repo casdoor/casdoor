@@ -342,7 +342,7 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 	res["provider"] = claims.Provider
 
 	for _, field := range tokenField {
-		if strings.HasPrefix(field, "Properties") {
+		if strings.HasPrefix(field, "Properties.") {
 			/*
 				Use selected properties fields as custom claims.
 				Converts `Properties.my_field` to custom claim with name `my_field`.
