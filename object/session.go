@@ -137,10 +137,17 @@ func AddSession(session *Session) (bool, error) {
 	}
 }
 
-func DeleteSession(id string) (bool, error) {
-	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
-	if owner == CasdoorOrganization && application == CasdoorApplication {
-		session, err := GetSingleSession(id)
+// DeleteSession deletes sessions based on provided parameters
+// If all parameters are provided, deletes a specific session
+// If only org and user are provided, deletes all sessions for that org and user
+// If only org and app are provided, deletes all sessions for that org and app
+// If only org is provided, deletes all sessions for that org
+func DeleteSession(org, user, application string) (bool, error) {
+	query := ormer.Engine.Where("owner = ?", org)
+
+	if user != "" && application != "" {
+		query = query.Where("name = ? AND application = ?", user, application)
+		session, err := GetSingleSession(util.GetSessionId(org, user, application))
 		if err != nil {
 			return false, err
 		}
@@ -148,9 +155,47 @@ func DeleteSession(id string) (bool, error) {
 		if session != nil {
 			DeleteBeegoSession(session.SessionId)
 		}
+	} else if user != "" {
+		query = query.Where("name = ?", user)
+
+		sessions := []*Session{}
+		err := query.Find(&sessions)
+		if err != nil {
+			return false, err
+		}
+
+		for _, session := range sessions {
+			if session.Application == CasdoorApplication {
+				DeleteBeegoSession(session.SessionId)
+			}
+		}
+	} else if application != "" {
+		query = query.Where("application = ?", application)
+
+		sessions := []*Session{}
+		err := query.Find(&sessions)
+		if err != nil {
+			return false, err
+		}
+
+		for _, session := range sessions {
+			DeleteBeegoSession(session.SessionId)
+		}
+	} else {
+		sessions := []*Session{}
+		err := query.Find(&sessions)
+		if err != nil {
+			return false, err
+		}
+
+		for _, session := range sessions {
+			if session.Application == CasdoorApplication {
+				DeleteBeegoSession(session.SessionId)
+			}
+		}
 	}
 
-	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
+	affected, err := query.Delete(&Session{})
 	if err != nil {
 		return false, err
 	}
@@ -174,7 +219,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 
 	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
 	if len(session.SessionId) == 0 {
-		return DeleteSession(id)
+		return DeleteSession(owner, owner, application)
 	} else {
 		return UpdateSession(id, session)
 	}

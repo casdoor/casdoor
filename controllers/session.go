@@ -137,7 +137,7 @@ func (c *ApiController) DeleteSession() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.DeleteSession(util.GetSessionId(session.Owner, session.Name, session.Application)))
+	c.Data["json"] = wrapActionResponse(object.DeleteSession(session.Owner, session.Name, session.Application))
 	c.ServeJSON()
 }
 
