@@ -42,10 +42,11 @@ class BaseListPage extends React.Component {
   handleOrganizationChange = () => {
     this.setState({
       organizationName: this.props.match?.params.organizationName || Setting.getRequestOrganization(this.props.account),
+    },
+    () => {
+      const {pagination} = this.state;
+      this.fetch({pagination});
     });
-
-    const {pagination} = this.state;
-    this.fetch({pagination});
   };
 
   handleTourChange = () => {

@@ -30,6 +30,7 @@ import (
 	"unicode"
 
 	"github.com/google/uuid"
+	"github.com/nyaruka/phonenumbers"
 )
 
 func ParseInt(s string) int {
@@ -276,6 +277,19 @@ func IsChinese(str string) bool {
 
 func GetMaskedPhone(phone string) string {
 	return rePhone.ReplaceAllString(phone, "$1****$2")
+}
+
+func GetSeperatedPhone(phone string) string {
+	if strings.HasPrefix(phone, "+") {
+		phoneNumberParsed, err := phonenumbers.Parse(phone, "")
+		if err != nil {
+			return phone
+		}
+
+		phone = fmt.Sprintf("%d", phoneNumberParsed.GetNationalNumber())
+	}
+
+	return phone
 }
 
 func GetMaskedEmail(email string) string {

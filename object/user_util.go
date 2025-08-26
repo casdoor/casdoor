@@ -80,7 +80,8 @@ func GetUserByFields(organization string, field string) (*User, error) {
 	}
 
 	// check phone
-	user, err = GetUserByField(organization, "phone", field)
+	phone := util.GetSeperatedPhone(field)
+	user, err = GetUserByField(organization, "phone", phone)
 	if user != nil || err != nil {
 		return user, err
 	}
@@ -245,6 +246,20 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	}
 
 	return UpdateUserForAllFields(user.GetId(), user)
+}
+
+func getUserRoleNames(user *User) (res []string) {
+	for _, role := range user.Roles {
+		res = append(res, role.Name)
+	}
+	return res
+}
+
+func getUserPermissionNames(user *User) (res []string) {
+	for _, permission := range user.Permissions {
+		res = append(res, permission.Name)
+	}
+	return res
 }
 
 func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {

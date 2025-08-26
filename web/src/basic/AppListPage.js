@@ -19,13 +19,21 @@ import GridCards from "./GridCards";
 const AppListPage = (props) => {
   const [applications, setApplications] = React.useState(null);
 
+  const sort = (applications) => {
+    applications.sort((a, b) => {
+      return a.order - b.order;
+    });
+  };
+
   React.useEffect(() => {
     if (props.account === null) {
       return;
     }
     ApplicationBackend.getApplicationsByOrganization("admin", props.account.owner)
       .then((res) => {
-        setApplications(res.data || []);
+        const applications = res.data || [];
+        sort(applications);
+        setApplications(applications);
       });
   }, [props.account]);
 

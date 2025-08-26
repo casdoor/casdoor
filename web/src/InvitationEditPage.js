@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
+import {Button, Card, Col, Input, InputNumber, Modal, Row, Select, Table} from "antd";
 import {CopyOutlined} from "@ant-design/icons";
 import * as InvitationBackend from "./backend/InvitationBackend";
 import * as OrganizationBackend from "./backend/OrganizationBackend";
@@ -37,6 +37,7 @@ class InvitationEditPage extends React.Component {
       applications: [],
       groups: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      sendLoading: false,
     };
   }
 
@@ -123,6 +124,35 @@ class InvitationEditPage extends React.Component {
     Setting.showMessage("success", i18next.t("general:Copied to clipboard successfully"));
   }
 
+  renderSendEmailModal() {
+    const emailColumns = [
+      {title: "email", dataIndex: "email"},
+    ];
+    const emails = this.state.emails?.split("\n")?.filter(email => Setting.isValidEmail(email));
+    const emailData = emails?.map((email) => {return {email: email};});
+
+    return <Modal title={i18next.t("general:Send")}
+      style={{height: "800px"}}
+      open={this.state.showSendModal}
+      closable
+      footer={[
+        <Button key={1} loading={this.state.sendLoading} type="primary"
+          onClick={() => {
+            this.setState({sendLoading: true});
+            InvitationBackend.sendInvitation(this.state.invitation, emails).then(() => {
+              this.setState({sendLoading: false});
+              Setting.showMessage("success", i18next.t("general:Successfully sent"));
+            }).catch(err => Setting.showMessage("success", err.message));
+          }}>{i18next.t("general:Send")}</Button>,
+      ]}
+      onCancel={() => {this.setState({showSendModal: false});}}>
+      <div >
+        <p>You will send invitation email to:</p>
+        <Table showHeader={false} columns={emailColumns} dataSource={emailData} size={"small"}></Table>
+      </div>
+    </Modal>;
+  }
+
   renderInvitation() {
     const isCreatedByPlan = this.state.invitation.tag === "auto_created_invitation_for_plan";
     return (
@@ -197,6 +227,17 @@ class InvitationEditPage extends React.Component {
             <Button style={{marginBottom: "10px"}} type="primary" shape="round" icon={<CopyOutlined />} onClick={_ => this.copySignupLink()}>
               {i18next.t("application:Copy signup page URL")}
             </Button>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {i18next.t("general:Send")}
+          </Col>
+          <Col span={22} >
+            <Input.TextArea autoSize={{minRows: 3, maxRows: 10}} value={this.state.emails} onChange={(value) => {
+              this.setState({emails: value.target.value});
+            }}></Input.TextArea>
+            <Button type="primary" style={{marginTop: "20px"}} onClick={() => this.setState({showSendModal: true})}>{i18next.t("general:Send")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -338,6 +379,7 @@ class InvitationEditPage extends React.Component {
   render() {
     return (
       <div>
+        {this.state.showSendModal ? this.renderSendEmailModal() : null}
         {
           this.state.invitation !== null ? this.renderInvitation() : null
         }

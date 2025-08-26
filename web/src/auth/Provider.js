@@ -392,7 +392,11 @@ export function getAuthUrl(application, provider, method, code) {
   let redirectUri = `${redirectOrigin}/callback`;
   let scope = authInfo[provider.type].scope;
   const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
-  const state = Util.getStateFromQueryParams(application.name, provider.name, method, isShortState);
+  let applicationName = application.name;
+  if (application?.isShared) {
+    applicationName = `${application.name}-org-${application.organization}`;
+  }
+  const state = Util.getStateFromQueryParams(applicationName, provider.name, method, isShortState);
   const codeChallenge = "P3S-a7dr8bgM4bF6vOyiKkKETDl16rcAzao9F8UIL1Y"; // SHA256(Base64-URL-encode("casdoor-verifier"))
 
   if (provider.type === "AzureAD") {

@@ -144,7 +144,7 @@ func (c *ApiController) SendEmail() {
 	content = strings.Replace(content, string(matchContent), "", -1)
 
 	for _, receiver := range emailForm.Receivers {
-		err = object.SendEmail(provider, emailForm.Title, content, receiver, emailForm.Sender)
+		err = object.SendEmail(provider, emailForm.Title, content, []string{receiver}, emailForm.Sender)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

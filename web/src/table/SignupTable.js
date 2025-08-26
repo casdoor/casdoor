@@ -94,6 +94,8 @@ class SignupTable extends React.Component {
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "ID", displayName: i18next.t("general:ID")},
             {name: "Display name", displayName: i18next.t("general:Display name")},
+            {name: "First name", displayName: i18next.t("general:First name")},
+            {name: "Last name", displayName: i18next.t("general:Last name")},
             {name: "Affiliation", displayName: i18next.t("user:Affiliation")},
             {name: "Gender", displayName: i18next.t("user:Gender")},
             {name: "Bio", displayName: i18next.t("user:Bio")},

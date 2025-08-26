@@ -60,6 +60,7 @@ export const Countries = [
   {label: "فارسی", key: "fa", country: "IR", alt: "فارسی"},
   {label: "Čeština", key: "cs", country: "CZ", alt: "Čeština"},
   {label: "Slovenčina", key: "sk", country: "SK", alt: "Slovenčina"},
+  {label: "Azərbaycan dili", key: "az", country: "AZ", alt: "Azərbaycan dili"},
 ];
 
 export function getThemeData(organization, application) {
@@ -156,7 +157,7 @@ export const OtherProviderInfo = {
       url: "https://control.msg91.com/app/",
     },
     "OSON SMS": {
-      logo: "https://osonsms.com/images/osonsms-logo.svg",
+      logo: `${StaticBaseUrl}/img/social_osonsms.svg`,
       url: "https://osonsms.com/",
     },
     "Custom HTTP SMS": {
@@ -204,7 +205,7 @@ export const OtherProviderInfo = {
       url: "https://aws.amazon.com/s3",
     },
     "MinIO": {
-      logo: "https://min.io/resources/img/logo.svg",
+      logo: `${StaticBaseUrl}/img/social_minio.png`,
       url: "https://min.io/",
     },
     "Aliyun OSS": {
@@ -1634,6 +1635,48 @@ export function getDefaultHtmlEmailContent() {
     <reset-link>
       <div class="link">
          Or click this <a href="%link">link</a> to reset
+      </div>
+    </reset-link>
+    <p>Thanks</p>
+    <p>Casbin Team</p>
+    <hr>
+    <div class="footer">
+        <p>Casdoor is a brand operated by Casbin organization. For more info please refer to <a href="https://casdoor.org">https://casdoor.org</a></p>
+    </div>
+</div>
+</body>
+</html>`;
+}
+
+export function getDefaultInvitationHtmlEmailContent() {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitation Code Email</title>
+<style>
+    body { font-family: Arial, sans-serif; }
+    .email-container { width: 600px; margin: 0 auto; }
+    .header { text-align: center; }
+    .code { font-size: 24px; margin: 20px 0; text-align: center; }
+    .footer { font-size: 12px; text-align: center; margin-top: 50px; }
+    .footer a { color: #000; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="email-container">
+  <div class="header">
+        <h3>Casbin Organization</h3>
+        <img src="${StaticBaseUrl}/img/casdoor-logo_1185x256.png" alt="Casdoor Logo" width="300">
+    </div>
+    <p>You have been invited into Casdoor</p>
+    <div class="code">
+        %code
+    </div>
+    <reset-link>
+      <div class="link">
+         Or click this <a href="%link">link</a> to signup
       </div>
     </reset-link>
     <p>Thanks</p>
