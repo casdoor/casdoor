@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Misslyckades logga in: %s",
     "Invalid token": "Ogiltig token",
     "State expected: %s, but got: %s": "Förväntat tillstånd: %s, men fick: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Kontot för leverantör: %s och användarnamn: %s (%s) finns inte och det är inte tillåtet att registrera ett nytt konto via %%s, använd ett annat sätt att registrera dig",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Kontot för leverantör: %s och användarnamn: %s (%s) finns inte och det är inte tillåtet att registrera ett nytt konto via %s, använd ett annat sätt att registrera dig",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Kontot för leverantör: %s och användarnamn: %s (%s) finns inte och det är inte tillåtet att registrera ett nytt konto, kontakta din IT-support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Kontot för leverantör: %s och användarnamn: %s (%s) är redan länkat till ett annat konto: %s (%s)",
     "The application: %s does not exist": "Applikationen: %s finns inte",

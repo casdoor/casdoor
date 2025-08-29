@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Sisäänkirjautuminen epäonnistui: %s",
     "Invalid token": "Virheellinen token",
     "State expected: %s, but got: %s": "Odotettiin tilaa: %s, mutta saatiin: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Tiliä providerille: %s ja käyttäjälle: %s (%s) ei ole olemassa, eikä sitä voi rekisteröidä uutena tilinä kautta %%s, käytä toista tapaa rekisteröityä",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Tiliä providerille: %s ja käyttäjälle: %s (%s) ei ole olemassa, eikä sitä voi rekisteröidä uutena tilinä kautta %s, käytä toista tapaa rekisteröityä",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Tiliä providerille: %s ja käyttäjälle: %s (%s) ei ole olemassa, eikä sitä voi rekisteröidä uutena tilinä, ota yhteyttä IT-tukeen",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Tili providerille: %s ja käyttäjälle: %s (%s) on jo linkitetty toiseen tiliin: %s (%s)",
     "The application: %s does not exist": "Sovellus: %s ei ole olemassa",

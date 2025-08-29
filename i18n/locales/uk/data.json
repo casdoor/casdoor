@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Не вдалося увійти: %s",
     "Invalid token": "Недійсний токен",
     "State expected: %s, but got: %s": "Очікувалося стан: %s, але отримано: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %%s, використайте інший спосіб",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий через %s, використайте інший спосіб",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) не існує і не дозволяється реєструвати як новий, зверніться до IT-підтримки",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Обліковий запис для провайдера: %s та імені користувача: %s (%s) уже пов’язаний з іншим обліковим записом: %s (%s)",
     "The application: %s does not exist": "Додаток: %s не існує",

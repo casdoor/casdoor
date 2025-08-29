@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Falha ao entrar em: %s",
     "Invalid token": "Token inválido",
     "State expected: %s, but got: %s": "Estado esperado: %s, mas recebeu: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta via %%s, por favor, use outra forma de se inscrever",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta via %s, por favor, use outra forma de se inscrever",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "A conta para o provedor: %s e nome de usuário: %s (%s) não existe e não é permitido inscrever-se como uma nova conta entre em contato com seu suporte de TI",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "A conta do provedor: %s e nome de usuário: %s (%s) já está vinculada a outra conta: %s (%s)",
     "The application: %s does not exist": "O aplicativo: %s não existe",

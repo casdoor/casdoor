@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Login fallito: %s",
     "Invalid token": "Token non valido",
     "State expected: %s, but got: %s": "Stato atteso: %s, ricevuto: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Account per provider: %s e utente: %s (%s) non esiste, registrazione tramite %%s non consentita",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Account per provider: %s e utente: %s (%s) non esiste, registrazione tramite %s non consentita",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Account per provider: %s e utente: %s (%s) non esiste, registrazione non consentita: contatta l'assistenza IT",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Account per provider: %s e utente: %s (%s) già collegato a un altro account: %s (%s)",
     "The application: %s does not exist": "L'app: %s non esiste",

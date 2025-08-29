@@ -12,7 +12,7 @@
     "Failed to login in: %s": "فشل تسجيل الدخول: %s",
     "Invalid token": "الرمز غير صالح",
     "State expected: %s, but got: %s": "كان من المتوقع الحالة: %s، لكن حصلنا على: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "الحساب الخاص بالمزود: %s واسم المستخدم: %s (%s) غير موجود ولا يُسمح بالتسجيل كحساب جديد عبر %%s، يرجى استخدام طريقة أخرى للتسجيل",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "الحساب الخاص بالمزود: %s واسم المستخدم: %s (%s) غير موجود ولا يُسمح بالتسجيل كحساب جديد عبر %s، يرجى استخدام طريقة أخرى للتسجيل",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "الحساب الخاص بالمزود: %s واسم المستخدم: %s (%s) غير موجود ولا يُسمح بالتسجيل كحساب جديد، يرجى الاتصال بدعم تكنولوجيا المعلومات",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "الحساب الخاص بالمزود: %s واسم المستخدم: %s (%s) مرتبط بالفعل بحساب آخر: %s (%s)",
     "The application: %s does not exist": "التطبيق: %s غير موجود",
