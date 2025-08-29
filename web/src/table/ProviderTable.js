@@ -147,7 +147,7 @@ class ProviderTable extends React.Component {
         key: "canSignUp",
         width: "120px",
         render: (text, record, index) => {
-          if (!["OAuth", "Web3"].includes(record.provider?.category)) {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
             return null;
           }
 
@@ -164,7 +164,7 @@ class ProviderTable extends React.Component {
         key: "canSignIn",
         width: "120px",
         render: (text, record, index) => {
-          if (!["OAuth", "Web3"].includes(record.provider?.category)) {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
             return null;
           }
 
@@ -181,7 +181,7 @@ class ProviderTable extends React.Component {
         key: "canUnlink",
         width: "120px",
         render: (text, record, index) => {
-          if (!["OAuth", "Web3"].includes(record.provider?.category)) {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
             return null;
           }
 
@@ -198,7 +198,7 @@ class ProviderTable extends React.Component {
         key: "prompted",
         width: "120px",
         render: (text, record, index) => {
-          if (!["OAuth", "Web3"].includes(record.provider?.category)) {
+          if (!["OAuth", "Web3", "SAML"].includes(record.provider?.category)) {
             return null;
           }
 

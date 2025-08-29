@@ -12,7 +12,7 @@
     "Failed to login in: %s": "عدم موفقیت در ورود: %s",
     "Invalid token": "توکن نامعتبر",
     "State expected: %s, but got: %s": "وضعیت مورد انتظار: %s، اما دریافت شد: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "حساب برای ارائه‌دهنده: %s و نام کاربری: %s (%s) وجود ندارد و مجاز به ثبت‌نام به‌عنوان حساب جدید از طریق %%s نیست، لطفاً از روش دیگری برای ثبت‌نام استفاده کنید",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "حساب برای ارائه‌دهنده: %s و نام کاربری: %s (%s) وجود ندارد و مجاز به ثبت‌نام به‌عنوان حساب جدید از طریق %s نیست، لطفاً از روش دیگری برای ثبت‌نام استفاده کنید",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "حساب برای ارائه‌دهنده: %s و نام کاربری: %s (%s) وجود ندارد و مجاز به ثبت‌نام به‌عنوان حساب جدید نیست، لطفاً با پشتیبانی IT خود تماس بگیرید",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "حساب برای ارائه‌دهنده: %s و نام کاربری: %s (%s) در حال حاضر به حساب دیگری مرتبط است: %s (%s)",
     "The application: %s does not exist": "برنامه: %s وجود ندارد",

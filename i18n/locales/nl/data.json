@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Inloggen mislukt: %s",
     "Invalid token": "Ongeldige token",
     "State expected: %s, but got: %s": "Verwachtte state: %s, gekregen: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Gebruiker bestaat niet; aanmelden via %%s niet toegestaan, kies andere methode",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Gebruiker bestaat niet; aanmelden via %s niet toegestaan, kies andere methode",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Gebruiker bestaat niet; aanmelden niet toegestaan, neem contact op met IT",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Account al gekoppeld aan andere gebruiker: %s (%s)",
     "The application: %s does not exist": "Applicatie %s bestaat niet",

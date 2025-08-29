@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Gagal log masuk: %s",
     "Invalid token": "Token tidak sah",
     "State expected: %s, but got: %s": "Jangkaan keadaan: %s, tetapi dapat: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Akaun untuk pembekal: %s dan nama pengguna: %s (%s) tidak wujud dan tidak dibenarkan daftar melalui %%s, sila guna cara lain",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Akaun untuk pembekal: %s dan nama pengguna: %s (%s) tidak wujud dan tidak dibenarkan daftar melalui %s, sila guna cara lain",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Akaun untuk pembekal: %s dan nama pengguna: %s (%s) tidak wujud dan tidak dibenarkan daftar, sila hubungi sokongan IT",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Akaun untuk pembekal: %s dan nama pengguna: %s (%s) sudah dipautkan kepada akaun lain: %s (%s)",
     "The application: %s does not exist": "Aplikasi: %s tidak wujud",

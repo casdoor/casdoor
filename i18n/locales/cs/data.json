@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Nepodařilo se přihlásit: %s",
     "Invalid token": "Neplatný token",
     "State expected: %s, but got: %s": "Očekávaný stav: %s, ale získán: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Účet pro poskytovatele: %s a uživatelské jméno: %s (%s) neexistuje a není povoleno se registrovat jako nový účet přes %%s, prosím použijte jiný způsob registrace",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Účet pro poskytovatele: %s a uživatelské jméno: %s (%s) neexistuje a není povoleno se registrovat jako nový účet přes %s, prosím použijte jiný způsob registrace",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Účet pro poskytovatele: %s a uživatelské jméno: %s (%s) neexistuje a není povoleno se registrovat jako nový účet, prosím kontaktujte svou IT podporu",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Účet pro poskytovatele: %s a uživatelské jméno: %s (%s) je již propojen s jiným účtem: %s (%s)",
     "The application: %s does not exist": "Aplikace: %s neexistuje",

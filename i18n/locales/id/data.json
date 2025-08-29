@@ -12,7 +12,7 @@
     "Failed to login in: %s": "Gagal masuk: %s",
     "Invalid token": "Token tidak valid",
     "State expected: %s, but got: %s": "Diharapkan: %s, tapi diperoleh: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru melalui %%s, silakan gunakan cara lain untuk mendaftar",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru melalui %s, silakan gunakan cara lain untuk mendaftar",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "Akun untuk penyedia: %s dan nama pengguna: %s (%s) tidak ada dan tidak diizinkan untuk mendaftar sebagai akun baru, silakan hubungi dukungan IT Anda",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "Akun untuk penyedia: %s dan username: %s (%s) sudah terhubung dengan akun lain: %s (%s)",
     "The application: %s does not exist": "Aplikasi: %s tidak ada",
