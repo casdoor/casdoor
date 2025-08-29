@@ -109,6 +109,7 @@ type Application struct {
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
 	ExpireInHours           int        `json:"expireInHours"`
 	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
+	CookieExpireInDays      int        `json:"cookieExpireInDays"`
 	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
 	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
@@ -557,6 +558,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.TokenFields = nil
 	application.ExpireInHours = -1
 	application.RefreshExpireInHours = -1
+	application.CookieExpireInDays = -1
 	application.FailedSigninLimit = -1
 	application.FailedSigninFrozenTime = -1
 
@@ -724,6 +726,13 @@ func DeleteApplication(application *Application) (bool, error) {
 	}
 
 	return deleteApplication(application)
+}
+
+func GetApplicationCookieExpireInSeconds(application *Application) int {
+	if application == nil || application.CookieExpireInDays <= 0 {
+		return 3600 * 24 * 30
+	}
+	return application.CookieExpireInDays * 24 * 3600
 }
 
 func (application *Application) GetId() string {
