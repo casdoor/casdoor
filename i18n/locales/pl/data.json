@@ -164,6 +164,7 @@
     "MFA email is enabled but email is empty": "MFA email jest włączone, ale email jest pusty",
     "MFA phone is enabled but phone number is empty": "MFA telefon jest włączony, ale numer telefonu jest pusty",
     "New password cannot contain blank space.": "Nowe hasło nie może zawierać spacji.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "właściciel i nazwa użytkownika nie powinny być puste"
   },
   "util": {

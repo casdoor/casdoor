@@ -164,6 +164,7 @@
     "MFA email is enabled but email is empty": "MFA email đã bật nhưng email trống",
     "MFA phone is enabled but phone number is empty": "MFA điện thoại đã bật nhưng số điện thoại trống",
     "New password cannot contain blank space.": "Mật khẩu mới không thể chứa dấu trắng.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "chủ sở hữu và tên người dùng không được để trống"
   },
   "util": {

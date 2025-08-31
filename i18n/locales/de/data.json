@@ -164,6 +164,7 @@
     "MFA email is enabled but email is empty": "MFA-E-Mail ist aktiviert, aber E-Mail ist leer",
     "MFA phone is enabled but phone number is empty": "MFA-Telefon ist aktiviert, aber Telefonnummer ist leer",
     "New password cannot contain blank space.": "Das neue Passwort darf keine Leerzeichen enthalten.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "Eigentümer und Name des Benutzers dürfen nicht leer sein"
   },
   "util": {

@@ -164,6 +164,7 @@
     "MFA email is enabled but email is empty": "MFA-e-mail is ingeschakeld maar e-mailadres is leeg",
     "MFA phone is enabled but phone number is empty": "MFA-telefoon is ingeschakeld maar telefoonnummer is leeg",
     "New password cannot contain blank space.": "Nieuw wachtwoord mag geen spaties bevatten.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "eigenaar en naam van gebruiker mogen niet leeg zijn"
   },
   "util": {
