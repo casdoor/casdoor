@@ -167,6 +167,7 @@
     "MFA email is enabled but email is empty": "MFA-sähköposti on käytössä, mutta sähköposti on tyhjä",
     "MFA phone is enabled but phone number is empty": "MFA-puhelin on käytössä, mutta puhelinnumero on tyhjä",
     "New password cannot contain blank space.": "Uusi salasana ei voi sisältää välilyöntejä.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "käyttäjän omistaja ja nimi eivät saa olla tyhjiä"
   },
   "util": {

@@ -551,6 +551,12 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
+	// Check if the new password is the same as the current password
+	if !object.CheckPasswordNotSameAsCurrent(targetUser, newPassword, organization) {
+		c.ResponseError(c.T("user:The new password must be different from your current password"))
+		return
+	}
+
 	application, err := object.GetApplicationByUser(targetUser)
 	if err != nil {
 		c.ResponseError(err.Error())

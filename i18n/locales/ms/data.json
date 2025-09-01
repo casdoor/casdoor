@@ -167,6 +167,7 @@
     "MFA email is enabled but email is empty": "MFA emel dibenarkan tetapi emel kosong",
     "MFA phone is enabled but phone number is empty": "MFA telefon dibenarkan tetapi nombor telefon kosong",
     "New password cannot contain blank space.": "Kata laluan baharu tidak boleh ada ruang kosong.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "pemilik dan nama pengguna tidak boleh kosong"
   },
   "util": {

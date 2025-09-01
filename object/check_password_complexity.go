@@ -16,6 +16,8 @@ package object
 
 import (
 	"regexp"
+
+	"github.com/casdoor/casdoor/cred"
 )
 
 type ValidatorFunc func(password string) string
@@ -95,4 +97,27 @@ func checkPasswordComplexity(password string, options []string) string {
 		}
 	}
 	return ""
+}
+
+// CheckPasswordNotSameAsCurrent checks if the new password is different from the current password
+func CheckPasswordNotSameAsCurrent(user *User, newPassword string, organization *Organization) bool {
+	if user.Password == "" {
+		// User doesn't have a password set (e.g., OAuth-only users), allow any password
+		return true
+	}
+
+	credManager := cred.GetCredManager(organization.PasswordType)
+	if credManager == nil {
+		// If no credential manager is available, we can't compare passwords
+		return true
+	}
+
+	// Check if the new password is the same as the current password
+	// Try with both organization salt and user salt (like CheckPassword function does)
+	if credManager.IsPasswordCorrect(newPassword, user.Password, organization.PasswordSalt) ||
+		credManager.IsPasswordCorrect(newPassword, user.Password, user.PasswordSalt) {
+		return false
+	}
+
+	return true
 }

@@ -167,6 +167,7 @@
     "MFA email is enabled but email is empty": "تم تمكين MFA للبريد الإلكتروني لكن البريد الإلكتروني فارغ",
     "MFA phone is enabled but phone number is empty": "تم تمكين MFA للهاتف لكن رقم الهاتف فارغ",
     "New password cannot contain blank space.": "كلمة المرور الجديدة لا يمكن أن تحتوي على مسافات.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "مالك المستخدم واسمه لا يجب أن يكونا فارغين"
   },
   "util": {
