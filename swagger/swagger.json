@@ -638,7 +638,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id(organization/application/user) of session",
+                        "description": "The id(organization/user/application) of session",
                         "required": true,
                         "type": "string"
                     },
@@ -1448,7 +1448,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id(organization/application/user) of session",
+                        "description": "The id(organization/user/application) of session",
                         "required": true,
                         "type": "string"
                     }
@@ -3318,8 +3318,8 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "id",
-                        "description": "The id(organization/application/user) of session",
+                        "name": "sessionPkId",
+                        "description": "The id(organization/user/application) of session",
                         "required": true,
                         "type": "string"
                     }
@@ -4034,8 +4034,8 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "id",
-                        "description": "The id(organization/application/user) of session",
+                        "name": "sessionPkId",
+                        "description": "The id(organization/user/application) of session",
                         "required": true,
                         "type": "string"
                     },
@@ -5457,7 +5457,7 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id(organization/application/user) of session",
+                        "description": "The id(organization/user/application) of session",
                         "required": true,
                         "type": "string"
                     }
