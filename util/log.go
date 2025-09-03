@@ -16,6 +16,7 @@ package util
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 
@@ -28,20 +29,12 @@ func getIpInfo(clientIp string) string {
 		return ""
 	}
 
-	ips := strings.Split(clientIp, ",")
-	res := strings.TrimSpace(ips[0])
-	//res := ""
-	//for i := range ips {
-	//	ip := strings.TrimSpace(ips[i])
-	//	ipstr := fmt.Sprintf("%s: %s", ip, "")
-	//	if i != len(ips)-1 {
-	//		res += ipstr + " -> "
-	//	} else {
-	//		res += ipstr
-	//	}
-	//}
+	first := strings.TrimSpace(strings.Split(clientIp, ",")[0])
+	if host, _, err := net.SplitHostPort(first); err == nil {
+		return strings.Trim(host, "[]")
+	}
 
-	return res
+	return strings.Trim(first, "[]")
 }
 
 func GetClientIpFromRequest(req *http.Request) string {
