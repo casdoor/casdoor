@@ -370,6 +370,12 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 				res[fieldName] = finalField.Interface()
 			}
 
+		} else if field == "permissionNames" {
+			permissionNames := []string{}
+			for _, val := range claims.User.Permissions {
+				permissionNames = append(permissionNames, val.Name)
+			}
+			res[util.SnakeToCamel(util.CamelToSnakeCase(field))] = permissionNames
 		} else { // Use selected user field as claims.
 			userField := userValue.FieldByName(field)
 			if userField.IsValid() {
