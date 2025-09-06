@@ -47,9 +47,7 @@ class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.captchaRef = React.createRef();
-
     const urlParams = new URLSearchParams(this.props.location?.search);
-
     this.state = {
       classes: props,
       type: props.type,
