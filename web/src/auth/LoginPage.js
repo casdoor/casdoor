@@ -47,6 +47,7 @@ class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.captchaRef = React.createRef();
+    const urlParams = new URLSearchParams(this.props.location?.search);
     this.state = {
       classes: props,
       type: props.type,
@@ -70,6 +71,7 @@ class LoginPage extends React.Component {
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
+      prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -1011,7 +1013,7 @@ class LoginPage extends React.Component {
             organization: application.organization,
             application: application.name,
             autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
-            username: Conf.ShowGithubCorner ? "admin" : "",
+            username: this.state.prefilledUsername || (Conf.ShowGithubCorner ? "admin" : ""),
             password: Conf.ShowGithubCorner ? "123" : "",
           }}
           onFinish={(values) => {
