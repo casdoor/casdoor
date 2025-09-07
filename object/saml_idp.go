@@ -26,6 +26,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 	"time"
 
@@ -547,7 +548,14 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	return samlResponse, nil
 }
 
-func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string) string {
+func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string, username string, loginHint string) string {
 	originF, _ := getOriginFromHost(host)
-	return fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
+	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
+	if username != "" {
+		baseURL += fmt.Sprintf("&username=%s", url.QueryEscape(username))
+	}
+	if loginHint != "" {
+		baseURL += fmt.Sprintf("&login_hint=%s", url.QueryEscape(loginHint))
+	}
+	return baseURL
 }
