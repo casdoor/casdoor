@@ -547,7 +547,15 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	return samlResponse, nil
 }
 
-func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string) string {
+func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string, username string, loginHint string) string {
 	originF, _ := getOriginFromHost(host)
-	return fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
+	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s", originF, owner, application)
+	params := fmt.Sprintf("relayState=%s&samlRequest=%s", relayState, samlRequest)
+	if username != "" {
+		params += fmt.Sprintf("&username=%s", username)
+	}
+	if loginHint != "" {
+		params += fmt.Sprintf("&login_hint=%s", loginHint)
+	}
+	return fmt.Sprintf("%s?%s", baseURL, params)
 }
