@@ -26,9 +26,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 	"time"
-	"net/url"
 
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v5"
