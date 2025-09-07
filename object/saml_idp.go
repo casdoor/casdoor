@@ -28,6 +28,7 @@ import (
 	"io"
 	"strings"
 	"time"
+	"net/url"
 
 	"github.com/beevik/etree"
 	"github.com/golang-jwt/jwt/v5"
@@ -549,13 +550,12 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 
 func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string, username string, loginHint string) string {
 	originF, _ := getOriginFromHost(host)
-	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s", originF, owner, application)
-	params := fmt.Sprintf("relayState=%s&samlRequest=%s", relayState, samlRequest)
+	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
 	if username != "" {
-		params += fmt.Sprintf("&username=%s", username)
+		baseURL += fmt.Sprintf("&username=%s", url.QueryEscape(username))
 	}
 	if loginHint != "" {
-		params += fmt.Sprintf("&login_hint=%s", loginHint)
+		baseURL += fmt.Sprintf("&login_hint=%s", url.QueryEscape(loginHint))
 	}
-	return fmt.Sprintf("%s?%s", baseURL, params)
+	return baseURL
 }
