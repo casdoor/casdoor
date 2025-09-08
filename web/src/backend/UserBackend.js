@@ -14,6 +14,7 @@
 
 import * as Setting from "../Setting";
 import i18next from "i18next";
+import {isValidEmail} from "../Setting";
 
 export function getGlobalUsers(page, pageSize, field = "", value = "", sortField = "", sortOrder = "") {
   return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
@@ -125,6 +126,10 @@ export function setPassword(userOwner, userName, oldPassword, newPassword, code 
 }
 
 export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode = "", dest, type, applicationId, checkUser = "") {
+  if (isValidEmail(dest) && type !== "email") {
+    type = "email";
+  }
+
   const formData = new FormData();
   formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);
