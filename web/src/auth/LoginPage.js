@@ -827,6 +827,8 @@ class LoginPage extends React.Component {
           {this.renderPasswordOrCodeInput(signinItem)}
         </div>
       );
+    } else if (signinItem.name === "Verification code") {
+      return null;
     } else if (signinItem.name === "Forgot password?") {
       return (
         <div key={resultItemKey}>
@@ -1287,6 +1289,9 @@ class LoginPage extends React.Component {
 
   renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
+
+    const verificationCodeItem = application.signinItems?.find(item => item.name === "Verification code");
+
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
@@ -1314,6 +1319,7 @@ class LoginPage extends React.Component {
           <div className="login-password">
             <Form.Item
               name="code"
+              label={verificationCodeItem.label ? verificationCodeItem.label : null}
               rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
             >
               <SendCodeInput
