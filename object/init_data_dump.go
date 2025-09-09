@@ -146,6 +146,16 @@ func writeInitDataToFile(filePath string) error {
 		return err
 	}
 
+	enforcerPolicies := make(map[string][][]string)
+	for _, enforcer := range enforcers {
+		err = enforcer.InitEnforcer()
+		if err != nil {
+			continue
+		}
+
+		enforcerPolicies[enforcer.GetId()] = enforcer.GetPolicy()
+	}
+
 	data := &InitData{
 		Organizations: organizations,
 		Applications:  applications,
@@ -172,6 +182,8 @@ func writeInitDataToFile(filePath string) error {
 		Sessions:      sessions,
 		Subscriptions: subscriptions,
 		Transactions:  transactions,
+
+		EnforcerPolicies: enforcerPolicies,
 	}
 
 	text := util.StructToJsonFormatted(data)
