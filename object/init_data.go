@@ -46,6 +46,8 @@ type InitData struct {
 	Sessions      []*Session            `json:"sessions"`
 	Subscriptions []*Subscription       `json:"subscriptions"`
 	Transactions  []*Transaction        `json:"transactions"`
+
+	EnforcerPolicies map[string][][]string `json:"enforcerPolicies"`
 }
 
 var initDataNewOnly bool
@@ -116,7 +118,8 @@ func InitFromFile() {
 			initDefinedAdapter(adapter)
 		}
 		for _, enforcer := range initData.Enforcers {
-			initDefinedEnforcer(enforcer)
+			policies := initData.EnforcerPolicies[enforcer.GetId()]
+			initDefinedEnforcer(enforcer, policies)
 		}
 		for _, plan := range initData.Plans {
 			initDefinedPlan(plan)
@@ -175,6 +178,8 @@ func readInitDataFromFile(filePath string) (*InitData, error) {
 		Sessions:      []*Session{},
 		Subscriptions: []*Subscription{},
 		Transactions:  []*Transaction{},
+
+		EnforcerPolicies: map[string][][]string{},
 	}
 	err := util.JsonToStruct(s, data)
 	if err != nil {
@@ -694,7 +699,7 @@ func initDefinedAdapter(adapter *Adapter) {
 	}
 }
 
-func initDefinedEnforcer(enforcer *Enforcer) {
+func initDefinedEnforcer(enforcer *Enforcer, policies [][]string) {
 	existed, err := getEnforcer(enforcer.Owner, enforcer.Name)
 	if err != nil {
 		panic(err)
@@ -713,6 +718,20 @@ func initDefinedEnforcer(enforcer *Enforcer) {
 	}
 	enforcer.CreatedTime = util.GetCurrentTime()
 	_, err = AddEnforcer(enforcer)
+	if err != nil {
+		panic(err)
+	}
+
+	err = enforcer.InitEnforcer()
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = enforcer.AddPolicies(policies)
+	if err != nil {
+		panic(err)
+	}
+	err = enforcer.SavePolicy()
 	if err != nil {
 		panic(err)
 	}
