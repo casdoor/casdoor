@@ -217,7 +217,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			if err != nil {
 				return nil, nil, err
 			}
-			
+
 			// Trigger webhook for add-subscription
 			record := &casvisorsdk.Record{
 				Name:        util.GenerateId(),

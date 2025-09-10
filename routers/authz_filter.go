@@ -43,7 +43,7 @@ func getUsername(ctx *context.Context) (username string) {
 	if username == "" {
 		username, _ = getUsernameByKeys(ctx)
 	}
-	return
+	return username
 }
 
 func getSubject(ctx *context.Context) (string, string) {
