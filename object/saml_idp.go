@@ -26,6 +26,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 	"time"
 
@@ -70,7 +71,13 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	if application.UseEmailAsSamlNameId {
 		nameIDValue = user.Email
 	}
-	subject.CreateElement("saml:NameID").SetText(nameIDValue)
+	nameId := subject.CreateElement("saml:NameID")
+	if application.UseEmailAsSamlNameId {
+		nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress")
+	} else {
+		nameId.CreateAttr("Format", "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified")
+	}
+	nameId.SetText(nameIDValue)
 	subjectConfirmation := subject.CreateElement("saml:SubjectConfirmation")
 	subjectConfirmation.CreateAttr("Method", "urn:oasis:names:tc:SAML:2.0:cm:bearer")
 	subjectConfirmationData := subjectConfirmation.CreateElement("saml:SubjectConfirmationData")
@@ -108,26 +115,72 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	displayName.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
 	displayName.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(user.DisplayName)
 
+	err := ExtendUserWithRolesAndPermissions(user)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, item := range application.SamlAttributes {
 		role := attributes.CreateElement("saml:Attribute")
 		role.CreateAttr("Name", item.Name)
 		role.CreateAttr("NameFormat", item.NameFormat)
-		role.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(item.Value)
+
+		valueList := []string{item.Value}
+		if strings.Contains(item.Value, "$user.roles") {
+			valueList = replaceSamlAttributeValuesWithList("$user.roles", getUserRoleNames(user), valueList)
+		}
+
+		if strings.Contains(item.Value, "$user.permissions") {
+			valueList = replaceSamlAttributeValuesWithList("$user.permissions", getUserPermissionNames(user), valueList)
+		}
+
+		if strings.Contains(item.Value, "$user.groups") {
+			valueList = replaceSamlAttributeValuesWithList("$user.groups", user.Groups, valueList)
+		}
+
+		valueList = replaceSamlAttributeValues("$user.owner", user.Owner, valueList)
+		valueList = replaceSamlAttributeValues("$user.name", user.Name, valueList)
+		valueList = replaceSamlAttributeValues("$user.email", user.Email, valueList)
+		valueList = replaceSamlAttributeValues("$user.id", user.Id, valueList)
+		valueList = replaceSamlAttributeValues("$user.phone", user.Phone, valueList)
+
+		for _, value := range valueList {
+			av := role.CreateElement("saml:AttributeValue")
+			av.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
+			av.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+			av.CreateAttr("xsi:type", "xs:string").Element().SetText(value)
+		}
 	}
 
 	roles := attributes.CreateElement("saml:Attribute")
 	roles.CreateAttr("Name", "Roles")
 	roles.CreateAttr("NameFormat", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic")
-	err := ExtendUserWithRolesAndPermissions(user)
-	if err != nil {
-		return nil, err
-	}
 
 	for _, role := range user.Roles {
 		roles.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText(role.Name)
 	}
 
 	return samlResponse, nil
+}
+
+func replaceSamlAttributeValues(val string, replaceVal string, values []string) []string {
+	newValues := []string{}
+	for _, value := range values {
+		newValues = append(newValues, strings.ReplaceAll(value, val, replaceVal))
+	}
+
+	return newValues
+}
+
+func replaceSamlAttributeValuesWithList(val string, replaceVals []string, values []string) []string {
+	newValues := []string{}
+	for _, value := range values {
+		for _, rVal := range replaceVals {
+			newValues = append(newValues, strings.ReplaceAll(value, val, rVal))
+		}
+	}
+
+	return newValues
 }
 
 type X509Key struct {
@@ -495,7 +548,14 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	return samlResponse, nil
 }
 
-func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string) string {
+func GetSamlRedirectAddress(owner string, application string, relayState string, samlRequest string, host string, username string, loginHint string) string {
 	originF, _ := getOriginFromHost(host)
-	return fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
+	baseURL := fmt.Sprintf("%s/login/saml/authorize/%s/%s?relayState=%s&samlRequest=%s", originF, owner, application, relayState, samlRequest)
+	if username != "" {
+		baseURL += fmt.Sprintf("&username=%s", url.QueryEscape(username))
+	}
+	if loginHint != "" {
+		baseURL += fmt.Sprintf("&login_hint=%s", url.QueryEscape(loginHint))
+	}
+	return baseURL
 }

@@ -59,8 +59,10 @@ func (c *ApiController) HandleSamlRedirect() {
 
 	relayState := c.Input().Get("RelayState")
 	samlRequest := c.Input().Get("SAMLRequest")
+	username := c.Input().Get("username")
+	loginHint := c.Input().Get("login_hint")
 
-	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlRequest, host)
+	targetURL := object.GetSamlRedirectAddress(owner, application, relayState, samlRequest, host, username, loginHint)
 
 	c.Redirect(targetURL, http.StatusSeeOther)
 }

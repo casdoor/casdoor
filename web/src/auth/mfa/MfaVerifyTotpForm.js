@@ -8,13 +8,6 @@ import * as Setting from "../../Setting";
 export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
   const [form] = Form.useForm();
 
-  const handleFinish = (values) => {
-    onFinish({
-      passcode: values.passcode,
-      enableMfaRemember: values.enableMfaRemember,
-    });
-  };
-
   const renderSecret = () => {
     if (!mfaProps.secret) {
       return null;
@@ -47,7 +40,7 @@ export const MfaVerifyTotpForm = ({mfaProps, onFinish}) => {
     <Form
       form={form}
       style={{width: "300px"}}
-      onFinish={handleFinish}
+      onFinish={onFinish}
       initialValues={{
         enableMfaRemember: false,
       }}

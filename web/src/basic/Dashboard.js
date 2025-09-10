@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {ArrowUpOutlined} from "@ant-design/icons";
-import {Card, Col, Row, Statistic, Tour} from "antd";
+import {Card, Col, Row, Spin, Statistic, Tour} from "antd";
 import * as echarts from "echarts";
 import i18next from "i18next";
 import React from "react";
@@ -74,6 +74,8 @@ const Dashboard = (props) => {
       return;
     }
 
+    setDashboardData(null);
+
     const organization = getOrganizationName();
     DashboardBackend.getDashboard(organization).then((res) => {
       if (res.status === "ok") {
@@ -110,11 +112,22 @@ const Dashboard = (props) => {
   };
 
   const renderEChart = () => {
+    const chartDom = document.getElementById("echarts-chart");
+
     if (dashboardData === null) {
-      return;
+      if (chartDom) {
+        const instance = echarts.getInstanceByDom(chartDom);
+        if (instance) {
+          instance.dispose();
+        }
+      }
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Spin size="large" tip={i18next.t("login:Loading")} style={{paddingTop: "10%"}} />
+        </div>
+      );
     }
 
-    const chartDom = document.getElementById("echarts-chart");
     const myChart = echarts.init(chartDom);
     const currentDate = new Date();
     const dateArray = [];

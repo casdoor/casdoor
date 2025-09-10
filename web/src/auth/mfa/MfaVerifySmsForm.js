@@ -12,13 +12,6 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
   const [dest, setDest] = React.useState("");
   const [form] = Form.useForm();
 
-  const handleFinish = (values) => {
-    onFinish({
-      passcode: values.passcode,
-      enableMfaRemember: values.enableMfaRemember,
-    });
-  };
-
   useEffect(() => {
     if (method === mfaAuth) {
       setDest(mfaProps.secret);
@@ -58,7 +51,7 @@ export const MfaVerifySmsForm = ({mfaProps, application, onFinish, method, user}
     <Form
       form={form}
       style={{width: "300px"}}
-      onFinish={handleFinish}
+      onFinish={onFinish}
       initialValues={{
         countryCode: mfaProps.countryCode,
         enableMfaRemember: false,

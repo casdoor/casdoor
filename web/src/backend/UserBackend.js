@@ -125,6 +125,10 @@ export function setPassword(userOwner, userName, oldPassword, newPassword, code 
 }
 
 export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode = "", dest, type, applicationId, checkUser = "") {
+  if (Setting.isValidEmail(dest) && type !== "email") {
+    type = "email";
+  }
+
   const formData = new FormData();
   formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);

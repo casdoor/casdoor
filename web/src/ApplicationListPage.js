@@ -113,6 +113,34 @@ class ApplicationListPage extends BaseListPage {
       });
   }
 
+  copyApplication(i) {
+    const original = this.state.data[i];
+    const randomSuffix = Setting.getRandomName();
+    const newName = `${original.name}_${randomSuffix}`;
+
+    const copiedApplication = {
+      ...original,
+      name: newName,
+      createdTime: moment().format(),
+      displayName: "Copy Application - " + newName,
+      clientId: "",
+      clientSecret: "",
+    };
+
+    ApplicationBackend.addApplication(copiedApplication)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.props.history.push({pathname: `/applications/${copiedApplication.organization}/${newName}`, mode: "add"});
+          Setting.showMessage("success", i18next.t("general:Successfully copied"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to copy")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   renderTable(applications) {
     const columns = [
       {
@@ -237,12 +265,13 @@ class ApplicationListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "170px",
+        width: "230px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/applications/${record.organization}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.copyApplication(index)}>{i18next.t("general:Copy")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteApplication(index)}

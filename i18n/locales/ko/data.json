@@ -12,7 +12,7 @@
     "Failed to login in: %s": "로그인에 실패했습니다.: %s",
     "Invalid token": "유효하지 않은 토큰",
     "State expected: %s, but got: %s": "예상한 상태: %s, 실제 상태: %s",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %%s, please use another way to sign up": "제공자 계정: %s와 사용자 이름: %s (%s)은(는) 존재하지 않으며 %%s를 통해 새 계정으로 가입하는 것이 허용되지 않습니다. 다른 방법으로 가입하십시오",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "제공자 계정: %s와 사용자 이름: %s (%s)은(는) 존재하지 않으며 %s를 통해 새 계정으로 가입하는 것이 허용되지 않습니다. 다른 방법으로 가입하십시오",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "공급자 계정 %s과 사용자 이름 %s (%s)는 존재하지 않으며 새 계정으로 등록할 수 없습니다. IT 지원팀에 문의하십시오",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "공급자 계정 %s과 사용자 이름 %s(%s)는 이미 다른 계정 %s(%s)에 연결되어 있습니다",
     "The application: %s does not exist": "해당 애플리케이션(%s)이 존재하지 않습니다",
@@ -106,6 +106,9 @@
     "this operation is not allowed in demo mode": "이 작업은 데모 모드에서 허용되지 않습니다",
     "this operation requires administrator to perform": "이 작업은 관리자 권한이 필요합니다"
   },
+  "invitation": {
+    "Invitation %s does not exist": "Invitation %s does not exist"
+  },
   "ldap": {
     "Ldap server exist": "LDAP 서버가 존재합니다"
   },
@@ -164,6 +167,7 @@
     "MFA email is enabled but email is empty": "MFA 이메일이 활성화되었지만 이메일이 비어 있습니다",
     "MFA phone is enabled but phone number is empty": "MFA 전화번호가 활성화되었지만 전화번호가 비어 있습니다",
     "New password cannot contain blank space.": "새 비밀번호에는 공백이 포함될 수 없습니다.",
+    "The new password must be different from your current password": "The new password must be different from your current password",
     "the user's owner and name should not be empty": "사용자의 소유자와 이름은 비워둘 수 없습니다"
   },
   "util": {

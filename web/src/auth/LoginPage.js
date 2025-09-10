@@ -46,6 +46,8 @@ const FaceRecognitionModal = lazy(() => import("../common/modal/FaceRecognitionM
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
+    this.captchaRef = React.createRef();
+    const urlParams = new URLSearchParams(this.props.location?.search);
     this.state = {
       classes: props,
       type: props.type,
@@ -69,6 +71,7 @@ class LoginPage extends React.Component {
       loginLoading: false,
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
+      prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -466,6 +469,7 @@ class LoginPage extends React.Component {
   login(values) {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
+    const usedCaptcha = this.state.captchaValues !== undefined;
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
@@ -492,6 +496,9 @@ class LoginPage extends React.Component {
           Setting.checkLoginMfa(res, values, casParams, loginHandler, this);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+          if (usedCaptcha) {
+            this.captchaRef.current?.loadCaptcha?.();
+          }
         }
       }).finally(() => {
         this.setState({loginLoading: false});
@@ -565,6 +572,9 @@ class LoginPage extends React.Component {
             Setting.checkLoginMfa(res, values, oAuthParams, loginHandler, this);
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+            if (usedCaptcha) {
+              this.captchaRef.current?.loadCaptcha?.();
+            }
           }
         }).finally(() => {
           this.setState({loginLoading: false});
@@ -1003,7 +1013,7 @@ class LoginPage extends React.Component {
             organization: application.organization,
             application: application.name,
             autoSignin: !application?.signinItems.map(signinItem => signinItem.name === "Forgot password?" && signinItem.rule === "Auto sign in - False")?.includes(true),
-            username: Conf.ShowGithubCorner ? "admin" : "",
+            username: this.state.prefilledUsername || (Conf.ShowGithubCorner ? "admin" : ""),
             password: Conf.ShowGithubCorner ? "123" : "",
           }}
           onFinish={(values) => {
@@ -1124,6 +1134,7 @@ class LoginPage extends React.Component {
       }}
       onCancel={() => this.setState({openCaptchaModal: false, loginLoading: false})}
       isCurrentProvider={true}
+      innerRef={this.captchaRef}
     />;
   }
 

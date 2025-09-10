@@ -410,15 +410,23 @@ m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act`
 		policyDefinition := strings.Split(cfg.String("policy_definition::p"), ",")
 
 		fieldsNum := len(policyDefinition)
-		if fieldsNum > builtInAvailableField {
-			return nil, fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInAvailableField, fieldsNum)
+		if fieldsNum > builtInMaxFields {
+			return nil, fmt.Errorf("the maximum policy_definition field number cannot exceed %d, got %d", builtInMaxFields, fieldsNum)
 		}
 
 		// filled empty field with "" and V5 with "permissionId"
-		for i := builtInAvailableField - fieldsNum; i > 0; i-- {
-			policyDefinition = append(policyDefinition, "")
+		if fieldsNum == builtInMaxFields {
+			sixthField := strings.TrimSpace(policyDefinition[builtInMaxFields-1])
+			if sixthField != "permissionId" {
+				return nil, fmt.Errorf("when adding policies with permissions, the sixth field of policy_definition must be permissionId, got %s", policyDefinition[builtInMaxFields-1])
+			}
+		} else {
+			needFill := builtInMaxFields - fieldsNum
+			for i := 0; i < needFill-1; i++ {
+				policyDefinition = append(policyDefinition, "")
+			}
+			policyDefinition = append(policyDefinition, "permissionId")
 		}
-		policyDefinition = append(policyDefinition, "permissionId")
 
 		m, err := model.NewModelFromString(modelText)
 		if err != nil {

@@ -44,11 +44,15 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 	return &SmtpEmailProvider{Dialer: dialer}
 }
 
-func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddress string, subject string, content string) error {
+func (s *SmtpEmailProvider) Send(fromAddress string, fromName string, toAddresses []string, subject string, content string) error {
 	message := gomail.NewMessage()
 
 	message.SetAddressHeader("From", fromAddress, fromName)
-	message.SetHeader("To", toAddress)
+	var addresses []string
+	for _, address := range toAddresses {
+		addresses = append(addresses, message.FormatAddress(address, ""))
+	}
+	message.SetHeader("To", addresses...)
 	message.SetHeader("Subject", subject)
 	message.SetBody("text/html", content)
 

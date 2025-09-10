@@ -16,6 +16,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -187,4 +189,74 @@ func (c *ApiController) VerifyInvitation() {
 	}
 
 	c.ResponseOk(payment, attachInfo)
+}
+
+// SendInvitation
+// @Title VerifyInvitation
+// @Tag Invitation API
+// @Description verify invitation
+// @Param   id     query    string	true        "The id ( owner/name ) of the invitation"
+// @Param   body    body	[]string  true        "The details of the invitation"
+// @Success 200 {object} controllers.Response The Response object
+// @router /send-invitation [post]
+func (c *ApiController) SendInvitation() {
+	id := c.Input().Get("id")
+
+	var destinations []string
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &destinations)
+
+	if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	invitation, err := object.GetInvitation(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if invitation == nil {
+		c.ResponseError(fmt.Sprintf(c.T("invitation:Invitation %s does not exist"), id))
+		return
+	}
+
+	organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", invitation.Owner))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
+		return
+	}
+
+	provider, err := application.GetEmailProvider("Invitation")
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("verification:please add an Email provider to the \"Providers\" list for the application: %s"), invitation.Owner))
+		return
+	}
+
+	content := provider.Metadata
+
+	content = strings.ReplaceAll(content, "%code", invitation.Code)
+	content = strings.ReplaceAll(content, "%link", invitation.GetInvitationLink(c.Ctx.Request.Host, application.Name))
+
+	err = object.SendEmail(provider, provider.Title, content, destinations, organization.DisplayName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk()
 }
