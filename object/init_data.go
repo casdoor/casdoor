@@ -87,9 +87,6 @@ func InitFromFile() {
 		for _, model := range initData.Models {
 			initDefinedModel(model)
 		}
-		for _, permission := range initData.Permissions {
-			initDefinedPermission(permission)
-		}
 		for _, payment := range initData.Payments {
 			initDefinedPayment(payment)
 		}
@@ -120,6 +117,9 @@ func InitFromFile() {
 		for _, enforcer := range initData.Enforcers {
 			policies := initData.EnforcerPolicies[enforcer.GetId()]
 			initDefinedEnforcer(enforcer, policies)
+		}
+		for _, permission := range initData.Permissions {
+			initDefinedPermission(permission)
 		}
 		for _, plan := range initData.Plans {
 			initDefinedPlan(plan)
@@ -727,10 +727,17 @@ func initDefinedEnforcer(enforcer *Enforcer, policies [][]string) {
 		panic(err)
 	}
 
-	_, err = enforcer.AddPolicies(policies)
-	if err != nil {
-		panic(err)
+	for _, policy := range policies {
+		if enforcer.HasPolicy(policy) {
+			continue
+		}
+
+		_, err = enforcer.AddPolicy(policy)
+		if err != nil {
+			panic(err)
+		}
 	}
+
 	err = enforcer.SavePolicy()
 	if err != nil {
 		panic(err)
