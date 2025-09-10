@@ -28,7 +28,7 @@ export const SigninTableDefaultCssMap = {
   "Signin methods": ".signin-methods {}",
   "Username": ".login-username {}\n.login-username-input{}",
   "Password": ".login-password {}\n.login-password-input{}",
-  "Verification code": ".login-verification-code {}",
+  "Verification code": ".login-verification-code {}\n.login-verification-code-input{}",
   "Agreement": ".login-agreement {}",
   "Forgot password?": ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
   "Login button": ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",

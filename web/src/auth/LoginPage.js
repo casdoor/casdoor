@@ -690,58 +690,84 @@ class LoginPage extends React.Component {
       }
 
       if (this.state.loginMethod === "verificationCodePhone") {
-        return <Form.Item className="signin-phone" required={true}>
-          <Input.Group compact>
-            <Form.Item
-              name="countryCode"
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: i18next.t("signup:Please select your country code!"),
-                },
-              ]}
-            >
-              <CountryCodeSelect
-                style={{width: "35%"}}
-                countryCodes={this.getApplicationObj().organizationObj.countryCodes}
-              />
-            </Form.Item>
-            <Form.Item
-              name="username"
-              dependencies={["countryCode"]}
-              noStyle
-              rules={[
-                {
-                  required: true,
-                  message: i18next.t("signup:Please input your phone number!"),
-                },
-                ({getFieldValue}) => ({
-                  validator: (_, value) => {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
+        const verificationCodeItem = application.signinItems?.find(item => item.name === "Verification code");
+        return (
+          <div key={resultItemKey}>
+            <Form.Item className="signin-phone" required={true}>
+              <Input.Group compact>
+                <Form.Item
+                  name="countryCode"
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: i18next.t("signup:Please select your country code!"),
+                    },
+                  ]}
+                >
+                  <CountryCodeSelect
+                    style={{width: "35%"}}
+                    countryCodes={this.getApplicationObj().organizationObj.countryCodes}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="username"
+                  dependencies={["countryCode"]}
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: i18next.t("signup:Please input your phone number!"),
+                    },
+                    ({getFieldValue}) => ({
+                      validator: (_, value) => {
+                        if (!value) {
+                          return Promise.resolve();
+                        }
 
-                    if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
-                      this.setState({validEmailOrPhone: false});
-                      return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
-                    }
+                        if (value && !Setting.isValidPhone(value, getFieldValue("countryCode"))) {
+                          this.setState({validEmailOrPhone: false});
+                          return Promise.reject(i18next.t("signup:The input is not valid Phone!"));
+                        }
 
-                    this.setState({validEmailOrPhone: true});
-                    return Promise.resolve();
-                  },
-                }),
-              ]}
-            >
-              <Input
-                className="signup-phone-input"
-                placeholder={signinItem.placeholder}
-                style={{width: "65%", textAlign: "left"}}
-                onChange={e => this.setState({username: e.target.value})}
-              />
+                        this.setState({validEmailOrPhone: true});
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]}
+                >
+                  <Input
+                    className="signup-phone-input"
+                    placeholder={signinItem.placeholder}
+                    style={{width: "65%", textAlign: "left"}}
+                    onChange={e => this.setState({username: e.target.value})}
+                  />
+                </Form.Item>
+              </Input.Group>
             </Form.Item>
-          </Input.Group>
-        </Form.Item>;
+            {
+              this.state.loginMethod?.includes("verificationCode") ? (
+                <>
+                  <div dangerouslySetInnerHTML={{__html: ("<style>" + verificationCodeItem?.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+                  <div className="login-verification-code">
+                    <Form.Item
+                      name="code"
+                      label={verificationCodeItem?.label ? verificationCodeItem.label : null}
+                      rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+                    >
+                      <SendCodeInput
+                        disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+                        method={"login"}
+                        onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+                        application={application}
+                      />
+                    </Form.Item>
+                  </div>
+                </>
+              ) : null
+            }
+          </div>
+        );
       }
 
       return (
@@ -818,15 +844,42 @@ class LoginPage extends React.Component {
               }}
             />
           </Form.Item>
+          {
+            this.state.loginMethod?.includes("verificationCode") ? (() => {
+              const verificationCodeItem = application.signinItems?.find(item => item.name === "Verification code");
+              return (
+                <>
+                  <div dangerouslySetInnerHTML={{__html: ("<style>" + verificationCodeItem?.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+                  <div className="login-verification-code">
+                    <Form.Item
+                      name="code"
+                      label={verificationCodeItem?.label ? verificationCodeItem.label : null}
+                      rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+                    >
+                      <SendCodeInput
+                        disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+                        method={"login"}
+                        onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+                        application={application}
+                      />
+                    </Form.Item>
+                  </div>
+                </>
+              );
+            })() : null
+          }
         </div>
       );
     } else if (signinItem.name === "Password") {
-      return (
-        <div key={resultItemKey}>
-          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
-          {this.renderPasswordOrCodeInput(signinItem)}
-        </div>
-      );
+      if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
+        return (
+          <div key={resultItemKey}>
+            <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+            {this.renderPasswordOrCodeInput(signinItem)}
+          </div>
+        );
+      }
+      return null;
     } else if (signinItem.name === "Verification code") {
       return null;
     } else if (signinItem.name === "Forgot password?") {
@@ -1290,8 +1343,6 @@ class LoginPage extends React.Component {
   renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
 
-    const verificationCodeItem = application.signinItems?.find(item => item.name === "Verification code");
-
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
       return (
         <Col span={24}>
@@ -1308,25 +1359,6 @@ class LoginPage extends React.Component {
                 type="password"
                 placeholder={signinItem.placeholder ? signinItem.placeholder : i18next.t("general:Password")}
                 disabled={this.state.loginMethod === "password" ? !Setting.isPasswordEnabled(application) : !Setting.isLdapEnabled(application)}
-              />
-            </Form.Item>
-          </div>
-        </Col>
-      );
-    } else if (this.state.loginMethod?.includes("verificationCode")) {
-      return (
-        <Col span={24}>
-          <div className="login-password">
-            <Form.Item
-              name="code"
-              label={verificationCodeItem.label ? verificationCodeItem.label : null}
-              rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
-            >
-              <SendCodeInput
-                disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
-                method={"login"}
-                onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
-                application={application}
               />
             </Form.Item>
           </div>
