@@ -22,6 +22,7 @@ import (
 	"github.com/casdoor/casdoor/pp"
 
 	"github.com/casdoor/casdoor/util"
+	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 	"github.com/xorm-io/core"
 )
 
@@ -216,6 +217,19 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			if err != nil {
 				return nil, nil, err
 			}
+			
+			// Trigger webhook for add-subscription
+			record := &casvisorsdk.Record{
+				Name:        util.GenerateId(),
+				CreatedTime: util.GetCurrentTime(),
+				Action:      "add-subscription",
+				Object:      util.StructToJson(sub),
+				Owner:       sub.Owner,
+				User:        sub.User,
+			}
+			util.SafeGoroutine(func() {
+				AddRecord(record)
+			})
 
 			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
 		}
