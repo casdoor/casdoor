@@ -171,6 +171,9 @@ class WebhookEditPage extends React.Component {
       if (obj === "payment") {
         res.push("invoice-payment", "notify-payment");
       }
+      if (obj === "product") {
+        res.push("buy-product");
+      }
     });
     return res;
   }
