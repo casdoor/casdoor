@@ -551,7 +551,6 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.Providers = providerItems
 
 	application.GrantTypes = nil
-	application.Tags = nil
 	application.RedirectUris = nil
 	application.TokenFormat = "***"
 	application.TokenFields = nil
