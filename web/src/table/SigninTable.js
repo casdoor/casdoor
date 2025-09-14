@@ -176,13 +176,13 @@ class SigninTable extends React.Component {
             return (
               <Popover placement="right" content={
                 <div style={{width: "900px", height: "300px"}} >
-                  <Editor value={record.customCss} lang="html" fillHeight dark onChange={newValue => {
-                    this.updateField(table, index, "customCss", newValue);
+                  <Editor value={record.label} lang="html" fillHeight dark onChange={newValue => {
+                    this.updateField(table, index, "label", newValue);
                   }} />
                 </div>
               } title={i18next.t("signup:Label HTML")} trigger="click">
-                <Input value={record.customCss} style={{marginBottom: "10px"}} onChange={e => {
-                  this.updateField(table, index, "customCss", e.target.value);
+                <Input value={record.label} style={{marginBottom: "10px"}} onChange={e => {
+                  this.updateField(table, index, "label", e.target.value);
                 }} />
               </Popover>
             );
