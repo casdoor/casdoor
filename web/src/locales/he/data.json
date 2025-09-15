@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "מזהה צוות - תיאור",
     "Template code": "קוד תבנית",
     "Template code - Tooltip": "קוד תבנית",
+    "Tenant ID": "מזהה תפריט",
+    "Tenant ID - Tooltip": "מזהה תפריט",
     "Test Email": "אימייל ניסיון",
     "Test Email - Tooltip": "כתובת אימייל לקבלת דואר ניסיון",
     "Test SMTP Connection": "בדוק חיבור SMTP",

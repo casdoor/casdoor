@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team ID",
     "Template code": "模板代码",
     "Template code - Tooltip": "模板代码",
+    "Tenant ID": "Tenant ID",
+    "Tenant ID - Tooltip": "Tenant ID",
     "Test Email": "测试Email配置",
     "Test Email - Tooltip": "接收测试邮件的Email邮箱",
     "Test SMTP Connection": "测试SMTP连接",

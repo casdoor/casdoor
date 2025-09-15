@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team-ID - Tooltip",
     "Template code": "Mallkod",
     "Template code - Tooltip": "Mallkod",
+    "Tenant ID": "Tenant-ID",
+    "Tenant ID - Tooltip": "Tenant-ID",
     "Test Email": "Test-e-post",
     "Test Email - Tooltip": "E-postadress för att ta emot testmail",
     "Test SMTP Connection": "Testa SMTP-anslutning",

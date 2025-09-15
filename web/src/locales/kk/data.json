@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Команда ID-сі - Құралдың түсіндірмесі",
     "Template code": "Үлгі коды",
     "Template code - Tooltip": "Үлгі коды",
+    "Tenant ID": "Tenant ID",
+    "Tenant ID - Tooltip": "Tenant ID",
     "Test Email": "Тест электрондық поштасы",
     "Test Email - Tooltip": "Тест электрондық поштасын алу мекенжайы",
     "Test SMTP Connection": "SMTP байланысын тестілеу",
