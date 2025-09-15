@@ -65,7 +65,7 @@ func (syncer *Syncer) syncUsers() error {
 		}
 	}
 
-	key := syncer.getKey()
+	key := syncer.getLocalPrimaryKey()
 
 	myUsers := map[string]*User{}
 	for _, m := range users {

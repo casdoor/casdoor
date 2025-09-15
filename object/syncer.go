@@ -273,9 +273,14 @@ func (syncer *Syncer) getKeyColumn() *TableColumn {
 	return column
 }
 
-func (syncer *Syncer) getKey() string {
+func (syncer *Syncer) getLocalPrimaryKey() string {
 	column := syncer.getKeyColumn()
 	return util.CamelToSnakeCase(column.CasdoorName)
+}
+
+func (syncer *Syncer) getTargetTablePrimaryKey() string {
+	column := syncer.getKeyColumn()
+	return column.Name
 }
 
 func RunSyncer(syncer *Syncer) error {
