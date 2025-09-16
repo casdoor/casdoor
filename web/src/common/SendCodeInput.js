@@ -63,6 +63,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
         value={value}
         prefix={<SafetyOutlined />}
         placeholder={i18next.t("code:Enter your code")}
+        className="verification-code-input"
         onChange={e => onChange(e.target.value)}
         enterButton={
           <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>

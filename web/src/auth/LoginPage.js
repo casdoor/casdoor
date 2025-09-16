@@ -827,6 +827,13 @@ class LoginPage extends React.Component {
           {this.renderPasswordOrCodeInput(signinItem)}
         </div>
       );
+    } else if (signinItem.name === "Verification code") {
+      return (
+        <div key={resultItemKey}>
+          <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
+          {this.renderCodeInput(signinItem)}
+        </div>
+      );
     } else if (signinItem.name === "Forgot password?") {
       return (
         <div key={resultItemKey}>
@@ -1285,6 +1292,14 @@ class LoginPage extends React.Component {
       });
   }
 
+  hasVerificationCodeSigninItem(application) {
+    const targetApp = application || this.getApplicationObj();
+    if (!targetApp || !targetApp.signinItems) {
+      return false;
+    }
+    return targetApp.signinItems.some(item => item.name === "Verification code");
+  }
+
   renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -1308,7 +1323,7 @@ class LoginPage extends React.Component {
           </div>
         </Col>
       );
-    } else if (this.state.loginMethod?.includes("verificationCode")) {
+    } else if (this.state.loginMethod?.includes("verificationCode") && !this.hasVerificationCodeSigninItem(application)) {
       return (
         <Col span={24}>
           <div className="login-password">
@@ -1324,6 +1339,31 @@ class LoginPage extends React.Component {
               />
             </Form.Item>
           </div>
+        </Col>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  renderCodeInput(signinItem) {
+    const application = this.getApplicationObj();
+    if (this.hasVerificationCodeSigninItem(application) && this.state.loginMethod?.includes("verificationCode")) {
+      return (
+        <Col span={24}>
+          <Form.Item
+            name="code"
+            label={signinItem.label ? signinItem.label : null}
+            rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
+            className="verification-code"
+          >
+            <SendCodeInput
+              disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
+              method={"login"}
+              onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
+              application={application}
+            />
+          </Form.Item>
         </Col>
       );
     } else {
