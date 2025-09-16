@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "Mã mẫu của template",
     "Template code - Tooltip": "Mã mẫu của template",
+    "Tenant ID": "ID Tenant",
+    "Tenant ID - Tooltip": "ID Tenant",
     "Test Email": "Thư Email kiểm tra",
     "Test Email - Tooltip": "Địa chỉ email để nhận thư kiểm tra",
     "Test SMTP Connection": "Kiểm tra kết nối SMTP",

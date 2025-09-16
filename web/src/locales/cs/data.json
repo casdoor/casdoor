@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Nápověda k ID týmu",
     "Template code": "Kód šablony",
     "Template code - Tooltip": "Nápověda ke kódu šablony",
+    "Tenant ID": "ID Tenant",
+    "Tenant ID - Tooltip": "ID Tenant",
     "Test Email": "Testovací e-mail",
     "Test Email - Tooltip": "E-mailová adresa pro příjem testovacích e-mailů",
     "Test SMTP Connection": "Testovat SMTP připojení",

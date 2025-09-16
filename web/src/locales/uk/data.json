@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "ID команди – підказка",
     "Template code": "Код шаблону",
     "Template code - Tooltip": "Код шаблону",
+    "Tenant ID": "ID Tenant",
+    "Tenant ID - Tooltip": "ID Tenant",
     "Test Email": "Перевірити електронну пошту",
     "Test Email - Tooltip": "Електронна адреса для отримання тестових листів",
     "Test SMTP Connection": "Перевірте з'єднання SMTP",

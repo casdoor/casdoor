@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "Template-Code",
     "Template code - Tooltip": "Template-Code",
+    "Tenant ID": "Tenant-ID",
+    "Tenant ID - Tooltip": "Tenant-ID",
     "Test Email": "Test E-Mail",
     "Test Email - Tooltip": "E-Mail-Adresse zum Empfangen von Test-E-Mails",
     "Test SMTP Connection": "Testen Sie die SMTP-Verbindung",

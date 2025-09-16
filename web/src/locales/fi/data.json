@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Tiimin tunnus – ohje",
     "Template code": "Mallikoodi",
     "Template code - Tooltip": "Mallikoodi",
+    "Tenant ID": "Tenant-tunnus",
+    "Tenant ID - Tooltip": "Tenant-tunnus",
     "Test Email": "Testisähköposti",
     "Test Email - Tooltip": "Sähköpostiosoite testiviestien vastaanottamiseksi",
     "Test SMTP Connection": "Testaa SMTP-yhteyttä",

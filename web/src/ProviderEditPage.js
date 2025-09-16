@@ -367,6 +367,19 @@ class ProviderEditPage extends React.Component {
     }
   }
 
+  getDomainLabel(provider) {
+    switch (provider.category) {
+    case "OAuth":
+      if (provider.type === "AzureAD" || provider.type === "AzureADB2C") {
+        return Setting.getLabel(i18next.t("provider:Tenant ID"), i18next.t("provider:Tenant ID - Tooltip"));
+      } else {
+        return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
+      }
+    default:
+      return Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"));
+    }
+  }
+
   getProviderSubTypeOptions(type) {
     if (type === "WeCom" || type === "Infoflow") {
       return (
@@ -963,7 +976,7 @@ class ProviderEditPage extends React.Component {
           this.state.provider.type !== "ADFS" && this.state.provider.type !== "AzureAD" && this.state.provider.type !== "AzureADB2C" && (this.state.provider.type !== "Casdoor" && this.state.category !== "Storage") && this.state.provider.type !== "Okta" && this.state.provider.type !== "Nextcloud" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={2}>
-                {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
+                {this.getDomainLabel(this.state.provider)} :
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.provider.domain} onChange={e => {

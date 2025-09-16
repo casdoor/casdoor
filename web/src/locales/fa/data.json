@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "شناسه تیم",
     "Template code": "کد قالب",
     "Template code - Tooltip": "کد قالب",
+    "Tenant ID": "شناسه تیم",
+    "Tenant ID - Tooltip": "شناسه تیم",
     "Test Email": "ایمیل تست",
     "Test Email - Tooltip": "آدرس ایمیل برای دریافت ایمیل‌های تست",
     "Test SMTP Connection": "تست اتصال SMTP",

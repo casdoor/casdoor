@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "템플릿 코드",
     "Template code - Tooltip": "템플릿 코드",
+    "Tenant ID": "Tenant ID",
+    "Tenant ID - Tooltip": "Tenant ID",
     "Test Email": "테스트 이메일",
     "Test Email - Tooltip": "테스트 메일을 받을 이메일 주소",
     "Test SMTP Connection": "테스트 SMTP 연결",

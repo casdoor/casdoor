@@ -994,6 +994,8 @@
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "テンプレートコード",
     "Template code - Tooltip": "テンプレートコード",
+    "Tenant ID": "テナントID",
+    "Tenant ID - Tooltip": "テナントID",
     "Test Email": "テストメール",
     "Test Email - Tooltip": "テストメールを受け取るためのメールアドレス",
     "Test SMTP Connection": "SMTP接続をテストする",
