@@ -37,6 +37,7 @@ import ThemeEditor from "./common/theme/ThemeEditor";
 import SigninTable from "./table/SigninTable";
 import Editor from "./common/Editor";
 import * as GroupBackend from "./backend/GroupBackend";
+import TokenAttributeTable from "./table/TokenAttributeTable";
 
 const {Option} = Select;
 
@@ -116,6 +117,7 @@ class ApplicationEditPage extends React.Component {
       providers: [],
       uploading: false,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
+      tokenAttributes: [],
       samlAttributes: [],
       samlMetadata: null,
       isAuthorized: true,
@@ -468,6 +470,21 @@ class ApplicationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
+        {
+          this.state.application.tokenFormat === "JWT-Custom" ? (<Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("general:Token attributes"), i18next.t("general:Token attributes - Tooltip"))} :
+            </Col>
+            <Col span={22} >
+              <TokenAttributeTable
+                title={i18next.t("general:Token attributes")}
+                table={this.state.application.tokenAttributes}
+                application={this.state.application}
+                onUpdateTable={(value) => {this.updateApplicationField("tokenAttributes", value);}}
+              />
+            </Col>
+          </Row>) : null
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:Order"), i18next.t("application:Order - Tooltip"))} :

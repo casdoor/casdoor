@@ -125,25 +125,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 		role.CreateAttr("Name", item.Name)
 		role.CreateAttr("NameFormat", item.NameFormat)
 
-		valueList := []string{item.Value}
-		if strings.Contains(item.Value, "$user.roles") {
-			valueList = replaceSamlAttributeValuesWithList("$user.roles", getUserRoleNames(user), valueList)
-		}
-
-		if strings.Contains(item.Value, "$user.permissions") {
-			valueList = replaceSamlAttributeValuesWithList("$user.permissions", getUserPermissionNames(user), valueList)
-		}
-
-		if strings.Contains(item.Value, "$user.groups") {
-			valueList = replaceSamlAttributeValuesWithList("$user.groups", user.Groups, valueList)
-		}
-
-		valueList = replaceSamlAttributeValues("$user.owner", user.Owner, valueList)
-		valueList = replaceSamlAttributeValues("$user.name", user.Name, valueList)
-		valueList = replaceSamlAttributeValues("$user.email", user.Email, valueList)
-		valueList = replaceSamlAttributeValues("$user.id", user.Id, valueList)
-		valueList = replaceSamlAttributeValues("$user.phone", user.Phone, valueList)
-
+		valueList := replaceAttributeValue(user, item.Value)
 		for _, value := range valueList {
 			av := role.CreateElement("saml:AttributeValue")
 			av.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
@@ -161,26 +143,6 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	}
 
 	return samlResponse, nil
-}
-
-func replaceSamlAttributeValues(val string, replaceVal string, values []string) []string {
-	newValues := []string{}
-	for _, value := range values {
-		newValues = append(newValues, strings.ReplaceAll(value, val, replaceVal))
-	}
-
-	return newValues
-}
-
-func replaceSamlAttributeValuesWithList(val string, replaceVals []string, values []string) []string {
-	newValues := []string{}
-	for _, value := range values {
-		for _, rVal := range replaceVals {
-			newValues = append(newValues, strings.ReplaceAll(value, val, rVal))
-		}
-	}
-
-	return newValues
 }
 
 type X509Key struct {

@@ -60,6 +60,11 @@ type SamlItem struct {
 	Value      string `json:"value"`
 }
 
+type JwtItem struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
 type Application struct {
 	Owner       string `xorm:"varchar(100) notnull pk" json:"owner"`
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
@@ -107,6 +112,7 @@ type Application struct {
 	TokenFormat             string     `xorm:"varchar(100)" json:"tokenFormat"`
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
+	TokenAttributes         []*JwtItem `xorm:"mediumtext" json:"tokenAttributes"`
 	ExpireInHours           int        `json:"expireInHours"`
 	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
 	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
