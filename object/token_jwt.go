@@ -330,7 +330,7 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 	return res
 }
 
-func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
+func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtItem) jwt.MapClaims {
 	res := make(jwt.MapClaims)
 
 	userValue := reflect.ValueOf(claims.User).Elem()
@@ -382,6 +382,16 @@ func getClaimsCustom(claims Claims, tokenField []string) jwt.MapClaims {
 				newfield := util.SnakeToCamel(util.CamelToSnakeCase(field))
 				res[newfield] = userField.Interface()
 			}
+		}
+	}
+
+	for _, item := range tokenAttributes {
+		valueList := replaceAttributeValue(claims.User, item.Value)
+
+		if len(valueList) == 1 {
+			res[item.Name] = valueList[0]
+		} else {
+			res[item.Name] = valueList
 		}
 	}
 
@@ -497,10 +507,10 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		claimsShort.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsShort)
 	} else if application.TokenFormat == "JWT-Custom" {
-		claimsCustom := getClaimsCustom(claims, application.TokenFields)
+		claimsCustom := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsCustom)
-		refreshClaims := getClaimsCustom(claims, application.TokenFields)
+		refreshClaims := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
 		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
 		refreshClaims["TokenType"] = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, refreshClaims)

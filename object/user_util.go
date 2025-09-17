@@ -827,3 +827,49 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 
 	return instances, nil
 }
+
+func replaceAttributeValue(user *User, value string) []string {
+	if user == nil {
+		return nil
+	}
+	valueList := []string{value}
+	if strings.Contains(value, "$user.roles") {
+		valueList = replaceAttributeValuesWithList("$user.roles", getUserRoleNames(user), valueList)
+	}
+
+	if strings.Contains(value, "$user.permissions") {
+		valueList = replaceAttributeValuesWithList("$user.permissions", getUserPermissionNames(user), valueList)
+	}
+
+	if strings.Contains(value, "$user.groups") {
+		valueList = replaceAttributeValuesWithList("$user.groups", user.Groups, valueList)
+	}
+
+	valueList = replaceAttributeValues("$user.owner", user.Owner, valueList)
+	valueList = replaceAttributeValues("$user.name", user.Name, valueList)
+	valueList = replaceAttributeValues("$user.email", user.Email, valueList)
+	valueList = replaceAttributeValues("$user.id", user.Id, valueList)
+	valueList = replaceAttributeValues("$user.phone", user.Phone, valueList)
+
+	return valueList
+}
+
+func replaceAttributeValues(val string, replaceVal string, values []string) []string {
+	var newValues []string
+	for _, value := range values {
+		newValues = append(newValues, strings.ReplaceAll(value, val, replaceVal))
+	}
+
+	return newValues
+}
+
+func replaceAttributeValuesWithList(val string, replaceVals []string, values []string) []string {
+	var newValues []string
+	for _, value := range values {
+		for _, rVal := range replaceVals {
+			newValues = append(newValues, strings.ReplaceAll(value, val, rVal))
+		}
+	}
+
+	return newValues
+}
