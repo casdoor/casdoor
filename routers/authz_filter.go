@@ -111,7 +111,8 @@ func getObject(ctx *context.Context) (string, string, error) {
 			return "", "", nil
 		}
 
-		if strings.HasSuffix(path, "-application") {
+		if strings.HasSuffix(path, "-application") || strings.HasSuffix(path, "-token") ||
+			strings.HasSuffix(path, "-syncer") || strings.HasSuffix(path, "-webhook") {
 			return obj.Organization, obj.Name, nil
 		}
 
