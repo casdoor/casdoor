@@ -32,6 +32,7 @@ type Object struct {
 	Name         string `json:"name"`
 	AccessKey    string `json:"accessKey"`
 	AccessSecret string `json:"accessSecret"`
+	Organization string `json:"organization"`
 }
 
 func getUsername(ctx *context.Context) (username string) {
@@ -108,6 +109,14 @@ func getObject(ctx *context.Context) (string, string, error) {
 		if err != nil {
 			// this is not error
 			return "", "", nil
+		}
+
+		if strings.HasSuffix(path, "-application") {
+			return obj.Organization, obj.Name, nil
+		}
+
+		if strings.HasSuffix(path, "-organization") {
+			return obj.Name, obj.Name, nil
 		}
 
 		if path == "/api/delete-resource" {

@@ -626,11 +626,15 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 	return res, nil
 }
 
-func UpdateApplication(id string, application *Application) (bool, error) {
+func UpdateApplication(id string, application *Application, isGlobalAdmin bool) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldApplication, err := getApplication(owner, name)
 	if oldApplication == nil {
 		return false, err
+	}
+
+	if !isGlobalAdmin && oldApplication.Organization != application.Organization {
+		return false, fmt.Errorf("auth:Unauthorized operation")
 	}
 
 	if name == "app-built-in" {
@@ -709,7 +713,7 @@ func AddApplication(application *Application) (bool, error) {
 }
 
 func deleteApplication(application *Application) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Delete(&Application{})
+	affected, err := ormer.Engine.ID(core.PK{application.Owner, application.Name}).Where("organization = ?", application.Organization).Delete(&Application{})
 	if err != nil {
 		return false, err
 	}
