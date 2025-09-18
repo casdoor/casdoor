@@ -143,6 +143,10 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 			return false
 		}
 
+		if user.IsGlobalAdmin() {
+			return true
+		}
+
 		if user.IsAdmin && (subOwner == objOwner || (objOwner == "admin")) {
 			return true
 		}

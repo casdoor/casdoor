@@ -180,11 +180,13 @@ func (token *Token) popularHashes() {
 	}
 }
 
-func UpdateToken(id string, token *Token) (bool, error) {
+func UpdateToken(id string, token *Token, isGlobalAdmin bool) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if t, err := getToken(owner, name); err != nil {
 		return false, err
 	} else if t == nil {
+		return false, nil
+	} else if !isGlobalAdmin && t.Organization != token.Organization {
 		return false, nil
 	}
 
@@ -210,7 +212,7 @@ func AddToken(token *Token) (bool, error) {
 }
 
 func DeleteToken(token *Token) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Delete(&Token{})
+	affected, err := ormer.Engine.ID(core.PK{token.Owner, token.Name}).Where("organization = ?", token.Organization).Delete(&Token{})
 	if err != nil {
 		return false, err
 	}

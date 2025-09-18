@@ -105,7 +105,7 @@ func (c *ApiController) UpdateToken() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token))
+	c.Data["json"] = wrapActionResponse(object.UpdateToken(id, &token, c.IsGlobalAdmin()))
 	c.ServeJSON()
 }
 

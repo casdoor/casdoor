@@ -104,12 +104,14 @@ func GetWebhook(id string) (*Webhook, error) {
 	return getWebhook(owner, name)
 }
 
-func UpdateWebhook(id string, webhook *Webhook) (bool, error) {
+func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if w, err := getWebhook(owner, name); err != nil {
 		return false, err
 	} else if w == nil {
 		return false, nil
+	} else if !isGlobalAdmin && w.Organization != webhook.Organization {
+		return false, fmt.Errorf("auth:Unauthorized operation")
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)
@@ -130,7 +132,7 @@ func AddWebhook(webhook *Webhook) (bool, error) {
 }
 
 func DeleteWebhook(webhook *Webhook) (bool, error) {
-	affected, err := ormer.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Delete(&Webhook{})
+	affected, err := ormer.Engine.ID(core.PK{webhook.Owner, webhook.Name}).Where("organization = ?", webhook.Organization).Delete(&Webhook{})
 	if err != nil {
 		return false, err
 	}
