@@ -274,6 +274,14 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 		}
 		application.SigninItems = append(application.SigninItems, signinItem)
 		signinItem = &SigninItem{
+			Name:        "Verification code",
+			Visible:     true,
+			CustomCss:   ".verification-code {}\n.verification-code-input{}",
+			Placeholder: "",
+			Rule:        "None",
+		}
+		application.SigninItems = append(application.SigninItems, signinItem)
+		signinItem = &SigninItem{
 			Name:        "Agreement",
 			Visible:     true,
 			CustomCss:   ".login-agreement {}",

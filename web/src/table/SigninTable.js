@@ -28,6 +28,7 @@ export const SigninTableDefaultCssMap = {
   "Signin methods": ".signin-methods {}",
   "Username": ".login-username {}\n.login-username-input{}",
   "Password": ".login-password {}\n.login-password-input{}",
+  "Verification code": ".verification-code {}\n.verification-code-input{}",
   "Agreement": ".login-agreement {}",
   "Forgot password?": ".login-forget-password {\n    display: inline-flex;\n    justify-content: space-between;\n    width: 320px;\n    margin-bottom: 25px;\n}",
   "Login button": ".login-button-box {\n    margin-bottom: 5px;\n}\n.login-button {\n    width: 100%;\n}",
@@ -112,6 +113,7 @@ class SigninTable extends React.Component {
             {name: "Languages", displayName: i18next.t("general:Languages")},
             {name: "Username", displayName: i18next.t("signup:Username")},
             {name: "Password", displayName: i18next.t("general:Password")},
+            {name: "Verification code", displayName: i18next.t("login:Verification code")},
             {name: "Providers", displayName: i18next.t("general:Providers")},
             {name: "Agreement", displayName: i18next.t("signup:Agreement")},
             {name: "Forgot password?", displayName: i18next.t("login:Forgot password?")},
@@ -186,7 +188,7 @@ class SigninTable extends React.Component {
                 }} />
               </Popover>
             );
-          } else if (["Username", "Password", "Signup link", "Forgot password?", "Login button"].includes(record.name)) {
+          } else if (["Username", "Password", "Verification code", "Signup link", "Forgot password?", "Login button"].includes(record.name)) {
             return <Input value={text} style={{marginBottom: "10px"}} onChange={e => {
               this.updateField(table, index, "label", e.target.value);
             }} />;
