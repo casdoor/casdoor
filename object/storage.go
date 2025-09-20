@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -214,7 +215,7 @@ func refineObjectKey(provider *Provider, objectKey string) string {
 	}
 
 	if provider.Type == ProviderTypeMinIO && provider.PathPrefix != "" {
-		p := "/" + strings.Trim(provider.PathPrefix, "/")
+		p := path.Join("/", strings.Trim(provider.PathPrefix, "/"))
 		if strings.HasPrefix(objectKey, p+"/") {
 			return strings.TrimPrefix(objectKey, p+"/")
 		}
