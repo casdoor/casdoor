@@ -478,7 +478,10 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 			continue
 		}
 
-		if !permission.isUserHit(userId) && !permission.isRoleHit(userId) {
+		userHit := permission.isUserHit(userId)
+		roleHit := permission.isRoleHit(userId)
+
+		if !userHit && !roleHit {
 			if permission.Effect == "Allow" {
 				allowPermissionCount += 1
 			} else {
@@ -493,18 +496,56 @@ func CheckLoginPermission(userId string, application *Application) (bool, error)
 		}
 
 		var isAllowed bool
-		isAllowed, err = enforcer.Enforce(userId, application.Name, "Read")
-		if err != nil {
-			return false, err
-		}
 
-		if isAllowed {
-			if permission.Effect == "Allow" {
-				allowCount += 1
+		if userHit {
+			isAllowed, err = enforcer.Enforce(userId, application.Name, "Read")
+			if err != nil {
+				return false, err
 			}
-		} else {
-			if permission.Effect == "Deny" {
-				denyCount += 1
+
+			if isAllowed {
+				if permission.Effect == "Allow" {
+					allowCount += 1
+				}
+			} else {
+				if permission.Effect == "Deny" {
+					denyCount += 1
+				}
+			}
+		}
+		if roleHit {
+			targetRoles, err := getRolesByUser(userId)
+			if err != nil {
+				return false, err
+			}
+
+			var checkRoleList []*Role
+
+			for _, role := range permission.Roles {
+				if role == "*" {
+					checkRoleList = targetRoles
+					break
+				}
+
+				for _, targetRole := range targetRoles {
+					if role == targetRole.GetId() {
+						checkRoleList = append(checkRoleList, targetRole)
+					}
+				}
+			}
+
+			for _, role := range checkRoleList {
+				isAllowed, err = enforcer.Enforce(role.GetId(), application.Name, "Read")
+
+				if isAllowed {
+					if permission.Effect == "Allow" {
+						allowCount += 1
+					}
+				} else {
+					if permission.Effect == "Deny" {
+						denyCount += 1
+					}
+				}
 			}
 		}
 	}
