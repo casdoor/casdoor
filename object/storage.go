@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -35,6 +36,7 @@ const (
 	ProviderTypeTencentCloudCOS    = "Tencent Cloud COS"
 	ProviderTypeAzureBlob          = "Azure Blob"
 	ProviderTypeLocalFileSystem    = "Local File System"
+	ProviderTypeMinIO              = "MinIO"
 )
 
 func init() {
@@ -211,5 +213,13 @@ func refineObjectKey(provider *Provider, objectKey string) string {
 	if provider.Type == ProviderTypeGoogleCloudStorage {
 		return strings.TrimPrefix(objectKey, "/")
 	}
+
+	if provider.Type == ProviderTypeMinIO && provider.PathPrefix != "" {
+		p := path.Join("/", strings.Trim(provider.PathPrefix, "/"))
+		if strings.HasPrefix(objectKey, p+"/") {
+			return strings.TrimPrefix(objectKey, p+"/")
+		}
+	}
+
 	return objectKey
 }
