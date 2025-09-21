@@ -20,6 +20,7 @@ import * as OrganizationBackend from "./backend/OrganizationBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import * as GroupBackend from "./backend/GroupBackend";
+import AttributesMapperTable from "./table/AttributesMapperTable";
 
 const {Option} = Select;
 
@@ -276,6 +277,14 @@ class LdapEditPage extends React.Component {
                 </Option>)
               }
             </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{lineHeight: "32px", textAlign: "right", paddingRight: "25px"}} span={3}>
+            {Setting.getLabel(i18next.t("ldap:Custom attributes"), i18next.t("ldap:Custom attributes - Tooltip"))} :
+          </Col>
+          <Col span={21} >
+            <AttributesMapperTable customAttributes={this.state.ldap.customAttributes} onUpdateTable={(value) => {this.updateLdapField("customAttributes", value);}} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}}>
