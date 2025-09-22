@@ -220,6 +220,12 @@
     "Unknown forget type": "未知の忘却タイプ",
     "Verify": "検証"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AIアシスタント",
     "API key": "APIキー",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "強制リダイレクトオリジン - ツールチップ",
     "Forget URL": "URLを忘れてください",
     "Forget URL - Tooltip": "「パスワードをお忘れの場合」ページのカスタムURL。未設定の場合、デフォルトのCasdoor「パスワードをお忘れの場合」ページが使用されます。設定された場合、ログインページの「パスワードをお忘れの場合」リンクはこのURLにリダイレクトされます",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "まだ翻訳されていない文章が見つかりましたか？是非とも翻訳のお手伝いをお願いします",
     "Go to enable": "有効にする",
     "Go to writable demo site?": "書き込み可能なデモサイトに移動しますか？",
@@ -405,6 +412,7 @@
     "Records": "記録",
     "Request": "リクエスト",
     "Request URI": "リクエストURI",
+    "Reset to Default": "Reset to Default",
     "Resources": "リソース",
     "Role": "ロール",
     "Role - Tooltip": "ロール - ツールチップ",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "インターネットのリージョンエンドポイント",
     "Region endpoint for Intranet": "Intranetの地域エンドポイント",
     "Required": "必要です",
-    "Reset to Default HTML": "デフォルトHTMLにリセット",
-    "Reset to Default Text": "デフォルトテキストにリセット",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 エンドポイント（HTTP）",
     "SMS Test": "SMSテスト",
     "SMS Test - Tooltip": "テストSMSの送信先電話番号",

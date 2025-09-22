@@ -220,6 +220,12 @@
     "Unknown forget type": "Неизвестный забытый тип",
     "Verify": "Проверить"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI-помощник",
     "API key": "API-ключ",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Подсказка: принудительный редирект origin",
     "Forget URL": "Забудьте URL",
     "Forget URL - Tooltip": "Настроенный URL для страницы \"Забыли пароль\". Если не установлено, будет использоваться стандартная страница \"Забыли пароль\" Casdoor. При установке, ссылка \"Забыли пароль\" на странице входа будет перенаправляться на этот URL",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Нашли некоторые тексты, которые еще не переведены? Пожалуйста, помогите нам перевести на",
     "Go to enable": "Перейти к включению",
     "Go to writable demo site?": "Перейти на демонстрационный сайт для записи данных?",
@@ -405,6 +412,7 @@
     "Records": "Записи",
     "Request": "Запрос",
     "Request URI": "URI запроса",
+    "Reset to Default": "Reset to Default",
     "Resources": "Ресурсы",
     "Role": "Роль",
     "Role - Tooltip": "Подсказка: роль",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Региональный конечная точка для Интернета",
     "Region endpoint for Intranet": "Региональный конечный пункт для интранета",
     "Required": "Требуется",
-    "Reset to Default HTML": "Сбросить на HTML по умолчанию",
-    "Reset to Default Text": "Сбросить на текст по умолчанию",
     "SAML 2.0 Endpoint (HTTP)": "Конечная точка SAML 2.0 (HTTP)",
     "SMS Test": "СМС тест",
     "SMS Test - Tooltip": "Номер телефона для отправки тестовых SMS сообщений",

@@ -220,6 +220,12 @@
     "Unknown forget type": "Jenis lupa tidak diketahui",
     "Verify": "Sahkan"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "Pembantu AI",
     "API key": "Kekunci API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Asal laluan paksa - Tooltip",
     "Forget URL": "URL Lupa",
     "Forget URL - Tooltip": "URL tersuai untuk halaman \"Lupa kata laluan\". Jika tidak ditetapkan, halaman lalai Casdoor \"Lupa kata laluan\" akan digunakan. Apabila ditetapkan, pautan \"Lupa kata laluan\" pada halaman log masuk akan laluan semula ke URL ini",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Jumpa teks yang belum diterjemahkan? Sila bantu kami terjemah di",
     "Go to enable": "Pergi untuk dayakan",
     "Go to writable demo site?": "Pergi ke tapak demo boleh tulis?",
@@ -405,6 +412,7 @@
     "Records": "Rekod",
     "Request": "Permintaan",
     "Request URI": "URI permintaan",
+    "Reset to Default": "Reset to Default",
     "Resources": "Sumber",
     "Role": "Peranan",
     "Role - Tooltip": "Peranan - Tooltip",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Titik akhir wilayah untuk Internet",
     "Region endpoint for Intranet": "Titik akhir wilayah untuk Intranet",
     "Required": "Diperlukan",
-    "Reset to Default HTML": "Tetap Semula ke HTML Lalai",
-    "Reset to Default Text": "Tetap Semula ke Teks Lalai",
     "SAML 2.0 Endpoint (HTTP)": "Titik Akhir SAML 2.0 (HTTP)",
     "SMS Test": "Ujian SMS",
     "SMS Test - Tooltip": "Nombor telefon untuk menghantar SMS ujian",

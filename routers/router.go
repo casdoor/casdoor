@@ -311,4 +311,11 @@ func initAPI() {
 	beego.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
 	beego.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
+
+	beego.Router("/api/get-global-forms", &controllers.ApiController{}, "GET:GetGlobalForms")
+	beego.Router("/api/get-forms", &controllers.ApiController{}, "GET:GetForms")
+	beego.Router("/api/get-form", &controllers.ApiController{}, "GET:GetForm")
+	beego.Router("/api/update-form", &controllers.ApiController{}, "POST:UpdateForm")
+	beego.Router("/api/add-form", &controllers.ApiController{}, "POST:AddForm")
+	beego.Router("/api/delete-form", &controllers.ApiController{}, "POST:DeleteForm")
 }

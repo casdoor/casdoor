@@ -220,6 +220,12 @@
     "Unknown forget type": "Невідомий забутий тип",
     "Verify": "Підтвердити"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI Асистент",
     "API key": "Ключ API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Примусове джерело перенаправлення - підказка",
     "Forget URL": "Забути URL",
     "Forget URL - Tooltip": "Користувацька URL-адреса для сторінки \"Забути пароль\". ",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Знайшли ще неперекладені тексти? ",
     "Go to enable": "Перейдіть до включення",
     "Go to writable demo site?": "Перейти на демонстраційний сайт для запису?",
@@ -405,6 +412,7 @@
     "Records": "Записи",
     "Request": "Запит",
     "Request URI": "URI запиту",
+    "Reset to Default": "Reset to Default",
     "Resources": "Ресурси",
     "Role": "Роль",
     "Role - Tooltip": "Роль - підказка",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Кінцева точка регіону для Інтернету",
     "Region endpoint for Intranet": "Кінцева точка регіону для інтрамережі",
     "Required": "вимагається",
-    "Reset to Default HTML": "Відновити стандартний HTML",
-    "Reset to Default Text": "Скинути текст за замовчуванням",
     "SAML 2.0 Endpoint (HTTP)": "Кінцева точка SAML 2.0 (HTTP)",
     "SMS Test": "SMS Тест",
     "SMS Test - Tooltip": "Номер телефону для відправки тестових SMS",

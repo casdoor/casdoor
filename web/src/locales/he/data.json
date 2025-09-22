@@ -220,6 +220,12 @@
     "Unknown forget type": "סוג איפוס לא ידוע",
     "Verify": "אימות"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "עוזר AI",
     "API key": "מפתח API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "הפניה כפויה של מקור - תיאור",
     "Forget URL": "כתובת שחזור סיסמה",
     "Forget URL - Tooltip": "כתובת מותאמת אישית לדף \"שחזור סיסמה\". אם לא מוגדר, ישמש דף ברירת המחדל של Casdoor. כאשר מוגדר, קישורי \"שחזור סיסמה\" בעמוד הכניסה יופנו לכאן",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "מצאת טקסטים שלא תורגמו? אנא עזור לנו לתרגם ב",
     "Go to enable": "עבור להפעלה",
     "Go to writable demo site?": "לעבור לאתר הדגמה ניתן לכתיבה?",
@@ -405,6 +412,7 @@
     "Records": "רשומות",
     "Request": "בקשה",
     "Request URI": "כתובת בקשה",
+    "Reset to Default": "Reset to Default",
     "Resources": "משאבים",
     "Role": "תפקיד",
     "Role - Tooltip": "תפקיד - תיאור",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "נקודת קצה אזור לאינטרנט",
     "Region endpoint for Intranet": "נקודת קצה אזור לרשת פנימית",
     "Required": "נדרש",
-    "Reset to Default HTML": "אפס ל-HTML ברירת מחדל",
-    "Reset to Default Text": "אפס לטקסט ברירת מחדל",
     "SAML 2.0 Endpoint (HTTP)": "נקודת קצה SAML 2.0 (HTTP)",
     "SMS Test": "בדיקת SMS",
     "SMS Test - Tooltip": "מספר טלפון לשליחת SMS ניסיון",

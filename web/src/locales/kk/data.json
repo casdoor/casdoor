@@ -220,6 +220,12 @@
     "Unknown forget type": "Белгісіз ұмыту түрі",
     "Verify": "Тексеру"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI көмекшісі",
     "API key": "API кілті",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Мәжбүрлі қайта бағыттау бастапқысы - Қысқаша түсінік",
     "Forget URL": "Парольді ұмыту URL",
     "Forget URL - Tooltip": "\"Парольді ұмыту\" парағы үшін теңшеу URL. Орнатылмаған жағдайда әдепті Casdoor \"Парольді ұмыту\" парағы қолданылады. Орнатылған кезде кіру парағындағы \"Парольді ұмыту\" сілтемесі осы URL-ге қайта бағыттайды",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Кейбір мәтіндер әлі аударылмағанын байқадыңыз ба? Аудармаға көмектесіңіз",
     "Go to enable": "Қосуға өту",
     "Go to writable demo site?": "Жазылатын демо сайтқа өтеміз бе?",
@@ -405,6 +412,7 @@
     "Records": "Жазбалар",
     "Request": "Сұраныс",
     "Request URI": "Сұраныс URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "Ресурстар",
     "Role": "Рөл",
     "Role - Tooltip": "Рөл - Қысқаша түсінік",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Интернет үшін аймақ нүктесі",
     "Region endpoint for Intranet": "Ішкі желі үшін аймақ нүктесі",
     "Required": "Міндетті",
-    "Reset to Default HTML": "Әдепкі HTML-ге қайтару",
-    "Reset to Default Text": "Әдепкі мәтінге қайтару",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 нүктесі (HTTP)",
     "SMS Test": "SMS тесті",
     "SMS Test - Tooltip": "Тест SMS жіберу үшін телефон нөмірі",

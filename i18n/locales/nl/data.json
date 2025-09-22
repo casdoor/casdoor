@@ -86,6 +86,7 @@
     "Your IP address: %s has been banned according to the configuration of: ": "IP-adres %s geblokkeerd volgens configuratie: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Wachtwoord verlopen; klik op \"Wachtwoord vergeten\"",
     "Your region is not allow to signup by phone": "Registratie per telefoon niet toegestaan in jouw regio",
+    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "Verkeerd wachtwoord of code",
     "password or code is incorrect, you have %s remaining chances": "Verkeerd wachtwoord/code, nog %s pogingen",
     "unsupported password type: %s": "Niet-ondersteund wachtwoordtype: %s"

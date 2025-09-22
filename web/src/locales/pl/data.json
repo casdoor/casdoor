@@ -220,6 +220,12 @@
     "Unknown forget type": "Nieznany typ odzyskiwania",
     "Verify": "Zweryfikuj"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "Asystent AI",
     "API key": "Klucz API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Wymuszone przekierowanie źródła - Tooltip",
     "Forget URL": "URL odzyskiwania",
     "Forget URL - Tooltip": "Niestandardowy URL strony \"Odzyskaj hasło\". Jeśli nie ustawiony, zostanie użyta domyślna strona \"Odzyskaj hasło\" Casdoor. Gdy ustawiony, link \"Odzyskaj hasło\" na stronie logowania przekieruje do tego URL-a",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Znalazłeś teksty, które nadal nie są przetłumaczone? Pomóż nam przetłumaczyć na",
     "Go to enable": "Przejdź, aby włączyć",
     "Go to writable demo site?": "Przejdź do strony demo z możliwością zapisu?",
@@ -405,6 +412,7 @@
     "Records": "Rekordy",
     "Request": "Żądanie",
     "Request URI": "URI żądania",
+    "Reset to Default": "Reset to Default",
     "Resources": "Zasoby",
     "Role": "Rola",
     "Role - Tooltip": "Rola - Tooltip",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Punkt końcowy regionu dla Internetu",
     "Region endpoint for Intranet": "Punkt końcowy regionu dla Intranetu",
     "Required": "Wymagane",
-    "Reset to Default HTML": "Przywróć domyślny HTML",
-    "Reset to Default Text": "Przywróć domyślny tekst",
     "SAML 2.0 Endpoint (HTTP)": "Punkt końcowy SAML 2.0 (HTTP)",
     "SMS Test": "Test SMS",
     "SMS Test - Tooltip": "Numer telefonu do wysłania testowego SMS-a",

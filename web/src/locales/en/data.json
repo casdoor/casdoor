@@ -220,6 +220,12 @@
     "Unknown forget type": "Unknown forget type",
     "Verify": "Verify"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI Assistant",
     "API key": "API key",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Forced redirect origin - Tooltip",
     "Forget URL": "Forget URL",
     "Forget URL - Tooltip": "Custom URL for the \"Forget password\" page. If not set, the default Casdoor \"Forget password\" page will be used. When set, the \"Forget password\" link on the login page will redirect to this URL",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Found some texts still not translated? Please help us translate at",
     "Go to enable": "Go to enable",
     "Go to writable demo site?": "Go to writable demo site?",
@@ -405,6 +412,7 @@
     "Records": "Records",
     "Request": "Request",
     "Request URI": "Request URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "Resources",
     "Role": "Role",
     "Role - Tooltip": "Role - Tooltip",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Region endpoint for Internet",
     "Region endpoint for Intranet": "Region endpoint for Intranet",
     "Required": "Required",
-    "Reset to Default HTML": "Reset to Default HTML",
-    "Reset to Default Text": "Reset to Default Text",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 Endpoint (HTTP)",
     "SMS Test": "SMS Test",
     "SMS Test - Tooltip": "Phone number for sending test SMS",

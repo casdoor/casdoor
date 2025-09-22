@@ -427,4 +427,9 @@ func (a *Ormer) createTable() {
 	if err != nil {
 		panic(err)
 	}
+
+	err = a.Engine.Sync2(new(Form))
+	if err != nil {
+		panic(err)
+	}
 }

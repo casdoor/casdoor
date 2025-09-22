@@ -220,6 +220,12 @@
     "Unknown forget type": "نوع فراموشی ناشناخته",
     "Verify": "تأیید"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "مساعد هوش مصنوعی",
     "API key": "کلید API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "منبع بازگرداندن اجباری - توصیه",
     "Forget URL": "آدرس فراموشی",
     "Forget URL - Tooltip": "آدرس سفارشی برای صفحه \"فراموشی رمز عبور\". اگر تنظیم نشده باشد، صفحه پیش‌فرض \"فراموشی رمز عبور\" Casdoor استفاده می‌شود. هنگامی که تنظیم شده باشد، لینک \"فراموشی رمز عبور\" در صفحه ورود به این آدرس هدایت می‌شود",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "برخی متون هنوز ترجمه نشده‌اند؟ لطفاً به ما در ترجمه کمک کنید در",
     "Go to enable": "برو به فعال‌سازی",
     "Go to writable demo site?": "به سایت دمو قابل نوشتن بروید؟",
@@ -405,6 +412,7 @@
     "Records": "سوابق",
     "Request": "درخواست",
     "Request URI": "آدرس URI درخواست",
+    "Reset to Default": "Reset to Default",
     "Resources": "منابع",
     "Role": "نقش",
     "Role - Tooltip": "نقش - راهنمای ابزار",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "نقطه پایانی منطقه برای اینترنت",
     "Region endpoint for Intranet": "نقطه پایانی منطقه برای اینترانت",
     "Required": "الزامی",
-    "Reset to Default HTML": "بازنشانی به HTML پیش‌فرض",
-    "Reset to Default Text": "بازنشانی به متن پیش‌فرض",
     "SAML 2.0 Endpoint (HTTP)": "نقطه پایانی SAML 2.0 (HTTP)",
     "SMS Test": "تست پیامک",
     "SMS Test - Tooltip": "شماره تلفن برای ارسال پیامک تست",

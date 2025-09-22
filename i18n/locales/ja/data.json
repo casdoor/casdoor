@@ -86,6 +86,7 @@
     "Your IP address: %s has been banned according to the configuration of: ": "あなたの IP アドレス「%s」は設定によりアクセスが禁止されています: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "パスワードの有効期限が切れています。「パスワードを忘れた方はこちら」をクリックしてリセットしてください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
+    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "パスワードまたはコードが正しくありません",
     "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと %s 回の試行機会があります",
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"

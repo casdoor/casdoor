@@ -220,6 +220,12 @@
     "Unknown forget type": "Okänd glömsketype",
     "Verify": "Verifiera"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI-assistent",
     "API key": "API-nyckel",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Tvingat omdirigeringsursprung",
     "Forget URL": "Glömt-URL",
     "Forget URL - Tooltip": "Anpassad URL för sidan \"Glömt lösenord\". Om inte inställd kommer standardsidan för \"Glömt lösenord\" i Casdoor att användas. När inställd kommer länken \"Glömt lösenord\" på inloggningssidan att omdirigera till denna URL",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Hittade text som fortfarande inte är översatt? Hjälp oss översätta på",
     "Go to enable": "Gå för att aktivera",
     "Go to writable demo site?": "Gå till skrivbar demosida?",
@@ -405,6 +412,7 @@
     "Records": "Poster",
     "Request": "Förfrågan",
     "Request URI": "Förfrågans URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "Resurser",
     "Role": "Roll",
     "Role - Tooltip": "Roll",
@@ -491,7 +499,7 @@
     "Show all": "Visa alla",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -> [Grupper]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -\u003e [Grupper]"
   },
   "home": {
     "New users past 30 days": "Nya användare senaste 30 dagarna",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Regions-slutpunkt för Internet",
     "Region endpoint for Intranet": "Regions-slutpunkt för intranät",
     "Required": "Obligatoriskt",
-    "Reset to Default HTML": "Återställ till standard HTML",
-    "Reset to Default Text": "Återställ till standardtext",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0-slutpunkt (HTTP)",
     "SMS Test": "SMS-test",
     "SMS Test - Tooltip": "Telefonnummer för att skicka test-SMS",
