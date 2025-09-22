@@ -58,9 +58,10 @@ type LdapUser struct {
 	RegisteredAddress     string
 	PostalAddress         string
 
-	GroupId  string `json:"groupId"`
-	Address  string `json:"address"`
-	MemberOf string `json:"memberOf"`
+	GroupId    string            `json:"groupId"`
+	Address    string            `json:"address"`
+	MemberOf   string            `json:"memberOf"`
+	Attributes map[string]string `json:"attributes"`
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -158,6 +159,10 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 		SearchAttributes = append(SearchAttributes, "uid")
 	}
 
+	for attribute := range ldapServer.CustomAttributes {
+		SearchAttributes = append(SearchAttributes, attribute)
+	}
+
 	searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
 		0, 0, false,
 		ldapServer.Filter, SearchAttributes, nil)
@@ -211,6 +216,13 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.PostalAddress = attribute.Values[0]
 			case "memberOf":
 				user.MemberOf = attribute.Values[0]
+			default:
+				if propName, ok := ldapServer.CustomAttributes[attribute.Name]; ok {
+					if user.Attributes == nil {
+						user.Attributes = make(map[string]string)
+					}
+					user.Attributes[propName] = attribute.Values[0]
+				}
 			}
 		}
 		ldapUsers = append(ldapUsers, user)
@@ -269,6 +281,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
+			Attributes:  user.Attributes,
 		}
 	}
 	return res
@@ -345,6 +358,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Tag:               tag,
 				Score:             score,
 				Ldap:              syncUser.Uuid,
+				Properties:        syncUser.Attributes,
 			}
 
 			if ldap.DefaultGroup != "" {
