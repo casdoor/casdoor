@@ -129,6 +129,9 @@ jobs:
     name: Release And Push
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
     needs: [ frontend, backend, linter, e2e ]
     steps:
       - name: Checkout
@@ -185,27 +188,27 @@ jobs:
         with:
           version: latest
 
-      - name: Build image (no push)
+      - name: Prepare GHCR owner
+        if: github.repository != 'casdoor/casdoor'
+        run: echo "GHCR_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      - name: Log in to GHCR
+        if: github.repository != 'casdoor/casdoor'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image to GHCR
         if: github.repository != 'casdoor/casdoor'
         uses: docker/build-push-action@v3
         with:
           context: .
           target: STANDARD
           platforms: linux/amd64
-          load: true
-          tags: casdoor-local:${{ github.sha }}
-
-      - name: Export image artifact
-        if: github.repository != 'casdoor/casdoor'
-        run: |
-          docker save casdoor-local:${{ github.sha }} | gzip > casdoor-image-${{ github.sha }}.tar.gz
-
-      - name: Upload image artifact
-        if: github.repository != 'casdoor/casdoor'
-        uses: actions/upload-artifact@v4
-        with:
-          name: casdoor-image-${{ github.sha }}
-          path: casdoor-image-${{ github.sha }}.tar.gz
+          push: true
+          tags: ghcr.io/${{ env.GHCR_OWNER }}/casdoor:${{ github.sha }},ghcr.io/${{ env.GHCR_OWNER }}/casdoor:latest
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
