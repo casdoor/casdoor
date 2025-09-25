@@ -86,6 +86,7 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Votre adresse IP : %s a été bannie selon la configuration de : ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Votre mot de passe a expiré. Veuillez le réinitialiser en cliquant sur \\\"Mot de passe oublié\\\"",
     "Your region is not allow to signup by phone": "Votre région n'est pas autorisée à s'inscrire par téléphone",
+    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "mot de passe ou code incorrect",
     "password or code is incorrect, you have %s remaining chances": "Le mot de passe ou le code est incorrect, il vous reste %s chances",
     "unsupported password type: %s": "Type de mot de passe non pris en charge : %s"

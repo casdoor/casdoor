@@ -220,6 +220,12 @@
     "Unknown forget type": "نوع استعادة غير معروف",
     "Verify": "التحقق"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "مساعد الذكاء الاصطناعي",
     "API key": "مفتاح API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "إعادة توجيه الأصل بالقوة - تلميح",
     "Forget URL": "رابط نسيان كلمة المرور",
     "Forget URL - Tooltip": "رابط مخصص لصفحة \"نسيان كلمة المرور\". إذا لم يتم تعيينه، ستُستخدم صفحة Casdoor الافتراضية. عند التعيين، ستُعيد توجيه روابط \"نسيان كلمة المرور\" إلى هذا الرابط",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "واجهت نصوصًا لم تُترجم بعد؟ ساعدنا في الترجمة على",
     "Go to enable": "الانتقال للتمكين",
     "Go to writable demo site?": "الانتقال إلى موقع تجريبي قابل للكتابة؟",
@@ -405,6 +412,7 @@
     "Records": "السجلات",
     "Request": "الطلب",
     "Request URI": "رابط الطلب",
+    "Reset to Default": "Reset to Default",
     "Resources": "الموارد",
     "Role": "الدور",
     "Role - Tooltip": "الدور - تلميح",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "نقطة نهاية المنطقة للإنترنت",
     "Region endpoint for Intranet": "نقطة نهاية المنطقة للشبكة الداخلية",
     "Required": "مطلوب",
-    "Reset to Default HTML": "إعادة التعيين إلى HTML الافتراضي",
-    "Reset to Default Text": "إعادة التعيين إلى النص الافتراضي",
     "SAML 2.0 Endpoint (HTTP)": "نقطة نهاية SAML 2.0 (HTTP)",
     "SMS Test": "اختبار الرسائل القصيرة",
     "SMS Test - Tooltip": "رقم الهاتف لإرسال رسالة تجريبية",

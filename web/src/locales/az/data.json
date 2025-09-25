@@ -220,6 +220,12 @@
     "Unknown forget type": "Naməlum unutma növü",
     "Verify": "Doğrula"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI Köməkçisi",
     "API key": "API açarı",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Məcburi yönləndirmə mənşəyi - Tooltip",
     "Forget URL": "Unutma URL-i",
     "Forget URL - Tooltip": "\"Şifrəni unudun\" səhifəsi üçün xüsusi URL. Təyin edilməsə, defolt Casdoor \"Şifrəni unudun\" səhifəsi istifadə ediləcək. Təyin edildikdə, giriş səhifəsindəki \"Şifrəni unudun\" linki bu URL-ə yönləndirəcək",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Hələ də tərcümə olunmamış mətnlər tapdınız? Xahiş edirik burada tərcümə etməyə kömək edin",
     "Go to enable": "Aktiv etməyə get",
     "Go to writable demo site?": "Yazıla bilən demo sayta get?",
@@ -405,6 +412,7 @@
     "Records": "Qeydlər",
     "Request": "Sorğu",
     "Request URI": "Sorğu URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "Resurslar",
     "Role": "Rol",
     "Role - Tooltip": "Rol - Tooltip",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "İnternet üçün region endpoint",
     "Region endpoint for Intranet": "Daxili şəbəkə üçün region endpoint",
     "Required": "Tələb olunan",
-    "Reset to Default HTML": "Defolt HTML-ə sıfırla",
-    "Reset to Default Text": "Defolt Mətnə sıfırla",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 Endpoint (HTTP)",
     "SMS Test": "SMS Testi",
     "SMS Test - Tooltip": "Test SMS göndərmək üçün telefon nömrəsi",

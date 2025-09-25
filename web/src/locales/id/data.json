@@ -220,6 +220,12 @@
     "Unknown forget type": "Tipe yang tidak diketahui terlupakan",
     "Verify": "Memverifikasi"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "Asisten AI",
     "API key": "Kunci API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Asal pengalihan paksa - Tooltip",
     "Forget URL": "Lupakan URL",
     "Forget URL - Tooltip": "URL kustom untuk halaman \"Lupa kata sandi\". Jika tidak diatur, halaman \"Lupa kata sandi\" default Casdoor akan digunakan. Ketika diatur, tautan \"Lupa kata sandi\" pada halaman masuk akan diarahkan ke URL ini",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Menemukan beberapa teks yang masih belum diterjemahkan? Tolong bantu kami menerjemahkan di",
     "Go to enable": "Pergi untuk mengaktifkan",
     "Go to writable demo site?": "Pergi ke situs demo yang dapat ditulis?",
@@ -405,6 +412,7 @@
     "Records": "Catatan",
     "Request": "Permintaan",
     "Request URI": "URI Permintaan",
+    "Reset to Default": "Reset to Default",
     "Resources": "Sumber daya",
     "Role": "Peran",
     "Role - Tooltip": "Peran - Tooltip",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Titik akhir wilayah untuk Internet",
     "Region endpoint for Intranet": "Titik akhir wilayah untuk Intranet",
     "Required": "Dibutuhkan",
-    "Reset to Default HTML": "Reset ke HTML Default",
-    "Reset to Default Text": "Reset ke Teks Default",
     "SAML 2.0 Endpoint (HTTP)": "Titik akhir SAML 2.0 (HTTP)",
     "SMS Test": "Pengujian SMS",
     "SMS Test - Tooltip": "Nomor telepon untuk mengirim SMS uji",

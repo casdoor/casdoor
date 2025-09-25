@@ -86,6 +86,7 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Ваш IP-адрес: %s заблокирован согласно конфигурации: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Срок действия вашего пароля истек. Пожалуйста, сбросьте пароль, нажав \\\"Забыли пароль\\\"",
     "Your region is not allow to signup by phone": "Ваш регион не разрешает регистрацию по телефону",
+    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "пароль или код неверны",
     "password or code is incorrect, you have %s remaining chances": "Неправильный пароль или код, у вас осталось %s попыток",
     "unsupported password type: %s": "неподдерживаемый тип пароля: %s"

@@ -240,6 +240,13 @@ func initAPI() {
 	beego.Router("/api/get-prometheus-info", &controllers.ApiController{}, "GET:GetPrometheusInfo")
 	beego.Handler("/api/metrics", promhttp.Handler())
 
+	beego.Router("/api/get-global-forms", &controllers.ApiController{}, "GET:GetGlobalForms")
+	beego.Router("/api/get-forms", &controllers.ApiController{}, "GET:GetForms")
+	beego.Router("/api/get-form", &controllers.ApiController{}, "GET:GetForm")
+	beego.Router("/api/update-form", &controllers.ApiController{}, "POST:UpdateForm")
+	beego.Router("/api/add-form", &controllers.ApiController{}, "POST:AddForm")
+	beego.Router("/api/delete-form", &controllers.ApiController{}, "POST:DeleteForm")
+
 	beego.Router("/api/get-syncers", &controllers.ApiController{}, "GET:GetSyncers")
 	beego.Router("/api/get-syncer", &controllers.ApiController{}, "GET:GetSyncer")
 	beego.Router("/api/update-syncer", &controllers.ApiController{}, "POST:UpdateSyncer")

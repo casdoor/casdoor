@@ -19,6 +19,7 @@ import Highlighter from "react-highlight-words";
 import i18next from "i18next";
 import * as Setting from "./Setting";
 import * as TourConfig from "./TourConfig";
+import * as FormBackend from "./backend/FormBackend";
 
 class BaseListPage extends React.Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class BaseListPage extends React.Component {
       searchedColumn: "",
       isAuthorized: true,
       isTourVisible: TourConfig.getTourVisible(),
+      formItems: [],
     };
   }
 
@@ -72,6 +74,18 @@ class BaseListPage extends React.Component {
   UNSAFE_componentWillMount() {
     const {pagination} = this.state;
     this.fetch({pagination});
+    this.getForm();
+  }
+
+  getForm() {
+    FormBackend.getForm(this.props.account.name, this.props.match?.path?.replace(/^\//, ""))
+      .then(res => {
+        if (res.status === "ok" && res.data) {
+          this.setState({formItems: res.data.formItems});
+        } else {
+          this.setState({formItems: []});
+        }
+      });
   }
 
   getColumnSearchProps = (dataIndex, customRender = null) => ({

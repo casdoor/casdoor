@@ -220,6 +220,12 @@
     "Unknown forget type": "Tuntematon unohtamistyyppi",
     "Verify": "Vahvista"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI-assistentti",
     "API key": "API-avain",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Pakotettu uudelleenohjaus alkuperä - työkalupala",
     "Forget URL": "Unohtamisen URL",
     "Forget URL - Tooltip": "Mukautettu URL \"Unohtunut salasana\" -sivulle. Jos ei aseteta, käytetään oletusarvoista Casdoor \"Unohtunut salasana\" -sivua. Kun asetetaan, \"Unohtunut salasana\" -linkki kirjautumissivulla ohjaa tähän URL-osoitteeseen",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Löysitkö tekstejä, joita ei ole vielä käännetty? Auta meitä kääntämään",
     "Go to enable": "Mene ottamaan käyttöön",
     "Go to writable demo site?": "Mene kirjoitettavaan demo-sivustoon?",
@@ -405,6 +412,7 @@
     "Records": "Tietueet",
     "Request": "Pyyntö",
     "Request URI": "Pyyntö URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "Resurssit",
     "Role": "Rooli",
     "Role - Tooltip": "Rooli - työkalupala",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Alueen päätepiste Internetille",
     "Region endpoint for Intranet": "Alueen päätepiste Intranetille",
     "Required": "Pakollinen",
-    "Reset to Default HTML": "Palauta oletus-HTML",
-    "Reset to Default Text": "Palauta oletusteksti",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 -päätepiste (HTTP)",
     "SMS Test": "SMS-testi",
     "SMS Test - Tooltip": "Puhelinnumero testi-SMS:n lähettämiseen",

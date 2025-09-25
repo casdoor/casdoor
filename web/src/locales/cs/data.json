@@ -220,6 +220,12 @@
     "Unknown forget type": "Neznámý typ zapomenutí",
     "Verify": "Ověřit"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI asistent",
     "API key": "API klíč",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Vynucený původ přesměrování - popisek",
     "Forget URL": "URL pro zapomenutí",
     "Forget URL - Tooltip": "Vlastní URL pro stránku \"Zapomenuté heslo\". Pokud není nastaveno, bude použita výchozí stránka Casdoor \"Zapomenuté heslo\". Když je nastaveno, odkaz \"Zapomenuté heslo\" na přihlašovací stránce přesměruje na tuto URL",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Našli jste nějaké texty, které ještě nejsou přeloženy? Pomozte nám prosím přeložit na",
     "Go to enable": "Přejít k povolení",
     "Go to writable demo site?": "Přejít na zapisovatelnou demo stránku?",
@@ -405,6 +412,7 @@
     "Records": "Záznamy",
     "Request": "Požadavek",
     "Request URI": "URI požadavku",
+    "Reset to Default": "Reset to Default",
     "Resources": "Zdroje",
     "Role": "Role",
     "Role - Tooltip": "Role - popisek",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Koncový bod regionu pro Internet",
     "Region endpoint for Intranet": "Koncový bod regionu pro Intranet",
     "Required": "Požadováno",
-    "Reset to Default HTML": "Vrátit na výchozí HTML",
-    "Reset to Default Text": "Vrátit na výchozí text",
     "SAML 2.0 Endpoint (HTTP)": "Koncový bod SAML 2.0 (HTTP)",
     "SMS Test": "Test SMS",
     "SMS Test - Tooltip": "Telefonní číslo pro odeslání testovací SMS",

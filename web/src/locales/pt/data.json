@@ -220,6 +220,12 @@
     "Unknown forget type": "Tipo de recuperação desconhecido",
     "Verify": "Verificar"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "Assistente de IA",
     "API key": "Chave da API",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Dica: origem de redirecionamento forçado",
     "Forget URL": "URL de Esqueci a Senha",
     "Forget URL - Tooltip": "URL personalizada para a página de \"Esqueci a senha\". Se não definido, será usada a página padrão de \"Esqueci a senha\" do Casdoor. Quando definido, o link de \"Esqueci a senha\" na página de login será redirecionado para esta URL",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Encontrou algum texto ainda não traduzido? Ajude-nos a traduzir em",
     "Go to enable": "Ir para ativar",
     "Go to writable demo site?": "Acessar o site de demonstração gravável?",
@@ -405,6 +412,7 @@
     "Records": "Registros",
     "Request": "Requisição",
     "Request URI": "URI da requisição",
+    "Reset to Default": "Reset to Default",
     "Resources": "Recursos",
     "Role": "Função",
     "Role - Tooltip": "Dica: função",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "Endpoint da região para a Internet",
     "Region endpoint for Intranet": "Endpoint da região para Intranet",
     "Required": "Obrigatório",
-    "Reset to Default HTML": "Redefinir para HTML padrão",
-    "Reset to Default Text": "Redefinir para texto padrão",
     "SAML 2.0 Endpoint (HTTP)": "Ponto de extremidade SAML 2.0 (HTTP)",
     "SMS Test": "Teste de SMS",
     "SMS Test - Tooltip": "Número de telefone para enviar SMS de teste",

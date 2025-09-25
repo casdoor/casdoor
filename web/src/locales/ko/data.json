@@ -220,6 +220,12 @@
     "Unknown forget type": "미지의 잊혀진 유형",
     "Verify": "검증하다"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "AI 어시스턴트",
     "API key": "API 키",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "강제 리다이렉트 출처 - 툴팁",
     "Forget URL": "URL을 잊어버려라",
     "Forget URL - Tooltip": "\"비밀번호를 잊어버렸을 경우\" 페이지에 대한 사용자 정의 URL. 설정되지 않은 경우 기본 Casdoor \"비밀번호를 잊어버렸을 경우\" 페이지가 사용됩니다. 설정된 경우 로그인 페이지의 \"비밀번호를 잊으셨나요?\" 링크는 이 URL로 리디렉션됩니다",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "아직 번역되지 않은 텍스트가 있나요? 번역에 도움을 주실 수 있나요?",
     "Go to enable": "활성화하러 가기",
     "Go to writable demo site?": "쓰기 가능한 데모 사이트로 이동하시겠습니까?",
@@ -405,6 +412,7 @@
     "Records": "기록",
     "Request": "요청",
     "Request URI": "요청 URI",
+    "Reset to Default": "Reset to Default",
     "Resources": "자원",
     "Role": "역할",
     "Role - Tooltip": "역할 - 툴팁",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "인터넷 지역 엔드포인트",
     "Region endpoint for Intranet": "인트라넷의 지역 엔드포인트",
     "Required": "필요한",
-    "Reset to Default HTML": "기본 HTML로 재설정",
-    "Reset to Default Text": "기본 텍스트로 재설정",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 엔드포인트 (HTTP)",
     "SMS Test": "SMS 테스트",
     "SMS Test - Tooltip": "테스트 SMS를 보내는 전화번호",

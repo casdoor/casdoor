@@ -1883,3 +1883,95 @@ export function createFormAndSubmit(url, params) {
   form.submit();
   setTimeout(() => {form.remove();}, 500);
 }
+
+export function getFormTypeOptions() {
+  return [
+    {id: "users", name: "general:Users"},
+    {id: "providers", name: "general:Providers"},
+    {id: "applications", name: "general:Applications"},
+    {id: "organizations", name: "general:Organizations"},
+  ];
+}
+
+export function getFormTypeItems(formType) {
+  if (formType === "users") {
+    return [
+      {name: "owner", label: "general:Organization", visible: true, width: "150"},
+      {name: "signupApplication", label: "general:Application", visible: true, width: "120"},
+      {name: "name", label: "general:Name", visible: true, width: "110"},
+      {name: "createdTime", label: "general:Created time", visible: true, width: "160"},
+      {name: "displayName", label: "general:Display name", visible: true},
+      {name: "avatar", label: "general:Avatar", visible: true, width: "80"},
+      {name: "email", label: "general:Email", visible: true, width: "160"},
+      {name: "phone", label: "general:Phone", visible: true, width: "120"},
+      {name: "affiliation", label: "user:Affiliation", visible: true, width: "140"},
+      {name: "region", label: "user:Country/Region", visible: true, width: "140"},
+      {name: "type", label: "general:User type", visible: true, width: "120"},
+      {name: "tag", label: "user:Tag", visible: true, width: "110"},
+      {name: "isAdmin", label: "user:Is admin", visible: true, width: "120"},
+      {name: "isForbidden", label: "user:Is forbidden", visible: true, width: "110"},
+      {name: "isDeleted", label: "user:Is deleted", visible: true, width: "110"},
+    ];
+  } else if (formType === "providers") {
+    return [
+      {name: "name", label: "general:Name", visible: true, width: "120"},
+      {name: "owner", label: "general:Organization", visible: true, width: "150"},
+      {name: "createdTime", label: "general:Created time", visible: true, width: "180"},
+      {name: "displayName", label: "general:Display name", visible: true},
+      {name: "category", label: "provider:Category", visible: true, width: "110"},
+      {name: "type", label: "provider:Type", visible: true, width: "110"},
+      {name: "clientId", label: "provider:Client ID", visible: true, width: "100"},
+      {name: "providerUrl", label: "provider:Provider URL", visible: true, width: "150"},
+    ];
+  } else if (formType === "applications") {
+    return [
+      {name: "name", label: "general:Name", visible: true, width: "150"},
+      {name: "createdTime", label: "general:Created time", visible: true, width: "160"},
+      {name: "displayName", label: "general:Display name", visible: true},
+      {name: "logo", label: "Logo", visible: true, width: "200"},
+      {name: "organization", label: "general:Organization", visible: true, width: "150"},
+      {name: "providers", label: "general:Providers", visible: true},
+    ];
+  } else if (formType === "organizations") {
+    return [
+      {name: "name", label: "general:Name", visible: true, width: "120"},
+      {name: "createdTime", label: "general:Created time", visible: true, width: "160"},
+      {name: "displayName", label: "general:Display name", visible: true},
+      {name: "favicon", label: "general:Favicon", visible: true, width: "50"},
+      {name: "websiteUrl", label: "organization:Website URL", visible: true, width: "200"},
+      {name: "passwordType", label: "general:Password type", visible: true, width: "150"},
+      {name: "passwordSalt", label: "general:Password salt", visible: true, width: "150"},
+      {name: "defaultAvatar", label: "general:Default avatar", visible: true, width: "120"},
+      {name: "enableSoftDeletion", label: "organization:Soft deletion", visible: true, width: "140"},
+    ];
+  } else {
+    return [];
+  }
+}
+
+export function filterTableColumns(columns, formItems) {
+  if (!formItems || formItems.length === 0) {
+    return columns;
+  }
+  const visibleColumns = formItems
+    .filter(item => item.visible !== false)
+    .map(item => {
+      const matchedColumn = columns.find(col => col.dataIndex === item.name);
+
+      if (matchedColumn) {
+        return {
+          ...matchedColumn,
+          width: item.width !== undefined ? `${item.width}px` : matchedColumn.width,
+        };
+      }
+      return null;
+    })
+    .filter(col => col !== null);
+
+  const actionColumn = columns.find(col => col.key === "op");
+
+  return [
+    ...visibleColumns,
+    actionColumn,
+  ].filter(col => col);
+}

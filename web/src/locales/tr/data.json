@@ -220,6 +220,12 @@
     "Unknown forget type": "Bilinmeyen unutma türü",
     "Verify": "Doğrula"
   },
+  "form": {
+    "Edit Form": "Edit Form",
+    "Form items": "Form items",
+    "Form items - Tooltip": "Form items - Tooltip",
+    "Width": "Width"
+  },
   "general": {
     "AI Assistant": "Yapay Zeka Asistanı",
     "API key": "API anahtarı",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Zorlanan yönlendirme kaynağı - Araç ipucu",
     "Forget URL": "Unutma URL'si",
     "Forget URL - Tooltip": "\"Parolayı unuttum\" sayfası için özel URL. Ayarlanmamışsa, varsayılan Casdoor \"Parolayı unuttum\" sayfası kullanılacaktır. Ayarlanırsa, giriş sayfasındaki \"Parolayı unuttum\" bağlantısı bu URL'ye yönlendirilecektir",
+    "Forms": "Forms",
     "Found some texts still not translated? Please help us translate at": "Henüz çevrilmemiş bazı metinler buldunuz mu? Lütfen aşağıdaki adreste bize çeviri yaparak yardım edin",
     "Go to enable": "Etkinleştirmek için git",
     "Go to writable demo site?": "Yazılabilir demo sitesine gitmek ister misiniz?",
@@ -405,6 +412,7 @@
     "Records": "Kayıtlar",
     "Request": "İstek",
     "Request URI": "İstek URI'si",
+    "Reset to Default": "Reset to Default",
     "Resources": "Kaynaklar",
     "Role": "Rol",
     "Role - Tooltip": "Rol - Araç ipucu",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "İnternet için Bölge uç noktası",
     "Region endpoint for Intranet": "İç ağ için Bölge uç noktası",
     "Required": "Gerekli",
-    "Reset to Default HTML": "Varsayılan HTML'ye Sıfırla",
-    "Reset to Default Text": "Varsayılan Metne Sıfırla",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 Uç noktası (HTTP)",
     "SMS Test": "SMS Testi",
     "SMS Test - Tooltip": "Test SMS'i göndermek için telefon numarası",

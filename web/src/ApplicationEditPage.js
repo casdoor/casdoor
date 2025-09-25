@@ -1101,7 +1101,7 @@ class ApplicationEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
           </Col>
           <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getDefaultFooterContent())} >
-            {i18next.t("provider:Reset to Default HTML")}
+            {i18next.t("general:Reset to Default")}
           </Button>
           <Button style={{marginLeft: "10px", marginBottom: "5px"}} onClick={() => this.updateApplicationField("footerHtml", Setting.getEmptyFooterContent())} >
             {i18next.t("application:Reset to Empty")}

@@ -220,6 +220,12 @@
     "Unknown forget type": "未知的忘记密码类型",
     "Verify": "验证"
   },
+  "form": {
+    "Edit Form": "编辑表单",
+    "Form items": "表单项",
+    "Form items - Tooltip": "表单项",
+    "Width": "宽度"
+  },
   "general": {
     "AI Assistant": "AI助理",
     "API key": "API 密钥",
@@ -311,6 +317,7 @@
     "Forced redirect origin - Tooltip": "Forced redirect origin - Tooltip",
     "Forget URL": "忘记密码URL",
     "Forget URL - Tooltip": "自定义忘记密码页面的URL，不设置时采用Casdoor默认的忘记密码页面，设置后Casdoor各类页面的忘记密码链接会跳转到该URL",
+    "Forms": "表单",
     "Found some texts still not translated? Please help us translate at": "发现有些文字尚未翻译？请移步这里帮我们翻译：",
     "Go to enable": "前往启用",
     "Go to writable demo site?": "跳转至可写演示站点？",
@@ -405,6 +412,7 @@
     "Records": "日志",
     "Request": "请求",
     "Request URI": "请求URI",
+    "Reset to Default": "重置为默认",
     "Resources": "资源",
     "Role": "角色",
     "Role - Tooltip": "所对应的角色",
@@ -941,8 +949,6 @@
     "Region endpoint for Internet": "地域节点 (外网)",
     "Region endpoint for Intranet": "地域节点 (内网)",
     "Required": "是否必填项",
-    "Reset to Default HTML": "重置为默认HTML",
-    "Reset to Default Text": "重置为默认纯文本",
     "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 端点 (HTTP)",
     "SMS Test": "测试短信配置",
     "SMS Test - Tooltip": "请输入测试手机号",
