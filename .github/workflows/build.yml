@@ -128,7 +128,7 @@ jobs:
   release-and-push:
     name: Release And Push
     runs-on: ubuntu-latest
-    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
+    if: github.event_name == 'push'
     needs: [ frontend, backend, linter, e2e ]
     steps:
       - name: Checkout
@@ -141,19 +141,23 @@ jobs:
           node-version: 20
 
       - name: Fetch Previous version
+        if: github.repository == 'casdoor/casdoor'
         id: get-previous-tag
         uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Release
+        if: github.repository == 'casdoor/casdoor'
         run: yarn global add semantic-release@17.4.4 && semantic-release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Current version
+        if: github.repository == 'casdoor/casdoor'
         id: get-current-tag
         uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Decide Should_Push Or Not
+        if: github.repository == 'casdoor/casdoor'
         id: should_push
         run: |
           old_version=${{steps.get-previous-tag.outputs.tag}}
@@ -181,16 +185,38 @@ jobs:
         with:
           version: latest
 
+      - name: Build image (no push)
+        if: github.repository != 'casdoor/casdoor'
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          target: STANDARD
+          platforms: linux/amd64
+          load: true
+          tags: casdoor-local:${{ github.sha }}
+
+      - name: Export image artifact
+        if: github.repository != 'casdoor/casdoor'
+        run: |
+          docker save casdoor-local:${{ github.sha }} | gzip > casdoor-image-${{ github.sha }}.tar.gz
+
+      - name: Upload image artifact
+        if: github.repository != 'casdoor/casdoor'
+        uses: actions/upload-artifact@v4
+        with:
+          name: casdoor-image-${{ github.sha }}
+          path: casdoor-image-${{ github.sha }}.tar.gz
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        if: github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Push to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        if: github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: STANDARD
@@ -200,7 +226,7 @@ jobs:
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
-        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && steps.should_push.outputs.push=='true'
+        if: github.event_name == 'push' && steps.should_push.outputs.push=='true'
         with:
           context: .
           target: ALLINONE
