@@ -284,7 +284,7 @@ class ApplicationListPage extends BaseListPage {
       },
     ];
 
-    const filteredColumns = Setting.filterTableColumns(columns, this.state.formItems);
+    const filteredColumns = Setting.filterTableColumns(columns, this.props.formItems ?? this.state.formItems);
     const paginationProps = {
       total: this.state.pagination.total,
       showQuickJumper: true,

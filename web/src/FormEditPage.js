@@ -18,6 +18,10 @@ import * as FormBackend from "./backend/FormBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import FormItemTable from "./table/FormItemTable";
+import UserListPage from "./UserListPage";
+import ApplicationListPage from "./ApplicationListPage";
+import ProviderListPage from "./ProviderListPage";
+import OrganizationListPage from "./OrganizationListPage";
 
 const {Option} = Select;
 
@@ -98,6 +102,7 @@ class FormEditPage extends React.Component {
               onChange={value => {
                 this.updateFormField("type", value);
                 this.updateFormField("name", value);
+                this.updateFormField("displayName", value);
                 const defaultItems = new FormItemTable({formType: value}).getItems();
                 this.updateFormField("formItems", defaultItems);
               }}
@@ -123,7 +128,42 @@ class FormEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            {
+              this.renderListPreview()
+            }
+          </Col>
+        </Row>
       </Card>
+    );
+  }
+
+  renderListPreview() {
+    let listPageComponent = null;
+
+    if (this.state.form.type === "users") {
+      listPageComponent = (<UserListPage {...this.props} formItems={this.state.form.formItems} />);
+    } else if (this.state.form.type === "applications") {
+      listPageComponent = (<ApplicationListPage {...this.props} formItems={this.state.form.formItems} />);
+    } else if (this.state.form.type === "providers") {
+      listPageComponent = (<ProviderListPage {...this.props} formItems={this.state.form.formItems} />);
+    } else if (this.state.form.type === "organizations") {
+      listPageComponent = (<OrganizationListPage {...this.props} formItems={this.state.form.formItems} />);
+    }
+
+    return (
+      <div style={{position: "relative", border: "1px solid rgb(217,217,217)", height: "600px", cursor: "pointer"}} onClick={(e) => {Setting.openLink(`/${this.state.form.type}`);}}>
+        <div style={{position: "relative", height: "100%", overflow: "auto"}}>
+          <div style={{display: "inline-block", position: "relative", zIndex: 1, pointerEvents: "none"}}>
+            {listPageComponent}
+          </div>
+        </div>
+        <div style={{position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, background: "rgba(0,0,0,0.4)", pointerEvents: "none"}} />
+      </div>
     );
   }
 
