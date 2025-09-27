@@ -18,6 +18,10 @@ import * as FormBackend from "./backend/FormBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
 import FormItemTable from "./table/FormItemTable";
+import UserListPage from "./UserListPage";
+import ApplicationListPage from "./ApplicationListPage";
+import ProviderListPage from "./ProviderListPage";
+import OrganizationListPage from "./OrganizationListPage";
 
 const {Option} = Select;
 
@@ -123,7 +127,61 @@ class FormEditPage extends React.Component {
             />
           </Col>
         </Row>
+        <Row style={{marginTop: "20px"}}>
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
+          </Col>
+          <Col span={22}>
+            {
+              this.renderListPreview()
+            }
+          </Col>
+        </Row>
       </Card>
+    );
+  }
+
+  renderListPreview() {
+    const {form} = this.state;
+    let PreviewComponent = null;
+
+    if (form.type === "users") {
+      PreviewComponent = (<UserListPage{...this.props} formItems={form.formItems} />);
+    } else if (form.type === "applications") {
+      PreviewComponent = (<ApplicationListPage{...this.props} formItems={form.formItems} />);
+    } else if (form.type === "providers") {
+      PreviewComponent = (<ProviderListPage{...this.props} formItems={form.formItems} />);
+    } else if (form.type === "organizations") {
+      PreviewComponent = (<OrganizationListPage{...this.props} formItems={form.formItems} />);
+    }
+
+    return (
+      <React.Fragment>
+        <div
+          style={{
+            position: "relative",
+            border: "1px solid rgb(217,217,217)",
+            boxShadow: "10px 10px 5px #888888",
+            height: "400px",
+            overflow: "auto",
+          }}
+        >
+          <div style={{display: "inline-block"}}>
+            {PreviewComponent}
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              zIndex: 10,
+              height: "400px",
+              width: "180%",
+              background: "rgba(0,0,0,0.4)",
+            }}
+          />
+        </div>
+      </React.Fragment>
     );
   }
 

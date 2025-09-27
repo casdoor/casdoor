@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Button, Col, Input, Row, Select, Switch, Table, Tooltip} from "antd";
-import {DownOutlined, UpOutlined} from "@ant-design/icons";
+import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -32,6 +32,17 @@ class FormItemTable extends React.Component {
 
   updateField(table, index, key, value) {
     table[index][key] = value;
+    this.updateTable(table);
+  }
+
+  addRow(table) {
+    const row = {name: "", label: "", visible: false};
+    table = Setting.addRow(table, row);
+    this.updateTable(table);
+  }
+
+  deleteRow(table, i) {
+    table = Setting.deleteRow(table, i);
     this.updateTable(table);
   }
 
@@ -67,7 +78,7 @@ class FormItemTable extends React.Component {
         width: "200px",
         render: (text, record, index) => {
           const items = this.getItems();
-          const options = Setting.getDeduplicatedArray(items, table, "name").map(item => ({label: item.label, value: item.name}));
+          const options = Setting.getDeduplicatedArray(items, table, "name").map(item => ({label: i18next.t(item.label), value: item.name}));
           const selectedLabel = items.find(item => item.name === text)?.label || text;
           return (
             <Select
@@ -102,8 +113,9 @@ class FormItemTable extends React.Component {
         key: "width",
         render: (text, record, index) => {
           return (
-            <Input value={text} onChange={e => {
-              this.updateField(table, index, "width", e.target.value);
+            <Input type="number" value={text} min={0} onChange={e => {
+              const value = e.target.value !== "" ? parseInt(e.target.value, 10) : null;
+              this.updateField(table, index, "width", value);
             }} />
           );
         },
@@ -111,7 +123,7 @@ class FormItemTable extends React.Component {
       {
         title: i18next.t("general:Action"),
         key: "action",
-        width: "75px",
+        width: "100px",
         render: (text, record, index) => {
           return (
             <div>
@@ -122,6 +134,9 @@ class FormItemTable extends React.Component {
               <Tooltip placement="topLeft" title={i18next.t("general:Down")}>
                 <Button style={{marginRight: "5px"}} disabled={index === table.length - 1}
                   icon={<DownOutlined />} size="small" onClick={() => this.downRow(table, index)} />
+              </Tooltip>
+              <Tooltip placement="topLeft" title={i18next.t("general:Delete")}>
+                <Button icon={<DeleteOutlined />} size="small" onClick={() => this.deleteRow(table, index)} />
               </Tooltip>
             </div>
           );
@@ -135,8 +150,8 @@ class FormItemTable extends React.Component {
         title={() => (
           <div>
             {this.props.title}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button style={{marginRight: "5px"}} type="primary" size="small"
-              onClick={() => this.defaultTable()}>{i18next.t("general:Reset to Default")}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.defaultTable()}>{i18next.t("general:Reset to Default")}</Button>
+            <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
       />
