@@ -499,7 +499,7 @@
     "Show all": "عرض الكل",
     "Upload (.xlsx)": "تحميل (.xlsx)",
     "Virtual": "افتراضي",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -\u003e [المجموعات]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
   },
   "home": {
     "New users past 30 days": "مستخدمون جدد خلال آخر 30 يومًا",
@@ -900,7 +900,7 @@
     "From name": "اسم المرسل",
     "From name - Tooltip": "اسم المرسل",
     "Get phone number": "الحصول على رقم الهاتف",
-    "Get phone number - Tooltip": "إذا تم تمكين مزامنة رقم الهاتف، يجب تمكين Google People API أولاً وإضافة النطاق \u003curl id=\"d20eej367ti9ba9cqjh0\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\"\u003ehttps://www.googleapis.com/auth/user.phonenumbers.read\u003c/url\u003e",
+    "Get phone number - Tooltip": "إذا تم تمكين مزامنة رقم الهاتف، يجب تمكين Google People API أولاً وإضافة النطاق <url id=\"d20eej367ti9ba9cqjh0\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\">https://www.googleapis.com/auth/user.phonenumbers.read</url>",
     "HTTP body mapping": "تعيين جسم HTTP",
     "HTTP body mapping - Tooltip": "تعيين جسم HTTP",
     "HTTP header": "رأس HTTP",
