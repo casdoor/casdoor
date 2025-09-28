@@ -392,14 +392,20 @@ func CheckUserPassword(organization string, username string, password string, la
 			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
 		}
 	} else {
-		err = CheckPassword(user, password, lang, enableCaptcha)
-		if err != nil {
-			return nil, err
-		}
+		// For OAuth users who don't have a password set, skip password verification
+		if user.Password == "" && password == "" {
+			// OAuth user without password - allow access without password verification
+			// This is used in scenarios like MFA setup where OAuth users need to proceed
+		} else {
+			err = CheckPassword(user, password, lang, enableCaptcha)
+			if err != nil {
+				return nil, err
+			}
 
-		err = checkPasswordExpired(user, lang)
-		if err != nil {
-			return nil, err
+			err = checkPasswordExpired(user, lang)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
