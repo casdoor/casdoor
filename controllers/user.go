@@ -524,17 +524,16 @@ func (c *ApiController) SetPassword() {
 			}
 		}
 	} else if code == "" {
-		// For OAuth users who don't have a password set, skip old password verification
-		if targetUser.Password == "" && user.Ldap == "" {
-			// OAuth user without password - no need to verify old password
-		} else if user.Ldap == "" {
-			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		} else {
-			err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		}
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if targetUser.Password != "" || user.Ldap != "" {
+			if user.Ldap == "" {
+				err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			} else {
+				err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			}
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	}
 
