@@ -127,20 +127,27 @@ class SignupPage extends React.Component {
     if (this.getApplicationObj() === undefined) {
       if (this.state.applicationName !== null) {
         this.getApplication(this.state.applicationName);
-
-        const sp = new URLSearchParams(window.location.search);
-        if (sp.has("invitationCode")) {
-          const invitationCode = sp.get("invitationCode");
-          this.setState({invitationCode: invitationCode});
-          if (invitationCode !== "") {
-            this.getInvitationCodeInfo(invitationCode, "admin/" + this.state.applicationName);
-          }
-        }
+        this.setInvitationCode();
       } else if (oAuthParams !== null) {
         this.getApplicationLogin(oAuthParams);
       } else {
         Setting.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
         this.onUpdateApplication(null);
+      }
+    }
+  }
+
+  setInvitationCode(application = null) {
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.has("invitationCode")) {
+      const invitationCode = sp.get("invitationCode");
+      this.setState({invitationCode: invitationCode});
+      if (invitationCode !== "") {
+        let appName = this.state.applicationName;
+        if (application) {
+          appName = application.name;
+        }
+        this.getInvitationCodeInfo(invitationCode, "admin/" + appName);
       }
     }
   }
@@ -167,6 +174,7 @@ class SignupPage extends React.Component {
         if (res.status === "ok") {
           const application = res.data;
           this.onUpdateApplication(application);
+          this.setInvitationCode(application);
         } else {
           this.onUpdateApplication(null);
           this.setState({
