@@ -537,6 +537,13 @@ func GetPasswordToken(application *Application, username string, password string
 	if user.Ldap != "" {
 		err = CheckLdapUserPassword(user, password, "en")
 	} else {
+		// For OAuth users who don't have a password set, they cannot use password grant type
+		if user.Password == "" {
+			return nil, &TokenError{
+				Error:            InvalidGrant,
+				ErrorDescription: "OAuth users cannot use password grant type, please use authorization code flow",
+			}, nil
+		}
 		err = CheckPassword(user, password, "en")
 	}
 	if err != nil {

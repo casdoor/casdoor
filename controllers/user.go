@@ -524,14 +524,16 @@ func (c *ApiController) SetPassword() {
 			}
 		}
 	} else if code == "" {
-		if user.Ldap == "" {
-			err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		} else {
-			err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
-		}
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		if targetUser.Password != "" || user.Ldap != "" {
+			if user.Ldap == "" {
+				err = object.CheckPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			} else {
+				err = object.CheckLdapUserPassword(targetUser, oldPassword, c.GetAcceptLanguage())
+			}
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 	}
 
