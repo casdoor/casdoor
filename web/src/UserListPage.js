@@ -188,7 +188,7 @@ class UserListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button icon={<UploadOutlined />} id="upload-button" type="primary" size="small">
+        <Button icon={<UploadOutlined />} id="upload-button" size="small">
           {i18next.t("user:Upload (.xlsx)")}
         </Button>
       </Upload>
@@ -433,7 +433,7 @@ class UserListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Users")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>
+              <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addUser.bind(this)}>{i18next.t("general:Add")} </Button>
               {
                 this.renderUpload()
               }

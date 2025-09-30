@@ -15,9 +15,11 @@
 package object
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/casdoor/xlsx"
 )
@@ -73,7 +75,7 @@ func parseListItem(lines *[]string, i int) []string {
 	return trimmedItems
 }
 
-func UploadUsers(owner string, path string) (bool, error) {
+func UploadUsers(owner string, path string, userObj *User, lang string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
 	oldUserMap, err := getUserMap(owner)
@@ -81,13 +83,58 @@ func UploadUsers(owner string, path string) (bool, error) {
 		return false, err
 	}
 
-	transUsers, err := StringArrayToStruct[User](table)
+	uploadedUsers, err := StringArrayToStruct[User](table)
 	if err != nil {
 		return false, err
 	}
+	if len(uploadedUsers) == 0 {
+		return false, fmt.Errorf("no users are provided")
+	}
+
+	organizationName := uploadedUsers[0].Owner
+	if organizationName == "" || !userObj.IsGlobalAdmin() {
+		organizationName = owner
+	}
+
+	organization, err := getOrganization("admin", organizationName)
+	if err != nil {
+		return false, err
+	}
+	if organization == nil {
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+	}
+
 	newUsers := []*User{}
-	for _, user := range transUsers {
+	for _, user := range uploadedUsers {
 		if _, ok := oldUserMap[user.GetId()]; !ok {
+			user.Owner = organizationName
+			if user.CreatedTime == "" {
+				user.CreatedTime = util.GetCurrentTime()
+			}
+			if user.Id == "" {
+				user.Id = util.GenerateId()
+			}
+			if user.Type == "" {
+				user.Type = "normal-user"
+			}
+			user.PasswordType = "plain"
+			if user.DisplayName == "" {
+				user.DisplayName = user.Name
+			}
+			user.Avatar = organization.DefaultAvatar
+			if user.Region == "" {
+				user.Region = userObj.Region
+			}
+			if user.Address == nil {
+				user.Address = []string{}
+			}
+			if user.CountryCode == "" {
+				user.CountryCode = userObj.CountryCode
+			}
+			if user.SignupApplication == "" {
+				user.SignupApplication = organization.DefaultApplication
+			}
+
 			newUsers = append(newUsers, user)
 		}
 	}

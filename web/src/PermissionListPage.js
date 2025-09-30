@@ -99,6 +99,7 @@ class PermissionListPage extends BaseListPage {
       Setting.showMessage("error", "File failed to upload");
     }
   }
+
   renderPermissionUpload() {
     const props = {
       name: "file",
@@ -113,7 +114,7 @@ class PermissionListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button icon={<UploadOutlined />} id="upload-button" type="primary" size="small">
+        <Button icon={<UploadOutlined />} id="upload-button" size="small">
           {i18next.t("user:Upload (.xlsx)")}
         </Button></Upload>
     );
@@ -390,7 +391,7 @@ class PermissionListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Permissions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button id="add-button" style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button id="add-button" style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addPermission.bind(this)}>{i18next.t("general:Add")}</Button>
               {
                 this.renderPermissionUpload()
               }

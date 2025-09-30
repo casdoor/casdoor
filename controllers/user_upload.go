@@ -40,6 +40,17 @@ func saveFile(path string, file *multipart.File) (err error) {
 }
 
 func (c *ApiController) UploadUsers() {
+	if !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	userObj := c.getCurrentUser()
+	if userObj == nil {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
 	userId := c.GetSessionUsername()
 	owner, user := util.GetOwnerAndNameFromId(userId)
 
@@ -58,7 +69,7 @@ func (c *ApiController) UploadUsers() {
 		return
 	}
 
-	affected, err := object.UploadUsers(owner, path)
+	affected, err := object.UploadUsers(owner, path, userObj, c.GetAcceptLanguage())
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

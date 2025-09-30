@@ -106,7 +106,7 @@ class RoleListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button icon={<UploadOutlined />} type="primary" size="small">
+        <Button icon={<UploadOutlined />} size="small">
           {i18next.t("user:Upload (.xlsx)")}
         </Button>
       </Upload>

@@ -117,7 +117,7 @@ class GroupListPage extends BaseListPage {
 
     return (
       <Upload {...props}>
-        <Button icon={<UploadOutlined />} id="upload-button" type="primary" size="small">
+        <Button icon={<UploadOutlined />} id="upload-button" size="small">
           {i18next.t("group:Upload (.xlsx)")}
         </Button>
       </Upload>
@@ -268,7 +268,7 @@ class GroupListPage extends BaseListPage {
           title={() => (
             <div>
               {i18next.t("general:Groups")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button style={{marginRight: "15px"}} type="primary" size="small" onClick={this.addGroup.bind(this)}>{i18next.t("general:Add")}</Button>
               {
                 this.renderUpload()
               }
