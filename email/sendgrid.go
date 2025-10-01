@@ -54,6 +54,8 @@ func (s *SendgridEmailProvider) Send(fromAddress string, fromName string, toAddr
 		personalization.AddTos(to)
 	}
 
+	personalization.Subject = subject
+
 	message.AddPersonalizations(personalization)
 
 	client := s.initSendgridClient()
