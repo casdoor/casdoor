@@ -830,6 +830,26 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("application:SAML hash algorithm"), i18next.t("application:SAML hash algorithm - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}}
+              value={this.state.application.samlHashAlgorithm}
+              onChange={(value => {
+                this.updateApplicationField("samlHashAlgorithm", value);
+              })} >
+              {
+                [
+                  {id: "SHA1", name: "SHA1"},
+                  {id: "SHA256", name: "SHA256"},
+                  {id: "SHA512", name: "SHA512"},
+                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
           </Col>
           <Col span={22} >

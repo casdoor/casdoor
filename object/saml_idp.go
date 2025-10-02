@@ -370,7 +370,13 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 		X509Certificate: certificate,
 	}
 	ctx := dsig.NewDefaultSigningContext(randomKeyStore)
-	ctx.Hash = crypto.SHA1
+	if application.SamlHashAlgorithm == "" || application.SamlHashAlgorithm == "SHA1" {
+		ctx.Hash = crypto.SHA1
+	} else if application.SamlHashAlgorithm == "SHA256" {
+		ctx.Hash = crypto.SHA256
+	} else if application.SamlHashAlgorithm == "SHA512" {
+		ctx.Hash = crypto.SHA512
+	}
 
 	if application.EnableSamlC14n10 {
 		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")

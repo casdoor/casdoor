@@ -102,6 +102,7 @@ type Application struct {
 	CertPublicKey         string          `xorm:"-" json:"certPublicKey"`
 	Tags                  []string        `xorm:"mediumtext" json:"tags"`
 	SamlAttributes        []*SamlItem     `xorm:"varchar(1000)" json:"samlAttributes"`
+	SamlHashAlgorithm     string          `xorm:"varchar(20)" json:"samlHashAlgorithm"`
 	IsShared              bool            `json:"isShared"`
 	IpRestriction         string          `json:"ipRestriction"`
 
