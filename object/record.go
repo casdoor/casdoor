@@ -54,6 +54,10 @@ func maskPassword(recordString string) string {
 func NewRecord(ctx *context.Context) (*casvisorsdk.Record, error) {
 	clientIp := strings.Replace(util.GetClientIpFromRequest(ctx.Request), ": ", "", -1)
 	action := strings.Replace(ctx.Request.URL.Path, "/api/", "", -1)
+	if strings.HasPrefix(action, "notify-payment") {
+		action = "notify-payment"
+	}
+
 	requestUri := util.FilterQuery(ctx.Request.RequestURI, []string{"accessToken"})
 	if len(requestUri) > 1000 {
 		requestUri = requestUri[0:1000]
