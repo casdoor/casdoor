@@ -32,6 +32,10 @@ type Object struct {
 	Name         string `json:"name"`
 	AccessKey    string `json:"accessKey"`
 	AccessSecret string `json:"accessSecret"`
+}
+
+type ObjectWithOrg struct {
+	Object
 	Organization string `json:"organization"`
 }
 
@@ -105,15 +109,21 @@ func getObject(ctx *context.Context) (string, string, error) {
 		}
 
 		var obj Object
+
+		if strings.HasSuffix(path, "-application") || strings.HasSuffix(path, "-token") ||
+			strings.HasSuffix(path, "-syncer") || strings.HasSuffix(path, "-webhook") {
+			var objWithOrg ObjectWithOrg
+			err := json.Unmarshal(body, &objWithOrg)
+			if err != nil {
+				return "", "", nil
+			}
+			return objWithOrg.Organization, objWithOrg.Name, nil
+		}
+
 		err := json.Unmarshal(body, &obj)
 		if err != nil {
 			// this is not error
 			return "", "", nil
-		}
-
-		if strings.HasSuffix(path, "-application") || strings.HasSuffix(path, "-token") ||
-			strings.HasSuffix(path, "-syncer") || strings.HasSuffix(path, "-webhook") {
-			return obj.Organization, obj.Name, nil
 		}
 
 		if strings.HasSuffix(path, "-organization") {
