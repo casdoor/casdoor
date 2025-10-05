@@ -95,7 +95,7 @@ class FormItemTable extends React.Component {
         },
       },
       {
-        title: i18next.t("general:Label"),
+        title: i18next.t("signup:Label"),
         dataIndex: "label",
         key: "label",
         width: "200px",
