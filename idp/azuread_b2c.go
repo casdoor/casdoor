@@ -26,13 +26,14 @@ import (
 )
 
 type AzureADB2CProvider struct {
-	Client   *http.Client
-	Config   *oauth2.Config
-	Tenant   string
-	UserFlow string
+	Client      *http.Client
+	Config      *oauth2.Config
+	Tenant      string
+	UserFlow    string
+	UserMapping map[string]string
 }
 
-func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, userFlow string) *AzureADB2CProvider {
+func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, userFlow string, userMapping map[string]string) *AzureADB2CProvider {
 	return &AzureADB2CProvider{
 		Config: &oauth2.Config{
 			ClientID:     clientId,
@@ -44,8 +45,9 @@ func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, u
 			},
 			Scopes: []string{"openid", "email"},
 		},
-		Tenant:   tenant,
-		UserFlow: userFlow,
+		Tenant:      tenant,
+		UserFlow:    userFlow,
+		UserMapping: userMapping,
 	}
 }
 
@@ -116,11 +118,65 @@ func (p *AzureADB2CProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
-	var userInfo UserInfo
-	err = json.Unmarshal(bodyBytes, &userInfo)
+	// If UserMapping is not provided, use default mapping
+	if p.UserMapping == nil || len(p.UserMapping) == 0 {
+		var userInfo UserInfo
+		err = json.Unmarshal(bodyBytes, &userInfo)
+		if err != nil {
+			return nil, err
+		}
+		return &userInfo, nil
+	}
+
+	// Use custom mapping (similar to CustomIdProvider)
+	var dataMap map[string]interface{}
+	err = json.Unmarshal(bodyBytes, &dataMap)
 	if err != nil {
 		return nil, err
 	}
 
-	return &userInfo, nil
+	userInfo := &UserInfo{}
+
+	// Map required fields
+	if idMapping, ok := p.UserMapping["id"]; ok {
+		if val, err := getNestedValue(dataMap, idMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Id = strVal
+			}
+		}
+	}
+
+	if usernameMapping, ok := p.UserMapping["username"]; ok {
+		if val, err := getNestedValue(dataMap, usernameMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Username = strVal
+			}
+		}
+	}
+
+	if displayNameMapping, ok := p.UserMapping["displayName"]; ok {
+		if val, err := getNestedValue(dataMap, displayNameMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.DisplayName = strVal
+			}
+		}
+	}
+
+	if emailMapping, ok := p.UserMapping["email"]; ok {
+		if val, err := getNestedValue(dataMap, emailMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Email = strVal
+			}
+		}
+	}
+
+	if avatarMapping, ok := p.UserMapping["avatarUrl"]; ok {
+		if val, err := getNestedValue(dataMap, avatarMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.AvatarUrl = strVal
+			}
+		}
+	}
+
+	return userInfo, nil
 }

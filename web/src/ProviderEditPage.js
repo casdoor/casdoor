@@ -86,7 +86,7 @@ class ProviderEditPage extends React.Component {
             if (!provider.userMapping?.fromName) {
               provider.userMapping = defaultEmailMapping;
             }
-          } else {
+          } else if ((provider.type === "Custom" || provider.type === "Okta" || provider.type === "AzureADB2C") && provider.category === "OAuth") {
             provider.userMapping = provider.userMapping || defaultUserMapping;
           }
           this.setState({
@@ -801,6 +801,11 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 ) : null
               }
+            </React.Fragment>
+          ) : null
+        }
+        {
+          (this.state.provider.type === "Custom" || this.state.provider.type === "Okta" || this.state.provider.type === "AzureADB2C") && this.state.provider.category === "OAuth" ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
@@ -809,6 +814,10 @@ class ProviderEditPage extends React.Component {
                   {this.renderUserMappingInput()}
                 </Col>
               </Row>
+          ) : null
+        }
+        {
+          this.state.provider.type === "Custom" ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :

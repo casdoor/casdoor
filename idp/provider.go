@@ -93,7 +93,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "ADFS":
 		return NewAdfsIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "AzureADB2C":
-		return NewAzureAdB2cProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.AppId), nil
+		return NewAzureAdB2cProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.AppId, idpInfo.UserMapping), nil
 	case "Baidu":
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
@@ -111,7 +111,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Casdoor":
 		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Okta":
-		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
+		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.UserMapping), nil
 	case "Douyin":
 		return NewDouyinIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Kwai":
