@@ -42,6 +42,14 @@ const defaultUserMapping = {
   avatarUrl: "avatarUrl",
 };
 
+const defaultOktaMapping = {
+  id: "sub",
+  username: "preferred_username",
+  displayName: "name",
+  email: "email",
+  avatarUrl: "picture",
+};
+
 const defaultEmailMapping = {
   fromName: "fromName",
   toAddress: "toAddress",
@@ -86,8 +94,15 @@ class ProviderEditPage extends React.Component {
             if (!provider.userMapping?.fromName) {
               provider.userMapping = defaultEmailMapping;
             }
-          } else if ((provider.type === "Custom" || provider.type === "Okta" || provider.type === "AzureADB2C") && provider.category === "OAuth") {
-            provider.userMapping = provider.userMapping || defaultUserMapping;
+          } else if (provider.category === "OAuth" && (provider.type === "Custom" || provider.type === "Okta" || provider.type === "AzureADB2C")) {
+            if (provider.type === "Okta") {
+              provider.userMapping = provider.userMapping || defaultOktaMapping;
+            } else if (provider.type === "AzureADB2C") {
+              // AzureADB2C returns standard OIDC claims, similar to Okta
+              provider.userMapping = provider.userMapping || defaultOktaMapping;
+            } else {
+              provider.userMapping = provider.userMapping || defaultUserMapping;
+            }
           }
           this.setState({
             provider: provider,
