@@ -159,11 +159,11 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore
 		// this was a PEM file
 		// block.Bytes are DER encoded so the following code block should happily accept it
 		certData = block.Bytes
-	}
-
-	certData, err = base64.StdEncoding.DecodeString(certEncodedData)
-	if err != nil {
-		return dsig.MemoryX509CertificateStore{}, err
+	} else {
+		certData, err = base64.StdEncoding.DecodeString(certEncodedData)
+		if err != nil {
+			return dsig.MemoryX509CertificateStore{}, err
+		}
 	}
 
 	idpCert, err := x509.ParseCertificate(certData)
