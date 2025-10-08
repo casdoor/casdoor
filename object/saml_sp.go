@@ -154,7 +154,7 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore
 	}
 
 	var certData []byte
-	block, _ := pem.Decode(certData)
+	block, _ := pem.Decode([]byte(certEncodedData))
 	if block != nil {
 		// this was a PEM file
 		// block.Bytes are DER encoded so the following code block should happily accept it
