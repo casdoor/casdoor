@@ -18,6 +18,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -152,10 +153,19 @@ func buildSpCertificateStore(provider *Provider, samlResponse string) (certStore
 		certEncodedData = provider.IdP
 	}
 
-	certData, err := base64.StdEncoding.DecodeString(certEncodedData)
+	var certData []byte
+	block, _ := pem.Decode(certData)
+	if block != nil {
+		// this was a PEM file
+		// block.Bytes are DER encoded so the following code block should happily accept it
+		certData = block.Bytes
+	}
+
+	certData, err = base64.StdEncoding.DecodeString(certEncodedData)
 	if err != nil {
 		return dsig.MemoryX509CertificateStore{}, err
 	}
+
 	idpCert, err := x509.ParseCertificate(certData)
 	if err != nil {
 		return dsig.MemoryX509CertificateStore{}, err
