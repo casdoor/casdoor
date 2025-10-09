@@ -78,7 +78,26 @@ class BaseListPage extends React.Component {
   }
 
   getForm() {
-    FormBackend.getForm(this.props.account.name, this.props.match?.path?.replace(/^\//, ""))
+    const tag = this.props.account.tag;
+    const formType = this.props.match?.path?.replace(/^\//, "");
+    let formName = formType;
+    if (tag !== "") {
+      formName = formType + "-tag-" + tag;
+      FormBackend.getForm(this.props.account.owner, formName)
+        .then(res => {
+          if (res.status === "ok" && res.data) {
+            this.setState({formItems: res.data.formItems});
+          } else {
+            this.fetchFormWithoutTag(formType);
+          }
+        });
+    } else {
+      this.fetchFormWithoutTag(formType);
+    }
+  }
+
+  fetchFormWithoutTag(formName) {
+    FormBackend.getForm(this.props.account.owner, formName)
       .then(res => {
         if (res.status === "ok" && res.data) {
           this.setState({formItems: res.data.formItems});
