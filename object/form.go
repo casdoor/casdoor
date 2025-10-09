@@ -17,7 +17,6 @@ package object
 import (
 	"fmt"
 
-	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -35,38 +34,8 @@ type Form struct {
 	CreatedTime string      `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string      `xorm:"varchar(100)" json:"displayName"`
 	Type        string      `xorm:"varchar(100)" json:"type"`
+	Tag         string      `xorm:"varchar(100)" json:"tag"`
 	FormItems   []*FormItem `xorm:"varchar(5000)" json:"formItems"`
-}
-
-func getFormByType(formType string) ([]*Form, error) {
-	forms := []*Form{}
-	err := ormer.Engine.Desc("created_time").Find(&forms, &Form{Type: formType})
-	if err != nil {
-		return forms, err
-	}
-
-	return forms, nil
-}
-
-func checkFormTypeExists(formType string, excludeId string) (bool, error) {
-	forms, err := getFormByType(formType)
-	if err != nil {
-		return false, err
-	}
-
-	if len(forms) == 0 {
-		return false, nil
-	}
-
-	if excludeId != "" {
-		for _, form := range forms {
-			if form.GetId() != excludeId {
-				return true, nil
-			}
-		}
-		return false, nil
-	}
-	return true, nil
 }
 
 func GetMaskedForm(form *Form, isMaskEnabled bool) *Form {
@@ -131,7 +100,7 @@ func GetForm(id string) (*Form, error) {
 	return getForm(owner, name)
 }
 
-func UpdateForm(id string, form *Form, lang string) (bool, error) {
+func UpdateForm(id string, form *Form) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	existingForm, err := getForm(owner, name)
 	if existingForm == nil {
@@ -144,16 +113,6 @@ func UpdateForm(id string, form *Form, lang string) (bool, error) {
 		return false, nil
 	}
 
-	if form.Type != "" && form.Type != existingForm.Type {
-		exists, err := checkFormTypeExists(form.Type, id)
-		if err != nil {
-			return false, err
-		}
-		if exists {
-			return false, fmt.Errorf(i18n.Translate(lang, "check:form type %s already exists"), form.Type)
-		}
-	}
-
 	_, err = ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(form)
 	if err != nil {
 		return false, err
@@ -162,17 +121,7 @@ func UpdateForm(id string, form *Form, lang string) (bool, error) {
 	return true, nil
 }
 
-func AddForm(form *Form, lang string) (bool, error) {
-	if form.Type != "" {
-		exists, err := checkFormTypeExists(form.Type, "")
-		if err != nil {
-			return false, err
-		}
-		if exists {
-			return false, fmt.Errorf(i18n.Translate(lang, "check:form type %s already exists"), form.Type)
-		}
-	}
-
+func AddForm(form *Form) (bool, error) {
 	affected, err := ormer.Engine.Insert(form)
 	if err != nil {
 		return false, err

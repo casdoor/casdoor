@@ -29,7 +29,7 @@ class FormListPage extends BaseListPage {
   newForm() {
     const randomName = Setting.getRandomName();
     return {
-      owner: this.props.account.name,
+      owner: this.props.account.owner,
       name: `form_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Form - ${randomName}`,
@@ -214,7 +214,7 @@ class FormListPage extends BaseListPage {
     const field = params.searchedColumn, value = params.searchText;
     const sortField = params.sortField, sortOrder = params.sortOrder;
     this.setState({loading: true});
-    FormBackend.getForms(this.props.account.name, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
+    FormBackend.getForms(this.props.account.owner, params.pagination.current, params.pagination.pageSize, field, value, sortField, sortOrder)
       .then((res) => {
         this.setState({
           loading: false,
