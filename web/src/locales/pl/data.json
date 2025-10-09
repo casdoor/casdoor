@@ -503,7 +503,7 @@
     "Show all": "Pokaż wszystko",
     "Upload (.xlsx)": "Prześlij (.xlsx)",
     "Virtual": "Wirtualna",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -\u003e [Grupy]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -> [Grupy]"
   },
   "home": {
     "New users past 30 days": "Nowi użytkownicy w ciągu ostatnich 30 dni",
@@ -908,7 +908,7 @@
     "From name": "Nazwa nadawcy",
     "From name - Tooltip": "Nazwa „Od”",
     "Get phone number": "Pobierz numer telefonu",
-    "Get phone number - Tooltip": "Jeśli synchronizacja numeru telefonu jest włączona, powinieneś najpierw włączyć Google People API i dodać zakres \u003curl id=\"d20esdb67ti9ba9h7sl0\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\"\u003ehttps://www.googleapis.com/auth/user.phonenumbers.read\u003c/url\u003e",
+    "Get phone number - Tooltip": "Jeśli synchronizacja numeru telefonu jest włączona, powinieneś najpierw włączyć Google People API i dodać zakres <url id=\"d20esdb67ti9ba9h7sl0\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\">https://www.googleapis.com/auth/user.phonenumbers.read</url>",
     "HTTP body mapping": "Mapowanie treści HTTP",
     "HTTP body mapping - Tooltip": "Mapowanie treści HTTP",
     "HTTP header": "Nagłówek HTTP",
