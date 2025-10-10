@@ -1,0 +1,306 @@
+/* Signup Page Specific Styles - Uses dex-signup-page modifier class */
+
+/* Compact layout for signup form to prevent scrolling */
+.dex-login-container.dex-signup-page .login-form-section {
+  padding: 2rem !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  min-height: 100vh !important;
+}
+
+.dex-login-container.dex-signup-page .login-content-container {
+  max-width: 400px !important;
+  margin: 0 auto !important;
+  flex: none !important;
+}
+
+/* More compact spacing for signup form */
+.dex-login-container.dex-signup-page .form-header {
+  margin-bottom: 1.2rem !important;
+}
+
+.dex-login-container.dex-signup-page .form-title {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.dex-login-container.dex-signup-page .official-email-note {
+  padding: 0.5rem 0 !important;
+  margin-bottom: 0.75rem !important;
+  margin-top: 1rem !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  word-wrap: break-word !important;
+  white-space: normal !important;
+  line-height: 1.4 !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+/* Compact form items for signup */
+.dex-login-container.dex-signup-page .ant-form-item {
+  margin-bottom: 16px !important;
+  width: 100% !important;
+}
+
+/* Compact panel for signup */
+.dex-login-container.dex-signup-page .modern-bordered-panel {
+  padding: 2rem !important;
+  margin-bottom: 2rem !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-top: 3.9rem !important;
+}
+
+.dex-login-container.dex-signup-page .login-content {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Hide labels and use placeholders instead */
+.dex-login-container.dex-signup-page .ant-form-item-label {
+  display: none !important;
+}
+
+/* Adjust form item spacing without labels */
+.dex-login-container.dex-signup-page .ant-form-item-control {
+  margin-top: 0 !important;
+}
+
+/* Add placeholder styling for better UX */
+.dex-login-container.dex-signup-page .ant-input::placeholder,
+.dex-login-container.dex-signup-page .ant-input-password input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 0.8;
+}
+
+/* Make form more compact without labels */
+.dex-login-container.dex-signup-page .ant-form-item {
+  margin-bottom: 16px !important;
+  width: 100% !important;
+}
+
+/* Signup specific form styling - Make all inputs full width like login page */
+.dex-login-container.dex-signup-page .ant-input,
+.dex-login-container.dex-signup-page .ant-input-password,
+.dex-login-container.dex-signup-page .ant-select,
+.dex-login-container.dex-signup-page .ant-form-item-control-input,
+.dex-login-container.dex-signup-page .ant-form-item-control-input-content,
+.dex-login-container.dex-signup-page .signup-email,
+.dex-login-container.dex-signup-page .signup-phone,
+.dex-login-container.dex-signup-page .signup-password-input,
+.dex-login-container.dex-signup-page .signup-invitation-code-input,
+.dex-login-container.dex-signup-page .signup-username,
+.dex-login-container.dex-signup-page .signup-display-name {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Remove any column width constraints */
+.dex-login-container.dex-signup-page .ant-col,
+.dex-login-container.dex-signup-page .ant-form-item-control {
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 !important;
+}
+
+/* Ensure all signup form items are visible */
+.dex-login-container.dex-signup-page .ant-form-item:has(input[name="username"]),
+.dex-login-container.dex-signup-page .ant-form-item:has(input[name="displayName"]),
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-username),
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-display-name) {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Radio button styling for signup */
+.dex-login-container.dex-signup-page .ant-radio-group {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container.dex-signup-page .ant-radio-wrapper {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container.dex-signup-page .ant-radio-checked .ant-radio-inner {
+  background-color: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+}
+
+.dex-login-container.dex-signup-page .ant-radio:hover .ant-radio-inner {
+  border-color: #0ea5e9 !important;
+}
+
+/* Select dropdown styling for signup */
+.dex-login-container.dex-signup-page .ant-select-dropdown {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+}
+
+.dex-login-container.dex-signup-page .ant-select-item {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container.dex-signup-page .ant-select-item-option-selected {
+  background: rgba(14, 165, 233, 0.2) !important;
+  color: #0ea5e9 !important;
+}
+
+.dex-login-container.dex-signup-page .ant-select-item:hover {
+  background: rgba(14, 165, 233, 0.1) !important;
+}
+
+/* Remove borders from "Have account? Sign in now" section */
+.dex-login-container.dex-signup-page a[href*="login"],
+.dex-login-container.dex-signup-page a[href*="signin"] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #0ea5e9 !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+  margin-top: 1rem !important;
+  display: inline-block !important;
+}
+
+.dex-login-container.dex-signup-page a[href*="login"]:hover,
+.dex-login-container.dex-signup-page a[href*="signin"]:hover {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5) !important;
+}
+
+/* Footer spacing for signup */
+.dex-login-container.dex-signup-page .page-footer {
+  margin-top: 1rem !important;
+  padding: 0.25rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix signup button alignment - remove offset from tailFormItemLayout */
+.dex-login-container.dex-signup-page .ant-form-item .ant-col-offset-8 {
+  margin-left: 0 !important;
+}
+
+/* Fix signup button and sign in link alignment */
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-button) {
+  text-align: left !important;
+}
+
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-button) .ant-form-item-control-input-content {
+  display: block !important;
+  text-align: center !important;
+}
+
+/* Style signin prompt wrapper */
+.dex-login-container.dex-signup-page .signin-prompt {
+  text-align: center !important;
+  margin-top: 1rem !important;
+  display: block !important;
+}
+
+/* Style Have account text */
+.dex-login-container.dex-signup-page .have-account-text {
+  color: white !important;
+  display: inline !important;
+}
+
+.dex-login-container.dex-signup-page .signup-button {
+  width: 100% !important;
+  margin: 0 0 1rem 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #0ea5e9 !important;
+  color: white !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.dex-login-container.dex-signup-page .signup-button:hover {
+  background: #0284c7 !important;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3) !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.dex-login-container.dex-signup-page .signup-button:focus,
+.dex-login-container.dex-signup-page .signup-button:focus-visible {
+  background: #0284c7 !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5) !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Override any input styling that might be applied to buttons */
+.dex-login-container.dex-signup-page .ant-btn.signup-button,
+.dex-login-container.dex-signup-page .ant-btn-primary.signup-button {
+  border: none !important;
+  box-shadow: none !important;
+  background: #0ea5e9 !important;
+  color: white !important;
+  height: auto !important;
+  line-height: normal !important;
+}
+
+.dex-login-container.dex-signup-page .ant-btn.signup-button:hover,
+.dex-login-container.dex-signup-page .ant-btn-primary.signup-button:hover {
+  background: #0284c7 !important;
+  border: none !important;
+  color: white !important;
+}
+
+.dex-login-container.dex-signup-page .ant-btn.signup-button:focus,
+.dex-login-container.dex-signup-page .ant-btn-primary.signup-button:focus {
+  background: #0284c7 !important;
+  border: none !important;
+  color: white !important;
+}
+
+.dex-login-container.dex-signup-page .signup-link {
+  text-align: left !important;
+  display: inline !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  color: #0ea5e9 !important;
+  text-decoration: none !important;
+}
+
+.dex-login-container.dex-signup-page .signup-link:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #38bdf8 !important;
+  text-decoration: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove background from the form item containing the signup link */
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-link) .ant-form-item-control-input,
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-link) .ant-form-item-control-input-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.css-dev-only-do-not-override-1azwnhv.ant-col-sm-offset-8 {
+  margin-left: 0px !important;
+}
+
+.ant-form-item-control-input{
+  max-width: 325px;
+}
+
+.year-text{
+  margin-left: 2px;
+}

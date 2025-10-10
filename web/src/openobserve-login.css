@@ -1,0 +1,1112 @@
+/* OpenObserve Login Page Styling - Force Full Width */
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  font-family: sans-serif;
+  width: 100% !important;
+  height: 100% !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root, #parent-area {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Override any Casdoor container styles */
+.content-warp-card {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: 1 !important;
+}
+
+.dex-login-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  flex-direction: row;
+  font-family: sans-serif;
+  overflow: hidden;
+  z-index: 999999;
+}
+
+/* Background elements */
+.bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0a0f1e 0%, #151b2e 25%, #1a2332 50%, #0f1624 75%, #0a0f1e 100%);
+  z-index: 1;
+}
+
+.grid-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: center;
+  z-index: 2;
+}
+
+@keyframes gridMove {
+  0% {background-position: 0 0;}
+  100% {background-position: 50px 50px;}
+}
+
+.metrics-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  opacity: 0.08;
+}
+
+.metric-line {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 40px,
+    rgba(14, 165, 233, 0.1) 40px,
+    rgba(14, 165, 233, 0.1) 41px
+  );
+}
+
+.metric-line-1 { top: 20%; }
+.metric-line-2 { top: 50%; }
+.metric-line-3 { top: 80%; }
+
+.gradient-orbs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.3;
+  animation: drift 30s infinite ease-in-out;
+}
+
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  top: 20%;
+  right: -150px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+  animation-delay: 10s;
+}
+
+.orb-3 {
+  width: 550px;
+  height: 550px;
+  bottom: -200px;
+  left: 30%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, transparent 70%);
+  animation-delay: 20s;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(60px, 60px); }
+  66% { transform: translate(-40px, 100px); }
+}
+
+/* Left brand section */
+.login-brand-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  padding-bottom: 4rem;
+  position: relative;
+  z-index: 10;
+}
+
+.brand-container {
+  max-width: 500px;
+  color: white;
+  margin-bottom: 2rem;
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-top: 4rem;
+}
+
+.brand-logo {
+  margin-bottom: 1.47rem;
+  margin-left: -0.7rem;
+}
+
+.brand-logo img {
+  height: 60px;
+  width: 224.6px;
+}
+
+.brand-logo .logo {
+  height: 60px;
+  width: 224.6px;
+}
+
+.brand-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-subtitle {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+.feature-icon {
+  font-size: 1.5rem;
+}
+
+/* Right form section */
+.login-form-section {
+  flex: 1;
+  background-color: transparent;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 0px;
+}
+
+.login-content-container {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 100px;
+}
+
+.modern-bordered-panel {
+  position: relative;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 16px;
+  padding: 2rem 1.5rem 0.5rem 1.5rem;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 0 1px rgba(14, 165, 233, 0.3);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 3.3rem;
+}
+
+/* Signup form specific adjustments */
+.dex-login-container .signup-email,
+.dex-login-container .signup-phone,
+.dex-login-container .signup-password-input,
+.dex-login-container .signup-button,
+.dex-login-container .signup-invitation-code-input,
+.dex-login-container .signup-username,
+.dex-login-container .signup-display-name {
+  width: 100% !important;
+}
+
+/* Ensure all form items are visible in signup */
+.dex-login-container .ant-form-item:has(input[name="username"]),
+.dex-login-container .ant-form-item:has(input[name="displayName"]),
+.dex-login-container .ant-form-item:has(.signup-username),
+.dex-login-container .ant-form-item:has(.signup-display-name) {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Form layout for signup with labels */
+.dex-login-container .ant-form {
+  width: 100%;
+}
+
+.dex-login-container .ant-form .ant-row {
+  width: 100%;
+}
+
+/* Radio button styling for signup */
+.dex-login-container .ant-radio-group {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-radio-wrapper {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-radio-checked .ant-radio-inner {
+  background-color: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-radio:hover .ant-radio-inner {
+  border-color: #0ea5e9 !important;
+}
+
+/* Select dropdown styling */
+.dex-login-container .ant-select-dropdown {
+  background: rgba(15, 23, 42, 0.95) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+}
+
+.dex-login-container .ant-select-item {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-select-item-option-selected {
+  background: rgba(14, 165, 233, 0.2) !important;
+  color: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-select-item:hover {
+  background: rgba(14, 165, 233, 0.1) !important;
+}
+
+/* Ensure username and display name inputs are visible */
+.dex-login-container input[name="username"],
+.dex-login-container input[name="displayName"],
+.dex-login-container .signup-username,
+.dex-login-container .signup-display-name {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Remove borders from "Have account? Sign in now" section */
+.dex-login-container a[href*="login"],
+.dex-login-container a[href*="signin"] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #0ea5e9 !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+  margin-top: 1rem !important;
+  display: inline-block !important;
+}
+
+.dex-login-container a[href*="login"]:hover,
+.dex-login-container a[href*="signin"]:hover {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5) !important;
+}
+
+.modern-bordered-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.5), transparent);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.form-title {
+  font-size: 2rem;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+  margin-top: 1.7rem;
+  
+}
+
+.form-subtitle {
+  color: #cbd5e1;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.official-email-note {
+  background: rgba(11, 165, 233, 0.1);
+  color: #0BA5E9;
+  padding: 0.75rem;
+  border: 1px solid rgba(11, 165, 233, 0.3);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: clamp(12px, 2.5vw, 14px);
+  line-height: normal;
+}
+
+/* Login content container styling */
+.dex-login-container .login-content {
+  margin-top: 0;
+}
+
+/* Form container spacing */
+.dex-login-container #login-buttons {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Override Ant Design styling for dark theme */
+.dex-login-container .ant-form {
+  background: transparent;
+}
+
+
+.dex-login-container .ant-input {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  color: #f1f5f9 !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.dex-login-container .ant-input:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-input:focus,
+.dex-login-container .ant-input:focus-within,
+.dex-login-container .ant-input.ant-input-focused {
+  border-color: #0ea5e9 !important;
+  box-shadow: none !important;
+  background: rgba(30, 41, 59, 1) !important;
+  outline: none !important;
+}
+
+.dex-login-container .ant-input-password {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-input-password:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-input-password:focus,
+.dex-login-container .ant-input-password:focus-within,
+.dex-login-container .ant-input-password.ant-input-focused {
+  border-color: #0ea5e9 !important;
+  box-shadow: none !important;
+  background: rgba(30, 41, 59, 1) !important;
+}
+
+.dex-login-container .ant-input-password-icon {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dex-login-container .ant-select-selector {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  color: #f1f5f9 !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-select-selector:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-select-focused .ant-select-selector,
+.dex-login-container .ant-select:focus .ant-select-selector {
+  border-color: #0ea5e9 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.dex-login-container .ant-select-single .ant-select-selector .ant-select-selection-item {
+  color: #f1f5f9 !important;
+}
+
+/* Remove any form item borders */
+.dex-login-container .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.dex-login-container .ant-form-item-label {
+  text-align: left !important;
+  padding-bottom: 4px !important;
+}
+
+.dex-login-container .ant-form-item-label > label {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.dex-login-container .ant-form-item-required:before {
+  color: #f87171 !important;
+}
+
+.dex-login-container .ant-form-item-control-input {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-form-item-control-input-content {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove all possible inner borders and shadows */
+.dex-login-container .ant-input,
+.dex-login-container .ant-input-password,
+.dex-login-container .ant-input-password input {
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+.dex-login-container .ant-input:before,
+.dex-login-container .ant-input:after,
+.dex-login-container .ant-input-password:before,
+.dex-login-container .ant-input-password:after {
+  display: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Fix password input specifically */
+.dex-login-container .ant-input-password .ant-input {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Fix input group borders */
+.dex-login-container .ant-input-group {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-input-group .ant-input {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.dex-login-container .ant-input-group-wrapper {
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border-radius: 8px !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .ant-input-group-wrapper:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+}
+
+.dex-login-container .ant-input-group-wrapper:focus,
+.dex-login-container .ant-input-group-wrapper.ant-input-group-wrapper-focused {
+  border-color: #0ea5e9 !important;
+  background: rgba(30, 41, 59, 1) !important;
+  box-shadow: none !important;
+}
+
+/* Fix username field specifically */
+.dex-login-container .login-username-input,
+.dex-login-container .ant-input.login-username-input {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #f1f5f9 !important;
+}
+
+.dex-login-container .login-username .ant-form-item-control-input,
+.dex-login-container .login-username .ant-form-item-control-input-content {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.dex-login-container .login-username .ant-form-item-control-input:hover,
+.dex-login-container .login-username .ant-form-item-control-input-content:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+}
+
+/* Remove white backgrounds from all input elements */
+.dex-login-container input,
+.dex-login-container .ant-input,
+.dex-login-container .ant-input-password input,
+.dex-login-container textarea,
+.dex-login-container .ant-select-selection-item {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Ensure the parent container has the dark background */
+.dex-login-container .ant-form-item-control-input,
+.dex-login-container .ant-form-item-control-input-content,
+.dex-login-container .ant-input-affix-wrapper {
+  background: rgba(30, 41, 59, 0.8) !important;
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border-radius: 8px !important;
+}
+
+.dex-login-container .ant-input-affix-wrapper:hover {
+  border-color: rgba(14, 165, 233, 0.5) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+}
+
+.dex-login-container .ant-input-affix-wrapper:focus,
+.dex-login-container .ant-input-affix-wrapper.ant-input-affix-wrapper-focused {
+  border-color: #0ea5e9 !important;
+  background: rgba(30, 41, 59, 1) !important;
+  box-shadow: none !important;
+}
+
+/* Completely remove ALL inner borders and elements */
+.dex-login-container .ant-input-affix-wrapper .ant-input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding-left: 11px !important;
+  padding-right: 11px !important;
+}
+
+/* Hide unwanted empty input boxes in login form */
+.dex-login-container .ant-form-item:last-child:not(:has(.ant-btn)):not(:has(input[placeholder*="username" i])):not(:has(input[placeholder*="password" i])):not(:has(input[type="password"])):not(.verification-code):not(.login-username) {
+  display: none !important;
+}
+
+/* Hide empty form items */
+.dex-login-container .ant-form-item:empty {
+  display: none !important;
+}
+
+/* Hide form items with only whitespace */
+.dex-login-container .ant-form-item:not(:has(input)):not(:has(.ant-btn)):not(:has(.ant-select)):not(:has(textarea)):not(:has(.ant-input)) {
+  display: none !important;
+}
+
+/* Additional border elimination for username field */
+.dex-login-container input[placeholder*="username" i],
+.dex-login-container input[name*="username" i],
+.dex-login-container .ant-input[placeholder*="username" i] {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.dex-login-container .ant-input-affix-wrapper .ant-input:focus,
+.dex-login-container .ant-input-affix-wrapper .ant-input:hover {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove all pseudo-elements that might create borders */
+.dex-login-container .ant-input-affix-wrapper::before,
+.dex-login-container .ant-input-affix-wrapper::after,
+.dex-login-container .ant-input::before,
+.dex-login-container .ant-input::after,
+.dex-login-container .ant-form-item-control-input::before,
+.dex-login-container .ant-form-item-control-input::after,
+.dex-login-container .ant-form-item-control-input-content::before,
+.dex-login-container .ant-form-item-control-input-content::after {
+  display: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Force remove borders from ALL nested elements */
+.dex-login-container .ant-input-affix-wrapper > *,
+.dex-login-container .ant-form-item-control-input > *,
+.dex-login-container .ant-form-item-control-input-content > * {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Username specific - brute force approach */
+.dex-login-container .login-username .ant-input-affix-wrapper .ant-input,
+.dex-login-container .login-username input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* Remove focus outline from all inputs */
+.dex-login-container input:focus,
+.dex-login-container input:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Button styling */
+.dex-login-container .ant-btn-primary {
+  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%) !important;
+  border: none !important;
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.dex-login-container .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%) !important;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.dex-login-container .ant-checkbox-wrapper {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #0ea5e9 !important;
+}
+
+/* Links */
+.dex-login-container a {
+  color: #0ea5e9 !important;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.dex-login-container a:hover {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+}
+
+/* Tabs styling - consistent blue theme */
+.dex-login-container .ant-tabs {
+  color: #cbd5e1 !important;
+}
+
+.dex-login-container .ant-tabs-tab {
+  color: #94a3b8 !important;
+  border-color: transparent !important;
+}
+
+.dex-login-container .ant-tabs-tab:hover {
+  color: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-tabs-tab-active,
+.dex-login-container .ant-tabs-tab-active .ant-tabs-tab-btn,
+.dex-login-container .ant-tabs-tab-active:hover,
+.dex-login-container .ant-tabs-tab-active:focus,
+.dex-login-container .ant-tabs-tab.ant-tabs-tab-active {
+  color: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-tabs-ink-bar {
+  background: #0ea5e9 !important;
+}
+
+.dex-login-container .ant-tabs-content-holder {
+  background: transparent !important;
+}
+
+.dex-login-container .ant-tabs-tab-btn:focus,
+.dex-login-container .ant-tabs-tab-btn:active {
+  color: #0ea5e9 !important;
+}
+
+/* Ensure active tab stays blue even when losing focus */
+.dex-login-container .ant-tabs-tab-active .ant-tabs-tab-btn:focus,
+.dex-login-container .ant-tabs-tab-active .ant-tabs-tab-btn:active,
+.dex-login-container .ant-tabs-tab-active .ant-tabs-tab-btn:hover,
+.dex-login-container .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #0ea5e9 !important;
+}
+
+/* Error messages */
+.dex-login-container .ant-form-item-explain-error {
+  color: #f87171 !important;
+}
+
+/* Loading state */
+.dex-login-container .ant-spin-dot-item {
+  background-color: #0ea5e9 !important;
+}
+
+/* Provider buttons styled like reference */
+.dex-login-container .theme-btn-provider {
+  width: 325px !important;
+  border: 1px solid rgba(232, 232, 232, 0.3) !important;
+  background: transparent !important;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  gap: 20px !important;
+  text-align: left !important;
+  padding: 2px 16px !important;
+}
+
+.dex-login-container .theme-btn-provider:hover {
+  border-color: rgba(14, 165, 233, 0.4) !important;
+  background: rgba(15, 23, 42, 0.4) !important;
+  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.3), 0 0 20px rgba(14, 165, 233, 0.2) !important;
+}
+
+/* Button text styling */
+.dex-login-container .dex-btn-text {
+  color: #cbd5e1 !important;
+  flex: 1;
+}
+
+/* Button icon styling */
+.dex-login-container .dex-btn-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Footer styling - positioned at bottom like reference */
+.page-footer {
+  text-align: center;
+  padding: 0.25rem;
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.page-footer > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modern-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: -1px;
+  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.modern-link:hover {
+  background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+.copyright-text {
+  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0px;
+  word-spacing: normal;
+}
+/* Fix notification and modal z-index to appear above OpenObserve overlay */
+.ant-message {
+  z-index: 1000000 !important;
+}
+
+.ant-notification {
+  z-index: 1000000 !important;
+}
+
+.ant-modal-root {
+  z-index: 1000000 !important;
+}
+
+.ant-modal-wrap {
+  z-index: 1000000 !important;
+}
+
+.ant-modal {
+  z-index: 1000000 !important;
+}
+
+.ant-modal-mask {
+  z-index: 999999 !important;
+}
+
+/* Captcha and verification elements */
+.grecaptcha-badge {
+  z-index: 1000001 !important;
+}
+
+.ant-spin {
+  z-index: 1000000 !important;
+}
+
+/* Error messages and alerts */
+.ant-alert {
+  z-index: 1000000 !important;
+}
+
+.ant-form-item-explain-error {
+  z-index: 1000000 !important;
+}
+
+/* Popover and tooltip elements */
+.ant-popover {
+  z-index: 1000000 !important;
+}
+
+.ant-tooltip {
+  z-index: 1000000 !important;
+}
+
+/* Additional notification and modal classes */
+.ant-drawer {
+  z-index: 1000000 !important;
+}
+
+.ant-select-dropdown {
+  z-index: 1000000 !important;
+}
+
+.ant-picker-dropdown {
+  z-index: 1000000 !important;
+}
+
+/* Message components */
+.message {
+  z-index: 1000000 !important;
+}
+
+.toast {
+  z-index: 1000000 !important;
+}
+
+/* Captcha specific */
+div[style*="z-index"] iframe {
+  z-index: 1000001 !important;
+}
+
+/* Style No account text in login page */
+.dex-login-container .no-account-text {
+  color: white !important;
+  display: inline !important;
+}
+
+/* Footer text styling cleaned up */
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dex-login-container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .login-brand-section {
+    flex: none;
+    padding: 1.5rem;
+    min-height: 40vh;
+  }
+  
+  .brand-title {
+    font-size: 2rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .brand-features {
+    display: none;
+  }
+  
+  .login-form-section {
+    flex: none;
+    min-height: 60vh;
+    padding: 1rem;
+  }
+  
+  .login-content-container {
+    max-width: 100%;
+    margin-top: 50px;
+  }
+  
+  .modern-bordered-panel {
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+  }
+  
+  .form-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Force override all parent containers */
+.dex-login-container ~ * {
+  display: none !important;
+}
+
+/* Ensure the login container takes full viewport - no scrolling on main container */
+.dex-login-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 999999 !important;
+  overflow: hidden !important;
+}
+
+/* Override any Casdoor wrapper styles */
+body > div,
+#root > div,
+#parent-area > div {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hide Casdoor's default content wrapper if it exists */
+.loginBackground,
+.loginBackgroundDark {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Reset any containers that might be limiting width */
+.ant-layout,
+.ant-layout-content {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hide default Casdoor elements in OpenObserve design */
+.dex-login-container .login-content,
+.dex-login-container .login-panel,
+.dex-login-container .login-panel-dark,
+.dex-login-container .side-image {
+  all: unset;
+  display: contents;
+}
+
+/* Prevent page scrolling - only form section should scroll */
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: hidden;
+}
+.login-form{
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 0px;
+  padding-left: 16px;
+  width: 350px !important;
+}
+
+.panel-logo{
+  margin-bottom: 0px;
+}
+
+/* Set consistent width for all form inputs */
+.dex-login-container .ant-form-item-control-input,
+.dex-login-container .ant-form-item-control-input-content {
+  max-width: 325 !important;
+}
+
+.login-username{
+  width: 325px !important;
+}

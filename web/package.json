@@ -60,7 +60,8 @@
   "scripts": {
     "start": "cross-env PORT=7001 craco start",
     "build": "craco build",
-    "postbuild": "node mv.js",
+    "postbuild": "../scripts/override-casdoor.sh && node mv.js",
+    "postinstall": "../scripts/override-casdoor.sh",
     "test": "craco test",
     "eject": "craco eject",
     "crowdin:sync": "crowdin upload && crowdin download",
