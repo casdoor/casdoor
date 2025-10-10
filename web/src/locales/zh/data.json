@@ -52,6 +52,8 @@
     "Enable SAML POST binding - Tooltip": "HTTP POST绑定使用HTML表单中的输入字段发送SAML消息，当SP使用它时启用",
     "Enable SAML compression": "压缩SAML响应",
     "Enable SAML compression - Tooltip": "Casdoor作为SAML IdP时，是否压缩SAML响应信息",
+    "Enable sign SAML assertion": "签名SAML断言",
+    "Enable sign SAML assertion - Tooltip": "除了签名响应外还签名SAML断言，以增强安全合规性",
     "Enable side panel": "启用侧面板",
     "Enable signin session - Tooltip": "从应用登录Casdoor后，Casdoor是否保持会话",
     "Enable signup": "启用注册",

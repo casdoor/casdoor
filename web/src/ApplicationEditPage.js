@@ -829,6 +829,16 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Enable sign SAML assertion"), i18next.t("application:Enable sign SAML assertion - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableSignSamlAssertion} onChange={checked => {
+              this.updateApplicationField("enableSignSamlAssertion", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML hash algorithm"), i18next.t("application:SAML hash algorithm - Tooltip"))} :
           </Col>
