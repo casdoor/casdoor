@@ -389,8 +389,8 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	// Sign the assertion if enabled
 	if application.EnableSignSamlAssertion {
-		// Find the Assertion element
-		assertion := samlResponse.FindElement("//Assertion")
+		// Find the Assertion element (child of Response)
+		assertion := samlResponse.FindElement("./Assertion")
 		if assertion != nil {
 			assertionSig, err := ctx.ConstructSignature(assertion, true)
 			if err != nil {
