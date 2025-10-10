@@ -59,6 +59,10 @@ class FormEditPage extends React.Component {
     });
   }
 
+  handleCancel() {
+    this.props.history.push("/forms");
+  }
+
   renderForm() {
     return (
       <Card size="small" title={
@@ -67,6 +71,7 @@ class FormEditPage extends React.Component {
           <Button onClick={() => this.submitFormEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary"
             onClick={() => this.submitFormEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          <Button style={{marginLeft: "20px"}} onClick={() => this.handleCancel()}>{i18next.t("general:Cancel")}</Button>
         </div>
       } style={{marginLeft: "5px"}} type="inner">
         <Row style={{marginTop: "10px"}}>
@@ -133,9 +138,7 @@ class FormEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Preview"), i18next.t("general:Preview - Tooltip"))} :
           </Col>
           <Col span={22}>
-            {
-              this.renderListPreview()
-            }
+            {this.renderListPreview()}
           </Col>
         </Row>
       </Card>
@@ -156,7 +159,8 @@ class FormEditPage extends React.Component {
     }
 
     return (
-      <div style={{position: "relative", border: "1px solid rgb(217,217,217)", height: "600px", cursor: "pointer"}} onClick={(e) => {Setting.openLink(`/${this.state.form.type}`);}}>
+      <div style={{position: "relative", border: "1px solid rgb(217,217,217)", height: "600px", cursor: "pointer"}}
+        onClick={(e) => {Setting.openLink(`/${this.state.form.type}`);}}>
         <div style={{position: "relative", height: "100%", overflow: "auto"}}>
           <div style={{display: "inline-block", position: "relative", zIndex: 1, pointerEvents: "none"}}>
             {listPageComponent}
@@ -198,13 +202,12 @@ class FormEditPage extends React.Component {
   render() {
     return (
       <div>
-        {
-          this.state.form !== null ? this.renderForm() : null
-        }
+        {this.state.form !== null ? this.renderForm() : null}
         <div style={{marginTop: "20px", marginLeft: "40px"}}>
           <Button size="large" onClick={() => this.submitFormEdit(false)}>{i18next.t("general:Save")}</Button>
           <Button style={{marginLeft: "20px"}} type="primary" size="large"
             onClick={() => this.submitFormEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+          <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.handleCancel()}>{i18next.t("general:Cancel")}</Button>
         </div>
       </div>
     );
