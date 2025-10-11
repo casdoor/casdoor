@@ -191,6 +191,62 @@ class PermissionEditPage extends React.Component {
     return false;
   }
 
+  getCasdoorApiList() {
+    return [
+      "add-user", "update-user", "delete-user", "upload-users",
+      "add-group", "update-group", "delete-group", "upload-groups",
+      "add-role", "update-role", "delete-role", "upload-roles",
+      "add-permission", "update-permission", "delete-permission", "upload-permissions",
+      "add-organization", "update-organization", "delete-organization",
+      "add-application", "update-application", "delete-application",
+      "add-provider", "update-provider", "delete-provider",
+      "add-resource", "update-resource", "delete-resource", "upload-resource",
+      "add-cert", "update-cert", "delete-cert",
+      "add-model", "update-model", "delete-model",
+      "add-adapter", "update-adapter", "delete-adapter",
+      "add-enforcer", "update-enforcer", "delete-enforcer",
+      "add-token", "update-token", "delete-token",
+      "add-product", "update-product", "delete-product",
+      "add-payment", "update-payment", "delete-payment",
+      "add-plan", "update-plan", "delete-plan",
+      "add-pricing", "update-pricing", "delete-pricing",
+      "add-subscription", "update-subscription", "delete-subscription",
+      "add-transaction", "update-transaction", "delete-transaction",
+      "add-syncer", "update-syncer", "delete-syncer",
+      "add-webhook", "update-webhook", "delete-webhook",
+      "add-session", "update-session", "delete-session",
+      "add-invitation", "update-invitation", "delete-invitation",
+      "add-ldap", "update-ldap", "delete-ldap",
+      "add-form", "update-form", "delete-form",
+      "get-users", "get-user", "get-global-users", "get-sorted-users", "get-user-count",
+      "get-groups", "get-group",
+      "get-roles", "get-role",
+      "get-permissions", "get-permission", "get-permissions-by-submitter", "get-permissions-by-role",
+      "get-organizations", "get-organization", "get-organization-names", "get-default-application",
+      "get-applications", "get-application", "get-user-application", "get-organization-applications",
+      "get-providers", "get-provider", "get-global-providers",
+      "get-resources", "get-resource",
+      "get-certs", "get-cert", "get-global-certs",
+      "get-models", "get-model",
+      "get-adapters", "get-adapter",
+      "get-enforcers", "get-enforcer",
+      "get-tokens", "get-token",
+      "get-products", "get-product",
+      "get-payments", "get-payment", "get-user-payments",
+      "get-plans", "get-plan",
+      "get-pricings", "get-pricing",
+      "get-subscriptions", "get-subscription",
+      "get-transactions", "get-transaction",
+      "get-syncers", "get-syncer",
+      "get-webhooks", "get-webhook",
+      "get-sessions", "get-session",
+      "get-invitations", "get-invitation", "get-invitation-info",
+      "get-ldaps", "get-ldap", "get-ldap-users",
+      "get-forms", "get-form", "get-global-forms",
+      "get-records", "get-records-filter",
+    ];
+  }
+
   renderPermission() {
     return (
       <Card size="small" title={
@@ -340,6 +396,7 @@ class PermissionEditPage extends React.Component {
             options={[
               {value: "Application", name: i18next.t("general:Application")},
               {value: "TreeNode", name: i18next.t("permission:TreeNode")},
+              {value: "Api", name: i18next.t("permission:Casdoor API")},
               {value: "Custom", name: i18next.t("general:Custom")},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
@@ -350,12 +407,17 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Resources"), i18next.t("permission:Resources - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.resources}
+            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom" || this.state.permission.resourceType === "Api") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.resources}
               onChange={(value => {this.updatePermissionField("resources", value);})}
-              options={[
-                Setting.getOption(i18next.t("organization:All"), "*"),
-                ...this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`)),
-              ]}
+              options={
+                this.state.permission.resourceType === "Api" ? [
+                  Setting.getOption(i18next.t("organization:All"), "*"),
+                  ...this.getCasdoorApiList().map((api) => Setting.getOption(api, api)),
+                ] : [
+                  Setting.getOption(i18next.t("organization:All"), "*"),
+                  ...this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`)),
+                ]
+              }
             />
           </Col>
         </Row>
@@ -364,14 +426,20 @@ class PermissionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("permission:Actions"), i18next.t("permission:Actions - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
+            <Select virtual={false} mode={(this.state.permission.resourceType === "Custom" || this.state.permission.resourceType === "Api") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
               this.updatePermissionField("actions", value);
             })}
-            options={[
-              {value: "Read", name: i18next.t("permission:Read")},
-              {value: "Write", name: i18next.t("permission:Write")},
-              {value: "Admin", name: i18next.t("permission:Admin")},
-            ].map((item) => Setting.getOption(item.name, item.value))}
+            options={
+              this.state.permission.resourceType === "Api" ? [
+                {value: "GET", name: "GET"},
+                {value: "POST", name: "POST"},
+                {value: "*", name: i18next.t("organization:All")},
+              ].map((item) => Setting.getOption(item.name, item.value)) : [
+                {value: "Read", name: i18next.t("permission:Read")},
+                {value: "Write", name: i18next.t("permission:Write")},
+                {value: "Admin", name: i18next.t("permission:Admin")},
+              ].map((item) => Setting.getOption(item.name, item.value))
+            }
             />
           </Col>
         </Row>
