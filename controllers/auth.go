@@ -811,6 +811,20 @@ func (c *ApiController) Login() {
 					}
 				}
 
+				// For WeCom provider, try to link with existing user by name (case-insensitive)
+				if user == nil && provider.Type == "WeCom" && userInfo.Username != "" {
+					username := userInfo.Username
+					isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
+					if isUsernameLowered {
+						username = strings.ToLower(username)
+					}
+					user, err = object.GetUserByField(application.Organization, "name", username)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+				}
+
 				if user == nil || user.IsDeleted {
 					if !application.EnableSignUp {
 						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
