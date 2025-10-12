@@ -318,4 +318,9 @@ func initAPI() {
 	beego.Router("/scim/*", &controllers.RootController{}, "*:HandleScim")
 
 	beego.Router("/api/faceid-signin-begin", &controllers.ApiController{}, "GET:FaceIDSigninBegin")
+
+	beego.Router("/ipa/json", &controllers.ApiController{}, "POST:FreeIPAJsonRpc")
+	beego.Router("/ipa/session/json", &controllers.ApiController{}, "POST:FreeIPASessionJson")
+	beego.Router("/ipa/session/login_password", &controllers.ApiController{}, "POST:FreeIPASessionLogin")
+	beego.Router("/ipa/session/logout", &controllers.ApiController{}, "POST:FreeIPASessionLogout")
 }
