@@ -131,9 +131,10 @@ class LoginPage extends React.Component {
           return;
         }
 
-        // For OAuth flow (type === "code"), automatically proceed with login
-        // since the user is already authenticated to Casdoor
-        if (this.state.type === "code") {
+        // For OAuth/SAML/CAS flows, automatically proceed with login since the user
+        // is already authenticated to Casdoor and should be redirected back to the
+        // application with the appropriate credentials (code/assertion/ticket)
+        if (this.state.type === "code" || this.state.type === "saml" || this.state.type === "cas") {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
