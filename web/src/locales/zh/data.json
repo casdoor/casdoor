@@ -109,6 +109,8 @@
     "Redirect URLs - Tooltip": "允许的重定向URL列表，支持正则匹配，不在列表中的URL将会跳转失败",
     "Refresh token expire": "Refresh Token过期",
     "Refresh token expire - Tooltip": "Refresh Token过期时间",
+    "Cookie expire": "Cookie过期",
+    "Cookie expire - Tooltip": "Cookie过期时间(秒) (默认: 2592000秒 = 30天)",
     "Reset to Empty": "重置为空",
     "Right": "居右",
     "Rule": "规则",
