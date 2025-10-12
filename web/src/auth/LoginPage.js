@@ -115,6 +115,7 @@ class LoginPage extends React.Component {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
+          return;
         }
 
         if (params.get("popup") === "1") {
@@ -124,6 +125,15 @@ class LoginPage extends React.Component {
         }
 
         if (this.props.application.enableAutoSignin) {
+          const values = {};
+          values["application"] = this.props.application.name;
+          this.login(values);
+          return;
+        }
+
+        // For OAuth flow (type === "code"), automatically proceed with login
+        // since the user is already authenticated to Casdoor
+        if (this.state.type === "code") {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
