@@ -1287,7 +1287,7 @@
     "Phone cannot be empty": "Phone cannot be empty",
     "Please select avatar from resources": "Please select avatar from resources",
     "Properties": "Properties",
-    "Properties - Tooltip": "Properties of the user",
+    "Properties - Tooltip": "Custom key-value pairs for storing additional user metadata. Commonly used for OAuth provider data (oauth_*), ID card verification (idCard*), WeChat integration (wechatUnionId, wechatOpenId), and custom application-specific attributes",
     "Ranking": "Ranking",
     "Ranking - Tooltip": "Ranking - Tooltip",
     "Re-enter New": "Re-enter New",

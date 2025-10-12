@@ -33,6 +33,7 @@ import (
 	"github.com/xorm-io/core"
 )
 
+// Property keys used in User.Properties map for WeChat integration
 const (
 	UserPropertiesWechatUnionId = "wechatUnionId"
 	UserPropertiesWechatOpenId  = "wechatOpenId"
@@ -199,7 +200,14 @@ type User struct {
 	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`
 	FaceIds             []*FaceId             `json:"faceIds"`
 
-	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
+	Ldap string `xorm:"ldap varchar(100)" json:"ldap"`
+	// Properties is a flexible key-value map for storing additional user metadata that doesn't fit into predefined fields.
+	// Common use cases include:
+	//   - OAuth provider data: oauth_{provider}_id, oauth_{provider}_username, oauth_{provider}_displayName, oauth_{provider}_email, oauth_{provider}_unionId, oauth_{provider}_avatarUrl, oauth_{provider}_extra
+	//   - ID card verification: idCardFront, idCardBack, idCardWithPerson, isIdCardVerified
+	//   - WeChat integration: wechatUnionId (use UserPropertiesWechatUnionId constant), wechatOpenId (use UserPropertiesWechatOpenId constant)
+	//   - Custom application-specific attributes: Any custom key-value pairs can be added via the user management UI or API
+	// All values are stored as strings. For complex data structures, use JSON serialization.
 	Properties map[string]string `json:"properties"`
 
 	Roles       []*Role       `json:"roles"`

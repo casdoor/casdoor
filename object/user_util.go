@@ -150,6 +150,9 @@ func GetUserField(user *User, field string) string {
 	return f.String()
 }
 
+// setUserProperty sets a property in the user's Properties map.
+// If the value is empty, the property is removed from the map.
+// This is commonly used to store OAuth provider data, ID card information, and custom attributes.
 func setUserProperty(user *User, field string, value string) {
 	if value == "" {
 		delete(user.Properties, field)
@@ -162,6 +165,8 @@ func setUserProperty(user *User, field string, value string) {
 	}
 }
 
+// getUserProperty retrieves a property value from the user's Properties map.
+// Returns an empty string if the Properties map is nil or the field doesn't exist.
 func getUserProperty(user *User, field string) string {
 	if user.Properties == nil {
 		return ""
@@ -181,6 +186,10 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
+// SetUserOAuthProperties stores OAuth provider information in the user's Properties map.
+// This function creates properties with keys in the format: oauth_{providerType}_{attribute}
+// For example: oauth_GitHub_id, oauth_GitHub_username, oauth_GitHub_displayName, etc.
+// It also updates the user's main fields (DisplayName, Email, Avatar) if they are empty.
 func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
@@ -262,6 +271,8 @@ func getUserPermissionNames(user *User) (res []string) {
 	return res
 }
 
+// ClearUserOAuthProperties removes all OAuth-related properties for a specific provider.
+// It deletes all properties with keys starting with "oauth_{providerType}_".
 func ClearUserOAuthProperties(user *User, providerType string) (bool, error) {
 	for k := range user.Properties {
 		prefix := fmt.Sprintf("oauth_%s_", providerType)
