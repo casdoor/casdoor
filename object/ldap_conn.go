@@ -58,10 +58,11 @@ type LdapUser struct {
 	RegisteredAddress     string
 	PostalAddress         string
 
-	GroupId    string            `json:"groupId"`
-	Address    string            `json:"address"`
-	MemberOf   string            `json:"memberOf"`
-	Attributes map[string]string `json:"attributes"`
+	GroupId     string            `json:"groupId"`
+	Address     string            `json:"address"`
+	Country     string            `json:"country"`
+	MemberOf    string            `json:"memberOf"`
+	Attributes  map[string]string `json:"attributes"`
 }
 
 func (ldap *Ldap) GetLdapConn() (c *LdapConn, err error) {
@@ -151,7 +152,7 @@ func isMicrosoftAD(Conn *goldap.Conn) (bool, error) {
 func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
-		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress", "c", "co",
 	}
 	if l.IsAD {
 		SearchAttributes = append(SearchAttributes, "sAMAccountName")
@@ -214,6 +215,10 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.RegisteredAddress = attribute.Values[0]
 			case "postalAddress":
 				user.PostalAddress = attribute.Values[0]
+			case "c":
+				user.Country = attribute.Values[0]
+			case "co":
+				user.Country = attribute.Values[0]
 			case "memberOf":
 				user.MemberOf = attribute.Values[0]
 			default:
@@ -281,6 +286,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
+			Country:     user.Country,
 			Attributes:  user.Attributes,
 		}
 	}
@@ -354,6 +360,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Email:             syncUser.Email,
 				Phone:             syncUser.Mobile,
 				Address:           []string{syncUser.Address},
+				CountryCode:       syncUser.Country,
 				Affiliation:       affiliation,
 				Tag:               tag,
 				Score:             score,

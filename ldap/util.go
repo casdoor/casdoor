@@ -70,6 +70,9 @@ var ldapAttributesMapping = map[string]FieldRelation{
 	"title": {userField: "tag", fieldMapper: func(user *object.User) message.AttributeValue {
 		return message.AttributeValue(user.Tag)
 	}},
+	"c": {userField: "countryCode", fieldMapper: func(user *object.User) message.AttributeValue {
+		return message.AttributeValue(user.CountryCode)
+	}},
 	"userPassword": {
 		userField:     "userPassword",
 		notSearchable: true,
