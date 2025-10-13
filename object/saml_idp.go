@@ -387,6 +387,18 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	//	return "", "", fmt.Errorf("err: %s", err.Error())
 	// }
 
+	// Sign the assertion (SAML 2.0 best practice)
+	assertion := samlResponse.FindElement("./Assertion")
+	if assertion != nil {
+		assertionSig, err := ctx.ConstructSignature(assertion, true)
+		if err != nil {
+			return "", "", "", fmt.Errorf("err: Failed to sign SAML assertion, %s", err.Error())
+		}
+		// Insert signature as the second child of assertion (after Issuer)
+		assertion.InsertChildAt(1, assertionSig)
+	}
+
+	// Sign the response
 	sig, err := ctx.ConstructSignature(samlResponse, true)
 	if err != nil {
 		return "", "", "", fmt.Errorf("err: Failed to serializes the SAML request into bytes, %s", err.Error())
