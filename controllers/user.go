@@ -279,27 +279,24 @@ func (c *ApiController) UpdateUser() {
 		}
 	}
 
-	var oldUser *object.User
-	// Support lookup by userId (UUID) to avoid issues with special characters in usernames
+	var userFromUserId *object.User
 	if userId != "" && owner != "" {
-		oldUser, err = object.GetUserByUserId(owner, userId)
+		userFromUserId, err = object.GetUserByUserId(owner, userId)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
-		if oldUser != nil {
-			id = util.GetId(oldUser.Owner, oldUser.Name)
-		}
-	} else if userId != "" {
-		// If only userId is provided without owner, search across all organizations
-		oldUser, err = object.GetUserByUserIdOnly(userId)
-		if err != nil {
-			c.ResponseError(err.Error())
+		if userFromUserId == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user with userId: %s doesn't exist"), userId))
 			return
 		}
-		if oldUser != nil {
-			id = util.GetId(oldUser.Owner, oldUser.Name)
-		}
+
+		id = util.GetId(userFromUserId.Owner, userFromUserId.Name)
+	}
+
+	var oldUser *object.User
+	if userId != "" {
+		oldUser = userFromUserId
 	} else {
 		oldUser, err = object.GetUser(id)
 		if err != nil {
@@ -309,11 +306,7 @@ func (c *ApiController) UpdateUser() {
 	}
 
 	if oldUser == nil {
-		if userId != "" {
-			c.ResponseError(fmt.Sprintf(c.T("general:The user with userId: %s doesn't exist"), userId))
-		} else {
-			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
-		}
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
 		return
 	}
 
