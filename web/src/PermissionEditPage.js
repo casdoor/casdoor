@@ -341,6 +341,7 @@ class PermissionEditPage extends React.Component {
               {value: "Application", name: i18next.t("general:Application")},
               {value: "TreeNode", name: i18next.t("permission:TreeNode")},
               {value: "Custom", name: i18next.t("general:Custom")},
+              {value: "API", name: "API"},
             ].map((item) => Setting.getOption(item.name, item.value))}
             />
           </Col>
@@ -352,7 +353,9 @@ class PermissionEditPage extends React.Component {
           <Col span={22} >
             <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.resources}
               onChange={(value => {this.updatePermissionField("resources", value);})}
-              options={[
+              options={this.state.permission.resourceType === "API" ? Setting.getApiPaths().map((option, index) => {
+                return Setting.getOption(option, option);
+              }) : [
                 Setting.getOption(i18next.t("organization:All"), "*"),
                 ...this.state.resources.map((resource) => Setting.getOption(`${resource.name}`, `${resource.name}`)),
               ]}
@@ -367,7 +370,10 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} mode={(this.state.permission.resourceType === "Custom") ? "tags" : "multiple"} style={{width: "100%"}} value={this.state.permission.actions} onChange={(value => {
               this.updatePermissionField("actions", value);
             })}
-            options={[
+            options={this.state.permission.resourceType === "API" ? [
+              {value: "POST", name: "POST"},
+              {value: "GET", name: "GET"},
+            ] : [
               {value: "Read", name: i18next.t("permission:Read")},
               {value: "Write", name: i18next.t("permission:Write")},
               {value: "Admin", name: i18next.t("permission:Admin")},

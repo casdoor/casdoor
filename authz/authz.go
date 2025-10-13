@@ -158,6 +158,13 @@ func IsAllowed(subOwner string, subName string, method string, urlPath string, o
 		panic(err)
 	}
 
+	if !res {
+		res, err = object.CheckApiPermission(util.GetId(subOwner, subName), objOwner, urlPath, method)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 	return res
 }
 

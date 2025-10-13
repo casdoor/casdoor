@@ -161,23 +161,6 @@ class WebhookEditPage extends React.Component {
     });
   }
 
-  getApiPaths() {
-    const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "record", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook"];
-    const res = [];
-    objects.forEach(obj => {
-      ["add", "update", "delete"].forEach(action => {
-        res.push(`${action}-${obj}`);
-      });
-      if (obj === "payment") {
-        res.push("invoice-payment", "notify-payment");
-      }
-      if (obj === "product") {
-        res.push("buy-product");
-      }
-    });
-    return res;
-  }
-
   renderWebhook() {
     const preview = Setting.deepCopy(previewTemplate);
     if (this.state.webhook.isUserExtended) {
@@ -291,7 +274,7 @@ class WebhookEditPage extends React.Component {
               }} >
               {
                 (
-                  ["signup", "login", "logout", "new-user"].concat(this.getApiPaths()).map((option, index) => {
+                  ["signup", "login", "logout", "new-user"].concat(Setting.getApiPaths()).map((option, index) => {
                     return (
                       <Option key={option} value={option}>{option}</Option>
                     );
