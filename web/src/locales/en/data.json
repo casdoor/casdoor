@@ -52,8 +52,6 @@
     "Enable SAML POST binding - Tooltip": "The HTTP POST binding uses input fields in a HTML form to send SAML messages, Enable when your SP use it",
     "Enable SAML compression": "Enable SAML compression",
     "Enable SAML compression - Tooltip": "Whether to compress SAML response messages when Casdoor is used as SAML idp",
-    "Enable sign SAML assertion": "Enable sign SAML assertion",
-    "Enable sign SAML assertion - Tooltip": "Sign the SAML assertion in addition to the response for enhanced security compliance",
     "Enable side panel": "Enable side panel",
     "Enable signin session - Tooltip": "Whether Casdoor maintains a session after logging into Casdoor from the application",
     "Enable signup": "Enable signup",
