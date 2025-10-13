@@ -215,13 +215,13 @@ func extendApplicationWithProviders(application *Application) (err error) {
 		}
 	}
 
-	return err
+	return
 }
 
 func extendApplicationWithOrg(application *Application) (err error) {
 	organization, err := getOrganization(application.Owner, application.Organization)
 	application.OrganizationObj = organization
-	return err
+	return
 }
 
 func extendApplicationWithSigninItems(application *Application) (err error) {
@@ -329,7 +329,7 @@ func extendApplicationWithSigninItems(application *Application) (err error) {
 			application.SigninItems[idx].Label = ""
 		}
 	}
-	return err
+	return
 }
 
 func extendApplicationWithSigninMethods(application *Application) (err error) {
@@ -356,7 +356,7 @@ func extendApplicationWithSigninMethods(application *Application) (err error) {
 		application.SigninMethods = append(application.SigninMethods, signinMethod)
 	}
 
-	return err
+	return
 }
 
 func getApplication(owner string, name string) (*Application, error) {
@@ -448,7 +448,7 @@ func GetApplicationByUserId(userId string) (application *Application, err error)
 	_, name := util.GetOwnerAndNameFromId(userId)
 	if IsAppUser(userId) {
 		application, err = getApplication("admin", name)
-		return application, err
+		return
 	}
 
 	user, err := GetUser(userId)
@@ -456,7 +456,7 @@ func GetApplicationByUserId(userId string) (application *Application, err error)
 		return nil, err
 	}
 	application, err = GetApplicationByUser(user)
-	return application, err
+	return
 }
 
 func GetApplicationByClientId(clientId string) (*Application, error) {
