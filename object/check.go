@@ -458,7 +458,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 	return hasPermission, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 }
 
-func CheckApiPermission(userId string, organization string, path string) (bool, error) {
+func CheckApiPermission(userId string, organization string, path string, method string) (bool, error) {
 	permissions, err := GetPermissions(organization)
 	if err != nil {
 		return false, err
@@ -471,7 +471,7 @@ func CheckApiPermission(userId string, organization string, path string) (bool, 
 	allowCount := 0
 	denyCount := 0
 	for _, permission := range permissions {
-		if !permission.IsEnabled || permission.State != "Approved" || permission.ResourceType != "Casdoor Api" || !permission.isResourceHit(path) {
+		if !permission.IsEnabled || permission.State != "Approved" || permission.ResourceType != "API" || !permission.isResourceHit(path) {
 			continue
 		}
 
@@ -495,7 +495,7 @@ func CheckApiPermission(userId string, organization string, path string) (bool, 
 		var isAllowed bool
 
 		if userHit {
-			isAllowed, err = enforcer.Enforce(userId, path, "Read")
+			isAllowed, err = enforcer.Enforce(userId, path, method)
 			if err != nil {
 				return false, err
 			}
@@ -532,7 +532,7 @@ func CheckApiPermission(userId string, organization string, path string) (bool, 
 			}
 
 			for _, role := range checkRoleList {
-				isAllowed, err = enforcer.Enforce(role.GetId(), path, "Read")
+				isAllowed, err = enforcer.Enforce(role.GetId(), path, method)
 
 				if isAllowed {
 					if permission.Effect == "Allow" {
