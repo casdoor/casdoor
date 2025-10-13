@@ -458,6 +458,111 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 	return hasPermission, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 }
 
+func CheckApiPermission(userId string, organization string, path string) (bool, error) {
+	permissions, err := GetPermissions(organization)
+	if err != nil {
+		return false, err
+	}
+
+	path = strings.TrimPrefix(path, "/api/")
+
+	allowPermissionCount := 0
+	denyPermissionCount := 0
+	allowCount := 0
+	denyCount := 0
+	for _, permission := range permissions {
+		if !permission.IsEnabled || permission.State != "Approved" || permission.ResourceType != "Casdoor Api" || !permission.isResourceHit(path) {
+			continue
+		}
+
+		userHit := permission.isUserHit(userId)
+		roleHit := permission.isRoleHit(userId)
+
+		if !userHit && !roleHit {
+			if permission.Effect == "Allow" {
+				allowPermissionCount += 1
+			} else {
+				denyPermissionCount += 1
+			}
+			continue
+		}
+
+		enforcer, err := getPermissionEnforcer(permission)
+		if err != nil {
+			return false, err
+		}
+
+		var isAllowed bool
+
+		if userHit {
+			isAllowed, err = enforcer.Enforce(userId, path, "Read")
+			if err != nil {
+				return false, err
+			}
+
+			if isAllowed {
+				if permission.Effect == "Allow" {
+					allowCount += 1
+				}
+			} else {
+				if permission.Effect == "Deny" {
+					denyCount += 1
+				}
+			}
+		}
+		if roleHit {
+			targetRoles, err := getRolesByUser(userId)
+			if err != nil {
+				return false, err
+			}
+
+			var checkRoleList []*Role
+
+			for _, role := range permission.Roles {
+				if role == "*" {
+					checkRoleList = targetRoles
+					break
+				}
+
+				for _, targetRole := range targetRoles {
+					if role == targetRole.GetId() {
+						checkRoleList = append(checkRoleList, targetRole)
+					}
+				}
+			}
+
+			for _, role := range checkRoleList {
+				isAllowed, err = enforcer.Enforce(role.GetId(), path, "Read")
+
+				if isAllowed {
+					if permission.Effect == "Allow" {
+						allowCount += 1
+					}
+				} else {
+					if permission.Effect == "Deny" {
+						denyCount += 1
+					}
+				}
+			}
+		}
+	}
+
+	// Deny-override, if one deny is found, then deny
+	if denyCount > 0 {
+		return false, nil
+	} else if allowCount > 0 {
+		return true, nil
+	}
+
+	// For no-allow and no-deny condition
+	// If only allow permissions exist, we suppose it's Deny-by-default, aka no-allow means deny
+	// Otherwise, it's Allow-by-default, aka no-deny means allow
+	if allowPermissionCount > 0 && denyPermissionCount == 0 {
+		return false, nil
+	}
+	return false, nil
+}
+
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
 	owner, _ := util.GetOwnerAndNameFromId(userId)
 	if owner == "built-in" {

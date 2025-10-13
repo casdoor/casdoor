@@ -1976,3 +1976,20 @@ export function filterTableColumns(columns, formItems, actionKey = "op") {
     actionColumn,
   ].filter(col => col);
 }
+
+export function getApiPaths() {
+  const objects = ["organization", "group", "user", "application", "provider", "resource", "cert", "role", "permission", "model", "adapter", "enforcer", "session", "record", "token", "product", "payment", "plan", "pricing", "subscription", "syncer", "webhook"];
+  const res = [];
+  objects.forEach(obj => {
+    ["add", "update", "delete"].forEach(action => {
+      res.push(`${action}-${obj}`);
+    });
+    if (obj === "payment") {
+      res.push("invoice-payment", "notify-payment");
+    }
+    if (obj === "product") {
+      res.push("buy-product");
+    }
+  });
+  return res;
+}
