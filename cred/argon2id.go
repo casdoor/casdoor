@@ -24,7 +24,14 @@ func NewArgon2idCredManager() *Argon2idCredManager {
 }
 
 func (cm *Argon2idCredManager) GetHashedPassword(password string, salt string) string {
-	hash, err := argon2id.CreateHash(password, argon2id.DefaultParams)
+	// Use salt as pepper: prepend it to the password before hashing
+	// This allows migration of users from systems that used a pepper
+	passwordWithPepper := password
+	if salt != "" {
+		passwordWithPepper = salt + password
+	}
+
+	hash, err := argon2id.CreateHash(passwordWithPepper, argon2id.DefaultParams)
 	if err != nil {
 		return ""
 	}
@@ -32,6 +39,13 @@ func (cm *Argon2idCredManager) GetHashedPassword(password string, salt string) s
 }
 
 func (cm *Argon2idCredManager) IsPasswordCorrect(plainPwd string, hashedPwd string, salt string) bool {
-	match, _ := argon2id.ComparePasswordAndHash(plainPwd, hashedPwd)
+	// Use salt as pepper: prepend it to the password before verification
+	// This allows migration of users from systems that used a pepper
+	passwordWithPepper := plainPwd
+	if salt != "" {
+		passwordWithPepper = salt + plainPwd
+	}
+
+	match, _ := argon2id.ComparePasswordAndHash(passwordWithPepper, hashedPwd)
 	return match
 }
