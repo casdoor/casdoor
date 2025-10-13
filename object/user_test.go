@@ -133,3 +133,41 @@ func TestGetEmailsForUsers(t *testing.T) {
 	text := strings.Join(emails, "\n")
 	println(text)
 }
+
+func TestGetUserByUserId(t *testing.T) {
+	type args struct {
+		owner  string
+		userId string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		{
+			name:    "empty owner and userId",
+			args:    args{owner: "", userId: ""},
+			want:    false,
+			wantErr: false,
+		},
+		{
+			name:    "empty userId",
+			args:    args{owner: "built-in", userId: ""},
+			want:    false,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := GetUserByUserId(tt.args.owner, tt.args.userId)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetUserByUserId() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if (got != nil) != tt.want {
+				t.Errorf("GetUserByUserId() got = %v, want non-nil: %v", got, tt.want)
+			}
+		})
+	}
+}

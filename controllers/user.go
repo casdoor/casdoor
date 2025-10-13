@@ -252,12 +252,16 @@ func (c *ApiController) GetUser() {
 // @Title UpdateUser
 // @Tag User API
 // @Description update user
-// @Param   id     query    string  true        "The id ( owner/name ) of the user"
+// @Param   id     query    string  false        "The id ( owner/name ) of the user"
+// @Param   userId query    string  false        "The userId (UUID) of the user"
+// @Param   owner  query    string  false        "The owner of the user (required when using userId)"
 // @Param   body    body   object.User  true        "The details of the user"
 // @Success 200 {object} controllers.Response The Response object
 // @router /update-user [post]
 func (c *ApiController) UpdateUser() {
 	id := c.Input().Get("id")
+	userId := c.Input().Get("userId")
+	owner := c.Input().Get("owner")
 	columnsStr := c.Input().Get("columns")
 
 	var user object.User
@@ -267,21 +271,49 @@ func (c *ApiController) UpdateUser() {
 		return
 	}
 
-	if id == "" {
+	if id == "" && userId == "" {
 		id = c.GetSessionUsername()
 		if id == "" {
 			c.ResponseError(c.T("general:Missing parameter"))
 			return
 		}
 	}
-	oldUser, err := object.GetUser(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+
+	var oldUser *object.User
+	// Support lookup by userId (UUID) to avoid issues with special characters in usernames
+	if userId != "" && owner != "" {
+		oldUser, err = object.GetUserByUserId(owner, userId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if oldUser != nil {
+			id = util.GetId(oldUser.Owner, oldUser.Name)
+		}
+	} else if userId != "" {
+		// If only userId is provided without owner, search across all organizations
+		oldUser, err = object.GetUserByUserIdOnly(userId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if oldUser != nil {
+			id = util.GetId(oldUser.Owner, oldUser.Name)
+		}
+	} else {
+		oldUser, err = object.GetUser(id)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if oldUser == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
+		if userId != "" {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user with userId: %s doesn't exist"), userId))
+		} else {
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), id))
+		}
 		return
 	}
 
