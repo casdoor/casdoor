@@ -957,7 +957,7 @@ class SignupPage extends React.Component {
                 <p className="form-subtitle">Sign up for your OpenObserve account</p>
               </div>
               <div className="official-email-note">
-                Use your <strong>company email ID</strong> to sign up.<br />Personal emails are not supported.
+                Only <strong>work emails</strong> are supported.
               </div>
               <div className="login-content">
                 {Setting.inIframe() || Setting.isMobile() ? null : <div dangerouslySetInnerHTML={{__html: application.formCss}} />}

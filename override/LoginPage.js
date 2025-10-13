@@ -275,8 +275,8 @@ class LoginPage extends React.Component {
     case "verificationCode": return i18next.t("login:Email or phone");
     case "verificationCodeEmail": return i18next.t("login:Email");
     case "verificationCodePhone": return i18next.t("login:Phone");
-    case "ldap": return i18next.t("login:LDAP username, Email or phone");
-    default: return i18next.t("login:username, Email or phone");
+    case "ldap": return i18next.t("login:LDAP Email");
+    default: return i18next.t("login: Email");
     }
   }
 
@@ -1593,7 +1593,7 @@ class LoginPage extends React.Component {
               </div>
 
               <div className="official-email-note">
-                Please use your <strong>company email ID</strong> to log in. Personal emails are not supported.
+                Only <strong>works emails</strong> are supported.
               </div>
 
               <div className="login-content">
