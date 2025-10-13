@@ -131,6 +131,72 @@ class OrganizationEditPage extends React.Component {
     });
   }
 
+  // Helper functions for Argon2id parameters
+  parseArgon2idSalt(salt) {
+    // Parse format: "pepper|m=65536|t=1|p=2"
+    if (!salt) {
+      return {pepper: "", memory: 65536, iterations: 1, parallelism: 2};
+    }
+
+    const parts = salt.split("|");
+    const result = {
+      pepper: parts[0] || "",
+      memory: 65536,
+      iterations: 1,
+      parallelism: 2,
+    };
+
+    for (let i = 1; i < parts.length; i++) {
+      const part = parts[i];
+      if (part.startsWith("m=")) {
+        result.memory = parseInt(part.substring(2)) || 65536;
+      } else if (part.startsWith("t=")) {
+        result.iterations = parseInt(part.substring(2)) || 1;
+      } else if (part.startsWith("p=")) {
+        result.parallelism = parseInt(part.substring(2)) || 2;
+      }
+    }
+
+    return result;
+  }
+
+  buildArgon2idSalt(pepper, memory, iterations, parallelism) {
+    // Build format: "pepper|m=65536|t=1|p=2"
+    let salt = pepper || "";
+
+    // Only add parameters if they differ from defaults or if pepper is set
+    const hasCustomParams = memory !== 65536 || iterations !== 1 || parallelism !== 2;
+    if (hasCustomParams) {
+      salt += `|m=${memory}|t=${iterations}|p=${parallelism}`;
+    }
+
+    return salt;
+  }
+
+  updateArgon2idParam(key, value) {
+    const organization = this.state.organization;
+    const parsed = this.parseArgon2idSalt(organization.passwordSalt || "");
+
+    if (key === "pepper") {
+      parsed.pepper = value;
+    } else if (key === "memory") {
+      parsed.memory = value;
+    } else if (key === "iterations") {
+      parsed.iterations = value;
+    } else if (key === "parallelism") {
+      parsed.parallelism = value;
+    }
+
+    organization.passwordSalt = this.buildArgon2idSalt(
+      parsed.pepper,
+      parsed.memory,
+      parsed.iterations,
+      parsed.parallelism
+    );
+
+    this.setState({organization: organization});
+  }
+
   renderOrganization() {
     return (
       <Card size="small" title={
@@ -305,16 +371,88 @@ class OrganizationEditPage extends React.Component {
             />
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.organization.passwordSalt} onChange={e => {
-              this.updateOrganizationField("passwordSalt", e.target.value);
-            }} />
-          </Col>
-        </Row>
+        {
+          this.state.organization.passwordType === "argon2id" ? (
+            <>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("general:Password pepper"), i18next.t("general:Password pepper - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input
+                    value={this.parseArgon2idSalt(this.state.organization.passwordSalt || "").pepper}
+                    onChange={e => {
+                      this.updateArgon2idParam("pepper", e.target.value);
+                    }}
+                    placeholder="Optional: Secret key for migration"
+                  />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("general:Argon2id memory (KiB)"), i18next.t("general:Argon2id memory - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber
+                    min={8}
+                    max={1048576}
+                    value={this.parseArgon2idSalt(this.state.organization.passwordSalt || "").memory}
+                    onChange={value => {
+                      this.updateArgon2idParam("memory", value);
+                    }}
+                    style={{width: "100%"}}
+                    placeholder="Default: 65536"
+                  />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("general:Argon2id iterations"), i18next.t("general:Argon2id iterations - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber
+                    min={1}
+                    max={100}
+                    value={this.parseArgon2idSalt(this.state.organization.passwordSalt || "").iterations}
+                    onChange={value => {
+                      this.updateArgon2idParam("iterations", value);
+                    }}
+                    style={{width: "100%"}}
+                    placeholder="Default: 1"
+                  />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("general:Argon2id parallelism"), i18next.t("general:Argon2id parallelism - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber
+                    min={1}
+                    max={16}
+                    value={this.parseArgon2idSalt(this.state.organization.passwordSalt || "").parallelism}
+                    onChange={value => {
+                      this.updateArgon2idParam("parallelism", value);
+                    }}
+                    style={{width: "100%"}}
+                    placeholder="Default: 2"
+                  />
+                </Col>
+              </Row>
+            </>
+          ) : (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:Password salt"), i18next.t("general:Password salt - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <Input value={this.state.organization.passwordSalt} onChange={e => {
+                  this.updateOrganizationField("passwordSalt", e.target.value);
+                }} />
+              </Col>
+            </Row>
+          )
+        }
         <Row style={{marginTop: "20px"}}>
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Password complexity options"), i18next.t("general:Password complexity options - Tooltip"))} :

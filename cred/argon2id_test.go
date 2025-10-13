@@ -169,3 +169,99 @@ func TestArgon2idPepperOrdering(t *testing.T) {
 		t.Error("Failed to verify direct concatenation")
 	}
 }
+
+func TestArgon2idWithCustomParameters(t *testing.T) {
+	// Test using custom parameters via salt field format: "pepper|m=12|t=20|p=2"
+	cm := NewArgon2idCredManager()
+	password := "testPassword"
+	pepper := "myPepper"
+
+	// Format: pepper|m=memory|t=iterations|p=parallelism
+	saltWithParams := pepper + "|m=16384|t=2|p=4"
+
+	// Create hash with custom parameters
+	hash := cm.GetHashedPassword(password, saltWithParams)
+	if hash == "" {
+		t.Fatal("Failed to generate hash with custom parameters")
+	}
+
+	// Verify password with same parameters
+	if !cm.IsPasswordCorrect(password, hash, saltWithParams) {
+		t.Error("Failed to verify password with custom parameters")
+	}
+
+	// Verify wrong password fails
+	if cm.IsPasswordCorrect("wrongPassword", hash, saltWithParams) {
+		t.Error("Wrong password verified with custom parameters")
+	}
+
+	// Verify that using different parameters in verification still works
+	// because parameters are embedded in the hash
+	saltWithDifferentParams := pepper + "|m=65536|t=1|p=2"
+	if !cm.IsPasswordCorrect(password, hash, saltWithDifferentParams) {
+		t.Error("Failed to verify with different params (params should come from hash)")
+	}
+}
+
+func TestArgon2idParameterParsing(t *testing.T) {
+	// Test parameter parsing function
+	testCases := []struct {
+		salt           string
+		expectedPepper string
+		hasParams      bool
+	}{
+		{"", "", false},
+		{"justPepper", "justPepper", false},
+		{"pepper|m=65536", "pepper", true},
+		{"pepper|m=65536|t=1|p=2", "pepper", true},
+		{"my-secret-pepper|m=16384|t=3|p=4", "my-secret-pepper", true},
+	}
+
+	for _, tc := range testCases {
+		pepper, params := parseArgon2idSalt(tc.salt)
+
+		if pepper != tc.expectedPepper {
+			t.Errorf("For salt %q, expected pepper %q but got %q", tc.salt, tc.expectedPepper, pepper)
+		}
+
+		if tc.hasParams && params == nil {
+			t.Errorf("For salt %q, expected params but got nil", tc.salt)
+		}
+
+		if !tc.hasParams && params != nil {
+			t.Errorf("For salt %q, expected nil params but got %v", tc.salt, params)
+		}
+	}
+}
+
+func TestArgon2idMigrationWithParameters(t *testing.T) {
+	// Simulate migrating from old system with custom parameters
+	cm := NewArgon2idCredManager()
+	password := "userPassword"
+
+	// Old system used these settings
+	pepper := "oldSystemSecret"
+	saltWithOldParams := pepper + "|m=12|t=20|p=2"
+
+	// Create hash as if from old system
+	oldHash := cm.GetHashedPassword(password, saltWithOldParams)
+
+	// Verify user can login with migrated credentials
+	if !cm.IsPasswordCorrect(password, oldHash, saltWithOldParams) {
+		t.Error("Failed to verify migrated user with old parameters")
+	}
+
+	// After migration, admin might want to update to new parameters
+	saltWithNewParams := pepper + "|m=65536|t=1|p=2"
+	newHash := cm.GetHashedPassword(password, saltWithNewParams)
+
+	// User should be able to login with new parameters
+	if !cm.IsPasswordCorrect(password, newHash, saltWithNewParams) {
+		t.Error("Failed to verify with updated parameters")
+	}
+
+	// Old and new hashes should be different
+	if oldHash == newHash {
+		t.Error("Hashes with different parameters should differ")
+	}
+}
