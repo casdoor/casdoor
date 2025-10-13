@@ -76,6 +76,11 @@ func (syncer *Syncer) createUserFromOriginalUser(originalUser *OriginalUser, aff
 		user.Properties = map[string]string{}
 	}
 
+	if user.RegisterType == "" {
+		user.RegisterType = "Add Users"
+		user.RegisterSource = fmt.Sprintf("%s/%s", syncer.Organization, syncer.Name)
+	}
+
 	return &user
 }
 

@@ -235,6 +235,8 @@ func (c *ApiController) Signup() {
 		Invitation:        invitationName,
 		InvitationCode:    authForm.InvitationCode,
 		EmailVerified:     userEmailVerified,
+		RegisterType:      "Application Signup",
+		RegisterSource:    fmt.Sprintf("%s/%s", authForm.Organization, application.Name),
 	}
 
 	if len(organization.Tags) > 0 {
