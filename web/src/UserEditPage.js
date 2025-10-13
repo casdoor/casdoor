@@ -781,6 +781,30 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Register type") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Register type"), i18next.t("user:Register type - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.registerType} disabled={!this.props.account.isAdmin}
+              onChange={e => {this.updateUserField("registerType", e.target.value);}} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Register source") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Register source"), i18next.t("user:Register source - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.registerSource} disabled={!this.props.account.isAdmin}
+              onChange={e => {this.updateUserField("registerSource", e.target.value);}} />
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "API key") {
       return (
         <Row style={{marginTop: "20px"}} >

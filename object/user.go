@@ -101,6 +101,8 @@ type User struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	RegisterType      string   `xorm:"varchar(100)" json:"registerType"`
+	RegisterSource    string   `xorm:"varchar(100)" json:"registerSource"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 	AccessToken       string   `xorm:"mediumtext" json:"accessToken"`
@@ -801,7 +803,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "mfa_items")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "mfa_items", "register_type", "register_source")
 	}
 
 	columns = append(columns, "updated_time")
@@ -976,6 +978,13 @@ func AddUser(user *User, lang string) (bool, error) {
 	isUsernameLowered := conf.GetConfigBool("isUsernameLowered")
 	if isUsernameLowered {
 		user.Name = strings.ToLower(user.Name)
+	}
+
+	if user.RegisterType == "" {
+		user.RegisterType = "Add User"
+	}
+	if user.RegisterSource == "" {
+		user.RegisterSource = "built-in/admin"
 	}
 
 	affected, err := ormer.Engine.Insert(user)

@@ -108,6 +108,8 @@ type UserWithoutThirdIdp struct {
 	SignupApplication string   `xorm:"varchar(100)" json:"signupApplication"`
 	Hash              string   `xorm:"varchar(100)" json:"hash"`
 	PreHash           string   `xorm:"varchar(100)" json:"preHash"`
+	RegisterType      string   `xorm:"varchar(100)" json:"registerType"`
+	RegisterSource    string   `xorm:"varchar(100)" json:"registerSource"`
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 
@@ -259,6 +261,8 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		SignupApplication: user.SignupApplication,
 		Hash:              user.Hash,
 		PreHash:           user.PreHash,
+		RegisterType:      user.RegisterType,
+		RegisterSource:    user.RegisterSource,
 		AccessKey:         user.AccessKey,
 		AccessSecret:      user.AccessSecret,
 

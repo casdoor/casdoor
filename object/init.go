@@ -67,6 +67,8 @@ func getBuiltInAccountItems() []*AccountItem {
 		{Name: "Bio", Visible: true, ViewRule: "Public", ModifyRule: "Self"},
 		{Name: "Tag", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Signup application", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
+		{Name: "Register type", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
+		{Name: "Register source", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
 		{Name: "Roles", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "Permissions", Visible: true, ViewRule: "Public", ModifyRule: "Immutable"},
 		{Name: "Groups", Visible: true, ViewRule: "Public", ModifyRule: "Admin"},
@@ -151,6 +153,8 @@ func initBuiltInUser() {
 		IsForbidden:       false,
 		IsDeleted:         false,
 		SignupApplication: "app-built-in",
+		RegisterType:      "Add User",
+		RegisterSource:    "built-in/admin",
 		CreatedIp:         "127.0.0.1",
 		Properties:        make(map[string]string),
 	}
