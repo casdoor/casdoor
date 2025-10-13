@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "casdoor/web/yarn.lock"
+
+      - name: Build frontend
+        working-directory: ./casdoor/web
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+
+      - name: Build backend binaries
+        working-directory: ./casdoor
+        run: |
+          # Build for multiple architectures
+          GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o bin/casdoor-linux-amd64 main.go
+          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w" -o bin/casdoor-linux-arm64 main.go
+          GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o bin/casdoor-windows-amd64.exe main.go
+          GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -o bin/casdoor-darwin-amd64 main.go
+          GOOS=darwin GOARCH=arm64 go build -ldflags "-s -w" -o bin/casdoor-darwin-arm64 main.go
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            casdoor/bin/casdoor-*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  container-images:
+    name: Container Images
+    uses: ./.github/workflows/artifacts.yaml
+    with:
+      publish: true
+      release_name: ${{ github.ref_name }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write

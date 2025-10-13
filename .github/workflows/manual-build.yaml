@@ -1,0 +1,73 @@
+name: Manual Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build from'
+        required: false
+        default: 'main'
+      tag:
+        description: 'Custom tag for the image'
+        required: false
+      push_to_ecr:
+        description: 'Push to ECR'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "casdoor/web/yarn.lock"
+
+      - name: Build frontend
+        working-directory: ./casdoor/web
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+
+      - name: Build Backend Binary
+        working-directory: ./casdoor
+        run: |
+          go build -o bin/casdoor main.go
+
+      - name: Upload Binary as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: casdoor-binary-${{ github.event.inputs.branch }}-${{ github.sha }}
+          path: ./casdoor/bin/casdoor
+
+  container-images:
+    name: Container Images
+    if: github.event.inputs.push_to_ecr == 'true'
+    uses: ./.github/workflows/artifacts.yaml
+    with:
+      publish: true
+      branch: ${{ github.event.inputs.branch }}
+      release_name: ${{ github.event.inputs.tag }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write

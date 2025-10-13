@@ -1,0 +1,162 @@
+name: Build and Push
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: "Branch to build image from"
+        required: false
+        type: string
+      publish:
+        description: Publish artifacts to the artifact store
+        default: false
+        required: false
+        type: boolean
+      release_name:
+        description: "A overridden tag name for the release"
+        required: false
+        type: string
+
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      AWS_REGION:
+        required: true
+      ECR_REPOSITORY:
+        required: true
+
+    outputs:
+      container-image-name:
+        description: Container image name
+        value: ${{ jobs.container-images.outputs.name }}
+      container-image-digest:
+        description: Container image digest
+        value: ${{ jobs.container-images.outputs.digest }}
+      container-image-ref:
+        description: Container image ref
+        value: ${{ jobs.container-images.outputs.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  container-images:
+    name: Container Images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write
+
+    outputs:
+      name: ${{ steps.image-name.outputs.value }}
+      digest: ${{ steps.build.outputs.digest }}
+      ref: ${{ steps.image-ref.outputs.value }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set Image Name
+        id: image-name
+        run: echo "value=${{ secrets.ECR_REPOSITORY }}" >> "$GITHUB_OUTPUT"
+
+      - name: Format Platform Name
+        id: platform-name
+        run: echo "PLATFORM_TAG=${{ matrix.platform }}" | sed 's/\//-/g' >> $GITHUB_ENV
+
+      - name: Determine Image Tag
+        id: image-tag
+        run: |
+          if [[ -n "${{ inputs.release_name }}" ]]; then
+            echo "IMAGE_TAG=${{ inputs.release_name }}" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          fi
+
+      - name: Determine build output
+        uses: haya14busa/action-cond@v1
+        id: build-output
+        with:
+          cond: ${{ inputs.publish }}
+          if_true: type=image,push=true
+          if_false: type=oci,dest=image.tar
+    
+      - name: Build Image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./casdoor
+          platforms: ${{ matrix.platform }}
+          target: STANDARD
+          tags: |
+            ${{ steps.image-name.outputs.value }}:${{ env.PLATFORM_TAG }}-${{ env.IMAGE_TAG }}
+            ${{ steps.image-name.outputs.value }}:${{ env.PLATFORM_TAG }}-latest
+          build-args: |
+            GIT_COMMIT_SHA=${{ env.IMAGE_TAG }}
+          outputs: ${{ steps.build-output.outputs.value }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Set Image Reference
+        id: image-ref
+        run: echo "value=${{ steps.image-name.outputs.value }}@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+      # Security scanning
+      - name: Get date
+        id: date
+        run: echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          input: image.tar
+          format: sarif
+          output: trivy-results.sarif
+        if: github.event_name == 'pull_request'
+
+      - name: Upload Trivy scan results as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Trivy-scan-results-${{ env.PLATFORM_TAG }}"
+          path: trivy-results.sarif
+          retention-days: 5
+        if: github.event_name == 'pull_request'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+        if: github.event_name == 'pull_request'
+
+      - name: Upload Image as Artifact (Only for PRs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "OCI-Image-${{ env.PLATFORM_TAG }}"
+          path: image.tar
+        if: github.event_name == 'pull_request'

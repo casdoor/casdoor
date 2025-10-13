@@ -1,0 +1,154 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: casdoor
+          POSTGRES_USER: casdoor  
+          POSTGRES_DB: casdoor
+          TZ: UTC
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: casdoor
+          MYSQL_DATABASE: casdoor
+          MYSQL_USER: casdoor
+          MYSQL_PASSWORD: casdoor
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "casdoor/web/yarn.lock"
+
+      - name: Install frontend dependencies
+        working-directory: ./casdoor/web
+        run: yarn install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: ./casdoor/web
+        run: yarn build
+
+      - name: Download Go dependencies
+        working-directory: ./casdoor
+        run: go mod download
+
+      - name: Run Go fmt
+        working-directory: ./casdoor
+        run: go fmt ./...
+
+      - name: Run Go vet
+        working-directory: ./casdoor
+        run: go vet ./...
+
+      - name: Build backend
+        working-directory: ./casdoor
+        run: go build -o bin/casdoor main.go
+
+      - name: Run backend tests
+        working-directory: ./casdoor
+        run: go test -v -cover ./...
+        env:
+          # PostgreSQL test environment
+          CASDOOR_DB_TYPE: postgres
+          CASDOOR_DB_HOST: localhost
+          CASDOOR_DB_PORT: 5432
+          CASDOOR_DB_USER: casdoor
+          CASDOOR_DB_PASSWORD: casdoor
+          CASDOOR_DB_NAME: casdoor
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "casdoor/web/yarn.lock"
+
+      - name: Install frontend dependencies
+        working-directory: ./casdoor/web
+        run: yarn install --frozen-lockfile
+
+      - name: Lint frontend (ESLint)
+        working-directory: ./casdoor/web
+        run: yarn run fix
+
+      - name: Lint frontend (Stylelint)
+        working-directory: ./casdoor/web
+        run: yarn run lint:css
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.54
+          working-directory: ./casdoor
+
+  artifacts:
+    name: Artifacts
+    uses: ./.github/workflows/artifacts.yaml
+    with:
+      publish: ${{ github.event_name == 'push' }}
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      security-events: write
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
