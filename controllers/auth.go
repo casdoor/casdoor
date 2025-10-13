@@ -889,6 +889,10 @@ func (c *ApiController) Login() {
 						Properties:        properties,
 					}
 
+					if providerItem.SignupGroup != "" {
+						user.Groups = []string{providerItem.SignupGroup}
+					}
+
 					var affected bool
 					affected, err = object.AddUser(user, c.GetAcceptLanguage())
 					if err != nil {
@@ -899,15 +903,6 @@ func (c *ApiController) Login() {
 					if !affected {
 						c.ResponseError(fmt.Sprintf(c.T("auth:Failed to create user, user information is invalid: %s"), util.StructToJson(user)))
 						return
-					}
-
-					if providerItem.SignupGroup != "" {
-						user.Groups = []string{providerItem.SignupGroup}
-						_, err = object.UpdateUser(user.GetId(), user, []string{"groups"}, false)
-						if err != nil {
-							c.ResponseError(err.Error())
-							return
-						}
 					}
 				}
 
