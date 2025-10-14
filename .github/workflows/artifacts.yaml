@@ -77,14 +77,21 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+        if: ${{ inputs.publish }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+        if: ${{ inputs.publish }}
 
       - name: Set Image Name
         id: image-name
-        run: echo "value=${{ secrets.ECR_REPOSITORY }}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [[ -n "${{ secrets.ECR_REPOSITORY }}" ]]; then
+            echo "value=${{ secrets.ECR_REPOSITORY }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=casdoor" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Format Platform Name
         id: platform-name
