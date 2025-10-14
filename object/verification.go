@@ -15,7 +15,6 @@
 package object
 
 import (
-	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -81,9 +80,15 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 		return err
 	}
 
+	resendTimeoutInSeconds, err := conf.GetConfigInt64("verificationCodeResendTimeout")
+	if err != nil {
+		// Default to 60 seconds if not configured
+		resendTimeoutInSeconds = 60
+	}
+
 	now := time.Now().Unix()
-	if has && now-record.Time < 60 {
-		return errors.New("you can only send one code in 60s")
+	if has && now-record.Time < resendTimeoutInSeconds {
+		return fmt.Errorf("you can only send one code in %ds", resendTimeoutInSeconds)
 	}
 
 	return nil
