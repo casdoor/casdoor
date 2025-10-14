@@ -60,6 +60,7 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	samlResponse.CreateElement("samlp:Status").CreateElement("samlp:StatusCode").CreateAttr("Value", "urn:oasis:names:tc:SAML:2.0:status:Success")
 
 	assertion := samlResponse.CreateElement("saml:Assertion")
+	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	assertion.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 	assertion.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
 	assertion.CreateAttr("ID", fmt.Sprintf("_%s", uuid.New()))
