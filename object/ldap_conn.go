@@ -362,7 +362,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Email:             syncUser.Email,
 				Phone:             syncUser.Mobile,
 				Address:           []string{syncUser.Address},
-				Region:            syncUser.Country,
+				Region:            util.ReturnAnyNotEmpty(syncUser.Country, syncUser.CountryName),
 				Affiliation:       affiliation,
 				Tag:               tag,
 				Score:             score,
