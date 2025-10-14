@@ -39,9 +39,10 @@ type MfaInterface interface {
 }
 
 const (
-	EmailType = "email"
-	SmsType   = "sms"
-	TotpType  = "app"
+	EmailType  = "email"
+	SmsType    = "sms"
+	TotpType   = "app"
+	RadiusType = "radius"
 )
 
 const (
@@ -58,6 +59,8 @@ func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 		return NewEmailMfaUtil(config)
 	case TotpType:
 		return NewTotpMfaUtil(config)
+	case RadiusType:
+		return NewRadiusMfaUtil(config)
 	}
 
 	return nil
@@ -92,7 +95,7 @@ func MfaRecover(user *User, recoveryCode string) error {
 func GetAllMfaProps(user *User, masked bool) []*MfaProps {
 	mfaProps := []*MfaProps{}
 
-	for _, mfaType := range []string{SmsType, EmailType, TotpType} {
+	for _, mfaType := range []string{SmsType, EmailType, TotpType, RadiusType} {
 		mfaProps = append(mfaProps, user.GetMfaProps(mfaType, masked))
 	}
 	return mfaProps
@@ -153,6 +156,23 @@ func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
 		} else {
 			mfaProps.Secret = user.TotpSecret
 		}
+	} else if mfaType == RadiusType {
+		if user.RadiusSecret == "" {
+			return &MfaProps{
+				Enabled: false,
+				MfaType: mfaType,
+			}
+		}
+
+		mfaProps = &MfaProps{
+			Enabled: true,
+			MfaType: mfaType,
+		}
+		if masked {
+			mfaProps.Secret = "***"
+		} else {
+			mfaProps.Secret = user.RadiusSecret
+		}
 	}
 
 	if user.PreferredMfaType == mfaType {
@@ -167,8 +187,11 @@ func DisabledMultiFactorAuth(user *User) error {
 	user.MfaPhoneEnabled = false
 	user.MfaEmailEnabled = false
 	user.TotpSecret = ""
+	user.RadiusSecret = ""
+	user.RadiusProvider = ""
+	user.RadiusUsername = ""
 
-	_, err := updateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled", "totp_secret"})
+	_, err := updateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled", "totp_secret", "radius_secret", "radius_provider", "radius_username"})
 	if err != nil {
 		return err
 	}

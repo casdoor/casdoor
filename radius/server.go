@@ -89,8 +89,8 @@ func handleAccessRequest(w radius.ResponseWriter, r *radius.Request) {
 	}
 
 	if user.IsMfaEnabled() {
-		mfaProp := user.GetMfaProps(object.TotpType, false)
-		if mfaProp == nil {
+		mfaProp := user.GetPreferredMfaProps(false)
+		if mfaProp == nil || !mfaProp.Enabled {
 			w.Write(r.Response(radius.CodeAccessReject))
 			return
 		}
