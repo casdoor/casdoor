@@ -658,7 +658,7 @@ class ProviderEditPage extends React.Component {
               this.updateProviderField("type", value);
               if (value === "Local File System") {
                 this.updateProviderField("domain", Setting.getFullServerUrl());
-              } else if (value === "Custom" && this.state.provider.category === "OAuth") {
+              } else if (value.startsWith("Custom") && this.state.provider.category === "OAuth") {
                 this.updateProviderField("customAuthUrl", "https://door.casdoor.com/login/oauth/authorize");
                 this.updateProviderField("scopes", "openid profile email");
                 this.updateProviderField("customTokenUrl", "https://door.casdoor.com/api/login/oauth/access_token");
@@ -753,7 +753,7 @@ class ProviderEditPage extends React.Component {
           ) : null
         }
         {
-          this.state.provider.type === "Custom" ? (
+          this.state.provider.type.startsWith("Custom") ? (
             <React.Fragment>
               {
                 this.state.provider.category === "OAuth" ? (

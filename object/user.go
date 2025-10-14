@@ -189,6 +189,15 @@ type User struct {
 	MetaMask        string `xorm:"metamask varchar(100)" json:"metamask"`
 	Web3Onboard     string `xorm:"web3onboard varchar(100)" json:"web3onboard"`
 	Custom          string `xorm:"custom varchar(100)" json:"custom"`
+	Custom2         string `xorm:"custom2 text" json:"custom2"`
+	Custom3         string `xorm:"custom3 text" json:"custom3"`
+	Custom4         string `xorm:"custom4 text" json:"custom4"`
+	Custom5         string `xorm:"custom5 text" json:"custom5"`
+	Custom6         string `xorm:"custom6 text" json:"custom6"`
+	Custom7         string `xorm:"custom7 text" json:"custom7"`
+	Custom8         string `xorm:"custom8 text" json:"custom8"`
+	Custom9         string `xorm:"custom9 text" json:"custom9"`
+	Custom10        string `xorm:"custom10 text" json:"custom10"`
 
 	WebauthnCredentials []webauthn.Credential `xorm:"webauthnCredentials blob" json:"webauthnCredentials"`
 	PreferredMfaType    string                `xorm:"varchar(100)" json:"preferredMfaType"`

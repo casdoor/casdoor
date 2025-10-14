@@ -174,7 +174,7 @@ export function renderProviderLogo(provider, application, width, margin, size, l
         </a>
       );
     }
-  } else if (provider.type === "Custom") {
+  } else if (provider.type.startsWith("Custom")) {
     // style definition
     const text = i18next.t("login:Sign in with {type}").replace("{type}", provider.displayName);
     const customAStyle = {display: "block", height: "55px", color: "#000"};
