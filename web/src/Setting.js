@@ -958,11 +958,12 @@ export function getClickable(text) {
 }
 
 export function getProviderLogoURL(provider) {
-  if (provider.type === "Custom" && provider.customLogo) {
+  if (provider.type.startsWith("Custom") && provider.customLogo) {
     return provider.customLogo;
   }
   if (provider.category === "OAuth") {
-    return `${StaticBaseUrl}/img/social_${provider.type.toLowerCase()}.png`;
+    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    return `${StaticBaseUrl}/img/social_${type.toLowerCase()}.png`;
   } else {
     const info = OtherProviderInfo[provider.category][provider.type];
     // avoid crash when provider is not found
@@ -1062,6 +1063,15 @@ export function getProviderTypeOptions(category) {
         {id: "Yandex", name: "Yandex"},
         {id: "Zoom", name: "Zoom"},
         {id: "Custom", name: "Custom"},
+        {id: "Custom2", name: "Custom2"},
+        {id: "Custom3", name: "Custom3"},
+        {id: "Custom4", name: "Custom4"},
+        {id: "Custom5", name: "Custom5"},
+        {id: "Custom6", name: "Custom6"},
+        {id: "Custom7", name: "Custom7"},
+        {id: "Custom8", name: "Custom8"},
+        {id: "Custom9", name: "Custom9"},
+        {id: "Custom10", name: "Custom10"},
       ]
     );
   } else if (category === "Email") {

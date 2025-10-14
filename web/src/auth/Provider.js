@@ -338,7 +338,8 @@ const authInfo = {
 
 export function getProviderUrl(provider) {
   if (provider.category === "OAuth") {
-    const endpoint = authInfo[provider.type].endpoint;
+    const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+    const endpoint = authInfo[type].endpoint;
     const urlObj = new URL(endpoint);
 
     let host = urlObj.host;
@@ -386,11 +387,11 @@ export function getAuthUrl(application, provider, method, code) {
   if (application === null || provider === null) {
     return "";
   }
-
-  let endpoint = authInfo[provider.type].endpoint;
+  const type = provider.type.startsWith("Custom") ? "Custom" : provider.type;
+  let endpoint = authInfo[type].endpoint;
   const redirectOrigin = application.forcedRedirectOrigin ? application.forcedRedirectOrigin : window.location.origin;
   let redirectUri = `${redirectOrigin}/callback`;
-  let scope = authInfo[provider.type].scope;
+  let scope = authInfo[type].scope;
   const isShortState = (provider.type === "WeChat" && navigator.userAgent.includes("MicroMessenger")) || (provider.type === "Twitter");
   let applicationName = application.name;
   if (application?.isShared) {
@@ -491,7 +492,7 @@ export function getAuthUrl(application, provider, method, code) {
     return `${endpoint}?client_key=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
   } else if (provider.type === "Kwai") {
     return `${endpoint}?app_id=${provider.clientId}&redirect_uri=${redirectUri}&state=${state}&response_type=code&scope=${scope}`;
-  } else if (provider.type === "Custom") {
+  } else if (type === "Custom") {
     return `${provider.customAuthUrl}?client_id=${provider.clientId}&redirect_uri=${redirectUri}&scope=${provider.scopes}&response_type=code&state=${state}`;
   } else if (provider.type === "Bilibili") {
     return `${endpoint}#/?client_id=${provider.clientId}&return_url=${redirectUri}&state=${state}&response_type=code`;
