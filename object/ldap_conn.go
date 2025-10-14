@@ -57,6 +57,8 @@ type LdapUser struct {
 	MobileTelephoneNumber string
 	RegisteredAddress     string
 	PostalAddress         string
+	Country               string `json:"country"`
+	CountryName           string `json:"countryName"`
 
 	GroupId    string            `json:"groupId"`
 	Address    string            `json:"address"`
@@ -152,6 +154,7 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 	SearchAttributes := []string{
 		"uidNumber", "cn", "sn", "gidNumber", "entryUUID", "displayName", "mail", "email",
 		"emailAddress", "telephoneNumber", "mobile", "mobileTelephoneNumber", "registeredAddress", "postalAddress",
+		"c", "co",
 	}
 	if l.IsAD {
 		SearchAttributes = append(SearchAttributes, "sAMAccountName")
@@ -214,6 +217,10 @@ func (l *LdapConn) GetLdapUsers(ldapServer *Ldap) ([]LdapUser, error) {
 				user.RegisteredAddress = attribute.Values[0]
 			case "postalAddress":
 				user.PostalAddress = attribute.Values[0]
+			case "c":
+				user.Country = attribute.Values[0]
+			case "co":
+				user.CountryName = attribute.Values[0]
 			case "memberOf":
 				user.MemberOf = attribute.Values[0]
 			default:
@@ -281,6 +288,7 @@ func AutoAdjustLdapUser(users []LdapUser) []LdapUser {
 			Email:       util.ReturnAnyNotEmpty(user.Email, user.EmailAddress, user.Mail),
 			Mobile:      util.ReturnAnyNotEmpty(user.Mobile, user.MobileTelephoneNumber, user.TelephoneNumber),
 			Address:     util.ReturnAnyNotEmpty(user.Address, user.PostalAddress, user.RegisteredAddress),
+			Country:     util.ReturnAnyNotEmpty(user.Country, user.CountryName),
 			Attributes:  user.Attributes,
 		}
 	}
@@ -354,6 +362,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Email:             syncUser.Email,
 				Phone:             syncUser.Mobile,
 				Address:           []string{syncUser.Address},
+				Region:            util.ReturnAnyNotEmpty(syncUser.Country, syncUser.CountryName),
 				Affiliation:       affiliation,
 				Tag:               tag,
 				Score:             score,
@@ -540,6 +549,8 @@ func (user *User) getFieldFromLdapAttribute(attribute string) string {
 		return user.Email
 	case "mobile":
 		return user.Phone
+	case "c", "co":
+		return user.Region
 	default:
 		return ""
 	}
