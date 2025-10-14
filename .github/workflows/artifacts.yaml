@@ -118,7 +118,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          context: ./casdoor
+          context: .
           platforms: ${{ matrix.platform }}
           target: STANDARD
           tags: |

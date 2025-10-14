@@ -57,34 +57,29 @@ jobs:
         with:
           node-version: "18"
           cache: "yarn"
-          cache-dependency-path: "casdoor/web/yarn.lock"
+          cache-dependency-path: "web/yarn.lock"
 
       - name: Install frontend dependencies
-        working-directory: ./casdoor/web
+        working-directory: ./web
         run: yarn install --frozen-lockfile
 
       - name: Build frontend
-        working-directory: ./casdoor/web
+        working-directory: ./web
         run: yarn build
 
       - name: Download Go dependencies
-        working-directory: ./casdoor
         run: go mod download
 
       - name: Run Go fmt
-        working-directory: ./casdoor
         run: go fmt ./...
 
       - name: Run Go vet
-        working-directory: ./casdoor
         run: go vet ./...
 
       - name: Build backend
-        working-directory: ./casdoor
         run: go build -o bin/casdoor main.go
 
       - name: Run backend tests
-        working-directory: ./casdoor
         run: go test -v -cover ./...
         env:
           # PostgreSQL test environment
@@ -113,25 +108,24 @@ jobs:
         with:
           node-version: "18"
           cache: "yarn"
-          cache-dependency-path: "casdoor/web/yarn.lock"
+          cache-dependency-path: "web/yarn.lock"
 
       - name: Install frontend dependencies
-        working-directory: ./casdoor/web
+        working-directory: ./web
         run: yarn install --frozen-lockfile
 
       - name: Lint frontend (ESLint)
-        working-directory: ./casdoor/web
+        working-directory: ./web
         run: yarn run fix
 
       - name: Lint frontend (Stylelint)
-        working-directory: ./casdoor/web
+        working-directory: ./web
         run: yarn run lint:css
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.54
-          working-directory: ./casdoor
 
   artifacts:
     name: Artifacts
