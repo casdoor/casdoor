@@ -73,14 +73,43 @@ Content-Type: application/x-www-form-urlencoded
 owner=built-in&name=username&mfaType=radius
 ```
 
+This will return MFA properties including recovery codes.
+
+#### Verify RADIUS MFA Setup
+
+Before enabling, verify that the RADIUS credentials work:
+
+```http
+POST /api/mfa/setup/verify
+Content-Type: application/x-www-form-urlencoded
+
+mfaType=radius&secret=built-in/radius-mfa-server&dest=radius-username&passcode=123456
+```
+
+Parameters:
+- `mfaType`: Must be "radius"
+- `secret`: The provider ID in format "owner/provider-name" (e.g., "built-in/radius-mfa-server")
+- `dest`: The RADIUS username
+- `passcode`: The RADIUS password/OTP to verify
+
 #### Enable RADIUS MFA for User
+
+After successful verification:
 
 ```http
 POST /api/mfa/setup/enable
 Content-Type: application/x-www-form-urlencoded
 
-owner=built-in&name=username&mfaType=radius
+owner=built-in&name=username&mfaType=radius&secret=built-in/radius-mfa-server&dest=radius-username&recoveryCodes=recovery-code-from-initiate
 ```
+
+Parameters:
+- `owner`: Organization owner
+- `name`: Username
+- `mfaType`: Must be "radius"
+- `secret`: The provider ID in format "owner/provider-name"
+- `dest`: The RADIUS username
+- `recoveryCodes`: Recovery code obtained from the initiate step
 
 ## Usage Flow
 

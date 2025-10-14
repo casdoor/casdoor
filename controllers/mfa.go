@@ -124,6 +124,17 @@ func (c *ApiController) MfaSetupVerify() {
 			return
 		}
 		config.Secret = dest
+	} else if mfaType == object.RadiusType {
+		if secret == "" {
+			c.ResponseError("RADIUS provider ID is missing")
+			return
+		}
+		config.Secret = secret
+		if dest == "" {
+			c.ResponseError("RADIUS username is missing")
+			return
+		}
+		config.CountryCode = dest // Use CountryCode field to pass username
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
@@ -200,6 +211,17 @@ func (c *ApiController) MfaSetupEnable() {
 			}
 			user.CountryCode = countryCode
 		}
+	} else if mfaType == object.RadiusType {
+		if secret == "" {
+			c.ResponseError("RADIUS provider ID is missing")
+			return
+		}
+		config.Secret = secret
+		if dest == "" {
+			c.ResponseError("RADIUS username is missing")
+			return
+		}
+		config.CountryCode = dest // Use CountryCode field to pass username
 	}
 
 	if recoveryCodes == "" {
