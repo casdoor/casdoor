@@ -81,6 +81,8 @@ class OrganizationListPage extends BaseListPage {
         {name: "Karma", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Ranking", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Signup application", visible: true, viewRule: "Public", modifyRule: "Admin"},
+        {name: "Register type", visible: true, viewRule: "Public", modifyRule: "Admin"},
+        {name: "Register source", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "API key", label: i18next.t("general:API key"), modifyRule: "Self"},
         {name: "Groups", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Roles", visible: true, viewRule: "Public", modifyRule: "Immutable"},

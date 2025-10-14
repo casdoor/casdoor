@@ -392,6 +392,17 @@ func (c *ApiController) AddUser() {
 		return
 	}
 
+	// Set RegisterSource based on the current user if not already set
+	if user.RegisterType == "" {
+		user.RegisterType = "Add User"
+	}
+	if user.RegisterSource == "" {
+		currentUser := c.getCurrentUser()
+		if currentUser != nil {
+			user.RegisterSource = currentUser.GetId()
+		}
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddUser(&user, c.GetAcceptLanguage()))
 	c.ServeJSON()
 }

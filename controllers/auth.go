@@ -887,6 +887,8 @@ func (c *ApiController) Login() {
 						IsDeleted:         false,
 						SignupApplication: application.Name,
 						Properties:        properties,
+						RegisterType:      "Application Signup",
+						RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
 					}
 
 					var affected bool

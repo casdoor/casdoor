@@ -85,6 +85,8 @@ class UserListPage extends BaseListPage {
       isDeleted: false,
       properties: {},
       signupApplication: this.state.organization.defaultApplication,
+      registerType: "Add User",
+      registerSource: `${this.props.account.owner}/${this.props.account.name}`,
     };
   }
 
@@ -346,6 +348,22 @@ class UserListPage extends BaseListPage {
           });
           return tagMap[text];
         },
+      },
+      {
+        title: i18next.t("user:Register type"),
+        dataIndex: "registerType",
+        key: "registerType",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("registerType"),
+      },
+      {
+        title: i18next.t("user:Register source"),
+        dataIndex: "registerSource",
+        key: "registerSource",
+        width: "150px",
+        sorter: true,
+        ...this.getColumnSearchProps("registerSource"),
       },
       {
         title: i18next.t("user:Is admin"),

@@ -134,6 +134,12 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 			if user.SignupApplication == "" {
 				user.SignupApplication = organization.DefaultApplication
 			}
+			if user.RegisterType == "" {
+				user.RegisterType = "Upload Users"
+			}
+			if user.RegisterSource == "" {
+				user.RegisterSource = userObj.GetId()
+			}
 
 			newUsers = append(newUsers, user)
 		}
