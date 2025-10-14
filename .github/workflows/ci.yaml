@@ -137,6 +137,8 @@ jobs:
     name: Artifacts
     uses: ./.github/workflows/artifacts.yaml
     with:
+      branch: ${{ github.event.inputs.branch || github.ref }}
+      release_name: ${{ github.event.inputs.release_name }}
       publish: ${{ github.event_name == 'push' }}
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
