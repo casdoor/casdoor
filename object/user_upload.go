@@ -138,7 +138,7 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 				user.RegisterType = "Upload Users"
 			}
 			if user.RegisterSource == "" {
-				user.RegisterSource = "built-in/admin"
+				user.RegisterSource = userObj.GetId()
 			}
 
 			newUsers = append(newUsers, user)

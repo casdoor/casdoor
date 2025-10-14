@@ -86,7 +86,7 @@ class UserListPage extends BaseListPage {
       properties: {},
       signupApplication: this.state.organization.defaultApplication,
       registerType: "Add User",
-      registerSource: "built-in/admin",
+      registerSource: `${this.props.account.owner}/${this.props.account.name}`,
     };
   }
 
