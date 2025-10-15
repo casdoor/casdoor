@@ -90,8 +90,11 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	condition.CreateAttr("NotOnOrAfter", expireTime)
 	audience := condition.CreateElement("saml:AudienceRestriction")
 	audience.CreateElement("saml:Audience").SetText(iss)
+	// Add redirect URIs as audiences, but skip duplicates and empty values
 	for _, value := range redirectUri {
-		audience.CreateElement("saml:Audience").SetText(value)
+		if value != "" && value != iss {
+			audience.CreateElement("saml:Audience").SetText(value)
+		}
 	}
 	authnStatement := assertion.CreateElement("saml:AuthnStatement")
 	authnStatement.CreateAttr("AuthnInstant", now)
