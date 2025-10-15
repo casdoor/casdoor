@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 /* Signup Page Specific Styles - Uses dex-signup-page modifier class */
 
 /* Compact layout for signup form to prevent scrolling */
@@ -21,14 +23,12 @@
 }
 
 .dex-login-container.dex-signup-page .form-title {
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
+  margin: 0.5rem 0 !important;
 }
 
 .dex-login-container.dex-signup-page .official-email-note {
   padding: 0.5rem 0 !important;
-  margin-bottom: 0.75rem !important;
-  margin-top: 1rem !important;
+  margin: 1rem 0 0.75rem !important;
   max-width: 100% !important;
   width: 100% !important;
   word-wrap: break-word !important;
@@ -48,10 +48,9 @@
 /* Compact panel for signup */
 .dex-login-container.dex-signup-page .modern-bordered-panel {
   padding: 2rem !important;
-  margin-bottom: 2rem !important;
+  margin: 3.9rem 0 2rem !important;
   width: 100% !important;
   max-width: none !important;
-  margin-top: 3.9rem !important;
 }
 
 .dex-login-container.dex-signup-page .login-content {
@@ -76,11 +75,7 @@
   opacity: 0.8;
 }
 
-/* Make form more compact without labels */
-.dex-login-container.dex-signup-page .ant-form-item {
-  margin-bottom: 16px !important;
-  width: 100% !important;
-}
+/* Make form more compact without labels - combined with previous form item styles */
 
 /* Signup specific form styling - Make all inputs full width like login page */
 .dex-login-container.dex-signup-page .ant-input,
@@ -106,11 +101,11 @@
   flex: 1 !important;
 }
 
-/* Ensure all signup form items are visible */
-.dex-login-container.dex-signup-page .ant-form-item:has(input[name="username"]),
-.dex-login-container.dex-signup-page .ant-form-item:has(input[name="displayName"]),
+/* Ensure all signup form items are visible - more specific selectors first */
 .dex-login-container.dex-signup-page .ant-form-item:has(.signup-username),
-.dex-login-container.dex-signup-page .ant-form-item:has(.signup-display-name) {
+.dex-login-container.dex-signup-page .ant-form-item:has(.signup-display-name),
+.dex-login-container.dex-signup-page .ant-form-item:has(input[name="username"]),
+.dex-login-container.dex-signup-page .ant-form-item:has(input[name="displayName"]) {
   display: block !important;
   visibility: visible !important;
 }
@@ -135,8 +130,8 @@
 
 /* Select dropdown styling for signup */
 .dex-login-container.dex-signup-page .ant-select-dropdown {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(15 23 42 / 95%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
 }
 
 .dex-login-container.dex-signup-page .ant-select-item {
@@ -144,12 +139,12 @@
 }
 
 .dex-login-container.dex-signup-page .ant-select-item-option-selected {
-  background: rgba(14, 165, 233, 0.2) !important;
+  background: rgb(14 165 233 / 20%) !important;
   color: #0ea5e9 !important;
 }
 
 .dex-login-container.dex-signup-page .ant-select-item:hover {
-  background: rgba(14, 165, 233, 0.1) !important;
+  background: rgb(14 165 233 / 10%) !important;
 }
 
 /* Remove borders from "Have account? Sign in now" section */
@@ -168,7 +163,7 @@
 .dex-login-container.dex-signup-page a[href*="login"]:hover,
 .dex-login-container.dex-signup-page a[href*="signin"]:hover {
   color: #38bdf8 !important;
-  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5) !important;
+  text-shadow: 0 0 10px rgb(14 165 233 / 50%) !important;
 }
 
 /* Footer spacing for signup */
@@ -208,7 +203,7 @@
 
 .dex-login-container.dex-signup-page .signup-button {
   width: 100% !important;
-  margin: 0 0 1rem 0 !important;
+  margin: 0 0 1rem !important;
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
@@ -224,7 +219,7 @@
 
 .dex-login-container.dex-signup-page .signup-button:hover {
   background: #0284c7 !important;
-  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3) !important;
+  box-shadow: 0 2px 4px rgb(14 165 233 / 30%) !important;
   border: none !important;
   outline: none !important;
 }
@@ -232,7 +227,7 @@
 .dex-login-container.dex-signup-page .signup-button:focus,
 .dex-login-container.dex-signup-page .signup-button:focus-visible {
   background: #0284c7 !important;
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5) !important;
+  box-shadow: 0 0 0 2px rgb(14 165 233 / 50%) !important;
   border: none !important;
   outline: none !important;
 }
@@ -294,13 +289,13 @@
 }
 
 .css-dev-only-do-not-override-1azwnhv.ant-col-sm-offset-8 {
-  margin-left: 0px !important;
+  margin-left: 0 !important;
 }
 
-.ant-form-item-control-input{
+.ant-form-item-control-input {
   max-width: 325px;
 }
 
-.year-text{
+.year-text {
   margin-left: 2px;
 }

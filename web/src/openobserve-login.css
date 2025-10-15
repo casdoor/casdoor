@@ -1,6 +1,9 @@
+/* stylelint-disable no-descending-specificity, no-duplicate-selectors */
+
 /* OpenObserve Login Page Styling - Force Full Width */
 
-html, body {
+html,
+body {
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden;
@@ -11,7 +14,8 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#root, #parent-area {
+#root,
+#parent-area {
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
@@ -55,19 +59,19 @@ html, body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: 
-    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgb(14 165 233 / 10%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(14 165 233 / 10%) 1px, transparent 1px);
   background-size: 50px 50px;
-  animation: gridMove 20s linear infinite;
+  animation: grid-move 20s linear infinite;
   transform: perspective(500px) rotateX(60deg);
   transform-origin: center;
   z-index: 2;
 }
 
-@keyframes gridMove {
-  0% {background-position: 0 0;}
-  100% {background-position: 50px 50px;}
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
 }
 
 .metrics-overlay {
@@ -84,13 +88,14 @@ html, body {
   position: absolute;
   width: 100%;
   height: 200px;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent,
-    transparent 40px,
-    rgba(14, 165, 233, 0.1) 40px,
-    rgba(14, 165, 233, 0.1) 41px
-  );
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 40px,
+      rgb(14 165 233 / 10%) 40px,
+      rgb(14 165 233 / 10%) 41px
+    );
 }
 
 .metric-line-1 { top: 20%; }
@@ -120,7 +125,7 @@ html, body {
   height: 600px;
   top: -200px;
   left: -200px;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgb(14 165 233 / 40%) 0%, transparent 70%);
   animation-delay: 0s;
 }
 
@@ -129,7 +134,7 @@ html, body {
   height: 500px;
   top: 20%;
   right: -150px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+  background: radial-gradient(circle, rgb(6 182 212 / 30%) 0%, transparent 70%);
   animation-delay: 10s;
 }
 
@@ -138,12 +143,13 @@ html, body {
   height: 550px;
   bottom: -200px;
   left: 30%;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, rgb(34 211 238 / 25%) 0%, transparent 70%);
   animation-delay: 20s;
 }
 
 @keyframes drift {
-  0%, 100% { transform: translate(0, 0); }
+  0%,
+  100% { transform: translate(0, 0); }
   33% { transform: translate(60px, 60px); }
   66% { transform: translate(-40px, 100px); }
 }
@@ -163,16 +169,14 @@ html, body {
 .brand-container {
   max-width: 500px;
   color: white;
-  margin-bottom: 2rem;
+  margin: 4rem 0 2rem;
   font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin-top: 4rem;
 }
 
 .brand-logo {
-  margin-bottom: 1.47rem;
-  margin-left: -0.7rem;
+  margin: 0 0 1.47rem -0.7rem;
 }
 
 .brand-logo img {
@@ -189,8 +193,7 @@ html, body {
   font-size: 3rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
-  -webkit-background-clip: text;
+  background: linear-gradient(135deg, #0ba5e9 0%, #38bdf8 100%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
@@ -222,13 +225,12 @@ html, body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 2rem 2rem 0;
   position: relative;
   z-index: 10;
   overflow-y: auto;
   align-items: center;
   justify-content: flex-start;
-  padding-bottom: 0px;
 }
 
 .login-content-container {
@@ -239,12 +241,12 @@ html, body {
 
 .modern-bordered-panel {
   position: relative;
-  border: 1px solid rgba(14, 165, 233, 0.2);
+  border: 1px solid rgb(14 165 233 / 20%);
   border-radius: 16px;
-  padding: 2rem 1.5rem 0.5rem 1.5rem;
-  background: rgba(15, 23, 42, 0.9);
+  padding: 2rem 1.5rem 0.5rem;
+  background: rgb(15 23 42 / 90%);
   backdrop-filter: blur(20px);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 0 1px rgba(14, 165, 233, 0.3);
+  box-shadow: 0 25px 70px rgb(0 0 0 / 50%), 0 0 1px rgb(14 165 233 / 30%);
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 3.3rem;
@@ -261,18 +263,19 @@ html, body {
   width: 100% !important;
 }
 
-/* Ensure all form items are visible in signup */
-.dex-login-container .ant-form-item:has(input[name="username"]),
-.dex-login-container .ant-form-item:has(input[name="displayName"]),
-.dex-login-container .ant-form-item:has(.signup-username),
-.dex-login-container .ant-form-item:has(.signup-display-name) {
-  display: block !important;
-  visibility: visible !important;
-}
-
 /* Form layout for signup with labels */
 .dex-login-container .ant-form {
   width: 100%;
+  background: transparent;
+}
+
+/* Ensure all form items are visible in signup - more specific selectors first */
+.dex-login-container .ant-form-item:has(.signup-username),
+.dex-login-container .ant-form-item:has(.signup-display-name),
+.dex-login-container .ant-form-item:has(input[name="username"]),
+.dex-login-container .ant-form-item:has(input[name="displayName"]) {
+  display: block !important;
+  visibility: visible !important;
 }
 
 .dex-login-container .ant-form .ant-row {
@@ -299,8 +302,8 @@ html, body {
 
 /* Select dropdown styling */
 .dex-login-container .ant-select-dropdown {
-  background: rgba(15, 23, 42, 0.95) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(15 23 42 / 95%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
 }
 
 .dex-login-container .ant-select-item {
@@ -308,12 +311,12 @@ html, body {
 }
 
 .dex-login-container .ant-select-item-option-selected {
-  background: rgba(14, 165, 233, 0.2) !important;
+  background: rgb(14 165 233 / 20%) !important;
   color: #0ea5e9 !important;
 }
 
 .dex-login-container .ant-select-item:hover {
-  background: rgba(14, 165, 233, 0.1) !important;
+  background: rgb(14 165 233 / 10%) !important;
 }
 
 /* Ensure username and display name inputs are visible */
@@ -341,17 +344,17 @@ html, body {
 .dex-login-container a[href*="login"]:hover,
 .dex-login-container a[href*="signin"]:hover {
   color: #38bdf8 !important;
-  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5) !important;
+  text-shadow: 0 0 10px rgb(14 165 233 / 50%) !important;
 }
 
 .modern-bordered-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgb(14 165 233 / 50%), transparent);
 }
 
 .form-header {
@@ -364,9 +367,7 @@ html, body {
 .form-title {
   font-size: 2rem;
   color: #f1f5f9;
-  margin-bottom: 0.5rem;
-  margin-top: 1.7rem;
-  
+  margin: 1.7rem 0 0.5rem;
 }
 
 .form-subtitle {
@@ -376,13 +377,12 @@ html, body {
 }
 
 .official-email-note {
-  background: rgba(11, 165, 233, 0.1);
-  color: #0BA5E9;
+  background: rgb(11 165 233 / 10%);
+  color: #0ba5e9;
   padding: 0.75rem;
-  border: 1px solid rgba(11, 165, 233, 0.3);
+  border: 1px solid rgb(11 165 233 / 30%);
   border-radius: 6px;
-  margin-bottom: 1rem;
-  margin-top: 2.5rem;
+  margin: 2.5rem 0 1rem;
   text-align: center;
   font-size: clamp(12px, 2.5vw, 14px);
   line-height: normal;
@@ -399,15 +399,9 @@ html, body {
   margin-top: 0.5rem;
 }
 
-/* Override Ant Design styling for dark theme */
-.dex-login-container .ant-form {
-  background: transparent;
-}
-
-
 .dex-login-container .ant-input {
-  background: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(30 41 59 / 80%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   color: #f1f5f9 !important;
   border-radius: 8px;
   box-shadow: none !important;
@@ -415,8 +409,8 @@ html, body {
 }
 
 .dex-login-container .ant-input:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
+  background: rgb(30 41 59 / 90%) !important;
   box-shadow: none !important;
 }
 
@@ -425,20 +419,20 @@ html, body {
 .dex-login-container .ant-input.ant-input-focused {
   border-color: #0ea5e9 !important;
   box-shadow: none !important;
-  background: rgba(30, 41, 59, 1) !important;
+  background: rgb(30 41 59 / 100%) !important;
   outline: none !important;
 }
 
 .dex-login-container .ant-input-password {
-  background: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(30 41 59 / 80%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   border-radius: 8px;
   box-shadow: none !important;
 }
 
 .dex-login-container .ant-input-password:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
+  background: rgb(30 41 59 / 90%) !important;
   box-shadow: none !important;
 }
 
@@ -447,7 +441,7 @@ html, body {
 .dex-login-container .ant-input-password.ant-input-focused {
   border-color: #0ea5e9 !important;
   box-shadow: none !important;
-  background: rgba(30, 41, 59, 1) !important;
+  background: rgb(30 41 59 / 100%) !important;
 }
 
 .dex-login-container .ant-input-password-icon {
@@ -459,15 +453,15 @@ html, body {
 }
 
 .dex-login-container .ant-select-selector {
-  background: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(30 41 59 / 80%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   color: #f1f5f9 !important;
   border-radius: 8px;
   box-shadow: none !important;
 }
 
 .dex-login-container .ant-select-selector:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
   box-shadow: none !important;
 }
 
@@ -498,7 +492,7 @@ html, body {
   font-size: 14px !important;
 }
 
-.dex-login-container .ant-form-item-required:before {
+.dex-login-container .ant-form-item-required::before {
   color: #f87171 !important;
 }
 
@@ -516,16 +510,16 @@ html, body {
 .dex-login-container .ant-input,
 .dex-login-container .ant-input-password,
 .dex-login-container .ant-input-password input {
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   box-shadow: none !important;
   outline: none !important;
-  background: rgba(30, 41, 59, 0.8) !important;
+  background: rgb(30 41 59 / 80%) !important;
 }
 
-.dex-login-container .ant-input:before,
-.dex-login-container .ant-input:after,
-.dex-login-container .ant-input-password:before,
-.dex-login-container .ant-input-password:after {
+.dex-login-container .ant-input::before,
+.dex-login-container .ant-input::after,
+.dex-login-container .ant-input-password::before,
+.dex-login-container .ant-input-password::after {
   display: none !important;
   border: none !important;
   box-shadow: none !important;
@@ -552,21 +546,21 @@ html, body {
 }
 
 .dex-login-container .ant-input-group-wrapper {
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   border-radius: 8px !important;
-  background: rgba(30, 41, 59, 0.8) !important;
+  background: rgb(30 41 59 / 80%) !important;
   box-shadow: none !important;
 }
 
 .dex-login-container .ant-input-group-wrapper:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
+  background: rgb(30 41 59 / 90%) !important;
 }
 
 .dex-login-container .ant-input-group-wrapper:focus,
 .dex-login-container .ant-input-group-wrapper.ant-input-group-wrapper-focused {
   border-color: #0ea5e9 !important;
-  background: rgba(30, 41, 59, 1) !important;
+  background: rgb(30 41 59 / 100%) !important;
   box-shadow: none !important;
 }
 
@@ -581,16 +575,16 @@ html, body {
 
 .dex-login-container .login-username .ant-form-item-control-input,
 .dex-login-container .login-username .ant-form-item-control-input-content {
-  background: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(30 41 59 / 80%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   border-radius: 8px !important;
   box-shadow: none !important;
 }
 
 .dex-login-container .login-username .ant-form-item-control-input:hover,
 .dex-login-container .login-username .ant-form-item-control-input-content:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
+  background: rgb(30 41 59 / 90%) !important;
 }
 
 /* Remove white backgrounds from all input elements */
@@ -607,21 +601,21 @@ html, body {
 .dex-login-container .ant-form-item-control-input,
 .dex-login-container .ant-form-item-control-input-content,
 .dex-login-container .ant-input-affix-wrapper {
-  background: rgba(30, 41, 59, 0.8) !important;
-  background-color: rgba(30, 41, 59, 0.8) !important;
-  border: 1px solid rgba(14, 165, 233, 0.3) !important;
+  background: rgb(30 41 59 / 80%) !important;
+  background-color: rgb(30 41 59 / 80%) !important;
+  border: 1px solid rgb(14 165 233 / 30%) !important;
   border-radius: 8px !important;
 }
 
 .dex-login-container .ant-input-affix-wrapper:hover {
-  border-color: rgba(14, 165, 233, 0.5) !important;
-  background: rgba(30, 41, 59, 0.9) !important;
+  border-color: rgb(14 165 233 / 50%) !important;
+  background: rgb(30 41 59 / 90%) !important;
 }
 
 .dex-login-container .ant-input-affix-wrapper:focus,
 .dex-login-container .ant-input-affix-wrapper.ant-input-affix-wrapper-focused {
   border-color: #0ea5e9 !important;
-  background: rgba(30, 41, 59, 1) !important;
+  background: rgb(30 41 59 / 100%) !important;
   box-shadow: none !important;
 }
 
@@ -631,12 +625,18 @@ html, body {
   box-shadow: none !important;
   outline: none !important;
   background: transparent !important;
-  padding-left: 11px !important;
-  padding-right: 11px !important;
+  padding: 0 11px !important;
 }
 
 /* Hide unwanted empty input boxes in login form */
-.dex-login-container .ant-form-item:last-child:not(:has(.ant-btn)):not(:has(input[placeholder*="username" i])):not(:has(input[placeholder*="password" i])):not(:has(input[type="password"])):not(.verification-code):not(.login-username) {
+.dex-login-container .ant-form-item:last-child:not(
+:has(.ant-btn),
+:has(input[placeholder*="username" i]),
+:has(input[placeholder*="password" i]),
+:has(input[type="password"]),
+.verification-code,
+.login-username
+) {
   display: none !important;
 }
 
@@ -646,7 +646,13 @@ html, body {
 }
 
 /* Hide form items with only whitespace */
-.dex-login-container .ant-form-item:not(:has(input)):not(:has(.ant-btn)):not(:has(.ant-select)):not(:has(textarea)):not(:has(.ant-input)) {
+.dex-login-container .ant-form-item:not(
+:has(input),
+:has(.ant-btn),
+:has(.ant-select),
+:has(textarea),
+:has(.ant-input)
+) {
   display: none !important;
 }
 
@@ -712,7 +718,7 @@ html, body {
 
 /* Button styling */
 .dex-login-container .ant-btn-primary {
-  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%) !important;
+  background: linear-gradient(135deg, #0ba5e9 0%, #38bdf8 100%) !important;
   border: none !important;
   border-radius: 8px;
   height: 40px;
@@ -722,8 +728,8 @@ html, body {
 }
 
 .dex-login-container .ant-btn-primary:hover {
-  background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%) !important;
-  box-shadow: 0 0 20px rgba(14, 165, 233, 0.4) !important;
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%) !important;
+  box-shadow: 0 0 20px rgb(14 165 233 / 40%) !important;
   transform: translateY(-1px);
 }
 
@@ -749,7 +755,7 @@ html, body {
 
 .dex-login-container a:hover {
   color: #38bdf8 !important;
-  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  text-shadow: 0 0 10px rgb(14 165 233 / 50%);
 }
 
 /* Tabs styling - consistent blue theme */
@@ -809,7 +815,7 @@ html, body {
 /* Provider buttons styled like reference */
 .dex-login-container .theme-btn-provider {
   width: 325px !important;
-  border: 1px solid rgba(232, 232, 232, 0.3) !important;
+  border: 1px solid rgb(232 232 232 / 30%) !important;
   background: transparent !important;
   transition: all 0.3s ease;
   border-radius: 8px;
@@ -822,9 +828,9 @@ html, body {
 }
 
 .dex-login-container .theme-btn-provider:hover {
-  border-color: rgba(14, 165, 233, 0.4) !important;
-  background: rgba(15, 23, 42, 0.4) !important;
-  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.3), 0 0 20px rgba(14, 165, 233, 0.2) !important;
+  border-color: rgb(14 165 233 / 40%) !important;
+  background: rgb(15 23 42 / 40%) !important;
+  box-shadow: 0 0 0 1px rgb(14 165 233 / 30%), 0 0 20px rgb(14 165 233 / 20%) !important;
 }
 
 /* Button text styling */
@@ -868,32 +874,29 @@ html, body {
   font-size: 16px;
   font-weight: 500;
   margin-bottom: -1px;
-  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
-  -webkit-background-clip: text;
+  background: linear-gradient(135deg, #0ba5e9 0%, #38bdf8 100%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
   transition: all 0.3s ease;
 }
 
 .modern-link:hover {
-  background: linear-gradient(135deg, #38BDF8 0%, #0EA5E9 100%);
-  -webkit-background-clip: text;
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-
 .copyright-text {
-  background: linear-gradient(135deg, #0BA5E9 0%, #38BDF8 100%);
-  -webkit-background-clip: text;
+  background: linear-gradient(135deg, #0ba5e9 0%, #38bdf8 100%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   word-spacing: normal;
 }
+
 /* Fix notification and modal z-index to appear above OpenObserve overlay */
 .ant-message {
   z-index: 1000000 !important;
@@ -987,42 +990,42 @@ div[style*="z-index"] iframe {
     flex-direction: column;
     min-height: 100vh;
   }
-  
+
   .login-brand-section {
     flex: none;
     padding: 1.5rem;
     min-height: 40vh;
   }
-  
+
   .brand-title {
     font-size: 2rem;
   }
-  
+
   .brand-subtitle {
     font-size: 1rem;
     margin-bottom: 1rem;
   }
-  
+
   .brand-features {
     display: none;
   }
-  
+
   .login-form-section {
     flex: none;
     min-height: 60vh;
     padding: 1rem;
   }
-  
+
   .login-content-container {
     max-width: 100%;
     margin-top: 50px;
   }
-  
+
   .modern-bordered-panel {
     padding: 1.5rem 1rem;
     border-radius: 12px;
   }
-  
+
   .form-title {
     font-size: 1.5rem;
   }
@@ -1055,8 +1058,8 @@ body > div,
 }
 
 /* Hide Casdoor's default content wrapper if it exists */
-.loginBackground,
-.loginBackgroundDark {
+.login-background,
+.login-background-dark {
   width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
@@ -1089,24 +1092,22 @@ html {
 body {
   overflow: hidden;
 }
-.login-form{
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-right: 0px;
-  padding-left: 16px;
+
+.login-form {
+  padding: 0 0 0 16px;
   width: 350px !important;
 }
 
-.panel-logo{
-  margin-bottom: 0px;
+.panel-logo {
+  margin-bottom: 0;
 }
 
 /* Set consistent width for all form inputs */
 .dex-login-container .ant-form-item-control-input,
 .dex-login-container .ant-form-item-control-input-content {
-  max-width: 325 !important;
+  max-width: 325px !important;
 }
 
-.login-username{
+.login-username {
   width: 325px !important;
 }
