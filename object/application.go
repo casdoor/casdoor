@@ -116,6 +116,7 @@ type Application struct {
 	TokenAttributes         []*JwtItem `xorm:"mediumtext" json:"tokenAttributes"`
 	ExpireInHours           int        `json:"expireInHours"`
 	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
+	CookieExpireSeconds     int        `json:"cookieExpireSeconds"`
 	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
 	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
