@@ -385,7 +385,7 @@ class PaymentEditPage extends React.Component {
                 <Button type={"primary"} onClick={() => this.downloadInvoice(false)}>{i18next.t("payment:Download Invoice")}</Button>
               )
             }
-            <Button style={{marginLeft: "20px"}} onClick={() => Setting.goToLink(this.state.payment.returnUrl)}>{i18next.t("payment:Return to Website")}</Button>
+            <Button style={{marginLeft: "20px"}} onClick={() => Setting.goToLink(this.state.payment.successUrl || this.state.payment.returnUrl)}>{i18next.t("payment:Return to Website")}</Button>
           </Col>
         </Row>
       </Card>
