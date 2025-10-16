@@ -148,10 +148,12 @@ class PaymentResultPage extends React.Component {
   }
 
   goToPaymentUrl(payment) {
-    if (payment.returnUrl === undefined || payment.returnUrl === null || payment.returnUrl === "") {
+    // Use successUrl if available (contains transaction parameters), otherwise use returnUrl
+    const targetUrl = payment.successUrl || payment.returnUrl;
+    if (targetUrl === undefined || targetUrl === null || targetUrl === "") {
       Setting.goToLink(`${window.location.origin}/products/${payment.owner}/${payment.productName}/buy`);
     } else {
-      Setting.goToLink(payment.returnUrl);
+      Setting.goToLink(targetUrl);
     }
   }
 
