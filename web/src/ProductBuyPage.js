@@ -243,7 +243,7 @@ class ProductBuyPage extends React.Component {
               this.callWechatPay(attachInfo);
               return ;
             }
-            payUrl = `/qrcode/${payment.owner}/${payment.name}?providerName=${provider.name}&payUrl=${encodeURI(payment.payUrl)}&successUrl=${encodeURI(payment.successUrl)}`;
+            payUrl = `/qrcode/${payment.owner}/${payment.name}?providerName=${provider.name}&payUrl=${encodeURIComponent(payment.payUrl)}&successUrl=${encodeURIComponent(payment.successUrl)}`;
           }
           Setting.goToLink(payUrl);
         } else {
