@@ -389,7 +389,7 @@ func GetBuiltInModel(modelText string) (model.Model, error) {
 r = sub, obj, act
 
 [policy_definition]
-p = sub, obj, act, "", "", permissionId
+p = sub, obj, act, eft, "", permissionId
 
 [role_definition]
 g = _, _
