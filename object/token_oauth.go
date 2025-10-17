@@ -18,6 +18,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -275,9 +276,15 @@ func GetOAuthToken(grantType string, clientId string, clientSecret string, code 
 		return nil, err
 	}
 
+	// Only include id_token if the scope contains "openid"
+	idToken := ""
+	if hasOpenIDScope(token.Scope) {
+		idToken = token.IdToken
+	}
+
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  token.AccessToken,
-		IdToken:      token.IdToken,
+		IdToken:      idToken,
 		RefreshToken: token.RefreshToken,
 		TokenType:    token.TokenType,
 		ExpiresIn:    token.ExpiresIn,
@@ -413,9 +420,15 @@ func RefreshToken(grantType string, refreshToken string, scope string, clientId 
 		return nil, err
 	}
 
+	// Only include id_token if the scope contains "openid"
+	idToken := ""
+	if hasOpenIDScope(newToken.Scope) {
+		idToken = newToken.IdToken
+	}
+
 	tokenWrapper := &TokenWrapper{
 		AccessToken:  newToken.AccessToken,
-		IdToken:      newToken.IdToken,
+		IdToken:      idToken,
 		RefreshToken: newToken.RefreshToken,
 		TokenType:    newToken.TokenType,
 		ExpiresIn:    newToken.ExpiresIn,
@@ -440,6 +453,20 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	}
 	for _, m := range grantTypes {
 		if m == method {
+			return true
+		}
+	}
+	return false
+}
+
+// hasOpenIDScope checks if the scope string contains "openid"
+func hasOpenIDScope(scope string) bool {
+	if scope == "" {
+		return false
+	}
+	scopes := strings.Fields(scope)
+	for _, s := range scopes {
+		if s == "openid" {
 			return true
 		}
 	}
