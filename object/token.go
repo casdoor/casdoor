@@ -34,6 +34,7 @@ type Token struct {
 
 	Code             string `xorm:"varchar(100) index" json:"code"`
 	AccessToken      string `xorm:"mediumtext" json:"accessToken"`
+	IdToken          string `xorm:"mediumtext" json:"idToken"`
 	RefreshToken     string `xorm:"mediumtext" json:"refreshToken"`
 	AccessTokenHash  string `xorm:"varchar(100) index" json:"accessTokenHash"`
 	RefreshTokenHash string `xorm:"varchar(100) index" json:"refreshTokenHash"`

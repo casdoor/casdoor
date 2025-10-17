@@ -424,7 +424,7 @@ func refineUser(user *User) *User {
 	return user
 }
 
-func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string) (string, string, string, error) {
+func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string) (string, string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
@@ -435,7 +435,7 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 	if conf.GetConfigBool("useGroupPathInToken") {
 		groupPath, err := user.GetUserFullGroupPath()
 		if err != nil {
-			return "", "", "", err
+			return "", "", "", "", err
 		}
 
 		user.Groups = groupPath
@@ -473,6 +473,7 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 	}
 
 	var token *jwt.Token
+	var idToken *jwt.Token
 	var refreshToken *jwt.Token
 
 	if application.TokenFormat == "" {
@@ -500,6 +501,12 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		claimsWithoutThirdIdp := getClaimsWithoutThirdIdp(claims)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsWithoutThirdIdp)
+		
+		// Generate id_token with full user claims
+		idTokenClaims := getClaimsWithoutThirdIdp(claims)
+		idTokenClaims.TokenType = "id-token"
+		idToken = jwt.NewWithClaims(jwtMethod, idTokenClaims)
+		
 		claimsWithoutThirdIdp.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsWithoutThirdIdp.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsWithoutThirdIdp)
@@ -507,6 +514,12 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		claimsShort := getShortClaims(claims)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsShort)
+		
+		// Generate id_token with full user claims
+		idTokenClaims := getShortClaims(claims)
+		idTokenClaims.TokenType = "id-token"
+		idToken = jwt.NewWithClaims(jwtMethod, idTokenClaims)
+		
 		claimsShort.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsShort.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsShort)
@@ -514,6 +527,12 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		claimsCustom := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsCustom)
+		
+		// Generate id_token with full user claims
+		idTokenClaims := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
+		idTokenClaims["tokenType"] = "id-token"
+		idToken = jwt.NewWithClaims(jwtMethod, idTokenClaims)
+		
 		refreshClaims := getClaimsCustom(claims, application.TokenFields, application.TokenAttributes)
 		refreshClaims["exp"] = jwt.NewNumericDate(refreshExpireTime)
 		refreshClaims["TokenType"] = "refresh-token"
@@ -522,28 +541,35 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		claimsStandard := getStandardClaims(claims)
 
 		token = jwt.NewWithClaims(jwtMethod, claimsStandard)
+		
+		// Generate id_token with full user claims
+		idTokenClaims := getStandardClaims(claims)
+		idTokenClaims.TokenType = "id-token"
+		idToken = jwt.NewWithClaims(jwtMethod, idTokenClaims)
+		
 		claimsStandard.ExpiresAt = jwt.NewNumericDate(refreshExpireTime)
 		claimsStandard.TokenType = "refresh-token"
 		refreshToken = jwt.NewWithClaims(jwtMethod, claimsStandard)
 	} else {
-		return "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
+		return "", "", "", "", fmt.Errorf("unknown application TokenFormat: %s", application.TokenFormat)
 	}
 
 	cert, err := getCertByApplication(application)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	if cert == nil {
 		if application.Cert == "" {
-			return "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
+			return "", "", "", "", fmt.Errorf("The cert field of the application \"%s\" should not be empty", application.GetId())
 		} else {
-			return "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
+			return "", "", "", "", fmt.Errorf("The cert \"%s\" does not exist", application.Cert)
 		}
 	}
 
 	var (
 		tokenString        string
+		idTokenString      string
 		refreshTokenString string
 		key                interface{}
 	)
@@ -559,17 +585,25 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 		key, err = jwt.ParseEdPrivateKeyFromPEM([]byte(cert.PrivateKey))
 	}
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
 
 	token.Header["kid"] = cert.Name
 	tokenString, err = token.SignedString(key)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", "", err
 	}
+	
+	idToken.Header["kid"] = cert.Name
+	idTokenString, err = idToken.SignedString(key)
+	if err != nil {
+		return "", "", "", "", err
+	}
+	
+	refreshToken.Header["kid"] = cert.Name
 	refreshTokenString, err = refreshToken.SignedString(key)
 
-	return tokenString, refreshTokenString, name, err
+	return tokenString, idTokenString, refreshTokenString, name, err
 }
 
 func ParseJwtToken(token string, cert *Cert) (*Claims, error) {
