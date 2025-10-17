@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/v2/conf"
 )
 
 type DashboardDateItem struct {

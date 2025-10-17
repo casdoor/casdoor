@@ -19,8 +19,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/conf"
+	"github.com/casdoor/casdoor/v2/util"
 )
 
 var enableErrorMask = false

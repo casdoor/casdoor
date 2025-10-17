@@ -20,10 +20,10 @@ import (
 	"strings"
 
 	"github.com/beego/beego/context"
-	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/idp"
-	"github.com/casdoor/casdoor/pp"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/i18n"
+	"github.com/casdoor/casdoor/v2/idp"
+	"github.com/casdoor/casdoor/v2/pp"
+	"github.com/casdoor/casdoor/v2/util"
 	"github.com/xorm-io/core"
 )
 

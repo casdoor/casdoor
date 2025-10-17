@@ -14,7 +14,7 @@
 
 package object
 
-import "github.com/casdoor/casdoor/cred"
+import "github.com/casdoor/casdoor/v2/cred"
 
 func calculateHash(user *User) (string, error) {
 	syncer, err := getDbSyncerForUser(user)

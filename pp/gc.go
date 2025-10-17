@@ -24,7 +24,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/util"
 )
 
 type GcPaymentProvider struct {

@@ -19,8 +19,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/i18n"
+	"github.com/casdoor/casdoor/v2/util"
 	"github.com/xorm-io/core"
 )
 

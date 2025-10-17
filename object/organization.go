@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/casdoor/casdoor/conf"
-	"github.com/casdoor/casdoor/cred"
-	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/conf"
+	"github.com/casdoor/casdoor/v2/cred"
+	"github.com/casdoor/casdoor/v2/i18n"
+	"github.com/casdoor/casdoor/v2/util"
 	"github.com/xorm-io/builder"
 	"github.com/xorm-io/core"
 )

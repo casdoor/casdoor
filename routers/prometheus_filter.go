@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/beego/beego/context"
-	"github.com/casdoor/casdoor/object"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/object"
+	"github.com/casdoor/casdoor/v2/util"
 )
 
 func recordSystemInfo(systemInfo *util.SystemInfo) {

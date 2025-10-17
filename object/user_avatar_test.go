@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/v2/proxy"
 )
 
 func TestSyncPermanentAvatars(t *testing.T) {

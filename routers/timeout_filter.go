@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/beego/beego/context"
-	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/v2/conf"
 )
 
 var (

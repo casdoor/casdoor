@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/beego/beego"
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/util"
 	"github.com/xorm-io/core"
 )
 

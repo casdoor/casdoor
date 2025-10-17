@@ -18,7 +18,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/casdoor/casdoor/util"
+	"github.com/casdoor/casdoor/v2/util"
 )
 
 func GetDirectResources(owner string, user string, provider *Provider, prefix string, lang string) ([]*Resource, error) {

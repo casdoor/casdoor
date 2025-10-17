@@ -18,7 +18,7 @@ import (
 	"crypto/tls"
 	"strings"
 
-	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/v2/conf"
 	"github.com/casdoor/gomail/v2"
 )
 
