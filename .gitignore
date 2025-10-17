@@ -34,3 +34,4 @@ server
 
 # include helm-chart
 !manifests/casdoor
+server_linux_*
