@@ -15,7 +15,7 @@
 package object
 
 import (
-	"github.com/casdoor/casdoor/xlsx"
+	"github.com/casdoor/casdoor/v2/xlsx"
 )
 
 func getRoleMap(owner string) (map[string]*Role, error) {

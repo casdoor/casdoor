@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/casdoor/casdoor/i18n"
+	"github.com/casdoor/casdoor/v2/i18n"
 )
 
 var reRealName *regexp.Regexp

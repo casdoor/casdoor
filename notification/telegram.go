@@ -17,7 +17,7 @@ package notification
 import (
 	"strconv"
 
-	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/v2/proxy"
 	"github.com/casdoor/notify"
 	"github.com/casdoor/notify/service/telegram"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"

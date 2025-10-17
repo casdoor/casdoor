@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/casdoor/casdoor/proxy"
+	"github.com/casdoor/casdoor/v2/proxy"
 )
 
 func downloadImage(client *http.Client, url string) (*bytes.Buffer, string, error) {

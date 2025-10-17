@@ -21,7 +21,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/casdoor/casdoor/object"
+	"github.com/casdoor/casdoor/v2/object"
 )
 
 const (
