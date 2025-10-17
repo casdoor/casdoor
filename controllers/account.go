@@ -328,9 +328,9 @@ func (c *ApiController) Signup() {
 // @router /logout [post]
 func (c *ApiController) Logout() {
 	// https://openid.net/specs/openid-connect-rpinitiated-1_0-final.html
-	accessToken := c.Input().Get("id_token_hint")
-	redirectUri := c.Input().Get("post_logout_redirect_uri")
-	state := c.Input().Get("state")
+	accessToken := c.GetString("id_token_hint")
+	redirectUri := c.GetString("post_logout_redirect_uri")
+	state := c.GetString("state")
 
 	user := c.GetSessionUsername()
 
