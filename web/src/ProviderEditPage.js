@@ -42,6 +42,14 @@ const defaultUserMapping = {
   avatarUrl: "avatarUrl",
 };
 
+const defaultOktaMapping = {
+  id: "sub",
+  username: "preferred_username",
+  displayName: "name",
+  email: "email",
+  avatarUrl: "picture",
+};
+
 const defaultEmailMapping = {
   fromName: "fromName",
   toAddress: "toAddress",
@@ -86,8 +94,15 @@ class ProviderEditPage extends React.Component {
             if (!provider.userMapping?.fromName) {
               provider.userMapping = defaultEmailMapping;
             }
-          } else {
-            provider.userMapping = provider.userMapping || defaultUserMapping;
+          } else if (provider.category === "OAuth" && (provider.type === "Custom" || provider.type === "Okta" || provider.type === "AzureADB2C")) {
+            if (provider.type === "Okta") {
+              provider.userMapping = provider.userMapping || defaultOktaMapping;
+            } else if (provider.type === "AzureADB2C") {
+              // AzureADB2C returns standard OIDC claims, similar to Okta
+              provider.userMapping = provider.userMapping || defaultOktaMapping;
+            } else {
+              provider.userMapping = provider.userMapping || defaultUserMapping;
+            }
           }
           this.setState({
             provider: provider,
@@ -801,6 +816,11 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 ) : null
               }
+            </React.Fragment>
+          ) : null
+        }
+        {
+          (this.state.provider.type === "Custom" || this.state.provider.type === "Okta" || this.state.provider.type === "AzureADB2C") && this.state.provider.category === "OAuth" ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
@@ -809,6 +829,10 @@ class ProviderEditPage extends React.Component {
                   {this.renderUserMappingInput()}
                 </Col>
               </Row>
+          ) : null
+        }
+        {
+          this.state.provider.type === "Custom" ? (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :

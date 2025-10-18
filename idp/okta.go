@@ -26,12 +26,13 @@ import (
 )
 
 type OktaIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
-	Host   string
+	Client      *http.Client
+	Config      *oauth2.Config
+	Host        string
+	UserMapping map[string]string
 }
 
-func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string, hostUrl string) *OktaIdProvider {
+func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string, hostUrl string, userMapping map[string]string) *OktaIdProvider {
 	idp := &OktaIdProvider{}
 
 	config := idp.getConfig(hostUrl, clientId, clientSecret, redirectUrl)
@@ -40,6 +41,7 @@ func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string,
 	config.RedirectURL = redirectUrl
 	idp.Config = config
 	idp.Host = hostUrl
+	idp.UserMapping = userMapping
 	return idp
 }
 
@@ -183,18 +185,73 @@ func (idp *OktaIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 
-	var oktaUserInfo OktaUserInfo
-	err = json.Unmarshal(body, &oktaUserInfo)
+	// If UserMapping is not provided, use default mapping
+	if idp.UserMapping == nil || len(idp.UserMapping) == 0 {
+		var oktaUserInfo OktaUserInfo
+		err = json.Unmarshal(body, &oktaUserInfo)
+		if err != nil {
+			return nil, err
+		}
+
+		userInfo := UserInfo{
+			Id:          oktaUserInfo.Sub,
+			Username:    oktaUserInfo.PreferredUsername,
+			DisplayName: oktaUserInfo.Name,
+			Email:       oktaUserInfo.Email,
+			AvatarUrl:   oktaUserInfo.Picture,
+		}
+		return &userInfo, nil
+	}
+
+	// Use custom mapping (similar to CustomIdProvider)
+	var dataMap map[string]interface{}
+	err = json.Unmarshal(body, &dataMap)
 	if err != nil {
 		return nil, err
 	}
 
-	userInfo := UserInfo{
-		Id:          oktaUserInfo.Sub,
-		Username:    oktaUserInfo.PreferredUsername,
-		DisplayName: oktaUserInfo.Name,
-		Email:       oktaUserInfo.Email,
-		AvatarUrl:   oktaUserInfo.Picture,
+	userInfo := &UserInfo{}
+
+	// Map required fields
+	if idMapping, ok := idp.UserMapping["id"]; ok {
+		if val, err := getNestedValue(dataMap, idMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Id = strVal
+			}
+		}
 	}
-	return &userInfo, nil
+
+	if usernameMapping, ok := idp.UserMapping["username"]; ok {
+		if val, err := getNestedValue(dataMap, usernameMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Username = strVal
+			}
+		}
+	}
+
+	if displayNameMapping, ok := idp.UserMapping["displayName"]; ok {
+		if val, err := getNestedValue(dataMap, displayNameMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.DisplayName = strVal
+			}
+		}
+	}
+
+	if emailMapping, ok := idp.UserMapping["email"]; ok {
+		if val, err := getNestedValue(dataMap, emailMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.Email = strVal
+			}
+		}
+	}
+
+	if avatarMapping, ok := idp.UserMapping["avatarUrl"]; ok {
+		if val, err := getNestedValue(dataMap, avatarMapping); err == nil {
+			if strVal, ok := val.(string); ok {
+				userInfo.AvatarUrl = strVal
+			}
+		}
+	}
+
+	return userInfo, nil
 }
