@@ -297,7 +297,56 @@ func CheckLdapUserPassword(user *User, password string, lang string) error {
 	ldapLoginSuccess := false
 	hit := false
 
+	// If user has an associated LDAP provider, try that one first
+	if user.LdapId != "" {
+		for _, ldapServer := range ldaps {
+			if ldapServer.Id != user.LdapId {
+				continue
+			}
+
+			conn, err := ldapServer.GetLdapConn()
+			if err != nil {
+				break
+			}
+
+			searchReq := goldap.NewSearchRequest(ldapServer.BaseDn, goldap.ScopeWholeSubtree, goldap.NeverDerefAliases,
+				0, 0, false, ldapServer.buildAuthFilterString(user), []string{}, nil)
+
+			searchResult, err := conn.Conn.Search(searchReq)
+			if err != nil {
+				conn.Close()
+				return err
+			}
+
+			if len(searchResult.Entries) == 0 {
+				conn.Close()
+				break
+			}
+			if len(searchResult.Entries) > 1 {
+				conn.Close()
+				return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
+			}
+
+			hit = true
+			dn := searchResult.Entries[0].DN
+			if err = conn.Conn.Bind(dn, password); err == nil {
+				ldapLoginSuccess = true
+				conn.Close()
+				return resetUserSigninErrorTimes(user)
+			}
+
+			conn.Close()
+			break
+		}
+	}
+
+	// If user's LDAP provider didn't work or wasn't set, try all LDAP providers
 	for _, ldapServer := range ldaps {
+		// Skip the provider we already tried
+		if user.LdapId != "" && ldapServer.Id == user.LdapId {
+			continue
+		}
+
 		conn, err := ldapServer.GetLdapConn()
 		if err != nil {
 			continue

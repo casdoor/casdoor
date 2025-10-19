@@ -346,7 +346,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				return nil, nil, err
 			}
 
-			name, err := syncUser.buildLdapUserName(owner)
+			name, err := syncUser.buildLdapUserName(owner, ldapId)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -367,6 +367,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 				Tag:               tag,
 				Score:             score,
 				Ldap:              syncUser.Uuid,
+				LdapId:            ldapId,
 				Properties:        syncUser.Attributes,
 			}
 
@@ -487,10 +488,31 @@ func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang 
 	return nil
 }
 
-func (ldapUser *LdapUser) buildLdapUserName(owner string) (string, error) {
+func (ldapUser *LdapUser) buildLdapUserName(owner string, ldapId string) (string, error) {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
-	has, err := ormer.Engine.Where("owner = ? and (name = ? or name = ?)", owner, ldapUser.Uid, uidWithNumber).Get(&user)
+	
+	// Check if username exists from a different LDAP provider
+	has, err := ormer.Engine.Where("owner = ? and (name = ? or name = ?) and (ldap_id != ? or ldap_id is null or ldap_id = '')", owner, ldapUser.Uid, uidWithNumber, ldapId).Get(&user)
+	if err != nil {
+		return "", err
+	}
+
+	// If username exists from different provider, append LDAP server name
+	if has {
+		ldapServer, err := GetLdap(ldapId)
+		if err != nil {
+			return "", err
+		}
+		serverNameSuffix := strings.ReplaceAll(ldapServer.ServerName, " ", "_")
+		if user.Name == ldapUser.Uid {
+			return fmt.Sprintf("%s_%s", ldapUser.Uid, serverNameSuffix), nil
+		}
+		return fmt.Sprintf("%s_%s", uidWithNumber, serverNameSuffix), nil
+	}
+
+	// Check if username exists from the same LDAP provider
+	has, err = ormer.Engine.Where("owner = ? and (name = ? or name = ?) and ldap_id = ?", owner, ldapUser.Uid, uidWithNumber, ldapId).Get(&user)
 	if err != nil {
 		return "", err
 	}
