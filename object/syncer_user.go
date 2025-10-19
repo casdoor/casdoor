@@ -36,8 +36,22 @@ type Credential struct {
 }
 
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
+	return syncer.getOriginalUsersWithFilter("")
+}
+
+func (syncer *Syncer) getOriginalUsersWithFilter(lastSyncTime string) ([]*OriginalUser, error) {
+	session := syncer.Ormer.Engine.Table(syncer.getTable())
+
+	// If lastSyncTime is provided and there's an UpdatedTime column, filter by it
+	if lastSyncTime != "" {
+		updatedTimeColumn := syncer.getUpdatedTimeColumn()
+		if updatedTimeColumn != "" {
+			session = session.Where(fmt.Sprintf("%s > ?", updatedTimeColumn), lastSyncTime)
+		}
+	}
+
 	var results []map[string]sql.NullString
-	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
+	err := session.Find(&results)
 	if err != nil {
 		return nil, err
 	}

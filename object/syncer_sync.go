@@ -27,6 +27,14 @@ func (syncer *Syncer) syncUsers() error {
 
 	fmt.Printf("Running syncUsers()..\n")
 
+	// Determine if incremental sync is possible
+	useIncrementalSync := syncer.LastSyncTime != "" && syncer.getUpdatedTimeColumn() != ""
+	if useIncrementalSync {
+		fmt.Printf("Using incremental sync (last sync: %s)\n", syncer.LastSyncTime)
+	} else {
+		fmt.Printf("Using full sync\n")
+	}
+
 	users, err := GetUsers(syncer.Organization)
 	if err != nil {
 		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
@@ -38,7 +46,12 @@ func (syncer *Syncer) syncUsers() error {
 		return err
 	}
 
-	oUsers, err := syncer.getOriginalUsers()
+	var oUsers []*OriginalUser
+	if useIncrementalSync {
+		oUsers, err = syncer.getOriginalUsersWithFilter(syncer.LastSyncTime)
+	} else {
+		oUsers, err = syncer.getOriginalUsers()
+	}
 	if err != nil {
 		line := fmt.Sprintf("[%s] %s\n", util.GetCurrentTime(), err.Error())
 		_, err2 := updateSyncerErrorText(syncer, line)
@@ -167,6 +180,13 @@ func (syncer *Syncer) syncUsers() error {
 				}
 			}
 		}
+	}
+
+	// Update LastSyncTime after successful sync
+	err = updateSyncerLastSyncTime(syncer)
+	if err != nil {
+		fmt.Printf("Warning: Failed to update LastSyncTime: %s\n", err.Error())
+		// Don't fail the sync if we can't update the timestamp
 	}
 
 	return nil

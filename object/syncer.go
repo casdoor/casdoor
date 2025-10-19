@@ -59,6 +59,7 @@ type Syncer struct {
 	SyncInterval     int            `json:"syncInterval"`
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
+	LastSyncTime     string         `xorm:"varchar(100)" json:"lastSyncTime"`
 
 	Ormer *Ormer `xorm:"-" json:"-"`
 }
@@ -203,6 +204,18 @@ func updateSyncerErrorText(syncer *Syncer, line string) (bool, error) {
 	return affected != 0, nil
 }
 
+func updateSyncerLastSyncTime(syncer *Syncer) error {
+	currentTime := util.GetCurrentTime()
+	syncer.LastSyncTime = currentTime
+
+	_, err := ormer.Engine.ID(core.PK{syncer.Owner, syncer.Name}).Cols("last_sync_time").Update(syncer)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func AddSyncer(syncer *Syncer) (bool, error) {
 	affected, err := ormer.Engine.Insert(syncer)
 	if err != nil {
@@ -283,6 +296,15 @@ func (syncer *Syncer) getLocalPrimaryKey() string {
 func (syncer *Syncer) getTargetTablePrimaryKey() string {
 	column := syncer.getKeyColumn()
 	return column.Name
+}
+
+func (syncer *Syncer) getUpdatedTimeColumn() string {
+	for _, tableColumn := range syncer.TableColumns {
+		if tableColumn.CasdoorName == "UpdatedTime" {
+			return tableColumn.Name
+		}
+	}
+	return ""
 }
 
 func RunSyncer(syncer *Syncer) error {
