@@ -26,6 +26,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
+	"github.com/casvisor/casvisor-go-sdk/casvisorsdk"
 	"github.com/go-webauthn/webauthn/webauthn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
@@ -872,4 +873,30 @@ func replaceAttributeValuesWithList(val string, replaceVals []string, values []s
 	}
 
 	return newValues
+}
+
+// TriggerWebhookForUser triggers a webhook for user operations (add, update, delete)
+// action: the action type, e.g., "new-user", "update-user", "delete-user"
+// user: the user object
+func TriggerWebhookForUser(action string, user *User) {
+	if user == nil {
+		return
+	}
+
+	record := &casvisorsdk.Record{
+		Name:         util.GenerateId(),
+		CreatedTime:  util.GetCurrentTime(),
+		Organization: user.Owner,
+		User:         user.Name,
+		Method:       "POST",
+		RequestUri:   "/api/" + action,
+		Action:       action,
+		Object:       util.StructToJson(user),
+		StatusCode:   200,
+		IsTriggered:  false,
+	}
+
+	util.SafeGoroutine(func() {
+		AddRecord(record)
+	})
 }
