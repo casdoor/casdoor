@@ -385,7 +385,7 @@ func SyncLdapUsers(owner string, syncUsers []LdapUser, ldapId string) (existUser
 			}
 
 			// Trigger webhook for LDAP user sync
-			TriggerWebhookForUser("new-user", newUser)
+			TriggerWebhookForUser("new-user-ldap", newUser)
 		}
 	}
 
