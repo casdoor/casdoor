@@ -19,6 +19,15 @@ import (
 )
 
 func TestBuildLdapUserNameWithMultipleProviders(t *testing.T) {
+	// This test validates the username generation logic
+	// Note: Requires database connection to run fully
+	
+	// Skip if no database connection available
+	if ormer == nil || ormer.Engine == nil {
+		t.Skip("Skipping test: database connection not available")
+		return
+	}
+
 	tests := []struct {
 		name           string
 		ldapUser       LdapUser
@@ -55,8 +64,8 @@ func TestBuildLdapUserNameWithMultipleProviders(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			username, err := tt.ldapUser.buildLdapUserName(tt.owner, tt.ldapId)
 			if err != nil {
-				// Test will fail gracefully if no database connection
-				t.Logf("Test requires database connection: %v", err)
+				// Test will skip if database error occurs
+				t.Skipf("Test requires database connection: %v", err)
 				return
 			}
 
@@ -72,6 +81,13 @@ func TestBuildLdapUserNameWithMultipleProviders(t *testing.T) {
 func TestLdapUserNameConflictResolution(t *testing.T) {
 	// This test validates the logic of username conflict resolution
 	// when the same username exists in multiple LDAP providers
+	// Note: Requires database connection to run fully
+
+	// Skip if no database connection available
+	if ormer == nil || ormer.Engine == nil {
+		t.Skip("Skipping test: database connection not available")
+		return
+	}
 
 	ldapUser := LdapUser{
 		Uid:       "testuser",
@@ -83,7 +99,7 @@ func TestLdapUserNameConflictResolution(t *testing.T) {
 	t.Run("Username available", func(t *testing.T) {
 		username, err := ldapUser.buildLdapUserName("test-org", "ldap-1")
 		if err != nil {
-			t.Logf("Test requires database connection: %v", err)
+			t.Skipf("Test requires database connection: %v", err)
 			return
 		}
 		if username != "testuser" && username != "" {
@@ -96,7 +112,7 @@ func TestLdapUserNameConflictResolution(t *testing.T) {
 	t.Run("Username exists in different provider", func(t *testing.T) {
 		username, err := ldapUser.buildLdapUserName("test-org", "ldap-2")
 		if err != nil {
-			t.Logf("Test requires database connection: %v", err)
+			t.Skipf("Test requires database connection: %v", err)
 			return
 		}
 		if username == "" {
