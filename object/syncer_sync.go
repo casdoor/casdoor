@@ -150,7 +150,7 @@ func (syncer *Syncer) syncUsers() error {
 
 		// Trigger webhooks for syncer user additions
 		for _, newUser := range newUsers {
-			TriggerWebhookForUser("new-user", newUser)
+			TriggerWebhookForUser("new-user-syncer", newUser)
 		}
 	}
 
