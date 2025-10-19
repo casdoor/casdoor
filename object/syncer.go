@@ -59,7 +59,7 @@ type Syncer struct {
 	SyncInterval     int            `json:"syncInterval"`
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
-	LastSyncTime     string         `xorm:"varchar(100)" json:"lastSyncTime"`
+	LastSyncTime     string         `xorm:"varchar(100)" json:"lastSyncTime"` // Timestamp of last successful sync for incremental sync
 
 	Ormer *Ormer `xorm:"-" json:"-"`
 }

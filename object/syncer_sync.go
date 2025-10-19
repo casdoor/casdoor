@@ -27,7 +27,10 @@ func (syncer *Syncer) syncUsers() error {
 
 	fmt.Printf("Running syncUsers()..\n")
 
-	// Determine if incremental sync is possible
+	// Determine if incremental sync is possible:
+	// - LastSyncTime must be set (from a previous successful sync)
+	// - External table must have an UpdatedTime column mapped
+	// When both conditions are met, only fetch users modified since last sync
 	useIncrementalSync := syncer.LastSyncTime != "" && syncer.getUpdatedTimeColumn() != ""
 	if useIncrementalSync {
 		fmt.Printf("Using incremental sync (last sync: %s)\n", syncer.LastSyncTime)
