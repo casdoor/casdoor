@@ -491,7 +491,7 @@ func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang 
 func (ldapUser *LdapUser) buildLdapUserName(owner string, ldapId string) (string, error) {
 	user := User{}
 	uidWithNumber := fmt.Sprintf("%s_%s", ldapUser.Uid, ldapUser.UidNumber)
-	
+
 	// Check if username exists from a different LDAP provider
 	has, err := ormer.Engine.Where("owner = ? and (name = ? or name = ?) and (ldap_id != ? or ldap_id is null or ldap_id = '')", owner, ldapUser.Uid, uidWithNumber, ldapId).Get(&user)
 	if err != nil {
