@@ -147,6 +147,11 @@ func (syncer *Syncer) syncUsers() error {
 		if err != nil {
 			return err
 		}
+
+		// Trigger webhooks for syncer user additions
+		for _, newUser := range newUsers {
+			TriggerWebhookForUser("new-user-syncer", newUser)
+		}
 	}
 
 	if !syncer.IsReadOnly {
