@@ -170,7 +170,9 @@ func (syncer *Syncer) syncUsers() error {
 		}
 	}
 
-	if !syncer.IsReadOnly {
+	// Only sync new local users to external database during full sync
+	// In incremental sync, myOUsers doesn't contain all external users, so we can't determine if a user is truly new
+	if !syncer.IsReadOnly && !useIncrementalSync {
 		for _, user := range users {
 			primary := syncer.getUserValue(user, key)
 			if _, ok := myOUsers[primary]; !ok {
