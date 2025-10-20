@@ -1348,10 +1348,14 @@ export function renderHelmet(application) {
     return null;
   }
 
+  // Application's title and favicon have higher priority than organization's values
+  const title = application.title || application.organizationObj.displayName;
+  const favicon = application.favicon || application.organizationObj.favicon;
+
   return (
     <Helmet>
-      <title>{application.organizationObj.displayName}</title>
-      <link rel="icon" href={application.organizationObj.favicon} />
+      <title>{title}</title>
+      <link rel="icon" href={favicon} />
     </Helmet>
   );
 }
