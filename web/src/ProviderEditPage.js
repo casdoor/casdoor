@@ -250,11 +250,11 @@ class ProviderEditPage extends React.Component {
   renderSmsMappingInput() {
     return (
       <React.Fragment>
-        {Setting.getLabel(i18next.t("provider:Phone number field"), i18next.t("provider:Phone number field - Tooltip"))} :
+        {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
         <Input value={this.state.provider.userMapping.phoneNumber} onChange={e => {
           this.updateUserMappingField("phoneNumber", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("provider:Content field"), i18next.t("provider:Content field - Tooltip"))} :
+        {Setting.getLabel(i18next.t("provider:Content"), i18next.t("provider:Content - Tooltip"))} :
         <Input value={this.state.provider.userMapping.content} onChange={e => {
           this.updateUserMappingField("content", e.target.value);
         }} />
