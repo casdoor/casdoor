@@ -101,6 +101,19 @@ func InitAdapter() {
 	tableNamePrefix := conf.GetConfigString("tableNamePrefix")
 	tbMapper := names.NewPrefixMapper(names.SnakeMapper{}, tableNamePrefix)
 	ormer.Engine.SetTableMapper(tbMapper)
+
+	// Initialize read engine if read data source is configured
+	readDataSourceName := conf.GetConfigReadDataSourceName()
+	if readDataSourceName != "" {
+		err = ormer.initReadEngine(conf.GetConfigString("driverName"), readDataSourceName, conf.GetConfigString("dbName"))
+		if err != nil {
+			panic(err)
+		}
+		ormer.readEngine.SetTableMapper(tbMapper)
+	}
+
+	// Set transaction pooling mode flag
+	ormer.enableTransPooling = conf.GetConfigEnableTransactionPooling()
 }
 
 func CreateTables() {
@@ -116,11 +129,13 @@ func CreateTables() {
 
 // Ormer represents the MySQL adapter for policy storage.
 type Ormer struct {
-	driverName     string
-	dataSourceName string
-	dbName         string
-	Db             *sql.DB
-	Engine         *xorm.Engine
+	driverName         string
+	dataSourceName     string
+	dbName             string
+	Db                 *sql.DB
+	Engine             *xorm.Engine
+	readEngine         *xorm.Engine
+	enableTransPooling bool
 }
 
 // finalizer is the destructor for Ormer.
@@ -128,6 +143,13 @@ func finalizer(a *Ormer) {
 	err := a.Engine.Close()
 	if err != nil {
 		panic(err)
+	}
+
+	if a.readEngine != nil {
+		err = a.readEngine.Close()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if a.Db != nil {
@@ -282,6 +304,45 @@ func (a *Ormer) openFromDb(db *sql.DB) error {
 func (a *Ormer) close() {
 	_ = a.Engine.Close()
 	a.Engine = nil
+	if a.readEngine != nil {
+		_ = a.readEngine.Close()
+		a.readEngine = nil
+	}
+}
+
+func (a *Ormer) initReadEngine(driverName string, dataSourceName string, dbName string) error {
+	dsn := dataSourceName + dbName
+	if driverName != "mysql" {
+		dsn = dataSourceName
+	}
+
+	engine, err := xorm.NewEngine(driverName, dsn)
+	if err != nil {
+		return err
+	}
+
+	if driverName == "postgres" {
+		schema := util.GetValueFromDataSourceName("search_path", dsn)
+		if schema != "" {
+			engine.SetSchema(schema)
+		}
+	}
+
+	a.readEngine = engine
+	return nil
+}
+
+// GetReadEngine returns the read engine if available, otherwise returns the write engine
+func (a *Ormer) GetReadEngine() *xorm.Engine {
+	if a.readEngine != nil {
+		return a.readEngine
+	}
+	return a.Engine
+}
+
+// IsTransactionPoolingEnabled returns whether transaction pooling mode is enabled
+func (a *Ormer) IsTransactionPoolingEnabled() bool {
+	return a.enableTransPooling
 }
 
 func (a *Ormer) createTable() {
