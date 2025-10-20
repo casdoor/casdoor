@@ -1,0 +1,106 @@
+# Casdoor Configuration Example
+# Copy this file to app.conf and modify as needed
+
+appname = casdoor
+httpport = 8000
+runmode = dev
+copyrequestbody = true
+
+# Database Configuration
+# Supported databases: mysql, postgres, mssql, sqlite
+
+# Example: MySQL
+driverName = mysql
+dataSourceName = root:123456@tcp(localhost:3306)/
+dbName = casdoor
+
+# Example: PostgreSQL
+# driverName = postgres
+# dataSourceName = user=postgres password=postgres host=localhost port=5432 sslmode=disable dbname=casdoor
+
+# Example: PostgreSQL with schema
+# driverName = postgres
+# dataSourceName = user=postgres password=postgres host=localhost port=5432 sslmode=disable search_path=casdoor dbname=casdoor
+
+# Transaction Pooling Mode
+# Enable this when using connection poolers (PgBouncer, Pgcat, Odyssey) in transaction mode
+# This prevents prepared statement caching to avoid "prepared statement does not exist" errors
+# Default: false
+enableTransactionPooling = false
+
+# Read/Write Database Splitting
+# Optional: Specify a separate read-only database connection for SELECT queries
+# Useful for routing reads to replicas in the same availability zone
+# Leave empty to use the main database for both reads and writes
+# Default: empty (not configured)
+readDataSourceName =
+
+# Example: PostgreSQL read replica
+# readDataSourceName = user=postgres password=postgres host=replica.example.com port=5432 sslmode=disable dbname=casdoor
+
+# Example: MySQL read replica (dbName will be appended automatically)
+# readDataSourceName = readonly:pass123@tcp(replica.example.com:3306)/
+
+# Database Table Configuration
+tableNamePrefix =
+showSql = false
+
+# Redis Configuration (optional, for session storage)
+redisEndpoint =
+
+# Storage Provider
+defaultStorageProvider =
+
+# Network Configuration
+isCloudIntranet = false
+authState = "casdoor"
+socks5Proxy = "127.0.0.1:10808"
+
+# Security Configuration
+verificationCodeTimeout = 10
+initScore = 0
+logPostOnly = true
+isUsernameLowered = false
+
+# Frontend Configuration
+origin =
+originFrontend =
+staticBaseUrl = "https://cdn.casbin.org"
+
+# Demo Mode
+isDemoMode = false
+
+# Batch Processing
+batchSize = 100
+
+# Error Handling
+enableErrorMask = false
+
+# Compression
+enableGzip = true
+
+# Session Timeout (in minutes)
+inactiveTimeoutMinutes =
+
+# LDAP Server
+ldapServerPort = 389
+ldapsCertId = ""
+ldapsServerPort = 636
+
+# RADIUS Server
+radiusServerPort = 1812
+radiusDefaultOrganization = "built-in"
+radiusSecret = "secret"
+
+# Resource Quota
+quota = {"organization": -1, "user": -1, "application": -1, "provider": -1}
+
+# Logging Configuration
+logConfig = {"adapter":"file", "filename": "logs/casdoor.log", "maxdays":99999, "perm":"0770"}
+
+# Initial Data Configuration
+initDataNewOnly = false
+initDataFile = "./init_data.json"
+
+# Frontend Base Directory (for development)
+frontendBaseDir = "../cc_0"
