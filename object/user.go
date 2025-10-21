@@ -211,7 +211,7 @@ type User struct {
 	FaceIds             []*FaceId             `json:"faceIds"`
 
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
-	Properties map[string]string `json:"properties"`
+	Properties map[string]string `xorm:"varchar(5000)" json:"properties"`
 
 	Roles       []*Role       `json:"roles"`
 	Permissions []*Permission `json:"permissions"`
