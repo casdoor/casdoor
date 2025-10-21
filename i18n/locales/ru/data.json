@@ -100,6 +100,7 @@
     "Only admin user can specify user": "Только администратор может указать пользователя",
     "Please login first": "Пожалуйста, сначала войдите в систему",
     "The organization: %s should have one application at least": "Организация: %s должна иметь хотя бы одно приложение",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Пользователь %s не существует",
     "Wrong userId": "Неверный идентификатор пользователя",
     "don't support captchaProvider: ": "неподдерживаемый captchaProvider: ",

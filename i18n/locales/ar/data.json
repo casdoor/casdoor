@@ -100,6 +100,7 @@
     "Only admin user can specify user": "فقط المسؤول يمكنه تحديد المستخدم",
     "Please login first": "يرجى تسجيل الدخول أولاً",
     "The organization: %s should have one application at least": "المنظمة: %s يجب أن تحتوي على تطبيق واحد على الأقل",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "المستخدم: %s غير موجود",
     "Wrong userId": "معرف المستخدم غير صحيح",
     "don't support captchaProvider: ": "لا يدعم captchaProvider: ",

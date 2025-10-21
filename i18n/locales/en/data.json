@@ -100,6 +100,7 @@
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
