@@ -107,8 +107,22 @@ func getOriginFromHost(host string) (string, string) {
 	return originF, originB
 }
 
-func GetOidcDiscovery(host string) OidcDiscovery {
+func GetOidcDiscovery(host string, owner string, applicationName string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
+
+	// If owner and application are provided, use application-specific URLs
+	var issuer, authzEndpoint, jwksUri string
+	if owner != "" && applicationName != "" {
+		// Application-specific issuer and endpoints
+		issuer = fmt.Sprintf("%s/.well-known/%s/%s", originBackend, owner, applicationName)
+		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+		jwksUri = fmt.Sprintf("%s/.well-known/%s/%s/jwks", originBackend, owner, applicationName)
+	} else {
+		// Default global issuer and endpoints
+		issuer = originBackend
+		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+		jwksUri = fmt.Sprintf("%s/.well-known/jwks", originBackend)
+	}
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
@@ -116,12 +130,12 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
-		Issuer:                                 originBackend,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		Issuer:                                 issuer,
+		AuthorizationEndpoint:                  authzEndpoint,
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:            fmt.Sprintf("%s/api/device-auth", originBackend),
-		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
+		JwksUri:                                jwksUri,
 		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
 		ResponseModesSupported:                 []string{"query", "fragment", "form_post"},
@@ -138,11 +152,29 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	return oidcDiscovery
 }
 
-func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
+func GetJsonWebKeySet(applicationId string) (jose.JSONWebKeySet, error) {
 	jwks := jose.JSONWebKeySet{}
-	certs, err := GetCerts("")
-	if err != nil {
-		return jwks, err
+
+	// Get certs - use application-specific cert if applicationId is provided
+	var certs []*Cert
+	var err error
+	if applicationId != "" {
+		// Try to get application-specific cert
+		application, err := GetApplication(applicationId)
+		if err == nil && application != nil && application.Cert != "" {
+			cert, err := GetCert(application.Owner + "/" + application.Cert)
+			if err == nil && cert != nil {
+				certs = []*Cert{cert}
+			}
+		}
+	}
+
+	// Fallback to global certs if no application-specific cert found
+	if len(certs) == 0 {
+		certs, err = GetCerts("")
+		if err != nil {
+			return jwks, err
+		}
 	}
 
 	// follows the protocol rfc 7517(draft)
@@ -176,7 +208,7 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	return jwks, nil
 }
 
-func GetWebFinger(resource string, rels []string, host string) (WebFinger, error) {
+func GetWebFinger(resource string, rels []string, host string, owner string, applicationName string) (WebFinger, error) {
 	wf := WebFinger{}
 
 	resourceSplit := strings.Split(resource, ":")
@@ -188,7 +220,7 @@ func GetWebFinger(resource string, rels []string, host string) (WebFinger, error
 	resourceType := resourceSplit[0]
 	resourceValue := resourceSplit[1]
 
-	oidcDiscovery := GetOidcDiscovery(host)
+	oidcDiscovery := GetOidcDiscovery(host, owner, applicationName)
 
 	switch resourceType {
 	case "acct":
