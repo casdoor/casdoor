@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.swp
+server_*
 
 # Test binary, built with `go test -c`
 *.test

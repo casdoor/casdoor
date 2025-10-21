@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -107,8 +108,22 @@ func getOriginFromHost(host string) (string, string) {
 	return originF, originB
 }
 
-func GetOidcDiscovery(host string) OidcDiscovery {
+func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
+
+	// If application is provided, use application-specific URLs
+	var issuer, authzEndpoint, jwksUri string
+	if applicationName != "" {
+		// Application-specific issuer and endpoints (owner is always "admin")
+		issuer = fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
+		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+		jwksUri = fmt.Sprintf("%s/.well-known/%s/jwks", originBackend, applicationName)
+	} else {
+		// Default global issuer and endpoints
+		issuer = originBackend
+		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
+		jwksUri = fmt.Sprintf("%s/.well-known/jwks", originBackend)
+	}
 
 	// Examples:
 	// https://login.okta.com/.well-known/openid-configuration
@@ -116,12 +131,12 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	// https://accounts.google.com/.well-known/openid-configuration
 	// https://access.line.me/.well-known/openid-configuration
 	oidcDiscovery := OidcDiscovery{
-		Issuer:                                 originBackend,
-		AuthorizationEndpoint:                  fmt.Sprintf("%s/login/oauth/authorize", originFrontend),
+		Issuer:                                 issuer,
+		AuthorizationEndpoint:                  authzEndpoint,
 		TokenEndpoint:                          fmt.Sprintf("%s/api/login/oauth/access_token", originBackend),
 		UserinfoEndpoint:                       fmt.Sprintf("%s/api/userinfo", originBackend),
 		DeviceAuthorizationEndpoint:            fmt.Sprintf("%s/api/device-auth", originBackend),
-		JwksUri:                                fmt.Sprintf("%s/.well-known/jwks", originBackend),
+		JwksUri:                                jwksUri,
 		IntrospectionEndpoint:                  fmt.Sprintf("%s/api/login/oauth/introspect", originBackend),
 		ResponseTypesSupported:                 []string{"code", "token", "id_token", "code token", "code id_token", "token id_token", "code token id_token", "none"},
 		ResponseModesSupported:                 []string{"query", "fragment", "form_post"},
@@ -138,11 +153,31 @@ func GetOidcDiscovery(host string) OidcDiscovery {
 	return oidcDiscovery
 }
 
-func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
+func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 	jwks := jose.JSONWebKeySet{}
-	certs, err := GetCerts("")
-	if err != nil {
-		return jwks, err
+
+	// Get certs - use application-specific cert if applicationName is provided
+	var certs []*Cert
+	var err error
+	if applicationName != "" {
+		// Try to get application-specific cert (owner is always "admin")
+		applicationId := util.GetId("admin", applicationName)
+		application, err := GetApplication(applicationId)
+		if err == nil && application != nil && application.Cert != "" {
+			certId := util.GetId(application.Owner, application.Cert)
+			cert, err := GetCert(certId)
+			if err == nil && cert != nil {
+				certs = []*Cert{cert}
+			}
+		}
+	}
+
+	// Fallback to global certs if no application-specific cert found
+	if len(certs) == 0 {
+		certs, err = GetCerts("")
+		if err != nil {
+			return jwks, err
+		}
 	}
 
 	// follows the protocol rfc 7517(draft)
@@ -176,7 +211,7 @@ func GetJsonWebKeySet() (jose.JSONWebKeySet, error) {
 	return jwks, nil
 }
 
-func GetWebFinger(resource string, rels []string, host string) (WebFinger, error) {
+func GetWebFinger(resource string, rels []string, host string, applicationName string) (WebFinger, error) {
 	wf := WebFinger{}
 
 	resourceSplit := strings.Split(resource, ":")
@@ -188,7 +223,7 @@ func GetWebFinger(resource string, rels []string, host string) (WebFinger, error
 	resourceType := resourceSplit[0]
 	resourceValue := resourceSplit[1]
 
-	oidcDiscovery := GetOidcDiscovery(host)
+	oidcDiscovery := GetOidcDiscovery(host, applicationName)
 
 	switch resourceType {
 	case "acct":

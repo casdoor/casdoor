@@ -303,8 +303,11 @@ func initAPI() {
 	beego.Router("/api/set-preferred-mfa", &controllers.ApiController{}, "POST:SetPreferredMfa")
 
 	beego.Router("/.well-known/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscovery")
+	beego.Router("/.well-known/:application/openid-configuration", &controllers.RootController{}, "GET:GetOidcDiscoveryByApplication")
 	beego.Router("/.well-known/jwks", &controllers.RootController{}, "*:GetJwks")
+	beego.Router("/.well-known/:application/jwks", &controllers.RootController{}, "*:GetJwksByApplication")
 	beego.Router("/.well-known/webfinger", &controllers.RootController{}, "GET:GetWebFinger")
+	beego.Router("/.well-known/:application/webfinger", &controllers.RootController{}, "GET:GetWebFingerByApplication")
 
 	beego.Router("/cas/:organization/:application/serviceValidate", &controllers.RootController{}, "GET:CasServiceValidate")
 	beego.Router("/cas/:organization/:application/proxyValidate", &controllers.RootController{}, "GET:CasProxyValidate")
