@@ -100,7 +100,6 @@
     "Only admin user can specify user": "Vain ylläpitäjä voi määrittää käyttäjän",
     "Please login first": "Kirjaudu ensin sisään",
     "The organization: %s should have one application at least": "Organisaatiolla: %s on oltava vähintään yksi sovellus",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Käyttäjää: %s ei ole olemassa",
     "Wrong userId": "Väärä userId",
     "don't support captchaProvider: ": "ei tueta captchaProvider: ",

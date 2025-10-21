@@ -182,11 +182,7 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
-	return SetUserOAuthPropertiesWithMapping(organization, user, providerType, userInfo, nil)
-}
-
-func SetUserOAuthPropertiesWithMapping(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping map[string]string) (bool, error) {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping ...map[string]string) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -230,8 +226,8 @@ func SetUserOAuthPropertiesWithMapping(organization *Organization, user *User, p
 	}
 
 	// Apply custom user mapping from provider configuration
-	if userMapping != nil && len(userMapping) > 0 && userInfo.Extra != nil {
-		applyUserMapping(user, userInfo.Extra, userMapping)
+	if len(userMapping) > 0 && userMapping[0] != nil && len(userMapping[0]) > 0 && userInfo.Extra != nil {
+		applyUserMapping(user, userInfo.Extra, userMapping[0])
 	}
 
 	if userInfo.Extra != nil {

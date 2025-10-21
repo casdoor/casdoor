@@ -100,7 +100,6 @@
     "Only admin user can specify user": "Hanya pentadbir boleh tetapkan pengguna",
     "Please login first": "Sila log masuk dahulu",
     "The organization: %s should have one application at least": "Organisasi: %s mesti ada sekurang-kurangnya satu aplikasi",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Pengguna: %s tidak wujud",
     "Wrong userId": "ID pengguna salah",
     "don't support captchaProvider: ": "tidak sokong penyedia captcha: ",

@@ -100,7 +100,6 @@
     "Only admin user can specify user": "Alleen beheerder mag gebruiker specificeren",
     "Please login first": "Gelieve eerst in te loggen",
     "The organization: %s should have one application at least": "Organisatie: %s moet minstens één applicatie hebben",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Gebruiker: %s bestaat niet",
     "Wrong userId": "Verkeerde userId",
     "don't support captchaProvider: ": "captchaProvider niet ondersteund: ",

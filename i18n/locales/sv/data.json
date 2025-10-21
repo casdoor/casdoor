@@ -100,7 +100,6 @@
     "Only admin user can specify user": "Endast administratör kan ange användare",
     "Please login first": "Logga in först",
     "The organization: %s should have one application at least": "Organisationen: %s bör ha minst en applikation",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Användaren: %s finns inte",
     "Wrong userId": "Fel användar-ID",
     "don't support captchaProvider: ": "stödjer inte captcha-leverantör: ",

@@ -100,7 +100,6 @@
     "Only admin user can specify user": "Seul un administrateur peut désigner un utilisateur",
     "Please login first": "Veuillez d'abord vous connecter",
     "The organization: %s should have one application at least": "L'organisation : %s doit avoir au moins une application",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "L'utilisateur : %s n'existe pas",
     "Wrong userId": "ID utilisateur incorrect",
     "don't support captchaProvider: ": "ne prend pas en charge captchaProvider: ",

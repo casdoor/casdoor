@@ -100,7 +100,6 @@
     "Only admin user can specify user": "רק משתמש מנהל יכול לציין משתמש",
     "Please login first": "אנא התחבר תחילה",
     "The organization: %s should have one application at least": "הארגון: %s צריך להכיל לפחות אפליקציה אחת",
-    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "המשתמש: %s לא קיים",
     "Wrong userId": "מזהה משתמש שגוי",
     "don't support captchaProvider: ": "לא נתמך captchaProvider: ",
