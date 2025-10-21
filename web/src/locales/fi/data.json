@@ -93,7 +93,7 @@
     "Normal": "Normaali",
     "Only signup": "Vain rekisteröityminen",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Organisaation valintatila",
     "Org choice mode - Tooltip": "Organisaation valintatila - työkalupala",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Ota \\\"Kirjautumisession\\\" käyttöön ennen \\\"Automaattisen kirjautumisen\\\" ottamista käyttöön",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "Näytä kaikki",
     "Upload (.xlsx)": "Lataa (.xlsx)",
     "Virtual": "Virtuaalinen",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -\u003e [Ryhmät]."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
   },
   "home": {
     "New users past 30 days": "Uudet käyttäjät viimeisen 30 päivän aikana",
@@ -910,7 +910,7 @@
     "From name": "Lähettäjän nimi",
     "From name - Tooltip": "Sähköpostin lähettäjän nimi",
     "Get phone number": "Hae puhelinnumero",
-    "Get phone number - Tooltip": "Jos puhelinnumeron synkronointi on käytössä, sinun tulee ottaa Google People API käyttöön ja lisätä scope \u003curl id=\"d20dgq7hvltu88agpb7g\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\"\u003ehttps://www.googleapis.com/auth/user.phonenumbers.read\u003c/url\u003e    ",
+    "Get phone number - Tooltip": "Jos puhelinnumeron synkronointi on käytössä, sinun tulee ottaa Google People API käyttöön ja lisätä scope <url id=\"d20dgq7hvltu88agpb7g\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\">https://www.googleapis.com/auth/user.phonenumbers.read</url>    ",
     "HTTP body mapping": "HTTP-body-kartoitus",
     "HTTP body mapping - Tooltip": "HTTP-body-kartoitus",
     "HTTP header": "HTTP-header",

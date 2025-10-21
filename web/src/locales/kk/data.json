@@ -93,7 +93,7 @@
     "Normal": "Қалыпты",
     "Only signup": "Тек тіркелу",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Ұйым таңдау режимі",
     "Org choice mode - Tooltip": "Ұйым таңдау режимі - Қысқаша түсінік",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Автоматты кіруді қосу алдында алдымен \\\"Кіру сессиясын\\\" қосыңыз",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "Барлығын көрсету",
     "Upload (.xlsx)": "Жүктеу (.xlsx)",
     "Virtual": "Виртуалды",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -\u003e [Топтар] парағының сол жақ топ ағашында көре аласыз"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -> [Топтар] парағының сол жақ топ ағашында көре аласыз"
   },
   "home": {
     "New users past 30 days": "Соңғы 30 күнде жаңа пайдаланушылар",

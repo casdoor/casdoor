@@ -93,7 +93,7 @@
     "Normal": "Normal",
     "Only signup": "Yalnız qeydiyyat",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Təşkilat seçim rejimi",
     "Org choice mode - Tooltip": "Təşkilat seçim rejimi - Tooltip",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Najprv povoľte \\\"Reláciu prihlásenia\\\" pred povolením \\\"Automatického prihlásenia\\\"",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "Hamısını göstər",
     "Upload (.xlsx)": "Yüklə (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -\u003e [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -> [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
   },
   "home": {
     "New users past 30 days": "Son 30 gündə yeni istifadəçilər",

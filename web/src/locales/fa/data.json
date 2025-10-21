@@ -86,14 +86,14 @@
     "Logged in successfully": "با موفقیت وارد شدید",
     "Logged out successfully": "با موفقیت خارج شدید",
     "MFA remember time": "زمان به خاطر سپاری MFA",
-    "MFA remember time - Tooltip": "MFA remember time - Tooltip",
+    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
     "Multiple Choices": "انتخاب‌های متعدد",
     "New Application": "برنامه جدید",
     "No verification": "بدون تأیید",
     "Normal": "عادی",
     "Only signup": "فقط ثبت‌نام",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "حالت انتخاب سازمان",
     "Org choice mode - Tooltip": "حالت انتخاب سازمان - راهنمای ابزار",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "لطفاً قبل فعال‌سازی «ورود خودکار»، ابتدا «جلسه ورود» را فعال کنید",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "نمایش همه",
     "Upload (.xlsx)": "آپلود (.xlsx)",
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -\u003e [گروه‌ها] مشاهده کنید"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",

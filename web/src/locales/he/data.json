@@ -93,7 +93,7 @@
     "Normal": "רגיל",
     "Only signup": "הרשמה בלבד",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "מצב בחירת ארגון",
     "Org choice mode - Tooltip": "מצב בחירת ארגון - תיאור",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "אנא הפעל \\\"פתיחת جلسة כניסה\\\" תחילה לפני הפעלת \\\"כניסה אוטומטית\\\"",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "הצג הכול",
     "Upload (.xlsx)": "העלה (.xlsx)",
     "Virtual": "וירטואלי",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -\u003e [קבוצות]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -> [קבוצות]"
   },
   "home": {
     "New users past 30 days": "משתמשים חדשים ב-30 הימים האחרונים",
@@ -910,7 +910,7 @@
     "From name": "שם מאת",
     "From name - Tooltip": "שם של \"מאת\"",
     "Get phone number": "קבל מספר טלפון",
-    "Get phone number - Tooltip": "אם מופעלת סינכרון מספר טלפון, יש להפעיל תחילה את Google People API ולהוסיף את הניקוד \u003curl id=\"d20ep91ic4ud506osang\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\"\u003ehttps://www.googleapis.com/auth/user.phonenumbers.read\u003c/url\u003e",
+    "Get phone number - Tooltip": "אם מופעלת סינכרון מספר טלפון, יש להפעיל תחילה את Google People API ולהוסיף את הניקוד <url id=\"d20ep91ic4ud506osang\" type=\"url\" status=\"failed\" title=\"\" wc=\"0\">https://www.googleapis.com/auth/user.phonenumbers.read</url>",
     "HTTP body mapping": "מיפוי גוף HTTP",
     "HTTP body mapping - Tooltip": "מיפוי גוף HTTP",
     "HTTP header": "כותרת HTTP",

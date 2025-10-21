@@ -86,14 +86,14 @@
     "Logged in successfully": "Úspěšně přihlášen",
     "Logged out successfully": "Úspěšně odhlášen",
     "MFA remember time": "Doba zapamatování MFA",
-    "MFA remember time - Tooltip": "MFA remember time - Tooltip",
+    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
     "Multiple Choices": "Vícenásobná volba",
     "New Application": "Nová aplikace",
     "No verification": "Žádná verifikace",
     "Normal": "Normální",
     "Only signup": "Pouze registrace",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Režim výběru organizace",
     "Org choice mode - Tooltip": "Režim výběru organizace - popisek",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Nejprve povolte \\\"Přihlašovací relaci\\\" před povolením \\\"Automatického přihlášení\\\"",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -454,7 +454,7 @@
     "Successfully sent": "Úspěšně odesláno",
     "Successfully synced": "Úspěšně synchronizováno",
     "Supported country codes": "Podporované kódy zemí",
-    "Supported country codes - Tooltip": "Podporované kódy zemí - Tooltip",
+    "Supported country codes - Tooltip": "Country codes supported by the organization. These codes can be selected as a prefix when sending SMS verification codes",
     "Sure to delete": "Opravdu smazat",
     "Sure to disable": "Opravdu chcete zakázat",
     "Sure to remove": "Opravdu chcete odstranit",
@@ -505,7 +505,7 @@
     "Show all": "Zobrazit vše",
     "Upload (.xlsx)": "Nahrát (.xlsx)",
     "Virtual": "Virtuální",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -\u003e [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -> [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví uživatelé za posledních 30 dní",

@@ -86,14 +86,14 @@
     "Logged in successfully": "Úspešne prihlásený",
     "Logged out successfully": "Úspešne odhlásený",
     "MFA remember time": "Čas pamätania MFA",
-    "MFA remember time - Tooltip": "MFA remember time - Tooltip",
+    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
     "Multiple Choices": "Viacero voľieb",
     "New Application": "Nová aplikácia",
     "No verification": "Bez overenia",
     "Normal": "Normálny",
     "Only signup": "Len registrácia",
     "Order": "Order",
-    "Order - Tooltip": "Order - Tooltip",
+    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
     "Org choice mode": "Režim výberu organizácie",
     "Org choice mode - Tooltip": "Režim výberu organizácie - Tooltip",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Najprv povoľte \\\"Reláciu prihlásenia\\\" pred povolením \\\"Automatického prihlásenia\\\"",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Form items",
     "Width": "Width"
   },
   "general": {
@@ -505,7 +505,7 @@
     "Show all": "Zobraziť všetko",
     "Upload (.xlsx)": "Nahrať (.xlsx)",
     "Virtual": "Virtuálna",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Najprv musíte odstrániť všetky podprupy. Podprupy môžete zobraziť v ľavom stromu skupín na stránke [Organizácie] -\u003e [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Najprv musíte odstrániť všetky podprupy. Podprupy môžete zobraziť v ľavom stromu skupín na stránke [Organizácie] -> [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví používatelia za posledných 30 dní",
