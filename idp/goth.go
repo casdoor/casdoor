@@ -15,6 +15,7 @@
 package idp
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -484,6 +485,41 @@ func getUser(gothUser goth.User, provider string) *UserInfo {
 		Email:       gothUser.Email,
 		AvatarUrl:   gothUser.AvatarURL,
 	}
+
+	// Capture additional fields in Extra
+	extra := make(map[string]string)
+	if gothUser.FirstName != "" {
+		extra["firstName"] = gothUser.FirstName
+	}
+	if gothUser.LastName != "" {
+		extra["lastName"] = gothUser.LastName
+	}
+	if gothUser.Location != "" {
+		extra["location"] = gothUser.Location
+	}
+	if gothUser.Description != "" {
+		extra["description"] = gothUser.Description
+	}
+	// Add all raw data from the provider
+	for k, v := range gothUser.RawData {
+		if v != nil {
+			switch val := v.(type) {
+			case string:
+				extra[k] = val
+			case float64:
+				extra[k] = fmt.Sprintf("%v", val)
+			case bool:
+				extra[k] = fmt.Sprintf("%v", val)
+			default:
+				// For complex types, marshal to JSON string
+				if jsonVal, err := json.Marshal(val); err == nil {
+					extra[k] = string(jsonVal)
+				}
+			}
+		}
+	}
+	user.Extra = extra
+
 	// Some idp return an empty Name
 	// so construct the Name with firstname and lastname or nickname
 	if user.Username == "" {

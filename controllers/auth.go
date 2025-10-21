@@ -777,7 +777,7 @@ func (c *ApiController) Login() {
 			if user != nil && !user.IsDeleted {
 				// Sign in via OAuth (want to sign up but already have account)
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+				_, err = object.SetUserOAuthPropertiesWithMapping(organization, user, provider.Type, userInfo, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -915,7 +915,7 @@ func (c *ApiController) Login() {
 				}
 
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+				_, err = object.SetUserOAuthPropertiesWithMapping(organization, user, provider.Type, userInfo, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -963,7 +963,7 @@ func (c *ApiController) Login() {
 			}
 
 			// sync info from 3rd-party if possible
-			_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo)
+			_, err = object.SetUserOAuthPropertiesWithMapping(organization, user, provider.Type, userInfo, provider.UserMapping)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return

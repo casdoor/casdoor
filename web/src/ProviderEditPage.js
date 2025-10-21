@@ -40,6 +40,14 @@ const defaultUserMapping = {
   displayName: "displayName",
   email: "email",
   avatarUrl: "avatarUrl",
+  phone: "phone",
+  countryCode: "country_code",
+  firstName: "given_name",
+  lastName: "family_name",
+  region: "region",
+  location: "location",
+  affiliation: "affiliation",
+  title: "title",
 };
 
 const defaultEmailMapping = {
@@ -219,6 +227,38 @@ class ProviderEditPage extends React.Component {
         {Setting.getLabel(i18next.t("general:Avatar"), i18next.t("general:Avatar - Tooltip"))} :
         <Input value={this.state.provider.userMapping.avatarUrl} onChange={e => {
           this.updateUserMappingField("avatarUrl", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.phone} onChange={e => {
+          this.updateUserMappingField("phone", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Country code"), i18next.t("user:Country code - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.countryCode} onChange={e => {
+          this.updateUserMappingField("countryCode", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:First name"), i18next.t("user:First name - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.firstName} onChange={e => {
+          this.updateUserMappingField("firstName", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Last name"), i18next.t("user:Last name - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.lastName} onChange={e => {
+          this.updateUserMappingField("lastName", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Region"), i18next.t("user:Region - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.region} onChange={e => {
+          this.updateUserMappingField("region", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Location"), i18next.t("user:Location - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.location} onChange={e => {
+          this.updateUserMappingField("location", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Affiliation"), i18next.t("user:Affiliation - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.affiliation} onChange={e => {
+          this.updateUserMappingField("affiliation", e.target.value);
+        }} />
+        {Setting.getLabel(i18next.t("user:Title"), i18next.t("user:Title - Tooltip"))} :
+        <Input value={this.state.provider.userMapping.title} onChange={e => {
+          this.updateUserMappingField("title", e.target.value);
         }} />
       </React.Fragment>
     );
