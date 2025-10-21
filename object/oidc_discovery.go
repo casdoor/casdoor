@@ -22,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/util"
 	"gopkg.in/square/go-jose.v2"
 )
 
@@ -107,16 +108,16 @@ func getOriginFromHost(host string) (string, string) {
 	return originF, originB
 }
 
-func GetOidcDiscovery(host string, owner string, applicationName string) OidcDiscovery {
+func GetOidcDiscovery(host string, applicationName string) OidcDiscovery {
 	originFrontend, originBackend := getOriginFromHost(host)
 
-	// If owner and application are provided, use application-specific URLs
+	// If application is provided, use application-specific URLs
 	var issuer, authzEndpoint, jwksUri string
-	if owner != "" && applicationName != "" {
-		// Application-specific issuer and endpoints
-		issuer = fmt.Sprintf("%s/.well-known/%s/%s", originBackend, owner, applicationName)
+	if applicationName != "" {
+		// Application-specific issuer and endpoints (owner is always "admin")
+		issuer = fmt.Sprintf("%s/.well-known/%s", originBackend, applicationName)
 		authzEndpoint = fmt.Sprintf("%s/login/oauth/authorize", originFrontend)
-		jwksUri = fmt.Sprintf("%s/.well-known/%s/%s/jwks", originBackend, owner, applicationName)
+		jwksUri = fmt.Sprintf("%s/.well-known/%s/jwks", originBackend, applicationName)
 	} else {
 		// Default global issuer and endpoints
 		issuer = originBackend
@@ -152,17 +153,19 @@ func GetOidcDiscovery(host string, owner string, applicationName string) OidcDis
 	return oidcDiscovery
 }
 
-func GetJsonWebKeySet(applicationId string) (jose.JSONWebKeySet, error) {
+func GetJsonWebKeySet(applicationName string) (jose.JSONWebKeySet, error) {
 	jwks := jose.JSONWebKeySet{}
 
-	// Get certs - use application-specific cert if applicationId is provided
+	// Get certs - use application-specific cert if applicationName is provided
 	var certs []*Cert
 	var err error
-	if applicationId != "" {
-		// Try to get application-specific cert
+	if applicationName != "" {
+		// Try to get application-specific cert (owner is always "admin")
+		applicationId := util.GetId("admin", applicationName)
 		application, err := GetApplication(applicationId)
 		if err == nil && application != nil && application.Cert != "" {
-			cert, err := GetCert(application.Owner + "/" + application.Cert)
+			certId := util.GetId(application.Owner, application.Cert)
+			cert, err := GetCert(certId)
 			if err == nil && cert != nil {
 				certs = []*Cert{cert}
 			}
@@ -208,7 +211,7 @@ func GetJsonWebKeySet(applicationId string) (jose.JSONWebKeySet, error) {
 	return jwks, nil
 }
 
-func GetWebFinger(resource string, rels []string, host string, owner string, applicationName string) (WebFinger, error) {
+func GetWebFinger(resource string, rels []string, host string, applicationName string) (WebFinger, error) {
 	wf := WebFinger{}
 
 	resourceSplit := strings.Split(resource, ":")
@@ -220,7 +223,7 @@ func GetWebFinger(resource string, rels []string, host string, owner string, app
 	resourceType := resourceSplit[0]
 	resourceValue := resourceSplit[1]
 
-	oidcDiscovery := GetOidcDiscovery(host, owner, applicationName)
+	oidcDiscovery := GetOidcDiscovery(host, applicationName)
 
 	switch resourceType {
 	case "acct":

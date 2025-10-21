@@ -28,7 +28,7 @@ import (
 // @router /.well-known/openid-configuration [get]
 func (c *RootController) GetOidcDiscovery() {
 	host := c.Ctx.Request.Host
-	c.Data["json"] = object.GetOidcDiscovery(host, "", "")
+	c.Data["json"] = object.GetOidcDiscovery(host, "")
 	c.ServeJSON()
 }
 
@@ -36,15 +36,13 @@ func (c *RootController) GetOidcDiscovery() {
 // @Title GetOidcDiscoveryByApplication
 // @Tag OIDC API
 // @Description Get Oidc Discovery for specific application
-// @Param owner path string true "owner"
 // @Param application path string true "application name"
 // @Success 200 {object} object.OidcDiscovery
-// @router /.well-known/:owner/:application/openid-configuration [get]
+// @router /.well-known/:application/openid-configuration [get]
 func (c *RootController) GetOidcDiscoveryByApplication() {
-	owner := c.Ctx.Input.Param(":owner")
 	application := c.Ctx.Input.Param(":application")
 	host := c.Ctx.Request.Host
-	c.Data["json"] = object.GetOidcDiscovery(host, owner, application)
+	c.Data["json"] = object.GetOidcDiscovery(host, application)
 	c.ServeJSON()
 }
 
@@ -66,15 +64,12 @@ func (c *RootController) GetJwks() {
 // GetJwksByApplication
 // @Title GetJwksByApplication
 // @Tag OIDC API
-// @Param owner path string true "owner"
 // @Param application path string true "application name"
 // @Success 200 {object} jose.JSONWebKey
-// @router /.well-known/:owner/:application/jwks [get]
+// @router /.well-known/:application/jwks [get]
 func (c *RootController) GetJwksByApplication() {
-	owner := c.Ctx.Input.Param(":owner")
 	application := c.Ctx.Input.Param(":application")
-	appId := owner + "/" + application
-	jwks, err := object.GetJsonWebKeySet(appId)
+	jwks, err := object.GetJsonWebKeySet(application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -100,7 +95,7 @@ func (c *RootController) GetWebFinger() {
 		}
 	}
 
-	webfinger, err := object.GetWebFinger(resource, rels, host, "", "")
+	webfinger, err := object.GetWebFinger(resource, rels, host, "")
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
@@ -114,13 +109,11 @@ func (c *RootController) GetWebFinger() {
 // GetWebFingerByApplication
 // @Title GetWebFingerByApplication
 // @Tag OIDC API
-// @Param owner path string true "owner"
 // @Param application path string true "application name"
 // @Param resource query string true "resource"
 // @Success 200 {object} object.WebFinger
-// @router /.well-known/:owner/:application/webfinger [get]
+// @router /.well-known/:application/webfinger [get]
 func (c *RootController) GetWebFingerByApplication() {
-	owner := c.Ctx.Input.Param(":owner")
 	application := c.Ctx.Input.Param(":application")
 	resource := c.Input().Get("resource")
 	rels := []string{}
@@ -132,7 +125,7 @@ func (c *RootController) GetWebFingerByApplication() {
 		}
 	}
 
-	webfinger, err := object.GetWebFinger(resource, rels, host, owner, application)
+	webfinger, err := object.GetWebFinger(resource, rels, host, application)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

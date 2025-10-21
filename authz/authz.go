@@ -81,9 +81,9 @@ p, *, *, POST, /api/upload-resource, *, *
 p, *, *, GET, /.well-known/openid-configuration, *, *
 p, *, *, GET, /.well-known/webfinger, *, *
 p, *, *, *, /.well-known/jwks, *, *
-p, *, *, GET, /.well-known/:owner/:application/openid-configuration, *, *
-p, *, *, GET, /.well-known/:owner/:application/webfinger, *, *
-p, *, *, *, /.well-known/:owner/:application/jwks, *, *
+p, *, *, GET, /.well-known/:application/openid-configuration, *, *
+p, *, *, GET, /.well-known/:application/webfinger, *, *
+p, *, *, *, /.well-known/:application/jwks, *, *
 p, *, *, GET, /api/get-saml-login, *, *
 p, *, *, POST, /api/acs, *, *
 p, *, *, GET, /api/saml/metadata, *, *
