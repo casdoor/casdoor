@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "כתובת ה-IP שלך: %s נחסמה לפי התצורה של: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "הסיסמה שלך פגה. אנא אפס את הסיסמה שלך על ידי לחיצה על \\\"שכחתי סיסמה\\\"",
     "Your region is not allow to signup by phone": "האזור שלך אינו מאפשר הרשמה באמצעות טלפון",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "סיסמה או קוד שגויים",
     "password or code is incorrect, you have %s remaining chances": "סיסמה או קוד שגויים, יש לך %s ניסיונות נותרים",
     "unsupported password type: %s": "סוג סיסמה לא נתמך: %s"

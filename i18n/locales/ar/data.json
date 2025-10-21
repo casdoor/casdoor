@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "عنوان IP الخاص بك: %s تم حظره وفقًا لتكوين: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Şifrenizin süresi doldu. Lütfen \\\"Şifremi unuttum\\\"a tıklayarak şifrenizi sıfırlayın",
     "Your region is not allow to signup by phone": "منطقتك لا تسمح بالتسجيل عبر الهاتف",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "كلمة المرور أو الرمز غير صحيح",
     "password or code is incorrect, you have %s remaining chances": "كلمة المرور أو الرمز غير صحيح، لديك %s فرصة متبقية",
     "unsupported password type: %s": "نوع كلمة المرور غير مدعوم: %s"

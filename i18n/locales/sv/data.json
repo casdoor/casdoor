@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Din IP-adress: %s har blockerats enligt konfigurationen av: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Ditt lösenord har gått ut. Återställ det genom att klicka på \\\"Glömt lösenord\\\"",
     "Your region is not allow to signup by phone": "Din region tillåter inte registrering via telefon",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "lösenord eller kod är felaktig",
     "password or code is incorrect, you have %s remaining chances": "lösenord eller kod är felaktig, du har %s försök kvar",
     "unsupported password type: %s": "lösenordstypen stöds inte: %s"

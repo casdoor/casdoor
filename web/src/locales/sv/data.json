@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Det uppstod ett problem med att logga in dig..",
     "This is a read-only demo site!": "Detta är en skrivskyddad demosida!",
     "Timestamp": "Tidsstämpel",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Token",

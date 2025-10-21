@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Alamat IP Anda: %s telah diblokir sesuai konfigurasi: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Kata sandi Anda telah kedaluwarsa. Silakan atur ulang kata sandi dengan mengklik \\\"Lupa kata sandi\\\"",
     "Your region is not allow to signup by phone": "Wilayah Anda tidak diizinkan untuk mendaftar melalui telepon",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "kata sandi atau kode salah",
     "password or code is incorrect, you have %s remaining chances": "Sandi atau kode salah, Anda memiliki %s kesempatan tersisa",
     "unsupported password type: %s": "jenis sandi tidak didukung: %s"

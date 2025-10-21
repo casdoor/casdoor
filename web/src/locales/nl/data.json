@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Er was een probleem met het inloggen..",
     "This is a read-only demo site!": "Dit is een alleen-lezen demo-site!",
     "Timestamp": "Tijdstempel",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Tokens",

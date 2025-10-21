@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Vaše IP adresa: %s byla zablokována podle konfigurace: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Vaše heslo vypršelo. Prosím resetujte si heslo kliknutím na \\\"Zapomněl jsem heslo\\\"",
     "Your region is not allow to signup by phone": "Vaše oblast neumožňuje registraci pomocí telefonu",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "heslo nebo kód je nesprávný",
     "password or code is incorrect, you have %s remaining chances": "heslo nebo kód je nesprávné, máte %s zbývajících pokusů",
     "unsupported password type: %s": "nepodporovaný typ hesla: %s"

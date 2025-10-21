@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Terdapat masalah untuk log masuk anda..",
     "This is a read-only demo site!": "Ini adalah tapak demo baca sahaja!",
     "Timestamp": "Cap masa",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Token",

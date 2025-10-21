@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "登录时遇到问题..",
     "This is a read-only demo site!": "这是一个只读演示站点！",
     "Timestamp": "时间",
+    "Title": "标题",
+    "Title - Tooltip": "浏览器页面标题",
     "Token attributes": "Token属性",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "令牌",

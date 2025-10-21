@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Кіруде қиындық туындады..",
     "This is a read-only demo site!": "Бұл тек оқуға арналған демо сайт!",
     "Timestamp": "Уақыт мөрі",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Токендер",
