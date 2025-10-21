@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Địa chỉ IP của bạn: %s đã bị cấm theo cấu hình của: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Mật khẩu của bạn đã hết hạn. Vui lòng đặt lại mật khẩu bằng cách nhấp vào \\\"Quên mật khẩu\\\"",
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "mật khẩu hoặc mã không đúng",
     "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
     "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Chỉ người dùng quản trị mới có thể chỉ định người dùng",
     "Please login first": "Vui lòng đăng nhập trước",
     "The organization: %s should have one application at least": "Tổ chức: %s cần có ít nhất một ứng dụng",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Người dùng: %s không tồn tại",
     "Wrong userId": "ID người dùng sai",
     "don't support captchaProvider: ": "không hỗ trợ captchaProvider: ",

@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Vaša IP adresa: %s bola zablokovaná podľa konfigurácie: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Vaše heslo je expirované. Prosím, resetujte svoje heslo kliknutím na \\\"Zabudnuté heslo\\\"",
     "Your region is not allow to signup by phone": "Váš región neumožňuje registráciu cez telefón",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "heslo alebo kód je nesprávne",
     "password or code is incorrect, you have %s remaining chances": "heslo alebo kód je nesprávne, máte %s zostávajúcich pokusov",
     "unsupported password type: %s": "nepodporovaný typ hesla: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Iba administrátor môže určiť používateľa",
     "Please login first": "Najskôr sa prosím prihláste",
     "The organization: %s should have one application at least": "Organizácia: %s by mala mať aspoň jednu aplikáciu",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Používateľ: %s neexistuje",
     "Wrong userId": "Nesprávne ID používateľa",
     "don't support captchaProvider: ": "nepodporuje captchaProvider: ",

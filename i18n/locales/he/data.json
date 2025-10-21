@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "כתובת ה-IP שלך: %s נחסמה לפי התצורה של: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "הסיסמה שלך פגה. אנא אפס את הסיסמה שלך על ידי לחיצה על \\\"שכחתי סיסמה\\\"",
     "Your region is not allow to signup by phone": "האזור שלך אינו מאפשר הרשמה באמצעות טלפון",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "סיסמה או קוד שגויים",
     "password or code is incorrect, you have %s remaining chances": "סיסמה או קוד שגויים, יש לך %s ניסיונות נותרים",
     "unsupported password type: %s": "סוג סיסמה לא נתמך: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "רק משתמש מנהל יכול לציין משתמש",
     "Please login first": "אנא התחבר תחילה",
     "The organization: %s should have one application at least": "הארגון: %s צריך להכיל לפחות אפליקציה אחת",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "המשתמש: %s לא קיים",
     "Wrong userId": "מזהה משתמש שגוי",
     "don't support captchaProvider: ": "לא נתמך captchaProvider: ",

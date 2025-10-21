@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Oturum açarken bir sorun oluştu...",
     "This is a read-only demo site!": "Bu site sadece görüntüleme amaçlıdır!",
     "Timestamp": "Zaman damgası",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Jetonnlar",

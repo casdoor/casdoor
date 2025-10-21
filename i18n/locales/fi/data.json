@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "IP-osoitteesi: %s on estetty asetuksen mukaan: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Salasanasi on vanhentunut. Nollaa salasanasi klikkaamalla \\\"Unohdin salasanan\\\"",
     "Your region is not allow to signup by phone": "Alueellasi ei ole sallittua rekisteröityä puhelimella",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "salasana tai koodi on virheellinen",
     "password or code is incorrect, you have %s remaining chances": "salasana tai koodi on virheellinen, sinulla on %s yritystä jäljellä",
     "unsupported password type: %s": "ei-tuettu salasanatyyppi: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Vain ylläpitäjä voi määrittää käyttäjän",
     "Please login first": "Kirjaudu ensin sisään",
     "The organization: %s should have one application at least": "Organisaatiolla: %s on oltava vähintään yksi sovellus",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Käyttäjää: %s ei ole olemassa",
     "Wrong userId": "Väärä userId",
     "don't support captchaProvider: ": "ei tueta captchaProvider: ",

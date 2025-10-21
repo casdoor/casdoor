@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Je IP-adres: %s is verbannen volgens configuratie van: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Сіздің пароліңіз мерзімі аяқталды. Кликтап \\\"Парольді ұмытып қалдым\\\" нұсқасын қалпына келтіріңіз",
     "Your region is not allow to signup by phone": "Registratie per telefoon niet toegestaan in jouw regio",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "wachtwoord of code onjuist",
     "password or code is incorrect, you have %s remaining chances": "wachtwoord of code onjuist, nog %s pogingen over",
     "unsupported password type: %s": "niet-ondersteund wachtwoordtype: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Alleen beheerder mag gebruiker specificeren",
     "Please login first": "Gelieve eerst in te loggen",
     "The organization: %s should have one application at least": "Organisatie: %s moet minstens één applicatie hebben",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Gebruiker: %s bestaat niet",
     "Wrong userId": "Verkeerde userId",
     "don't support captchaProvider: ": "captchaProvider niet ondersteund: ",

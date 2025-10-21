@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "IP ünvanınız: %s konfiqurasiyaya görə qadağan edilib: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Şifrənizin vaxtı keçib. Xahiş edirik \\\"Şifrəni unutdum\\\" düyməsinə basaraq şifrənizi sıfırlayın",
     "Your region is not allow to signup by phone": "Regionunuzda telefonla qeydiyyata icazə verilmir",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "şifrə və ya kod yanlışdır",
     "password or code is incorrect, you have %s remaining chances": "şifrə və ya kod yanlışdır, %s şansınız qalıb",
     "unsupported password type: %s": "dəstəklənməyən şifrə növü: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Yalnız admin istifadəçi başqa istifadəçini təyin edə bilər",
     "Please login first": "Xahiş edirik əvvəlcə daxil olun",
     "The organization: %s should have one application at least": "Təşkilat: %s ən azı bir tətbiqə malik olmalıdır",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "İstifadəçi: %s mövcud deyil",
     "Wrong userId": "Yanlış istifadəçi ID-si",
     "don't support captchaProvider: ": "captcha provayderini dəstəkləmir: ",

@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Su dirección IP: %s ha sido bloqueada según la configuración de: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Su contraseña ha expirado. Restablezca su contraseña haciendo clic en \\\"Olvidé mi contraseña\\\"",
     "Your region is not allow to signup by phone": "Tu región no está permitida para registrarse por teléfono",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "contraseña o código incorrecto",
     "password or code is incorrect, you have %s remaining chances": "Contraseña o código incorrecto, tienes %s intentos restantes",
     "unsupported password type: %s": "Tipo de contraseña no compatible: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Solo el usuario administrador puede especificar usuario",
     "Please login first": "Por favor, inicia sesión primero",
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "El usuario: %s no existe",
     "Wrong userId": "ID de usuario incorrecto",
     "don't support captchaProvider: ": "No apoyo a captchaProvider",

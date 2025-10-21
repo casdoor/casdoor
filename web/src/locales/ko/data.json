@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "로그인하는 데 문제가 발생했습니다.",
     "This is a read-only demo site!": "이것은 읽기 전용 데모 사이트입니다!",
     "Timestamp": "타임스탬프",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "토큰",

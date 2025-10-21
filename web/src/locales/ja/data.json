@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "サインインに問題が発生しました...",
     "This is a read-only demo site!": "これは読み取り専用のデモサイトです！",
     "Timestamp": "タイムスタンプ",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "トークン",

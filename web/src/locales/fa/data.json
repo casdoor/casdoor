@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "مشکلی در ورود شما وجود داشت...",
     "This is a read-only demo site!": "این یک سایت دمو فقط خواندنی است!",
     "Timestamp": "مهر زمان",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "توکن‌ها",

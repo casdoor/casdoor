@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Đã xảy ra lỗi khi đăng nhập..",
     "This is a read-only demo site!": "Đây là trang web giới thiệu chỉ có chức năng đọc!",
     "Timestamp": "Dấu thời gian",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Mã thông báo",

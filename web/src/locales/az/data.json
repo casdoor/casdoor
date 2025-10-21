@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Sizə daxil olmaqda problem yaşandı..",
     "This is a read-only demo site!": "Bu yalnız oxuma demo saytıdır!",
     "Timestamp": "Vaxt damgası",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Tokenlər",

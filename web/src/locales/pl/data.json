@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "Wystąpił problem podczas logowania..",
     "This is a read-only demo site!": "To jest tylko demonstracyjna strona tylko do odczytu!",
     "Timestamp": "Znacznik czasu",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Tokeny",

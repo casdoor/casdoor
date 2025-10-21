@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "あなたの IP アドレス「%s」は設定によりアクセスが禁止されています: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "パスワードの有効期限が切れています。「パスワードを忘れた方はこちら」をクリックしてリセットしてください",
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "パスワードまたはコードが正しくありません",
     "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと %s 回の試行機会があります",
     "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
     "Wrong userId": "無効なユーザーIDです",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",

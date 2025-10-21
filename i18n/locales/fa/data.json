@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "آدرس IP شما: %s طبق تنظیمات بلاک شده است: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "رمز عبور شما منقضی شده است. لطفاً با کلیک بر روی \\\"فراموشی رمز عبور\\\" رمز عبور خود را بازنشانی کنید",
     "Your region is not allow to signup by phone": "منطقه شما اجازه ثبت‌نام با تلفن را ندارد",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "رمز عبور یا کد نادرست است",
     "password or code is incorrect, you have %s remaining chances": "رمز عبور یا کد نادرست است، شما %s فرصت باقی‌مانده دارید",
     "unsupported password type: %s": "نوع رمز عبور پشتیبانی نشده: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "فقط کاربر مدیر می‌تواند کاربر را مشخص کند",
     "Please login first": "لطفاً ابتدا وارد شوید",
     "The organization: %s should have one application at least": "سازمان: %s باید حداقل یک برنامه داشته باشد",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "کاربر: %s وجود ندارد",
     "Wrong userId": "شناسه کاربر اشتباه است",
     "don't support captchaProvider: ": "از captchaProvider پشتیبانی نمی‌شود: ",

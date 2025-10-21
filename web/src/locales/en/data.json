@@ -466,6 +466,8 @@
     "There was a problem signing you in..": "There was a problem signing you in..",
     "This is a read-only demo site!": "This is a read-only demo site!",
     "Timestamp": "Timestamp",
+    "Title": "Title",
+    "Title - Tooltip": "Title - Tooltip",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Token attributes - Tooltip",
     "Tokens": "Tokens",

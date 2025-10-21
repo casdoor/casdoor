@@ -86,7 +86,6 @@
     "Your IP address: %s has been banned according to the configuration of: ": "Your IP address: %s has been banned according to the configuration of: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"",
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
-    "form type %s already exists": "form type %s already exists",
     "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %s remaining chances": "password or code is incorrect, you have %s remaining chances",
     "unsupported password type: %s": "unsupported password type: %s"
@@ -101,6 +100,7 @@
     "Only admin user can specify user": "Only admin user can specify user",
     "Please login first": "Please login first",
     "The organization: %s should have one application at least": "The organization: %s should have one application at least",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "The user: %s doesn't exist",
     "Wrong userId": "Wrong userId",
     "don't support captchaProvider: ": "don't support captchaProvider: ",
