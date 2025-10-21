@@ -182,7 +182,7 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo) (bool, error) {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping ...map[string]string) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -225,6 +225,11 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 
+	// Apply custom user mapping from provider configuration
+	if len(userMapping) > 0 && userMapping[0] != nil && len(userMapping[0]) > 0 && userInfo.Extra != nil {
+		applyUserMapping(user, userInfo.Extra, userMapping[0])
+	}
+
 	if userInfo.Extra != nil {
 		// Save extra info as json string
 		propertyName := fmt.Sprintf("oauth_%s_extra", providerType)
@@ -247,6 +252,94 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 	}
 
 	return UpdateUserForAllFields(user.GetId(), user)
+}
+
+func applyUserMapping(user *User, extraClaims map[string]string, userMapping map[string]string) {
+	// Map of user fields that can be set from IDP claims
+	for userField, claimName := range userMapping {
+		// Skip standard fields that are already handled
+		if userField == "id" || userField == "username" || userField == "displayName" || userField == "email" || userField == "avatarUrl" {
+			continue
+		}
+
+		// Get value from extra claims
+		claimValue, exists := extraClaims[claimName]
+		if !exists || claimValue == "" {
+			continue
+		}
+
+		// Map to user fields based on field name
+		switch strings.ToLower(userField) {
+		case "phone":
+			if user.Phone == "" {
+				user.Phone = claimValue
+			}
+		case "countrycode":
+			if user.CountryCode == "" {
+				user.CountryCode = claimValue
+			}
+		case "firstname":
+			if user.FirstName == "" {
+				user.FirstName = claimValue
+			}
+		case "lastname":
+			if user.LastName == "" {
+				user.LastName = claimValue
+			}
+		case "region":
+			if user.Region == "" {
+				user.Region = claimValue
+			}
+		case "location":
+			if user.Location == "" {
+				user.Location = claimValue
+			}
+		case "affiliation":
+			if user.Affiliation == "" {
+				user.Affiliation = claimValue
+			}
+		case "title":
+			if user.Title == "" {
+				user.Title = claimValue
+			}
+		case "homepage":
+			if user.Homepage == "" {
+				user.Homepage = claimValue
+			}
+		case "bio":
+			if user.Bio == "" {
+				user.Bio = claimValue
+			}
+		case "tag":
+			if user.Tag == "" {
+				user.Tag = claimValue
+			}
+		case "language":
+			if user.Language == "" {
+				user.Language = claimValue
+			}
+		case "gender":
+			if user.Gender == "" {
+				user.Gender = claimValue
+			}
+		case "birthday":
+			if user.Birthday == "" {
+				user.Birthday = claimValue
+			}
+		case "education":
+			if user.Education == "" {
+				user.Education = claimValue
+			}
+		case "idcard":
+			if user.IdCard == "" {
+				user.IdCard = claimValue
+			}
+		case "idcardtype":
+			if user.IdCardType == "" {
+				user.IdCardType = claimValue
+			}
+		}
+	}
 }
 
 func getUserRoleNames(user *User) (res []string) {
