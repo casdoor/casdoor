@@ -19,6 +19,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/casdoor/casdoor/util"
+	"github.com/mitchellh/mapstructure"
 	"golang.org/x/oauth2"
 )
 
@@ -93,7 +95,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "ADFS":
 		return NewAdfsIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "AzureADB2C":
-		return NewAzureAdB2cProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.AppId), nil
+		return NewAzureAdB2cProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.AppId, idpInfo.UserMapping), nil
 	case "Baidu":
 		return NewBaiduIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Alipay":
@@ -111,7 +113,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "Casdoor":
 		return NewCasdoorIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
 	case "Okta":
-		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl), nil
+		return NewOktaIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl, idpInfo.HostUrl, idpInfo.UserMapping), nil
 	case "Douyin":
 		return NewDouyinIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "Kwai":
@@ -126,7 +128,7 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 		return NewTwitterIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	default:
 		if isGothSupport(idpInfo.Type) {
-			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl)
+			return NewGothIdProvider(idpInfo.Type, idpInfo.ClientId, idpInfo.ClientSecret, idpInfo.ClientId2, idpInfo.ClientSecret2, redirectUrl, idpInfo.HostUrl, idpInfo.UserMapping)
 		}
 		if strings.HasPrefix(idpInfo.Type, "Custom") {
 			return NewCustomIdProvider(idpInfo, redirectUrl), nil
@@ -197,4 +199,58 @@ func isGothSupport(provider string) bool {
 		}
 	}
 	return false
+}
+
+// ApplyUserMapping applies user mapping to raw user data from IDP
+// If requireAllFields is true, id, username, and displayName are required (for Custom providers)
+// If requireAllFields is false, missing fields will be omitted (for standard providers)
+func ApplyUserMapping(rawData map[string]interface{}, userMapping map[string]string) (*UserInfo, error) {
+	if userMapping == nil || len(userMapping) == 0 {
+		// No user mapping, return nil to indicate default mapping should be used
+		return nil, nil
+	}
+
+	// Apply user mapping
+	mappedData := make(map[string]interface{})
+	for casdoorField, idpField := range userMapping {
+		val, err := getNestedValue(rawData, idpField)
+		if err != nil {
+			// Skip fields that are not found - will use default behavior
+			continue
+		}
+		mappedData[casdoorField] = val
+	}
+
+	// If we have no mapped data at all, return nil to use default mapping
+	if len(mappedData) == 0 {
+		return nil, nil
+	}
+
+	// Try to parse id to string if present
+	if id, ok := mappedData["id"]; ok {
+		idStr, err := util.ParseIdToString(id)
+		if err != nil {
+			return nil, err
+		}
+		mappedData["id"] = idStr
+	}
+
+	// Decode to CustomUserInfo
+	customUserInfo := &CustomUserInfo{}
+	err := mapstructure.Decode(mappedData, customUserInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build UserInfo with mapped fields
+	// If a field is not mapped, it will be empty and the caller can use defaults
+	userInfo := &UserInfo{
+		Id:          customUserInfo.Id,
+		Username:    customUserInfo.Username,
+		DisplayName: customUserInfo.DisplayName,
+		Email:       customUserInfo.Email,
+		AvatarUrl:   customUserInfo.AvatarUrl,
+	}
+
+	return userInfo, nil
 }

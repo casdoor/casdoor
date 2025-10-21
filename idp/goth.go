@@ -86,11 +86,12 @@ import (
 )
 
 type GothIdProvider struct {
-	Provider goth.Provider
-	Session  goth.Session
+	Provider    goth.Provider
+	Session     goth.Session
+	UserMapping map[string]string
 }
 
-func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string) (*GothIdProvider, error) {
+func NewGothIdProvider(providerType string, clientId string, clientSecret string, clientId2 string, clientSecret2 string, redirectUrl string, hostUrl string, userMapping map[string]string) (*GothIdProvider, error) {
 	var idp GothIdProvider
 	switch providerType {
 	case "Amazon":
@@ -418,6 +419,7 @@ func NewGothIdProvider(providerType string, clientId string, clientSecret string
 		return nil, fmt.Errorf("OAuth Goth provider type: %s is not supported", providerType)
 	}
 
+	idp.UserMapping = userMapping
 	return &idp, nil
 }
 
@@ -473,6 +475,59 @@ func (idp *GothIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// If user mapping is configured, apply it
+	if idp.UserMapping != nil && len(idp.UserMapping) > 0 {
+		// Convert goth.User to map for processing
+		rawData := map[string]interface{}{
+			"id":          gothUser.UserID,
+			"name":        gothUser.Name,
+			"nickName":    gothUser.NickName,
+			"email":       gothUser.Email,
+			"avatarUrl":   gothUser.AvatarURL,
+			"firstName":   gothUser.FirstName,
+			"lastName":    gothUser.LastName,
+			"description": gothUser.Description,
+			"location":    gothUser.Location,
+		}
+
+		// Add all RawData fields
+		for k, v := range gothUser.RawData {
+			rawData[k] = v
+		}
+
+		mappedUserInfo, err := ApplyUserMapping(rawData, idp.UserMapping)
+		if err != nil {
+			return nil, err
+		}
+
+		// If ApplyUserMapping returned data, merge with defaults
+		if mappedUserInfo != nil {
+			// Get default user info
+			defaultUserInfo := getUser(gothUser, idp.Provider.Name())
+
+			// Override with mapped values
+			if mappedUserInfo.Id != "" {
+				defaultUserInfo.Id = mappedUserInfo.Id
+			}
+			if mappedUserInfo.Username != "" {
+				defaultUserInfo.Username = mappedUserInfo.Username
+			}
+			if mappedUserInfo.DisplayName != "" {
+				defaultUserInfo.DisplayName = mappedUserInfo.DisplayName
+			}
+			if mappedUserInfo.Email != "" {
+				defaultUserInfo.Email = mappedUserInfo.Email
+			}
+			if mappedUserInfo.AvatarUrl != "" {
+				defaultUserInfo.AvatarUrl = mappedUserInfo.AvatarUrl
+			}
+
+			return defaultUserInfo, nil
+		}
+	}
+
+	// Use default mapping
 	return getUser(gothUser, idp.Provider.Name()), nil
 }
 

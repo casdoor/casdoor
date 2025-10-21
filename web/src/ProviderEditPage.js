@@ -98,6 +98,8 @@ class ProviderEditPage extends React.Component {
             if (!provider.userMapping?.phoneNumber) {
               provider.userMapping = defaultSmsMapping;
             }
+          } else if (provider.category === "OAuth") {
+            provider.userMapping = provider.userMapping || {};
           } else {
             provider.userMapping = provider.userMapping || defaultUserMapping;
           }
@@ -179,12 +181,14 @@ class ProviderEditPage extends React.Component {
         Setting.showMessage("error", i18next.t("provider:This field is required"));
         return;
       }
-    } else {
+    } else if (provider.type.startsWith("Custom") && provider.category === "OAuth") {
+      // For Custom OAuth providers, require id, username, and displayName
       if (value === "" && requiredKeys.includes(key)) {
         Setting.showMessage("error", i18next.t("provider:This field is required"));
         return;
       }
     }
+    // For standard OAuth providers (non-Custom), all fields are optional
 
     if (value === "") {
       delete provider.userMapping[key];
@@ -830,14 +834,6 @@ class ProviderEditPage extends React.Component {
               }
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                  {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
-                </Col>
-                <Col span={22} >
-                  {this.renderUserMappingInput()}
-                </Col>
-              </Row>
-              <Row style={{marginTop: "20px"}} >
-                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("general:Favicon"), i18next.t("general:Favicon - Tooltip"))} :
                 </Col>
                 <Col span={22} >
@@ -864,6 +860,18 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             </React.Fragment>
+          ) : null
+        }
+        {
+          this.state.provider.category === "OAuth" ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("provider:User mapping"), i18next.t("provider:User mapping - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                {this.renderUserMappingInput()}
+              </Col>
+            </Row>
           ) : null
         }
         {

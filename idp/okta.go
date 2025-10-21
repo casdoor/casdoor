@@ -26,12 +26,13 @@ import (
 )
 
 type OktaIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
-	Host   string
+	Client      *http.Client
+	Config      *oauth2.Config
+	Host        string
+	UserMapping map[string]string
 }
 
-func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string, hostUrl string) *OktaIdProvider {
+func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string, hostUrl string, userMapping map[string]string) *OktaIdProvider {
 	idp := &OktaIdProvider{}
 
 	config := idp.getConfig(hostUrl, clientId, clientSecret, redirectUrl)
@@ -40,6 +41,7 @@ func NewOktaIdProvider(clientId string, clientSecret string, redirectUrl string,
 	config.RedirectURL = redirectUrl
 	idp.Config = config
 	idp.Host = hostUrl
+	idp.UserMapping = userMapping
 	return idp
 }
 
@@ -183,6 +185,60 @@ func (idp *OktaIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		return nil, err
 	}
 
+	// Parse the response
+	var rawData map[string]interface{}
+	err = json.Unmarshal(body, &rawData)
+	if err != nil {
+		return nil, err
+	}
+
+	// If user mapping is configured, apply it
+	if idp.UserMapping != nil && len(idp.UserMapping) > 0 {
+		mappedUserInfo, err := ApplyUserMapping(rawData, idp.UserMapping)
+		if err != nil {
+			return nil, err
+		}
+
+		// If ApplyUserMapping returned data, merge with defaults
+		if mappedUserInfo != nil {
+			// Parse default data
+			var oktaUserInfo OktaUserInfo
+			err = json.Unmarshal(body, &oktaUserInfo)
+			if err != nil {
+				return nil, err
+			}
+
+			// Use mapped values if available, otherwise fall back to defaults
+			userInfo := UserInfo{
+				Id:          oktaUserInfo.Sub,
+				Username:    oktaUserInfo.PreferredUsername,
+				DisplayName: oktaUserInfo.Name,
+				Email:       oktaUserInfo.Email,
+				AvatarUrl:   oktaUserInfo.Picture,
+			}
+
+			// Override with mapped values
+			if mappedUserInfo.Id != "" {
+				userInfo.Id = mappedUserInfo.Id
+			}
+			if mappedUserInfo.Username != "" {
+				userInfo.Username = mappedUserInfo.Username
+			}
+			if mappedUserInfo.DisplayName != "" {
+				userInfo.DisplayName = mappedUserInfo.DisplayName
+			}
+			if mappedUserInfo.Email != "" {
+				userInfo.Email = mappedUserInfo.Email
+			}
+			if mappedUserInfo.AvatarUrl != "" {
+				userInfo.AvatarUrl = mappedUserInfo.AvatarUrl
+			}
+
+			return &userInfo, nil
+		}
+	}
+
+	// Use default mapping
 	var oktaUserInfo OktaUserInfo
 	err = json.Unmarshal(body, &oktaUserInfo)
 	if err != nil {

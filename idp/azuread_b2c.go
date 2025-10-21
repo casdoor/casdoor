@@ -26,13 +26,14 @@ import (
 )
 
 type AzureADB2CProvider struct {
-	Client   *http.Client
-	Config   *oauth2.Config
-	Tenant   string
-	UserFlow string
+	Client      *http.Client
+	Config      *oauth2.Config
+	Tenant      string
+	UserFlow    string
+	UserMapping map[string]string
 }
 
-func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, userFlow string) *AzureADB2CProvider {
+func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, userFlow string, userMapping map[string]string) *AzureADB2CProvider {
 	return &AzureADB2CProvider{
 		Config: &oauth2.Config{
 			ClientID:     clientId,
@@ -44,8 +45,9 @@ func NewAzureAdB2cProvider(clientId, clientSecret, redirectUrl, tenant string, u
 			},
 			Scopes: []string{"openid", "email"},
 		},
-		Tenant:   tenant,
-		UserFlow: userFlow,
+		Tenant:      tenant,
+		UserFlow:    userFlow,
+		UserMapping: userMapping,
 	}
 }
 
@@ -116,6 +118,54 @@ func (p *AzureADB2CProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		return nil, err
 	}
 
+	// Parse the response
+	var rawData map[string]interface{}
+	err = json.Unmarshal(bodyBytes, &rawData)
+	if err != nil {
+		return nil, err
+	}
+
+	// If user mapping is configured, apply it
+	if p.UserMapping != nil && len(p.UserMapping) > 0 {
+		mappedUserInfo, err := ApplyUserMapping(rawData, p.UserMapping)
+		if err != nil {
+			return nil, err
+		}
+
+		// If ApplyUserMapping returned data, merge with defaults
+		if mappedUserInfo != nil {
+			// Parse default data
+			var defaultUserInfo UserInfo
+			err = json.Unmarshal(bodyBytes, &defaultUserInfo)
+			if err != nil {
+				return nil, err
+			}
+
+			// Use mapped values if available, otherwise fall back to defaults
+			userInfo := defaultUserInfo
+
+			// Override with mapped values
+			if mappedUserInfo.Id != "" {
+				userInfo.Id = mappedUserInfo.Id
+			}
+			if mappedUserInfo.Username != "" {
+				userInfo.Username = mappedUserInfo.Username
+			}
+			if mappedUserInfo.DisplayName != "" {
+				userInfo.DisplayName = mappedUserInfo.DisplayName
+			}
+			if mappedUserInfo.Email != "" {
+				userInfo.Email = mappedUserInfo.Email
+			}
+			if mappedUserInfo.AvatarUrl != "" {
+				userInfo.AvatarUrl = mappedUserInfo.AvatarUrl
+			}
+
+			return &userInfo, nil
+		}
+	}
+
+	// Use default mapping
 	var userInfo UserInfo
 	err = json.Unmarshal(bodyBytes, &userInfo)
 	if err != nil {
