@@ -223,9 +223,9 @@
     "Verify": "Verifiera"
   },
   "form": {
-    "Edit Form": "Edit Form",
+    "Edit Form": "Redigera formulär",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items - Tooltip",
+    "Form items - Tooltip": "Formulärobjekt",
     "Width": "Width"
   },
   "general": {
@@ -303,7 +303,7 @@
     "Enforcers": "Verkställare",
     "Failed to add": "Misslyckades att lägga till",
     "Failed to connect to server": "Misslyckades att ansluta till server",
-    "Failed to copy": "Misslyckades att kopiera",
+    "Failed to copy": "Kopiering misslyckades",
     "Failed to delete": "Misslyckades att ta bort",
     "Failed to enable": "Misslyckades att aktivera",
     "Failed to get TermsOfUse URL": "Misslyckades att hämta användarvillkor-URL",
@@ -316,7 +316,7 @@
     "Favicon - Tooltip": "Favicon-ikon-URL som används på alla Casdoor-sidor för organisationen",
     "First name": "Förnamn",
     "First name - Tooltip": "Användarens förnamn",
-    "Forced redirect origin - Tooltip": "Tvingat omdirigeringsursprung",
+    "Forced redirect origin - Tooltip": "Tvingad omdirigeringsursprung",
     "Forget URL": "Glömt-URL",
     "Forget URL - Tooltip": "Anpassad URL för sidan \"Glömt lösenord\". Om inte inställd kommer standardsidan för \"Glömt lösenord\" i Casdoor att användas. När inställd kommer länken \"Glömt lösenord\" på inloggningssidan att omdirigera till denna URL",
     "Forms": "Forms",
@@ -395,7 +395,7 @@
     "Phone or Email": "Telefon eller e-post",
     "Plain": "Vanlig",
     "Plan": "Plan",
-    "Plan - Tooltip": "Plan",
+    "Plan - Tooltip": "Abonnemangsplan",
     "Plans": "Planer",
     "Plans - Tooltip": "Planer",
     "Preview": "Förhandsvisning",
@@ -414,7 +414,7 @@
     "Records": "Poster",
     "Request": "Förfrågan",
     "Request URI": "Förfrågans URI",
-    "Reset to Default": "Reset to Default",
+    "Reset to Default": "Återställ till standard",
     "Resources": "Resurser",
     "Role": "Roll",
     "Role - Tooltip": "Roll",
@@ -467,9 +467,9 @@
     "This is a read-only demo site!": "Detta är en skrivskyddad demosida!",
     "Timestamp": "Tidsstämpel",
     "Title": "Title",
-    "Title - Tooltip": "Title - Tooltip",
+    "Title - Tooltip": "Titel",
     "Token attributes": "Token attributes",
-    "Token attributes - Tooltip": "Token attributes - Tooltip",
+    "Token attributes - Tooltip": "Token-attribut",
     "Tokens": "Token",
     "Tour": "Rundtur",
     "Transactions": "Transaktioner",
@@ -505,7 +505,7 @@
     "Show all": "Visa alla",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -\u003e [Grupper]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -> [Grupper]"
   },
   "home": {
     "New users past 30 days": "Nya användare senaste 30 dagarna",
@@ -1159,7 +1159,7 @@
     "Table": "Tabell",
     "Table - Tooltip": "Databastabellens namn",
     "Table columns": "Tabellkolumner",
-    "Table columns - Tooltip": "Kolumner i tabellen som deltar i datasynkronisering. Kolumner som inte deltar behöver inte läggas till",
+    "Table columns - Tooltip": "Tabellkolumner",
     "Test DB Connection": "Testa DB-anslutning"
   },
   "system": {
@@ -1314,7 +1314,7 @@
     "The password must not contain any repeated characters": "Lösenordet får inte innehålla några upprepade tecken",
     "This field value doesn't match the pattern rule": "Detta fältvärde matchar inte mönsterregeln",
     "Title": "Titel",
-    "Title - Tooltip": "Position i anknytningen",
+    "Title - Tooltip": "Titel",
     "Two passwords you typed do not match.": "De två lösenord du angav stämmer inte överens.",
     "Unlink": "Ta bort länk",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
