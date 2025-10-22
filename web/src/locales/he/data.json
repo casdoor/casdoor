@@ -41,7 +41,7 @@
     "Custom CSS Mobile - Edit": "ערוך CSS מותאם אישית לנייד",
     "Custom CSS Mobile - Tooltip": "CSS מותאם אישית לנייד - תיאור",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "מנע ממשתמשים להתחבר לאפליקציה זו",
     "Dynamic": "דינמי",
     "Edit Application": "ערוך יישום",
     "Enable Email linking": "אפשר קישור דוא\"ל",
@@ -93,7 +93,7 @@
     "Normal": "רגיל",
     "Only signup": "הרשמה בלבד",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "ככל שהערך קטן יותר, כך הדירוג גבוה יותר בדף האפליקציות",
     "Org choice mode": "מצב בחירת ארגון",
     "Org choice mode - Tooltip": "מצב בחירת ארגון - תיאור",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "אנא הפעל \\\"פתיחת جلسة כניסה\\\" תחילה לפני הפעלת \\\"כניסה אוטומטית\\\"",
@@ -113,7 +113,7 @@
     "Right": "ימין",
     "Rule": "כלל",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "אלגוריתם Hash לחתימת SAML",
     "SAML metadata": "מטה-נתונים SAML",
     "SAML metadata - Tooltip": "מטה-נתונים של פרוטוקול SAML",
     "SAML reply URL": "כתובת תגובה SAML",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "פריטי טופס",
     "Width": "Width"
   },
   "general": {
@@ -343,7 +343,7 @@
     "Languages": "שפות",
     "Languages - Tooltip": "שפות זמינות",
     "Last name": "שם משפחה",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "שם המשפחה של המשתמש",
     "Later": "מאוחר יותר",
     "Logging & Auditing": "רישום וביקורת",
     "Login page": "Login page",
@@ -440,9 +440,15 @@
     "Signup application": "יישום הרשמה",
     "Signup application - Tooltip": "היישום שבו המשתמש נרשם כאשר נרשם",
     "Signup link": "קישור הרשמה",
-    "Sorry, the page you visited does not exist.": "מצטערים, הדף שביקרת בו אינו קיים.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "מצטערים, המשתמש שביקרת בו אינו קיים או שאין לך הרשאה לגשת אליו.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "מצטערים, אין לך הרשאה לגשת לדף זה או שמצב הכניסה אינו תקף.",
+    "Sorry, the page you visited does not exist": {
+      "": "מצטערים, הדף שביקרת בו אינו קיים."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "מצטערים, המשתמש שביקרת בו אינו קיים או שאין לך הרשאה לגשת אליו."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "מצטערים, אין לך הרשאה לגשת לדף זה או שמצב הכניסה אינו תקף."
+    },
     "State": "מצב",
     "State - Tooltip": "מצב - תיאור",
     "Subscriptions": "מנויים",
@@ -463,11 +469,15 @@
     "Syncers": "מסנכרנים",
     "System Info": "מידע מערכת",
     "Tab": "Tab",
-    "There was a problem signing you in..": "הייתה בעיה בכניסה שלך..",
+    "There was a problem signing you in": {
+      "": {
+        "": "הייתה בעיה בכניסה שלך.."
+      }
+    },
     "This is a read-only demo site!": "זהו אתר הדגמה לקריאה בלבד!",
     "Timestamp": "חותמת זמן",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "הצג כותרת",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Custom attributes to include in the token",
     "Tokens": "אסימונים",
@@ -503,9 +513,13 @@
     "Parent group - Tooltip": "קבוצת אב - תיאור",
     "Physical": "פיזי",
     "Show all": "הצג הכול",
-    "Upload (.xlsx)": "העלה (.xlsx)",
+    "Upload (": {
+      "xlsx)": "העלה (.xlsx)"
+    },
     "Virtual": "וירטואלי",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -> [קבוצות]"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -> [קבוצות]"
+    }
   },
   "home": {
     "New users past 30 days": "משתמשים חדשים ב-30 הימים האחרונים",
@@ -581,7 +595,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "שם משתמש LDAP, אימייל או טלפון",
     "Loading": "טוען",
-    "Logging out...": "מתנתק...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "מתנתק..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "לא זוהה תוסף MetaMask",
     "Model loading failure": "כישלון בטעינת מודל",
     "No account?": "אין חשבון?",
@@ -601,7 +621,9 @@
     "Please select an organization": "אנא בחר ארגון",
     "Please select an organization to sign in": "אנא בחר ארגון להתחברות",
     "Please type an organization to sign in": "אנא הקלד ארגון להתחברות",
-    "Redirecting, please wait.": "מעביר, אנא המתן.",
+    "Redirecting, please wait": {
+      "": "מעביר, אנא המתן."
+    },
     "Refresh": "רענן",
     "Select organization": "Select organization",
     "Sign In": "התחבר",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "התחבר עם WebAuthn",
     "Sign in with {type}": "התחבר עם {type}",
     "Signin button": "כפתור התחברות",
-    "Signing in...": "מתחבר...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "מתחבר..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "התחבר בהצלחה עם אישורי WebAuthn",
     "The camera is currently in use by another webpage": "המצלמה בשימוש כעת על ידי דף אחר",
     "The input is not valid Email or phone number!": "הקלט אינו אימייל או מספר טלפון תקין!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "אנא קשר תחילה את האימייל שלך, המערכת תשתמש באימייל אוטומטית לאימות דו-גורמי",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "אנא קשר תחילה את הטלפון שלך, המערכת תשתמש בטלפון אוטומטית לאימות דו-גורמי",
     "Please confirm the information below": "אנא אשר את המידע למטה",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "אנא שמור את קוד השחזור הזה. אם המכשיר שלך לא יכול לספק קוד אימות, תוכל לאפס אימות MFA בעזרת קוד שחזור זה",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "אנא שמור את קוד השחזור הזה. אם המכשיר שלך לא יכול לספק קוד אימות, תוכל לאפס אימות MFA בעזרת קוד שחזור זה"
+    },
     "Protect your account with Multi-factor authentication": "הגן על החשבון שלך עם אימות דו-גורמי",
     "Recovery code": "קוד שחזור",
     "Remember this account for {hour} hours": "זכור חשבון זה ל-{hour} שעות",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "שם התשלום האמיתי",
     "Person phone": "טלפון התשלום",
     "Person phone - Tooltip": "מספר הטלפון של התשלום",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "אנא בדוק בקפידה את פרטי החשבונית. לאחר הנפקת החשבונית, אין אפשרות לבטל או לשנות אותה.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "אנא בדוק בקפידה את פרטי החשבונית. לאחר הנפקת החשבונית, אין אפשרות לבטל או לשנות אותה."
+      }
+    },
     "Please click the below button to return to the original website": "אנא לחץ על הכפתור למטה כדי לחזור לאתר המקורי",
     "Please pay the order first!": "אנא שלם את ההזמנה תחילה!",
-    "Processing...": "מעבד...",
+    "Processing": {
+      "": {
+        "": {
+          "": "מעבד..."
+        }
+      }
+    },
     "Product": "מוצר",
     "Product - Tooltip": "שם המוצר",
     "Recharged successfully": "הטעינה בוצעה בהצלחה",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "השלמת את התשלום בהצלחה",
     "You have successfully recharged": "הטעינה בוצעה בהצלחה",
     "Your current balance is": "היתרה הנוכחית שלך היא",
-    "please wait for a few seconds...": "אנא המתן כמה שניות...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "אנא המתן כמה שניות..."
+        }
+      }
+    },
     "the current state is": "המצב הנוכחי הוא"
   },
   "permission": {
@@ -824,7 +870,13 @@
     "Payment failed": "התשלום נכשל",
     "Payment providers": "ספקי תשלום",
     "Payment providers - Tooltip": "ספקי שירותי תשלום",
-    "Placing order...": "מגיש הזמנה...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "מגיש הזמנה..."
+        }
+      }
+    },
     "Price": "מחיר",
     "Price - Tooltip": "מחיר המוצר",
     "Quantity": "כמות",
@@ -838,9 +890,17 @@
     "Success URL": "כתובת הצלחה",
     "Success URL - Tooltip": "כתובת לחזור אליה לאחר הרכישה",
     "Tag - Tooltip": "תג של המוצר",
-    "Test buy page..": "דף קנייה לבדיקה..",
-    "There is no payment channel for this product.": "אין ערוץ תשלום עבור מוצר זה.",
-    "This product is currently not in sale.": "מוצר זה אינו נמכר כעת.",
+    "Test buy page": {
+      "": {
+        "": "דף קנייה לבדיקה.."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "אין ערוץ תשלום עבור מוצר זה."
+    },
+    "This product is currently not in sale": {
+      "": "מוצר זה אינו נמכר כעת."
+    },
     "WeChat Pay": "פיימנט ווצ'אט"
   },
   "provider": {
@@ -872,8 +932,10 @@
     "Can unlink": "יכול לנתק",
     "Category": "קטגוריה",
     "Category - Tooltip": "בחר קטגוריה",
-    "Channel No.": "מספר ערוץ",
-    "Channel No. - Tooltip": "מספר ערוץ",
+    "Channel No": {
+      "": "מספר ערוץ",
+      " - Tooltip": "מספר ערוץ"
+    },
     "Chat ID": "מזהה צ'אט",
     "Chat ID - Tooltip": "מזהה צ'אט - תיאור",
     "Client ID": "מזהה לקוח",
@@ -959,7 +1021,9 @@
     "Region endpoint for Internet": "נקודת קצה אזור לאינטרנט",
     "Region endpoint for Intranet": "נקודת קצה אזור לרשת פנימית",
     "Required": "נדרש",
-    "SAML 2.0 Endpoint (HTTP)": "נקודת קצה SAML 2.0 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "נקודת קצה SAML 2.0 (HTTP)"
+    },
     "SMS Test": "בדיקת SMS",
     "SMS Test - Tooltip": "מספר טלפון לשליחת SMS ניסיון",
     "SMS account": "חשבון SMS",
@@ -1051,7 +1115,13 @@
     "File size": "גודל קובץ",
     "Format": "פורמט",
     "Parent": "הורה",
-    "Upload a file...": "העלה קובץ..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "העלה קובץ..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "ערוך תפקיד",
@@ -1166,7 +1236,9 @@
     "API Latency": "זמן תגובת API",
     "API Throughput": "קצב API",
     "About Casdoor": "אודות Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "פלטפורמת ניהול זהות וגישה (IAM) / כניסה יחידה (SSO) עם ממשק ווב התומך ב-OAuth 2.0, OIDC, SAML ו-CAS",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "פלטפורמת ניהול זהות וגישה (IAM) / כניסה יחידה (SSO) עם ממשק ווב התומך ב-OAuth 2.0, OIDC, SAML ו-CAS"
+    },
     "CPU Usage": "שימוש במעבד",
     "Community": "קהילה",
     "Count": "ספירה",
@@ -1276,7 +1348,13 @@
     "Location - Tooltip": "עיר מגורים",
     "MFA accounts": "חשבונות MFA",
     "Managed accounts": "חשבונות מנוהלים",
-    "Modify password...": "שנה סיסמה...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "שנה סיסמה..."
+        }
+      }
+    },
     "Multi-factor authentication": "אימות רב-גורמי",
     "Need update password": "צריך לעדכן סיסמה",
     "Need update password - Tooltip": "הכרח משתמש לעדכן סיסמה לאחר כניסה",
@@ -1297,14 +1375,38 @@
     "Register source - Tooltip": "The source from which the user was registered",
     "Register type": "Register type",
     "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "אפס דוא\"ל...",
-    "Reset Phone...": "אפס טלפון...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "אפס דוא\"ל..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "אפס טלפון..."
+        }
+      }
+    },
     "Score": "ניקוד",
     "Score - Tooltip": "ניקוד - תיאור",
-    "Select a photo...": "בחר תמונה...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "בחר תמונה..."
+        }
+      }
+    },
     "Set Password": "הגדר סיסמה",
     "Set new profile picture": "הגדר תמונת פרופיל חדשה",
-    "Set password...": "הגדר סיסמה...",
+    "Set password": {
+      "": {
+        "": {
+          "": "הגדר סיסמה..."
+        }
+      }
+    },
     "Tag": "תג",
     "Tag - Tooltip": "תג של המשתמש",
     "The password must contain at least one special character": "הסיסמה חייבת להכיל לפחות תו מיוחד אחד",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "ערך שדה זה לא תואם לכלל התבנית",
     "Title": "כותרת",
     "Title - Tooltip": "תפקיד בארגון",
-    "Two passwords you typed do not match.": "שתי הסיסמאות שהקלדת אינן תואמות.",
+    "Two passwords you typed do not match": {
+      "": "שתי הסיסמאות שהקלדת אינן תואמות."
+    },
     "Unlink": "בטל קישור",
-    "Upload (.xlsx)": "העלה (.xlsx)",
+    "Upload (": {
+      "xlsx)": "העלה (.xlsx)"
+    },
     "Upload ID card back picture": "העלה תמונה של גב תעודת זהות",
     "Upload ID card front picture": "העלה תמונה של חזית תעודת זהות",
     "Upload ID card with person picture": "העלה תמונה של תעודת זהות עם אדם",

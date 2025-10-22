@@ -41,7 +41,7 @@
     "Custom CSS Mobile - Edit": "Редагувати мобільний спеціальний CSS",
     "Custom CSS Mobile - Tooltip": "Мобільний спеціальний CSS - Підказка",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "Заборонити користувачам входити в цю програму",
     "Dynamic": "Динамічний",
     "Edit Application": "Редагувати програму",
     "Enable Email linking": "Дозволити зв’язок з Email",
@@ -86,14 +86,14 @@
     "Logged in successfully": "Успішно ввійшли",
     "Logged out successfully": "Успішно вийшов",
     "MFA remember time": "Час запам'ятовування MFA",
-    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
+    "MFA remember time - Tooltip": "Налаштовує тривалість, протягом якої обліковий запис запам'ятовується як довірений після успішного входу MFA",
     "Multiple Choices": "Кілька варіантів",
     "New Application": "Нова заявка",
     "No verification": "Без підтвердження",
     "Normal": "нормальний",
     "Only signup": "Тільки реєстрація",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "Чим менше значення, тим вищий рейтинг на сторінці Програми",
     "Org choice mode": "Режим вибору організації",
     "Org choice mode - Tooltip": "Режим вибору організації – підказка",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Спочатку увімкніть \\\"Сесію входу\\\", перш ніж увімкнути \\\"Автоматичний вхід\\\"",
@@ -113,7 +113,7 @@
     "Right": "правильно",
     "Rule": "правило",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "Алгоритм хешування для підпису SAML",
     "SAML metadata": "Метадані SAML",
     "SAML metadata - Tooltip": "Метадані протоколу SAML",
     "SAML reply URL": "URL-адреса відповіді SAML",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "Елементи форми",
     "Width": "Width"
   },
   "general": {
@@ -343,7 +343,7 @@
     "Languages": "Мови",
     "Languages - Tooltip": "Доступні мови",
     "Last name": "Прізвище",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "Прізвище користувача",
     "Later": "Пізніше",
     "Logging & Auditing": "Лісозаготівля",
     "Login page": "Login page",
@@ -440,9 +440,15 @@
     "Signup application": "Заявка на реєстрацію",
     "Signup application - Tooltip": "Через яку програму користувач зареєструвався під час реєстрації",
     "Signup link": "Посилання для реєстрації",
-    "Sorry, the page you visited does not exist.": "Вибачте, сторінка, яку ви відвідали, не існує.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Вибачте, користувач, якого ви відвідали, не існує або ви не авторизовані для доступу до цього користувача.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Вибачте, у вас немає дозволу на доступ до цієї сторінки або статус входу недійсний.",
+    "Sorry, the page you visited does not exist": {
+      "": "Вибачте, сторінка, яку ви відвідали, не існує."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Вибачте, користувач, якого ви відвідали, не існує або ви не авторизовані для доступу до цього користувача."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Вибачте, у вас немає дозволу на доступ до цієї сторінки або статус входу недійсний."
+    },
     "State": "Держава",
     "State - Tooltip": "Держава",
     "Subscriptions": "Підписки",
@@ -463,11 +469,15 @@
     "Syncers": "Синхронизатори",
     "System Info": "Інформація про систему",
     "Tab": "Tab",
-    "There was a problem signing you in..": "Під час входу виникла проблема.",
+    "There was a problem signing you in": {
+      "": {
+        "": "Під час входу виникла проблема."
+      }
+    },
     "This is a read-only demo site!": "Це демо-сайт лише для читання!",
     "Timestamp": "Мітка часу",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "Відображати назву",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Custom attributes to include in the token",
     "Tokens": "Жетони",
@@ -503,9 +513,13 @@
     "Parent group - Tooltip": "Батьківська група - підказка",
     "Physical": "фізичний",
     "Show all": "Покажи все",
-    "Upload (.xlsx)": "Завантажити (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Завантажити (.xlsx)"
+    },
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
+    }
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -581,7 +595,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "Ім’я користувача LDAP, електронна пошта або телефон",
     "Loading": "Завантаження",
-    "Logging out...": "Вихід...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Вихід..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "Плагін MetaMask не виявлено",
     "Model loading failure": "Помилка завантаження моделі",
     "No account?": "Немає облікового запису?",
@@ -601,7 +621,9 @@
     "Please select an organization": "Виберіть організацію",
     "Please select an organization to sign in": "Виберіть організацію для входу",
     "Please type an organization to sign in": "Будь ласка, введіть організацію, щоб увійти",
-    "Redirecting, please wait.": "Перенаправлення, будь ласка, зачекайте.",
+    "Redirecting, please wait": {
+      "": "Перенаправлення, будь ласка, зачекайте."
+    },
     "Refresh": "Оновити",
     "Select organization": "Select organization",
     "Sign In": "Увійти",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "Увійдіть за допомогою WebAuthn",
     "Sign in with {type}": "Увійдіть за допомогою {type}",
     "Signin button": "Кнопка входу",
-    "Signing in...": "Вхід...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Вхід..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "Успішно ввійшли за допомогою облікових даних WebAuthn",
     "The camera is currently in use by another webpage": "Камера зараз використовується іншою веб-сторінкою",
     "The input is not valid Email or phone number!": "Введено невірну адресу електронної пошти або номер телефону!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Спочатку прив’яжіть свою електронну адресу, система автоматично використовуватиме її для багатофакторної автентифікації",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Спочатку прив’яжіть свій телефон, система автоматично використовує телефон для багатофакторної автентифікації",
     "Please confirm the information below": "Підтвердьте інформацію нижче",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Будь ласка, збережіть цей код відновлення. ",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Будь ласка, збережіть цей код відновлення. "
+    },
     "Protect your account with Multi-factor authentication": "Захистіть свій обліковий запис за допомогою багатофакторної автентифікації",
     "Recovery code": "Код відновлення",
     "Remember this account for {hour} hours": "Запам'ятати цей обліковий запис на {hour} годин",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "Справжнє ім'я платника",
     "Person phone": "Особистий телефон",
     "Person phone - Tooltip": "Номер телефону платника",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Будь ласка, уважно перевірте інформацію про рахунок-фактуру. ",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Будь ласка, уважно перевірте інформацію про рахунок-фактуру. "
+      }
+    },
     "Please click the below button to return to the original website": "Будь ласка, натисніть кнопку нижче, щоб повернутися на вихідний веб-сайт",
     "Please pay the order first!": "Будь ласка, спочатку оплатите замовлення!",
-    "Processing...": "Обробка...",
+    "Processing": {
+      "": {
+        "": {
+          "": "Обробка..."
+        }
+      }
+    },
     "Product": "Продукт",
     "Product - Tooltip": "Назва продукту",
     "Recharged successfully": "Поповнення успішне",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "Ви успішно завершили оплату",
     "You have successfully recharged": "Ви успішно поповнили рахунок",
     "Your current balance is": "Ваш поточний баланс:",
-    "please wait for a few seconds...": "зачекайте кілька секунд...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "зачекайте кілька секунд..."
+        }
+      }
+    },
     "the current state is": "поточний стан є"
   },
   "permission": {
@@ -824,7 +870,13 @@
     "Payment failed": "Платіж не вдалося",
     "Payment providers": "Постачальники платежів",
     "Payment providers - Tooltip": "Провайдери платіжних послуг",
-    "Placing order...": "Розміщення замовлення...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Розміщення замовлення..."
+        }
+      }
+    },
     "Price": "Ціна",
     "Price - Tooltip": "Ціна товару",
     "Quantity": "Кількість",
@@ -838,9 +890,17 @@
     "Success URL": "URL успіху",
     "Success URL - Tooltip": "URL, на який буде перенаправлено після покупки",
     "Tag - Tooltip": "Тег товару",
-    "Test buy page..": "Сторінка тестової покупки..",
-    "There is no payment channel for this product.": "Для цього продукту немає платіжного каналу.",
-    "This product is currently not in sale.": "Цей товар наразі відсутній у продажу.",
+    "Test buy page": {
+      "": {
+        "": "Сторінка тестової покупки.."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "Для цього продукту немає платіжного каналу."
+    },
+    "This product is currently not in sale": {
+      "": "Цей товар наразі відсутній у продажу."
+    },
     "WeChat Pay": "Вейчат Платіж"
   },
   "provider": {
@@ -872,8 +932,10 @@
     "Can unlink": "Можна від’єднати",
     "Category": "Категорія",
     "Category - Tooltip": "Виберіть категорію",
-    "Channel No.": "Номер каналу",
-    "Channel No. - Tooltip": "Номер каналу",
+    "Channel No": {
+      "": "Номер каналу",
+      " - Tooltip": "Номер каналу"
+    },
     "Chat ID": "Ідентифікатор чату",
     "Chat ID - Tooltip": "Ідентифікатор чату – підказка",
     "Client ID": "ID клієнта",
@@ -959,7 +1021,9 @@
     "Region endpoint for Internet": "Кінцева точка регіону для Інтернету",
     "Region endpoint for Intranet": "Кінцева точка регіону для інтрамережі",
     "Required": "вимагається",
-    "SAML 2.0 Endpoint (HTTP)": "Кінцева точка SAML 2.0 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "Кінцева точка SAML 2.0 (HTTP)"
+    },
     "SMS Test": "SMS Тест",
     "SMS Test - Tooltip": "Номер телефону для відправки тестових SMS",
     "SMS account": "обліковий запис SMS",
@@ -1051,7 +1115,13 @@
     "File size": "Розмір файлу",
     "Format": "Формат",
     "Parent": "Батько",
-    "Upload a file...": "Завантажити файл..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Завантажити файл..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Редагувати роль",
@@ -1166,7 +1236,9 @@
     "API Latency": "Затримка API",
     "API Throughput": "Пропускна здатність API",
     "About Casdoor": "Про Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Платформа керування ідентифікацією та доступом (IAM)/системи єдиного входу (SSO) із веб-інтерфейсом користувача, який підтримує OAuth 2.0, OIDC, SAML і CAS",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "Платформа керування ідентифікацією та доступом (IAM)/системи єдиного входу (SSO) із веб-інтерфейсом користувача, який підтримує OAuth 2.0, OIDC, SAML і CAS"
+    },
     "CPU Usage": "Використання ЦП",
     "Community": "Спільнота",
     "Count": "Рахувати",
@@ -1276,7 +1348,13 @@
     "Location - Tooltip": "Місто проживання",
     "MFA accounts": "Облікові записи MFA",
     "Managed accounts": "Керовані облікові записи",
-    "Modify password...": "Змінити пароль...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Змінити пароль..."
+        }
+      }
+    },
     "Multi-factor authentication": "Багатофакторна аутентифікація",
     "Need update password": "Потрібно оновити пароль",
     "Need update password - Tooltip": "Примусова зміна паролю користувача після входу",
@@ -1297,14 +1375,38 @@
     "Register source - Tooltip": "The source from which the user was registered",
     "Register type": "Register type",
     "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "Скинути електронну адресу...",
-    "Reset Phone...": "Скинути телефон...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "Скинути електронну адресу..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Скинути телефон..."
+        }
+      }
+    },
     "Score": "Оцінка",
     "Score - Tooltip": "Оцінка – підказка",
-    "Select a photo...": "Виберіть фото...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Виберіть фото..."
+        }
+      }
+    },
     "Set Password": "Встановити пароль",
     "Set new profile picture": "Встановити нове зображення профілю",
-    "Set password...": "Встановити пароль...",
+    "Set password": {
+      "": {
+        "": {
+          "": "Встановити пароль..."
+        }
+      }
+    },
     "Tag": "Тег",
     "Tag - Tooltip": "Тег користувача",
     "The password must contain at least one special character": "Пароль повинен містити хоча б один спеціальний символ",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "Це значення поля не відповідає правилу шаблону",
     "Title": "Назва",
     "Title - Tooltip": "Посада в афіліації",
-    "Two passwords you typed do not match.": "Два паролі, які ви ввели, не збігаються.",
+    "Two passwords you typed do not match": {
+      "": "Два паролі, які ви ввели, не збігаються."
+    },
     "Unlink": "Від’єднати",
-    "Upload (.xlsx)": "Завантажити (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Завантажити (.xlsx)"
+    },
     "Upload ID card back picture": "Завантажити заднє зображення посвідчення особи",
     "Upload ID card front picture": "Завантажте переднє зображення посвідчення особи",
     "Upload ID card with person picture": "Завантажте посвідчення особи із зображенням особи",

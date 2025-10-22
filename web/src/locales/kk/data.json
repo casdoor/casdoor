@@ -41,7 +41,7 @@
     "Custom CSS Mobile - Edit": "Теңшеу CSS (мобильді) - Өңдеу",
     "Custom CSS Mobile - Tooltip": "Теңшеу CSS (мобильді) - Қысқаша түсінік",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "Пайдаланушылардың осы қолданбаға кіруін болдырмау",
     "Dynamic": "Динамикалық",
     "Edit Application": "Қолданбаны өңдеу",
     "Enable Email linking": "Email байланысын қосу",
@@ -93,7 +93,7 @@
     "Normal": "Қалыпты",
     "Only signup": "Тек тіркелу",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "Мән неғұрлым кіші болса, Қолданбалар бетінде рейтингі соғұрлым жоғары",
     "Org choice mode": "Ұйым таңдау режимі",
     "Org choice mode - Tooltip": "Ұйым таңдау режимі - Қысқаша түсінік",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Автоматты кіруді қосу алдында алдымен \\\"Кіру сессиясын\\\" қосыңыз",
@@ -113,7 +113,7 @@
     "Right": "Оң жақта",
     "Rule": "Ереже",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "SAML қолтаңбасы үшін хэш алгоритмі",
     "SAML metadata": "SAML метадеректері",
     "SAML metadata - Tooltip": "SAML протоколының метадеректері",
     "SAML reply URL": "SAML жауап URL",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "Форма элементтері",
     "Width": "Width"
   },
   "general": {
@@ -343,7 +343,7 @@
     "Languages": "Тілдер",
     "Languages - Tooltip": "Қол жетімді тілдер",
     "Last name": "Тегі",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "Пайдаланушының тегі",
     "Later": "Кейінірек",
     "Logging & Auditing": "Журналдау және аудит",
     "Login page": "Login page",
@@ -440,9 +440,15 @@
     "Signup application": "Тіркелу қолданбасы",
     "Signup application - Tooltip": "Пайдаланушы тіркелген кездегі қолданба",
     "Signup link": "Тіркелу сілтемесі",
-    "Sorry, the page you visited does not exist.": "Кешіріңіз, сіз барған парақ жоқ.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Кешіріңіз, сіз барған пайдаланушы жоқ немесе сізде осы пайдаланушыға қатынау рұқсаты жоқ.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Кешіріңіз, сізде осы параққа қатынау рұқсаты жоқ немесе кіру күйі жарамсыз.",
+    "Sorry, the page you visited does not exist": {
+      "": "Кешіріңіз, сіз барған парақ жоқ."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Кешіріңіз, сіз барған пайдаланушы жоқ немесе сізде осы пайдаланушыға қатынау рұқсаты жоқ."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Кешіріңіз, сізде осы параққа қатынау рұқсаты жоқ немесе кіру күйі жарамсыз."
+    },
     "State": "Күй",
     "State - Tooltip": "Күй",
     "Subscriptions": "Жазылымдар",
@@ -463,11 +469,15 @@
     "Syncers": "Синхрондаушылар",
     "System Info": "Жүйе ақпараты",
     "Tab": "Tab",
-    "There was a problem signing you in..": "Кіруде қиындық туындады..",
+    "There was a problem signing you in": {
+      "": {
+        "": "Кіруде қиындық туындады.."
+      }
+    },
     "This is a read-only demo site!": "Бұл тек оқуға арналған демо сайт!",
     "Timestamp": "Уақыт мөрі",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "Тақырыпты көрсету",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Custom attributes to include in the token",
     "Tokens": "Токендер",
@@ -503,9 +513,13 @@
     "Parent group - Tooltip": "Ата-ана тобы - Қысқаша түсінік",
     "Physical": "Физикалық",
     "Show all": "Барлығын көрсету",
-    "Upload (.xlsx)": "Жүктеу (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Жүктеу (.xlsx)"
+    },
     "Virtual": "Виртуалды",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -> [Топтар] парағының сол жақ топ ағашында көре аласыз"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -> [Топтар] парағының сол жақ топ ағашында көре аласыз"
+    }
   },
   "home": {
     "New users past 30 days": "Соңғы 30 күнде жаңа пайдаланушылар",
@@ -581,7 +595,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "LDAP пайдаланушы аты, электрондық пошта немесе телефон",
     "Loading": "Жүктелуде",
-    "Logging out...": "Шығу барысында...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Шығу барысында..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "MetaMask плагині табылмады",
     "Model loading failure": "Модель жүктеу қатесі",
     "No account?": "Тіркелгі жоқ па?",
@@ -601,7 +621,9 @@
     "Please select an organization": "Ұйымды таңдаңыз",
     "Please select an organization to sign in": "Кіру үшін ұйымды таңдаңыз",
     "Please type an organization to sign in": "Кіру үшін ұйымды енгізіңіз",
-    "Redirecting, please wait.": "Қайта бағытталуда, күте тұрыңыз.",
+    "Redirecting, please wait": {
+      "": "Қайта бағытталуда, күте тұрыңыз."
+    },
     "Refresh": "Жаңарту",
     "Select organization": "Select organization",
     "Sign In": "Кіру",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "WebAuthn арқылы кіру",
     "Sign in with {type}": "{type} арқылы кіру",
     "Signin button": "Кіру батырмасы",
-    "Signing in...": "Кіріп жатыр...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Кіріп жатыр..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "WebAuthn тіркелгі деректерімен сәтті кірілді",
     "The camera is currently in use by another webpage": "Камера басқа веб-бетпен қолданылуда",
     "The input is not valid Email or phone number!": "Енгізілген дерек жарамсыз электрондық пошта немесе телефон нөмірі!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Алдымен электрондық поштаңызды байлаңыз, жүйе автоматты түрде оны көп факторлы растау үшін пайдаланады",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Алдымен телефоныңызды байлаңыз, жүйе автоматты түрде оны көп факторлы растау үшін пайдаланады",
     "Please confirm the information below": "Төмендегі ақпаратты растаңыз",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Бұл қалпына келтіру кодын сақтаңыз. Егер құрылғыңыз растау кодын бере алмаса, осы код арқылы mfa растауын қалпына келтіре аласыз",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Бұл қалпына келтіру кодын сақтаңыз. Егер құрылғыңыз растау кодын бере алмаса, осы код арқылы mfa растауын қалпына келтіре аласыз"
+    },
     "Protect your account with Multi-factor authentication": "Тіркелгіңізді көп факторлы растау арқылы қорғаңыз",
     "Recovery code": "Қалпына келтіру коду",
     "Remember this account for {hour} hours": "Бұл тіркелгіні {hour} сағатқа есте сақтау",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "Төлеушінің нақты аты",
     "Person phone": "Төлеушінің телефоны",
     "Person phone - Tooltip": "Төлеушінің телефон нөмірі",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Шот-фактура деректерін мұқият тексеріңіз. Шот-фактура шығарылғаннан кейін оны кері қайтару немесе өзгерту мүмкін емес.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Шот-фактура деректерін мұқият тексеріңіз. Шот-фактура шығарылғаннан кейін оны кері қайтару немесе өзгерту мүмкін емес."
+      }
+    },
     "Please click the below button to return to the original website": "Төмендегі батырманы басып, бастапқы сайтқа оралуды сұраймыз",
     "Please pay the order first!": "Алдымен тапсырысты төлеңіз!",
-    "Processing...": "Өңделуде...",
+    "Processing": {
+      "": {
+        "": {
+          "": "Өңделуде..."
+        }
+      }
+    },
     "Product": "Өнім",
     "Product - Tooltip": "Өнім атауы",
     "Recharged successfully": "Толтыру сәтті аяқталды",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "Төлем сәтті аяқталды",
     "You have successfully recharged": "Сіздің балансыңыз сәтті толтырылды",
     "Your current balance is": "Сіздің ағымдағы балансыңыз",
-    "please wait for a few seconds...": "бірнеше секунд күте тұрыңыз...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "бірнеше секунд күте тұрыңыз..."
+        }
+      }
+    },
     "the current state is": "агымдағы жағдай"
   },
   "permission": {
@@ -824,7 +870,13 @@
     "Payment failed": "Төлем сәтсіз аяқталды",
     "Payment providers": "Төлем провайдерлері",
     "Payment providers - Tooltip": "Төлем қызметтерінің провайдерлері",
-    "Placing order...": "Тапсырыс берілуде...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Тапсырыс берілуде..."
+        }
+      }
+    },
     "Price": "Баға",
     "Price - Tooltip": "Өнім бағасы",
     "Quantity": "Саны",
@@ -838,9 +890,17 @@
     "Success URL": "Сәтті URL",
     "Success URL - Tooltip": "Сатып алудан кейін оралатын URL",
     "Tag - Tooltip": "Өнім тегі",
-    "Test buy page..": "Сатып алу парағын сынау...",
-    "There is no payment channel for this product.": "Бұл өнім үшін төлем арнасы жоқ.",
-    "This product is currently not in sale.": "Бұл өнім қазір сатылымда жоқ.",
+    "Test buy page": {
+      "": {
+        "": "Сатып алу парағын сынау..."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "Бұл өнім үшін төлем арнасы жоқ."
+    },
+    "This product is currently not in sale": {
+      "": "Бұл өнім қазір сатылымда жоқ."
+    },
     "WeChat Pay": "Вейчат Төлемі"
   },
   "provider": {
@@ -872,8 +932,10 @@
     "Can unlink": "Байланысты бұзуға болады",
     "Category": "Санат",
     "Category - Tooltip": "Санатты таңдаңыз",
-    "Channel No.": "Арна нөмірі",
-    "Channel No. - Tooltip": "Арна нөмірі",
+    "Channel No": {
+      "": "Арна нөмірі",
+      " - Tooltip": "Арна нөмірі"
+    },
     "Chat ID": "Чат ID-сі",
     "Chat ID - Tooltip": "Чат ID-сі - Құралдың түсіндірмесі",
     "Client ID": "Клиент ID-сі",
@@ -959,7 +1021,9 @@
     "Region endpoint for Internet": "Интернет үшін аймақ нүктесі",
     "Region endpoint for Intranet": "Ішкі желі үшін аймақ нүктесі",
     "Required": "Міндетті",
-    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 нүктесі (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "SAML 2.0 нүктесі (HTTP)"
+    },
     "SMS Test": "SMS тесті",
     "SMS Test - Tooltip": "Тест SMS жіберу үшін телефон нөмірі",
     "SMS account": "SMS тіркелгісі",
@@ -1051,7 +1115,13 @@
     "File size": "Файл өлшемі",
     "Format": "Формат",
     "Parent": "Ата-ана",
-    "Upload a file...": "Файл жүктеу..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Файл жүктеу..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Рөлді өңдеу",
@@ -1166,7 +1236,9 @@
     "API Latency": "API кідірісі",
     "API Throughput": "API өткізу қабілеті",
     "About Casdoor": "Casdoor туралы",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "OAuth 2.0, OIDC, SAML және CAS қолдайтын веб UI бар IAM/SSO платформасы",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "OAuth 2.0, OIDC, SAML және CAS қолдайтын веб UI бар IAM/SSO платформасы"
+    },
     "CPU Usage": "CPU пайдалану",
     "Community": "Қоғамдастық",
     "Count": "Сан",
@@ -1276,7 +1348,13 @@
     "Location - Tooltip": "Тұрғылықты қаласы",
     "MFA accounts": "MFA тіркелгілері",
     "Managed accounts": "Басқарылатын тіркелгілер",
-    "Modify password...": "Құпия сөзді өзгерту...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Құпия сөзді өзгерту..."
+        }
+      }
+    },
     "Multi-factor authentication": "Көп факторлы аутентификация",
     "Need update password": "Құпия сөзді жаңарту қажет",
     "Need update password - Tooltip": "Қолданушыға кіруден кейін құпия сөзді міндетті түрде жаңарту",
@@ -1297,14 +1375,38 @@
     "Register source - Tooltip": "The source from which the user was registered",
     "Register type": "Register type",
     "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "Электрондық поштаны өңдеу...",
-    "Reset Phone...": "Телефонды өңдеу...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "Электрондық поштаны өңдеу..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Телефонды өңдеу..."
+        }
+      }
+    },
     "Score": "Балл",
     "Score - Tooltip": "Балл - Құралдар",
-    "Select a photo...": "Суретті таңдаңыз...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Суретті таңдаңыз..."
+        }
+      }
+    },
     "Set Password": "Құпия сөз орнату",
     "Set new profile picture": "Жаңа профиль суретін орнату",
-    "Set password...": "Құпия сөз орнату...",
+    "Set password": {
+      "": {
+        "": {
+          "": "Құпия сөз орнату..."
+        }
+      }
+    },
     "Tag": "Тег",
     "Tag - Tooltip": "Пайдаланушының тегі",
     "The password must contain at least one special character": "Құпия сөз кем дегенде бір арнайы таңбаны қамтуы керек",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "Бұл өріс мәні үлгі ережесіне сәйкес келмейді",
     "Title": "Лауазым",
     "Title - Tooltip": "Қызмет орнындағы лауазым",
-    "Two passwords you typed do not match.": "Енгізген екі құпия сөзіңіз сәйкес келмейді.",
+    "Two passwords you typed do not match": {
+      "": "Енгізген екі құпия сөзіңіз сәйкес келмейді."
+    },
     "Unlink": "Байланысты бұзу",
-    "Upload (.xlsx)": "Жүктеу (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Жүктеу (.xlsx)"
+    },
     "Upload ID card back picture": "ID картасының артқы жағының суретін жүктеу",
     "Upload ID card front picture": "ID картасының алдыңғы жағының суретін жүктеу",
     "Upload ID card with person picture": "Адаммен бірге ID картасының суретін жүктеу",

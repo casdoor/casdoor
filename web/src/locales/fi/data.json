@@ -41,7 +41,7 @@
     "Custom CSS Mobile - Edit": "Muokkaa mukautettua CSS:ää - matkaviestit",
     "Custom CSS Mobile - Tooltip": "Mukautettu CSS - matkaviestit - työkalupala",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "Estä käyttäjiä kirjautumasta tähän sovellukseen",
     "Dynamic": "Dynaaminen",
     "Edit Application": "Muokkaa sovellusta",
     "Enable Email linking": "Ota sähköpostiinkkoutuminen käyttöön",
@@ -93,7 +93,7 @@
     "Normal": "Normaali",
     "Only signup": "Vain rekisteröityminen",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "Mitä pienempi arvo, sitä korkeammalla se on Sovellukset-sivulla",
     "Org choice mode": "Organisaation valintatila",
     "Org choice mode - Tooltip": "Organisaation valintatila - työkalupala",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "Ota \\\"Kirjautumisession\\\" käyttöön ennen \\\"Automaattisen kirjautumisen\\\" ottamista käyttöön",
@@ -113,7 +113,7 @@
     "Right": "Oikea",
     "Rule": "Sääntö",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "Hash-algoritmi SAML-allekirjoitukselle",
     "SAML metadata": "SAML-metadata",
     "SAML metadata - Tooltip": "SAML-protokollan metadata",
     "SAML reply URL": "SAML-vastaus URL",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "Lomakkeen kentät",
     "Width": "Width"
   },
   "general": {
@@ -343,7 +343,7 @@
     "Languages": "Kielet",
     "Languages - Tooltip": "Saatavilla olevat kielet",
     "Last name": "Sukunimi",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "Käyttäjän sukunimi",
     "Later": "Myöhemmin",
     "Logging & Auditing": "Kirjaaminen ja tarkastus",
     "Login page": "Login page",
@@ -440,9 +440,15 @@
     "Signup application": "Rekisteröintisovellus",
     "Signup application - Tooltip": "Mikä sovellus käyttäjä rekisteröityi kautta, kun he rekisteröityivät",
     "Signup link": "Rekisteröitymislinkki",
-    "Sorry, the page you visited does not exist.": "Valitettavasti sivua, jota yritit avata, ei ole olemassa.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "Valitettavasti käyttäjää, jota yritit tarkastella, ei ole olemassa tai sinulla ei ole oikeutta nähdä tätä käyttäjää.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "Valitettavasti sinulla ei ole oikeutta tarkastella tätä sivua tai kirjautumistilanne ei ole voimassa.",
+    "Sorry, the page you visited does not exist": {
+      "": "Valitettavasti sivua, jota yritit avata, ei ole olemassa."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "Valitettavasti käyttäjää, jota yritit tarkastella, ei ole olemassa tai sinulla ei ole oikeutta nähdä tätä käyttäjää."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "Valitettavasti sinulla ei ole oikeutta tarkastella tätä sivua tai kirjautumistilanne ei ole voimassa."
+    },
     "State": "Tila",
     "State - Tooltip": "Tila – ohje",
     "Subscriptions": "Tilaukset",
@@ -463,11 +469,15 @@
     "Syncers": "Synkronointitoiminnot",
     "System Info": "Järjestelmätiedot",
     "Tab": "Tab",
-    "There was a problem signing you in..": "Kirjautumisessasi ilmeni ongelma..",
+    "There was a problem signing you in": {
+      "": {
+        "": "Kirjautumisessasi ilmeni ongelma.."
+      }
+    },
     "This is a read-only demo site!": "Tämä on vain luku -muotoinen demo-sivusto!",
     "Timestamp": "Aikaleima",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "Näytä otsikko",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Custom attributes to include in the token",
     "Tokens": "Tunnisteet",
@@ -503,9 +513,13 @@
     "Parent group - Tooltip": "Yliryhmä – ohje",
     "Physical": "Fyysinen",
     "Show all": "Näytä kaikki",
-    "Upload (.xlsx)": "Lataa (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Lataa (.xlsx)"
+    },
     "Virtual": "Virtuaalinen",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
+    }
   },
   "home": {
     "New users past 30 days": "Uudet käyttäjät viimeisen 30 päivän aikana",
@@ -581,7 +595,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "LDAP-käyttäjätunnus, sähköposti tai puhelinnumero",
     "Loading": "Ladataan",
-    "Logging out...": "Kirjaudutaan ulos...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "Kirjaudutaan ulos..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "MetaMask-lisäosaa ei havaittu",
     "Model loading failure": "Mallin lataus epäonnistui",
     "No account?": "Eikö tiliä ole?",
@@ -601,7 +621,9 @@
     "Please select an organization": "Valitse organisaatio",
     "Please select an organization to sign in": "Valitse organisaatio kirjautumista varten",
     "Please type an organization to sign in": "Kirjoita organisaatio kirjautumista varten",
-    "Redirecting, please wait.": "Ohjataan uudelleen, odota hetki.",
+    "Redirecting, please wait": {
+      "": "Ohjataan uudelleen, odota hetki."
+    },
     "Refresh": "Päivitä",
     "Select organization": "Select organization",
     "Sign In": "Kirjaudu sisään",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "Kirjaudu WebAuthn-tunnisteella",
     "Sign in with {type}": "Kirjaudu palvelulla {type}",
     "Signin button": "Kirjaudu-painike",
-    "Signing in...": "Kirjaudutaan sisään...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "Kirjaudutaan sisään..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "Kirjautuminen WebAuthn-tunnisteella onnistui",
     "The camera is currently in use by another webpage": "Kamera on parhaillaan toisen verkkosivun käytössä",
     "The input is not valid Email or phone number!": "Syöte ei ole kelvollinen sähköpostiosoite tai puhelinnumero!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "Liitä ensin sähköpostisi, järjestelmä käyttää sitä automaattisesti monivaiheiseen tunnistukseen",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "Liitä ensin puhelinnumerosi, järjestelmä käyttää sitä automaattisesti monivaiheiseen tunnistukseen",
     "Please confirm the information below": "Vahvista alla oleva tiedot",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Tallenna tämä palautuskoodi. Jos laite ei voi antaa tunnistuskoodia, voit nollata MFA:n tällä koodilla",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "Tallenna tämä palautuskoodi. Jos laite ei voi antaa tunnistuskoodia, voit nollata MFA:n tällä koodilla"
+    },
     "Protect your account with Multi-factor authentication": "Suojaa tilisi monivaiheisella tunnistuksella",
     "Recovery code": "Palautuskoodi",
     "Remember this account for {hour} hours": "Muista tämä tili {hour} tunnin ajan",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "Maksajan todellinen nimi",
     "Person phone": "Maksajan puhelinnumero",
     "Person phone - Tooltip": "Maksajan puhelinnumero",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "Tarkasta laskutustietosi huolellisesti. Laskua ei voi peruuttaa tai muuttaa sen luomisen jälkeen.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "Tarkasta laskutustietosi huolellisesti. Laskua ei voi peruuttaa tai muuttaa sen luomisen jälkeen."
+      }
+    },
     "Please click the below button to return to the original website": "Klikkaa alla olevaa painiketta palataksesi alkuperäiselle verkkosivulle",
     "Please pay the order first!": "Maksa tilaus ensin!",
-    "Processing...": "Käsitellään...",
+    "Processing": {
+      "": {
+        "": {
+          "": "Käsitellään..."
+        }
+      }
+    },
     "Product": "Tuote",
     "Product - Tooltip": "Tuotteen nimi",
     "Recharged successfully": "Lataus onnistui",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "Maksu suoritettiin onnistuneesti",
     "You have successfully recharged": "Lataus onnistui",
     "Your current balance is": "Nykyinen saldosi on",
-    "please wait for a few seconds...": "odota hetki...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "odota hetki..."
+        }
+      }
+    },
     "the current state is": "nykyinen tila on"
   },
   "permission": {
@@ -824,7 +870,13 @@
     "Payment failed": "Maksu epäonnistui",
     "Payment providers": "Maksuntarjoajat",
     "Payment providers - Tooltip": "Maksupalvelun tarjoajat",
-    "Placing order...": "Tilataan...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "Tilataan..."
+        }
+      }
+    },
     "Price": "Hinta",
     "Price - Tooltip": "Tuotteen hinta",
     "Quantity": "Määrä",
@@ -838,9 +890,17 @@
     "Success URL": "Onnistumis-URL",
     "Success URL - Tooltip": "Osoite, johon palataan ostoksen jälkeen",
     "Tag - Tooltip": "Tuotteen tunniste",
-    "Test buy page..": "Testi-ostosivu..",
-    "There is no payment channel for this product.": "Tälle tuotteelle ei ole maksukanavaa.",
-    "This product is currently not in sale.": "Tämä tuote ei ole tällä hetkellä myynnissä.",
+    "Test buy page": {
+      "": {
+        "": "Testi-ostosivu.."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "Tälle tuotteelle ei ole maksukanavaa."
+    },
+    "This product is currently not in sale": {
+      "": "Tämä tuote ei ole tällä hetkellä myynnissä."
+    },
     "WeChat Pay": "WeChat -maksu"
   },
   "provider": {
@@ -872,8 +932,10 @@
     "Can unlink": "Voi irrottaa",
     "Category": "Kategoria",
     "Category - Tooltip": "Valitse kategoria",
-    "Channel No.": "Kanavanumero",
-    "Channel No. - Tooltip": "Kanavanumero",
+    "Channel No": {
+      "": "Kanavanumero",
+      " - Tooltip": "Kanavanumero"
+    },
     "Chat ID": "Keskustelun tunnus",
     "Chat ID - Tooltip": "Keskustelun tunnus – ohje",
     "Client ID": "Asiakkaan tunnus",
@@ -959,7 +1021,9 @@
     "Region endpoint for Internet": "Alueen päätepiste Internetille",
     "Region endpoint for Intranet": "Alueen päätepiste Intranetille",
     "Required": "Pakollinen",
-    "SAML 2.0 Endpoint (HTTP)": "SAML 2.0 -päätepiste (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "SAML 2.0 -päätepiste (HTTP)"
+    },
     "SMS Test": "SMS-testi",
     "SMS Test - Tooltip": "Puhelinnumero testi-SMS:n lähettämiseen",
     "SMS account": "SMS-tili",
@@ -1051,7 +1115,13 @@
     "File size": "Tiedostokoko",
     "Format": "Muoto",
     "Parent": "Ylätaso",
-    "Upload a file...": "Lataa tiedosto..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "Lataa tiedosto..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "Muokkaa roolia",
@@ -1166,7 +1236,9 @@
     "API Latency": "API-viive",
     "API Throughput": "API-läpäisy",
     "About Casdoor": "Tietoa Casdoorista",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "Identiteetin- ja käyttöoikeudenhallinta- (IAM) sekä Single-Sign-On (SSO) -alusta verkkokäyttöliittymällä, joka tukee OAuth 2.0:aa, OIDC:tä, SAML:ia ja CAS:ia",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "Identiteetin- ja käyttöoikeudenhallinta- (IAM) sekä Single-Sign-On (SSO) -alusta verkkokäyttöliittymällä, joka tukee OAuth 2.0:aa, OIDC:tä, SAML:ia ja CAS:ia"
+    },
     "CPU Usage": "CPU-käyttö",
     "Community": "Yhteisö",
     "Count": "Lukumäärä",
@@ -1276,7 +1348,13 @@
     "Location - Tooltip": "Asuinkaupunki",
     "MFA accounts": "MFA-tilit",
     "Managed accounts": "Hallitut tilit",
-    "Modify password...": "Muokkaa salasanaa...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "Muokkaa salasanaa..."
+        }
+      }
+    },
     "Multi-factor authentication": "Monivaiheinen tunnistus",
     "Need update password": "Vaadi salasanan päivitys",
     "Need update password - Tooltip": "Pakota käyttäjä päivittämään salasana kirjautumisen jälkeen",
@@ -1297,14 +1375,38 @@
     "Register source - Tooltip": "The source from which the user was registered",
     "Register type": "Register type",
     "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "Nollaa sähköposti...",
-    "Reset Phone...": "Nollaa puhelin...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "Nollaa sähköposti..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "Nollaa puhelin..."
+        }
+      }
+    },
     "Score": "Pisteet",
     "Score - Tooltip": "Pisteet – ohje",
-    "Select a photo...": "Valitse valokuva...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "Valitse valokuva..."
+        }
+      }
+    },
     "Set Password": "Aseta salasana",
     "Set new profile picture": "Aseta uusi profiilikuva",
-    "Set password...": "Aseta salasana...",
+    "Set password": {
+      "": {
+        "": {
+          "": "Aseta salasana..."
+        }
+      }
+    },
     "Tag": "Tunniste",
     "Tag - Tooltip": "Käyttäjän tunniste",
     "The password must contain at least one special character": "Salasanassa on oltava vähintään yksi erikoismerkki",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "Kentän arvo ei vastaa mallisääntöä",
     "Title": "Titteli",
     "Title - Tooltip": "Asema yhteys-tiedossa",
-    "Two passwords you typed do not match.": "Syöttämäsi salasanat eivät täsmää.",
+    "Two passwords you typed do not match": {
+      "": "Syöttämäsi salasanat eivät täsmää."
+    },
     "Unlink": "Irrota",
-    "Upload (.xlsx)": "Lataa (.xlsx)",
+    "Upload (": {
+      "xlsx)": "Lataa (.xlsx)"
+    },
     "Upload ID card back picture": "Lataa henkilötunnuksen takakuva",
     "Upload ID card front picture": "Lataa henkilötunnuksen etukuva",
     "Upload ID card with person picture": "Lataa henkilötunnus henkilön kanssa",

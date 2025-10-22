@@ -41,7 +41,7 @@
     "Custom CSS Mobile - Edit": "ویرایش CSS سفارشی موبایل",
     "Custom CSS Mobile - Tooltip": "CSS سفارشی برای موبایل",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "جلوگیری از ورود کاربران به این برنامه",
     "Dynamic": "پویا",
     "Edit Application": "ویرایش برنامه",
     "Enable Email linking": "فعال‌سازی اتصال ایمیل",
@@ -86,14 +86,14 @@
     "Logged in successfully": "با موفقیت وارد شدید",
     "Logged out successfully": "با موفقیت خارج شدید",
     "MFA remember time": "زمان به خاطر سپاری MFA",
-    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
+    "MFA remember time - Tooltip": "مدت زمانی را که یک حساب پس از ورود موفق MFA به عنوان قابل اعتماد به خاطر سپرده می‌شود، پیکربندی می‌کند",
     "Multiple Choices": "انتخاب‌های متعدد",
     "New Application": "برنامه جدید",
     "No verification": "بدون تأیید",
     "Normal": "عادی",
     "Only signup": "فقط ثبت‌نام",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "هرچه مقدار کوچکتر باشد، رتبه آن در صفحه برنامه‌ها بالاتر است",
     "Org choice mode": "حالت انتخاب سازمان",
     "Org choice mode - Tooltip": "حالت انتخاب سازمان - راهنمای ابزار",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "لطفاً قبل فعال‌سازی «ورود خودکار»، ابتدا «جلسه ورود» را فعال کنید",
@@ -113,7 +113,7 @@
     "Right": "راست",
     "Rule": "قانون",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "الگوریتم هش برای امضای SAML",
     "SAML metadata": "فراداده SAML",
     "SAML metadata - Tooltip": "فراداده پروتکل SAML",
     "SAML reply URL": "آدرس پاسخ SAML",
@@ -225,7 +225,7 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "موارد فرم",
     "Width": "Width"
   },
   "general": {
@@ -343,7 +343,7 @@
     "Languages": "زبان‌ها",
     "Languages - Tooltip": "زبان‌های موجود",
     "Last name": "نام خانوادگی",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "نام خانوادگی کاربر",
     "Later": "بعداً",
     "Logging & Auditing": "ورود و حسابرسی",
     "Login page": "Login page",
@@ -440,9 +440,15 @@
     "Signup application": "برنامه ثبت‌نام",
     "Signup application - Tooltip": "کاربر هنگام ثبت‌نام از کدام برنامه استفاده کرده است",
     "Signup link": "لینک ثبت‌نام",
-    "Sorry, the page you visited does not exist.": "متأسفیم، صفحه‌ای که بازدید کردید وجود ندارد.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "متأسفیم، کاربری که بازدید کردید وجود ندارد یا شما مجاز به دسترسی به این کاربر نیستید.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "متأسفیم، شما اجازه دسترسی به این صفحه را ندارید یا وضعیت ورود شما نامعتبر است.",
+    "Sorry, the page you visited does not exist": {
+      "": "متأسفیم، صفحه‌ای که بازدید کردید وجود ندارد."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "متأسفیم، کاربری که بازدید کردید وجود ندارد یا شما مجاز به دسترسی به این کاربر نیستید."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "متأسفیم، شما اجازه دسترسی به این صفحه را ندارید یا وضعیت ورود شما نامعتبر است."
+    },
     "State": "وضعیت",
     "State - Tooltip": "وضعیت",
     "Subscriptions": "اشتراک‌ها",
@@ -463,11 +469,15 @@
     "Syncers": "همگام‌سازها",
     "System Info": "اطلاعات سیستم",
     "Tab": "Tab",
-    "There was a problem signing you in..": "مشکلی در ورود شما وجود داشت...",
+    "There was a problem signing you in": {
+      "": {
+        "": "مشکلی در ورود شما وجود داشت..."
+      }
+    },
     "This is a read-only demo site!": "این یک سایت دمو فقط خواندنی است!",
     "Timestamp": "مهر زمان",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "عنوان نمایش",
     "Token attributes": "Token attributes",
     "Token attributes - Tooltip": "Custom attributes to include in the token",
     "Tokens": "توکن‌ها",
@@ -503,9 +513,13 @@
     "Parent group - Tooltip": "گروه والد - راهنمای ابزار",
     "Physical": "فیزیکی",
     "Show all": "نمایش همه",
-    "Upload (.xlsx)": "آپلود (.xlsx)",
+    "Upload (": {
+      "xlsx)": "آپلود (.xlsx)"
+    },
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
+    }
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",
@@ -581,7 +595,13 @@
     "LDAP": "LDAP",
     "LDAP username, Email or phone": "نام کاربری LDAP، ایمیل یا تلفن",
     "Loading": "در حال بارگذاری",
-    "Logging out...": "در حال خروج...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "در حال خروج..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "پلاگین MetaMask شناسایی نشد",
     "Model loading failure": "بارگذاری مدل ناموفق بود",
     "No account?": "",
@@ -601,7 +621,9 @@
     "Please select an organization": "لطفاً یک سازمان انتخاب کنید",
     "Please select an organization to sign in": "لطفاً یک سازمان برای ورود انتخاب کنید",
     "Please type an organization to sign in": "لطفاً یک سازمان برای ورود تایپ کنید",
-    "Redirecting, please wait.": "در حال هدایت، لطفاً صبر کنید.",
+    "Redirecting, please wait": {
+      "": "در حال هدایت، لطفاً صبر کنید."
+    },
     "Refresh": "به روزرسانی",
     "Select organization": "Select organization",
     "Sign In": "ورود",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "ورود با WebAuthn",
     "Sign in with {type}": "ورود با {type}",
     "Signin button": "دکمه ورود",
-    "Signing in...": "در حال ورود...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "در حال ورود..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "با موفقیت با اعتبارنامه WebAuthn وارد شدید",
     "The camera is currently in use by another webpage": "دوربین در حال حاضر توسط صفحه وب دیگری استفاده می‌شود",
     "The input is not valid Email or phone number!": "ورودی ایمیل یا شماره تلفن معتبر نیست!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "لطفاً ابتدا ایمیل خود را متصل کنید، سیستم به‌طور خودکار از ایمیل برای احراز هویت چندعاملی استفاده می‌کند",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "لطفاً ابتدا تلفن خود را متصل کنید، سیستم به‌طور خودکار از تلفن برای احراز هویت چندعاملی استفاده می‌کند",
     "Please confirm the information below": "لطفاً اطلاعات زیر را تأیید کنید",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "لطفاً این کد بازیابی را ذخیره کنید. هنگامی که دستگاه شما نتواند کد تأیید ارائه دهد، می‌توانید احراز هویت mfa را با این کد بازیابی تنظیم مجدد کنید",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "لطفاً این کد بازیابی را ذخیره کنید. هنگامی که دستگاه شما نتواند کد تأیید ارائه دهد، می‌توانید احراز هویت mfa را با این کد بازیابی تنظیم مجدد کنید"
+    },
     "Protect your account with Multi-factor authentication": "حساب خود را با احراز هویت چندعاملی محافظت کنید",
     "Recovery code": "کد بازیابی",
     "Remember this account for {hour} hours": "این حساب را برای {hour} ساعت به خاطر بسپار",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "نام واقعی پرداخت‌کننده",
     "Person phone": "تلفن شخص",
     "Person phone - Tooltip": "شماره تلفن پرداخت‌کننده",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "لطفاً اطلاعات فاکتور خود را با دقت بررسی کنید. پس از صدور فاکتور، نمی‌توان آن را پس گرفت یا اصلاح کرد.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "لطفاً اطلاعات فاکتور خود را با دقت بررسی کنید. پس از صدور فاکتور، نمی‌توان آن را پس گرفت یا اصلاح کرد."
+      }
+    },
     "Please click the below button to return to the original website": "لطفاً برای بازگشت به وب‌سایت اصلی روی دکمه زیر کلیک کنید",
     "Please pay the order first!": "لطفاً ابتدا سفارش را پرداخت کنید!",
-    "Processing...": "در حال پردازش...",
+    "Processing": {
+      "": {
+        "": {
+          "": "در حال پردازش..."
+        }
+      }
+    },
     "Product": "محصول",
     "Product - Tooltip": "نام محصول",
     "Recharged successfully": "با موفقیت شارژ شد",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "شما با موفقیت پرداخت را تکمیل کردید",
     "You have successfully recharged": "شما با موفقیت شارژ کردید",
     "Your current balance is": "موجودی فعلی شما",
-    "please wait for a few seconds...": "لطفاً چند ثانیه صبر کنید...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "لطفاً چند ثانیه صبر کنید..."
+        }
+      }
+    },
     "the current state is": "وضعیت فعلی"
   },
   "permission": {
@@ -824,7 +870,13 @@
     "Payment failed": "پرداخت ناموفق بود",
     "Payment providers": "ارائه‌دهندگان پرداخت",
     "Payment providers - Tooltip": "ارائه‌دهندگان خدمات پرداخت",
-    "Placing order...": "در حال ثبت سفارش...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "در حال ثبت سفارش..."
+        }
+      }
+    },
     "Price": "قیمت",
     "Price - Tooltip": "قیمت محصول",
     "Quantity": "تعداد",
@@ -838,9 +890,17 @@
     "Success URL": "URL موفقیت",
     "Success URL - Tooltip": "URL برای بازگشت پس از خرید",
     "Tag - Tooltip": "برچسب محصول",
-    "Test buy page..": "صفحه تست خرید..",
-    "There is no payment channel for this product.": "برای این محصول کانال پرداختی وجود ندارد.",
-    "This product is currently not in sale.": "این محصول در حال حاضر در فروش نیست.",
+    "Test buy page": {
+      "": {
+        "": "صفحه تست خرید.."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "برای این محصول کانال پرداختی وجود ندارد."
+    },
+    "This product is currently not in sale": {
+      "": "این محصول در حال حاضر در فروش نیست."
+    },
     "WeChat Pay": "پرداخت ویچات"
   },
   "provider": {
@@ -872,8 +932,10 @@
     "Can unlink": "می‌تواند لغو اتصال کند",
     "Category": "دسته‌بندی",
     "Category - Tooltip": "یک دسته‌بندی را انتخاب کنید",
-    "Channel No.": "شماره کانال",
-    "Channel No. - Tooltip": "شماره کانال",
+    "Channel No": {
+      "": "شماره کانال",
+      " - Tooltip": "شماره کانال"
+    },
     "Chat ID": "شناسه چت",
     "Chat ID - Tooltip": "شناسه چت - راهنمای ابزار",
     "Client ID": "شناسه کلاینت",
@@ -959,7 +1021,9 @@
     "Region endpoint for Internet": "نقطه پایانی منطقه برای اینترنت",
     "Region endpoint for Intranet": "نقطه پایانی منطقه برای اینترانت",
     "Required": "الزامی",
-    "SAML 2.0 Endpoint (HTTP)": "نقطه پایانی SAML 2.0 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "نقطه پایانی SAML 2.0 (HTTP)"
+    },
     "SMS Test": "تست پیامک",
     "SMS Test - Tooltip": "شماره تلفن برای ارسال پیامک تست",
     "SMS account": "حساب پیامک",
@@ -1051,7 +1115,13 @@
     "File size": "اندازه فایل",
     "Format": "فرمت",
     "Parent": "والد",
-    "Upload a file...": "آپلود یک فایل..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "آپلود یک فایل..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "ویرایش نقش",
@@ -1166,7 +1236,9 @@
     "API Latency": "تأخیر API",
     "API Throughput": "بازدهی API",
     "About Casdoor": "درباره Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "یک پلتفرم مدیریت هویت و دسترسی (IAM) / ورود یکپارچه (SSO) با رابط کاربری وب که از OAuth 2.0، OIDC، SAML و CAS پشتیبانی می‌کند",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "یک پلتفرم مدیریت هویت و دسترسی (IAM) / ورود یکپارچه (SSO) با رابط کاربری وب که از OAuth 2.0، OIDC، SAML و CAS پشتیبانی می‌کند"
+    },
     "CPU Usage": "استفاده CPU",
     "Community": "جامعه",
     "Count": "تعداد",
@@ -1276,7 +1348,13 @@
     "Location - Tooltip": "شهر محل سکونت",
     "MFA accounts": "حساب‌های MFA",
     "Managed accounts": "حساب‌های مدیریت شده",
-    "Modify password...": "تغییر رمز عبور...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "تغییر رمز عبور..."
+        }
+      }
+    },
     "Multi-factor authentication": "احراز هویت چندعاملی",
     "Need update password": "نیاز به به‌روزرسانی رمز عبور",
     "Need update password - Tooltip": "اجبار کاربر به به‌روزرسانی رمز عبور پس از ورود",
@@ -1297,14 +1375,38 @@
     "Register source - Tooltip": "The source from which the user was registered",
     "Register type": "Register type",
     "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "بازنشانی ایمیل...",
-    "Reset Phone...": "بازنشانی تلفن...",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "بازنشانی ایمیل..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "بازنشانی تلفن..."
+        }
+      }
+    },
     "Score": "امتیاز",
     "Score - Tooltip": "امتیاز - راهنمای ابزار",
-    "Select a photo...": "یک عکس انتخاب کنید...",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "یک عکس انتخاب کنید..."
+        }
+      }
+    },
     "Set Password": "تنظیم رمز عبور",
     "Set new profile picture": "تنظیم تصویر پروفایل جدید",
-    "Set password...": "تنظیم رمز عبور...",
+    "Set password": {
+      "": {
+        "": {
+          "": "تنظیم رمز عبور..."
+        }
+      }
+    },
     "Tag": "برچسب",
     "Tag - Tooltip": "برچسب کاربر",
     "The password must contain at least one special character": "رمز عبور باید حداقل یک کاراکتر خاص داشته باشد",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "مقدار این فیلد با قانون الگو مطابقت ندارد",
     "Title": "عنوان",
     "Title - Tooltip": "موقعیت در وابستگی",
-    "Two passwords you typed do not match.": "دو رمز عبوری که وارد کردید مطابقت ندارند.",
+    "Two passwords you typed do not match": {
+      "": "دو رمز عبوری که وارد کردید مطابقت ندارند."
+    },
     "Unlink": "لغو اتصال",
-    "Upload (.xlsx)": "آپلود (.xlsx)",
+    "Upload (": {
+      "xlsx)": "آپلود (.xlsx)"
+    },
     "Upload ID card back picture": "آپلود تصویر پشت کارت شناسایی",
     "Upload ID card front picture": "آپلود تصویر جلوی کارت شناسایی",
     "Upload ID card with person picture": "آپلود تصویر کارت شناسایی با شخص",
