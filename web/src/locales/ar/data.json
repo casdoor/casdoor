@@ -14,7 +14,7 @@
     "Rule type": "نوع القاعدة",
     "Sync policies successfully": "تمت مزامنة السياسات بنجاح",
     "Use same DB": "استخدام نفس قاعدة البيانات",
-    "Use same DB - Tooltip": "Use the same DB as Casdoor"
+    "Use same DB - Tooltip": "استخدام نفس قاعدة البيانات مثل Casdoor"
   },
   "application": {
     "Add Face ID": "إضافة Face ID",
@@ -25,7 +25,7 @@
     "Background URL": "رابط الخلفية",
     "Background URL - Tooltip": "رابط صورة الخلفية المستخدمة في صفحة تسجيل الدخول",
     "Background URL Mobile": "رابط الخلفية للجوال",
-    "Background URL Mobile - Tooltip": "URL of the background image used in the login page (mobile version)",
+    "Background URL Mobile - Tooltip": "رابط صورة الخلفية المستخدمة في صفحة تسجيل الدخول (نسخة الجوال)",
     "Big icon": "الرمز الكبير",
     "Binding providers": "مزودي الربط",
     "CSS style": "أنماط CSS",
@@ -39,15 +39,15 @@
     "Custom CSS - Tooltip": "أنماط CSS لنماذج التسجيل، تسجيل الدخول، ونسيان كلمة المرور (مثل إضافة الحدود والظلال)",
     "Custom CSS Mobile": "CSS مخصص للجوال",
     "Custom CSS Mobile - Edit": "تعديل CSS مخصص للجوال",
-    "Custom CSS Mobile - Tooltip": "CSS styling of the signup, signin and forget password forms (mobile version)",
+    "Custom CSS Mobile - Tooltip": "أنماط CSS لنماذج التسجيل، تسجيل الدخول، ونسيان كلمة المرور (نسخة الجوال)",
     "Disable signin": "Disable signin",
-    "Disable signin - Tooltip": "Prevent users from signing in to this application",
+    "Disable signin - Tooltip": "منع المستخدمين من تسجيل الدخول إلى هذا التطبيق",
     "Dynamic": "ديناميكي",
     "Edit Application": "تحرير التطبيق",
     "Enable Email linking": "تمكين ربط البريد الإلكتروني",
     "Enable Email linking - Tooltip": "عند استخدام مزودي تسجيل دخول تابعين لجهات خارجية، إذا كان هناك مستخدم في المنظمة بنفس البريد الإلكتروني، سيتم ربط طريقة تسجيل الدخول الخارجية مع هذا المستخدم تلقائيًا",
     "Enable SAML C14N10": "تمكين SAML C14N10",
-    "Enable SAML C14N10 - Tooltip": "Use C14N10 instead of C14N11 in SAML",
+    "Enable SAML C14N10 - Tooltip": "استخدام C14N10 بدلاً من C14N11 في SAML",
     "Enable SAML POST binding": "تمكين ربط POST لـ SAML",
     "Enable SAML POST binding - Tooltip": "يربط POST عبر HTTP يستخدم حقول إدخال في نموذج HTML لإرسال رسائل SAML، فعّله عندما يستخدم مزود الخدمة هذا النوع",
     "Enable SAML compression": "تمكين ضغط SAML",
@@ -57,9 +57,9 @@
     "Enable signup": "تمكين التسجيل",
     "Enable signup - Tooltip": "ما إذا كان يسمح للمستخدمين بتسجيل حساب جديد",
     "Failed signin frozen time": "وقت التجميد بعد فشل تسجيل الدخول",
-    "Failed signin frozen time - Tooltip": "Time period (in minutes) to freeze account after exceeding failed signin limit. Default is 15 minutes",
+    "Failed signin frozen time - Tooltip": "المدة الزمنية (بالدقائق) لتجميد الحساب بعد تجاوز حد محاولات تسجيل الدخول الفاشلة. الافتراضي هو 15 دقيقة",
     "Failed signin limit": "حد فشل تسجيل الدخول",
-    "Failed signin limit - Tooltip": "Maximum number of failed signin attempts before account is temporarily frozen. Default is 5",
+    "Failed signin limit - Tooltip": "الحد الأقصى لعدد محاولات تسجيل الدخول الفاشلة قبل تجميد الحساب مؤقتًا. الافتراضي هو 5",
     "Failed to sign in": "فشل تسجيل الدخول",
     "File uploaded successfully": "تم رفع الملف بنجاح",
     "First, last": "الأول، الأخير",
@@ -86,16 +86,16 @@
     "Logged in successfully": "تم تسجيل الدخول بنجاح",
     "Logged out successfully": "تم تسجيل الخروج بنجاح",
     "MFA remember time": "وقت تذكر MFA",
-    "MFA remember time - Tooltip": "Configures the duration that a account is remembered as trusted after a successful MFA login",
+    "MFA remember time - Tooltip": "تكوين المدة التي يتم فيها تذكر الحساب كموثوق بعد تسجيل دخول MFA ناجح",
     "Multiple Choices": "اختيارات متعددة",
     "New Application": "تطبيق جديد",
     "No verification": "لا توجد مصادقة",
     "Normal": "عادي",
     "Only signup": "التسجيل فقط",
     "Order": "Order",
-    "Order - Tooltip": "The smaller the value, the higher it ranks in the Apps page",
+    "Order - Tooltip": "كلما كانت القيمة أصغر، كان الترتيب أعلى في صفحة التطبيقات",
     "Org choice mode": "وضع اختيار المنظمة",
-    "Org choice mode - Tooltip": "Method for selecting which organization to sign in to",
+    "Org choice mode - Tooltip": "طريقة اختيار المنظمة التي سيتم تسجيل الدخول إليها",
     "Please enable \\\"Signin session\\\" first before enabling \\\"Auto signin\\\"": "يرجى تشغيل \\\"جلسة الدخول\\\" أولاً قبل تشغيل \\\"الدخول التلقائي\\\"",
     "Please input your application!": "يرجى إدخال تطبيقك!",
     "Please input your organization!": "يرجى إدخال منظمتك!",
@@ -113,7 +113,7 @@
     "Right": "اليمين",
     "Rule": "القاعدة",
     "SAML hash algorithm": "SAML hash algorithm",
-    "SAML hash algorithm - Tooltip": "Hash algorithm for SAML signature",
+    "SAML hash algorithm - Tooltip": "خوارزمية التجزئة لتوقيع SAML",
     "SAML metadata": "بيانات SAML الوصفية",
     "SAML metadata - Tooltip": "البيانات الوصفية لبروتوكول SAML",
     "SAML reply URL": "رابط رد SAML",
@@ -125,9 +125,9 @@
     "Signin": "تسجيل الدخول",
     "Signin (Default True)": "تسجيل الدخول (الافتراضي صحيح)",
     "Signin items": "عناصر تسجيل الدخول",
-    "Signin items - Tooltip": "Items for users to fill in when signing up",
+    "Signin items - Tooltip": "العناصر التي يجب على المستخدمين ملؤها عند التسجيل",
     "Signin methods": "طرق تسجيل الدخول",
-    "Signin methods - Tooltip": "Authentication methods allowed for signing in (password, SMS, email, etc.)",
+    "Signin methods - Tooltip": "طرق المصادقة المسموح بها لتسجيل الدخول (كلمة المرور، الرسائل النصية، البريد الإلكتروني، إلخ)",
     "Signin session": "جلسة تسجيل الدخول",
     "Signup items": "عناصر التسجيل",
     "Signup items - Tooltip": "العناصر التي يجب على المستخدمين ملؤها عند تسجيل حسابات جديدة",
@@ -138,13 +138,13 @@
     "Token expire": "انتهاء صلاحية الرمز",
     "Token expire - Tooltip": "وقت انتهاء صلاحية رمز الوصول",
     "Token fields": "حقول الرمز",
-    "Token fields - Tooltip": "The user fields included in the token",
+    "Token fields - Tooltip": "حقول المستخدم المضمنة في الرمز",
     "Token format": "صيغة الرمز",
     "Token format - Tooltip": "صيغة رمز الوصول",
     "Token signing method": "طريقة توقيع الرمز",
     "Token signing method - Tooltip": "طريقة توقيع رمز JWT، يجب أن تكون نفس خوارزمية الشهادة",
     "Use Email as NameID": "استخدام البريد الإلكتروني كـ NameID",
-    "Use Email as NameID - Tooltip": "Use the user's email address as the SAML NameID attribute",
+    "Use Email as NameID - Tooltip": "استخدام عنوان البريد الإلكتروني للمستخدم كخاصية SAML NameID",
     "You are unexpected to see this prompt page": "أنت لا تتوقع رؤية صفحة الإشعار هذه"
   },
   "cert": {
@@ -225,17 +225,17 @@
   "form": {
     "Edit Form": "Edit Form",
     "Form items": "Form items",
-    "Form items - Tooltip": "Form items",
+    "Form items - Tooltip": "عناصر النموذج",
     "Width": "Width"
   },
   "general": {
     "AI Assistant": "مساعد الذكاء الاصطناعي",
     "API key": "مفتاح API",
-    "API key - Tooltip": "API key for authentication",
+    "API key - Tooltip": "مفتاح API للمصادقة",
     "Access key": "مفتاح الوصول",
-    "Access key - Tooltip": "Access key credential",
+    "Access key - Tooltip": "بيانات اعتماد مفتاح الوصول",
     "Access secret": "سر الوصول",
-    "Access secret - Tooltip": "Secret key credential",
+    "Access secret - Tooltip": "بيانات اعتماد المفتاح السري",
     "Access token is empty": "رمز الوصول فارغ",
     "Action": "الإجراء",
     "Adapter": "المحول",
@@ -248,7 +248,7 @@
     "Affiliation URL - Tooltip": "رابط الصفحة الرئيسية للانتماء",
     "All": "الكل",
     "Application": "التطبيق",
-    "Application - Tooltip": "Associated application",
+    "Application - Tooltip": "التطبيق المرتبط",
     "Applications": "التطبيقات",
     "Applications that require authentication": "التطبيقات التي تتطلب المصادقة",
     "Apps": "التطبيقات",
@@ -279,7 +279,7 @@
     "Default avatar": "الصورة الرمزية الافتراضية",
     "Default avatar - Tooltip": "الصورة الرمزية الافتراضية المستخدمة عندما لا يضع المستخدمون الجدد صورة",
     "Default password": "كلمة المرور الافتراضية",
-    "Default password - Tooltip": "When adding new user, if the user's password is not specified, the default password will be used as the user's password",
+    "Default password - Tooltip": "عند إضافة مستخدم جديد، إذا لم يتم تحديد كلمة مرور المستخدم، سيتم استخدام كلمة المرور الافتراضية ككلمة مرور المستخدم",
     "Delete": "حذف",
     "Description": "الوصف",
     "Description - Tooltip": "معلومات وصفية مفصلة للرجوع إليها، لن تستخدمها Casdoor نفسها",
@@ -295,7 +295,7 @@
     "Email or Phone": "البريد الإلكتروني أو الهاتف",
     "Enable": "تمكين",
     "Enable dark logo": "تمكين الشعار المظلم",
-    "Enable dark logo - Tooltip": "Enable dark logo",
+    "Enable dark logo - Tooltip": "تمكين الشعار الداكن",
     "Enable tour": "تمكين الجولة",
     "Enable tour - Tooltip": "عرض الجولة للمستخدمين",
     "Enabled": "مُمكَّن",
@@ -315,8 +315,8 @@
     "Favicon": "الرمز المفضل",
     "Favicon - Tooltip": "رابط رمز الموقع المستخدم في جميع صفحات Casdoor الخاصة بالمنظمة",
     "First name": "الاسم الأول",
-    "First name - Tooltip": "The first name of user",
-    "Forced redirect origin - Tooltip": "Force redirect to a specific origin URL after authentication",
+    "First name - Tooltip": "الاسم الأول للمستخدم",
+    "Forced redirect origin - Tooltip": "فرض إعادة التوجيه إلى عنوان URL أصلي محدد بعد المصادقة",
     "Forget URL": "رابط نسيان كلمة المرور",
     "Forget URL - Tooltip": "رابط مخصص لصفحة \"نسيان كلمة المرور\". إذا لم يتم تعيينه، ستُستخدم صفحة Casdoor الافتراضية. عند التعيين، ستُعيد توجيه روابط \"نسيان كلمة المرور\" إلى هذا الرابط",
     "Forms": "Forms",
@@ -324,14 +324,14 @@
     "Go to enable": "الانتقال للتمكين",
     "Go to writable demo site?": "الانتقال إلى موقع تجريبي قابل للكتابة؟",
     "Groups": "المجموعات",
-    "Groups - Tooltip": "User groups this applies to",
+    "Groups - Tooltip": "مجموعات المستخدمين التي ينطبق عليها هذا",
     "Hide password": "إخفاء كلمة المرور",
     "Home": "الرئيسية",
     "Home - Tooltip": "الصفحة الرئيسية للتطبيق",
     "ID": "المعرف",
     "ID - Tooltip": "سلسلة عشوائية فريدة",
     "IP whitelist": "قائمة IP البيضاء",
-    "IP whitelist - Tooltip": "List of IP addresses or CIDR ranges that are allowed access",
+    "IP whitelist - Tooltip": "قائمة عناوين IP أو نطاقات CIDR المسموح بها بالوصول",
     "Identity": "الهوية",
     "Invitations": "الدعوات",
     "Is enabled": "مُفعَّل",
@@ -343,7 +343,7 @@
     "Languages": "اللغات",
     "Languages - Tooltip": "اللغات المتاحة",
     "Last name": "الاسم الأخير",
-    "Last name - Tooltip": "The last name of user",
+    "Last name - Tooltip": "اسم العائلة للمستخدم",
     "Later": "لاحقًا",
     "Logging & Auditing": "التسجيل والمراجعة",
     "Login page": "Login page",
@@ -352,11 +352,11 @@
     "Logo dark": "الشعار المظلم",
     "Logo dark - Tooltip": "الشعار المستخدم في الوضع المظلم",
     "MFA items": "عناصر MFA",
-    "MFA items - Tooltip": "Multi-factor authentication methods available",
+    "MFA items - Tooltip": "طرق المصادقة متعددة العوامل المتاحة",
     "Master password": "كلمة المرور الرئيسية",
     "Master password - Tooltip": "يمكن استخدامها لتسجيل الدخول لجميع المستخدمين ضمن هذه المنظمة، مما يسهل على المسؤولين تسجيل الدخول باسم هذا المستخدم لحل المشكلات التقنية",
     "Master verification code": "رمز التحقق الرئيسي",
-    "Master verification code - Tooltip": "When the master verification code is set, all email and SMS verification codes sent under this organization will use this fixed code. It's mainly used for automated testing and CI purposes and is generally not used in normal environments",
+    "Master verification code - Tooltip": "عند تعيين رمز التحقق الرئيسي، ستستخدم جميع رموز التحقق عبر البريد الإلكتروني والرسائل النصية المرسلة ضمن هذه المنظمة هذا الرمز الثابت. يتم استخدامه بشكل أساسي لأغراض الاختبار الآلي والتكامل المستمر وعادة لا يستخدم في البيئات العادية",
     "Menu": "القائمة",
     "Method": "الطريقة",
     "Model": "النموذج",
@@ -377,15 +377,15 @@
     "Password complexity options": "خيارات تعقيد كلمة المرور",
     "Password complexity options - Tooltip": "تركيبات مختلفة من خيارات تعقيد كلمة المرور",
     "Password obf key": "مفتاح تشويش كلمة المرور",
-    "Password obf key - Tooltip": "Encryption key used for password obfuscation",
+    "Password obf key - Tooltip": "مفتاح التشفير المستخدم لإخفاء كلمة المرور",
     "Password obfuscator": "مشوش كلمة المرور",
-    "Password obfuscator - Tooltip": "Method used to obfuscate passwords when sent from frontend to backend",
+    "Password obfuscator - Tooltip": "الطريقة المستخدمة لإخفاء كلمات المرور عند إرسالها من الواجهة الأمامية إلى الخلفية",
     "Password salt": "ملح كلمة المرور",
     "Password salt - Tooltip": "المعلمة العشوائية المستخدمة لتشفير كلمة المرور",
     "Password type": "نوع كلمة المرور",
     "Password type - Tooltip": "تنسيق تخزين كلمات المرور في قاعدة البيانات",
     "Payment": "الدفع",
-    "Payment - Tooltip": "Associated payment record",
+    "Payment - Tooltip": "سجل الدفع المرتبط",
     "Payments": "المدفوعات",
     "Permissions": "الأذونات",
     "Permissions - Tooltip": "الأذونات التي يملكها هذا المستخدم",
@@ -395,13 +395,13 @@
     "Phone or Email": "الهاتف أو البريد الإلكتروني",
     "Plain": "نص عادي",
     "Plan": "الخطة",
-    "Plan - Tooltip": "Subscription plan",
+    "Plan - Tooltip": "خطة الاشتراك",
     "Plans": "الخطط",
-    "Plans - Tooltip": "Available subscription plans",
+    "Plans - Tooltip": "خطط الاشتراك المتاحة",
     "Preview": "معاينة",
     "Preview - Tooltip": "معاينة التأثيرات المُعدّلة",
     "Pricing": "الأسعار",
-    "Pricing - Tooltip": "Pricing information",
+    "Pricing - Tooltip": "معلومات التسعير",
     "Pricings": "الأسعار",
     "Products": "المنتجات",
     "Provider": "المزود",
@@ -417,13 +417,13 @@
     "Reset to Default": "Reset to Default",
     "Resources": "الموارد",
     "Role": "الدور",
-    "Role - Tooltip": "User role assigned",
+    "Role - Tooltip": "دور المستخدم المعين",
     "Roles": "الأدوار",
     "Roles - Tooltip": "الأدوار التي ينتمي إليها المستخدم",
     "Root cert": "الشهادة الجذرية",
-    "Root cert - Tooltip": "Root certificate for SSL/TLS",
+    "Root cert - Tooltip": "الشهادة الجذرية لـ SSL/TLS",
     "SAML attributes": "سمات SAML",
-    "SAML attributes - Tooltip": "Custom SAML attributes to include in the assertion",
+    "SAML attributes - Tooltip": "خصائص SAML المخصصة لتضمينها في التأكيد",
     "SSH cert": "شهادة SSH",
     "SSH type": "نوع SSH",
     "SSH type - Tooltip": "نوع المصادقة لاتصال SSH",
@@ -440,11 +440,17 @@
     "Signup application": "تطبيق التسجيل",
     "Signup application - Tooltip": "التطبيق الذي سجّل المستخدم من خلاله عند التسجيل",
     "Signup link": "رابط التسجيل",
-    "Sorry, the page you visited does not exist.": "عذرًا، الصفحة التي زرتها غير موجودة.",
-    "Sorry, the user you visited does not exist or you are not authorized to access this user.": "عذرًا، المستخدم الذي زرته غير موجود أو ليس لديك صلاحية الوصول إليه.",
-    "Sorry, you do not have permission to access this page or logged in status invalid.": "عذرًا، ليس لديك صلاحية الوصول إلى هذه الصفحة أو حالة تسجيل الدخول غير صالحة.",
+    "Sorry, the page you visited does not exist": {
+      "": "عذرًا، الصفحة التي زرتها غير موجودة."
+    },
+    "Sorry, the user you visited does not exist or you are not authorized to access this user": {
+      "": "عذرًا، المستخدم الذي زرته غير موجود أو ليس لديك صلاحية الوصول إليه."
+    },
+    "Sorry, you do not have permission to access this page or logged in status invalid": {
+      "": "عذرًا، ليس لديك صلاحية الوصول إلى هذه الصفحة أو حالة تسجيل الدخول غير صالحة."
+    },
     "State": "الحالة",
-    "State - Tooltip": "State",
+    "State - Tooltip": "الولاية",
     "Subscriptions": "الاشتراكات",
     "Successfully added": "تمت الإضافة بنجاح",
     "Successfully copied": "Successfully copied",
@@ -463,19 +469,23 @@
     "Syncers": "المزامنات",
     "System Info": "معلومات النظام",
     "Tab": "Tab",
-    "There was a problem signing you in..": "حدثت مشكلة أثناء تسجيل دخولك..",
+    "There was a problem signing you in": {
+      "": {
+        "": "حدثت مشكلة أثناء تسجيل دخولك.."
+      }
+    },
     "This is a read-only demo site!": "هذا موقع تجريبي للقراءة فقط!",
     "Timestamp": "الطابع الزمني",
     "Title": "Title",
-    "Title - Tooltip": "Display title",
+    "Title - Tooltip": "عنوان العرض",
     "Token attributes": "Token attributes",
-    "Token attributes - Tooltip": "Custom attributes to include in the token",
+    "Token attributes - Tooltip": "الخصائص المخصصة لتضمينها في الرمز",
     "Tokens": "الرموز",
     "Tour": "الجولة",
     "Transactions": "المعاملات",
     "True": "صحيح",
     "Type": "النوع",
-    "Type - Tooltip": "Type classification",
+    "Type - Tooltip": "تصنيف النوع",
     "URL": "الرابط",
     "URL - Tooltip": "رابط URL",
     "Up": "أعلى",
@@ -487,7 +497,7 @@
     "User type": "نوع المستخدم",
     "User type - Tooltip": "الوسوم التي ينتمي إليها المستخدم، الافتراضي هو \"مستخدم عادي\"",
     "Users": "المستخدمون",
-    "Users - Tooltip": "Users this applies to",
+    "Users - Tooltip": "المستخدمون الذين ينطبق عليهم هذا",
     "Users under all organizations": "المستخدمون تحت جميع المنظمات",
     "Verifications": "التحققات",
     "Webhooks": "واجهات الويب المتقنة",
@@ -500,12 +510,16 @@
     "Edit Group": "تحرير المجموعة",
     "New Group": "مجموعة جديدة",
     "Parent group": "المجموعة الأب",
-    "Parent group - Tooltip": "Parent group in the hierarchy",
+    "Parent group - Tooltip": "المجموعة الأصلية في التسلسل الهرمي",
     "Physical": "مادي",
     "Show all": "عرض الكل",
-    "Upload (.xlsx)": "تحميل (.xlsx)",
+    "Upload (": {
+      "xlsx)": "تحميل (.xlsx)"
+    },
     "Virtual": "افتراضي",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
+    "You need to delete all subgroups first": {
+      " You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
+    }
   },
   "home": {
     "New users past 30 days": "مستخدمون جدد خلال آخر 30 يومًا",
@@ -516,15 +530,15 @@
   },
   "invitation": {
     "Code": "الرمز",
-    "Code - Tooltip": "Can be a single string as an invitation code, or a regular expression. All strings matching the regular expression are valid invitation codes",
+    "Code - Tooltip": "يمكن أن يكون سلسلة نصية واحدة كرمز دعوة، أو تعبير عادي. جميع السلاسل النصية المطابقة للتعبير العادي هي رموز دعوة صالحة",
     "Default code": "الرمز الافتراضي",
     "Default code - Tooltip": "عندما يكون رمز الدعوة عبارة عن تعبير منتظم، يرجى إدخال رمز الدعوة الذي يطابق قاعدة التعبير المنتظم كرمز الدعوة الافتراضي لرابط الدعوة",
     "Edit Invitation": "تعديل الدعوة",
     "New Invitation": "دعوة جديدة",
     "Quota": "الحصة",
-    "Quota - Tooltip": "The maximum number of users that can register using this invitation code",
+    "Quota - Tooltip": "الحد الأقصى لعدد المستخدمين الذين يمكنهم التسجيل باستخدام رمز الدعوة هذا",
     "Used count": "عدد الاستخدام",
-    "Used count - Tooltip": "The number of times this invitation code has been used",
+    "Used count - Tooltip": "عدد المرات التي تم فيها استخدام رمز الدعوة هذا",
     "You need to first specify a default application for organization: ": "يجب عليك أولاً تحديد تطبيق افتراضي للمنظمة: "
   },
   "ldap": {
@@ -533,26 +547,26 @@
     "Admin Password": "كلمة مرور المسؤول",
     "Admin Password - Tooltip": "كلمة مرور مسؤول خادم LDAP",
     "Allow self-signed certificate": "السماح بالشهادات الموقعة ذاتياً",
-    "Allow self-signed certificate - Tooltip": "Allow connections to LDAP servers with self-signed certificates",
+    "Allow self-signed certificate - Tooltip": "السماح بالاتصالات بخوادم LDAP ذات الشهادات الموقعة ذاتيًا",
     "Auto Sync": "مزامنة تلقائية",
     "Auto Sync - Tooltip": "تهيئة المزامنة التلقائية، معطل عند 0",
     "Base DN": "الاسم المميز الأساسي",
     "Base DN - Tooltip": "Base DN أثناء البحث في LDAP",
     "CN": "الاسم المشترك",
     "Custom attributes": "Custom attributes",
-    "Custom attributes - Tooltip": "Custom LDAP attributes to retrieve",
+    "Custom attributes - Tooltip": "خصائص LDAP المخصصة لاسترجاعها",
     "Default group": "المجموعة الافتراضية",
     "Default group - Tooltip": "المجموعة التي ينتمي إليها المستخدمون بعد المزامنة",
     "Edit LDAP": "تعديل LDAP",
     "Enable SSL": "تمكين SSL",
     "Enable SSL - Tooltip": "ما إذا كان سيتم تمكين SSL",
     "Filter fields": "حقول التصفية",
-    "Filter fields - Tooltip": "LDAP fields to use for filtering users",
+    "Filter fields - Tooltip": "حقول LDAP المستخدمة لتصفية المستخدمين",
     "Group ID": "معرف المجموعة",
     "LDAP attribute name": "LDAP attribute name",
     "Last Sync": "آخر مزامنة",
     "Search Filter": "مرشح البحث",
-    "Search Filter - Tooltip": "LDAP search filter expression",
+    "Search Filter - Tooltip": "تعبير مرشح بحث LDAP",
     "Server": "الخادم",
     "Server host": "مضيف الخادم",
     "Server host - Tooltip": "عنوان خادم LDAP",
@@ -581,7 +595,13 @@
     "LDAP": "خدمة الدليل المشترك الخاطئ",
     "LDAP username, Email or phone": "اسم مستخدم LDAP أو البريد الإلكتروني أو الهاتف",
     "Loading": "جار التحميل",
-    "Logging out...": "جار تسجيل الخروج...",
+    "Logging out": {
+      "": {
+        "": {
+          "": "جار تسجيل الخروج..."
+        }
+      }
+    },
     "MetaMask plugin not detected": "لم يتم اكتشاف ملحق MetaMask",
     "Model loading failure": "فشل تحميل النموذج",
     "No account?": "ليس لديك حساب؟",
@@ -601,7 +621,9 @@
     "Please select an organization": "يرجى اختيار منظمة",
     "Please select an organization to sign in": "يرجى اختيار منظمة لتسجيل الدخول",
     "Please type an organization to sign in": "يرجى كتابة منظمة لتسجيل الدخول",
-    "Redirecting, please wait.": "جار إعادة التوجيه، يرجى الانتظار.",
+    "Redirecting, please wait": {
+      "": "جار إعادة التوجيه، يرجى الانتظار."
+    },
     "Refresh": "تحديث",
     "Select organization": "Select organization",
     "Sign In": "تسجيل الدخول",
@@ -609,7 +631,13 @@
     "Sign in with WebAuthn": "تسجيل الدخول باستخدام WebAuthn",
     "Sign in with {type}": "تسجيل الدخول باستخدام {type}",
     "Signin button": "زر تسجيل الدخول",
-    "Signing in...": "جار تسجيل الدخول...",
+    "Signing in": {
+      "": {
+        "": {
+          "": "جار تسجيل الدخول..."
+        }
+      }
+    },
     "Successfully logged in with WebAuthn credentials": "تم تسجيل الدخول بنجاح باستخدام بيانات اعتماد WebAuthn",
     "The camera is currently in use by another webpage": "الكاميرا قيد الاستخدام حالياً من قبل صفحة ويب أخرى",
     "The input is not valid Email or phone number!": "الإدخال ليس بريداً إلكترونياً أو رقم هاتف صالح!",
@@ -637,7 +665,9 @@
     "Please bind your email first, the system will automatically uses the mail for multi-factor authentication": "يرجى ربط بريدك الإلكتروني أولاً، سيستخدم النظام البريد تلقائياً للمصادقة متعددة العوامل",
     "Please bind your phone first, the system automatically uses the phone for multi-factor authentication": "يرجى ربط هاتفك أولاً، سيستخدم النظام الهاتف تلقائياً للمصادقة متعددة العوامل",
     "Please confirm the information below": "يرجى تأكيد المعلومات أدناه",
-    "Please save this recovery code. Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "يرجى حفظ رمز الاستعادة هذا. إذا لم يتمكن جهازك من تقديم رمز مصادقة، يمكنك إعادة تعيين مصادقة MFA باستخدام رمز الاستعادة هذا",
+    "Please save this recovery code": {
+      " Once your device cannot provide an authentication code, you can reset mfa authentication by this recovery code": "يرجى حفظ رمز الاستعادة هذا. إذا لم يتمكن جهازك من تقديم رمز مصادقة، يمكنك إعادة تعيين مصادقة MFA باستخدام رمز الاستعادة هذا"
+    },
     "Protect your account with Multi-factor authentication": "حمِ حسابك باستخدام المصادقة متعددة العوامل",
     "Recovery code": "Kurtarma kodu",
     "Remember this account for {hour} hours": "تذكر هذا الحساب لمدة {hour} ساعات",
@@ -682,11 +712,11 @@
     "Is profile public - Tooltip": "عند الإغلاق، يمكن فقط للمسؤولين العامين أو المستخدمين في نفس المنظمة الوصول إلى صفحة الملف الشخصي للمستخدم",
     "Modify rule": "قاعدة التعديل",
     "Navbar items": "عناصر شريط التنقل",
-    "Navbar items - Tooltip": "Items to display in the navigation bar",
+    "Navbar items - Tooltip": "العناصر التي سيتم عرضها في شريط التنقل",
     "New Organization": "منظمة جديدة",
     "Optional": "اختياري",
     "Password expire days": "أيام انتهاء صلاحية كلمة المرور",
-    "Password expire days - Tooltip": "Number of days until passwords expire and must be changed",
+    "Password expire days - Tooltip": "عدد الأيام حتى انتهاء صلاحية كلمات المرور ويجب تغييرها",
     "Prompt": "الطلب",
     "Required": "مطلوب",
     "Soft deletion": "الحذف الناعم",
@@ -696,13 +726,13 @@
     "Use Email as username": "استخدم البريد الإلكتروني كاسم مستخدم",
     "Use Email as username - Tooltip": "استخدم البريد الإلكتروني كاسم مستخدم إذا لم يكن حقل اسم المستخدم مرئياً عند التسجيل",
     "User types": "أنواع المستخدمين",
-    "User types - Tooltip": "Types of users supported by this organization",
+    "User types - Tooltip": "أنواع المستخدمين المدعومة من قبل هذه المنظمة",
     "View rule": "قاعدة العرض",
     "Visible": "مرئي",
     "Website URL": "رابط الموقع",
     "Website URL - Tooltip": "رابط الصفحة الرئيسية للمنظمة. لا يُستخدم هذا الحقل في Casdoor",
     "Widget items": "عناصر الودجت",
-    "Widget items - Tooltip": "Widgets to display in the user interface"
+    "Widget items - Tooltip": "الأدوات التي سيتم عرضها في واجهة المستخدم"
   },
   "payment": {
     "Confirm your invoice information": "تأكيد معلومات الفاتورة",
@@ -736,10 +766,20 @@
     "Person name - Tooltip": "الاسم الكامل للدافع",
     "Person phone": "هاتف الدافع",
     "Person phone - Tooltip": "رقم هاتف الدافع",
-    "Please carefully check your invoice information. Once the invoice is issued, it cannot be withdrawn or modified.": "يرجى التحقق بعناية من معلومات الفاتورة. بمجرد إصدار الفاتورة، لا يمكن سحبها أو تعديلها.",
+    "Please carefully check your invoice information": {
+      " Once the invoice is issued, it cannot be withdrawn or modified": {
+        "": "يرجى التحقق بعناية من معلومات الفاتورة. بمجرد إصدار الفاتورة، لا يمكن سحبها أو تعديلها."
+      }
+    },
     "Please click the below button to return to the original website": "يرجى النقر على الزر أدناه للعودة إلى الموقع الأصلي",
     "Please pay the order first!": "يرجى دفع الطلب أولاً!",
-    "Processing...": "جار المعالجة...",
+    "Processing": {
+      "": {
+        "": {
+          "": "جار المعالجة..."
+        }
+      }
+    },
     "Product": "المنتج",
     "Product - Tooltip": "اسم المنتج",
     "Recharged successfully": "تمت إعادة الشحن بنجاح",
@@ -753,7 +793,13 @@
     "You have successfully completed the payment": "لقد أكملت الدفع بنجاح",
     "You have successfully recharged": "لقد أعدت الشحن بنجاح",
     "Your current balance is": "رصيدك الحالي هو",
-    "please wait for a few seconds...": "يرجى الانتظار لبضع ثوانٍ...",
+    "please wait for a few seconds": {
+      "": {
+        "": {
+          "": "يرجى الانتظار لبضع ثوانٍ..."
+        }
+      }
+    },
     "the current state is": "الحالة الحالية هي"
   },
   "permission": {
@@ -785,9 +831,9 @@
     "Edit Plan": "تعديل الخطة",
     "New Plan": "خطة جديدة",
     "Period": "الفترة",
-    "Period - Tooltip": "Period for the plan",
+    "Period - Tooltip": "مدة الخطة",
     "Price": "السعر",
-    "Price - Tooltip": "Price needs to pay to subscribe the plan",
+    "Price - Tooltip": "السعر المطلوب دفعه للاشتراك في الخطة",
     "Related product": "المنتج المرتبط",
     "per month": "شهرياً",
     "per year": "سنوياً"
@@ -824,7 +870,13 @@
     "Payment failed": "فشل الدفع",
     "Payment providers": "مزودو الدفع",
     "Payment providers - Tooltip": "مزودو خدمات الدفع",
-    "Placing order...": "جارٍ تقديم الطلب...",
+    "Placing order": {
+      "": {
+        "": {
+          "": "جارٍ تقديم الطلب..."
+        }
+      }
+    },
     "Price": "السعر",
     "Price - Tooltip": "سعر المنتج",
     "Quantity": "الكمية",
@@ -838,9 +890,17 @@
     "Success URL": "رابط النجاح",
     "Success URL - Tooltip": "الرابط للعودة إليه بعد الشراء",
     "Tag - Tooltip": "وسم المنتج",
-    "Test buy page..": "صفحة شراء تجريبية..",
-    "There is no payment channel for this product.": "لا يوجد قناة دفع لهذا المنتج.",
-    "This product is currently not in sale.": "هذا المنتج غير متاح للبيع حالياً.",
+    "Test buy page": {
+      "": {
+        "": "صفحة شراء تجريبية.."
+      }
+    },
+    "There is no payment channel for this product": {
+      "": "لا يوجد قناة دفع لهذا المنتج."
+    },
+    "This product is currently not in sale": {
+      "": "هذا المنتج غير متاح للبيع حالياً."
+    },
     "WeChat Pay": "ويشات باي"
   },
   "provider": {
@@ -849,21 +909,21 @@
     "Agent ID": "معرف الوكيل",
     "Agent ID - Tooltip": "معرف الوكيل",
     "Api Key": "مفتاح API",
-    "Api Key - Tooltip": "API key for the provider",
+    "Api Key - Tooltip": "مفتاح API للموفر",
     "App ID": "معرف التطبيق",
     "App ID - Tooltip": "معرف التطبيق",
     "App Key": "مفتاح التطبيق",
-    "App Key - Tooltip": "Application key for the provider",
+    "App Key - Tooltip": "مفتاح التطبيق للموفر",
     "App key": "مفتاح التطبيق",
     "App key - Tooltip": "مفتاح التطبيق",
     "App secret": "سر التطبيق",
     "AppSecret - Tooltip": "سر التطبيق",
     "Auth Key": "مفتاح المصادقة",
-    "Auth Key - Tooltip": "Authentication key for the provider",
+    "Auth Key - Tooltip": "مفتاح المصادقة للموفر",
     "Auth URL": "رابط المصادقة",
     "Auth URL - Tooltip": "رابط المصادقة",
     "Base URL": "الرابط الأساسي",
-    "Base URL - Tooltip": "Base URL endpoint for the provider's API",
+    "Base URL - Tooltip": "نقطة نهاية عنوان URL الأساسي لواجهة برمجة التطبيقات الخاصة بالموفر",
     "Bucket": "الحاوية",
     "Bucket - Tooltip": "اسم الحاوية",
     "Can not parse metadata": "لا يمكن تحليل البيانات الوصفية",
@@ -872,10 +932,12 @@
     "Can unlink": "يمكن فك الارتباط",
     "Category": "الفئة",
     "Category - Tooltip": "اختر فئة",
-    "Channel No.": "رقم القناة",
-    "Channel No. - Tooltip": "رقم القناة",
+    "Channel No": {
+      "": "رقم القناة",
+      " - Tooltip": "رقم القناة"
+    },
     "Chat ID": "معرف الدردشة",
-    "Chat ID - Tooltip": "Chat or channel ID for messaging",
+    "Chat ID - Tooltip": "معرف الدردشة أو القناة للمراسلة",
     "Client ID": "معرف العميل",
     "Client ID - Tooltip": "معرف العميل",
     "Client ID 2": "معرف العميل 2",
@@ -885,10 +947,10 @@
     "Client secret 2": "سر العميل 2",
     "Client secret 2 - Tooltip": "المفتاح السري الثاني للعميل",
     "Content": "المحتوى",
-    "Content - Tooltip": "Message content template",
+    "Content - Tooltip": "نموذج محتوى الرسالة",
     "Copy": "نسخ",
     "DB test": "اختبار قاعدة البيانات",
-    "DB test - Tooltip": "Test the connectivity to the database",
+    "DB test - Tooltip": "اختبار الاتصال بقاعدة البيانات",
     "Disable SSL": "تعطيل SSL",
     "Disable SSL - Tooltip": "ما إذا كان سيتم تعطيل بروتوكول SSL عند الاتصال بخادم SMTP",
     "Domain": "النطاق",
@@ -897,12 +959,12 @@
     "Email content": "محتوى البريد الإلكتروني",
     "Email content - Tooltip": "محتوى البريد الإلكتروني",
     "Email regex": "تعبير منتظم للبريد",
-    "Email regex - Tooltip": "Regular expression pattern for validating email addresses",
+    "Email regex - Tooltip": "نمط التعبير العادي للتحقق من صحة عناوين البريد الإلكتروني",
     "Email title": "عنوان البريد الإلكتروني",
     "Email title - Tooltip": "عنوان البريد الإلكتروني",
     "Endpoint": "نقطة النهاية",
     "Endpoint (Intranet)": "نقطة النهاية (الشبكة الداخلية)",
-    "Endpoint - Tooltip": "API endpoint URL",
+    "Endpoint - Tooltip": "عنوان URL لنقطة نهاية واجهة برمجة التطبيقات",
     "Follow-up action": "الإجراء التالي",
     "Follow-up action - Tooltip": "إذا اخترت \"استخدام WeChat Open Platform لتسجيل الدخول\"، سيحتاج المستخدمون لتسجيل الدخول في WeChat Open Platform بعد متابعة الحساب الرسمي.",
     "From address": "عنوان المرسل",
@@ -914,7 +976,7 @@
     "HTTP body mapping": "تعيين جسم HTTP",
     "HTTP body mapping - Tooltip": "تعيين جسم HTTP",
     "HTTP header": "رأس HTTP",
-    "HTTP header - Tooltip": "Custom HTTP headers to include in requests",
+    "HTTP header - Tooltip": "رؤوس HTTP المخصصة لتضمينها في الطلبات",
     "Host": "المضيف",
     "Host - Tooltip": "اسم المضيف",
     "IdP": "مزود الهوية",
@@ -923,18 +985,18 @@
     "Issuer URL": "رابط المصدر",
     "Issuer URL - Tooltip": "رابط المصدر",
     "Key ID": "معرف المفتاح",
-    "Key ID - Tooltip": "Key ID",
+    "Key ID - Tooltip": "معرف المفتاح",
     "Key text": "نص المفتاح",
-    "Key text - Tooltip": "Key text",
+    "Key text - Tooltip": "نص المفتاح",
     "Metadata": "البيانات الوصفية",
     "Metadata - Tooltip": "بيانات SAML الوصفية",
     "Metadata url": "رابط البيانات الوصفية",
-    "Metadata url - Tooltip": "URL to fetch provider metadata",
+    "Metadata url - Tooltip": "عنوان URL لجلب البيانات الوصفية للموفر",
     "Method - Tooltip": "طريقة تسجيل الدخول، رمز QR أو تسجيل صامت",
     "New Provider": "مزود جديد",
     "Normal": "عادي",
     "Parameter": "المعامل",
-    "Parameter - Tooltip": "Additional parameters for the provider",
+    "Parameter - Tooltip": "معلمات إضافية للموفر",
     "Parse": "تحليل",
     "Parse metadata successfully": "تم تحليل البيانات الوصفية بنجاح",
     "Path prefix": "بادئة المسار",
@@ -943,23 +1005,25 @@
     "Port": "المنفذ",
     "Port - Tooltip": "تأكد من فتح المنفذ",
     "Private Key": "المفتاح الخاص",
-    "Private Key - Tooltip": "Private key for encryption/signing",
+    "Private Key - Tooltip": "المفتاح الخاص للتشفير/التوقيع",
     "Project Id": "معرف المشروع",
-    "Project Id - Tooltip": "Project identifier for the provider",
+    "Project Id - Tooltip": "معرف المشروع للموفر",
     "Prompted": "تم الإعلام",
-    "Provider - Tooltip": "Authentication or service provider",
+    "Provider - Tooltip": "موفر المصادقة أو الخدمة",
     "Provider URL": "رابط المزود",
     "Provider URL - Tooltip": "رابط لتكوين مزود الخدمة، يُستخدم فقط كمرجع ولا يُستخدم في Casdoor",
     "Public key": "المفتاح العام",
-    "Public key - Tooltip": "Public key for encryption/verification",
+    "Public key - Tooltip": "المفتاح العام للتشفير/التحقق",
     "Region": "المنطقة",
-    "Region - Tooltip": "Geographic region for the service",
+    "Region - Tooltip": "المنطقة الجغرافية للخدمة",
     "Region ID": "معرف المنطقة",
     "Region ID - Tooltip": "معرف المنطقة لمزود الخدمة",
     "Region endpoint for Internet": "نقطة نهاية المنطقة للإنترنت",
     "Region endpoint for Intranet": "نقطة نهاية المنطقة للشبكة الداخلية",
     "Required": "مطلوب",
-    "SAML 2.0 Endpoint (HTTP)": "نقطة نهاية SAML 2.0 (HTTP)",
+    "SAML 2": {
+      "0 Endpoint (HTTP)": "نقطة نهاية SAML 2.0 (HTTP)"
+    },
     "SMS Test": "اختبار الرسائل القصيرة",
     "SMS Test - Tooltip": "رقم الهاتف لإرسال رسالة تجريبية",
     "SMS account": "حساب الرسائل القصيرة",
@@ -980,13 +1044,13 @@
     "Send Testing Notification": "إرسال إشعار تجريبي",
     "Send Testing SMS": "إرسال رسالة تجريبية",
     "Sender Id": "معرف المرسل",
-    "Sender Id - Tooltip": "Sender identifier for messaging",
+    "Sender Id - Tooltip": "معرف المرسل للمراسلة",
     "Sender number": "رقم المرسل",
-    "Sender number - Tooltip": "Phone number used for sending messages",
+    "Sender number - Tooltip": "رقم الهاتف المستخدم لإرسال الرسائل",
     "Service ID identifier": "معرف معرف الخدمة",
-    "Service ID identifier - Tooltip": "Service ID identifier",
+    "Service ID identifier - Tooltip": "معرف معرف الخدمة",
     "Service account JSON": "حساب الخدمة JSON",
-    "Service account JSON - Tooltip": "The JSON file content for the service account",
+    "Service account JSON - Tooltip": "محتوى ملف JSON لحساب الخدمة",
     "Sign Name": "اسم التوقيع",
     "Sign Name - Tooltip": "اسم التوقيع المطلوب استخدامه",
     "Sign request": "توقيع الطلب",
@@ -998,7 +1062,7 @@
     "Signup HTML - Edit": "HTML التسجيل - تعديل",
     "Signup HTML - Tooltip": "HTML مخصص لاستبدال نمط صفحة التسجيل الافتراضي",
     "Signup group": "مجموعة التسجيل",
-    "Signup group - Tooltip": "Default group for new users signing up through this provider",
+    "Signup group - Tooltip": "المجموعة الافتراضية للمستخدمين الجدد الذين يسجلون من خلال هذا الموفر",
     "Silent": "صامت",
     "Site key": "مفتاح الموقع",
     "Site key - Tooltip": "مفتاح الموقع",
@@ -1007,7 +1071,7 @@
     "Subject": "الموضوع",
     "Subject - Tooltip": "موضوع البريد الإلكتروني",
     "Team ID": "معرف الفريق",
-    "Team ID - Tooltip": "Team ID",
+    "Team ID - Tooltip": "معرف الفريق",
     "Template code": "رمز القالب",
     "Template code - Tooltip": "رمز القالب",
     "Tenant ID": "معرف العميل",
@@ -1026,17 +1090,17 @@
     "Use WeChat Media Platform to login": "استخدام WeChat Media Platform لتسجيل الدخول",
     "Use WeChat Open Platform to login": "استخدام WeChat Open Platform لتسجيل الدخول",
     "Use global endpoint": "استخدام نقطة النهاية العالمية",
-    "Use global endpoint - Tooltip": "Use the global endpoint instead of regional endpoints",
+    "Use global endpoint - Tooltip": "استخدام نقطة النهاية العالمية بدلاً من نقاط النهاية الإقليمية",
     "Use id as name": "استخدام المعرف كاسم",
     "Use id as name - Tooltip": "استخدام المعرف كاسم المستخدم",
     "User flow": "تدفق المستخدم",
-    "User flow - Tooltip": "User flow",
+    "User flow - Tooltip": "تدفق المستخدم",
     "User mapping": "تعيين المستخدم",
-    "User mapping - Tooltip": "Mapping between provider user attributes and Casdoor user attributes",
+    "User mapping - Tooltip": "التعيين بين خصائص مستخدم الموفر وخصائص مستخدم Casdoor",
     "UserInfo URL": "رابط معلومات المستخدم",
     "UserInfo URL - Tooltip": "رابط معلومات المستخدم",
     "Wallets": "المحافظ",
-    "Wallets - Tooltip": "Cryptocurrency wallets associated with this provider",
+    "Wallets - Tooltip": "محافظ العملات المشفرة المرتبطة بهذا الموفر",
     "admin (Shared)": "المسؤول (مشترك)"
   },
   "record": {
@@ -1051,7 +1115,13 @@
     "File size": "حجم الملف",
     "Format": "التنسيق",
     "Parent": "الأصل",
-    "Upload a file...": "تحميل ملف..."
+    "Upload a file": {
+      "": {
+        "": {
+          "": "تحميل ملف..."
+        }
+      }
+    }
   },
   "role": {
     "Edit Role": "تعديل الدور",
@@ -1059,7 +1129,7 @@
     "Sub domains": "النطاقات الفرعية",
     "Sub domains - Tooltip": "النطاقات المدرجة في الدور الحالي",
     "Sub groups": "المجموعات الفرعية",
-    "Sub groups - Tooltip": "Groups included in the current role",
+    "Sub groups - Tooltip": "المجموعات المضمنة في الدور الحالي",
     "Sub roles": "الأدوار الفرعية",
     "Sub roles - Tooltip": "الأدوار المدرجة في الدور الحالي",
     "Sub users": "المستخدمون الفرعيون",
@@ -1106,7 +1176,7 @@
     "The input is not valid Email!": "المدخل ليس بريدًا إلكترونيًا صالحًا!",
     "The input is not valid Phone!": "المدخل ليس هاتفًا صالحًا!",
     "Username": "اسم المستخدم",
-    "Username - Tooltip": "Username for the account",
+    "Username - Tooltip": "اسم المستخدم للحساب",
     "Your account has been created!": "تم إنشاء حسابك!",
     "Your confirmed password is inconsistent with the password!": "كلمة المرور المؤكدة غير متطابقة مع كلمة المرور!",
     "sign in now": "سجل الدخول الآن"
@@ -1115,14 +1185,14 @@
     "Active": "نشط",
     "Edit Subscription": "تعديل الاشتراك",
     "End time": "وقت الانتهاء",
-    "End time - Tooltip": "End time of the subscription",
+    "End time - Tooltip": "وقت انتهاء الاشتراك",
     "Error": "خطأ",
     "Expired": "منتهي",
     "New Subscription": "اشتراك جديد",
     "Pending": "قيد الانتظار",
     "Period": "الفترة",
     "Start time": "وقت البدء",
-    "Start time - Tooltip": "Start time of the subscription",
+    "Start time - Tooltip": "وقت بدء الاشتراك",
     "Suspended": "موقوف",
     "Upcoming": "قادم"
   },
@@ -1146,14 +1216,14 @@
     "Is hashed": "مشفر",
     "Is key": "مفتاح",
     "Is read-only": "للقراءة فقط",
-    "Is read-only - Tooltip": "Synchronization is read-only; no changes will be written back to the source",
+    "Is read-only - Tooltip": "المزامنة للقراءة فقط؛ لن يتم كتابة أي تغييرات إلى المصدر",
     "New Syncer": "مزامن جديد",
     "SSH host": "مضيف SSH",
     "SSH password": "كلمة مرور SSH",
     "SSH port": "منفذ SSH",
     "SSH user": "مستخدم SSH",
     "SSL mode": "وضع SSL",
-    "SSL mode - Tooltip": "The SSL mode used when connecting to the database",
+    "SSL mode - Tooltip": "وضع SSL المستخدم عند الاتصال بقاعدة البيانات",
     "Sync interval": "فترة المزامنة",
     "Sync interval - Tooltip": "الوحدة بالثواني",
     "Table": "الجدول",
@@ -1166,7 +1236,9 @@
     "API Latency": "زمن وصول الواجهة البرمجية",
     "API Throughput": "إنتاجية الواجهة البرمجية",
     "About Casdoor": "حول Casdoor",
-    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS": "منصة إدارة الهوية والوصول (IAM) / تسجيل الدخول الموحد (SSO) مع واجهة ويب تدعم OAuth 2.0، OIDC، SAML و CAS",
+    "An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2": {
+      "0, OIDC, SAML and CAS": "منصة إدارة الهوية والوصول (IAM) / تسجيل الدخول الموحد (SSO) مع واجهة ويب تدعم OAuth 2.0، OIDC، SAML و CAS"
+    },
     "CPU Usage": "استخدام المعالج",
     "Community": "المجتمع",
     "Count": "العدد",
@@ -1195,19 +1267,19 @@
   },
   "token": {
     "Access token": "رمز الوصول",
-    "Access token - Tooltip": "OAuth access token for API authentication",
+    "Access token - Tooltip": "رمز الوصول OAuth لمصادقة واجهة برمجة التطبيقات",
     "Authorization code": "رمز التفويض",
-    "Authorization code - Tooltip": "OAuth authorization code",
+    "Authorization code - Tooltip": "رمز تفويض OAuth",
     "Copy access token": "نسخ رمز الوصول",
     "Copy parsed result": "نسخ النتيجة المحللة",
     "Edit Token": "تعديل الرمز",
     "Expires in": "تنتهي في",
-    "Expires in - Tooltip": "Time in seconds until the token expires",
+    "Expires in - Tooltip": "الوقت بالثواني حتى انتهاء صلاحية الرمز",
     "New Token": "رمز جديد",
     "Parsed result": "النتيجة المحللة",
-    "Parsed result - Tooltip": "Parsed content of the token",
+    "Parsed result - Tooltip": "المحتوى المحلل للرمز",
     "Token type": "نوع الرمز",
-    "Token type - Tooltip": "Type of token (Bearer, etc.)"
+    "Token type - Tooltip": "نوع الرمز (Bearer، إلخ)"
   },
   "transaction": {
     "Amount": "المبلغ",
@@ -1229,7 +1301,7 @@
     "Bio": "السيرة الذاتية",
     "Bio - Tooltip": "مقدمة ذاتية للمستخدم",
     "Birthday": "تاريخ الميلاد",
-    "Birthday - Tooltip": "User's date of birth",
+    "Birthday - Tooltip": "تاريخ ميلاد المستخدم",
     "Captcha Verify Failed": "فشل التحقق من Captcha",
     "Captcha Verify Success": "نجح التحقق من Captcha",
     "Country code": "رمز البلد",
@@ -1237,24 +1309,24 @@
     "Country/Region - Tooltip": "البلد أو المنطقة",
     "Edit User": "تعديل المستخدم",
     "Education": "التعليم",
-    "Education - Tooltip": "Education level or institution",
+    "Education - Tooltip": "مستوى التعليم أو المؤسسة",
     "Email cannot be empty": "لا يمكن أن يكون البريد الإلكتروني فارغًا",
     "Email/phone reset successfully": "تم إعادة تعيين البريد الإلكتروني/الهاتف بنجاح",
     "Empty input!": "إدخال فارغ!",
     "Face ID": "معرف الوجه",
     "Face IDs": "معرفات الوجه",
     "Gender": "الجنس",
-    "Gender - Tooltip": "User's gender",
+    "Gender - Tooltip": "جنس المستخدم",
     "Homepage": "الصفحة الرئيسية",
     "Homepage - Tooltip": "عنوان URL للصفحة الرئيسية للمستخدم",
     "ID card": "بطاقة الهوية",
-    "ID card - Tooltip": "Identification card number",
+    "ID card - Tooltip": "رقم بطاقة الهوية",
     "ID card back": "ظهر بطاقة الهوية",
     "ID card front": "وجه بطاقة الهوية",
     "ID card info": "معلومات بطاقة الهوية",
-    "ID card info - Tooltip": "Additional identification card information",
+    "ID card info - Tooltip": "معلومات إضافية عن بطاقة الهوية",
     "ID card type": "نوع بطاقة الهوية",
-    "ID card type - Tooltip": "Type of identification card",
+    "ID card type - Tooltip": "نوع بطاقة الهوية",
     "ID card with person": "بطاقة الهوية مع الشخص",
     "Input your email": "أدخل بريدك الإلكتروني",
     "Input your phone number": "أدخل رقم هاتفك",
@@ -1266,17 +1338,23 @@
     "Is forbidden - Tooltip": "المستخدمون الممنوعون لا يمكنهم تسجيل الدخول",
     "Is online": "متصل",
     "Karma": "الكارما",
-    "Karma - Tooltip": "User reputation or karma score",
+    "Karma - Tooltip": "سمعة المستخدم أو درجة الكارما",
     "Keys": "المفاتيح",
     "Language": "اللغة",
-    "Language - Tooltip": "Preferred language",
+    "Language - Tooltip": "اللغة المفضلة",
     "Last change password time": "آخر وقت لتغيير كلمة المرور",
     "Link": "الرابط",
     "Location": "الموقع",
     "Location - Tooltip": "مدينة السكن",
     "MFA accounts": "حسابات MFA",
     "Managed accounts": "الحسابات المدارة",
-    "Modify password...": "تعديل كلمة المرور...",
+    "Modify password": {
+      "": {
+        "": {
+          "": "تعديل كلمة المرور..."
+        }
+      }
+    },
     "Multi-factor authentication": "المصادقة متعددة العوامل",
     "Need update password": "يجب تحديث كلمة المرور",
     "Need update password - Tooltip": "إجبار المستخدم على تحديث كلمة المرور بعد تسجيل الدخول",
@@ -1291,20 +1369,44 @@
     "Properties": "الخصائص",
     "Properties - Tooltip": "خصائص المستخدم",
     "Ranking": "الترتيب",
-    "Ranking - Tooltip": "User ranking or level",
+    "Ranking - Tooltip": "تصنيف أو مستوى المستخدم",
     "Re-enter New": "أعد إدخال الجديد",
     "Register source": "Register source",
-    "Register source - Tooltip": "The source from which the user was registered",
+    "Register source - Tooltip": "المصدر الذي تم تسجيل المستخدم منه",
     "Register type": "Register type",
-    "Register type - Tooltip": "The method used to register the user",
-    "Reset Email...": "إعادة تعيين البريد الإلكتروني...",
-    "Reset Phone...": "إعادة تعيين الهاتف...",
+    "Register type - Tooltip": "الطريقة المستخدمة لتسجيل المستخدم",
+    "Reset Email": {
+      "": {
+        "": {
+          "": "إعادة تعيين البريد الإلكتروني..."
+        }
+      }
+    },
+    "Reset Phone": {
+      "": {
+        "": {
+          "": "إعادة تعيين الهاتف..."
+        }
+      }
+    },
     "Score": "النقاط",
-    "Score - Tooltip": "User score or points",
-    "Select a photo...": "اختر صورة...",
+    "Score - Tooltip": "نقاط أو درجات المستخدم",
+    "Select a photo": {
+      "": {
+        "": {
+          "": "اختر صورة..."
+        }
+      }
+    },
     "Set Password": "تعيين كلمة المرور",
     "Set new profile picture": "تعيين صورة ملف شخصي جديدة",
-    "Set password...": "تعيين كلمة المرور...",
+    "Set password": {
+      "": {
+        "": {
+          "": "تعيين كلمة المرور..."
+        }
+      }
+    },
     "Tag": "العلامة",
     "Tag - Tooltip": "علامة المستخدم",
     "The password must contain at least one special character": "يجب أن تحتوي كلمة المرور على حرف خاص واحد على الأقل",
@@ -1315,9 +1417,13 @@
     "This field value doesn't match the pattern rule": "قيمة هذا الحقل لا تطابق قاعدة النمط",
     "Title": "اللقب",
     "Title - Tooltip": "المنصب في الانتماء",
-    "Two passwords you typed do not match.": "كلمتا المرور اللتان أدخلتهما غير متطابقتين.",
+    "Two passwords you typed do not match": {
+      "": "كلمتا المرور اللتان أدخلتهما غير متطابقتين."
+    },
     "Unlink": "إلغاء الربط",
-    "Upload (.xlsx)": "تحميل (.xlsx)",
+    "Upload (": {
+      "xlsx)": "تحميل (.xlsx)"
+    },
     "Upload ID card back picture": "تحميل صورة ظهر بطاقة الهوية",
     "Upload ID card front picture": "تحميل صورة وجه بطاقة الهوية",
     "Upload ID card with person picture": "تحميل صورة بطاقة الهوية مع الشخص",
@@ -1340,7 +1446,7 @@
     "Events": "الأحداث",
     "Events - Tooltip": "الأحداث",
     "Extended user fields": "حقول المستخدم الموسعة",
-    "Extended user fields - Tooltip": "Additional user fields to include in webhook payloads",
+    "Extended user fields - Tooltip": "حقول مستخدم إضافية لتضمينها في حمولات الخطافات الإلكترونية",
     "Headers": "الرؤوس",
     "Headers - Tooltip": "رؤوس HTTP (أزواج مفتاح-قيمة)",
     "Is user extended": "موسع للمستخدم",
