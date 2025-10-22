@@ -40,7 +40,7 @@
     "Custom CSS Mobile": "Теңшеу CSS (мобильді)",
     "Custom CSS Mobile - Edit": "Теңшеу CSS (мобильді) - Өңдеу",
     "Custom CSS Mobile - Tooltip": "Теңшеу CSS (мобильді) - Қысқаша түсінік",
-    "Disable signin": "Disable signin",
+    "Disable signin": "Кіруді өшіру",
     "Disable signin - Tooltip": "Пайдаланушылардың осы қолданбаға кіруін болдырмау",
     "Dynamic": "Динамикалық",
     "Edit Application": "Қолданбаны өңдеу",
@@ -92,7 +92,7 @@
     "No verification": "Тексерусіз",
     "Normal": "Қалыпты",
     "Only signup": "Тек тіркелу",
-    "Order": "Order",
+    "Order": "Тәртіп",
     "Order - Tooltip": "Мән неғұрлым кіші болса, Қолданбалар бетінде рейтингі соғұрлым жоғары",
     "Org choice mode": "Ұйым таңдау режимі",
     "Org choice mode - Tooltip": "Ұйым таңдау режимі - Қысқаша түсінік",
@@ -112,7 +112,7 @@
     "Reset to Empty": "Босату",
     "Right": "Оң жақта",
     "Rule": "Ереже",
-    "SAML hash algorithm": "SAML hash algorithm",
+    "SAML hash algorithm": "SAML хэш алгоритмі",
     "SAML hash algorithm - Tooltip": "SAML қолтаңбасы үшін хэш алгоритмі",
     "SAML metadata": "SAML метадеректері",
     "SAML metadata - Tooltip": "SAML протоколының метадеректері",
@@ -223,10 +223,10 @@
     "Verify": "Тексеру"
   },
   "form": {
-    "Edit Form": "Edit Form",
-    "Form items": "Form items",
+    "Edit Form": "Форманы өңдеу",
+    "Form items": "Форма элементтері",
     "Form items - Tooltip": "Форма элементтері",
-    "Width": "Width"
+    "Width": "Ені"
   },
   "general": {
     "AI Assistant": "AI көмекшісі",
@@ -268,7 +268,7 @@
     "Close": "Жабу",
     "Confirm": "Растау",
     "Copied to clipboard successfully": "Алмасу буферіне сәтті көшірілді",
-    "Copy": "Copy",
+    "Copy": "Көшіру",
     "Created time": "Жасалған уақыт",
     "Custom": "Теңшеу",
     "Dashboard": "Басқару тақтасы",
@@ -303,7 +303,7 @@
     "Enforcers": "Enforcer-лер",
     "Failed to add": "Қосу сәтсіз аяқталды",
     "Failed to connect to server": "Серверге қосылу сәтсіз аяқталды",
-    "Failed to copy": "Failed to copy",
+    "Failed to copy": "Көшіру сәтсіз аяқталды",
     "Failed to delete": "Жою сәтсіз аяқталды",
     "Failed to enable": "Қосу сәтсіз аяқталды",
     "Failed to get TermsOfUse URL": "Қолдану шарттары URL алу сәтсіз аяқталды",
@@ -319,7 +319,7 @@
     "Forced redirect origin - Tooltip": "Мәжбүрлі қайта бағыттау бастапқысы - Қысқаша түсінік",
     "Forget URL": "Парольді ұмыту URL",
     "Forget URL - Tooltip": "\"Парольді ұмыту\" парағы үшін теңшеу URL. Орнатылмаған жағдайда әдепті Casdoor \"Парольді ұмыту\" парағы қолданылады. Орнатылған кезде кіру парағындағы \"Парольді ұмыту\" сілтемесі осы URL-ге қайта бағыттайды",
-    "Forms": "Forms",
+    "Forms": "Формалар",
     "Found some texts still not translated? Please help us translate at": "Кейбір мәтіндер әлі аударылмағанын байқадыңыз ба? Аудармаға көмектесіңіз",
     "Go to enable": "Қосуға өту",
     "Go to writable demo site?": "Жазылатын демо сайтқа өтеміз бе?",
@@ -346,7 +346,7 @@
     "Last name - Tooltip": "Пайдаланушының тегі",
     "Later": "Кейінірек",
     "Logging & Auditing": "Журналдау және аудит",
-    "Login page": "Login page",
+    "Login page": "Кіру беті",
     "Logo": "Логотип",
     "Logo - Tooltip": "Қолданбаның сыртқы көріністегі белгілері",
     "Logo dark": "Қараңғы логотип",
@@ -1372,9 +1372,9 @@
     "Ranking - Tooltip": "Рейтинг - Құралдар",
     "Re-enter New": "Жаңасын қайта енгізіңіз",
     "Register source": "Register source",
-    "Register source - Tooltip": "The source from which the user was registered",
+    "Register source - Tooltip": "Пайдаланушы тіркелген көз",
     "Register type": "Register type",
-    "Register type - Tooltip": "The method used to register the user",
+    "Register type - Tooltip": "Пайдаланушыны тіркеу үшін қолданылатын әдіс",
     "Reset Email": {
       "": {
         "": {

@@ -40,7 +40,7 @@
     "Custom CSS Mobile": "CSS מותאם אישית לנייד",
     "Custom CSS Mobile - Edit": "ערוך CSS מותאם אישית לנייד",
     "Custom CSS Mobile - Tooltip": "CSS מותאם אישית לנייד - תיאור",
-    "Disable signin": "Disable signin",
+    "Disable signin": "השבת התחברות",
     "Disable signin - Tooltip": "מנע ממשתמשים להתחבר לאפליקציה זו",
     "Dynamic": "דינמי",
     "Edit Application": "ערוך יישום",
@@ -92,7 +92,7 @@
     "No verification": "ללא אימות",
     "Normal": "רגיל",
     "Only signup": "הרשמה בלבד",
-    "Order": "Order",
+    "Order": "סדר",
     "Order - Tooltip": "ככל שהערך קטן יותר, כך הדירוג גבוה יותר בדף האפליקציות",
     "Org choice mode": "מצב בחירת ארגון",
     "Org choice mode - Tooltip": "מצב בחירת ארגון - תיאור",
@@ -112,7 +112,7 @@
     "Reset to Empty": "איפוס לריק",
     "Right": "ימין",
     "Rule": "כלל",
-    "SAML hash algorithm": "SAML hash algorithm",
+    "SAML hash algorithm": "אלגוריתם Hash של SAML",
     "SAML hash algorithm - Tooltip": "אלגוריתם Hash לחתימת SAML",
     "SAML metadata": "מטה-נתונים SAML",
     "SAML metadata - Tooltip": "מטה-נתונים של פרוטוקול SAML",
@@ -223,10 +223,10 @@
     "Verify": "אימות"
   },
   "form": {
-    "Edit Form": "Edit Form",
-    "Form items": "Form items",
+    "Edit Form": "ערוך טופס",
+    "Form items": "פריטי טופס",
     "Form items - Tooltip": "פריטי טופס",
-    "Width": "Width"
+    "Width": "רוחב"
   },
   "general": {
     "AI Assistant": "עוזר AI",
@@ -268,7 +268,7 @@
     "Close": "סגור",
     "Confirm": "אשר",
     "Copied to clipboard successfully": "הועתק ללוח בהצלחה",
-    "Copy": "Copy",
+    "Copy": "העתק",
     "Created time": "זמן יצירה",
     "Custom": "מותאם אישית",
     "Dashboard": "לוח בקרה",
@@ -303,7 +303,7 @@
     "Enforcers": "מפעילים",
     "Failed to add": "הוספה נכשלה",
     "Failed to connect to server": "התחברות לשרת נכשלה",
-    "Failed to copy": "Failed to copy",
+    "Failed to copy": "ההעתקה נכשלה",
     "Failed to delete": "מחיקה נכשלה",
     "Failed to enable": "הפעלה נכשלה",
     "Failed to get TermsOfUse URL": "קבלת כתובת תנאי שימוש נכשלה",
@@ -319,7 +319,7 @@
     "Forced redirect origin - Tooltip": "הפניה כפויה של מקור - תיאור",
     "Forget URL": "כתובת שחזור סיסמה",
     "Forget URL - Tooltip": "כתובת מותאמת אישית לדף \"שחזור סיסמה\". אם לא מוגדר, ישמש דף ברירת המחדל של Casdoor. כאשר מוגדר, קישורי \"שחזור סיסמה\" בעמוד הכניסה יופנו לכאן",
-    "Forms": "Forms",
+    "Forms": "טפסים",
     "Found some texts still not translated? Please help us translate at": "מצאת טקסטים שלא תורגמו? אנא עזור לנו לתרגם ב",
     "Go to enable": "עבור להפעלה",
     "Go to writable demo site?": "לעבור לאתר הדגמה ניתן לכתיבה?",
@@ -346,7 +346,7 @@
     "Last name - Tooltip": "שם המשפחה של המשתמש",
     "Later": "מאוחר יותר",
     "Logging & Auditing": "רישום וביקורת",
-    "Login page": "Login page",
+    "Login page": "עמוד התחברות",
     "Logo": "לוגו",
     "Logo - Tooltip": "סמלים שהיישום מציג לעולם החיצון",
     "Logo dark": "לוגו כהה",
@@ -1372,9 +1372,9 @@
     "Ranking - Tooltip": "דירוג - תיאור",
     "Re-enter New": "הכנס שוב חדש",
     "Register source": "Register source",
-    "Register source - Tooltip": "The source from which the user was registered",
+    "Register source - Tooltip": "המקור ממנו נרשם המשתמש",
     "Register type": "Register type",
-    "Register type - Tooltip": "The method used to register the user",
+    "Register type - Tooltip": "השיטה ששימשה לרישום המשתמש",
     "Reset Email": {
       "": {
         "": {

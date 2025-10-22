@@ -40,7 +40,7 @@
     "Custom CSS Mobile": "Мобільний спеціальний CSS",
     "Custom CSS Mobile - Edit": "Редагувати мобільний спеціальний CSS",
     "Custom CSS Mobile - Tooltip": "Мобільний спеціальний CSS - Підказка",
-    "Disable signin": "Disable signin",
+    "Disable signin": "Вимкнути вхід",
     "Disable signin - Tooltip": "Заборонити користувачам входити в цю програму",
     "Dynamic": "Динамічний",
     "Edit Application": "Редагувати програму",
@@ -92,7 +92,7 @@
     "No verification": "Без підтвердження",
     "Normal": "нормальний",
     "Only signup": "Тільки реєстрація",
-    "Order": "Order",
+    "Order": "Порядок",
     "Order - Tooltip": "Чим менше значення, тим вищий рейтинг на сторінці Програми",
     "Org choice mode": "Режим вибору організації",
     "Org choice mode - Tooltip": "Режим вибору організації – підказка",
@@ -112,7 +112,7 @@
     "Reset to Empty": "Скинути до порожнього",
     "Right": "правильно",
     "Rule": "правило",
-    "SAML hash algorithm": "SAML hash algorithm",
+    "SAML hash algorithm": "Алгоритм хешування SAML",
     "SAML hash algorithm - Tooltip": "Алгоритм хешування для підпису SAML",
     "SAML metadata": "Метадані SAML",
     "SAML metadata - Tooltip": "Метадані протоколу SAML",
@@ -223,10 +223,10 @@
     "Verify": "Підтвердити"
   },
   "form": {
-    "Edit Form": "Edit Form",
-    "Form items": "Form items",
+    "Edit Form": "Редагувати форму",
+    "Form items": "Елементи форми",
     "Form items - Tooltip": "Елементи форми",
-    "Width": "Width"
+    "Width": "Ширина"
   },
   "general": {
     "AI Assistant": "AI Асистент",
@@ -268,7 +268,7 @@
     "Close": "Закрити",
     "Confirm": "Підтвердити",
     "Copied to clipboard successfully": "Успішно скопійовано в буфер обміну",
-    "Copy": "Copy",
+    "Copy": "Копіювати",
     "Created time": "Створений час",
     "Custom": "Користувацький",
     "Dashboard": "Панель приладів",
@@ -303,7 +303,7 @@
     "Enforcers": "Силовики",
     "Failed to add": "Не вдалося додати",
     "Failed to connect to server": "Не вдалося підключитися до сервера",
-    "Failed to copy": "Failed to copy",
+    "Failed to copy": "Не вдалося скопіювати",
     "Failed to delete": "Не вдалося видалити",
     "Failed to enable": "Не вдалося ввімкнути",
     "Failed to get TermsOfUse URL": "Не вдалося отримати URL-адресу TermsOfUse",
@@ -319,7 +319,7 @@
     "Forced redirect origin - Tooltip": "Примусове джерело перенаправлення - підказка",
     "Forget URL": "Забути URL",
     "Forget URL - Tooltip": "Користувацька URL-адреса для сторінки \"Забути пароль\". ",
-    "Forms": "Forms",
+    "Forms": "Форми",
     "Found some texts still not translated? Please help us translate at": "Знайшли ще неперекладені тексти? ",
     "Go to enable": "Перейдіть до включення",
     "Go to writable demo site?": "Перейти на демонстраційний сайт для запису?",
@@ -346,7 +346,7 @@
     "Last name - Tooltip": "Прізвище користувача",
     "Later": "Пізніше",
     "Logging & Auditing": "Лісозаготівля",
-    "Login page": "Login page",
+    "Login page": "Сторінка входу",
     "Logo": "логотип",
     "Logo - Tooltip": "Значки, які програма представляє зовнішньому світу",
     "Logo dark": "Логотип темний",
@@ -1372,9 +1372,9 @@
     "Ranking - Tooltip": "Рейтинг – підказка",
     "Re-enter New": "Повторно введіть новий",
     "Register source": "Register source",
-    "Register source - Tooltip": "The source from which the user was registered",
+    "Register source - Tooltip": "Джерело, з якого був зареєстрований користувач",
     "Register type": "Register type",
-    "Register type - Tooltip": "The method used to register the user",
+    "Register type - Tooltip": "Метод, використаний для реєстрації користувача",
     "Reset Email": {
       "": {
         "": {

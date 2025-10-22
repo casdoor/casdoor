@@ -40,7 +40,7 @@
     "Custom CSS Mobile": "CSS سفارشی موبایل",
     "Custom CSS Mobile - Edit": "ویرایش CSS سفارشی موبایل",
     "Custom CSS Mobile - Tooltip": "CSS سفارشی برای موبایل",
-    "Disable signin": "Disable signin",
+    "Disable signin": "غیرفعال کردن ورود",
     "Disable signin - Tooltip": "جلوگیری از ورود کاربران به این برنامه",
     "Dynamic": "پویا",
     "Edit Application": "ویرایش برنامه",
@@ -92,7 +92,7 @@
     "No verification": "بدون تأیید",
     "Normal": "عادی",
     "Only signup": "فقط ثبت‌نام",
-    "Order": "Order",
+    "Order": "ترتیب",
     "Order - Tooltip": "هرچه مقدار کوچکتر باشد، رتبه آن در صفحه برنامه‌ها بالاتر است",
     "Org choice mode": "حالت انتخاب سازمان",
     "Org choice mode - Tooltip": "حالت انتخاب سازمان - راهنمای ابزار",
@@ -112,7 +112,7 @@
     "Reset to Empty": "تنظیم مجدد به خالی",
     "Right": "راست",
     "Rule": "قانون",
-    "SAML hash algorithm": "SAML hash algorithm",
+    "SAML hash algorithm": "الگوریتم هش SAML",
     "SAML hash algorithm - Tooltip": "الگوریتم هش برای امضای SAML",
     "SAML metadata": "فراداده SAML",
     "SAML metadata - Tooltip": "فراداده پروتکل SAML",
@@ -223,10 +223,10 @@
     "Verify": "تأیید"
   },
   "form": {
-    "Edit Form": "Edit Form",
-    "Form items": "Form items",
+    "Edit Form": "ویرایش فرم",
+    "Form items": "موارد فرم",
     "Form items - Tooltip": "موارد فرم",
-    "Width": "Width"
+    "Width": "عرض"
   },
   "general": {
     "AI Assistant": "مساعد هوش مصنوعی",
@@ -268,7 +268,7 @@
     "Close": "بستن",
     "Confirm": "تأیید",
     "Copied to clipboard successfully": "با موفقیت در کلیپ‌بورد کپی شد",
-    "Copy": "Copy",
+    "Copy": "کپی",
     "Created time": "زمان ایجاد",
     "Custom": "سفارشی",
     "Dashboard": "داشبورد",
@@ -303,7 +303,7 @@
     "Enforcers": "Enforcerها",
     "Failed to add": "عدم موفقیت در افزودن",
     "Failed to connect to server": "عدم موفقیت در اتصال به سرور",
-    "Failed to copy": "Failed to copy",
+    "Failed to copy": "کپی انجام نشد",
     "Failed to delete": "عدم موفقیت در حذف",
     "Failed to enable": "عدم موفقیت در فعال‌سازی",
     "Failed to get TermsOfUse URL": "عدم موفقیت در دریافت آدرس شرایط استفاده",
@@ -319,7 +319,7 @@
     "Forced redirect origin - Tooltip": "منبع بازگرداندن اجباری - توصیه",
     "Forget URL": "آدرس فراموشی",
     "Forget URL - Tooltip": "آدرس سفارشی برای صفحه \"فراموشی رمز عبور\". اگر تنظیم نشده باشد، صفحه پیش‌فرض \"فراموشی رمز عبور\" Casdoor استفاده می‌شود. هنگامی که تنظیم شده باشد، لینک \"فراموشی رمز عبور\" در صفحه ورود به این آدرس هدایت می‌شود",
-    "Forms": "Forms",
+    "Forms": "فرم‌ها",
     "Found some texts still not translated? Please help us translate at": "برخی متون هنوز ترجمه نشده‌اند؟ لطفاً به ما در ترجمه کمک کنید در",
     "Go to enable": "برو به فعال‌سازی",
     "Go to writable demo site?": "به سایت دمو قابل نوشتن بروید؟",
@@ -346,7 +346,7 @@
     "Last name - Tooltip": "نام خانوادگی کاربر",
     "Later": "بعداً",
     "Logging & Auditing": "ورود و حسابرسی",
-    "Login page": "Login page",
+    "Login page": "صفحه ورود",
     "Logo": "لوگو",
     "Logo - Tooltip": "آیکون‌هایی که برنامه به بیرون ارائه می‌دهد",
     "Logo dark": "لوگوی تیره",
@@ -1372,9 +1372,9 @@
     "Ranking - Tooltip": "رتبه‌بندی - راهنمای ابزار",
     "Re-enter New": "دوباره وارد کنید",
     "Register source": "Register source",
-    "Register source - Tooltip": "The source from which the user was registered",
+    "Register source - Tooltip": "منبعی که کاربر از آن ثبت نام کرده است",
     "Register type": "Register type",
-    "Register type - Tooltip": "The method used to register the user",
+    "Register type - Tooltip": "روش مورد استفاده برای ثبت نام کاربر",
     "Reset Email": {
       "": {
         "": {
