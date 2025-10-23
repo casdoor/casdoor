@@ -113,6 +113,17 @@ func ExpireTokenByAccessToken(accessToken string) (bool, *Application, *Token, e
 	return affected != 0, application, token, nil
 }
 
+// ExpireAllUserTokens expires all tokens for a specific user across all applications
+// This is used for Single Sign-Out functionality
+func ExpireAllUserTokens(organization string, username string) (int, error) {
+	affected, err := ormer.Engine.Where("organization = ? and user = ?", organization, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	if err != nil {
+		return 0, err
+	}
+
+	return int(affected), nil
+}
+
 func CheckOAuthLogin(clientId string, responseType string, redirectUri string, scope string, state string, lang string) (string, *Application, error) {
 	if responseType != "code" && responseType != "token" && responseType != "id_token" {
 		return fmt.Sprintf(i18n.Translate(lang, "token:Grant_type: %s is not supported in this application"), responseType), nil, nil

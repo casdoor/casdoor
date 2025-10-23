@@ -324,6 +324,7 @@ func (c *ApiController) Signup() {
 // @Param   id_token_hint   query        string  false        "id_token_hint"
 // @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
 // @Param   state     query    string  false     "state"
+// @Param   logout_all     query    string  false     "logout_all - set to 'true' to enable Single Sign-Out (logout from all applications)"
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
 func (c *ApiController) Logout() {
@@ -331,6 +332,7 @@ func (c *ApiController) Logout() {
 	accessToken := c.GetString("id_token_hint")
 	redirectUri := c.GetString("post_logout_redirect_uri")
 	state := c.GetString("state")
+	logoutAll := c.GetString("logout_all") == "true"
 
 	user := c.GetSessionUsername()
 
@@ -344,10 +346,28 @@ func (c *ApiController) Logout() {
 		c.ClearUserSession()
 		c.ClearTokenSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
-		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+
+		// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+		if logoutAll {
+			_, err := object.ExpireAllUserTokens(owner, username)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			_, err = object.DeleteAllUserSessions(owner, username)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			util.LogInfo(c.Ctx, "API: [%s] logged out from all applications (Single Sign-Out)", user)
+		} else {
+			_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)
@@ -390,13 +410,31 @@ func (c *ApiController) Logout() {
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
+
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
+		// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+		if logoutAll {
+			_, err := object.ExpireAllUserTokens(owner, username)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			_, err = object.DeleteAllUserSessions(owner, username)
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
+
+			util.LogInfo(c.Ctx, "API: [%s] logged out from all applications (Single Sign-Out)", user)
+		} else {
+			_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+			if err != nil {
+				c.ResponseError(err.Error())
+				return
+			}
 		}
 
 		util.LogInfo(c.Ctx, "API: [%s] logged out", user)

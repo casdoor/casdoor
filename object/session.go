@@ -228,3 +228,35 @@ func IsSessionDuplicated(id string, sessionId string) (bool, error) {
 		}
 	}
 }
+
+// DeleteAllUserSessions deletes all sessions for a specific user across all applications
+// This is used for Single Sign-Out functionality
+func DeleteAllUserSessions(owner string, name string) (int, error) {
+	// Get all sessions for this user
+	sessions := []*Session{}
+	err := ormer.Engine.Where("owner = ? and name = ?", owner, name).Find(&sessions)
+	if err != nil {
+		return 0, err
+	}
+
+	// Collect all session IDs for Casdoor application to destroy in Beego
+	var casdoorSessionIds []string
+	for _, session := range sessions {
+		if session.Owner == CasdoorOrganization && session.Application == CasdoorApplication {
+			casdoorSessionIds = append(casdoorSessionIds, session.SessionId...)
+		}
+	}
+
+	// Destroy Beego sessions
+	if len(casdoorSessionIds) > 0 {
+		DeleteBeegoSession(casdoorSessionIds)
+	}
+
+	// Delete all session records from database
+	affected, err := ormer.Engine.Where("owner = ? and name = ?", owner, name).Delete(&Session{})
+	if err != nil {
+		return 0, err
+	}
+
+	return int(affected), nil
+}
