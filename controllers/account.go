@@ -347,9 +347,11 @@ func (c *ApiController) Logout() {
 		c.ClearTokenSession()
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+		// Perform logout action based on logout_all parameter
+		var err error
 		if logoutAll {
-			_, err := object.ExpireAllUserTokens(owner, username)
+			// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+			_, err = object.ExpireAllUserTokens(owner, username)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -363,7 +365,7 @@ func (c *ApiController) Logout() {
 
 			util.LogInfo(c.Ctx, "API: [%s] logged out from all applications (Single Sign-Out)", user)
 		} else {
-			_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+			_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
@@ -414,9 +416,10 @@ func (c *ApiController) Logout() {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+		// Perform logout action based on logout_all parameter
 		if logoutAll {
-			_, err := object.ExpireAllUserTokens(owner, username)
+			// Single Sign-Out: Expire all tokens and delete all sessions for this user across all applications
+			_, err = object.ExpireAllUserTokens(owner, username)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
