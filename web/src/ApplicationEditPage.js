@@ -619,6 +619,16 @@ class ApplicationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Enable exclusive signin"), i18next.t("application:Enable exclusive signin - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.enableExclusiveSignin} onChange={checked => {
+              this.updateApplicationField("enableExclusiveSignin", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("application:Signin session"), i18next.t("application:Enable signin session - Tooltip"))} :
           </Col>
           <Col span={1} >

@@ -100,6 +100,7 @@
     "Only admin user can specify user": "管理者ユーザーのみがユーザーを指定できます",
     "Please login first": "最初にログインしてください",
     "The organization: %s should have one application at least": "組織「%s」は少なくとも1つのアプリケーションを持っている必要があります",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "そのユーザー：%sは存在しません",
     "Wrong userId": "無効なユーザーIDです",
     "don't support captchaProvider: ": "captchaProviderをサポートしないでください",

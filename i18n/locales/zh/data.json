@@ -100,6 +100,7 @@
     "Only admin user can specify user": "仅管理员用户可以指定用户",
     "Please login first": "请先登录",
     "The organization: %s should have one application at least": "组织: %s 应该拥有至少一个应用",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "用户: %s不存在",
     "Wrong userId": "错误的 userId",
     "don't support captchaProvider: ": "不支持验证码提供商: ",

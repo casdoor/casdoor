@@ -87,6 +87,7 @@ type Application struct {
 	EnableSigninSession   bool            `json:"enableSigninSession"`
 	EnableAutoSignin      bool            `json:"enableAutoSignin"`
 	EnableCodeSignin      bool            `json:"enableCodeSignin"`
+	EnableExclusiveSignin bool            `json:"enableExclusiveSignin"`
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`

@@ -100,6 +100,7 @@
     "Only admin user can specify user": "관리자만 사용자를 지정할 수 있습니다",
     "Please login first": "먼저 로그인 하십시오",
     "The organization: %s should have one application at least": "조직 %s에는 최소 하나의 애플리케이션이 있어야 합니다",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "사용자 %s는 존재하지 않습니다",
     "Wrong userId": "잘못된 사용자 ID입니다",
     "don't support captchaProvider: ": "CaptchaProvider를 지원하지 마세요",

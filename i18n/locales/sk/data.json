@@ -100,6 +100,7 @@
     "Only admin user can specify user": "Iba administrátor môže určiť používateľa",
     "Please login first": "Najskôr sa prosím prihláste",
     "The organization: %s should have one application at least": "Organizácia: %s by mala mať aspoň jednu aplikáciu",
+    "The user with userId: %s doesn't exist": "The user with userId: %s doesn't exist",
     "The user: %s doesn't exist": "Používateľ: %s neexistuje",
     "Wrong userId": "Nesprávne ID používateľa",
     "don't support captchaProvider: ": "nepodporuje captchaProvider: ",
