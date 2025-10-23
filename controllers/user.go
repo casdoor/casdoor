@@ -287,7 +287,7 @@ func (c *ApiController) UpdateUser() {
 			return
 		}
 		if userFromUserId == nil {
-			c.ResponseError(fmt.Sprintf(c.T("general:The user with userId: %s doesn't exist"), userId))
+			c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
 			return
 		}
 

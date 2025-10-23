@@ -191,7 +191,7 @@
     "the user does not exist, please sign up first": "用户不存在，请先注册"
   },
   "webauthn": {
-    "Found no credentials for this user": "Found no credentials for this user",
+    "Found no credentials for this user": "无法找到此用户的证书",
     "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
   }
 }

@@ -27,6 +27,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/captcha"
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/casdoor/form"
@@ -244,12 +245,32 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		c.setExpireForSession()
 	}
 
+	if application.EnableExclusiveSignin {
+		sessions, err := object.GetUserAppSessions(user.Owner, user.Name, application.Name)
+		if err != nil {
+			c.ResponseError(err.Error(), nil)
+			return
+		}
+
+		for _, session := range sessions {
+			for _, sid := range session.SessionId {
+				err := beego.GlobalSessions.GetProvider().SessionDestroy(sid)
+				if err != nil {
+					c.ResponseError(err.Error(), nil)
+					return
+				}
+			}
+		}
+	}
+
 	if resp.Status == "ok" {
 		_, err = object.AddSession(&object.Session{
 			Owner:       user.Owner,
 			Name:        user.Name,
 			Application: application.Name,
 			SessionId:   []string{c.Ctx.Input.CruSession.SessionID()},
+
+			ExclusiveSignin: true,
 		})
 		if err != nil {
 			c.ResponseError(err.Error(), nil)

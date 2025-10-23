@@ -34,6 +34,8 @@ type Session struct {
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 
 	SessionId []string `json:"sessionId"`
+
+	ExclusiveSignin bool `xorm:"-"`
 }
 
 func GetSessions(owner string) ([]*Session, error) {
@@ -44,6 +46,17 @@ func GetSessions(owner string) ([]*Session, error) {
 	} else {
 		err = ormer.Engine.Desc("created_time").Find(&sessions)
 	}
+	if err != nil {
+		return sessions, err
+	}
+
+	return sessions, nil
+}
+
+func GetUserAppSessions(owner string, name string, application string) ([]*Session, error) {
+	sessions := []*Session{}
+
+	err := ormer.Engine.Desc("created_time").Where("owner = ? and name = ? and application = ?", owner, name, application).Find(&sessions)
 	if err != nil {
 		return sessions, err
 	}
@@ -132,6 +145,10 @@ func AddSession(session *Session) (bool, error) {
 		}
 
 		removeExtraSessionIds(dbSession)
+
+		if session.ExclusiveSignin {
+			dbSession.SessionId = []string{session.SessionId[0]}
+		}
 
 		return UpdateSession(dbSession.GetId(), dbSession)
 	}
