@@ -67,7 +67,7 @@ type VerificationRecord struct {
 	IsUsed     bool   `xorm:"notnull" json:"isUsed"`
 }
 
-func IsAllowSend(user *User, remoteAddr, recordType string) error {
+func IsAllowSend(user *User, remoteAddr, recordType string, application *Application) error {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
@@ -80,10 +80,15 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 		return err
 	}
 
-	resendTimeoutInSeconds, err := conf.GetConfigInt64("verificationCodeResendTimeout")
-	if err != nil {
-		// Default to 60 seconds if not configured
-		resendTimeoutInSeconds = 60
+	// Get timeout from application first, fall back to config, then default
+	resendTimeoutInSeconds := int64(60)
+	if application != nil && application.CodeResendTimeout > 0 {
+		resendTimeoutInSeconds = int64(application.CodeResendTimeout)
+	} else {
+		// Try to get from config
+		if timeout, err := conf.GetConfigInt64("codeResendTimeout"); err == nil && timeout > 0 {
+			resendTimeoutInSeconds = timeout
+		}
 	}
 
 	now := time.Now().Unix()
@@ -94,7 +99,7 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 	return nil
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string) error {
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string, application *Application) error {
 	sender := organization.DisplayName
 	title := provider.Title
 
@@ -129,7 +134,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	}
 	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
-	err := IsAllowSend(user, remoteAddr, provider.Category)
+	err := IsAllowSend(user, remoteAddr, provider.Category, application)
 	if err != nil {
 		return err
 	}
@@ -147,8 +152,8 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	return nil
 }
 
-func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	err := IsAllowSend(user, remoteAddr, provider.Category)
+func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, application *Application) error {
+	err := IsAllowSend(user, remoteAddr, provider.Category, application)
 	if err != nil {
 		return err
 	}

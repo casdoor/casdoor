@@ -30,6 +30,8 @@
     "Binding providers": "バインディングプロバイダー",
     "CSS style": "CSSスタイル",
     "Center": "センター",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Code resend timeout - Tooltip",
     "Copy SAML metadata URL": "SAMLメタデータのURLをコピーしてください",
     "Copy prompt page URL": "プロンプトページのURLをコピーしてください",
     "Copy signin page URL": "サインインページのURLをコピーしてください",

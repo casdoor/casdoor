@@ -57,7 +57,7 @@ func TestGetConfInt(t *testing.T) {
 	}{
 		{"Should be return 8000", "httpport", 8001},
 		{"Should be return 8000", "verificationCodeTimeout", 10},
-		{"Should be return 60", "verificationCodeResendTimeout", 60},
+		{"Should be return 60", "codeResendTimeout", 60},
 	}
 
 	// do some set up job

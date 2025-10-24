@@ -30,6 +30,8 @@
     "Binding providers": "Dostawcy powiązani",
     "CSS style": "Styl CSS",
     "Center": "Środek",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Code resend timeout - Tooltip",
     "Copy SAML metadata URL": "Kopiuj URL metadanych SAML",
     "Copy prompt page URL": "Kopiuj URL strony monitu",
     "Copy signin page URL": "Kopiuj URL strony logowania",

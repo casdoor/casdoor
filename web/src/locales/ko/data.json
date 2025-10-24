@@ -30,6 +30,8 @@
     "Binding providers": "바인딩 제공자",
     "CSS style": "CSS 스타일",
     "Center": "중앙",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Code resend timeout - Tooltip",
     "Copy SAML metadata URL": "SAML 메타데이터 URL 복사",
     "Copy prompt page URL": "프롬프트 페이지 URL을 복사하세요",
     "Copy signin page URL": "사인인 페이지 URL 복사",

@@ -30,6 +30,8 @@
     "Binding providers": "Penyedia pengikatan",
     "CSS style": "Gaya CSS",
     "Center": "Tengah",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Code resend timeout - Tooltip",
     "Copy SAML metadata URL": "Salin URL metadata SAML",
     "Copy prompt page URL": "Salin URL halaman segera",
     "Copy signin page URL": "Salin URL halaman log masuk",

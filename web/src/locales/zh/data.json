@@ -30,6 +30,8 @@
     "Binding providers": "绑定提供商",
     "CSS style": "CSS样式",
     "Center": "居中",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Code resend timeout - Tooltip",
     "Copy SAML metadata URL": "复制SAML元数据URL",
     "Copy prompt page URL": "复制提醒页面URL",
     "Copy signin page URL": "复制登录页面URL",
