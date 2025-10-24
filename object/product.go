@@ -196,6 +196,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
+
 	// Create a subscription when pricing and plan are provided
 	// This allows both free users and paid users to subscribe to plans
 	if pricingName != "" && planName != "" {
