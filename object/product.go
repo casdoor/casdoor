@@ -196,29 +196,29 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	originFrontend, originBackend := getOriginFromHost(host)
 	returnUrl := fmt.Sprintf("%s/payments/%s/%s/result", originFrontend, owner, paymentName)
 	notifyUrl := fmt.Sprintf("%s/api/notify-payment/%s/%s", originBackend, owner, paymentName)
-	if user.Type == "paid-user" {
-		// Create a subscription for `paid-user`
-		if pricingName != "" && planName != "" {
-			plan, err := GetPlan(util.GetId(owner, planName))
-			if err != nil {
-				return nil, nil, err
-			}
-			if plan == nil {
-				return nil, nil, fmt.Errorf("the plan: %s does not exist", planName)
-			}
 
-			sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
-			if err != nil {
-				return nil, nil, err
-			}
-
-			_, err = AddSubscription(sub)
-			if err != nil {
-				return nil, nil, err
-			}
-
-			returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
+	// Create a subscription when pricing and plan are provided
+	// This allows both free users and paid users to subscribe to plans
+	if pricingName != "" && planName != "" {
+		plan, err := GetPlan(util.GetId(owner, planName))
+		if err != nil {
+			return nil, nil, err
 		}
+		if plan == nil {
+			return nil, nil, fmt.Errorf("the plan: %s does not exist", planName)
+		}
+
+		sub, err := NewSubscription(owner, user.Name, plan.Name, paymentName, plan.Period)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		_, err = AddSubscription(sub)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		returnUrl = fmt.Sprintf("%s/buy-plan/%s/%s/result?subscription=%s", originFrontend, owner, pricingName, sub.Name)
 	}
 
 	if product.SuccessUrl != "" {
