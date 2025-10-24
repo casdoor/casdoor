@@ -933,6 +933,7 @@
     "Metadata": "Metadata",
     "Metadata - Tooltip": "SAML metadata",
     "Metadata url": "Metadata url",
+    "Mobile": "Mobile",
     "Metadata url - Tooltip": "Metadata url - Tooltip",
     "Method - Tooltip": "Login method, QR code or silent login",
     "New Provider": "New Provider",
@@ -1041,6 +1042,7 @@
     "UserInfo URL - Tooltip": "UserInfo URL",
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
+    "Web": "Web",
     "admin (Shared)": "admin (Shared)"
   },
   "record": {
