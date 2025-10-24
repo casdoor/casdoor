@@ -193,13 +193,8 @@ func (application *Application) HasPromptPageForUser(user *User) bool {
 func (application *Application) GetMissingRequiredSignupItems(user *User) []*SignupItem {
 	missing := []*SignupItem{}
 
+	// If user is nil, return empty slice - caller should handle nil users
 	if user == nil {
-		// If user is nil, all required items are considered missing
-		for _, signupItem := range application.SignupItems {
-			if signupItem.Required {
-				missing = append(missing, signupItem)
-			}
-		}
 		return missing
 	}
 
@@ -221,13 +216,12 @@ func (application *Application) GetMissingRequiredSignupItems(user *User) []*Sig
 			isEmpty = user.Affiliation == ""
 		case "ID card":
 			isEmpty = user.IdCard == ""
-		case "Region":
-			isEmpty = user.Region == ""
-		case "Country/Region":
+		case "Region", "Country/Region":
 			isEmpty = user.Region == ""
 		// Add more fields as needed
 		default:
 			// For custom fields, we can't easily check, so skip
+			// This is expected behavior for extensibility
 			continue
 		}
 
