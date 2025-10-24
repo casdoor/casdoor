@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Будь ласка, зареєструйтесь, використовуючи ім’я користувача, що відповідає коду запрошення",
     "Session outdated, please login again": "Сесію застаро, будь ласка, увійдіть знову",
     "The invitation code has already been used": "Код запрошення вже використано",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Користувача було видалено і не можна використовувати для входу, будь ласка, зверніться до адміністратора",
     "The user is forbidden to sign in, please contact the administrator": "Користувачу заборонено вхід, зверніться до адміністратора",
     "The user: %s doesn't exist in LDAP server": "Користувач: %s не існує на сервері LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Ім’я користувача може містити лише буквено-цифрові символи, підкреслення або дефіси, не може мати послідовні дефіси або підкреслення та не може починатися або закінчуватися дефісом або підкресленням.",

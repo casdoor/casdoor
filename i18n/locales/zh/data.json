@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "请使用邀请码关联的用户名注册",
     "Session outdated, please login again": "会话已过期，请重新登录",
     "The invitation code has already been used": "邀请码已被使用",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "该用户已被删除, 无法用于登录, 请联系管理员",
     "The user is forbidden to sign in, please contact the administrator": "该用户被禁止登录，请联系管理员",
     "The user: %s doesn't exist in LDAP server": "用户: %s 在LDAP服务器中未找到",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "用户名只能包含字母数字字符、下划线或连字符，不能有连续的连字符或下划线，也不能以连字符或下划线开头或结尾",

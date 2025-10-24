@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Registrera dig med det användarnamn som motsvarar inbjudningskoden",
     "Session outdated, please login again": "Sessionen har gått ut, logga in igen",
     "The invitation code has already been used": "Inbjudningskoden har redan använts",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Användaren har tagits bort och kan inte användas för att logga in, kontakta administratören",
     "The user is forbidden to sign in, please contact the administrator": "Användaren är förbjuden att logga in, kontakta administratören",
     "The user: %s doesn't exist in LDAP server": "Användaren: %s finns inte i LDAP-servern",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Användarnamnet får endast innehålla alfanumeriska tecken, understreck eller bindestreck, får inte ha flera understreck eller bindestreck i följd, och får inte börja eller sluta med ett understreck eller bindestreck.",

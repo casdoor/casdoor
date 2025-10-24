@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "招待コードに対応するユーザー名で登録してください",
     "Session outdated, please login again": "セッションが期限切れになりました。再度ログインしてください",
     "The invitation code has already been used": "この招待コードは既に使用されています",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "ユーザーは削除されており、サインインに使用できません。管理者にお問い合わせください",
     "The user is forbidden to sign in, please contact the administrator": "ユーザーはサインインできません。管理者に連絡してください",
     "The user: %s doesn't exist in LDAP server": "ユーザー「%s」は LDAP サーバーに存在しません",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "ユーザー名には英数字、アンダースコア、ハイフンしか含めることができません。連続したハイフンまたはアンダースコアは不可であり、ハイフンまたはアンダースコアで始まるまたは終わることもできません。",

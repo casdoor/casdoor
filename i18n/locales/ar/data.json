@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "يرجى التسجيل باستخدام اسم المستخدم المطابق لرمز الدعوة",
     "Session outdated, please login again": "الجلسة منتهية الصلاحية، يرجى تسجيل الدخول مرة أخرى",
     "The invitation code has already been used": "رمز الدعوة تم استخدامه بالفعل",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "تم حذف المستخدم ولا يمكن استخدامه لتسجيل الدخول، يرجى الاتصال بالمسؤول",
     "The user is forbidden to sign in, please contact the administrator": "المستخدم ممنوع من تسجيل الدخول، يرجى الاتصال بالمسؤول",
     "The user: %s doesn't exist in LDAP server": "المستخدم: %s غير موجود في خادم LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "اسم المستخدم يمكن أن يحتوي فقط على أحرف وأرقام، شرطات سفلية أو علوية، لا يمكن أن تحتوي على شرطات متتالية، ولا يمكن أن يبدأ أو ينتهي بشرطة.",

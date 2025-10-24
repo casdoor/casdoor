@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Please register using the username corresponding to the invitation code",
     "Session outdated, please login again": "Session outdated, please login again",
     "The invitation code has already been used": "The invitation code has already been used",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "The user has been deleted and cannot be used to sign in, please contact the administrator",
     "The user is forbidden to sign in, please contact the administrator": "The user is forbidden to sign in, please contact the administrator",
     "The user: %s doesn't exist in LDAP server": "The user: %s doesn't exist in LDAP server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.",

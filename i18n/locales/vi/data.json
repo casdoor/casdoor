@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Vui lòng đăng ký bằng tên người dùng tương ứng với mã mời",
     "Session outdated, please login again": "Phiên làm việc hết hạn, vui lòng đăng nhập lại",
     "The invitation code has already been used": "Mã mời đã được sử dụng",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Người dùng đã bị xóa và không thể được sử dụng để đăng nhập, vui lòng liên hệ với quản trị viên",
     "The user is forbidden to sign in, please contact the administrator": "Người dùng bị cấm đăng nhập, vui lòng liên hệ với quản trị viên",
     "The user: %s doesn't exist in LDAP server": "Người dùng: %s không tồn tại trên máy chủ LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Tên người dùng chỉ có thể chứa các ký tự chữ và số, gạch dưới hoặc gạch ngang, không được có hai ký tự gạch dưới hoặc gạch ngang liền kề và không được bắt đầu hoặc kết thúc bằng dấu gạch dưới hoặc gạch ngang.",

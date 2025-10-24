@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Lütfen davet koduna karşılık gelen kullanıcı adıyla kayıt olun",
     "Session outdated, please login again": "Oturum süresi doldu, lütfen tekrar giriş yapın",
     "The invitation code has already been used": "Davet kodu zaten kullanılmış",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Kullanıcı silinmiş ve oturum açmak için kullanılamaz, lütfen yöneticiyle iletişime geçin",
     "The user is forbidden to sign in, please contact the administrator": "Kullanıcı giriş yapmaktan men edildi, lütfen yönetici ile iletişime geçin",
     "The user: %s doesn't exist in LDAP server": "Kullanıcı: %s LDAP sunucusunda mevcut değil",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Kullanıcı adı yalnızca alfanümerik karakterler, alt çizgi veya tire içerebilir, ardışık tire veya alt çizgi içeremez ve tire veya alt çizgi ile başlayamaz veya bitemez.",

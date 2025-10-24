@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Rekisteröidy käyttämällä kutsukoodiin vastaavaa käyttäjänimeä",
     "Session outdated, please login again": "Istunto vanhentunut, kirjaudu uudelleen",
     "The invitation code has already been used": "Kutsukoodi on jo käytetty",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Käyttäjä on poistettu eikä sitä voi käyttää kirjautumiseen, ota yhteyttä järjestelmänvalvojaan",
     "The user is forbidden to sign in, please contact the administrator": "Käyttäjän kirjautuminen on estetty, ota yhteyttä ylläpitäjään",
     "The user: %s doesn't exist in LDAP server": "Käyttäjä: %s ei ole olemassa LDAP-palvelimessa",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Käyttäjänimi voi sisältää vain alfanumeerisia merkkejä, alaviivoja tai tavuviivoja, ei voi sisältää peräkkäisiä tavuviivoja tai alaviivoja, eikä voi alkaa tai loppua tavuviivalla tai alaviivalla.",

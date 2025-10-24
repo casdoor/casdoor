@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "لطفاً با استفاده از نام کاربری مربوط به کد دعوت ثبت‌نام کنید",
     "Session outdated, please login again": "جلسه منقضی شده است، لطفاً دوباره وارد شوید",
     "The invitation code has already been used": "کد دعوت قبلاً استفاده شده است",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "کاربر حذف شده است و نمی توان از آن برای ورود استفاده کرد، لطفا با مدیر تماس بگیرید",
     "The user is forbidden to sign in, please contact the administrator": "ورود کاربر ممنوع است، لطفاً با مدیر تماس بگیرید",
     "The user: %s doesn't exist in LDAP server": "کاربر: %s در سرور LDAP وجود ندارد",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "نام کاربری فقط می‌تواند حاوی کاراکترهای الفبایی عددی، زیرخط یا خط تیره باشد، نمی‌تواند خط تیره یا زیرخط متوالی داشته باشد، و نمی‌تواند با خط تیره یا زیرخط شروع یا پایان یابد.",

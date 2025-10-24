@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Prosím registrujte se pomocí uživatelského jména odpovídajícího pozvánkovému kódu",
     "Session outdated, please login again": "Relace je zastaralá, prosím přihlaste se znovu",
     "The invitation code has already been used": "Pozvánkový kód již byl použit",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Uživatel byl odstraněn a nelze jej použít k přihlášení, kontaktujte prosím správce",
     "The user is forbidden to sign in, please contact the administrator": "Uživatel má zakázáno se přihlásit, prosím kontaktujte administrátora",
     "The user: %s doesn't exist in LDAP server": "Uživatel: %s neexistuje na LDAP serveru",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Uživatelské jméno může obsahovat pouze alfanumerické znaky, podtržítka nebo pomlčky, nemůže mít po sobě jdoucí pomlčky nebo podtržítka a nemůže začínat nebo končit pomlčkou nebo podtržítkem.",

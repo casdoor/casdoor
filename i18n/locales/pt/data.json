@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Por favor, registre-se usando o nome de usuário correspondente ao código de convite",
     "Session outdated, please login again": "Sessão expirada, faça login novamente",
     "The invitation code has already been used": "O código de convite já foi utilizado",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "O usuário foi excluído e não pode ser usado para fazer login, entre em contato com o administrador",
     "The user is forbidden to sign in, please contact the administrator": "O usuário está proibido de entrar, entre em contato com o administrador",
     "The user: %s doesn't exist in LDAP server": "O usuário: %s não existe no servidor LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "O nome de usuário pode conter apenas caracteres alfanuméricos, sublinhados ou hífens, não pode ter hífens ou sublinhados consecutivos e não pode começar ou terminar com hífen ou sublinhado.",

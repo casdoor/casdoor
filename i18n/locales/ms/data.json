@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Sila daftar dengan nama pengguna yang sepadan dengan kod jemputan",
     "Session outdated, please login again": "Sesi tamat, sila log masuk semula",
     "The invitation code has already been used": "Kod jemputan sudah digunakan",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Pengguna telah dipadamkan dan tidak boleh digunakan untuk log masuk, sila hubungi pentadbir",
     "The user is forbidden to sign in, please contact the administrator": "Pengguna dilarang log masuk, sila hubungi pentadbir",
     "The user: %s doesn't exist in LDAP server": "Pengguna: %s tidak wujud dalam pelayan LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Nama pengguna hanya boleh mengandungi alfanumerik, garis bawah atau sengkang, tidak boleh ada sengkang atau garis bawah berturutan, dan tidak boleh bermula atau berakhir dengan sengkang atau garis bawah.",

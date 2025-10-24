@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "Registreer met de gebruikersnaam die hoort bij de uitnodigingscode",
     "Session outdated, please login again": "Sessie verlopen, gelieve opnieuw in te loggen",
     "The invitation code has already been used": "Uitnodigingscode is al gebruikt",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Пайдаланушы жойылған және кіру үшін пайдалануға болмайды, әкімшіге хабарласыңыз",
     "The user is forbidden to sign in, please contact the administrator": "Gebruiker mag niet inloggen, contacteer beheerder",
     "The user: %s doesn't exist in LDAP server": "Gebruiker: %s bestaat niet in LDAP-server",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "Gebruikersnaam mag alleen alfanumerieke tekens, underscores of koppeltekens bevatten, geen opeenvolgende koppeltekens/underscores, en mag niet beginnen of eindigen met koppelteken of underscore.",

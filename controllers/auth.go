@@ -62,6 +62,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
+	if user.IsDeleted {
+		c.ResponseError(c.T("check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
+		return
+	}
+
 	userId := user.GetId()
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
@@ -833,7 +838,7 @@ func (c *ApiController) Login() {
 					}
 				}
 
-				if user == nil || user.IsDeleted {
+				if user == nil {
 					if !application.EnableSignUp {
 						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
 						return

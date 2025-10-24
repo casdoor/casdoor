@@ -70,6 +70,7 @@
     "Please register using the username corresponding to the invitation code": "אנא הרשם באמצעות שם המשתמש התואם לקוד ההזמנה",
     "Session outdated, please login again": "הסשן פג תוקף, אנא התחבר שוב",
     "The invitation code has already been used": "קוד ההזמנה כבר נוצל",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "המשתמש נמחק ולא ניתן להשתמש בו לכניסה, אנא צור קשר עם המנהל",
     "The user is forbidden to sign in, please contact the administrator": "המשתמש אסור להיכנס, אנא צור קשר עם המנהל",
     "The user: %s doesn't exist in LDAP server": "המשתמש: %s אינו קיים בשרת ה-LDAP",
     "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "שם המשתמש יכול להכיל רק תווים אלפאנומריים, קווים תחתונים או מקפים, לא יכול להכיל מקפים או קווים תחתונים רצופים, ולא יכול להתחיל או להסתיים עם מקף או קו תחתון.",
