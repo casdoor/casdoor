@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/casdoor/casdoor/util"
 	"layeh.com/radius"
 	"layeh.com/radius/rfc2865"
 )
@@ -123,8 +122,8 @@ func NewRadiusMfaUtil(config *MfaProps) *RadiusMfa {
 		MfaProps: config,
 	}
 
-	// Load provider if URL is specified
-	if config.URL != "" {
+	// Load provider if URL is specified and ormer is initialized
+	if config.URL != "" && ormer != nil && ormer.Engine != nil {
 		provider, err := GetProvider(config.URL)
 		if err == nil && provider != nil {
 			radiusMfa.provider = provider
