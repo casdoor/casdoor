@@ -1180,6 +1180,10 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Alibaba Cloud Facebody", name: "Alibaba Cloud Facebody"},
     ]);
+  } else if (category === "MFA") {
+    return ([
+      {id: "RADIUS", name: "RADIUS"},
+    ]);
   } else {
     return [];
   }
