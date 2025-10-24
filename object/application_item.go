@@ -193,6 +193,16 @@ func (application *Application) HasPromptPageForUser(user *User) bool {
 func (application *Application) GetMissingRequiredSignupItems(user *User) []*SignupItem {
 	missing := []*SignupItem{}
 
+	if user == nil {
+		// If user is nil, all required items are considered missing
+		for _, signupItem := range application.SignupItems {
+			if signupItem.Required {
+				missing = append(missing, signupItem)
+			}
+		}
+		return missing
+	}
+
 	for _, signupItem := range application.SignupItems {
 		if !signupItem.Required {
 			continue
