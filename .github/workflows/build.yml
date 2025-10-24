@@ -1,7 +1,16 @@
 name: Build
 
-on: 
-  workflow_dispatch:  # Only manual trigger
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to build image from"
+        required: true
+        default: "master"
+      release_name:
+        description: "A overridden tag name for the release for e.g. v10.0.0-beta.1-hot-fix"
+        required: false
+        type: string
 
 jobs:
 
