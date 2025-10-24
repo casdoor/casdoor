@@ -30,6 +30,8 @@
     "Binding providers": "Koppelen van providers",
     "CSS style": "CSS-stijl",
     "Center": "Centreren",
+    "Code resend timeout": "Time-out voor opnieuw verzenden code",
+    "Code resend timeout - Tooltip": "Tijdsperiode (in seconden) die gebruikers moeten wachten voordat ze een andere verificatiecode kunnen aanvragen. Stel in op 0 om de algemene standaardwaarde (60 seconden) te gebruiken",
     "Copy SAML metadata URL": "Kopieer SAML-metadata-URL",
     "Copy prompt page URL": "Kopieer promptpagina-URL",
     "Copy signin page URL": "Kopieer inlogpagina-URL",

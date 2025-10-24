@@ -30,6 +30,8 @@
     "Binding providers": "Penyedia pengikatan",
     "CSS style": "Gaya CSS",
     "Center": "Tengah",
+    "Code resend timeout": "Had masa hantar semula kod",
+    "Code resend timeout - Tooltip": "Tempoh masa (dalam saat) yang pengguna perlu tunggu sebelum meminta kod pengesahan lain. Tetapkan kepada 0 untuk menggunakan nilai lalai global (60 saat)",
     "Copy SAML metadata URL": "Salin URL metadata SAML",
     "Copy prompt page URL": "Salin URL halaman segera",
     "Copy signin page URL": "Salin URL halaman log masuk",

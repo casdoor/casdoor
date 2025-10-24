@@ -30,6 +30,8 @@
     "Binding providers": "Bindungsanbieter",
     "CSS style": "CSS-Stil",
     "Center": "Zentrum",
+    "Code resend timeout": "Code-Neusendungs-Timeout",
+    "Code resend timeout - Tooltip": "Zeitraum (in Sekunden), den Benutzer warten müssen, bevor sie einen weiteren Verifizierungscode anfordern können. Auf 0 setzen, um die globale Standardeinstellung (60 Sekunden) zu verwenden",
     "Copy SAML metadata URL": "SAML-Metadaten-URL kopieren",
     "Copy prompt page URL": "URL der Prompt-Seite kopieren",
     "Copy signin page URL": "Kopieren Sie die URL der Anmeldeseite",

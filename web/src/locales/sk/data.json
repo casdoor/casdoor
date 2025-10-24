@@ -30,6 +30,8 @@
     "Binding providers": "Priradené poskytovatele",
     "CSS style": "Štýl CSS",
     "Center": "Centrum",
+    "Code resend timeout": "Časový limit opätovného odoslania kódu",
+    "Code resend timeout - Tooltip": "Časové obdobie (v sekundách), počas ktorého musia používatelia čakať pred požiadaním na ďalší overovací kód. Nastavte na 0 pre použitie globálneho predvoleného nastavenia (60 sekúnd)",
     "Copy SAML metadata URL": "Kopírovať URL SAML metadát",
     "Copy prompt page URL": "Kopírovať URL výzvy",
     "Copy signin page URL": "Kopírovať URL prihlasovacej stránky",

@@ -30,6 +30,8 @@
     "Binding providers": "Binding providers",
     "CSS style": "CSS style",
     "Center": "Center",
+    "Code resend timeout": "Code resend timeout",
+    "Code resend timeout - Tooltip": "Time period (in seconds) that users must wait before requesting another verification code. Set to 0 to use the global default (60 seconds)",
     "Copy SAML metadata URL": "Copy SAML metadata URL",
     "Copy prompt page URL": "Copy prompt page URL",
     "Copy signin page URL": "Copy signin page URL",

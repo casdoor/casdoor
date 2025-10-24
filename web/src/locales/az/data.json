@@ -30,6 +30,8 @@
     "Binding providers": "Bağlama provayderləri",
     "CSS style": "CSS stili",
     "Center": "Mərkəz",
+    "Code resend timeout": "Kod yenidən göndərmə vaxt limiti",
+    "Code resend timeout - Tooltip": "İstifadəçilərin digər doğrulama kodunu tələb etməzdən əvvəl gözləməli olduqları müddət (saniyələrlə). Qlobal standart (60 saniyə) istifadə etmək üçün 0 təyin edin",
     "Copy SAML metadata URL": "SAML metadata URL-ini köçür",
     "Copy prompt page URL": "Xəbərdarlıq səhifəsi URL-ini köçür",
     "Copy signin page URL": "Giriş səhifəsi URL-ini köçür",

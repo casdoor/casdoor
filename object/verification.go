@@ -15,7 +15,6 @@
 package object
 
 import (
-	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -68,7 +67,7 @@ type VerificationRecord struct {
 	IsUsed     bool   `xorm:"notnull" json:"isUsed"`
 }
 
-func IsAllowSend(user *User, remoteAddr, recordType string) error {
+func IsAllowSend(user *User, remoteAddr, recordType string, application *Application) error {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
@@ -81,15 +80,21 @@ func IsAllowSend(user *User, remoteAddr, recordType string) error {
 		return err
 	}
 
+	// Get timeout from application, or use default
+	resendTimeoutInSeconds := int64(60)
+	if application != nil && application.CodeResendTimeout > 0 {
+		resendTimeoutInSeconds = int64(application.CodeResendTimeout)
+	}
+
 	now := time.Now().Unix()
-	if has && now-record.Time < 60 {
-		return errors.New("you can only send one code in 60s")
+	if has && now-record.Time < resendTimeoutInSeconds {
+		return fmt.Errorf("you can only send one code in %ds", resendTimeoutInSeconds)
 	}
 
 	return nil
 }
 
-func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string) error {
+func SendVerificationCodeToEmail(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, method string, host string, applicationName string, application *Application) error {
 	sender := organization.DisplayName
 	title := provider.Title
 
@@ -124,7 +129,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	}
 	content = strings.Replace(content, "%{user.friendlyName}", userString, 1)
 
-	err := IsAllowSend(user, remoteAddr, provider.Category)
+	err := IsAllowSend(user, remoteAddr, provider.Category, application)
 	if err != nil {
 		return err
 	}
@@ -142,8 +147,8 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 	return nil
 }
 
-func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string) error {
-	err := IsAllowSend(user, remoteAddr, provider.Category)
+func SendVerificationCodeToPhone(organization *Organization, user *User, provider *Provider, remoteAddr string, dest string, application *Application) error {
+	err := IsAllowSend(user, remoteAddr, provider.Category, application)
 	if err != nil {
 		return err
 	}

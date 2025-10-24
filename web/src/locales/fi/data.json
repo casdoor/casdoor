@@ -30,6 +30,8 @@
     "Binding providers": "Yhdistä toimittajia",
     "CSS style": "CSS-tyylit",
     "Center": "Keskellä",
+    "Code resend timeout": "Koodin uudelleenlähetyksen aikakatkaisu",
+    "Code resend timeout - Tooltip": "Aika (sekunteina), jonka käyttäjien on odotettava ennen toisen vahvistuskoodin pyytämistä. Aseta arvoksi 0 käyttääksesi yleistä oletusarvoa (60 sekuntia)",
     "Copy SAML metadata URL": "Kopioi SAML-metadata URL",
     "Copy prompt page URL": "Kopioi kehotussivun URL",
     "Copy signin page URL": "Kopioi kirjautumissivun URL",
