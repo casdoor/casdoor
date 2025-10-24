@@ -72,6 +72,7 @@ import PricingListPage from "./PricingListPage";
 import PricingEditPage from "./PricingEditPage";
 import SubscriptionListPage from "./SubscriptionListPage";
 import SubscriptionEditPage from "./SubscriptionEditPage";
+import UserSubscriptionsPage from "./UserSubscriptionsPage";
 import SystemInfo from "./SystemInfo";
 import FormListPage from "./FormListPage";
 import FormEditPage from "./FormEditPage";
@@ -147,6 +148,9 @@ function ManagementPage(props) {
       items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
         "/account"
       ));
+      items.push(Setting.getItem(<><WalletTwoTone />&nbsp;&nbsp;{i18next.t("subscription:My Subscriptions")}</>,
+        "/my-subscriptions"
+      ));
     }
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
@@ -154,8 +158,8 @@ function ManagementPage(props) {
     const onClick = (e) => {
       if (e.key === "/account") {
         props.history.push("/account");
-      } else if (e.key === "/subscription") {
-        props.history.push("/subscription");
+      } else if (e.key === "/my-subscriptions") {
+        props.history.push("/my-subscriptions");
       } else if (e.key === "/logout") {
         logout();
       }
@@ -392,6 +396,7 @@ function ManagementPage(props) {
         <Route exact path="/apps" render={(props) => renderLoginIfNotLoggedIn(<AppListPage account={account} {...props} />)} />
         <Route exact path="/shortcuts" render={(props) => renderLoginIfNotLoggedIn(<ShortcutsPage account={account} {...props} />)} />
         <Route exact path="/account" render={(props) => renderLoginIfNotLoggedIn(<AccountPage account={account} {...props} />)} />
+        <Route exact path="/my-subscriptions" render={(props) => renderLoginIfNotLoggedIn(<UserSubscriptionsPage account={account} {...props} />)} />
         <Route exact path="/organizations" render={(props) => renderLoginIfNotLoggedIn(<OrganizationListPage account={account} {...props} />)} />
         <Route exact path="/organizations/:organizationName" render={(props) => renderLoginIfNotLoggedIn(<OrganizationEditPage account={account} onChangeTheme={onChangeTheme} {...props} />)} />
         <Route exact path="/organizations/:organizationName/users" render={(props) => renderLoginIfNotLoggedIn(<UserListPage account={account} {...props} />)} />

@@ -69,3 +69,13 @@ export function deleteSubscription(subscription) {
     },
   }).then(res => res.json());
 }
+
+export function getUserSubscriptions(owner, userName) {
+  return fetch(`${Setting.ServerUrl}/api/get-user-subscriptions?owner=${owner}&userName=${encodeURIComponent(userName)}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

@@ -283,6 +283,26 @@ class ProductEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Hide quantity"), i18next.t("product:Hide quantity - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Switch checked={this.state.product.hideQuantity} onChange={value => {
+              this.updateProductField("hideQuantity", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("product:Hide sold"), i18next.t("product:Hide sold - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Switch checked={this.state.product.hideSold} onChange={value => {
+              this.updateProductField("hideSold", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :
           </Col>
           <Col span={22} >

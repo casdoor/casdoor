@@ -143,3 +143,24 @@ func (c *ApiController) DeleteSubscription() {
 	c.Data["json"] = wrapActionResponse(object.DeleteSubscription(&subscription))
 	c.ServeJSON()
 }
+
+// GetUserSubscriptions
+// @Title GetUserSubscriptions
+// @Tag Subscription API
+// @Description get subscriptions for a specific user
+// @Param   owner     query    string  true        "The owner of subscriptions"
+// @Param   userName  query    string  true        "The user name"
+// @Success 200 {array} object.Subscription The Response object
+// @router /get-user-subscriptions [get]
+func (c *ApiController) GetUserSubscriptions() {
+	owner := c.Input().Get("owner")
+	userName := c.Input().Get("userName")
+
+	subscriptions, err := object.GetSubscriptionsByUser(owner, userName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(subscriptions)
+}

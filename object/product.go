@@ -37,12 +37,14 @@ type Product struct {
 	Tag         string   `xorm:"varchar(100)" json:"tag"`
 	Currency    string   `xorm:"varchar(100)" json:"currency"`
 	Price       float64  `json:"price"`
-	Quantity    int      `json:"quantity"`
-	Sold        int      `json:"sold"`
-	IsRecharge  bool     `json:"isRecharge"`
-	Providers   []string `xorm:"varchar(255)" json:"providers"`
-	ReturnUrl   string   `xorm:"varchar(1000)" json:"returnUrl"`
-	SuccessUrl  string   `xorm:"varchar(1000)" json:"successUrl"`
+	Quantity     int      `json:"quantity"`
+	Sold         int      `json:"sold"`
+	IsRecharge   bool     `json:"isRecharge"`
+	Providers    []string `xorm:"varchar(255)" json:"providers"`
+	ReturnUrl    string   `xorm:"varchar(1000)" json:"returnUrl"`
+	SuccessUrl   string   `xorm:"varchar(1000)" json:"successUrl"`
+	HideQuantity bool     `json:"hideQuantity"` // Hide quantity field on product buy page
+	HideSold     bool     `json:"hideSold"`     // Hide sold field on product buy page
 
 	State string `xorm:"varchar(100)" json:"state"`
 

@@ -345,15 +345,15 @@ class ProductBuyPage extends React.Component {
                 </Descriptions.Item>
               ) : (
                 <React.Fragment>
-                  <Descriptions.Item label={i18next.t("product:Price")}>
+                  <Descriptions.Item label={i18next.t("product:Price")} span={product?.hideQuantity && product?.hideSold ? 3 : 1}>
                     <span style={{fontSize: 28, color: "red", fontWeight: "bold"}}>
                       {
                         this.getPrice(product)
                       }
                     </span>
                   </Descriptions.Item>
-                  <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>
-                  <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>
+                  {!product?.hideQuantity && <Descriptions.Item label={i18next.t("product:Quantity")}><span style={{fontSize: 16}}>{product?.quantity}</span></Descriptions.Item>}
+                  {!product?.hideSold && <Descriptions.Item label={i18next.t("product:Sold")}><span style={{fontSize: 16}}>{product?.sold}</span></Descriptions.Item>}
                 </React.Fragment>
               )
             }
