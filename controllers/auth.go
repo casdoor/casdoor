@@ -838,6 +838,18 @@ func (c *ApiController) Login() {
 					}
 				}
 
+				// Try to find existing user by username (case-insensitive)
+				// This allows OAuth providers (e.g., Wecom) to automatically associate with
+				// existing users when usernames match, particularly useful for enterprise
+				// scenarios where signup is disabled and users already exist in Casdoor
+				if user == nil && userInfo.Username != "" {
+					user, err = object.GetUserByFields(application.Organization, userInfo.Username)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+				}
+
 				if user == nil {
 					if !application.EnableSignUp {
 						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
