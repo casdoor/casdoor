@@ -82,7 +82,19 @@ func (mfa *RadiusMfa) Verify(passCode string) error {
 
 func (mfa *RadiusMfa) authenticateWithRadius(username, password string) error {
 	if mfa.provider == nil {
-		return errors.New("RADIUS provider is not configured")
+		// Try to load provider if URL is set and we have database access
+		if mfa.URL != "" && ormer != nil && ormer.Engine != nil {
+			provider, err := GetProvider(mfa.URL)
+			if err != nil {
+				return fmt.Errorf("failed to load RADIUS provider: %v", err)
+			}
+			if provider == nil {
+				return errors.New("RADIUS provider not found")
+			}
+			mfa.provider = provider
+		} else {
+			return errors.New("RADIUS provider is not configured")
+		}
 	}
 
 	// Create RADIUS packet
