@@ -14,6 +14,7 @@
     "State expected: %s, but got: %s": "期望状态为: %s, 实际状态为: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许通过 %s 注册新账户, 请使用其他方式注册",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 不存在且 不允许注册新账户, 请联系IT支持",
+    "The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support": "提供商账户: %s 与用户名: %s (%s) 已被删除, 无法用于登录, 请联系IT支持",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "提供商账户: %s与用户名: %s (%s)已经与其他账户绑定: %s (%s)",
     "The application: %s does not exist": "应用%s不存在",
     "The application: %s has disabled users to signin": "应用: %s 禁止用户登录",
