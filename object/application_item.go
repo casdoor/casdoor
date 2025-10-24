@@ -192,12 +192,12 @@ func (application *Application) HasPromptPageForUser(user *User) bool {
 // GetMissingRequiredSignupItems returns a list of required signup items that are not filled for the given user
 func (application *Application) GetMissingRequiredSignupItems(user *User) []*SignupItem {
 	missing := []*SignupItem{}
-	
+
 	for _, signupItem := range application.SignupItems {
 		if !signupItem.Required {
 			continue
 		}
-		
+
 		// Check if the field is empty in the user
 		isEmpty := false
 		switch signupItem.Name {
@@ -220,12 +220,12 @@ func (application *Application) GetMissingRequiredSignupItems(user *User) []*Sig
 			// For custom fields, we can't easily check, so skip
 			continue
 		}
-		
+
 		if isEmpty {
 			missing = append(missing, signupItem)
 		}
 	}
-	
+
 	return missing
 }
 
