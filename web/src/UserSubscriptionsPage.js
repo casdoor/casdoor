@@ -27,7 +27,7 @@ class UserSubscriptionsPage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getSubscriptions();
   }
 
