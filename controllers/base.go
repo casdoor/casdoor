@@ -223,9 +223,17 @@ func (c *ApiController) getMfaUserSession() string {
 	return userId.(string)
 }
 
-func (c *ApiController) setExpireForSession() {
+func (c *ApiController) setExpireForSession(application *object.Application) {
 	timestamp := time.Now().Unix()
-	timestamp += 3600 * 24
+
+	// Get cookie expiration time from application settings or use default
+	cookieExpireSeconds := int64(3600 * 24 * 30) // Default: 30 days
+
+	if application != nil && application.CookieExpireSeconds > 0 {
+		cookieExpireSeconds = int64(application.CookieExpireSeconds)
+	}
+
+	timestamp += cookieExpireSeconds
 	c.SetSessionData(&SessionData{
 		ExpireTime: timestamp,
 	})
