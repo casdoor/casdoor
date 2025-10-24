@@ -205,6 +205,9 @@ type User struct {
 	TotpSecret          string                `xorm:"varchar(100)" json:"totpSecret"`
 	MfaPhoneEnabled     bool                  `json:"mfaPhoneEnabled"`
 	MfaEmailEnabled     bool                  `json:"mfaEmailEnabled"`
+	MfaRadiusEnabled    bool                  `json:"mfaRadiusEnabled"`
+	MfaRadiusUsername   string                `xorm:"varchar(100)" json:"mfaRadiusUsername"`
+	MfaRadiusProvider   string                `xorm:"varchar(100)" json:"mfaRadiusProvider"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 	Invitation          string                `xorm:"varchar(100) index" json:"invitation"`
 	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`

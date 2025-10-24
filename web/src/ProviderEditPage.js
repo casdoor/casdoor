@@ -695,12 +695,17 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Telegram");
               } else if (value === "Face ID") {
                 this.updateProviderField("type", "Alibaba Cloud Facebody");
+              } else if (value === "MFA") {
+                this.updateProviderField("type", "RADIUS");
+                this.updateProviderField("host", "");
+                this.updateProviderField("port", 1812);
               }
             })}>
               {
                 [
                   {id: "Captcha", name: "Captcha"},
                   {id: "Email", name: "Email"},
+                  {id: "MFA", name: "MFA"},
                   {id: "Notification", name: "Notification"},
                   {id: "OAuth", name: "OAuth"},
                   {id: "Payment", name: "Payment"},
@@ -909,6 +914,7 @@ class ProviderEditPage extends React.Component {
         {
           (this.state.provider.category === "Captcha" && this.state.provider.type === "Default") ||
           (this.state.provider.category === "Web3") ||
+          (this.state.provider.category === "MFA") ||
           (this.state.provider.category === "Storage" && this.state.provider.type === "Local File System") ||
           (this.state.provider.category === "SMS" && this.state.provider.type === "Custom HTTP SMS") ||
           (this.state.provider.category === "Email" && this.state.provider.type === "Custom HTTP Email") ||
@@ -1571,6 +1577,39 @@ class ProviderEditPage extends React.Component {
                     onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
                   </Button>
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "MFA" ? (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input prefix={<LinkOutlined />} value={this.state.provider.host} placeholder="10.10.10.10" onChange={e => {
+                    this.updateProviderField("host", e.target.value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <InputNumber value={this.state.provider.port} onChange={value => {
+                    this.updateProviderField("port", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:RADIUS Shared Secret - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Input value={this.state.provider.clientSecret} placeholder="Shared secret" onChange={e => {
+                    this.updateProviderField("clientSecret", e.target.value);
+                  }} />
                 </Col>
               </Row>
             </React.Fragment>
