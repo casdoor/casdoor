@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "У вашому регіоні реєстрація за телефоном недоступна",
     "password or code is incorrect": "пароль або код неправильний",
     "password or code is incorrect, you have %s remaining chances": "пароль або код неправильний, у вас залишилось %s спроб",
-    "unsupported password type: %s": "непідтримуваний тип пароля: %s"
+    "unsupported password type: %s": "непідтримуваний тип пароля: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Користувача було видалено і не можна використовувати для входу, будь ласка, зверніться до адміністратора"
   },
   "enforcer": {
     "the adapter: %s is not found": "адаптер: %s не знайдено"

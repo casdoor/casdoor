@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Din region tillåter inte registrering via telefon",
     "password or code is incorrect": "lösenord eller kod är felaktig",
     "password or code is incorrect, you have %s remaining chances": "lösenord eller kod är felaktig, du har %s försök kvar",
-    "unsupported password type: %s": "lösenordstypen stöds inte: %s"
+    "unsupported password type: %s": "lösenordstypen stöds inte: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Användaren har tagits bort och kan inte användas för att logga in, kontakta administratören"
   },
   "enforcer": {
     "the adapter: %s is not found": "adaptern: %s hittades inte"

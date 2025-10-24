@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "당신의 지역은 전화로 가입할 수 없습니다",
     "password or code is incorrect": "비밀번호 또는 코드가 올바르지 않습니다",
     "password or code is incorrect, you have %s remaining chances": "암호 또는 코드가 올바르지 않습니다. %s 번의 기회가 남아 있습니다",
-    "unsupported password type: %s": "지원되지 않는 암호 유형: %s"
+    "unsupported password type: %s": "지원되지 않는 암호 유형: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "사용자가 삭제되어 로그인에 사용할 수 없습니다. 관리자에게 문의하세요"
   },
   "enforcer": {
     "the adapter: %s is not found": "어댑터 %s을(를) 찾을 수 없습니다"

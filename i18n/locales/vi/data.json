@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Vùng của bạn không được phép đăng ký bằng điện thoại",
     "password or code is incorrect": "mật khẩu hoặc mã không đúng",
     "password or code is incorrect, you have %s remaining chances": "Mật khẩu hoặc mã không chính xác, bạn còn %s lần cơ hội",
-    "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s"
+    "unsupported password type: %s": "Loại mật khẩu không được hỗ trợ: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Người dùng đã bị xóa và không thể được sử dụng để đăng nhập, vui lòng liên hệ với quản trị viên"
   },
   "enforcer": {
     "the adapter: %s is not found": "không tìm thấy adapter: %s"

@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "האזור שלך אינו מאפשר הרשמה באמצעות טלפון",
     "password or code is incorrect": "סיסמה או קוד שגויים",
     "password or code is incorrect, you have %s remaining chances": "סיסמה או קוד שגויים, יש לך %s ניסיונות נותרים",
-    "unsupported password type: %s": "סוג סיסמה לא נתמך: %s"
+    "unsupported password type: %s": "סוג סיסמה לא נתמך: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "המשתמש נמחק ולא ניתן להשתמש בו לכניסה, אנא צור קשר עם המנהל"
   },
   "enforcer": {
     "the adapter: %s is not found": "המתאם: %s לא נמצא"

@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "あなたの地域は電話でサインアップすることができません",
     "password or code is incorrect": "パスワードまたはコードが正しくありません",
     "password or code is incorrect, you have %s remaining chances": "パスワードまたはコードが間違っています。あと %s 回の試行機会があります",
-    "unsupported password type: %s": "サポートされていないパスワードタイプ：%s"
+    "unsupported password type: %s": "サポートされていないパスワードタイプ：%s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "ユーザーは削除されており、サインインに使用できません。管理者にお問い合わせください"
   },
   "enforcer": {
     "the adapter: %s is not found": "アダプタ「%s」が見つかりません"

@@ -62,6 +62,11 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 		return
 	}
 
+	if user.IsDeleted {
+		c.ResponseError(c.T("check:The user has been deleted and cannot be used to sign in, please contact the administrator"))
+		return
+	}
+
 	userId := user.GetId()
 
 	clientIp := util.GetClientIpFromRequest(c.Ctx.Request)
@@ -811,10 +816,6 @@ func (c *ApiController) Login() {
 				resp = c.HandleLoggedIn(application, user, &authForm)
 
 				c.Ctx.Input.SetParam("recordUserId", user.GetId())
-			} else if user != nil && user.IsDeleted {
-				// Block soft-deleted users from re-registering via third-party login
-				c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
-				return
 			} else if provider.Category == "OAuth" || provider.Category == "Web3" || provider.Category == "SAML" {
 				// Sign up via OAuth
 				if application.EnableLinkWithEmail {
@@ -825,11 +826,6 @@ func (c *ApiController) Login() {
 							c.ResponseError(err.Error())
 							return
 						}
-						// Block if soft-deleted user found by email
-						if user != nil && user.IsDeleted {
-							c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
-							return
-						}
 					}
 
 					if user == nil && userInfo.Phone != "" {
@@ -837,11 +833,6 @@ func (c *ApiController) Login() {
 						user, err = object.GetUserByField(application.Organization, "phone", userInfo.Phone)
 						if err != nil {
 							c.ResponseError(err.Error())
-							return
-						}
-						// Block if soft-deleted user found by phone
-						if user != nil && user.IsDeleted {
-							c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support"), provider.Type, userInfo.Username, userInfo.DisplayName))
 							return
 						}
 					}

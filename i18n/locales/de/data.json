@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Ihre Region ist nicht berechtigt, sich telefonisch anzumelden",
     "password or code is incorrect": "Passwort oder Code ist falsch",
     "password or code is incorrect, you have %s remaining chances": "Das Passwort oder der Code ist falsch. Du hast noch %s Versuche übrig",
-    "unsupported password type: %s": "Nicht unterstützter Passworttyp: %s"
+    "unsupported password type: %s": "Nicht unterstützter Passworttyp: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Der Benutzer wurde gelöscht und kann nicht zur Anmeldung verwendet werden. Bitte wenden Sie sich an den Administrator"
   },
   "enforcer": {
     "the adapter: %s is not found": "Der Adapter: %s wurde nicht gefunden"

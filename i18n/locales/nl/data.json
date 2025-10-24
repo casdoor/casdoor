@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Registratie per telefoon niet toegestaan in jouw regio",
     "password or code is incorrect": "Verkeerd wachtwoord of code",
     "password or code is incorrect, you have %s remaining chances": "Verkeerd wachtwoord/code, nog %s pogingen",
-    "unsupported password type: %s": "Niet-ondersteund wachtwoordtype: %s"
+    "unsupported password type: %s": "Niet-ondersteund wachtwoordtype: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "De gebruiker is verwijderd en kan niet worden gebruikt om in te loggen, neem contact op met de beheerder"
   },
   "enforcer": {
     "the adapter: %s is not found": "Adapter %s niet gevonden"

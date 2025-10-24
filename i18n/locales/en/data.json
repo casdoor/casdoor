@@ -14,7 +14,6 @@
     "State expected: %s, but got: %s": "State expected: %s, but got: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support",
-    "The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support": "The account for provider: %s and username: %s (%s) has been deleted and cannot be used to sign in, please contact your IT support",
     "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)",
     "The application: %s does not exist": "The application: %s does not exist",
     "The application: %s has disabled users to signin": "The application: %s has disabled users to signin",
@@ -89,7 +88,8 @@
     "Your region is not allow to signup by phone": "Your region is not allow to signup by phone",
     "password or code is incorrect": "password or code is incorrect",
     "password or code is incorrect, you have %s remaining chances": "password or code is incorrect, you have %s remaining chances",
-    "unsupported password type: %s": "unsupported password type: %s"
+    "unsupported password type: %s": "unsupported password type: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "The user has been deleted and cannot be used to sign in, please contact the administrator"
   },
   "enforcer": {
     "the adapter: %s is not found": "the adapter: %s is not found"

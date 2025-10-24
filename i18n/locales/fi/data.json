@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Alueellasi ei ole sallittua rekisteröityä puhelimella",
     "password or code is incorrect": "salasana tai koodi on virheellinen",
     "password or code is incorrect, you have %s remaining chances": "salasana tai koodi on virheellinen, sinulla on %s yritystä jäljellä",
-    "unsupported password type: %s": "ei-tuettu salasanatyyppi: %s"
+    "unsupported password type: %s": "ei-tuettu salasanatyyppi: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Käyttäjä on poistettu eikä sitä voi käyttää kirjautumiseen, ota yhteyttä järjestelmänvalvojaan"
   },
   "enforcer": {
     "the adapter: %s is not found": "adapteria: %s ei löydy"

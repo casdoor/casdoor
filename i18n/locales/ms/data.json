@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "Wilayah anda tidak dibenarkan daftar melalui telefon",
     "password or code is incorrect": "kata laluan atau kod salah",
     "password or code is incorrect, you have %s remaining chances": "kata laluan atau kod salah, anda ada %s peluang lagi",
-    "unsupported password type: %s": "jenis kata laluan tidak disokong: %s"
+    "unsupported password type: %s": "jenis kata laluan tidak disokong: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "Pengguna telah dipadamkan dan tidak boleh digunakan untuk log masuk, sila hubungi pentadbir"
   },
   "enforcer": {
     "the adapter: %s is not found": "penyesuai: %s tidak ditemui"

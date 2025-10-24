@@ -88,7 +88,8 @@
     "Your region is not allow to signup by phone": "منطقه شما اجازه ثبت‌نام با تلفن را ندارد",
     "password or code is incorrect": "رمز عبور یا کد نادرست است",
     "password or code is incorrect, you have %s remaining chances": "رمز عبور یا کد نادرست است، شما %s فرصت باقی‌مانده دارید",
-    "unsupported password type: %s": "نوع رمز عبور پشتیبانی نشده: %s"
+    "unsupported password type: %s": "نوع رمز عبور پشتیبانی نشده: %s",
+    "The user has been deleted and cannot be used to sign in, please contact the administrator": "کاربر حذف شده است و نمی توان از آن برای ورود استفاده کرد، لطفا با مدیر تماس بگیرید"
   },
   "enforcer": {
     "the adapter: %s is not found": "آداپتر: %s پیدا نشد"
