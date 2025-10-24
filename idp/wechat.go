@@ -37,8 +37,9 @@ var (
 )
 
 type WeChatIdProvider struct {
-	Client *http.Client
-	Config *oauth2.Config
+	Client  *http.Client
+	Config  *oauth2.Config
+	SubType string
 }
 
 type WechatCacheMapValue struct {
@@ -46,8 +47,10 @@ type WechatCacheMapValue struct {
 	WechatUnionId string
 }
 
-func NewWeChatIdProvider(clientId string, clientSecret string, redirectUrl string) *WeChatIdProvider {
-	idp := &WeChatIdProvider{}
+func NewWeChatIdProvider(clientId string, clientSecret string, redirectUrl string, subType string) *WeChatIdProvider {
+	idp := &WeChatIdProvider{
+		SubType: subType,
+	}
 
 	config := idp.getConfig(clientId, clientSecret, redirectUrl)
 	idp.Config = config
@@ -65,8 +68,16 @@ func (idp *WeChatIdProvider) getConfig(clientId string, clientSecret string, red
 		TokenURL: "https://graph.qq.com/oauth2.0/token",
 	}
 
+	// Choose scope based on SubType
+	// Web (default): snsapi_login - for web applications with QR code login
+	// Mobile: snsapi_userinfo - for mobile applications with WeChat app authorization
+	scope := "snsapi_login"
+	if idp.SubType == "Mobile" {
+		scope = "snsapi_userinfo"
+	}
+
 	config := &oauth2.Config{
-		Scopes:       []string{"snsapi_login"},
+		Scopes:       []string{scope},
 		Endpoint:     endpoint,
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
