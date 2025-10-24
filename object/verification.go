@@ -80,15 +80,10 @@ func IsAllowSend(user *User, remoteAddr, recordType string, application *Applica
 		return err
 	}
 
-	// Get timeout from application first, fall back to config, then default
+	// Get timeout from application, or use default
 	resendTimeoutInSeconds := int64(60)
 	if application != nil && application.CodeResendTimeout > 0 {
 		resendTimeoutInSeconds = int64(application.CodeResendTimeout)
-	} else {
-		// Try to get from config
-		if timeout, err := conf.GetConfigInt64("codeResendTimeout"); err == nil && timeout > 0 {
-			resendTimeoutInSeconds = timeout
-		}
 	}
 
 	now := time.Now().Unix()
