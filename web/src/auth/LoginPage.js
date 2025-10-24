@@ -357,7 +357,9 @@ class LoginPage extends React.Component {
       return;
     }
 
+    // Always fetch account to check if prompt page is needed (including missing required fields)
     if (Setting.hasPromptPage(application)) {
+      // If application has prompted items, always check the account
       AuthBackend.getAccount()
         .then((res) => {
           if (res.status === "ok") {
@@ -375,20 +377,51 @@ class LoginPage extends React.Component {
           }
         });
     } else {
-      if (noRedirect === "true") {
-        window.close();
-        const newWindow = window.open(redirectUrl);
-        if (newWindow) {
-          setInterval(() => {
-            if (!newWindow.closed) {
-              newWindow.close();
+      // Even if no prompted items, check if there are missing required fields
+      AuthBackend.getAccount()
+        .then((res) => {
+          if (res.status === "ok") {
+            const account = res.data;
+            account.organization = res.data2;
+            this.onUpdateAccount(account);
+
+            // Check if user needs prompt page (e.g., missing required fields)
+            if (Setting.hasPromptPageForUser(account, application) && !Setting.isPromptAnswered(account, application)) {
+              Setting.goToLinkSoft(ths, `/prompt/${application.name}?redirectUri=${oAuthParams.redirectUri}&code=${code}&state=${oAuthParams.state}`);
+            } else {
+              if (noRedirect === "true") {
+                window.close();
+                const newWindow = window.open(redirectUrl);
+                if (newWindow) {
+                  setInterval(() => {
+                    if (!newWindow.closed) {
+                      newWindow.close();
+                    }
+                  }, 1000);
+                }
+              } else {
+                Setting.goToLink(redirectUrl);
+                this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
+              }
             }
-          }, 1000);
-        }
-      } else {
-        Setting.goToLink(redirectUrl);
-        this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
-      }
+          } else {
+            // If failed to get account, proceed with redirect
+            if (noRedirect === "true") {
+              window.close();
+              const newWindow = window.open(redirectUrl);
+              if (newWindow) {
+                setInterval(() => {
+                  if (!newWindow.closed) {
+                    newWindow.close();
+                  }
+                }, 1000);
+              }
+            } else {
+              Setting.goToLink(redirectUrl);
+              this.sendPopupData({type: "loginSuccess", data: {code: code, state: oAuthParams.state}}, oAuthParams.redirectUri);
+            }
+          }
+        });
     }
   }
 

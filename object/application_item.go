@@ -177,3 +177,59 @@ func (application *Application) HasPromptPage() bool {
 
 	return application.isAffiliationPrompted()
 }
+
+// HasPromptPageForUser checks if a specific user needs to see the prompt page
+// This includes checking for missing required signup items
+func (application *Application) HasPromptPageForUser(user *User) bool {
+	if application.HasPromptPage() {
+		return true
+	}
+
+	// Check if the user has missing required signup items
+	return application.HasMissingRequiredSignupItems(user)
+}
+
+// GetMissingRequiredSignupItems returns a list of required signup items that are not filled for the given user
+func (application *Application) GetMissingRequiredSignupItems(user *User) []*SignupItem {
+	missing := []*SignupItem{}
+	
+	for _, signupItem := range application.SignupItems {
+		if !signupItem.Required {
+			continue
+		}
+		
+		// Check if the field is empty in the user
+		isEmpty := false
+		switch signupItem.Name {
+		case "Email":
+			isEmpty = user.Email == ""
+		case "Phone":
+			isEmpty = user.Phone == ""
+		case "Display name":
+			isEmpty = user.DisplayName == ""
+		case "Affiliation":
+			isEmpty = user.Affiliation == ""
+		case "ID card":
+			isEmpty = user.IdCard == ""
+		case "Region":
+			isEmpty = user.Region == ""
+		case "Country/Region":
+			isEmpty = user.Region == ""
+		// Add more fields as needed
+		default:
+			// For custom fields, we can't easily check, so skip
+			continue
+		}
+		
+		if isEmpty {
+			missing = append(missing, signupItem)
+		}
+	}
+	
+	return missing
+}
+
+// HasMissingRequiredSignupItems checks if a user has missing required signup items
+func (application *Application) HasMissingRequiredSignupItems(user *User) bool {
+	return len(application.GetMissingRequiredSignupItems(user)) > 0
+}

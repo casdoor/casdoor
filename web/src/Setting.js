@@ -623,6 +623,57 @@ export function isAffiliationPrompted(application) {
   return signupItem.prompted;
 }
 
+// Get missing required signup items for a user
+export function getMissingRequiredSignupItems(user, application) {
+  if (!application || !application.signupItems) {
+    return [];
+  }
+
+  const missing = [];
+  for (const signupItem of application.signupItems) {
+    if (!signupItem.required) {
+      continue;
+    }
+
+    // Check if the field is empty in the user
+    let isEmpty = false;
+    if (!user) {
+      isEmpty = true;
+    } else {
+      switch (signupItem.name) {
+      case "Email":
+        isEmpty = !user.email || user.email === "";
+        break;
+      case "Phone":
+        isEmpty = !user.phone || user.phone === "";
+        break;
+      case "Display name":
+        isEmpty = !user.displayName || user.displayName === "";
+        break;
+      case "Affiliation":
+        isEmpty = !user.affiliation || user.affiliation === "";
+        break;
+      case "ID card":
+        isEmpty = !user.idCard || user.idCard === "";
+        break;
+      case "Region":
+      case "Country/Region":
+        isEmpty = !user.region || user.region === "";
+        break;
+      default:
+        // For other fields or custom fields, skip
+        continue;
+      }
+    }
+
+    if (isEmpty) {
+      missing.push(signupItem);
+    }
+  }
+
+  return missing;
+}
+
 export function hasPromptPage(application) {
   const providerItems = getAllPromptedProviderItems(application);
   if (providerItems?.length > 0) {
@@ -635,6 +686,17 @@ export function hasPromptPage(application) {
   }
 
   return isAffiliationPrompted(application);
+}
+
+// Check if a specific user needs to see the prompt page
+export function hasPromptPageForUser(user, application) {
+  if (hasPromptPage(application)) {
+    return true;
+  }
+
+  // Check if the user has missing required signup items
+  const missingItems = getMissingRequiredSignupItems(user, application);
+  return missingItems.length > 0;
 }
 
 function isAffiliationAnswered(user, application) {
@@ -689,6 +751,13 @@ export function isPromptAnswered(user, application) {
       return false;
     }
   }
+
+  // Check if there are missing required signup items
+  const missingRequiredItems = getMissingRequiredSignupItems(user, application);
+  if (missingRequiredItems.length > 0) {
+    return false;
+  }
+
   return true;
 }
 

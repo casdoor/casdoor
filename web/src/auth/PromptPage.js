@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Result, Row} from "antd";
+import {Button, Card, Col, Input, Result, Row} from "antd";
 import * as ApplicationBackend from "../backend/ApplicationBackend";
 import * as UserBackend from "../backend/UserBackend";
 import * as Setting from "../Setting";
@@ -23,6 +23,7 @@ import OAuthWidget from "../common/OAuthWidget";
 import RegionSelect from "../common/select/RegionSelect";
 import {withRouter} from "react-router-dom";
 import * as AuthBackend from "./AuthBackend";
+import {CountryCodeSelect} from "../common/select/CountryCodeSelect";
 
 class PromptPage extends React.Component {
   constructor(props) {
@@ -142,7 +143,134 @@ class PromptPage extends React.Component {
     this.getUser();
   }
 
+  renderMissingRequiredField(signupItem) {
+    if (!this.state.user) {
+      return null;
+    }
+
+    const user = this.state.user;
+    const labelSpan = 6;
+    const inputSpan = 18;
+
+    switch (signupItem.name) {
+    case "Email":
+      return (
+        <Row key={signupItem.name} style={{marginTop: "20px"}}>
+          <Col span={labelSpan} style={{marginTop: "5px", textAlign: "right", paddingRight: "10px"}}>
+            <span style={{color: "red"}}>*</span>
+            <span>{i18next.t("general:Email")}:</span>
+          </Col>
+          <Col span={inputSpan}>
+            <Input
+              value={user.email}
+              onChange={(e) => {
+                this.updateUserFieldWithoutSubmit("email", e.target.value);
+              }}
+              onBlur={() => {
+                this.submitUserEdit(false);
+              }}
+              placeholder={signupItem.placeholder || i18next.t("signup:Please input your Email!")}
+            />
+          </Col>
+        </Row>
+      );
+    case "Phone":
+      return (
+        <Row key={signupItem.name} style={{marginTop: "20px"}}>
+          <Col span={labelSpan} style={{marginTop: "5px", textAlign: "right", paddingRight: "10px"}}>
+            <span style={{color: "red"}}>*</span>
+            <span>{i18next.t("general:Phone")}:</span>
+          </Col>
+          <Col span={inputSpan}>
+            <Input
+              addonBefore={<CountryCodeSelect
+                style={{width: "100px"}}
+                initValue={user.countryCode}
+                onChange={(value) => {
+                  this.updateUserFieldWithoutSubmit("countryCode", value);
+                }}
+              />}
+              value={user.phone}
+              onChange={(e) => {
+                this.updateUserFieldWithoutSubmit("phone", e.target.value);
+              }}
+              onBlur={() => {
+                this.submitUserEdit(false);
+              }}
+              placeholder={signupItem.placeholder || i18next.t("signup:Please input your Phone!")}
+            />
+          </Col>
+        </Row>
+      );
+    case "Display name":
+      return (
+        <Row key={signupItem.name} style={{marginTop: "20px"}}>
+          <Col span={labelSpan} style={{marginTop: "5px", textAlign: "right", paddingRight: "10px"}}>
+            <span style={{color: "red"}}>*</span>
+            <span>{i18next.t("general:Display name")}:</span>
+          </Col>
+          <Col span={inputSpan}>
+            <Input
+              value={user.displayName}
+              onChange={(e) => {
+                this.updateUserFieldWithoutSubmit("displayName", e.target.value);
+              }}
+              onBlur={() => {
+                this.submitUserEdit(false);
+              }}
+              placeholder={signupItem.placeholder || i18next.t("signup:Please input your Display name!")}
+            />
+          </Col>
+        </Row>
+      );
+    case "ID card":
+      return (
+        <Row key={signupItem.name} style={{marginTop: "20px"}}>
+          <Col span={labelSpan} style={{marginTop: "5px", textAlign: "right", paddingRight: "10px"}}>
+            <span style={{color: "red"}}>*</span>
+            <span>{i18next.t("user:ID card")}:</span>
+          </Col>
+          <Col span={inputSpan}>
+            <Input
+              value={user.idCard}
+              onChange={(e) => {
+                this.updateUserFieldWithoutSubmit("idCard", e.target.value);
+              }}
+              onBlur={() => {
+                this.submitUserEdit(false);
+              }}
+              placeholder={signupItem.placeholder || i18next.t("signup:Please input your ID card!")}
+            />
+          </Col>
+        </Row>
+      );
+    case "Region":
+    case "Country/Region":
+      return (
+        <Row key={signupItem.name} style={{marginTop: "20px"}}>
+          <Col span={labelSpan} style={{marginTop: "5px", textAlign: "right", paddingRight: "10px"}}>
+            <span style={{color: "red"}}>*</span>
+            <span>{i18next.t("user:Country/Region")}:</span>
+          </Col>
+          <Col span={inputSpan}>
+            <RegionSelect
+              defaultValue={user.region}
+              onChange={(value) => {
+                this.updateUserFieldWithoutSubmit("region", value);
+                this.submitUserEdit(false);
+              }}
+            />
+          </Col>
+        </Row>
+      );
+    default:
+      return null;
+    }
+  }
+
   renderContent(application) {
+    const missingRequiredItems = (application === null || this.state.user === null) ? [] : Setting.getMissingRequiredSignupItems(this.state.user, application);
+
     return (
       <div style={{width: "500px"}}>
         {
@@ -178,6 +306,10 @@ class PromptPage extends React.Component {
                 );
               })
             )
+          }
+          {
+            /* Render missing required signup items */
+            missingRequiredItems.map((signupItem, index) => this.renderMissingRequiredField(signupItem))
           }
         </div>
       </div>
