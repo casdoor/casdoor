@@ -839,6 +839,9 @@ func (c *ApiController) Login() {
 				}
 
 				// Try to find existing user by username (case-insensitive)
+				// This allows OAuth providers (e.g., Wecom) to automatically associate with
+				// existing users when usernames match, particularly useful for enterprise
+				// scenarios where signup is disabled and users already exist in Casdoor
 				if user == nil && userInfo.Username != "" {
 					user, err = object.GetUserByFields(application.Organization, userInfo.Username)
 					if err != nil {
