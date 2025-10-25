@@ -33,19 +33,9 @@ type CLIVersionInfo struct {
 	BinaryTime time.Time
 }
 
-type CommandCacheEntry struct {
-	Output     string
-	CachedTime time.Time
-}
-
 var (
-	cliVersionCache   = make(map[string]*CLIVersionInfo)
-	cliVersionMutex   sync.RWMutex
-	commandCache      = make(map[string]*CommandCacheEntry)
-	commandCacheMutex sync.RWMutex
-	cacheTTL          = 5 * time.Minute
-	cleanupInProgress = false
-	cleanupMutex      sync.Mutex
+	cliVersionCache = make(map[string]*CLIVersionInfo)
+	cliVersionMutex sync.RWMutex
 )
 
 // getCLIVersion
@@ -93,69 +83,6 @@ func getCLIVersion(language string) (string, error) {
 	cliVersionMutex.Unlock()
 
 	return version, nil
-}
-
-// generateCacheKey creates a unique cache key based on language and arguments
-func generateCacheKey(language string, args []string) (string, error) {
-	argsJSON, err := json.Marshal(args)
-	if err != nil {
-		return "", fmt.Errorf("failed to marshal args: %v", err)
-	}
-	data := fmt.Sprintf("%s:%s", language, string(argsJSON))
-	hash := sha256.Sum256([]byte(data))
-	return hex.EncodeToString(hash[:]), nil
-}
-
-// cleanExpiredCacheEntries removes expired entries from the cache
-func cleanExpiredCacheEntries() {
-	commandCacheMutex.Lock()
-	defer commandCacheMutex.Unlock()
-
-	for key, entry := range commandCache {
-		if time.Since(entry.CachedTime) >= cacheTTL {
-			delete(commandCache, key)
-		}
-	}
-
-	cleanupMutex.Lock()
-	cleanupInProgress = false
-	cleanupMutex.Unlock()
-}
-
-// getCachedCommandResult retrieves cached command result if available and not expired
-func getCachedCommandResult(cacheKey string) (string, bool) {
-	commandCacheMutex.RLock()
-	defer commandCacheMutex.RUnlock()
-
-	if entry, exists := commandCache[cacheKey]; exists {
-		if time.Since(entry.CachedTime) < cacheTTL {
-			return entry.Output, true
-		}
-	}
-	return "", false
-}
-
-// setCachedCommandResult stores command result in cache and performs periodic cleanup
-func setCachedCommandResult(cacheKey string, output string) {
-	commandCacheMutex.Lock()
-	commandCache[cacheKey] = &CommandCacheEntry{
-		Output:     output,
-		CachedTime: time.Now(),
-	}
-	shouldCleanup := len(commandCache)%100 == 0
-	commandCacheMutex.Unlock()
-
-	// Periodically clean expired entries (every 100 cache sets)
-	if shouldCleanup {
-		cleanupMutex.Lock()
-		if !cleanupInProgress {
-			cleanupInProgress = true
-			cleanupMutex.Unlock()
-			go cleanExpiredCacheEntries()
-		} else {
-			cleanupMutex.Unlock()
-		}
-	}
 }
 
 func processArgsToTempFiles(args []string) ([]string, []string, error) {
