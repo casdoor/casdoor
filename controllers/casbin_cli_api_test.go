@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -46,11 +47,17 @@ func TestGenerateCacheKey(t *testing.T) {
 		},
 	}
 
-	baseKey := generateCacheKey("go", []string{"-v"})
+	baseKey, err := generateCacheKey("go", []string{"-v"})
+	if err != nil {
+		t.Fatalf("Failed to generate base cache key: %v", err)
+	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			key := generateCacheKey(tt.language, tt.args)
+			key, err := generateCacheKey(tt.language, tt.args)
+			if err != nil {
+				t.Fatalf("Failed to generate cache key: %v", err)
+			}
 			if tt.wantSame && key != baseKey {
 				t.Errorf("Expected same cache key, got %s vs %s", key, baseKey)
 			}
@@ -69,7 +76,10 @@ func TestCommandCache(t *testing.T) {
 
 	language := "go"
 	args := []string{"-v"}
-	cacheKey := generateCacheKey(language, args)
+	cacheKey, err := generateCacheKey(language, args)
+	if err != nil {
+		t.Fatalf("Failed to generate cache key: %v", err)
+	}
 	expectedOutput := "test output"
 
 	// Test cache miss
@@ -99,6 +109,51 @@ func TestCommandCache(t *testing.T) {
 	}
 }
 
+func TestCleanExpiredCacheEntries(t *testing.T) {
+	// Clear the cache before testing
+	commandCacheMutex.Lock()
+	commandCache = make(map[string]*CommandCacheEntry)
+	commandCacheMutex.Unlock()
+
+	// Add some entries
+	for i := 0; i < 5; i++ {
+		key, _ := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		setCachedCommandResult(key, fmt.Sprintf("output%d", i))
+	}
+
+	// Add some expired entries
+	oldTTL := cacheTTL
+	cacheTTL = 1 * time.Millisecond
+	defer func() { cacheTTL = oldTTL }()
+
+	for i := 5; i < 10; i++ {
+		key, _ := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		commandCacheMutex.Lock()
+		commandCache[key] = &CommandCacheEntry{
+			Output:     fmt.Sprintf("output%d", i),
+			CachedTime: time.Now().Add(-2 * time.Minute),
+		}
+		commandCacheMutex.Unlock()
+	}
+
+	// Verify we have 10 entries
+	commandCacheMutex.RLock()
+	if len(commandCache) != 10 {
+		t.Errorf("Expected 10 entries, got %d", len(commandCache))
+	}
+	commandCacheMutex.RUnlock()
+
+	// Clean expired entries
+	cleanExpiredCacheEntries()
+
+	// Verify expired entries are removed
+	commandCacheMutex.RLock()
+	if len(commandCache) != 5 {
+		t.Errorf("Expected 5 entries after cleanup, got %d", len(commandCache))
+	}
+	commandCacheMutex.RUnlock()
+}
+
 func TestConcurrentCacheAccess(t *testing.T) {
 	// Clear the cache before testing
 	commandCacheMutex.Lock()
@@ -107,8 +162,11 @@ func TestConcurrentCacheAccess(t *testing.T) {
 
 	language := "go"
 	args := []string{"-v"}
-	cacheKey := generateCacheKey(language, args)
-	
+	cacheKey, err := generateCacheKey(language, args)
+	if err != nil {
+		t.Fatalf("Failed to generate cache key: %v", err)
+	}
+
 	// Test concurrent writes
 	done := make(chan bool)
 	for i := 0; i < 10; i++ {

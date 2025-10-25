@@ -94,11 +94,26 @@ func getCLIVersion(language string) (string, error) {
 }
 
 // generateCacheKey creates a unique cache key based on language and arguments
-func generateCacheKey(language string, args []string) string {
-	argsJSON, _ := json.Marshal(args)
+func generateCacheKey(language string, args []string) (string, error) {
+	argsJSON, err := json.Marshal(args)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal args: %v", err)
+	}
 	data := fmt.Sprintf("%s:%s", language, string(argsJSON))
 	hash := sha256.Sum256([]byte(data))
-	return hex.EncodeToString(hash[:])
+	return hex.EncodeToString(hash[:]), nil
+}
+
+// cleanExpiredCacheEntries removes expired entries from the cache
+func cleanExpiredCacheEntries() {
+	commandCacheMutex.Lock()
+	defer commandCacheMutex.Unlock()
+
+	for key, entry := range commandCache {
+		if time.Since(entry.CachedTime) >= cacheTTL {
+			delete(commandCache, key)
+		}
+	}
 }
 
 // getCachedCommandResult retrieves cached command result if available and not expired
@@ -114,7 +129,7 @@ func getCachedCommandResult(cacheKey string) (string, bool) {
 	return "", false
 }
 
-// setCachedCommandResult stores command result in cache
+// setCachedCommandResult stores command result in cache and performs periodic cleanup
 func setCachedCommandResult(cacheKey string, output string) {
 	commandCacheMutex.Lock()
 	defer commandCacheMutex.Unlock()
@@ -122,6 +137,11 @@ func setCachedCommandResult(cacheKey string, output string) {
 	commandCache[cacheKey] = &CommandCacheEntry{
 		Output:     output,
 		CachedTime: time.Now(),
+	}
+
+	// Periodically clean expired entries (every 100 cache sets)
+	if len(commandCache)%100 == 0 {
+		go cleanExpiredCacheEntries()
 	}
 }
 
@@ -193,7 +213,11 @@ func (c *ApiController) RunCasbinCommand() {
 	}
 
 	// Generate cache key for this command
-	cacheKey := generateCacheKey(language, args)
+	cacheKey, err := generateCacheKey(language, args)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	// Check if result is cached
 	if cachedOutput, found := getCachedCommandResult(cacheKey); found {
