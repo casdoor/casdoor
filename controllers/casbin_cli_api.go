@@ -44,6 +44,8 @@ var (
 	commandCache      = make(map[string]*CommandCacheEntry)
 	commandCacheMutex sync.RWMutex
 	cacheTTL          = 5 * time.Minute
+	cleanupInProgress = false
+	cleanupMutex      sync.Mutex
 )
 
 // getCLIVersion
@@ -114,6 +116,10 @@ func cleanExpiredCacheEntries() {
 			delete(commandCache, key)
 		}
 	}
+
+	cleanupMutex.Lock()
+	cleanupInProgress = false
+	cleanupMutex.Unlock()
 }
 
 // getCachedCommandResult retrieves cached command result if available and not expired
@@ -132,16 +138,23 @@ func getCachedCommandResult(cacheKey string) (string, bool) {
 // setCachedCommandResult stores command result in cache and performs periodic cleanup
 func setCachedCommandResult(cacheKey string, output string) {
 	commandCacheMutex.Lock()
-	defer commandCacheMutex.Unlock()
-
 	commandCache[cacheKey] = &CommandCacheEntry{
 		Output:     output,
 		CachedTime: time.Now(),
 	}
+	shouldCleanup := len(commandCache)%100 == 0
+	commandCacheMutex.Unlock()
 
 	// Periodically clean expired entries (every 100 cache sets)
-	if len(commandCache)%100 == 0 {
-		go cleanExpiredCacheEntries()
+	if shouldCleanup {
+		cleanupMutex.Lock()
+		if !cleanupInProgress {
+			cleanupInProgress = true
+			cleanupMutex.Unlock()
+			go cleanExpiredCacheEntries()
+		} else {
+			cleanupMutex.Unlock()
+		}
 	}
 }
 

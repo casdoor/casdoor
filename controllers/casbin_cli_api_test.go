@@ -117,7 +117,10 @@ func TestCleanExpiredCacheEntries(t *testing.T) {
 
 	// Add some entries
 	for i := 0; i < 5; i++ {
-		key, _ := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		key, err := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		if err != nil {
+			t.Fatalf("Failed to generate cache key: %v", err)
+		}
 		setCachedCommandResult(key, fmt.Sprintf("output%d", i))
 	}
 
@@ -127,7 +130,10 @@ func TestCleanExpiredCacheEntries(t *testing.T) {
 	defer func() { cacheTTL = oldTTL }()
 
 	for i := 5; i < 10; i++ {
-		key, _ := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		key, err := generateCacheKey("go", []string{fmt.Sprintf("arg%d", i)})
+		if err != nil {
+			t.Fatalf("Failed to generate cache key: %v", err)
+		}
 		commandCacheMutex.Lock()
 		commandCache[key] = &CommandCacheEntry{
 			Output:     fmt.Sprintf("output%d", i),
