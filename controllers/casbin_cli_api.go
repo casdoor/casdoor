@@ -152,6 +152,19 @@ func (c *ApiController) RunCasbinCommand() {
 		return
 	}
 
+	// Generate cache key for this command
+	cacheKey, err := generateCacheKey(language, args)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	// Check if result is cached
+	if cachedOutput, found := getCachedCommandResult(cacheKey); found {
+		c.ResponseOk(cachedOutput)
+		return
+	}
+
 	if len(args) > 0 && args[0] == "--version" {
 		version, err := getCLIVersion(language)
 		if err != nil {
@@ -188,6 +201,10 @@ func (c *ApiController) RunCasbinCommand() {
 
 	output := string(outputBytes)
 	output = strings.TrimSuffix(output, "\n")
+
+	// Store result in cache
+	setCachedCommandResult(cacheKey, output)
+
 	c.ResponseOk(output)
 }
 
