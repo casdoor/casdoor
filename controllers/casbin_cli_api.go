@@ -33,9 +33,17 @@ type CLIVersionInfo struct {
 	BinaryTime time.Time
 }
 
+type CommandCacheEntry struct {
+	Output     string
+	CachedTime time.Time
+}
+
 var (
-	cliVersionCache = make(map[string]*CLIVersionInfo)
-	cliVersionMutex sync.RWMutex
+	cliVersionCache   = make(map[string]*CLIVersionInfo)
+	cliVersionMutex   sync.RWMutex
+	commandCache      = make(map[string]*CommandCacheEntry)
+	commandCacheMutex sync.RWMutex
+	cacheTTL          = 5 * time.Minute
 )
 
 // getCLIVersion
@@ -83,6 +91,38 @@ func getCLIVersion(language string) (string, error) {
 	cliVersionMutex.Unlock()
 
 	return version, nil
+}
+
+// generateCacheKey creates a unique cache key based on language and arguments
+func generateCacheKey(language string, args []string) string {
+	argsJSON, _ := json.Marshal(args)
+	data := fmt.Sprintf("%s:%s", language, string(argsJSON))
+	hash := sha256.Sum256([]byte(data))
+	return hex.EncodeToString(hash[:])
+}
+
+// getCachedCommandResult retrieves cached command result if available and not expired
+func getCachedCommandResult(cacheKey string) (string, bool) {
+	commandCacheMutex.RLock()
+	defer commandCacheMutex.RUnlock()
+
+	if entry, exists := commandCache[cacheKey]; exists {
+		if time.Since(entry.CachedTime) < cacheTTL {
+			return entry.Output, true
+		}
+	}
+	return "", false
+}
+
+// setCachedCommandResult stores command result in cache
+func setCachedCommandResult(cacheKey string, output string) {
+	commandCacheMutex.Lock()
+	defer commandCacheMutex.Unlock()
+
+	commandCache[cacheKey] = &CommandCacheEntry{
+		Output:     output,
+		CachedTime: time.Now(),
+	}
 }
 
 func processArgsToTempFiles(args []string) ([]string, []string, error) {
@@ -152,6 +192,15 @@ func (c *ApiController) RunCasbinCommand() {
 		return
 	}
 
+	// Generate cache key for this command
+	cacheKey := generateCacheKey(language, args)
+
+	// Check if result is cached
+	if cachedOutput, found := getCachedCommandResult(cacheKey); found {
+		c.ResponseOk(cachedOutput)
+		return
+	}
+
 	if len(args) > 0 && args[0] == "--version" {
 		version, err := getCLIVersion(language)
 		if err != nil {
@@ -188,6 +237,10 @@ func (c *ApiController) RunCasbinCommand() {
 
 	output := string(outputBytes)
 	output = strings.TrimSuffix(output, "\n")
+
+	// Store result in cache
+	setCachedCommandResult(cacheKey, output)
+
 	c.ResponseOk(output)
 }
 
