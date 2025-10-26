@@ -904,6 +904,8 @@
     "Email regex - Tooltip": "Email regex - Tooltip",
     "Email title": "Email title",
     "Email title - Tooltip": "Title of the email",
+    "Enable proxy": "Enable proxy",
+    "Enable proxy - Tooltip": "Whether to enable socks5 proxy when sending emails or SMS messages",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpoint (Intranet)",
     "Endpoint - Tooltip": "Endpoint - Tooltip",
