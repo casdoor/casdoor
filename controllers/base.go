@@ -37,7 +37,8 @@ type RootController struct {
 }
 
 type SessionData struct {
-	ExpireTime int64
+	ExpireTime          int64
+	OrganizationContext string
 }
 
 func (c *ApiController) IsGlobalAdmin() bool {

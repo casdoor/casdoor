@@ -27,10 +27,11 @@ import (
 
 type Claims struct {
 	*User
-	TokenType string `json:"tokenType,omitempty"`
-	Nonce     string `json:"nonce,omitempty"`
-	Tag       string `json:"tag"`
-	Scope     string `json:"scope,omitempty"`
+	TokenType          string `json:"tokenType,omitempty"`
+	Nonce              string `json:"nonce,omitempty"`
+	Tag                string `json:"tag"`
+	Scope              string `json:"scope,omitempty"`
+	OrganizationContext string `json:"organization,omitempty"` // Current organization context
 	// the `azp` (Authorized Party) claim. Optional. See https://openid.net/specs/openid-connect-core-1_0.html#IDToken
 	Azp      string `json:"azp,omitempty"`
 	Provider string `json:"provider,omitempty"`
@@ -174,12 +175,13 @@ type OIDCAddress struct {
 
 type ClaimsWithoutThirdIdp struct {
 	*UserWithoutThirdIdp
-	TokenType string `json:"tokenType,omitempty"`
-	Nonce     string `json:"nonce,omitempty"`
-	Tag       string `json:"tag"`
-	Scope     string `json:"scope,omitempty"`
-	Azp       string `json:"azp,omitempty"`
-	Provider  string `json:"provider,omitempty"`
+	TokenType           string `json:"tokenType,omitempty"`
+	Nonce               string `json:"nonce,omitempty"`
+	Tag                 string `json:"tag"`
+	Scope               string `json:"scope,omitempty"`
+	OrganizationContext string `json:"organization,omitempty"` // Current organization context
+	Azp                 string `json:"azp,omitempty"`
+	Provider            string `json:"provider,omitempty"`
 
 	SigninMethod string `json:"signinMethod,omitempty"`
 	jwt.RegisteredClaims
@@ -326,6 +328,7 @@ func getClaimsWithoutThirdIdp(claims Claims) ClaimsWithoutThirdIdp {
 		Nonce:               claims.Nonce,
 		Tag:                 claims.Tag,
 		Scope:               claims.Scope,
+		OrganizationContext: claims.OrganizationContext,
 		RegisteredClaims:    claims.RegisteredClaims,
 		Azp:                 claims.Azp,
 		SigninMethod:        claims.SigninMethod,
@@ -350,6 +353,7 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	res["nonce"] = claims.Nonce
 	res["tag"] = claims.Tag
 	res["scope"] = claims.Scope
+	res["organization"] = claims.OrganizationContext
 	res["azp"] = claims.Azp
 	res["signinMethod"] = claims.SigninMethod
 	res["provider"] = claims.Provider
@@ -424,7 +428,7 @@ func refineUser(user *User) *User {
 	return user
 }
 
-func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string) (string, string, string, error) {
+func generateJwtToken(application *Application, user *User, provider string, signinMethod string, nonce string, scope string, host string, organizationContext string) (string, string, string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(time.Duration(application.ExpireInHours) * time.Hour)
 	refreshExpireTime := nowTime.Add(time.Duration(application.RefreshExpireInHours) * time.Hour)
@@ -447,10 +451,16 @@ func generateJwtToken(application *Application, user *User, provider string, sig
 	name := util.GenerateId()
 	jti := util.GetId(application.Owner, name)
 
+	// Use organization context if provided, otherwise default to user's owner
+	if organizationContext == "" {
+		organizationContext = user.Owner
+	}
+
 	claims := Claims{
-		User:      user,
-		TokenType: "access-token",
-		Nonce:     nonce,
+		User:                user,
+		TokenType:           "access-token",
+		Nonce:               nonce,
+		OrganizationContext: organizationContext,
 		// FIXME: A workaround for custom claim by reusing `tag` in user info
 		Tag:          user.Tag,
 		Scope:        scope,

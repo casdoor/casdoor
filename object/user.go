@@ -994,6 +994,14 @@ func AddUser(user *User, lang string) (bool, error) {
 		return false, err
 	}
 
+	// Create the default user-organization relationship
+	if affected != 0 {
+		err = EnsureUserOrganizationExists(user)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
