@@ -15,11 +15,13 @@ CREATE TABLE user_organization (
     owner VARCHAR(100) NOT NULL,        -- User's owner (original organization)
     name VARCHAR(100) NOT NULL,         -- User's name
     organization VARCHAR(100) NOT NULL, -- Organization the user is a member of
-    created_time VARCHAR(100),          -- When the membership was created
+    created_time VARCHAR(100),          -- When the membership was created (stored as string for consistency with existing schema)
     is_default BOOLEAN,                 -- Is this the user's primary organization
     PRIMARY KEY (owner, name, organization)
 );
 ```
+
+**Note**: The `created_time` field uses VARCHAR(100) to maintain consistency with the existing Casdoor schema design pattern, where timestamps are stored as formatted strings throughout the application.
 
 ### Backend Changes
 
@@ -127,8 +129,8 @@ curl -X POST "https://casdoor.example.com/api/accept-organization-invitation?inv
 ## Testing
 
 Unit tests are provided in `object/user_organization_test.go` to verify:
-- UserOrganization struct creation
-- GetId method
-- Basic CRUD operations (when database is available)
+- **UserOrganization struct creation** - Validates proper initialization of the model
+- **GetId method** - Returns unique identifier for user-organization relationship in format "owner/name/organization"
+- **Basic CRUD operations** - Tests for adding, retrieving, and deleting relationships (when database is available)
 
 Integration tests can be added by uncommenting the test functions that require database connectivity.
