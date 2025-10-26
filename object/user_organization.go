@@ -120,3 +120,18 @@ func EnsureUserOrganizationExists(user *User) error {
 
 	return nil
 }
+
+// PopulateUserOrganizations populates the Organizations field of a user
+func PopulateUserOrganizations(user *User) error {
+	if user == nil {
+		return nil
+	}
+
+	organizations, err := GetUserOrganizationNames(user.Owner, user.Name)
+	if err != nil {
+		return err
+	}
+
+	user.Organizations = organizations
+	return nil
+}

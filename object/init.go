@@ -45,6 +45,12 @@ func InitDb() {
 	}
 
 	initWebAuthn()
+
+	// Migrate existing users to have organization memberships
+	err := MigrateUserOrganizations()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func getBuiltInAccountItems() []*AccountItem {

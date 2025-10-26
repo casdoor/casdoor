@@ -202,3 +202,30 @@ func (c *ApiController) GetOrganizationContext() {
 
 	c.ResponseOk(organizationContext)
 }
+
+// AcceptOrganizationInvitation
+// @Title AcceptOrganizationInvitation
+// @Tag User API
+// @Description accept an invitation to join an organization
+// @Param   invitationCode query    string  true        "Invitation code"
+// @Param   organization   query    string  true        "Organization name"
+// @Success 200 {object} controllers.Response The Response object
+// @router /accept-organization-invitation [post]
+func (c *ApiController) AcceptOrganizationInvitation() {
+	invitationCode := c.Input().Get("invitationCode")
+	organization := c.Input().Get("organization")
+
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError(c.T("general:Please login first"))
+		return
+	}
+
+	success, err := object.AcceptOrganizationInvitation(userId, invitationCode, organization, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(success)
+}

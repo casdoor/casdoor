@@ -227,6 +227,8 @@ type User struct {
 	MfaRememberDeadline string           `xorm:"varchar(100)" json:"mfaRememberDeadline"`
 	NeedUpdatePassword  bool             `json:"needUpdatePassword"`
 	IpWhitelist         string           `xorm:"varchar(200)" json:"ipWhitelist"`
+
+	Organizations []string `xorm:"-" json:"organizations,omitempty"` // List of organizations user belongs to
 }
 
 type Userinfo struct {
