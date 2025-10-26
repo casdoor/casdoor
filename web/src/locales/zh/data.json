@@ -904,6 +904,8 @@
     "Email regex - Tooltip": "只有符合此正则表达式的Email才能进行注册或登录",
     "Email title": "邮件标题",
     "Email title - Tooltip": "邮件标题",
+    "Enable proxy": "启用代理",
+    "Enable proxy - Tooltip": "发送邮件或短信时是否启用socks5代理",
     "Endpoint": "地域节点 (外网)",
     "Endpoint (Intranet)": "地域节点 (内网)",
     "Endpoint - Tooltip": "端点 - 工具提示",
