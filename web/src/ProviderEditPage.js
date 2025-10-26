@@ -1246,6 +1246,16 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 </Row>
               )}
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.enableProxy} onChange={checked => {
+                    this.updateProviderField("enableProxy", checked);
+                  }} />
+                </Col>
+              </Row>
               {
                 !["Custom HTTP Email"].includes(this.state.provider.type) ? null : (
                   <React.Fragment>
@@ -1543,6 +1553,16 @@ class ProviderEditPage extends React.Component {
                   </React.Fragment>
                 )
               }
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.enableProxy} onChange={checked => {
+                    this.updateProviderField("enableProxy", checked);
+                  }} />
+                </Col>
+              </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :
