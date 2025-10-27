@@ -27,6 +27,7 @@ import {MfaVerifyForm} from "./mfa/MfaVerifyForm";
 export const EmailMfaType = "email";
 export const SmsMfaType = "sms";
 export const TotpMfaType = "app";
+export const RadiusMfaType = "radius";
 export const RecoveryMfaType = "recovery";
 
 class MfaSetupPage extends React.Component {
@@ -147,11 +148,26 @@ class MfaSetupPage extends React.Component {
       );
     };
 
+    const renderRadiusLink = () => {
+      if (this.state.mfaType === RadiusMfaType) {
+        return null;
+      }
+      return (<Button type={"link"} onClick={() => {
+        this.setState({
+          mfaType: RadiusMfaType,
+        });
+        this.props.history.push(`/mfa/setup?mfaType=${RadiusMfaType}`);
+      }
+      }>{i18next.t("mfa:Use Radius")}</Button>
+      );
+    };
+
     return !this.state.isPromptPage ? (
       <React.Fragment>
         {renderSmsLink()}
         {renderEmailLink()}
         {renderTotpLink()}
+        {renderRadiusLink()}
       </React.Fragment>
     ) : null;
   }
