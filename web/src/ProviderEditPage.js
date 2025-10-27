@@ -127,7 +127,16 @@ class ProviderEditPage extends React.Component {
           this.setState({
             providerOrganization: res.data,
           });
+        } else {
+          this.setState({
+            providerOrganization: null,
+          });
         }
+      })
+      .catch(() => {
+        this.setState({
+          providerOrganization: null,
+        });
       });
   }
 
