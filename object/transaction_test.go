@@ -44,6 +44,11 @@ func TestTransactionBalanceIntegration(t *testing.T) {
 		t.Fatal("Failed to add organization")
 	}
 
+	// Ensure cleanup runs even if test fails
+	defer func() {
+		deleteOrganization(testOrg)
+	}()
+
 	// Create test user
 	testUser := &User{
 		Owner:          testOrg.Name,
@@ -52,7 +57,7 @@ func TestTransactionBalanceIntegration(t *testing.T) {
 		DisplayName:    "Test User",
 		InitialBalance: 50.0,
 		Balance:        50.0,
-		Currency:       "USD",
+		Currency:       testOrg.Currency, // Use same currency as organization
 	}
 
 	// Add user
@@ -63,6 +68,11 @@ func TestTransactionBalanceIntegration(t *testing.T) {
 	if !success {
 		t.Fatal("Failed to add user")
 	}
+
+	// Ensure cleanup runs even if test fails
+	defer func() {
+		deleteUser(testUser)
+	}()
 
 	// Create test transaction
 	transaction := &Transaction{
@@ -176,8 +186,4 @@ func TestTransactionBalanceIntegration(t *testing.T) {
 	if updatedOrg.Balance != expectedOrgBalance {
 		t.Errorf("Organization balance after deletion mismatch. Expected: %.2f, Got: %.2f", expectedOrgBalance, updatedOrg.Balance)
 	}
-
-	// Cleanup
-	deleteUser(testUser)
-	deleteOrganization(testOrg)
 }
