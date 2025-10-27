@@ -92,6 +92,7 @@ type User struct {
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
 	Balance           float64  `json:"balance"`
+	InitialBalance    float64  `json:"initialBalance"`
 	Currency          string   `xorm:"varchar(100)" json:"currency"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
 	IsOnline          bool     `json:"isOnline"`

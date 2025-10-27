@@ -108,15 +108,49 @@ func GetTransaction(id string) (*Transaction, error) {
 
 func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if p, err := getTransaction(owner, name); err != nil {
+	oldTransaction, err := getTransaction(owner, name)
+	if err != nil {
 		return false, err
-	} else if p == nil {
+	}
+	if oldTransaction == nil {
 		return false, nil
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(transaction)
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 {
+		// Calculate the difference in amount
+		amountDiff := transaction.Amount - oldTransaction.Amount
+
+		// Update user balance if user is specified (handle user change)
+		if oldTransaction.User != "" && oldTransaction.User != transaction.User {
+			// Reverse old user's balance
+			err = UpdateUserBalance(oldTransaction.Owner, oldTransaction.User, -oldTransaction.Amount)
+			if err != nil {
+				return false, err
+			}
+		}
+		if transaction.User != "" {
+			if transaction.User == oldTransaction.User {
+				// Same user, just update the difference
+				err = UpdateUserBalance(transaction.Owner, transaction.User, amountDiff)
+			} else {
+				// New user, add full amount
+				err = UpdateUserBalance(transaction.Owner, transaction.User, transaction.Amount)
+			}
+			if err != nil {
+				return false, err
+			}
+		}
+
+		// Update organization balance with the difference
+		err = UpdateOrganizationBalance("admin", transaction.Owner, amountDiff)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -128,6 +162,22 @@ func AddTransaction(transaction *Transaction) (bool, error) {
 		return false, err
 	}
 
+	if affected != 0 {
+		// Update user balance if user is specified
+		if transaction.User != "" {
+			err = UpdateUserBalance(transaction.Owner, transaction.User, transaction.Amount)
+			if err != nil {
+				return false, err
+			}
+		}
+
+		// Update organization balance
+		err = UpdateOrganizationBalance("admin", transaction.Owner, transaction.Amount)
+		if err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
@@ -135,6 +185,22 @@ func DeleteTransaction(transaction *Transaction) (bool, error) {
 	affected, err := ormer.Engine.ID(core.PK{transaction.Owner, transaction.Name}).Delete(&Transaction{})
 	if err != nil {
 		return false, err
+	}
+
+	if affected != 0 {
+		// Reverse user balance if user is specified
+		if transaction.User != "" {
+			err = UpdateUserBalance(transaction.Owner, transaction.User, -transaction.Amount)
+			if err != nil {
+				return false, err
+			}
+		}
+
+		// Reverse organization balance
+		err = UpdateOrganizationBalance("admin", transaction.Owner, -transaction.Amount)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil

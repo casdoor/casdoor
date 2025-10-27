@@ -88,6 +88,10 @@ type Organization struct {
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
+
+	Balance        float64 `json:"balance"`
+	InitialBalance float64 `json:"initialBalance"`
+	Currency       string  `xorm:"varchar(100)" json:"currency"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {
@@ -566,4 +570,21 @@ func (org *Organization) GetInitScore() (int, error) {
 	} else {
 		return strconv.Atoi(conf.GetConfigString("initScore"))
 	}
+}
+
+func UpdateOrganizationBalance(owner string, name string, balance float64) error {
+	organization, err := getOrganization(owner, name)
+	if err != nil {
+		return err
+	}
+	if organization == nil {
+		return fmt.Errorf("organization not found: %s/%s", owner, name)
+	}
+	organization.Balance += balance
+	_, err = UpdateOrganization(organization.GetId(), organization, true)
+	return err
+}
+
+func (org *Organization) GetId() string {
+	return fmt.Sprintf("%s/%s", org.Owner, org.Name)
 }
