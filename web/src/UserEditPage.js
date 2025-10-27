@@ -722,8 +722,19 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Balance"), i18next.t("user:Balance - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.user.balance} onChange={value => {
-              this.updateUserField("balance", value);
+            <InputNumber value={this.state.user.balance} disabled={true} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Initial balance") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Initial balance"), i18next.t("user:Initial balance - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <InputNumber value={this.state.user.initialBalance} onChange={value => {
+              this.updateUserField("initialBalance", value);
             }} />
           </Col>
         </Row>
@@ -1243,6 +1254,18 @@ class UserEditPage extends React.Component {
             })
           }
         </Form>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Transactions"), i18next.t("user:Transactions - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Button type="primary" onClick={() => {
+              this.props.history.push(`/transactions?owner=${this.state.user.owner}&user=${this.state.user.name}`);
+            }}>
+              {i18next.t("user:View Transactions")}
+            </Button>
+          </Col>
+        </Row>
       </Card>
     );
   }

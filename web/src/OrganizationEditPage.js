@@ -523,6 +523,34 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Initial balance"), i18next.t("organization:Initial balance - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber value={this.state.organization.initialBalance} onChange={value => {
+              this.updateOrganizationField("initialBalance", value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Balance"), i18next.t("organization:Balance - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <InputNumber value={this.state.organization.balance} disabled={true} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("organization:Currency"), i18next.t("organization:Currency - Tooltip"))} :
+          </Col>
+          <Col span={4} >
+            <Input value={this.state.organization.currency} onChange={e => {
+              this.updateOrganizationField("currency", e.target.value);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
             {Setting.getLabel(i18next.t("organization:Soft deletion"), i18next.t("organization:Soft deletion - Tooltip"))} :
           </Col>
           <Col span={1} >
@@ -673,6 +701,18 @@ class OrganizationEditPage extends React.Component {
                 this.setState({ldaps: value});
               }}
             />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:Transactions"), i18next.t("organization:Transactions - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Button type="primary" onClick={() => {
+              this.props.history.push(`/transactions?owner=${this.state.organization.name}`);
+            }}>
+              {i18next.t("organization:View Transactions")}
+            </Button>
           </Col>
         </Row>
       </Card>

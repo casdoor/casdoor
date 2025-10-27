@@ -24,6 +24,16 @@ export function getTransactions(owner, page = "", pageSize = "", field = "", val
   }).then(res => res.json());
 }
 
+export function getUserTransactions(owner, user) {
+  return fetch(`${Setting.ServerUrl}/api/get-user-transactions?owner=${owner}&user=${user}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getTransaction(owner, name) {
   return fetch(`${Setting.ServerUrl}/api/get-transaction?id=${owner}/${encodeURIComponent(name)}`, {
     method: "GET",
