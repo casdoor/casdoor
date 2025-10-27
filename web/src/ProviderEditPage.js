@@ -72,6 +72,7 @@ class ProviderEditPage extends React.Component {
       provider: null,
       certs: [],
       organizations: [],
+      providerOrganization: null,
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -112,8 +113,20 @@ class ProviderEditPage extends React.Component {
           this.setState({
             provider: provider,
           });
+          this.getProviderOrganization(provider.owner);
         } else {
           Setting.showMessage("error", res.msg);
+        }
+      });
+  }
+
+  getProviderOrganization(owner) {
+    OrganizationBackend.getOrganization("admin", owner)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            providerOrganization: res.data,
+          });
         }
       });
   }
@@ -155,6 +168,7 @@ class ProviderEditPage extends React.Component {
       // the provider change the owner, reset the cert
       provider["cert"] = "";
       this.getCerts(value);
+      this.getProviderOrganization(value);
     }
 
     provider[key] = value;
@@ -1575,7 +1589,7 @@ class ProviderEditPage extends React.Component {
                       onChange={(value) => {
                         this.updateProviderField("content", value);
                       }}
-                      countryCodes={this.props.account.organization.countryCodes}
+                      countryCodes={this.state.providerOrganization?.countryCodes || this.props.account.organization.countryCodes}
                     />
                     <Input value={this.state.provider.receiver}
                       style={{width: "150px"}}
