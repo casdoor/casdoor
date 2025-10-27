@@ -41,6 +41,11 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 		return syncer.getWecomOriginalUsers()
 	}
 
+	// Handle Azure AD syncer separately
+	if syncer.Type == "Azure AD" {
+		return syncer.getAzureAdOriginalUsers()
+	}
+
 	var results []map[string]sql.NullString
 	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
 	if err != nil {
@@ -154,6 +159,11 @@ func (syncer *Syncer) initAdapter() error {
 
 	// WeCom syncer doesn't need database adapter
 	if syncer.Type == "WeCom" {
+		return nil
+	}
+
+	// Azure AD syncer doesn't need database adapter
+	if syncer.Type == "Azure AD" {
 		return nil
 	}
 
