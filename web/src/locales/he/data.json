@@ -891,8 +891,10 @@
     "Content": "תוכן",
     "Content - Tooltip": "תוכן - תיאור",
     "Copy": "העתק",
-    "DB test": "בדיקת מסד נתונים",
-    "DB test - Tooltip": "בדיקת מסד נתונים - תיאור",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "בדיקת מסנכרן",
+    "Syncer test - Tooltip": "בדיקת מסנכרן - תיאור",
     "Disable SSL": "השבת SSL",
     "Disable SSL - Tooltip": "האם להשבית פרוטוקול SSL בעת תקשורת עם שרת SMTP",
     "Domain": "דומיין",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "שם טבלת מסד הנתונים",
     "Table columns": "עמודות טבלה",
     "Table columns - Tooltip": "עמודות טבלה המעורבות בסנכרון נתונים. עמודות שאינן מעורבות בסנכרון אינן צריכות להיווסף",
-    "Test DB Connection": "בדוק חיבור מסד נתונים"
+    "Test Connection": "בדוק חיבור"
   },
   "system": {
     "API Latency": "זמן תגובת API",

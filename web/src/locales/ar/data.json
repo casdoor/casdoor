@@ -891,8 +891,10 @@
     "Content": "المحتوى",
     "Content - Tooltip": "المعلومات أو البيانات المحددة الواردة في الرسائل أو الإشعارات أو المستندات",
     "Copy": "نسخ",
-    "DB test": "اختبار قاعدة البيانات",
-    "DB test - Tooltip": "اختبار قاعدة البيانات",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "اختبار المزامن",
+    "Syncer test - Tooltip": "اختبار الاتصال بالمزامن",
     "Disable SSL": "تعطيل SSL",
     "Disable SSL - Tooltip": "ما إذا كان سيتم تعطيل بروتوكول SSL عند الاتصال بخادم SMTP",
     "Domain": "النطاق",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "اسم جدول قاعدة البيانات",
     "Table columns": "أعمدة الجدول",
     "Table columns - Tooltip": "أعمدة الجدول المشاركة في مزامنة البيانات. الأعمدة التي لا تشارك في المزامنة لا تحتاج إلى إضافة",
-    "Test DB Connection": "اختبار اتصال قاعدة البيانات"
+    "Test Connection": "اختبار الاتصال"
   },
   "system": {
     "API Latency": "زمن وصول الواجهة البرمجية",

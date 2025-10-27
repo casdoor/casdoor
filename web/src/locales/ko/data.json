@@ -891,8 +891,10 @@
     "Content": "내용",
     "Content - Tooltip": "내용 - 툴팁",
     "Copy": "복사",
-    "DB test": "DB 테스트",
-    "DB test - Tooltip": "데이터베이스 연결 테스트",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "동기화 테스트",
+    "Syncer test - Tooltip": "동기화 연결 테스트",
     "Disable SSL": "SSL을 사용하지 않도록 설정하십시오",
     "Disable SSL - Tooltip": "STMP 서버와 통신할 때 SSL 프로토콜을 비활성화할지 여부",
     "Domain": "도메인",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "데이터베이스 테이블 이름",
     "Table columns": "테이블 열",
     "Table columns - Tooltip": "데이터 동기화에 참여하는 테이블 열입니다. 동기화에 참여하지 않는 열은 추가할 필요가 없습니다",
-    "Test DB Connection": "DB 연결 테스트"
+    "Test Connection": "연결 테스트"
   },
   "system": {
     "API Latency": "API 지연",

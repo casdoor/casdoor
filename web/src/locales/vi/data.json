@@ -891,8 +891,10 @@
     "Content": "Nội dung",
     "Content - Tooltip": "Gợi ý nội dung",
     "Copy": "Sao chép",
-    "DB test": "Kiểm tra DB",
-    "DB test - Tooltip": "Kiểm tra xem kết nối cơ sở dữ liệu có hoạt động không",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Kiểm tra bộ đồng bộ",
+    "Syncer test - Tooltip": "Kiểm tra xem kết nối bộ đồng bộ có hoạt động không",
     "Disable SSL": "Vô hiệu hóa SSL",
     "Disable SSL - Tooltip": "Có nên vô hiệu hóa giao thức SSL khi giao tiếp với máy chủ STMP hay không?",
     "Domain": "Miền",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Tên của bảng cơ sở dữ liệu",
     "Table columns": "Các cột bảng",
     "Table columns - Tooltip": "Các cột bảng tham gia đồng bộ dữ liệu. Các cột không tham gia đồng bộ không cần thêm vào",
-    "Test DB Connection": "Kiểm tra kết nối DB"
+    "Test Connection": "Kiểm tra kết nối"
   },
   "system": {
     "API Latency": "Độ trễ API",

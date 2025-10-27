@@ -891,8 +891,10 @@
     "Content": "Inhalt",
     "Content - Tooltip": "Spezifische Informationen oder Daten in Nachrichten, Benachrichtigungen oder Dokumenten",
     "Copy": "Kopieren",
-    "DB test": "DB-Test",
-    "DB test - Tooltip": "Datenbanktest",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Synchronisierer-Test",
+    "Syncer test - Tooltip": "Synchronisierer-Test",
     "Disable SSL": "SSL deaktivieren",
     "Disable SSL - Tooltip": "Ob die Deaktivierung des SSL-Protokolls bei der Kommunikation mit dem STMP-Server erfolgen soll",
     "Domain": "Domäne",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Name der Datenbanktabelle",
     "Table columns": "Tabellenspalten",
     "Table columns - Tooltip": "Tabellenspalten, die an der Datensynchronisation beteiligt sind. Spalten, die nicht an der Synchronisation beteiligt sind, müssen nicht hinzugefügt werden",
-    "Test DB Connection": "DB-Verbindung testen"
+    "Test Connection": "Verbindung testen"
   },
   "system": {
     "API Latency": "API Latenz",

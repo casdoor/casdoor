@@ -891,8 +891,10 @@
     "Content": "Innehåll",
     "Content - Tooltip": "Innehåll - Tooltip",
     "Copy": "Kopiera",
-    "DB test": "DB-test",
-    "DB test - Tooltip": "DB-test - Tooltip",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Synkroniseringstest",
+    "Syncer test - Tooltip": "Synkroniseringstest - Tooltip",
     "Disable SSL": "Inaktivera SSL",
     "Disable SSL - Tooltip": "Om SSL-protokollet ska inaktiveras vid kommunikation med SMTP-server",
     "Domain": "Domän",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Databastabellens namn",
     "Table columns": "Tabellkolumner",
     "Table columns - Tooltip": "Tabellkolumner som är involverade i datasynkronisering. Kolumner som inte är involverade i synkronisering behöver inte läggas till",
-    "Test DB Connection": "Testa DB-anslutning"
+    "Test Connection": "Testa anslutning"
   },
   "system": {
     "API Latency": "API-latens",

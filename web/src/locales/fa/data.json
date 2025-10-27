@@ -891,8 +891,10 @@
     "Content": "محتوا",
     "Content - Tooltip": "محتوا - راهنمای ابزار",
     "Copy": "کپی",
-    "DB test": "تست پایگاه داده",
-    "DB test - Tooltip": "تست پایگاه داده",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "تست همگام‌ساز",
+    "Syncer test - Tooltip": "تست همگام‌ساز",
     "Disable SSL": "غیرفعال کردن SSL",
     "Disable SSL - Tooltip": "آیا پروتکل SSL هنگام ارتباط با سرور STMP غیرفعال شود",
     "Domain": "دامنه",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "نام جدول پایگاه داده",
     "Table columns": "ستون‌های جدول",
     "Table columns - Tooltip": "ستون‌های جدول که در همگام‌سازی داده‌ها مشارکت دارند. ستون‌هایی که در همگام‌سازی مشارکت ندارند نیازی به اضافه کردن ندارند",
-    "Test DB Connection": "تست اتصال پایگاه داده"
+    "Test Connection": "تست اتصال"
   },
   "system": {
     "API Latency": "تأخیر API",

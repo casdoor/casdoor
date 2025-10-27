@@ -891,8 +891,10 @@
     "Content": "Мазмұн",
     "Content - Tooltip": "Мазмұн - Құралдың түсіндірмесі",
     "Copy": "Көшіру",
-    "DB test": "ДБ тесті",
-    "DB test - Tooltip": "ДБ тесті - Құралдың түсіндірмесі",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Синхронизатор тесті",
+    "Syncer test - Tooltip": "Синхронизатор тесті - Құралдың түсіндірмесі",
     "Disable SSL": "SSL өшіру",
     "Disable SSL - Tooltip": "SMTP серверімен байланыс кезінде SSL протоколын өшіру керек пе",
     "Domain": "Домен",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Дерекқор кестесінің атауы",
     "Table columns": "Кесте бағандары",
     "Table columns - Tooltip": "Деректерді синхрондауға қатысатын кесте бағандары. Синхрондауға қатыспайтын бағандарды қосу қажет емес",
-    "Test DB Connection": "DB қосылымын тексеру"
+    "Test Connection": "Қосылымды тексеру"
   },
   "system": {
     "API Latency": "API кідірісі",

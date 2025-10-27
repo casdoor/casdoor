@@ -891,8 +891,10 @@
     "Content": "Məzmun",
     "Content - Tooltip": "Mesajlarda, bildirişlərdə və ya sənədlərdə olan konkret məlumat və ya data",
     "Copy": "Kopyala",
-    "DB test": "DB testi",
-    "DB test - Tooltip": "Verilənlər bazasına qoşulmanı test et",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Sinxronizator testi",
+    "Syncer test - Tooltip": "Sinxronizatora qoşulmanı test et",
     "Disable SSL": "SSL-i söndür",
     "Disable SSL - Tooltip": "STMP server ilə əlaqədə SSL protokolunun söndürülməsi",
     "Domain": "Domen",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Verilənlər bazası cədvəlinin adı",
     "Table columns": "Cədvəl sütunları",
     "Table columns - Tooltip": "Məlumat sinxronizasiyasında iştirak edən cədvəl sütunları. Sinxronizasiyada iştirak etməyən sütunları əlavə etmək lazım deyil",
-    "Test DB Connection": "DB Bağlantısını Test Et"
+    "Test Connection": "Bağlantını Test Et"
   },
   "system": {
     "API Latency": "API Gecikmə",

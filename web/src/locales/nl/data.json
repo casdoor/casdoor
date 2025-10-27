@@ -891,8 +891,10 @@
     "Content": "Inhoud",
     "Content - Tooltip": "Inhoud - Tooltip",
     "Copy": "Kopiëren",
-    "DB test": "Database-test",
-    "DB test - Tooltip": "Database-test - Tooltip",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Synchronisatie-test",
+    "Syncer test - Tooltip": "Synchronisatie-test - Tooltip",
     "Disable SSL": "SSL uitschakelen",
     "Disable SSL - Tooltip": "SSL-protocol uitschakelen bij communicatie met SMTP-server",
     "Domain": "Domein",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Naam van de databasetabel",
     "Table columns": "Tabelkolommen",
     "Table columns - Tooltip": "Tabelkolommen die betrokken zijn bij gegevenssynchronisatie. Kolommen die niet betrokken zijn bij synchronisatie hoeven niet te worden toegevoegd",
-    "Test DB Connection": "Databaseverbinding testen"
+    "Test Connection": "Verbinding testen"
   },
   "system": {
     "API Latency": "API-latentie",

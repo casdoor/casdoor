@@ -891,8 +891,10 @@
     "Content": "Содержание",
     "Content - Tooltip": "Подсказка: содержание",
     "Copy": "Копировать",
-    "DB test": "Тест БД",
-    "DB test - Tooltip": "Тест базы данных",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Тест синхронизатора",
+    "Syncer test - Tooltip": "Тест синхронизатора",
     "Disable SSL": "Отключить SSL",
     "Disable SSL - Tooltip": "Нужно ли отключать протокол SSL при общении с SMTP сервером?",
     "Domain": "Домен",
@@ -1164,7 +1166,7 @@
     "Table - Tooltip": "Название таблицы базы данных",
     "Table columns": "Столбцы таблицы",
     "Table columns - Tooltip": "Столбцы таблицы, участвующие в синхронизации данных. Столбцы, не участвующие в синхронизации, добавлять не нужно",
-    "Test DB Connection": "Проверить подключение к БД"
+    "Test Connection": "Проверить подключение"
   },
   "system": {
     "API Latency": "Задержка API",
