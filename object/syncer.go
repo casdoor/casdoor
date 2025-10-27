@@ -304,6 +304,12 @@ func TestSyncerDb(syncer Syncer) error {
 		syncer.Password = oldSyncer.Password
 	}
 
+	// For WeCom syncer, test by getting access token
+	if syncer.Type == "WeCom" {
+		_, err := syncer.getWecomAccessToken()
+		return err
+	}
+
 	err = syncer.initAdapter()
 	if err != nil {
 		return err
