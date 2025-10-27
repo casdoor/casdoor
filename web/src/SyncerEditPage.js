@@ -380,7 +380,7 @@ class SyncerEditPage extends React.Component {
         }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(this.state.syncer.type === "WeCom" ? "Corp ID" : i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
+            {Setting.getLabel(this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp ID") : i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input value={this.state.syncer.user} onChange={e => {
@@ -390,7 +390,7 @@ class SyncerEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(this.state.syncer.type === "WeCom" ? "Corp Secret" : i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
+            {Setting.getLabel(this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp Secret") : i18next.t("general:Password"), i18next.t("general:Password - Tooltip"))} :
           </Col>
           <Col span={22} >
             <Input.Password value={this.state.syncer.password} onChange={e => {
@@ -510,7 +510,7 @@ class SyncerEditPage extends React.Component {
         }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(this.state.syncer.type === "WeCom" ? "API test" : i18next.t("provider:DB test"), i18next.t("provider:DB test - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Syncer test"), i18next.t("provider:Syncer test - Tooltip"))} :
           </Col>
           <Col span={2} >
             <Button type={"primary"} loading={this.state.testDbLoading} onClick={() => {
@@ -530,7 +530,7 @@ class SyncerEditPage extends React.Component {
                   Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
                 });
             }
-            }>{this.state.syncer.type === "WeCom" ? "Test API Connection" : i18next.t("syncer:Test DB Connection")}</Button>
+            }>{i18next.t("syncer:Test Connection")}</Button>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

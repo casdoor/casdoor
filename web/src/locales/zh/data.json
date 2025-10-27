@@ -891,8 +891,10 @@
     "Content": "内容",
     "Content - Tooltip": "消息、通知或文档中包含的具体信息或数据内容",
     "Copy": "复制",
-    "DB test": "测试数据库",
-    "DB test - Tooltip": "测试数据库是否连通",
+    "Corp ID": "企业 ID",
+    "Corp Secret": "企业密钥",
+    "Syncer test": "同步器测试",
+    "Syncer test - Tooltip": "测试同步器是否连通",
     "Disable SSL": "禁用SSL",
     "Disable SSL - Tooltip": "与STMP服务器通信时是否禁用SSL协议",
     "Domain": "域名",
@@ -1166,7 +1168,7 @@
     "Table - Tooltip": "数据库表名",
     "Table columns": "表格列",
     "Table columns - Tooltip": "参与数据同步的表格列，不参与同步的列不需要添加",
-    "Test DB Connection": "测试 DB 连接"
+    "Test Connection": "测试连接"
   },
   "system": {
     "API Latency": "API延迟",

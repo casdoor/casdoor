@@ -294,7 +294,7 @@ func RunSyncer(syncer *Syncer) error {
 	return syncer.syncUsers()
 }
 
-func TestSyncerDb(syncer Syncer) error {
+func TestSyncer(syncer Syncer) error {
 	oldSyncer, err := getSyncer(syncer.Owner, syncer.Name)
 	if err != nil {
 		return err
