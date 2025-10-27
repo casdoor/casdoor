@@ -27,25 +27,25 @@ import (
 )
 
 type AzureAdAccessTokenResp struct {
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	AccessToken  string `json:"access_token"`
-	Error        string `json:"error"`
-	ErrorDesc    string `json:"error_description"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
+	AccessToken string `json:"access_token"`
+	Error       string `json:"error"`
+	ErrorDesc   string `json:"error_description"`
 }
 
 type AzureAdUser struct {
-	Id                string   `json:"id"`
-	UserPrincipalName string   `json:"userPrincipalName"`
-	DisplayName       string   `json:"displayName"`
-	GivenName         string   `json:"givenName"`
-	Surname           string   `json:"surname"`
-	Mail              string   `json:"mail"`
-	MobilePhone       string   `json:"mobilePhone"`
-	JobTitle          string   `json:"jobTitle"`
-	OfficeLocation    string   `json:"officeLocation"`
-	PreferredLanguage string   `json:"preferredLanguage"`
-	AccountEnabled    bool     `json:"accountEnabled"`
+	Id                string `json:"id"`
+	UserPrincipalName string `json:"userPrincipalName"`
+	DisplayName       string `json:"displayName"`
+	GivenName         string `json:"givenName"`
+	Surname           string `json:"surname"`
+	Mail              string `json:"mail"`
+	MobilePhone       string `json:"mobilePhone"`
+	JobTitle          string `json:"jobTitle"`
+	OfficeLocation    string `json:"officeLocation"`
+	PreferredLanguage string `json:"preferredLanguage"`
+	AccountEnabled    bool   `json:"accountEnabled"`
 }
 
 type AzureAdUserListResp struct {
@@ -59,7 +59,7 @@ func (syncer *Syncer) getAzureAdAccessToken() (string, error) {
 	// syncer.Host should be the tenant ID or tenant domain
 	// syncer.User should be the client ID (application ID)
 	// syncer.Password should be the client secret
-	
+
 	tenantId := syncer.Host
 	if tenantId == "" {
 		return "", fmt.Errorf("tenant ID (host field) is required for Azure AD syncer")
