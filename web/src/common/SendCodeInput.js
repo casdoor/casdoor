@@ -40,10 +40,10 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
     setTimeout(countDown, 1000);
   };
 
-  const handleOk = (captchaType, captchaToken, clintSecret) => {
+  const handleOk = (captchaType, captchaToken, clientSecret) => {
     setVisible(false);
     setButtonLoading(true);
-    UserBackend.sendCode(captchaType, captchaToken, clintSecret, method, countryCode, ...onButtonClickArgs).then(res => {
+    UserBackend.sendCode(captchaType, captchaToken, clientSecret, method, countryCode, ...onButtonClickArgs).then(res => {
       setButtonLoading(false);
       if (res) {
         handleCountDown(60);
