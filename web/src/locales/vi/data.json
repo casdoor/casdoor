@@ -908,6 +908,8 @@
     "Email regex - Tooltip": "Gợi ý biểu thức chính quy Email",
     "Email title": "Tiêu đề email",
     "Email title - Tooltip": "Tiêu đề của email",
+    "Enable proxy": "启用代理",
+    "Enable proxy - Tooltip": "发送邮件或短信时是否启用socks5代理",
     "Endpoint": "Điểm cuối",
     "Endpoint (Intranet)": "Điểm kết thúc (mạng nội bộ)",
     "Endpoint - Tooltip": "Gợi ý điểm cuối",

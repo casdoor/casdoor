@@ -908,6 +908,8 @@
     "Email regex - Tooltip": "Regex emel - Tooltip",
     "Email title": "Tajuk emel",
     "Email title - Tooltip": "Tajuk emel",
+    "Enable proxy": "启用代理",
+    "Enable proxy - Tooltip": "发送邮件或短信时是否启用socks5代理",
     "Endpoint": "Titik akhir",
     "Endpoint (Intranet)": "Titik akhir (Intranet)",
     "Endpoint - Tooltip": "Titik akhir - Tooltip",

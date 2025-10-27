@@ -908,6 +908,8 @@
     "Email regex - Tooltip": "رجکس ایمیل - توصیه",
     "Email title": "عنوان ایمیل",
     "Email title - Tooltip": "عنوان ایمیل",
+    "Enable proxy": "启用代理",
+    "Enable proxy - Tooltip": "发送邮件或短信时是否启用socks5代理",
     "Endpoint": "نقطه پایانی",
     "Endpoint (Intranet)": "نقطه پایانی (اینترانت)",
     "Endpoint - Tooltip": "نقطه پایانی - راهنمای ابزار",

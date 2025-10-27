@@ -908,6 +908,8 @@
     "Email regex - Tooltip": "Regex email - Tooltip",
     "Email title": "Titolo Email",
     "Email title - Tooltip": "Titolo dell'email",
+    "Enable proxy": "启用代理",
+    "Enable proxy - Tooltip": "发送邮件或短信时是否启用socks5代理",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpoint (Intranet)",
     "Endpoint - Tooltip": "Endpoint - Tooltip",
