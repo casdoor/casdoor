@@ -65,7 +65,7 @@ require (
 	golang.org/x/text v0.21.0
 	google.golang.org/api v0.150.0
 	gopkg.in/square/go-jose.v2 v2.6.0
-	layeh.com/radius v0.0.0-20221205141417-e7fbddd11d68
+	layeh.com/radius v0.0.0-20231213012653-1006025d24f8
 	maunium.net/go/mautrix v0.16.0
 	modernc.org/sqlite v1.18.2
 )
