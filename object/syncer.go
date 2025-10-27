@@ -311,7 +311,7 @@ func TestSyncer(syncer Syncer) error {
 	}
 
 	// For Azure AD syncer, test by getting access token
-	if syncer.Type == "AzureAd" {
+	if syncer.Type == "Azure AD" {
 		_, err := syncer.getAzureAdAccessToken()
 		return err
 	}

@@ -42,7 +42,7 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 	}
 
 	// Handle Azure AD syncer separately
-	if syncer.Type == "AzureAd" {
+	if syncer.Type == "Azure AD" {
 		return syncer.getAzureAdOriginalUsers()
 	}
 
@@ -163,7 +163,7 @@ func (syncer *Syncer) initAdapter() error {
 	}
 
 	// Azure AD syncer doesn't need database adapter
-	if syncer.Type == "AzureAd" {
+	if syncer.Type == "Azure AD" {
 		return nil
 	}
 

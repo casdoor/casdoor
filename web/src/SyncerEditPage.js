@@ -240,7 +240,7 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
       ];
-    case "AzureAd":
+    case "Azure AD":
       return [
         {
           "name": "id",
@@ -372,14 +372,14 @@ class SyncerEditPage extends React.Component {
               });
             })}>
               {
-                ["Database", "Keycloak", "WeCom", "AzureAd"]
+                ["Database", "Keycloak", "WeCom", "Azure AD"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>
         </Row>
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "AzureAd" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
@@ -434,7 +434,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "AzureAd" ? i18next.t("provider:Tenant ID") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.syncer.host} onChange={e => {
@@ -445,7 +445,7 @@ class SyncerEditPage extends React.Component {
           )
         }
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "AzureAd" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
@@ -462,7 +462,7 @@ class SyncerEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(
               this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp ID") : 
-              this.state.syncer.type === "AzureAd" ? i18next.t("provider:Client ID") :
+              this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client ID") :
               i18next.t("general:User"), 
               i18next.t("general:User - Tooltip")
             )} :
@@ -477,7 +477,7 @@ class SyncerEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(
               this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp Secret") :
-              this.state.syncer.type === "AzureAd" ? i18next.t("provider:Client Secret") :
+              this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client Secret") :
               i18next.t("general:Password"), 
               i18next.t("general:Password - Tooltip")
             )} :
@@ -489,7 +489,7 @@ class SyncerEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "AzureAd" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
@@ -585,7 +585,7 @@ class SyncerEditPage extends React.Component {
           ) : null
         }
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "AzureAd" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Table"), i18next.t("syncer:Table - Tooltip"))} :
