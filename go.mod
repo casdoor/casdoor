@@ -19,7 +19,7 @@ require (
 	github.com/casdoor/ldapserver v1.2.0
 	github.com/casdoor/notify v1.0.1
 	github.com/casdoor/oss v1.8.0
-	github.com/casdoor/xorm-adapter/v3 v3.1.0
+	github.com/casdoor/xorm-adapter/v3 v3.1.1
 	github.com/casvisor/casvisor-go-sdk v1.4.0
 	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/denisenkom/go-mssqldb v0.9.0
