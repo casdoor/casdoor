@@ -1300,6 +1300,14 @@ class LoginPage extends React.Component {
     return targetApp.signinItems.some(item => item.name === "Verification code");
   }
 
+  hasInlineCaptcha(application) {
+    const targetApp = application || this.getApplicationObj();
+    if (!targetApp || !targetApp.signinItems) {
+      return false;
+    }
+    return targetApp.signinItems.some(item => item.name === "Captcha" && item.rule === "inline");
+  }
+
   renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -1336,6 +1344,8 @@ class LoginPage extends React.Component {
                 method={"login"}
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
+                useInlineCaptcha={this.hasInlineCaptcha(application)}
+                captchaValues={this.state.captchaValues}
               />
             </Form.Item>
           </div>
@@ -1362,6 +1372,8 @@ class LoginPage extends React.Component {
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
+              useInlineCaptcha={this.hasInlineCaptcha(application)}
+              captchaValues={this.state.captchaValues}
             />
           </Form.Item>
         </Col>

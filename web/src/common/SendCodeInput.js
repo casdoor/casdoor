@@ -21,7 +21,7 @@ import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode}) => {
+export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode, useInlineCaptcha, captchaValues}) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
@@ -55,6 +55,16 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
     setVisible(false);
   };
 
+  const handleSendCode = () => {
+    // If inline captcha is enabled and we have captcha values, use them directly
+    if (useInlineCaptcha && captchaValues) {
+      handleOk(captchaValues.captchaType, captchaValues.captchaToken, captchaValues.clientSecret);
+    } else {
+      // Otherwise, show the captcha modal
+      setVisible(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <Search
@@ -70,17 +80,19 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
           </Button>
         }
-        onSearch={() => setVisible(true)}
+        onSearch={handleSendCode}
         autoComplete="one-time-code"
       />
-      <CaptchaModal
-        owner={application.owner}
-        name={application.name}
-        visible={visible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        isCurrentProvider={false}
-      />
+      {!useInlineCaptcha && (
+        <CaptchaModal
+          owner={application.owner}
+          name={application.name}
+          visible={visible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          isCurrentProvider={false}
+        />
+      )}
     </React.Fragment>
   );
 };
