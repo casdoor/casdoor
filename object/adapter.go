@@ -195,7 +195,73 @@ func (adapter *Adapter) InitAdapter() error {
 
 	adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
 	if err != nil {
+		// Handle MySQL Error 1280: Incorrect index name
+		// This can occur during upgrades when index naming conventions change
+		if driverName == "mysql" && strings.Contains(err.Error(), "Error 1280") {
+			// Try to fix the problematic indexes by dropping them
+			if fixErr := adapter.fixMySQLIndexes(engine, tableName); fixErr == nil {
+				// Retry adapter initialization after fixing indexes
+				adapter.Adapter, err = xormadapter.NewAdapterByEngineWithTableName(engine, tableName, "")
+				if err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// fixMySQLIndexes handles MySQL Error 1280 by dropping problematic indexes
+// This allows the xorm adapter to recreate them with the correct naming
+func (adapter *Adapter) fixMySQLIndexes(engine *xorm.Engine, tableName string) error {
+	// Check if the table exists
+	tableExists, err := engine.IsTableExist(tableName)
+	if err != nil {
 		return err
+	}
+
+	if !tableExists {
+		// Table doesn't exist, no indexes to fix
+		return nil
+	}
+
+	// Get all indexes on the table
+	sql := fmt.Sprintf("SHOW INDEX FROM `%s`", tableName)
+	results, err := engine.QueryString(sql)
+	if err != nil {
+		return err
+	}
+
+	// Drop indexes that might be problematic (those with _v2 suffix or old naming conventions)
+	indexesToDrop := make(map[string]bool)
+	for _, row := range results {
+		indexName := row["Key_name"]
+		// Skip PRIMARY key
+		if indexName == "PRIMARY" {
+			continue
+		}
+		// Drop indexes that match the problematic pattern
+		if strings.Contains(indexName, "_v2") || strings.HasPrefix(indexName, "IDX_") {
+			indexesToDrop[indexName] = true
+		}
+	}
+
+	// Drop each problematic index
+	for indexName := range indexesToDrop {
+		dropSQL := fmt.Sprintf("DROP INDEX `%s` ON `%s`", indexName, tableName)
+		_, err := engine.Exec(dropSQL)
+		if err != nil {
+			// Log but don't fail if we can't drop an index
+			// It might already be dropped or not exist
+			if !strings.Contains(err.Error(), "Error 1091") { // Error 1091: Can't DROP index; check that it exists
+				return err
+			}
+		}
 	}
 
 	return nil
