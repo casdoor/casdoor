@@ -52,7 +52,11 @@ func getWebBuildFolder() string {
 }
 
 func fastAutoSignin(ctx *context.Context) (string, error) {
-	userId := getSessionUser(ctx)
+	// First check context, then session
+	userId := getContextUser(ctx)
+	if userId == "" {
+		userId = getSessionUser(ctx)
+	}
 	if userId == "" {
 		return "", nil
 	}
