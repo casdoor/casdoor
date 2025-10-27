@@ -16,7 +16,6 @@ package email
 
 import (
 	"crypto/tls"
-	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	"github.com/casdoor/gomail/v2"
@@ -26,7 +25,7 @@ type SmtpEmailProvider struct {
 	Dialer *gomail.Dialer
 }
 
-func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool) *SmtpEmailProvider {
+func NewSmtpEmailProvider(userName string, password string, host string, port int, typ string, disableSsl bool, enableProxy bool) *SmtpEmailProvider {
 	dialer := gomail.NewDialer(host, port, userName, password)
 	if typ == "SUBMAIL" {
 		dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
@@ -34,7 +33,7 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 
 	dialer.SSL = !disableSsl
 
-	if strings.HasSuffix(host, ".amazonaws.com") {
+	if enableProxy {
 		socks5Proxy := conf.GetConfigString("socks5Proxy")
 		if socks5Proxy != "" {
 			dialer.SetSocks5Proxy(socks5Proxy)

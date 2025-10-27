@@ -236,15 +236,15 @@ class ProviderEditPage extends React.Component {
         <Input value={this.state.provider.userMapping.countryCode} onChange={e => {
           this.updateUserMappingField("countryCode", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("user:First name"), i18next.t("user:First name - Tooltip"))} :
+        {Setting.getLabel(i18next.t("general:First name"), i18next.t("general:First name - Tooltip"))} :
         <Input value={this.state.provider.userMapping.firstName} onChange={e => {
           this.updateUserMappingField("firstName", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("user:Last name"), i18next.t("user:Last name - Tooltip"))} :
+        {Setting.getLabel(i18next.t("general:Last name"), i18next.t("general:Last name - Tooltip"))} :
         <Input value={this.state.provider.userMapping.lastName} onChange={e => {
           this.updateUserMappingField("lastName", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("user:Region"), i18next.t("user:Region - Tooltip"))} :
+        {Setting.getLabel(i18next.t("provider:Region"), i18next.t("provider:Region - Tooltip"))} :
         <Input value={this.state.provider.userMapping.region} onChange={e => {
           this.updateUserMappingField("region", e.target.value);
         }} />
@@ -1252,6 +1252,16 @@ class ProviderEditPage extends React.Component {
                   </Col>
                 </Row>
               )}
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.enableProxy} onChange={checked => {
+                    this.updateProviderField("enableProxy", checked);
+                  }} />
+                </Col>
+              </Row>
               {
                 !["Custom HTTP Email"].includes(this.state.provider.type) ? null : (
                   <React.Fragment>
@@ -1549,6 +1559,16 @@ class ProviderEditPage extends React.Component {
                   </React.Fragment>
                 )
               }
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Enable proxy"), i18next.t("provider:Enable proxy - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.provider.enableProxy} onChange={checked => {
+                    this.updateProviderField("enableProxy", checked);
+                  }} />
+                </Col>
+              </Row>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                   {Setting.getLabel(i18next.t("provider:SMS Test"), i18next.t("provider:SMS Test - Tooltip"))} :

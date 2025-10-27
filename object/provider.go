@@ -75,6 +75,7 @@ type Provider struct {
 	EmailRegex             string `xorm:"varchar(200)" json:"emailRegex"`
 
 	ProviderUrl string `xorm:"varchar(200)" json:"providerUrl"`
+	EnableProxy bool   `json:"enableProxy"`
 }
 
 func GetMaskedProvider(provider *Provider, isMaskEnabled bool) *Provider {
