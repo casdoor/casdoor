@@ -40,6 +40,7 @@ func main() {
 	object.InitDb()
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
+	object.InitWeComAutoSynchronizer()
 	proxy.InitHttpClient()
 	authz.InitApi()
 	object.InitUserManager()

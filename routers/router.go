@@ -279,6 +279,14 @@ func initAPI() {
 	beego.Router("/api/delete-ldap", &controllers.ApiController{}, "POST:DeleteLdap")
 	beego.Router("/api/sync-ldap-users", &controllers.ApiController{}, "POST:SyncLdapUsers")
 
+	beego.Router("/api/get-wecom-users", &controllers.ApiController{}, "GET:GetWeComUsers")
+	beego.Router("/api/get-wecoms", &controllers.ApiController{}, "GET:GetWeComs")
+	beego.Router("/api/get-wecom", &controllers.ApiController{}, "GET:GetWeCom")
+	beego.Router("/api/add-wecom", &controllers.ApiController{}, "POST:AddWeCom")
+	beego.Router("/api/update-wecom", &controllers.ApiController{}, "POST:UpdateWeCom")
+	beego.Router("/api/delete-wecom", &controllers.ApiController{}, "POST:DeleteWeCom")
+	beego.Router("/api/sync-wecom-users", &controllers.ApiController{}, "POST:SyncWeComUsers")
+
 	beego.Router("/api/login/oauth/access_token", &controllers.ApiController{}, "POST:GetOAuthToken")
 	beego.Router("/api/login/oauth/refresh_token", &controllers.ApiController{}, "POST:RefreshToken")
 	beego.Router("/api/login/oauth/introspect", &controllers.ApiController{}, "POST:IntrospectToken")
