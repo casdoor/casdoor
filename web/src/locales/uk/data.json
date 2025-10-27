@@ -895,8 +895,10 @@
     "Content": "Зміст",
     "Content - Tooltip": "Вміст – підказка",
     "Copy": "Копіювати",
-    "DB test": "Тест БД",
-    "DB test - Tooltip": "Тест БД - Підказка",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Тест синхронізатора",
+    "Syncer test - Tooltip": "Тест синхронізатора - Підказка",
     "Disable SSL": "Вимкнути SSL",
     "Disable SSL - Tooltip": "Чи вимикати протокол SSL під час зв’язку із сервером STMP",
     "Domain": "Домен",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Назва таблиці бази даних",
     "Table columns": "Стовпці таблиці",
     "Table columns - Tooltip": "Стовпці таблиці, що беруть участь у синхронізації даних. Стовпці, які не беруть участь у синхронізації, не потрібно додавати",
-    "Test DB Connection": "Перевірити підключення до БД"
+    "Test Connection": "Перевірити підключення"
   },
   "system": {
     "API Latency": "Затримка API",

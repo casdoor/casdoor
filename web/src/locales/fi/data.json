@@ -895,8 +895,10 @@
     "Content": "Sisältö",
     "Content - Tooltip": "Sisältö – ohje",
     "Copy": "Kopioi",
-    "DB test": "Tietokantatesti",
-    "DB test - Tooltip": "Tietokantatesti – ohje",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Synkronoijan testi",
+    "Syncer test - Tooltip": "Synkronoijan testi – ohje",
     "Disable SSL": "Poista SSL käytöstä",
     "Disable SSL - Tooltip": "Poista SSL-protokolla käytöstä STMP-palvelimen kanssa kommunikoitaessa",
     "Domain": "Verkkotunnus",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Tietokantataulun nimi",
     "Table columns": "Taulun sarakkeet",
     "Table columns - Tooltip": "Taulukon sarakkeet, jotka osallistuvat tietojen synkronointiin. Sarakkeet, jotka eivät osallistu synkronointiin, eivät tarvitse lisätä",
-    "Test DB Connection": "Testaa tietokantayhteyttä"
+    "Test Connection": "Testaa yhteyttä"
   },
   "system": {
     "API Latency": "API-viive",

@@ -294,7 +294,7 @@ func RunSyncer(syncer *Syncer) error {
 	return syncer.syncUsers()
 }
 
-func TestSyncerDb(syncer Syncer) error {
+func TestSyncer(syncer Syncer) error {
 	oldSyncer, err := getSyncer(syncer.Owner, syncer.Name)
 	if err != nil {
 		return err
@@ -302,6 +302,12 @@ func TestSyncerDb(syncer Syncer) error {
 
 	if syncer.Password == "***" {
 		syncer.Password = oldSyncer.Password
+	}
+
+	// For WeCom syncer, test by getting access token
+	if syncer.Type == "WeCom" {
+		_, err := syncer.getWecomAccessToken()
+		return err
 	}
 
 	err = syncer.initAdapter()

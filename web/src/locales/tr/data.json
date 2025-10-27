@@ -895,8 +895,10 @@
     "Content": "İçerik",
     "Content - Tooltip": "İçerik - Araç ipucu",
     "Copy": "Kopyala",
-    "DB test": "Veritabanı testi",
-    "DB test - Tooltip": "Veritabanı bağlantısının çalışıp çalışmadığını test et",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Senkronizasyon testi",
+    "Syncer test - Tooltip": "Senkronizasyon bağlantısının çalışıp çalışmadığını test et",
     "Disable SSL": "SSL'yi Devre Dışı Bırak",
     "Disable SSL - Tooltip": "STMP sunucusu ile iletişim kurarken SSL protokolünü devre dışı bırakıp bırakmayacağı",
     "Domain": "Alan adı",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Veritabanı tablo adı",
     "Table columns": "Tablo sütunları",
     "Table columns - Tooltip": "Veri senkronizasyonunda yer alan tablo sütunları. Senkronizasyonda yer almayan sütunların eklenmesine gerek yoktur",
-    "Test DB Connection": "Veritabanı Bağlantısını Test Et"
+    "Test Connection": "Bağlantıyı Test Et"
   },
   "system": {
     "API Latency": "API Gecikmesi",

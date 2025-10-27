@@ -895,8 +895,10 @@
     "Content": "Contenuto",
     "Content - Tooltip": "Contenuto - Tooltip",
     "Copy": "Copia",
-    "DB test": "Test DB",
-    "DB test - Tooltip": "DB test - Tooltip",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Test sincronizzatore",
+    "Syncer test - Tooltip": "Test sincronizzatore - Tooltip",
     "Disable SSL": "Disabilita SSL",
     "Disable SSL - Tooltip": "Indica se disabilitare il protocollo SSL durante la comunicazione con il server STMP",
     "Domain": "Dominio",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Nome tabella database",
     "Table columns": "Colonne tabella",
     "Table columns - Tooltip": "Colonne della tabella coinvolte nella sincronizzazione dei dati. Le colonne che non partecipano alla sincronizzazione non devono essere aggiunte",
-    "Test DB Connection": "Test connessione DB"
+    "Test Connection": "Test connessione"
   },
   "system": {
     "API Latency": "Latenza API",

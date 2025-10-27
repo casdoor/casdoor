@@ -895,8 +895,10 @@
     "Content": "Conteúdo",
     "Content - Tooltip": "Dica: conteúdo",
     "Copy": "Copiar",
-    "DB test": "Teste de banco de dados",
-    "DB test - Tooltip": "Testar se a conexão com o banco de dados está funcionando",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Teste de sincronizador",
+    "Syncer test - Tooltip": "Testar se a conexão com o sincronizador está funcionando",
     "Disable SSL": "Desabilitar SSL",
     "Disable SSL - Tooltip": "Se deve desabilitar o protocolo SSL ao comunicar com o servidor SMTP",
     "Domain": "Domínio",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Nome da tabela no banco de dados",
     "Table columns": "Colunas da tabela",
     "Table columns - Tooltip": "Colunas da tabela envolvidas na sincronização de dados. Colunas que não participam da sincronização não precisam ser adicionadas",
-    "Test DB Connection": "Testar conexão com banco de dados"
+    "Test Connection": "Testar conexão"
   },
   "system": {
     "API Latency": "Latência da API",

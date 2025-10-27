@@ -895,8 +895,10 @@
     "Content": "Konten",
     "Content - Tooltip": "Konten - Tooltip",
     "Copy": "Salin",
-    "DB test": "Tes DB",
-    "DB test - Tooltip": "DB test - Tooltip",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Tes Sinkronisasi",
+    "Syncer test - Tooltip": "Tes Sinkronisasi - Tooltip",
     "Disable SSL": "Menonaktifkan SSL",
     "Disable SSL - Tooltip": "Apakah perlu menonaktifkan protokol SSL saat berkomunikasi dengan server STMP?",
     "Domain": "Domain",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Nama tabel database",
     "Table columns": "Kolom tabel",
     "Table columns - Tooltip": "Kolom tabel yang terlibat dalam sinkronisasi data. Kolom yang tidak terlibat dalam sinkronisasi tidak perlu ditambahkan",
-    "Test DB Connection": "Tes Koneksi DB"
+    "Test Connection": "Tes Koneksi"
   },
   "system": {
     "API Latency": "Latensi API",

@@ -895,8 +895,10 @@
     "Content": "コンテンツ",
     "Content - Tooltip": "コンテンツ - ツールチップ",
     "Copy": "コピー",
-    "DB test": "DBテスト",
-    "DB test - Tooltip": "データベーステスト",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "同期テスト",
+    "Syncer test - Tooltip": "同期テスト",
     "Disable SSL": "SSLを無効にする",
     "Disable SSL - Tooltip": "SMTPサーバーと通信する場合にSSLプロトコルを無効にするかどうか",
     "Domain": "ドメイン",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "データベーステーブル名",
     "Table columns": "テーブルの列",
     "Table columns - Tooltip": "データ同期に関与するテーブル列。同期に関与しない列は追加する必要がありません",
-    "Test DB Connection": "DB接続をテスト"
+    "Test Connection": "接続をテスト"
   },
   "system": {
     "API Latency": "API遅延",

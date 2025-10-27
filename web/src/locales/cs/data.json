@@ -895,8 +895,10 @@
     "Content": "Obsah",
     "Content - Tooltip": "Konkrétní informace nebo data obsažená v zprávách, oznámeních nebo dokumentech",
     "Copy": "Kopírovat",
-    "DB test": "Test DB",
-    "DB test - Tooltip": "Test databáze",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Test synchronizátoru",
+    "Syncer test - Tooltip": "Test synchronizátoru",
     "Disable SSL": "Zakázat SSL",
     "Disable SSL - Tooltip": "Zda zakázat SSL protokol při komunikaci se serverem SMTP",
     "Domain": "Doména",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Název databázové tabulky",
     "Table columns": "Sloupce tabulky",
     "Table columns - Tooltip": "Sloupce tabulky zapojené do synchronizace dat. Sloupce, které se nezúčastňují synchronizace, není potřeba přidávat",
-    "Test DB Connection": "Test připojení k DB"
+    "Test Connection": "Test připojení"
   },
   "system": {
     "API Latency": "Latence API",

@@ -895,8 +895,10 @@
     "Content": "Kandungan",
     "Content - Tooltip": "Kandungan - Tooltip",
     "Copy": "Salin",
-    "DB test": "Ujian DB",
-    "DB test - Tooltip": "Ujian DB - Tooltip",
+    "Corp ID": "Corp ID",
+    "Corp Secret": "Corp Secret",
+    "Syncer test": "Ujian Penyegerak",
+    "Syncer test - Tooltip": "Ujian Penyegerak - Tooltip",
     "Disable SSL": "Lumpuhkan SSL",
     "Disable SSL - Tooltip": "Sama ada untuk melumpuhkan protokol SSL semasa berkomunikasi dengan pelayan STMP",
     "Domain": "Domain",
@@ -1171,7 +1173,7 @@
     "Table - Tooltip": "Nama jadual pangkalan data",
     "Table columns": "Lajur jadual",
     "Table columns - Tooltip": "Lajur jadual yang terlibat dalam penyegerakan data. Lajur yang tidak terlibat dalam penyegerakan tidak perlu ditambah",
-    "Test DB Connection": "Ujian sambungan DB"
+    "Test Connection": "Ujian sambungan"
   },
   "system": {
     "API Latency": "Kelewatan API",
