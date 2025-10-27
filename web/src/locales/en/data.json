@@ -909,7 +909,7 @@
     "Email title": "Email title",
     "Email title - Tooltip": "Subject of the email",
     "Enable proxy": "Enable proxy",
-    "Enable proxy - Tooltip": "Enable proxy - Tooltip",
+    "Enable proxy - Tooltip": "Enable socks5 Proxy when sending email or sms",
     "Endpoint": "Endpoint",
     "Endpoint (Intranet)": "Endpoint (Intranet)",
     "Endpoint - Tooltip": "Service endpoint URL",
