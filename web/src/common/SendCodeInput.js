@@ -57,12 +57,23 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
 
   const handleSendCode = () => {
     // If inline captcha is enabled and we have captcha values, use them directly
-    if (useInlineCaptcha && captchaValues) {
-      handleOk(captchaValues.captchaType, captchaValues.captchaToken, captchaValues.clientSecret);
+    if (useInlineCaptcha) {
+      if (captchaValues && captchaValues.captchaToken) {
+        handleOk(captchaValues.captchaType, captchaValues.captchaToken, captchaValues.clientSecret);
+      }
+      // If inline captcha is enabled but not filled yet, do nothing (button should be disabled)
     } else {
       // Otherwise, show the captcha modal
       setVisible(true);
     }
+  };
+
+  const isSendButtonDisabled = () => {
+    // Button is disabled if:
+    // 1. The base disabled prop is true, OR
+    // 2. Countdown is active, OR
+    // 3. Inline captcha is enabled but not filled yet
+    return disabled || buttonLeftTime > 0 || (useInlineCaptcha && (!captchaValues || !captchaValues.captchaToken));
   };
 
   return (
@@ -76,7 +87,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
         className="verification-code-input"
         onChange={e => onChange(e.target.value)}
         enterButton={
-          <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
+          <Button style={{fontSize: 14}} type={"primary"} disabled={isSendButtonDisabled()} loading={buttonLoading}>
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
           </Button>
         }
