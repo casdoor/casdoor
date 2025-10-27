@@ -84,7 +84,7 @@ func AutoSigninFilter(ctx *context.Context) {
 			responseError(ctx, err.Error())
 		}
 
-		setSessionUser(ctx, userId)
+		setContextUser(ctx, userId)
 	}
 
 	// "/page?clientId=123&clientSecret=456"
@@ -94,7 +94,7 @@ func AutoSigninFilter(ctx *context.Context) {
 		return
 	}
 	if userId != "" {
-		setSessionUser(ctx, userId)
+		setContextUser(ctx, userId)
 		return
 	}
 

@@ -40,6 +40,13 @@ type ObjectWithOrg struct {
 }
 
 func getUsername(ctx *context.Context) (username string) {
+	// First check if user is in the request context (API key/client secret auth)
+	username = getContextUser(ctx)
+	if username != "" {
+		return
+	}
+
+	// Then check session (interactive browser-based auth)
 	username, ok := ctx.Input.Session("username").(string)
 	if !ok || username == "" {
 		username, _ = getUsernameByClientIdSecret(ctx)

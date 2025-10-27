@@ -149,6 +149,20 @@ func setSessionOidc(ctx *context.Context, scope string, aud string) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 }
 
+// setContextUser stores the user in the request context without creating a session
+func setContextUser(ctx *context.Context, user string) {
+	ctx.Input.SetData("username", user)
+}
+
+// getContextUser retrieves the user from the request context
+func getContextUser(ctx *context.Context) string {
+	user := ctx.Input.GetData("username")
+	if user == nil {
+		return ""
+	}
+	return user.(string)
+}
+
 func parseBearerToken(ctx *context.Context) string {
 	header := ctx.Request.Header.Get("Authorization")
 	tokens := strings.Split(header, " ")
