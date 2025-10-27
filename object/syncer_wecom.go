@@ -15,10 +15,13 @@
 package object
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/casdoor/casdoor/util"
 )
@@ -59,10 +62,19 @@ type WecomDeptListResp struct {
 
 // getWecomAccessToken gets access token from WeCom API
 func (syncer *Syncer) getWecomAccessToken() (string, error) {
-	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s",
-		syncer.User, syncer.Password)
+	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s",
+		url.QueryEscape(syncer.User), url.QueryEscape(syncer.Password))
 
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", apiUrl, nil)
+	if err != nil {
+		return "", err
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -89,9 +101,19 @@ func (syncer *Syncer) getWecomAccessToken() (string, error) {
 
 // getWecomDepartments gets all department IDs from WeCom API
 func (syncer *Syncer) getWecomDepartments(accessToken string) ([]int, error) {
-	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/department/list?access_token=%s", accessToken)
+	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/department/list?access_token=%s",
+		url.QueryEscape(accessToken))
 
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", apiUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -123,10 +145,19 @@ func (syncer *Syncer) getWecomDepartments(accessToken string) ([]int, error) {
 
 // getWecomUsersFromDept gets users from a specific department
 func (syncer *Syncer) getWecomUsersFromDept(accessToken string, deptId int) ([]*WecomUser, error) {
-	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/list?access_token=%s&department_id=%d",
-		accessToken, deptId)
+	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/list?access_token=%s&department_id=%d",
+		url.QueryEscape(accessToken), deptId)
 
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", apiUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
