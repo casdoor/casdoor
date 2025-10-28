@@ -25,6 +25,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
+  const [codeSent, setCodeSent] = React.useState(false);
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime;
@@ -47,6 +48,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
       setButtonLoading(false);
       if (res) {
         handleCountDown(60);
+        setCodeSent(true);
       }
     });
   };
@@ -58,42 +60,48 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
   const handleSendCode = () => {
     // If inline captcha is enabled and we have captcha values, use them directly
     if (useInlineCaptcha) {
-      if (captchaValues && captchaValues.captchaToken) {
+      if (captchaValues?.captchaToken) {
         handleOk(captchaValues.captchaType, captchaValues.captchaToken, captchaValues.clientSecret);
       }
-      // If inline captcha is enabled but not filled yet, do nothing (button should be disabled)
+      // If inline captcha is enabled but not filled yet, do nothing
     } else {
       // Otherwise, show the captcha modal
       setVisible(true);
     }
   };
 
-  const isSendButtonDisabled = () => {
-    // Button is disabled if:
-    // 1. The base disabled prop is true, OR
-    // 2. Countdown is active, OR
-    // 3. Inline captcha is enabled but not filled yet
-    return disabled || buttonLeftTime > 0 || (useInlineCaptcha && (!captchaValues || !captchaValues.captchaToken));
-  };
-
   return (
     <React.Fragment>
-      <Search
-        addonBefore={textBefore}
-        disabled={disabled}
-        value={value}
-        prefix={<SafetyOutlined />}
-        placeholder={i18next.t("code:Enter your code")}
-        className="verification-code-input"
-        onChange={e => onChange(e.target.value)}
-        enterButton={
-          <Button style={{fontSize: 14}} type={"primary"} disabled={isSendButtonDisabled()} loading={buttonLoading}>
-            {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
-          </Button>
-        }
-        onSearch={handleSendCode}
-        autoComplete="one-time-code"
-      />
+      {!codeSent ? (
+        // Before code is sent: Show only the Send Code button
+        <Button
+          style={{width: "100%"}}
+          type="primary"
+          disabled={disabled || buttonLeftTime > 0}
+          loading={buttonLoading}
+          onClick={handleSendCode}
+        >
+          {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
+        </Button>
+      ) : (
+        // After code is sent: Show the input field with countdown button
+        <Search
+          addonBefore={textBefore}
+          disabled={disabled}
+          value={value}
+          prefix={<SafetyOutlined />}
+          placeholder={i18next.t("code:Enter your code")}
+          className="verification-code-input"
+          onChange={e => onChange(e.target.value)}
+          enterButton={
+            <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
+              {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
+            </Button>
+          }
+          onSearch={handleSendCode}
+          autoComplete="one-time-code"
+        />
+      )}
       {!useInlineCaptcha && (
         <CaptchaModal
           owner={application.owner}
