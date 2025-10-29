@@ -21,11 +21,20 @@ import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode, useInlineCaptcha, captchaValues}) => {
+export const SendCodeInput = React.forwardRef(({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode, useInlineCaptcha, captchaValues, onCaptchaError, onCodeSent}, ref) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
   const [codeSent, setCodeSent] = React.useState(false);
+  const [captchaDisabled, setCaptchaDisabled] = React.useState(false);
+  const [failedAttempts, setFailedAttempts] = React.useState(0);
+  const [maxAttempts] = React.useState(5);
+
+  // Expose methods to parent component
+  React.useImperativeHandle(ref, () => ({
+    handleCodeFailed: handleCodeFailed,
+    resetAttempts: () => setFailedAttempts(0),
+  }));
 
   const handleCountDown = (leftTime = 60) => {
     let leftTimeSecond = leftTime;
@@ -49,6 +58,17 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
       if (res) {
         handleCountDown(60);
         setCodeSent(true);
+        // Disable captcha completely after code is sent successfully
+        setCaptchaDisabled(true);
+        // Notify parent component that code was sent
+        if (onCodeSent) {
+          onCodeSent();
+        }
+      } else {
+        // If sendCode failed (e.g., wrong captcha), trigger captcha refresh for inline captcha
+        if (useInlineCaptcha && onCaptchaError && !captchaDisabled) {
+          onCaptchaError();
+        }
       }
     });
   };
@@ -57,7 +77,29 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
     setVisible(false);
   };
 
+  const handleCodeFailed = () => {
+    const newFailedAttempts = failedAttempts + 1;
+    setFailedAttempts(newFailedAttempts);
+
+    // If max attempts reached, disable the input
+    if (newFailedAttempts >= maxAttempts) {
+      // Disable the input field
+    }
+  };
+
   const handleSendCode = () => {
+    // If captcha is disabled (after code was sent successfully), resend code without captcha
+    if (captchaDisabled) {
+      setButtonLoading(true);
+      UserBackend.sendCode("none", "", "", method, countryCode, ...onButtonClickArgs).then(res => {
+        setButtonLoading(false);
+        if (res) {
+          handleCountDown(60);
+        }
+      });
+      return;
+    }
+
     // If inline captcha is enabled and we have captcha values, use them directly
     if (useInlineCaptcha) {
       if (captchaValues?.captchaToken) {
@@ -87,14 +129,14 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
         // After code is sent: Show the input field with countdown button
         <Search
           addonBefore={textBefore}
-          disabled={disabled}
+          disabled={disabled || failedAttempts >= maxAttempts}
           value={value}
           prefix={<SafetyOutlined />}
-          placeholder={i18next.t("code:Enter your code")}
+          placeholder={failedAttempts >= maxAttempts ? i18next.t("code:Too many failed attempts") : i18next.t("code:Enter your code")}
           className="verification-code-input"
           onChange={e => onChange(e.target.value)}
           enterButton={
-            <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0} loading={buttonLoading}>
+            <Button style={{fontSize: 14}} type={"primary"} disabled={disabled || buttonLeftTime > 0 || failedAttempts >= maxAttempts} loading={buttonLoading}>
               {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
             </Button>
           }
@@ -114,4 +156,4 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
       )}
     </React.Fragment>
   );
-};
+});

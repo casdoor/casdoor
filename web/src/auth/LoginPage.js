@@ -47,6 +47,7 @@ class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.captchaRef = React.createRef();
+    this.sendCodeRef = React.createRef();
     const urlParams = new URLSearchParams(this.props.location?.search);
     this.state = {
       classes: props,
@@ -72,6 +73,7 @@ class LoginPage extends React.Component {
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
       prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
+      codeSent: false,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -470,6 +472,7 @@ class LoginPage extends React.Component {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     const usedCaptcha = this.state.captchaValues !== undefined;
+    const isVerificationCode = this.state.loginMethod?.includes("verificationCode");
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
@@ -495,9 +498,17 @@ class LoginPage extends React.Component {
         if (res.status === "ok") {
           Setting.checkLoginMfa(res, values, casParams, loginHandler, this);
         } else {
-          Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-          if (usedCaptcha) {
+          // Suppress generic backend error toast for verification code failures
+          if (!isVerificationCode) {
+            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+          }
+          // Do not refresh captcha after code was already sent
+          if (usedCaptcha && !this.state.codeSent) {
             this.captchaRef.current?.loadCaptcha?.();
+          }
+          // If verification code login failed, handle failed attempts
+          if (isVerificationCode && this.sendCodeRef.current?.handleCodeFailed) {
+            this.sendCodeRef.current.handleCodeFailed();
           }
         }
       }).finally(() => {
@@ -571,9 +582,17 @@ class LoginPage extends React.Component {
           if (res.status === "ok") {
             Setting.checkLoginMfa(res, values, oAuthParams, loginHandler, this);
           } else {
-            Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-            if (usedCaptcha) {
+            // Suppress generic backend error toast for verification code failures
+            if (!isVerificationCode) {
+              Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
+            }
+            // Do not refresh captcha after code was already sent
+            if (usedCaptcha && !this.state.codeSent) {
               this.captchaRef.current?.loadCaptcha?.();
+            }
+            // If verification code login failed, handle failed attempts
+            if (isVerificationCode && this.sendCodeRef.current?.handleCodeFailed) {
+              this.sendCodeRef.current.handleCodeFailed();
             }
           }
         }).finally(() => {
@@ -856,6 +875,13 @@ class LoginPage extends React.Component {
       if (this.state.loginMethod === "wechat") {
         return null;
       }
+      // Hide Sign In button during send-code phase for verification code login
+      const applicationForBtn = this.getApplicationObj();
+      const currentOrDefaultMethod = this.state.loginMethod ?? this.getDefaultLoginMethod(applicationForBtn);
+      const isVerificationCodeMethod = currentOrDefaultMethod?.includes("verificationCode");
+      if (isVerificationCodeMethod && !this.state.codeSent) {
+        return null;
+      }
       return (
         <Form.Item key={resultItemKey} className="login-button-box">
           <div dangerouslySetInnerHTML={{__html: ("<style>" + signinItem.customCss?.replaceAll("<style>", "").replaceAll("</style>", "") + "</style>")}} />
@@ -942,6 +968,10 @@ class LoginPage extends React.Component {
         </div>
       );
     } else if (signinItem.name === "Captcha" && signinItem.rule === "inline") {
+      // Hide inline captcha after code has been sent for verification-code flow
+      if (this.state.codeSent && this.state.loginMethod?.includes("verificationCode")) {
+        return null;
+      }
       return this.renderCaptchaModal(application, true);
     } else if (signinItem.name.startsWith("Text ") || signinItem?.isCustom) {
       return (
@@ -1308,6 +1338,32 @@ class LoginPage extends React.Component {
     return targetApp.signinItems.some(item => item.name === "Captcha" && item.rule === "inline");
   }
 
+  handleCaptchaError = () => {
+    // Only refresh captcha if we haven't sent the code yet
+    // After code is sent, captcha should be disabled
+    if (!this.state.codeSent) {
+      // Clear current captcha values and refresh the captcha
+      this.setState({captchaValues: null});
+      if (this.captchaRef.current?.loadCaptcha) {
+        this.captchaRef.current.loadCaptcha();
+      }
+    }
+  };
+
+  handleCodeSent = () => {
+    // Mark that code has been sent successfully
+    this.setState({codeSent: true, captchaValues: undefined, openCaptchaModal: false});
+  };
+
+  handleCodeFailed = (attempts, maxAttempts) => {
+    const remaining = Math.max(0, maxAttempts - attempts);
+    if (attempts >= maxAttempts) {
+      Setting.showMessage("error", "Too many failed attempts. Please try again later.");
+    } else {
+      Setting.showMessage("error", `Incorrect verification code. You have ${remaining} attempts remaining`);
+    }
+  };
+
   renderPasswordOrCodeInput(signinItem) {
     const application = this.getApplicationObj();
     if (this.state.loginMethod === "password" || this.state.loginMethod === "ldap") {
@@ -1340,12 +1396,15 @@ class LoginPage extends React.Component {
               rules={[{required: true, message: i18next.t("login:Please input your code!")}]}
             >
               <SendCodeInput
+                ref={this.sendCodeRef}
                 disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
                 method={"login"}
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
                 useInlineCaptcha={this.hasInlineCaptcha(application)}
                 captchaValues={this.state.captchaValues}
+                onCaptchaError={this.handleCaptchaError}
+                onCodeSent={this.handleCodeSent}
               />
             </Form.Item>
           </div>
@@ -1368,12 +1427,15 @@ class LoginPage extends React.Component {
             className="verification-code"
           >
             <SendCodeInput
+              ref={this.sendCodeRef}
               disabled={this.state.username?.length === 0 || !this.state.validEmailOrPhone}
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
               useInlineCaptcha={this.hasInlineCaptcha(application)}
               captchaValues={this.state.captchaValues}
+              onCaptchaError={this.handleCaptchaError}
+              onCodeSent={this.handleCodeSent}
             />
           </Form.Item>
         </Col>
