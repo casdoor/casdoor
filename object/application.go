@@ -645,7 +645,7 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 	return res, nil
 }
 
-func UpdateApplication(id string, application *Application, isGlobalAdmin bool) (bool, error) {
+func UpdateApplication(id string, application *Application, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldApplication, err := getApplication(owner, name)
 	if oldApplication == nil {
@@ -653,7 +653,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool) 
 	}
 
 	if !isGlobalAdmin && oldApplication.Organization != application.Organization {
-		return false, fmt.Errorf("auth:Unauthorized operation")
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	if name == "app-built-in" {

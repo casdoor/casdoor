@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -104,14 +105,14 @@ func GetWebhook(id string) (*Webhook, error) {
 	return getWebhook(owner, name)
 }
 
-func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool) (bool, error) {
+func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	if w, err := getWebhook(owner, name); err != nil {
 		return false, err
 	} else if w == nil {
 		return false, nil
 	} else if !isGlobalAdmin && w.Organization != webhook.Organization {
-		return false, fmt.Errorf("auth:Unauthorized operation")
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)

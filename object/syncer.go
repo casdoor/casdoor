@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -153,7 +154,7 @@ func GetMaskedSyncers(syncers []*Syncer, errs ...error) ([]*Syncer, error) {
 	return syncers, nil
 }
 
-func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool) (bool, error) {
+func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	s, err := getSyncer(owner, name)
 	if err != nil {
@@ -161,7 +162,7 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool) (bool, error) {
 	} else if s == nil {
 		return false, nil
 	} else if !isGlobalAdmin && s.Organization != syncer.Organization {
-		return false, fmt.Errorf("auth:Unauthorized operation")
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()

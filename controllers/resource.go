@@ -364,7 +364,7 @@ func (c *ApiController) UploadResource() {
 		}
 
 		applicationObj.TermsOfUse = fileUrl
-		_, err = object.UpdateApplication(applicationId, applicationObj, true)
+		_, err = object.UpdateApplication(applicationId, applicationObj, true, c.GetAcceptLanguage())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
