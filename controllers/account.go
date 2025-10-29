@@ -341,16 +341,7 @@ func (c *ApiController) Logout() {
 		// Parse the session ID to get owner, name, and application
 		owner, name, _ := util.GetOwnerAndNameAndOtherFromId(casdoorSessionId)
 
-		// Get the session to verify it exists
-		session, err := object.GetSingleSession(casdoorSessionId)
-		if err != nil {
-			c.ResponseError(err.Error())
-			return
-		}
-		if session == nil {
-			c.ResponseError("Session not found")
-			return
-		}
+		// No need to retrieve the session; proceed to permission checks and deletion
 
 		// Check permissions: user must be the session owner, global admin, or org admin
 		currentUser := c.getCurrentUser()
