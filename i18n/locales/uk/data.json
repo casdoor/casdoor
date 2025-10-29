@@ -194,5 +194,15 @@
   "webauthn": {
     "Found no credentials for this user": "Облікові дані для цього користувача не знайдено",
     "Please call WebAuthnSigninBegin first": "Спочатку викличте WebAuthnSigninBegin"
+  },
+  "group": {
+    "Group %s not exist": "Group %s not exist"
+  },
+  "plan": {
+    "%s does not exist": "%s does not exist"
+  },
+  "pricing": {
+    "%s does not exist": "%s does not exist",
+    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

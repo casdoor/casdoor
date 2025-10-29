@@ -194,5 +194,15 @@
   "webauthn": {
     "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
     "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
+  },
+  "group": {
+    "Group %s not exist": "Group %s not exist"
+  },
+  "plan": {
+    "%s does not exist": "%s does not exist"
+  },
+  "pricing": {
+    "%s does not exist": "%s does not exist",
+    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

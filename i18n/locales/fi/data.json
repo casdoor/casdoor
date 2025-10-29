@@ -194,5 +194,15 @@
   "webauthn": {
     "Found no credentials for this user": "Tälle käyttäjälle ei löytynyt kirjautumistietoja",
     "Please call WebAuthnSigninBegin first": "Kutsu ensin WebAuthnSigninBegin"
+  },
+  "group": {
+    "Group %s not exist": "Group %s not exist"
+  },
+  "plan": {
+    "%s does not exist": "%s does not exist"
+  },
+  "pricing": {
+    "%s does not exist": "%s does not exist",
+    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

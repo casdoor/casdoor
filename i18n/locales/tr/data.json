@@ -194,5 +194,15 @@
   "webauthn": {
     "Found no credentials for this user": "Bu kullanıcı için kimlik bilgisi bulunamadı",
     "Please call WebAuthnSigninBegin first": "Lütfen önce WebAuthnSigninBegin çağırın"
+  },
+  "group": {
+    "Group %s not exist": "Group %s not exist"
+  },
+  "plan": {
+    "%s does not exist": "%s does not exist"
+  },
+  "pricing": {
+    "%s does not exist": "%s does not exist",
+    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

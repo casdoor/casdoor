@@ -194,5 +194,15 @@
   "webauthn": {
     "Found no credentials for this user": "이 사용자에 대한 자격 증명을 찾을 수 없습니다",
     "Please call WebAuthnSigninBegin first": "WebAuthnSigninBegin을 먼저 호출해주세요"
+  },
+  "group": {
+    "Group %s not exist": "Group %s not exist"
+  },
+  "plan": {
+    "%s does not exist": "%s does not exist"
+  },
+  "pricing": {
+    "%s does not exist": "%s does not exist",
+    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }
