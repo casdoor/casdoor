@@ -324,6 +324,7 @@ func (c *ApiController) Signup() {
 // @Param   id_token_hint   query        string  false        "id_token_hint"
 // @Param   post_logout_redirect_uri    query    string  false     "post_logout_redirect_uri"
 // @Param   state     query    string  false     "state"
+// @Param   casdoor_session_id     query    string  false     "casdoor_session_id"
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout [post]
 func (c *ApiController) Logout() {
@@ -331,8 +332,61 @@ func (c *ApiController) Logout() {
 	accessToken := c.GetString("id_token_hint")
 	redirectUri := c.GetString("post_logout_redirect_uri")
 	state := c.GetString("state")
+	casdoorSessionId := c.GetString("casdoor_session_id")
 
 	user := c.GetSessionUsername()
+
+	// Handle optional casdoor_session_id parameter
+	if casdoorSessionId != "" {
+		// Parse the session ID to get owner, name, and application
+		owner, name, _ := util.GetOwnerAndNameAndOtherFromId(casdoorSessionId)
+
+		// Get the session to verify it exists
+		session, err := object.GetSingleSession(casdoorSessionId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if session == nil {
+			c.ResponseError(c.T("session:Session not found"))
+			return
+		}
+
+		// Check permissions: user must be the session owner, global admin, or org admin
+		currentUser := c.getCurrentUser()
+		hasPermission := false
+
+		if currentUser != nil {
+			// Check if user is the session owner
+			if currentUser.Owner == owner && currentUser.Name == name {
+				hasPermission = true
+			}
+			// Check if user is global admin
+			if currentUser.IsGlobalAdmin() {
+				hasPermission = true
+			}
+			// Check if user is org admin of the same organization
+			if currentUser.Owner == owner && currentUser.IsAdmin {
+				hasPermission = true
+			}
+		}
+
+		if !hasPermission {
+			c.ResponseError(c.T("auth:Unauthorized"))
+			return
+		}
+
+		// Delete the specified session
+		_, err = object.DeleteSession(casdoorSessionId)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		util.LogInfo(c.Ctx, "API: Session [%s] deleted by [%s]", casdoorSessionId, user)
+		c.ResponseOk()
+		return
+	}
 
 	if accessToken == "" && redirectUri == "" {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
