@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "משתמש בתשלום %s אין לו מנוי פעיל או ממתין והאפליקציה: %s אין לה תמחור ברירת מחדל",
     "the application for user %s is not found": "האפליקציה עבור המשתמש %s לא נמצאה",
     "the organization: %s is not found": "הארגון: %s לא נמצא",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "התוכנית: %s לא קיימת",
+    "The pricing: %s does not exist": "התמחור: %s לא קיים",
+    "The pricing: %s does not have plan: %s": "התמחור: %s אין לו תוכנית: %s",
+    "The group: %s does not exist": "הקבוצה: %s לא קיימת"
   },
   "cas": {
     "Service %s and %s do not match": "השירות %s ו-%s אינם תואמים"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "לא נמצאו אישורים עבור משתמש זה",
     "Please call WebAuthnSigninBegin first": "אנא קרא ל-WebAuthnSigninBegin תחילה"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

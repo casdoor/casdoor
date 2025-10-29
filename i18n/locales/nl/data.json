@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Betaald lid %s zonder actief abonnement en app %s heeft geen standaardprijs",
     "the application for user %s is not found": "App voor gebruiker %s niet gevonden",
     "the organization: %s is not found": "Organisatie %s niet gevonden",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Het plan: %s bestaat niet",
+    "The pricing: %s does not exist": "De prijsstelling: %s bestaat niet",
+    "The pricing: %s does not have plan: %s": "De prijsstelling: %s heeft geen plan: %s",
+    "The group: %s does not exist": "De groep: %s bestaat niet"
   },
   "cas": {
     "Service %s and %s do not match": "Services %s en %s komen niet overeen"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Geen inloggegevens gevonden voor deze gebruiker",
     "Please call WebAuthnSigninBegin first": "Roep eerst WebAuthnSigninBegin aan"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

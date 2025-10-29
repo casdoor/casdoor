@@ -36,7 +36,8 @@
     "the organization: %s is not found": "the organization: %s is not found",
     "The plan: %s does not exist": "The plan: %s does not exist",
     "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s",
+    "The group: %s does not exist": "The group: %s does not exist"
   },
   "cas": {
     "Service %s and %s do not match": "Service %s and %s do not match"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Found no credentials for this user",
     "Please call WebAuthnSigninBegin first": "Please call WebAuthnSigninBegin first"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

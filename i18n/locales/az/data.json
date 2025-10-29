@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "ödənişli istifadəçi %s aktiv və ya gözləyən abunəyə malik deyil və tətbiq: %s defolt qiymətləndirməyə malik deyil",
     "the application for user %s is not found": "istifadəçi %s üçün tətbiq tapılmadı",
     "the organization: %s is not found": "təşkilat: %s tapılmadı",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Plan: %s mövcud deyil",
+    "The pricing: %s does not exist": "Qiymətləndirmə: %s mövcud deyil",
+    "The pricing: %s does not have plan: %s": "Qiymətləndirmə: %s planı yoxdur: %s",
+    "The group: %s does not exist": "Qrup: %s mövcud deyil"
   },
   "cas": {
     "Service %s and %s do not match": "Xidmət %s və %s uyğun gəlmir"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Bu istifadəçi üçün heç bir etimadnamə tapılmadı",
     "Please call WebAuthnSigninBegin first": "Xahiş edirik əvvəlcə WebAuthnSigninBegin çağırın"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

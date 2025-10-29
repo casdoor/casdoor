@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "người dùng trả phí %s không có đăng ký đang hoạt động hoặc đang chờ và ứng dụng: %s không có giá mặc định",
     "the application for user %s is not found": "không tìm thấy ứng dụng cho người dùng %s",
     "the organization: %s is not found": "không tìm thấy tổ chức: %s",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Kế hoạch: %s không tồn tại",
+    "The pricing: %s does not exist": "Giá: %s không tồn tại",
+    "The pricing: %s does not have plan: %s": "Giá: %s không có kế hoạch: %s",
+    "The group: %s does not exist": "Nhóm: %s không tồn tại"
   },
   "cas": {
     "Service %s and %s do not match": "Dịch sang tiếng Việt: Dịch vụ %s và %s không khớp"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
     "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "maksettu-käyttäjä %s ei ole aktiivista tai odottavaa tilausta ja sovellus: %s ei ole oletushinnoittelua",
     "the application for user %s is not found": "sovellusta käyttäjälle %s ei löydy",
     "the organization: %s is not found": "organisaatiota: %s ei löydy",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Suunnitelma: %s ei ole olemassa",
+    "The pricing: %s does not exist": "Hinnoittelu: %s ei ole olemassa",
+    "The pricing: %s does not have plan: %s": "Hinnoittelu: %s ei sisällä suunnitelmaa: %s",
+    "The group: %s does not exist": "Ryhmä: %s ei ole olemassa"
   },
   "cas": {
     "Service %s and %s do not match": "Palvelu %s ja %s eivät täsmää"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Tälle käyttäjälle ei löytynyt kirjautumistietoja",
     "Please call WebAuthnSigninBegin first": "Kutsu ensin WebAuthnSigninBegin"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

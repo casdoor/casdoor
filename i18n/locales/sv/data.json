@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Betalningsanvändare %s har ingen aktiv eller väntande prenumeration och applikationen: %s har ingen standardprissättning",
     "the application for user %s is not found": "Applikationen för användare %s hittades inte",
     "the organization: %s is not found": "Organisationen: %s hittades inte",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Planen: %s finns inte",
+    "The pricing: %s does not exist": "Prissättningen: %s finns inte",
+    "The pricing: %s does not have plan: %s": "Prissättningen: %s har inte plan: %s",
+    "The group: %s does not exist": "Gruppen: %s finns inte"
   },
   "cas": {
     "Service %s and %s do not match": "Tjänsten %s och %s matchar inte"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Inga autentiseringsuppgifter hittades för denna användare",
     "Please call WebAuthnSigninBegin first": "Anropa WebAuthnSigninBegin först"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

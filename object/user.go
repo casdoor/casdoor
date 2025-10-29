@@ -1378,7 +1378,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 
 		curGroup, ok := groupMap[group.ParentId]
 		if !ok {
-			return []string{}, fmt.Errorf(i18n.Translate("en", "group:Group %s not exist"), group.ParentId)
+			return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), group.ParentId)
 		}
 		for {
 			groupPath = util.GetId(curGroup.Name, groupPath)
@@ -1388,7 +1388,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 
 			curGroup, ok = groupMap[curGroup.ParentId]
 			if !ok {
-				return []string{}, fmt.Errorf(i18n.Translate("en", "group:Group %s not exist"), curGroup.ParentId)
+				return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), curGroup.ParentId)
 			}
 		}
 

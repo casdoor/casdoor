@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Placený uživatel %s nemá aktivní ani čekající předplatné a aplikace: %s nemá výchozí ceny",
     "the application for user %s is not found": "Aplikace pro uživatele %s nebyla nalezena",
     "the organization: %s is not found": "Organizace: %s nebyla nalezena",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Plán: %s neexistuje",
+    "The pricing: %s does not exist": "Ceník: %s neexistuje",
+    "The pricing: %s does not have plan: %s": "Ceník: %s nemá plán: %s",
+    "The group: %s does not exist": "Skupina: %s neexistuje"
   },
   "cas": {
     "Service %s and %s do not match": "Služba %s a %s se neshodují"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Pro tohoto uživatele nebyly nalezeny žádné přihlašovací údaje",
     "Please call WebAuthnSigninBegin first": "Prosím, nejprve zavolejte WebAuthnSigninBegin"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

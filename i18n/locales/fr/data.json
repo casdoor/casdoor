@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "L'utilisateur payant %s n'a pas d'abonnement actif ou en attente et l'application : %s n'a pas de tarification par défaut",
     "the application for user %s is not found": "L'application pour l'utilisateur %s est introuvable",
     "the organization: %s is not found": "L'organisation : %s est introuvable",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "Le plan : %s n'existe pas",
+    "The pricing: %s does not exist": "Le tarif : %s n'existe pas",
+    "The pricing: %s does not have plan: %s": "Le tarif : %s n'a pas de plan : %s",
+    "The group: %s does not exist": "Le groupe : %s n'existe pas"
   },
   "cas": {
     "Service %s and %s do not match": "Les services %s et %s ne correspondent pas"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Aucune information d'identification trouvée pour cet utilisateur",
     "Please call WebAuthnSigninBegin first": "Veuillez d'abord appeler WebAuthnSigninBegin"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }

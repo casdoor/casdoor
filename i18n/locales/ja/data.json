@@ -34,9 +34,10 @@
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "有料ユーザー「%s」には有効または保留中のサブスクリプションがなく、アプリケーション「%s」にはデフォルトの価格設定がありません",
     "the application for user %s is not found": "ユーザー「%s」のアプリケーションが見つかりません",
     "the organization: %s is not found": "組織「%s」が見つかりません",
-    "The plan: %s does not exist": "The plan: %s does not exist",
-    "The pricing: %s does not exist": "The pricing: %s does not exist",
-    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
+    "The plan: %s does not exist": "プラン: %sは存在しません",
+    "The pricing: %s does not exist": "料金: %sは存在しません",
+    "The pricing: %s does not have plan: %s": "料金: %sにはプラン%sがありません",
+    "The group: %s does not exist": "グループ: %sは存在しません"
   },
   "cas": {
     "Service %s and %s do not match": "サービス%sと%sは一致しません"
@@ -197,8 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "このユーザーの認証情報が見つかりませんでした",
     "Please call WebAuthnSigninBegin first": "最初にWebAuthnSigninBeginを呼び出してください"
-  },
-  "group": {
-    "Group %s not exist": "Group %s not exist"
   }
 }
