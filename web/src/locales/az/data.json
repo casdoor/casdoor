@@ -509,7 +509,7 @@
     "Show all": "Hamısını göstər",
     "Upload (.xlsx)": "Yüklə (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -\u003e [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -> [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
   },
   "home": {
     "New users past 30 days": "Son 30 gündə yeni istifadəçilər",
@@ -897,8 +897,6 @@
     "Copy": "Kopyala",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Sinxronizator testi",
-    "Syncer test - Tooltip": "Sinxronizatora qoşulmanı test et",
     "Disable SSL": "SSL-i söndür",
     "Disable SSL - Tooltip": "STMP server ilə əlaqədə SSL protokolunun söndürülməsi",
     "Domain": "Domen",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Əsas növün altında başqa bir alt bölmə kateqoriyası, obyektləri və ya funksiyaları daha dəqiq fərqləndirmək üçün istifadə olunur",
     "Subject": "Mövzu",
     "Subject - Tooltip": "Email-in mövzusu",
+    "Syncer test": "Sinxronizator testi",
+    "Syncer test - Tooltip": "Sinxronizatora qoşulmanı test et",
     "Team ID": "Komanda ID",
     "Team ID - Tooltip": "Komanda üçün unikal identifikator, müxtəlif komandaları fərqləndirmək və komanda səviyyəsində resursları idarə etmək üçün istifadə olunur",
     "Template code": "Şablon kodu",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "SMTP Bağlantısını Test Et",
     "Third-party": "Üçüncü tərəf",
     "This field is required": "Bu sahə tələb olunur",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Xüsusi OAuth Token URL-i",
     "Type": "Növ",

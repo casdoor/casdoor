@@ -509,7 +509,7 @@
     "Show all": "Tümünü göster",
     "Upload (.xlsx)": "Yükle (.xlsx)",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -897,8 +897,6 @@
     "Copy": "Kopyala",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Senkronizasyon testi",
-    "Syncer test - Tooltip": "Senkronizasyon bağlantısının çalışıp çalışmadığını test et",
     "Disable SSL": "SSL'yi Devre Dışı Bırak",
     "Disable SSL - Tooltip": "STMP sunucusu ile iletişim kurarken SSL protokolünü devre dışı bırakıp bırakmayacağı",
     "Domain": "Alan adı",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Alt tür",
     "Subject": "Konu",
     "Subject - Tooltip": "E-posta konusu",
+    "Syncer test": "Senkronizasyon testi",
+    "Syncer test - Tooltip": "Senkronizasyon bağlantısının çalışıp çalışmadığını test et",
     "Team ID": "Takım Kimliği",
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "Şablon kodu",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "SMTP Bağlantısını Test Et",
     "Third-party": "Üçüncü taraf",
     "This field is required": "Bu alan zorunludur",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Jeton URL'si",
     "Token URL - Tooltip": "Jeton URL'si",
     "Type": "Tür",

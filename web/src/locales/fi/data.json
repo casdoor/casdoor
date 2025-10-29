@@ -509,7 +509,7 @@
     "Show all": "Näytä kaikki",
     "Upload (.xlsx)": "Lataa (.xlsx)",
     "Virtual": "Virtuaalinen",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -\u003e [Ryhmät]."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
   },
   "home": {
     "New users past 30 days": "Uudet käyttäjät viimeisen 30 päivän aikana",
@@ -897,8 +897,6 @@
     "Copy": "Kopioi",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Synkronoijan testi",
-    "Syncer test - Tooltip": "Synkronoijan testi – ohje",
     "Disable SSL": "Poista SSL käytöstä",
     "Disable SSL - Tooltip": "Poista SSL-protokolla käytöstä STMP-palvelimen kanssa kommunikoitaessa",
     "Domain": "Verkkotunnus",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Alatyyppi",
     "Subject": "Aihe",
     "Subject - Tooltip": "Sähköpostin aihe",
+    "Syncer test": "Synkronoijan testi",
+    "Syncer test - Tooltip": "Synkronoijan testi – ohje",
     "Team ID": "Tiimin tunnus",
     "Team ID - Tooltip": "Tiimin tunnus – ohje",
     "Template code": "Mallikoodi",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Testaa SMTP-yhteyttä",
     "Third-party": "Kolmas osapuoli",
     "This field is required": "Tämä kenttä on pakollinen",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token-URL",
     "Token URL - Tooltip": "Token-URL",
     "Type": "Tyyppi",

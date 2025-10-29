@@ -509,7 +509,7 @@
     "Show all": "Alles weergeven",
     "Upload (.xlsx)": "Uploaden (.xlsx)",
     "Virtual": "Virtueel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -\u003e [Groepen] pagina"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -> [Groepen] pagina"
   },
   "home": {
     "New users past 30 days": "Nieuwe gebruikers afgelopen 30 dagen",
@@ -897,8 +897,6 @@
     "Copy": "Kopiëren",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Synchronisatie-test",
-    "Syncer test - Tooltip": "Synchronisatie-test - Tooltip",
     "Disable SSL": "SSL uitschakelen",
     "Disable SSL - Tooltip": "SSL-protocol uitschakelen bij communicatie met SMTP-server",
     "Domain": "Domein",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Subtype",
     "Subject": "Onderwerp",
     "Subject - Tooltip": "Onderwerp van e-mail",
+    "Syncer test": "Synchronisatie-test",
+    "Syncer test - Tooltip": "Synchronisatie-test - Tooltip",
     "Team ID": "Team-ID",
     "Team ID - Tooltip": "Team-ID - Tooltip",
     "Template code": "Sjablooncode",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "SMTP-verbinding testen",
     "Third-party": "Derde partij",
     "This field is required": "Dit veld is verplicht",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token-URL",
     "Token URL - Tooltip": "Token-URL",
     "Type": "Type",

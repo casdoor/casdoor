@@ -509,7 +509,7 @@
     "Show all": "모두 표시",
     "Upload (.xlsx)": "업로드 (.xlsx)",
     "Virtual": "가상",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -\u003e [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -> [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
   },
   "home": {
     "New users past 30 days": "지난 30일간 새 사용자",
@@ -897,8 +897,6 @@
     "Copy": "복사",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "동기화 테스트",
-    "Syncer test - Tooltip": "동기화 연결 테스트",
     "Disable SSL": "SSL을 사용하지 않도록 설정하십시오",
     "Disable SSL - Tooltip": "STMP 서버와 통신할 때 SSL 프로토콜을 비활성화할지 여부",
     "Domain": "도메인",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "서브 타입",
     "Subject": "제목",
     "Subject - Tooltip": "이메일 제목",
+    "Syncer test": "동기화 테스트",
+    "Syncer test - Tooltip": "동기화 연결 테스트",
     "Team ID": "팀 ID",
     "Team ID - Tooltip": "팀 ID",
     "Template code": "템플릿 코드",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "테스트 SMTP 연결",
     "Third-party": "서드파티",
     "This field is required": "이 필드는 필수입니다.",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "토큰 URL",
     "Token URL - Tooltip": "토큰 URL",
     "Type": "타입",

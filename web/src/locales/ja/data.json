@@ -509,7 +509,7 @@
     "Show all": "すべて表示",
     "Upload (.xlsx)": "アップロード (.xlsx)",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",
@@ -897,8 +897,6 @@
     "Copy": "コピー",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "同期テスト",
-    "Syncer test - Tooltip": "同期テスト",
     "Disable SSL": "SSLを無効にする",
     "Disable SSL - Tooltip": "SMTPサーバーと通信する場合にSSLプロトコルを無効にするかどうか",
     "Domain": "ドメイン",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "サブタイプ",
     "Subject": "件名",
     "Subject - Tooltip": "メールの件名",
+    "Syncer test": "同期テスト",
+    "Syncer test - Tooltip": "同期テスト",
     "Team ID": "チームID",
     "Team ID - Tooltip": "チームID",
     "Template code": "テンプレートコード",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "SMTP接続をテストする",
     "Third-party": "サードパーティ",
     "This field is required": "このフィールドは必須です",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "トークンのURL",
     "Token URL - Tooltip": "トークンURL",
     "Type": "タイプ",

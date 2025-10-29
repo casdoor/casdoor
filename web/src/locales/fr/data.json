@@ -509,7 +509,7 @@
     "Show all": "Afficher tout",
     "Upload (.xlsx)": "Télécharger (.xlsx)",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -\u003e [Groupes]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users past 30 days": "Nouveaux utilisateurs ces 30 derniers jours",
@@ -897,8 +897,6 @@
     "Copy": "Copier",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Test du synchroniseur",
-    "Syncer test - Tooltip": "Test du synchroniseur",
     "Disable SSL": "Désactiver SSL",
     "Disable SSL - Tooltip": "Désactiver le protocole SSL lors de la communication avec le serveur STMP",
     "Domain": "Domaine",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Sous-type",
     "Subject": "Sujet",
     "Subject - Tooltip": "Sujet de l'e-mail",
+    "Syncer test": "Test du synchroniseur",
+    "Syncer test - Tooltip": "Test du synchroniseur",
     "Team ID": "ID de l'équipe",
     "Team ID - Tooltip": "ID d'équipe",
     "Template code": "Code modèle",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Test de connexion SMTP",
     "Third-party": "Tierce partie",
     "This field is required": "Ce champ est requis",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "URL de jeton",
     "Token URL - Tooltip": "URL de jeton",
     "Type": "Type de texte",

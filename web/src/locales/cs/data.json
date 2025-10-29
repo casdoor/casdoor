@@ -509,7 +509,7 @@
     "Show all": "Zobrazit vše",
     "Upload (.xlsx)": "Nahrát (.xlsx)",
     "Virtual": "Virtuální",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -\u003e [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -> [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví uživatelé za posledních 30 dní",
@@ -897,8 +897,6 @@
     "Copy": "Kopírovat",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Test synchronizátoru",
-    "Syncer test - Tooltip": "Test synchronizátoru",
     "Disable SSL": "Zakázat SSL",
     "Disable SSL - Tooltip": "Zda zakázat SSL protokol při komunikaci se serverem SMTP",
     "Domain": "Doména",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Další podkategorie pod hlavním typem, používaná k přesnějšímu rozlišení objektů nebo funkcí",
     "Subject": "Předmět",
     "Subject - Tooltip": "Předmět e-mailu",
+    "Syncer test": "Test synchronizátoru",
+    "Syncer test - Tooltip": "Test synchronizátoru",
     "Team ID": "ID týmu",
     "Team ID - Tooltip": "Jedinečný identifikátor pro tým, používaný k rozlišení různých týmů a správě zdrojů na úrovni týmu",
     "Template code": "Kód šablony",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Testovat SMTP připojení",
     "Third-party": "Třetí strana",
     "This field is required": "Toto pole je povinné",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "URL tokenu",
     "Token URL - Tooltip": "Vlastní OAuth Token URL",
     "Type": "Typ",

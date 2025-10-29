@@ -509,7 +509,7 @@
     "Show all": "Show all",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",
@@ -897,8 +897,6 @@
     "Copy": "Copy",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Syncer test",
-    "Syncer test - Tooltip": "Test the connectivity to the syncer",
     "Disable SSL": "Disable SSL",
     "Disable SSL - Tooltip": "Whether to disable SSL protocol when communicating with STMP server",
     "Domain": "Domain",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Further subdivision category under the main type, used to more precisely distinguish objects or functions",
     "Subject": "Subject",
     "Subject - Tooltip": "Subject of email",
+    "Syncer test": "Syncer test",
+    "Syncer test - Tooltip": "Test the connectivity to the syncer",
     "Team ID": "Team ID",
     "Team ID - Tooltip": "Unique identifier for the team, used to distinguish different teams and manage team-level resources",
     "Template code": "Template code",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Test SMTP Connection",
     "Third-party": "Third-party",
     "This field is required": "This field is required",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token URL",
     "Token URL - Tooltip": "Custom OAuth Token URL",
     "Type": "Type",

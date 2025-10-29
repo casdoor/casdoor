@@ -509,7 +509,7 @@
     "Show all": "نمایش همه",
     "Upload (.xlsx)": "آپلود (.xlsx)",
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -\u003e [گروه‌ها] مشاهده کنید"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",
@@ -897,8 +897,6 @@
     "Copy": "کپی",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "تست همگام‌ساز",
-    "Syncer test - Tooltip": "تست همگام‌ساز",
     "Disable SSL": "غیرفعال کردن SSL",
     "Disable SSL - Tooltip": "آیا پروتکل SSL هنگام ارتباط با سرور STMP غیرفعال شود",
     "Domain": "دامنه",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "زیرنوع",
     "Subject": "موضوع",
     "Subject - Tooltip": "موضوع ایمیل",
+    "Syncer test": "تست همگام‌ساز",
+    "Syncer test - Tooltip": "تست همگام‌ساز",
     "Team ID": "شناسه تیم",
     "Team ID - Tooltip": "شناسه تیم",
     "Template code": "کد قالب",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "تست اتصال SMTP",
     "Third-party": "شخص ثالث",
     "This field is required": "این فیلد الزامی است",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "آدرس توکن",
     "Token URL - Tooltip": "آدرس توکن",
     "Type": "نوع",

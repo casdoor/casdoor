@@ -509,7 +509,7 @@
     "Show all": "Покажи все",
     "Upload (.xlsx)": "Завантажити (.xlsx)",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -897,8 +897,6 @@
     "Copy": "Копіювати",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Тест синхронізатора",
-    "Syncer test - Tooltip": "Тест синхронізатора - Підказка",
     "Disable SSL": "Вимкнути SSL",
     "Disable SSL - Tooltip": "Чи вимикати протокол SSL під час зв’язку із сервером STMP",
     "Domain": "Домен",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Підтип",
     "Subject": "Тема",
     "Subject - Tooltip": "Тема електронного листа",
+    "Syncer test": "Тест синхронізатора",
+    "Syncer test - Tooltip": "Тест синхронізатора - Підказка",
     "Team ID": "ID команди",
     "Team ID - Tooltip": "ID команди – підказка",
     "Template code": "Код шаблону",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Перевірте з'єднання SMTP",
     "Third-party": "Сторонні",
     "This field is required": "Це поле є обов'язковим",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "URL маркера",
     "Token URL - Tooltip": "URL маркера",
     "Type": "Тип",

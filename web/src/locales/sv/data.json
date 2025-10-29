@@ -509,7 +509,7 @@
     "Show all": "Visa alla",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -\u003e [Grupper]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -> [Grupper]"
   },
   "home": {
     "New users past 30 days": "Nya användare senaste 30 dagarna",
@@ -897,8 +897,6 @@
     "Copy": "Kopiera",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Synkroniseringstest",
-    "Syncer test - Tooltip": "Synkroniseringstest - Tooltip",
     "Disable SSL": "Inaktivera SSL",
     "Disable SSL - Tooltip": "Om SSL-protokollet ska inaktiveras vid kommunikation med SMTP-server",
     "Domain": "Domän",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Undertyp",
     "Subject": "Ämne",
     "Subject - Tooltip": "E-postämne",
+    "Syncer test": "Synkroniseringstest",
+    "Syncer test - Tooltip": "Synkroniseringstest - Tooltip",
     "Team ID": "Team-ID",
     "Team ID - Tooltip": "Team-ID - Tooltip",
     "Template code": "Mallkod",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Testa SMTP-anslutning",
     "Third-party": "Tredje part",
     "This field is required": "Detta fält är obligatoriskt",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token-URL",
     "Token URL - Tooltip": "Token-URL",
     "Type": "Typ",

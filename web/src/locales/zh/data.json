@@ -509,7 +509,7 @@
     "Show all": "显示全部",
     "Upload (.xlsx)": "上传(.xlsx)",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -897,8 +897,6 @@
     "Copy": "复制",
     "Corp ID": "企业 ID",
     "Corp Secret": "企业密钥",
-    "Syncer test": "同步器测试",
-    "Syncer test - Tooltip": "测试同步器是否连通",
     "Disable SSL": "禁用SSL",
     "Disable SSL - Tooltip": "与STMP服务器通信时是否禁用SSL协议",
     "Domain": "域名",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "在主类型下进一步细分的类别",
     "Subject": "主题",
     "Subject - Tooltip": "邮件的主题",
+    "Syncer test": "同步器测试",
+    "Syncer test - Tooltip": "测试同步器是否连通",
     "Team ID": "Team ID",
     "Team ID - Tooltip": "团队的唯一标识符",
     "Template code": "模板代码",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "测试SMTP连接",
     "Third-party": "第三方",
     "This field is required": "此字段是必需的",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Token链接",
     "Token URL - Tooltip": "自定义OAuth的Token链接",
     "Type": "类型",

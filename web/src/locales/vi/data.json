@@ -509,7 +509,7 @@
     "Show all": "Hiển thị tất cả",
     "Upload (.xlsx)": "Tải lên (.xlsx)",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -897,8 +897,6 @@
     "Copy": "Sao chép",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "Kiểm tra bộ đồng bộ",
-    "Syncer test - Tooltip": "Kiểm tra xem kết nối bộ đồng bộ có hoạt động không",
     "Disable SSL": "Vô hiệu hóa SSL",
     "Disable SSL - Tooltip": "Có nên vô hiệu hóa giao thức SSL khi giao tiếp với máy chủ STMP hay không?",
     "Domain": "Miền",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "Loại phụ",
     "Subject": "Tiêu đề",
     "Subject - Tooltip": "Tiêu đề email",
+    "Syncer test": "Kiểm tra bộ đồng bộ",
+    "Syncer test - Tooltip": "Kiểm tra xem kết nối bộ đồng bộ có hoạt động không",
     "Team ID": "ID nhóm",
     "Team ID - Tooltip": "Team ID - Tooltip",
     "Template code": "Mã mẫu của template",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "Kiểm tra kết nối SMTP",
     "Third-party": "Bên thứ ba",
     "This field is required": "Trường này là bắt buộc",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "Đường dẫn mã thông báo",
     "Token URL - Tooltip": "Địa chỉ của mã thông báo",
     "Type": "Kiểu",

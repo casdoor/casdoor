@@ -509,7 +509,7 @@
     "Show all": "عرض الكل",
     "Upload (.xlsx)": "تحميل (.xlsx)",
     "Virtual": "افتراضي",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -\u003e [المجموعات]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
   },
   "home": {
     "New users past 30 days": "مستخدمون جدد خلال آخر 30 يومًا",
@@ -897,8 +897,6 @@
     "Copy": "نسخ",
     "Corp ID": "Corp ID",
     "Corp Secret": "Corp Secret",
-    "Syncer test": "اختبار المزامن",
-    "Syncer test - Tooltip": "اختبار الاتصال بالمزامن",
     "Disable SSL": "تعطيل SSL",
     "Disable SSL - Tooltip": "ما إذا كان سيتم تعطيل بروتوكول SSL عند الاتصال بخادم SMTP",
     "Domain": "النطاق",
@@ -1019,6 +1017,8 @@
     "Sub type - Tooltip": "فئة تقسيم فرعي أخرى تحت النوع الرئيسي، تُستخدم للتمييز بشكل أكثر دقة بين الكائنات أو الوظائف",
     "Subject": "الموضوع",
     "Subject - Tooltip": "موضوع البريد الإلكتروني",
+    "Syncer test": "اختبار المزامن",
+    "Syncer test - Tooltip": "اختبار الاتصال بالمزامن",
     "Team ID": "معرف الفريق",
     "Team ID - Tooltip": "معرف فريد للفريق، يُستخدم للتمييز بين الفرق المختلفة وإدارة الموارد على مستوى الفريق",
     "Template code": "رمز القالب",
@@ -1030,6 +1030,8 @@
     "Test SMTP Connection": "اختبار اتصال SMTP",
     "Third-party": "طرف ثالث",
     "This field is required": "هذا الحقل مطلوب",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "Token URL": "رابط الرمز",
     "Token URL - Tooltip": "عنوان URL مخصص لرمز OAuth",
     "Type": "النوع",
