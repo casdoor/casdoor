@@ -348,7 +348,7 @@ func (c *ApiController) Logout() {
 			return
 		}
 		if session == nil {
-			c.ResponseError(c.T("session:Session not found"))
+			c.ResponseError("Session not found")
 			return
 		}
 
@@ -372,7 +372,7 @@ func (c *ApiController) Logout() {
 		}
 
 		if !hasPermission {
-			c.ResponseError(c.T("auth:Unauthorized"))
+			c.ResponseError(c.T("auth:Unauthorized operation"))
 			return
 		}
 
