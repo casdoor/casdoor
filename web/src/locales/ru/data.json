@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "Если вы выберете \"Использовать WeChat Open Platform для входа\", пользователям нужно будет войти на WeChat Open Platform после подписки на официальный аккаунт.",
     "From address": "Адрес отправителя",
     "From address - Tooltip": "Адрес электронной почты отправителя",
+    "To address": "Адрес получателя",
+    "To address - Tooltip": "Адрес электронной почты получателя",
     "From name": "Имя отправителя",
     "From name - Tooltip": "Отображаемое имя отправителя",
     "Get phone number": "Получить номер телефона",

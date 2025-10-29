@@ -271,7 +271,7 @@ class ProviderEditPage extends React.Component {
         <Input value={this.state.provider.userMapping.fromName} onChange={e => {
           this.updateUserMappingField("fromName", e.target.value);
         }} />
-        {Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"))} :
+        {Setting.getLabel(i18next.t("provider:To address"), i18next.t("provider:To address - Tooltip"))} :
         <Input value={this.state.provider.userMapping.toAddress} onChange={e => {
           this.updateUserMappingField("toAddress", e.target.value);
         }} />

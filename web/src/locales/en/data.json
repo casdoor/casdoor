@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "If you choose \"Use WeChat Open Platform to login\", users need to login on the WeChat Open Platform after following the wechat official account.",
     "From address": "From address",
     "From address - Tooltip": "Email address of \"From\"",
+    "To address": "To address",
+    "To address - Tooltip": "Email address of \"To\"",
     "From name": "From name",
     "From name - Tooltip": "Name of \"From\"",
     "Get phone number": "Get phone number",

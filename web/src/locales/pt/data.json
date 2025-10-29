@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "Se você escolher \"Usar WeChat Open Platform para login\", os usuários precisarão fazer login na WeChat Open Platform após seguir a conta oficial WeChat.",
     "From address": "Endereço de origem",
     "From address - Tooltip": "Endereço de e-mail do remetente",
+    "To address": "Endereço do destinatário",
+    "To address - Tooltip": "Endereço de e-mail do destinatário",
     "From name": "Nome de origem",
     "From name - Tooltip": "Nome do remetente",
     "Get phone number": "Obter número de telefone",

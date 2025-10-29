@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "Wenn Sie „WeChat Open Platform zur Anmeldung verwenden“ wählen, müssen Benutzer sich nach dem Folgen des offiziellen Kontos auf der WeChat Open Platform anmelden.",
     "From address": "Absenderadresse",
     "From address - Tooltip": "Von Adresse",
+    "To address": "Empfängeradresse",
+    "To address - Tooltip": "E-Mail-Adresse des Empfängers",
     "From name": "Absendername",
     "From name - Tooltip": "Von Name",
     "Get phone number": "Telefonnummer abrufen",

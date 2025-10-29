@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "Se scegli \"Usa WeChat Open Platform per accedere\", gli utenti dovranno autenticarsi su WeChat Open Platform dopo aver seguito l'account ufficiale",
     "From address": "Indirizzo mittente",
     "From address - Tooltip": "Indirizzo Email di \"Da\"",
+    "To address": "Indirizzo destinatario",
+    "To address - Tooltip": "Indirizzo email del destinatario",
     "From name": "Nome mittente",
     "From name - Tooltip": "Nome di \"Da\"",
     "Get phone number": "Ottieni numero di telefono",

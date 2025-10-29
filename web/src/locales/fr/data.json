@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "Si vous choisissez \"Utiliser la plateforme ouverte WeChat pour se connecter\", les utilisateurs doivent se connecter sur la plateforme ouverte WeChat après avoir suivi le compte officiel WeChat.",
     "From address": "Adresse de l'expéditeur",
     "From address - Tooltip": "Depuis l'adresse",
+    "To address": "Adresse du destinataire",
+    "To address - Tooltip": "Adresse e-mail du destinataire",
     "From name": "Nom de l'expéditeur",
     "From name - Tooltip": "Depuis le nom",
     "Get phone number": "Obtenir le numéro de téléphone",

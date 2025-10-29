@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "\\\"위챗 오픈 플랫폼으로 로그인\\\"을 선택하면, 사용자는 위챗 공식 계정을 팔로우한 후 위챗 오픈 플랫폼에서 로그인해야 합니다.",
     "From address": "보낸 주소",
     "From address - Tooltip": "발신자 이메일 주소",
+    "To address": "받는 주소",
+    "To address - Tooltip": "받는 사람 이메일 주소",
     "From name": "보낸 이름",
     "From name - Tooltip": "발신자 표시 이름",
     "Get phone number": "전화번호 가져오기",

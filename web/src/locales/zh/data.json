@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "如果你选择“使用微信开放平台进行登录”，用户在扫描二维码并关注公众号后需要在微信开放平台进行登录",
     "From address": "发件人地址",
     "From address - Tooltip": "邮件里发件人的邮箱地址",
+    "To address": "收件人地址",
+    "To address - Tooltip": "收件人的邮箱",
     "From name": "发件人名称",
     "From name - Tooltip": "邮件里发件人的显示名称",
     "Get phone number": "获取手机号码",

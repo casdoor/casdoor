@@ -919,6 +919,8 @@
     "Follow-up action - Tooltip": "「WeChat Open Platformでログイン」を選択した場合、ユーザーはWeChat公式アカウントをフォローした後にWeChat Open Platformでログインする必要があります",
     "From address": "送信元アドレス",
     "From address - Tooltip": "送信元アドレス",
+    "To address": "宛先アドレス",
+    "To address - Tooltip": "宛先のメールアドレス",
     "From name": "送信元名",
     "From name - Tooltip": "送信元名",
     "Get phone number": "電話番号を取得",
