@@ -338,13 +338,6 @@ func (c *ApiController) Logout() {
 
 	// Handle optional casdoor_session_id parameter
 	if casdoorSessionId != "" {
-		// Validate session ID format (should be owner/name/application)
-		tokens := strings.Split(casdoorSessionId, "/")
-		if len(tokens) != 3 {
-			c.ResponseError("Invalid session ID format")
-			return
-		}
-
 		// Parse the session ID to get owner, name, and application
 		owner, name, _ := util.GetOwnerAndNameAndOtherFromId(casdoorSessionId)
 
