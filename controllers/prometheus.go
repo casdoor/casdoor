@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"github.com/casdoor/casdoor/object"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // GetPrometheusInfo
@@ -36,4 +37,18 @@ func (c *ApiController) GetPrometheusInfo() {
 	}
 
 	c.ResponseOk(prometheusInfo)
+}
+
+// GetMetrics
+// @Title GetMetrics
+// @Tag System API
+// @Description get Prometheus metrics
+// @Success 200 {string} Prometheus metrics in text format
+// @router /metrics [get]
+func (c *ApiController) GetMetrics() {
+	_, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+	promhttp.Handler().ServeHTTP(c.Ctx.ResponseWriter, c.Ctx.Request)
 }
