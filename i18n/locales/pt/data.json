@@ -33,7 +33,10 @@
     "UserCode Invalid": "Código de usuário inválido",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "O usuário pago %s não possui assinatura ativa ou pendente e o aplicativo: %s não possui preço padrão",
     "the application for user %s is not found": "o aplicativo para o usuário %s não foi encontrado",
-    "the organization: %s is not found": "a organização: %s não foi encontrada"
+    "the organization: %s is not found": "a organização: %s não foi encontrada",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "O serviço %s e %s não correspondem"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

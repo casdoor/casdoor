@@ -46,7 +46,7 @@ func (pricing *Pricing) HasPlan(planName string, lang string) (bool, error) {
 		return false, err
 	}
 	if plan == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "plan: %s does not exist"), planId)
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:The plan: %s does not exist"), planId)
 	}
 
 	if util.InSlice(pricing.Plans, plan.Name) {
@@ -153,7 +153,7 @@ func CheckPricingAndPlan(owner, pricingName, planName string, lang string) error
 	pricing, err := GetPricing(pricingId)
 	if pricing == nil || err != nil {
 		if pricing == nil && err == nil {
-			err = fmt.Errorf(i18n.Translate(lang, "pricing: %s does not exist"), pricingName)
+			err = fmt.Errorf(i18n.Translate(lang, "auth:The pricing: %s does not exist"), pricingName)
 		}
 		return err
 	}
@@ -162,7 +162,7 @@ func CheckPricingAndPlan(owner, pricingName, planName string, lang string) error
 		return err
 	}
 	if !ok {
-		return fmt.Errorf(i18n.Translate(lang, "pricing: %s does not have plan: %s"), pricingName, planName)
+		return fmt.Errorf(i18n.Translate(lang, "auth:The pricing: %s does not have plan: %s"), pricingName, planName)
 	}
 	return nil
 }

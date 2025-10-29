@@ -33,7 +33,10 @@
     "UserCode Invalid": "İstifadəçi Kodu Etibarsızdır",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "ödənişli istifadəçi %s aktiv və ya gözləyən abunəyə malik deyil və tətbiq: %s defolt qiymətləndirməyə malik deyil",
     "the application for user %s is not found": "istifadəçi %s üçün tətbiq tapılmadı",
-    "the organization: %s is not found": "təşkilat: %s tapılmadı"
+    "the organization: %s is not found": "təşkilat: %s tapılmadı",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Xidmət %s və %s uyğun gəlmir"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

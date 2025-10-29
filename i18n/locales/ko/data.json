@@ -33,7 +33,10 @@
     "UserCode Invalid": "사용자 코드가 유효하지 않습니다",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "유료 사용자 %s에게 활성 또는 대기 중인 구독이 없으며, 애플리케이션 %s에 기본 가격 책정이 설정되어 있지 않습니다",
     "the application for user %s is not found": "사용자 %s의 애플리케이션을 찾을 수 없습니다",
-    "the organization: %s is not found": "조직 %s을(를) 찾을 수 없습니다"
+    "the organization: %s is not found": "조직 %s을(를) 찾을 수 없습니다",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "서비스 %s와 %s는 일치하지 않습니다"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

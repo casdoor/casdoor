@@ -33,7 +33,10 @@
     "UserCode Invalid": "UserCode je neplatný",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "platiaci používateľ %s nemá aktívne alebo čakajúce predplatné a aplikácia: %s nemá predvolenú cenovú politiku",
     "the application for user %s is not found": "aplikácia pre používateľa %s nebola nájdená",
-    "the organization: %s is not found": "organizácia: %s nebola nájdená"
+    "the organization: %s is not found": "organizácia: %s nebola nájdená",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Služba %s a %s sa nezhodujú"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

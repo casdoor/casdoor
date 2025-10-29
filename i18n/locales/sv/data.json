@@ -33,7 +33,10 @@
     "UserCode Invalid": "Ogiltig användarkod",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Betalningsanvändare %s har ingen aktiv eller väntande prenumeration och applikationen: %s har ingen standardprissättning",
     "the application for user %s is not found": "Applikationen för användare %s hittades inte",
-    "the organization: %s is not found": "Organisationen: %s hittades inte"
+    "the organization: %s is not found": "Organisationen: %s hittades inte",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Tjänsten %s och %s matchar inte"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }

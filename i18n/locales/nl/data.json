@@ -33,7 +33,10 @@
     "UserCode Invalid": "Ongeldige gebruikerscode",
     "paid-user %s does not have active or pending subscription and the application: %s does not have default pricing": "Betaald lid %s zonder actief abonnement en app %s heeft geen standaardprijs",
     "the application for user %s is not found": "App voor gebruiker %s niet gevonden",
-    "the organization: %s is not found": "Organisatie %s niet gevonden"
+    "the organization: %s is not found": "Organisatie %s niet gevonden",
+    "The plan: %s does not exist": "The plan: %s does not exist",
+    "The pricing: %s does not exist": "The pricing: %s does not exist",
+    "The pricing: %s does not have plan: %s": "The pricing: %s does not have plan: %s"
   },
   "cas": {
     "Service %s and %s do not match": "Services %s en %s komen niet overeen"
@@ -197,12 +200,5 @@
   },
   "group": {
     "Group %s not exist": "Group %s not exist"
-  },
-  "plan": {
-    "%s does not exist": "%s does not exist"
-  },
-  "pricing": {
-    "%s does not exist": "%s does not exist",
-    "%s does not have plan: %s": "%s does not have plan: %s"
   }
 }
