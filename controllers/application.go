@@ -237,7 +237,7 @@ func (c *ApiController) UpdateApplication() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin()))
+	c.Data["json"] = wrapActionResponse(object.UpdateApplication(id, &application, c.IsGlobalAdmin(), c.GetAcceptLanguage()))
 	c.ServeJSON()
 }
 

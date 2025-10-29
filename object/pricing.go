@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -38,14 +39,14 @@ func (pricing *Pricing) GetId() string {
 	return fmt.Sprintf("%s/%s", pricing.Owner, pricing.Name)
 }
 
-func (pricing *Pricing) HasPlan(planName string) (bool, error) {
+func (pricing *Pricing) HasPlan(planName string, lang string) (bool, error) {
 	planId := util.GetId(pricing.Owner, planName)
 	plan, err := GetPlan(planId)
 	if err != nil {
 		return false, err
 	}
 	if plan == nil {
-		return false, fmt.Errorf("plan: %s does not exist", planId)
+		return false, fmt.Errorf(i18n.Translate(lang, "auth:The plan: %s does not exist"), planId)
 	}
 
 	if util.InSlice(pricing.Plans, plan.Name) {
@@ -147,21 +148,21 @@ func DeletePricing(pricing *Pricing) (bool, error) {
 	return affected != 0, nil
 }
 
-func CheckPricingAndPlan(owner, pricingName, planName string) error {
+func CheckPricingAndPlan(owner, pricingName, planName string, lang string) error {
 	pricingId := util.GetId(owner, pricingName)
 	pricing, err := GetPricing(pricingId)
 	if pricing == nil || err != nil {
 		if pricing == nil && err == nil {
-			err = fmt.Errorf("pricing: %s does not exist", pricingName)
+			err = fmt.Errorf(i18n.Translate(lang, "auth:The pricing: %s does not exist"), pricingName)
 		}
 		return err
 	}
-	ok, err := pricing.HasPlan(planName)
+	ok, err := pricing.HasPlan(planName, lang)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return fmt.Errorf("pricing: %s does not have plan: %s", pricingName, planName)
+		return fmt.Errorf(i18n.Translate(lang, "auth:The pricing: %s does not have plan: %s"), pricingName, planName)
 	}
 	return nil
 }
