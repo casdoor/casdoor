@@ -393,8 +393,11 @@ func (c *ApiController) Logout() {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		// Delete all sessions for the user-application combination when using id_token_hint
-		// since we may not have the specific session ID in the current context
+		// Delete all sessions for the user-application combination when using id_token_hint.
+		// This is necessary because:
+		// 1. The current Beego session ID (c.Ctx.Input.CruSession.SessionID()) may not be available in OIDC logout flow
+		// 2. The token doesn't track which specific session was used to create it
+		// 3. OIDC logout with id_token_hint is expected to log the user out from the application completely
 		_, err = object.DeleteSession(util.GetSessionId(owner, username, application.Name))
 		if err != nil {
 			c.ResponseError(err.Error())
