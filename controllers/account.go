@@ -393,7 +393,9 @@ func (c *ApiController) Logout() {
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
 		owner, username := util.GetOwnerAndNameFromId(user)
 
-		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		// Delete all sessions for the user-application combination when using id_token_hint
+		// since we may not have the specific session ID in the current context
+		_, err = object.DeleteSession(util.GetSessionId(owner, username, application.Name))
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
