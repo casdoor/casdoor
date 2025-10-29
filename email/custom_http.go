@@ -52,6 +52,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	var req *http.Request
 	var err error
 
+	fromAddressField := "fromAddress"
 	fromNameField := "fromName"
 	toAddressField := "toAddress"
 	toAddressesField := "toAddresses"
@@ -59,6 +60,8 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 	contentField := "content"
 	for k, v := range c.bodyMapping {
 		switch k {
+		case "fromAddress":
+			fromAddressField = v
 		case "fromName":
 			fromNameField = v
 		case "toAddress":
@@ -74,6 +77,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 
 	if c.method == "POST" || c.method == "PUT" || c.method == "DELETE" {
 		bodyMap := make(map[string]string)
+		bodyMap[fromAddressField] = fromAddress
 		bodyMap[fromNameField] = fromName
 		bodyMap[subjectField] = subject
 		bodyMap[contentField] = content
@@ -112,6 +116,7 @@ func (c *HttpEmailProvider) Send(fromAddress string, fromName string, toAddress 
 		}
 
 		q := req.URL.Query()
+		q.Add(fromAddressField, fromAddress)
 		q.Add(fromNameField, fromName)
 		if len(toAddress) == 1 {
 			q.Add(toAddressField, toAddress[0])

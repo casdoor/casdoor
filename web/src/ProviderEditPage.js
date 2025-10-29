@@ -52,7 +52,7 @@ const defaultUserMapping = {
 
 const defaultEmailMapping = {
   fromName: "fromName",
-  toAddress: "toAddress",
+  fromAddress: "fromAddress",
   subject: "subject",
   content: "content",
 };
@@ -272,8 +272,8 @@ class ProviderEditPage extends React.Component {
           this.updateUserMappingField("fromName", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("provider:From address"), i18next.t("provider:From address - Tooltip"))} :
-        <Input value={this.state.provider.userMapping.toAddress} onChange={e => {
-          this.updateUserMappingField("toAddress", e.target.value);
+        <Input value={this.state.provider.userMapping.fromAddress} onChange={e => {
+          this.updateUserMappingField("fromAddress", e.target.value);
         }} />
         {Setting.getLabel(i18next.t("provider:Subject"), i18next.t("provider:Subject - Tooltip"))} :
         <Input value={this.state.provider.userMapping.subject} onChange={e => {
