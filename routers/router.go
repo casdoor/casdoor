@@ -237,7 +237,7 @@ func initAPI() {
 	beego.Router("/api/get-version-info", &controllers.ApiController{}, "GET:GetVersionInfo")
 	beego.Router("/api/health", &controllers.ApiController{}, "GET:Health")
 	beego.Router("/api/get-prometheus-info", &controllers.ApiController{}, "GET:GetPrometheusInfo")
-	beego.InsertFilter("/api/metrics", beego.BeforeRouter, MetricsHandler)
+	beego.Router("/api/metrics", &controllers.ApiController{}, "GET:GetMetrics")
 
 	beego.Router("/api/get-global-forms", &controllers.ApiController{}, "GET:GetGlobalForms")
 	beego.Router("/api/get-forms", &controllers.ApiController{}, "GET:GetForms")
