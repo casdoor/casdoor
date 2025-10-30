@@ -191,7 +191,21 @@ class SignupPage extends React.Component {
           Setting.showMessage("error", res.msg);
           return;
         }
-        this.setState({invitation: res.data});
+        const invitation = res.data;
+        const newState = {invitation: invitation};
+
+        // Initialize email/phone state if invitation has pre-filled values
+        // This ensures SendCodeInput has the correct dest parameter
+        if (invitation.email !== "") {
+          newState.email = invitation.email;
+          newState.validEmail = Setting.isValidEmail(invitation.email);
+        }
+        if (invitation.phone !== "") {
+          newState.phone = invitation.phone;
+          newState.validPhone = true; // Assume invitation phone is valid
+        }
+
+        this.setState(newState);
       });
   }
 
