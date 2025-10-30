@@ -196,13 +196,15 @@ class SignupPage extends React.Component {
 
         // Initialize email/phone state if invitation has pre-filled values
         // This ensures SendCodeInput has the correct dest parameter
-        if (invitation.email !== "") {
+        if (invitation.email && invitation.email !== "") {
           newState.email = invitation.email;
           newState.validEmail = Setting.isValidEmail(invitation.email);
         }
-        if (invitation.phone !== "") {
+        if (invitation.phone && invitation.phone !== "") {
           newState.phone = invitation.phone;
-          newState.validPhone = true; // Assume invitation phone is valid
+          // Validate phone number if we have the country code available
+          // For invitation-based signup, we assume it's valid since it was pre-configured
+          newState.validPhone = true;
         }
 
         this.setState(newState);
