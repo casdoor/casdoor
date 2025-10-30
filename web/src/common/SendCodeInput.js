@@ -26,7 +26,12 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
 
-  const handleCountDown = (leftTime = 60) => {
+  const getCodeResendTimeout = () => {
+    // Use application's codeResendTimeout if available, otherwise default to 60 seconds
+    return (application && application.codeResendTimeout > 0) ? application.codeResendTimeout : 60;
+  };
+
+  const handleCountDown = (leftTime = getCodeResendTimeout()) => {
     let leftTimeSecond = leftTime;
     setButtonLeftTime(leftTimeSecond);
     const countDown = () => {
@@ -46,7 +51,7 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
     UserBackend.sendCode(captchaType, captchaToken, clintSecret, method, countryCode, ...onButtonClickArgs).then(res => {
       setButtonLoading(false);
       if (res) {
-        handleCountDown(60);
+        handleCountDown(getCodeResendTimeout());
       }
     });
   };
