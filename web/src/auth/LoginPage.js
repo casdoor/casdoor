@@ -1336,6 +1336,8 @@ class LoginPage extends React.Component {
                 method={"login"}
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
+                captchaValue={this.state.captchaValues}
+                useInlineCaptcha={application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true)}
               />
             </Form.Item>
           </div>
@@ -1362,6 +1364,8 @@ class LoginPage extends React.Component {
               method={"login"}
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
+              captchaValue={this.state.captchaValues}
+              useInlineCaptcha={application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true)}
             />
           </Form.Item>
         </Col>
