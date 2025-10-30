@@ -17,6 +17,7 @@ package controllers
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -106,7 +107,7 @@ func TestCleanOldMEIFolders(t *testing.T) {
 		}
 
 		// Check if folder should be cleaned based on _MEI prefix and age
-		shouldClean := entry.Name()[:4] == "_MEI" && info.ModTime().Before(cutoffTime)
+		shouldClean := strings.HasPrefix(entry.Name(), "_MEI") && info.ModTime().Before(cutoffTime)
 
 		if shouldClean != tc.shouldBeDeleted {
 			t.Errorf("folder %s: expected shouldBeDeleted=%v, got shouldClean=%v (modTime=%v, cutoff=%v)",
