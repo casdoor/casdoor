@@ -16,12 +16,13 @@ import {Button, Input} from "antd";
 import React from "react";
 import i18next from "i18next";
 import * as UserBackend from "../backend/UserBackend";
+import * as Setting from "../Setting";
 import {SafetyOutlined} from "@ant-design/icons";
 import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonClickArgs, application, method, countryCode}) => {
+export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode}) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
@@ -60,6 +61,19 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
     setVisible(false);
   };
 
+  const handleSearch = () => {
+    if (!useInlineCaptcha) {
+      setVisible(true);
+      return;
+    }
+
+    if (!captchaValue?.captchaType) {
+      Setting.showMessage("error", i18next.t(i18next.t("code:Empty code")));
+      return;
+    }
+    handleOk(captchaValue.captchaType, captchaValue.captchaToken, captchaValue.clientSecret);
+  };
+
   return (
     <React.Fragment>
       <Search
@@ -75,17 +89,21 @@ export const SendCodeInput = ({value, disabled, textBefore, onChange, onButtonCl
             {buttonLeftTime > 0 ? `${buttonLeftTime} s` : buttonLoading ? i18next.t("code:Sending") : i18next.t("code:Send Code")}
           </Button>
         }
-        onSearch={() => setVisible(true)}
+        onSearch={handleSearch}
         autoComplete="one-time-code"
       />
-      <CaptchaModal
-        owner={application.owner}
-        name={application.name}
-        visible={visible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        isCurrentProvider={false}
-      />
+      {
+        useInlineCaptcha ? null : (
+          <CaptchaModal
+            owner={application.owner}
+            name={application.name}
+            visible={visible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            isCurrentProvider={false}
+          />
+        )
+      }
     </React.Fragment>
   );
 };
