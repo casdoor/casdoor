@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
@@ -37,6 +38,46 @@ var (
 	cliVersionCache = make(map[string]*CLIVersionInfo)
 	cliVersionMutex sync.RWMutex
 )
+
+// cleanOldMEIFolders cleans up old _MEIXXX folders from the system temp directory
+// that are older than 24 hours. These folders are created by PyInstaller when
+// executing casbin-python-cli and can accumulate over time.
+func cleanOldMEIFolders() {
+	tempDir := os.TempDir()
+	cutoffTime := time.Now().Add(-24 * time.Hour)
+
+	entries, err := os.ReadDir(tempDir)
+	if err != nil {
+		// Log error but don't fail - cleanup is best-effort
+		fmt.Printf("failed to read temp directory for cleanup: %v\n", err)
+		return
+	}
+
+	for _, entry := range entries {
+		// Check if the entry is a directory and matches the _MEI pattern
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), "_MEI") {
+			continue
+		}
+
+		dirPath := filepath.Join(tempDir, entry.Name())
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+
+		// Check if the folder is older than 24 hours
+		if info.ModTime().Before(cutoffTime) {
+			// Try to remove the directory
+			err = os.RemoveAll(dirPath)
+			if err != nil {
+				// Log but continue with other folders
+				fmt.Printf("failed to remove old MEI folder %s: %v\n", dirPath, err)
+			} else {
+				fmt.Printf("removed old MEI folder: %s\n", dirPath)
+			}
+		}
+	}
+}
 
 // getCLIVersion
 // @Title getCLIVersion
@@ -65,6 +106,9 @@ func getCLIVersion(language string) (string, error) {
 		}
 	}
 	cliVersionMutex.RUnlock()
+
+	// Clean up old _MEI folders before running the command
+	cleanOldMEIFolders()
 
 	cmd := exec.Command(binaryName, "--version")
 	output, err := cmd.CombinedOutput()
@@ -185,6 +229,10 @@ func (c *ApiController) RunCasbinCommand() {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	// Clean up old _MEI folders before running the command
+	// This is especially important for Python CLI which creates these folders
+	cleanOldMEIFolders()
 
 	command := exec.Command(binaryName, processedArgs...)
 	outputBytes, err := command.CombinedOutput()
