@@ -39,17 +39,17 @@ var (
 	cliVersionMutex sync.RWMutex
 )
 
-// cleanOldMEIFolders cleans up old _MEIXXX folders from the system temp directory
+// cleanOldMEIFolders cleans up old _MEIXXX folders from the Casdoor temp directory
 // that are older than 24 hours. These folders are created by PyInstaller when
 // executing casbin-python-cli and can accumulate over time.
 func cleanOldMEIFolders() {
-	tempDir := os.TempDir()
+	tempDir := "temp"
 	cutoffTime := time.Now().Add(-24 * time.Hour)
 
 	entries, err := os.ReadDir(tempDir)
 	if err != nil {
 		// Log error but don't fail - cleanup is best-effort
-		fmt.Printf("failed to read temp directory for cleanup: %v\n", err)
+		// This is expected if temp directory doesn't exist yet
 		return
 	}
 
