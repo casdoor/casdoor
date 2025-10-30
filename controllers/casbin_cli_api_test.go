@@ -29,13 +29,11 @@ func TestCleanOldMEIFolders(t *testing.T) {
 	}
 	defer os.RemoveAll(testTempDir)
 
-
-
 	// Create test folders with different ages
 	testCases := []struct {
-		name           string
-		prefix         string
-		age            time.Duration
+		name            string
+		prefix          string
+		age             time.Duration
 		shouldBeDeleted bool
 	}{
 		{"old_MEI_folder", "_MEI123456", 25 * time.Hour, true},
@@ -91,9 +89,9 @@ func TestCleanOldMEIFolders(t *testing.T) {
 
 		// Find the test case for this entry
 		var tc *struct {
-			name           string
-			prefix         string
-			age            time.Duration
+			name            string
+			prefix          string
+			age             time.Duration
 			shouldBeDeleted bool
 		}
 		for i := range testCases {
