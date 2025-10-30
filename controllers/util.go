@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -221,7 +222,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 		}
 
 		if provider == nil {
-			err = fmt.Errorf(c.T("util:The provider: %s is not found"), providerName)
+			err = errors.New(c.T("util:The provider: %s is not found"), providerName)
 			return nil, err
 		}
 
@@ -230,7 +231,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 
 	userId, ok := c.RequireSignedIn()
 	if !ok {
-		return nil, fmt.Errorf(c.T("general:Please login first"))
+		return nil, errors.New(c.T("general:Please login first"))
 	}
 
 	application, err := object.GetApplicationByUserId(userId)
@@ -239,7 +240,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	}
 
 	if application == nil {
-		return nil, fmt.Errorf(c.T("util:No application is found for userId: %s"), userId)
+		return nil, errors.New(c.T("util:No application is found for userId: %s"), userId)
 	}
 
 	provider, err := application.GetProviderByCategory(category)
@@ -248,7 +249,7 @@ func (c *ApiController) GetProviderFromContext(category string) (*object.Provide
 	}
 
 	if provider == nil {
-		return nil, fmt.Errorf(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name)
+		return nil, errors.New(c.T("util:No provider for category: %s is found for application: %s"), category, application.Name)
 	}
 
 	return provider, nil
@@ -260,7 +261,7 @@ func checkQuotaForApplication(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("application quota is exceeded")
+		return errors.New("application quota is exceeded")
 	}
 	return nil
 }
@@ -271,7 +272,7 @@ func checkQuotaForOrganization(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("organization quota is exceeded")
+		return errors.New("organization quota is exceeded")
 	}
 	return nil
 }
@@ -282,7 +283,7 @@ func checkQuotaForProvider(count int) error {
 		return nil
 	}
 	if count >= quota {
-		return fmt.Errorf("provider quota is exceeded")
+		return errors.New("provider quota is exceeded")
 	}
 	return nil
 }
@@ -299,7 +300,7 @@ func checkQuotaForUser() error {
 	}
 
 	if int(count) >= quota {
-		return fmt.Errorf("user quota is exceeded")
+		return errors.New("user quota is exceeded")
 	}
 	return nil
 }

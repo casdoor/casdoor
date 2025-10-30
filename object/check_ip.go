@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -25,7 +26,7 @@ import (
 func CheckEntryIp(clientIp string, user *User, application *Application, organization *Organization, lang string) error {
 	entryIp := net.ParseIP(clientIp)
 	if entryIp == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:Failed to parse client IP: %s"), clientIp)
+		return errors.New(i18n.Translate(lang, "check:Failed to parse client IP: %s"), clientIp)
 	} else if entryIp.IsLoopback() {
 		return nil
 	}
@@ -77,7 +78,7 @@ func isEntryIpAllowd(ipWhitelistStr string, entryIp net.IP, lang string) error {
 			return err
 		}
 		if ipNet == nil {
-			return fmt.Errorf(i18n.Translate(lang, "check:CIDR for IP: %s should not be empty"), entryIp.String())
+			return errors.New(i18n.Translate(lang, "check:CIDR for IP: %s should not be empty"), entryIp.String())
 		}
 
 		if ipNet.Contains(entryIp) {
@@ -85,7 +86,7 @@ func isEntryIpAllowd(ipWhitelistStr string, entryIp net.IP, lang string) error {
 		}
 	}
 
-	return fmt.Errorf(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp.String())
+	return errors.New(i18n.Translate(lang, "check:Your IP address: %s has been banned according to the configuration of: "), entryIp.String())
 }
 
 func CheckIpWhitelist(ipWhitelistStr string, lang string) error {
@@ -96,7 +97,7 @@ func CheckIpWhitelist(ipWhitelistStr string, lang string) error {
 	ipWhiteList := strings.Split(ipWhitelistStr, ",")
 	for _, ip := range ipWhiteList {
 		if _, _, err := net.ParseCIDR(ip); err != nil {
-			return fmt.Errorf(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
+			return errors.New(i18n.Translate(lang, "check:%s does not meet the CIDR format requirements: %s"), ip, err.Error())
 		}
 	}
 

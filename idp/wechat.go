@@ -19,6 +19,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -124,7 +125,7 @@ func (idp *WeChatIdProvider) GetToken(code string) (*oauth2.Token, error) {
 
 	// {"errcode":40163,"errmsg":"code been used, rid: 6206378a-793424c0-2e4091cc"}
 	if strings.Contains(buf.String(), "errcode") {
-		return nil, fmt.Errorf(buf.String())
+		return nil, errors.New(buf.String())
 	}
 
 	var wechatAccessToken WechatAccessToken
@@ -184,7 +185,7 @@ func (idp *WeChatIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error)
 		Lock.RUnlock()
 
 		if !ok || mapValue.WechatUnionId == "" {
-			return nil, fmt.Errorf("error ticket")
+			return nil, errors.New("error ticket")
 		}
 
 		Lock.Lock()
@@ -287,7 +288,7 @@ func GetWechatOfficialAccountQRCode(clientId string, clientSecret string, provid
 	}
 
 	if errMsg != "" {
-		return "", "", fmt.Errorf("Fail to fetch WeChat QRcode: %s", errMsg)
+		return "", "", errors.New("Fail to fetch WeChat QRcode: %s", errMsg)
 	}
 
 	client := new(http.Client)

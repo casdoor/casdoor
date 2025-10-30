@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
@@ -88,7 +89,7 @@ func IsAllowSend(user *User, remoteAddr, recordType string, application *Applica
 
 	now := time.Now().Unix()
 	if has && now-record.Time < resendTimeoutInSeconds {
-		return fmt.Errorf("you can only send one code in %ds", resendTimeoutInSeconds)
+		return errors.New("you can only send one code in %ds", resendTimeoutInSeconds)
 	}
 
 	return nil
@@ -325,13 +326,13 @@ func CheckSigninCode(user *User, dest, code, lang string) error {
 	case wrongCodeError:
 		return recordSigninErrorInfo(user, lang)
 	default:
-		return fmt.Errorf(result.Msg)
+		return errors.New(result.Msg)
 	}
 }
 
 func CheckFaceId(user *User, faceId []float64, lang string) error {
 	if len(user.FaceIds) == 0 {
-		return fmt.Errorf(i18n.Translate(lang, "check:Face data does not exist, cannot log in"))
+		return errors.New(i18n.Translate(lang, "check:Face data does not exist, cannot log in"))
 	}
 
 	for _, userFaceId := range user.FaceIds {
@@ -348,7 +349,7 @@ func CheckFaceId(user *User, faceId []float64, lang string) error {
 		}
 	}
 
-	return fmt.Errorf(i18n.Translate(lang, "check:Face data mismatch"))
+	return errors.New(i18n.Translate(lang, "check:Face data mismatch"))
 }
 
 func GetVerifyType(username string) (verificationCodeType string) {

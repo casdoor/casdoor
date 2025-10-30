@@ -19,6 +19,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -75,7 +76,7 @@ func GenerateSamlRequest(id, relayState, host, lang string) (auth string, method
 		return "", "", err
 	}
 	if provider.Category != "SAML" {
-		return "", "", fmt.Errorf(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
+		return "", "", errors.New(i18n.Translate(lang, "saml_sp:provider %s's category is not SAML"), provider.Name)
 	}
 
 	sp, err := buildSp(provider, "", host)

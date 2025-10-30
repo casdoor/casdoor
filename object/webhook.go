@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/casdoor/casdoor/i18n"
@@ -112,7 +113,7 @@ func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool, lang string)
 	} else if w == nil {
 		return false, nil
 	} else if !isGlobalAdmin && w.Organization != webhook.Organization {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+		return false, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(webhook)

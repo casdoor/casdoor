@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -188,7 +189,7 @@ func CheckInvitationDefaultCode(code string, defaultCode string, lang string) er
 	if matched, err := util.IsInvitationCodeMatch(code, defaultCode); err != nil {
 		return err
 	} else if !matched {
-		return fmt.Errorf(i18n.Translate(lang, "check:Default code does not match the code's matching rules"))
+		return errors.New(i18n.Translate(lang, "check:Default code does not match the code's matching rules"))
 	}
 	return nil
 }
@@ -206,7 +207,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 
 		// deny the login if the error times is greater than the limit and the last login time is less than the duration
 		if minutes > 0 {
-			return fmt.Errorf(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes)
+			return errors.New(i18n.Translate(lang, "check:You have entered the wrong password or code too many times, please wait for %d minutes and try again"), minutes)
 		}
 
 		// reset the error times
@@ -221,7 +222,7 @@ func checkSigninErrorTimes(user *User, lang string) error {
 
 func CheckPassword(user *User, password string, lang string, options ...bool) error {
 	if password == "" {
-		return fmt.Errorf(i18n.Translate(lang, "check:Password cannot be empty"))
+		return errors.New(i18n.Translate(lang, "check:Password cannot be empty"))
 	}
 
 	enableCaptcha := false
@@ -242,7 +243,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 		return err
 	}
 	if organization == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:Organization does not exist"))
+		return errors.New(i18n.Translate(lang, "check:Organization does not exist"))
 	}
 
 	passwordType := user.PasswordType
@@ -252,7 +253,7 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 
 	credManager := cred.GetCredManager(passwordType)
 	if credManager == nil {
-		return fmt.Errorf(i18n.Translate(lang, "check:unsupported password type: %s"), passwordType)
+		return errors.New(i18n.Translate(lang, "check:unsupported password type: %s"), passwordType)
 	}
 
 	if organization.MasterPassword != "" {
@@ -318,7 +319,7 @@ func CheckLdapUserPassword(user *User, password string, lang string) error {
 		}
 		if len(searchResult.Entries) > 1 {
 			conn.Close()
-			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
+			return errors.New(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
 		}
 
 		hit = true
@@ -336,7 +337,7 @@ func CheckLdapUserPassword(user *User, password string, lang string) error {
 		if !hit {
 			return fmt.Errorf("user not exist")
 		}
-		return fmt.Errorf(i18n.Translate(lang, "check:LDAP user name or password incorrect"))
+		return errors.New(i18n.Translate(lang, "check:LDAP user name or password incorrect"))
 	}
 	return resetUserSigninErrorTimes(user)
 }
@@ -356,22 +357,22 @@ func CheckUserPassword(organization string, username string, password string, la
 	}
 
 	if user == nil || user.IsDeleted {
-		return nil, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
+		return nil, errors.New(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
 	}
 
 	if user.IsForbidden {
-		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
+		return nil, errors.New(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
 	if isSigninViaLdap {
 		if user.Ldap == "" {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+			return nil, errors.New(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
 		}
 	}
 
 	if user.Ldap != "" {
 		if !isSigninViaLdap && !isPasswordWithLdapEnabled {
-			return nil, fmt.Errorf(i18n.Translate(lang, "check:password or code is incorrect"))
+			return nil, errors.New(i18n.Translate(lang, "check:password or code is incorrect"))
 		}
 
 		// check the login error times
@@ -386,7 +387,7 @@ func CheckUserPassword(organization string, username string, password string, la
 		err = CheckLdapUserPassword(user, password, lang)
 		if err != nil {
 			if err.Error() == "user not exist" {
-				return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+				return nil, errors.New(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
 			}
 
 			return nil, recordSigninErrorInfo(user, lang, enableCaptcha)
@@ -408,7 +409,7 @@ func CheckUserPassword(organization string, username string, password string, la
 
 func CheckUserPermission(requestUserId, userId string, strict bool, lang string) (bool, error) {
 	if requestUserId == "" {
-		return false, fmt.Errorf(i18n.Translate(lang, "general:Please login first"))
+		return false, errors.New(i18n.Translate(lang, "general:Please login first"))
 	}
 
 	userOwner := util.GetOwnerFromId(userId)
@@ -424,7 +425,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 				return true, nil
 			}
 
-			return false, fmt.Errorf(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId)
+			return false, errors.New(i18n.Translate(lang, "general:The user: %s doesn't exist"), userId)
 		}
 
 		userOwner = targetUser.Owner
@@ -440,7 +441,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		}
 
 		if requestUser == nil {
-			return false, fmt.Errorf(i18n.Translate(lang, "check:Session outdated, please login again"))
+			return false, errors.New(i18n.Translate(lang, "check:Session outdated, please login again"))
 		}
 		if requestUser.IsGlobalAdmin() {
 			hasPermission = true
@@ -455,7 +456,7 @@ func CheckUserPermission(requestUserId, userId string, strict bool, lang string)
 		}
 	}
 
-	return hasPermission, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+	return hasPermission, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 }
 
 func CheckApiPermission(userId string, organization string, path string, method string) (bool, error) {

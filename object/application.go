@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -611,7 +612,7 @@ func GetMaskedApplications(applications []*Application, userId string) []*Applic
 
 func GetAllowedApplications(applications []*Application, userId string, lang string) ([]*Application, error) {
 	if userId == "" {
-		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+		return nil, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	if isUserIdGlobalAdmin(userId) {
@@ -623,7 +624,7 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 		return nil, err
 	}
 	if user == nil {
-		return nil, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+		return nil, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	if user.IsAdmin {
@@ -653,7 +654,7 @@ func UpdateApplication(id string, application *Application, isGlobalAdmin bool, 
 	}
 
 	if !isGlobalAdmin && oldApplication.Organization != application.Organization {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
+		return false, errors.New(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
 
 	if name == "app-built-in" {

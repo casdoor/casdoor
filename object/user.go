@@ -17,6 +17,7 @@ package object
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -911,7 +912,7 @@ func AddUser(user *User, lang string) (bool, error) {
 	}
 
 	if user.Owner == "" || user.Name == "" {
-		return false, fmt.Errorf(i18n.Translate(lang, "user:the user's owner and name should not be empty"))
+		return false, errors.New(i18n.Translate(lang, "user:the user's owner and name should not be empty"))
 	}
 
 	if CheckUsernameWithEmail(user.Name, "en") != "" {
@@ -923,7 +924,7 @@ func AddUser(user *User, lang string) (bool, error) {
 		return false, err
 	}
 	if organization == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:the organization: %s is not found"), user.Owner)
+		return false, errors.New(i18n.Translate(lang, "auth:the organization: %s is not found"), user.Owner)
 	}
 
 	if user.Owner != "built-in" {
@@ -932,12 +933,12 @@ func AddUser(user *User, lang string) (bool, error) {
 			return false, err
 		}
 		if applicationCount == 0 {
-			return false, fmt.Errorf(i18n.Translate(lang, "general:The organization: %s should have one application at least"), organization.Owner)
+			return false, errors.New(i18n.Translate(lang, "general:The organization: %s should have one application at least"), organization.Owner)
 		}
 	}
 
 	if organization.Name == "built-in" && !organization.HasPrivilegeConsent && user.Name != "admin" {
-		return false, fmt.Errorf(i18n.Translate(lang, "organization:adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option."))
+		return false, errors.New(i18n.Translate(lang, "organization:adding a new user to the 'built-in' organization is currently disabled. Please note: all users in the 'built-in' organization are global administrators in Casdoor. Refer to the docs: https://casdoor.org/docs/basic/core-concepts#how-does-casdoor-manage-itself. If you still wish to create a user for the 'built-in' organization, go to the organization's settings page and enable the 'Has privilege consent' option."))
 	}
 
 	if organization.DefaultPassword != "" && user.Password == "123" {
@@ -1378,7 +1379,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 
 		curGroup, ok := groupMap[group.ParentId]
 		if !ok {
-			return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), group.ParentId)
+			return []string{}, errors.New(i18n.Translate("en", "auth:The group: %s does not exist"), group.ParentId)
 		}
 		for {
 			groupPath = util.GetId(curGroup.Name, groupPath)
@@ -1388,7 +1389,7 @@ func (user *User) GetUserFullGroupPath() ([]string, error) {
 
 			curGroup, ok = groupMap[curGroup.ParentId]
 			if !ok {
-				return []string{}, fmt.Errorf(i18n.Translate("en", "auth:The group: %s does not exist"), curGroup.ParentId)
+				return []string{}, errors.New(i18n.Translate("en", "auth:The group: %s does not exist"), curGroup.ParentId)
 			}
 		}
 

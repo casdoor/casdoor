@@ -432,7 +432,7 @@ func ResetLdapPassword(user *User, oldPassword string, newPassword string, lang 
 		}
 		if len(searchResult.Entries) > 1 {
 			conn.Close()
-			return fmt.Errorf(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
+			return errors.New(i18n.Translate(lang, "check:Multiple accounts with same uid, please check your ldap server"))
 		}
 
 		userDn := searchResult.Entries[0].DN

@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -357,7 +358,7 @@ func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error
 	}
 
 	if !existed {
-		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
+		return nil, errors.New(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
 	}
 
 	return &provider, nil
@@ -373,7 +374,7 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 	}
 
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
+		return nil, errors.New(i18n.Translate(lang, "provider:Invalid application id"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {
@@ -395,7 +396,7 @@ func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error)
 	}
 
 	if !existed {
-		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
+		return nil, errors.New(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
 	}
 
 	return &provider, nil
@@ -411,7 +412,7 @@ func GetFaceIdProviderByApplication(applicationId, isCurrentProvider, lang strin
 	}
 
 	if application == nil || len(application.Providers) == 0 {
-		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
+		return nil, errors.New(i18n.Translate(lang, "provider:Invalid application id"))
 	}
 	for _, provider := range application.Providers {
 		if provider.Provider == nil {

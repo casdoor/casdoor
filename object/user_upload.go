@@ -15,6 +15,7 @@
 package object
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -101,7 +102,7 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 		return false, err
 	}
 	if organization == nil {
-		return false, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+		return false, errors.New(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
 	}
 
 	newUsers := []*User{}
