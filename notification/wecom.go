@@ -30,6 +30,12 @@ type wecomService struct {
 	webhookURL string
 }
 
+// wecomResponse represents the response from WeCom webhook API
+type wecomResponse struct {
+	Errcode int    `json:"errcode"`
+	Errmsg  string `json:"errmsg"`
+}
+
 // NewWeComProvider returns a new instance of a WeCom notification service
 // WeCom (WeChat Work/企业微信) uses webhook for group chat notifications
 // Reference: https://developer.work.weixin.qq.com/document/path/90236
@@ -80,9 +86,18 @@ func (s *wecomService) Send(ctx context.Context, subject, content string) error 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body := make([]byte, 1024)
-		n, _ := resp.Body.Read(body)
-		return fmt.Errorf("WeCom webhook returned status code %d: %s", resp.StatusCode, string(body[:n]))
+		return fmt.Errorf("WeCom webhook returned HTTP status code: %d", resp.StatusCode)
+	}
+
+	// Parse WeCom API response
+	var wecomResp wecomResponse
+	if err := json.NewDecoder(resp.Body).Decode(&wecomResp); err != nil {
+		return fmt.Errorf("failed to decode WeCom response: %w", err)
+	}
+
+	// Check WeCom API error code
+	if wecomResp.Errcode != 0 {
+		return fmt.Errorf("WeCom API error: errcode=%d, errmsg=%s", wecomResp.Errcode, wecomResp.Errmsg)
 	}
 
 	return nil
