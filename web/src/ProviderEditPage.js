@@ -389,7 +389,7 @@ class ProviderEditPage extends React.Component {
     case "Notification":
       if (provider.type === "Line" || provider.type === "Telegram" || provider.type === "Bark" || provider.type === "DingTalk" || provider.type === "Discord" || provider.type === "Slack" || provider.type === "Pushover" || provider.type === "Pushbullet") {
         return Setting.getLabel(i18next.t("provider:Secret key"), i18next.t("provider:Secret key - Tooltip"));
-      } else if (provider.type === "Lark" || provider.type === "Microsoft Teams") {
+      } else if (provider.type === "Lark" || provider.type === "Microsoft Teams" || provider.type === "WeCom") {
         return Setting.getLabel(i18next.t("provider:Endpoint"), i18next.t("provider:Endpoint - Tooltip"));
       } else {
         return Setting.getLabel(i18next.t("provider:Client secret"), i18next.t("provider:Client secret - Tooltip"));
@@ -928,7 +928,7 @@ class ProviderEditPage extends React.Component {
                 {
                   (this.state.provider.category === "Storage" && this.state.provider.type === "Google Cloud Storage") ||
                   (this.state.provider.category === "Email" && (this.state.provider.type === "Azure ACS" || this.state.provider.type === "SendGrid")) ||
-                  (this.state.provider.category === "Notification" && (this.state.provider.type === "Line" || this.state.provider.type === "Telegram" || this.state.provider.type === "Bark" || this.state.provider.type === "Discord" || this.state.provider.type === "Slack" || this.state.provider.type === "Pushbullet" || this.state.provider.type === "Pushover" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams")) ? null : (
+                  (this.state.provider.category === "Notification" && (this.state.provider.type === "Line" || this.state.provider.type === "Telegram" || this.state.provider.type === "Bark" || this.state.provider.type === "Discord" || this.state.provider.type === "Slack" || this.state.provider.type === "Pushbullet" || this.state.provider.type === "Pushover" || this.state.provider.type === "Lark" || this.state.provider.type === "Microsoft Teams" || this.state.provider.type === "WeCom")) ? null : (
                       <Row style={{marginTop: "20px"}} >
                         <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                           {this.getClientIdLabel(this.state.provider)} :
