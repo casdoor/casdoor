@@ -108,15 +108,28 @@ func GetTransaction(id string) (*Transaction, error) {
 
 func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
-	if p, err := getTransaction(owner, name); err != nil {
+	oldTransaction, err := getTransaction(owner, name)
+	if err != nil {
 		return false, err
-	} else if p == nil {
+	} else if oldTransaction == nil {
 		return false, nil
+	}
+
+	// Revert old balance changes
+	if err := updateBalanceForTransaction(oldTransaction, -oldTransaction.Amount); err != nil {
+		return false, err
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).AllCols().Update(transaction)
 	if err != nil {
 		return false, err
+	}
+
+	// Apply new balance changes
+	if affected != 0 {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount); err != nil {
+			return false, err
+		}
 	}
 
 	return affected != 0, nil
@@ -128,10 +141,21 @@ func AddTransaction(transaction *Transaction) (bool, error) {
 		return false, err
 	}
 
+	if affected != 0 {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount); err != nil {
+			return false, err
+		}
+	}
+
 	return affected != 0, nil
 }
 
 func DeleteTransaction(transaction *Transaction) (bool, error) {
+	// Revert balance changes before deleting
+	if err := updateBalanceForTransaction(transaction, -transaction.Amount); err != nil {
+		return false, err
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{transaction.Owner, transaction.Name}).Delete(&Transaction{})
 	if err != nil {
 		return false, err
@@ -142,4 +166,22 @@ func DeleteTransaction(transaction *Transaction) (bool, error) {
 
 func (transaction *Transaction) GetId() string {
 	return fmt.Sprintf("%s/%s", transaction.Owner, transaction.Name)
+}
+
+func updateBalanceForTransaction(transaction *Transaction, amount float64) error {
+	if transaction.Category == "Organization" {
+		// Update organization's own balance
+		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, true)
+	} else if transaction.Category == "User" {
+		// Update user's balance
+		if transaction.User == "" {
+			return fmt.Errorf("user is required for User category transaction")
+		}
+		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount); err != nil {
+			return err
+		}
+		// Update organization's user balance sum
+		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, false)
+	}
+	return nil
 }
