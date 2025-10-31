@@ -366,6 +366,16 @@ class UserListPage extends BaseListPage {
         ...this.getColumnSearchProps("registerSource"),
       },
       {
+        title: i18next.t("user:Balance"),
+        dataIndex: "balance",
+        key: "balance",
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text ?? 0;
+        },
+      },
+      {
         title: i18next.t("user:Is admin"),
         dataIndex: "isAdmin",
         key: "isAdmin",
