@@ -47,8 +47,10 @@ func (mfa *PushMfa) SetupVerify(passCode string) error {
 		return errors.New("push notification provider is not configured")
 	}
 
-	// For setup verification, send a test notification and verify the response code
-	return mfa.sendPushNotification("MFA Setup Verification", "Please verify your device by entering the code sent to your device")
+	// For setup verification, send a test notification
+	// Note: Full implementation would require a callback endpoint to receive approval/denial
+	// from the mobile app, and passCode would contain the callback verification token
+	return mfa.sendPushNotification("MFA Setup Verification", "Please approve this setup request on your device")
 }
 
 func (mfa *PushMfa) Enable(user *User) error {
@@ -80,8 +82,12 @@ func (mfa *PushMfa) Verify(passCode string) error {
 		return errors.New("push notification provider is not configured")
 	}
 
-	// For verification, check if the passCode matches the expected response
-	// In a real implementation, this would check against a stored challenge
+	// Send the push notification for authentication
+	// Note: Full implementation would require:
+	// 1. A callback endpoint to receive approval/denial from the mobile app
+	// 2. Persistent storage of challengeId to validate the callback
+	// 3. passCode would contain the callback verification token
+	// For now, this sends the notification and returns success to enable basic functionality
 	return mfa.sendPushNotification("MFA Verification", "Authentication request. Please approve or deny.")
 }
 
@@ -103,6 +109,8 @@ func (mfa *PushMfa) sendPushNotification(title string, message string) error {
 	}
 
 	// Generate a unique challenge ID for this notification
+	// Note: In a full implementation, this would be stored in a cache/database
+	// to validate callbacks from the mobile app
 	mfa.challengeId = uuid.NewString()
 	mfa.challengeExp = time.Now().Add(5 * time.Minute) // Challenge expires in 5 minutes
 
@@ -128,10 +136,10 @@ func (mfa *PushMfa) sendPushNotification(title string, message string) error {
 		return errors.New("notification provider is not supported")
 	}
 
-	// Send the push notification with the challenge ID
-	fullMessage := fmt.Sprintf("%s\nChallenge ID: %s", message, mfa.challengeId)
+	// Send the push notification
+	// Note: The challengeId is kept server-side and not exposed in the message
 	ctx := context.Background()
-	err = notifier.Send(ctx, title, fullMessage)
+	err = notifier.Send(ctx, title, message)
 	if err != nil {
 		return fmt.Errorf("failed to send push notification: %v", err)
 	}
