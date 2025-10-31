@@ -1429,6 +1429,9 @@ func UpdateUserBalance(owner string, name string, balance float64) error {
 	if err != nil {
 		return err
 	}
+	if user == nil {
+		return fmt.Errorf("user not found: %s/%s", owner, name)
+	}
 	user.Balance += balance
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
