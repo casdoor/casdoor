@@ -112,7 +112,7 @@ type User struct {
 	LastSigninIp   string `xorm:"varchar(100)" json:"lastSigninIp"`
 
 	GitHub          string `xorm:"github text" json:"github"`
-	Google          string `xorm:"text" json:"google"`
+	Google          string `xorm:"google text" json:"google"`
 	QQ              string `xorm:"qq text" json:"qq"`
 	WeChat          string `xorm:"wechat text" json:"wechat"`
 	Facebook        string `xorm:"facebook text" json:"facebook"`
