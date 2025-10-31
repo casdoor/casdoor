@@ -1,4 +1,4 @@
-// Copyright 2024 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ type wecomResponse struct {
 }
 
 // NewWeComProvider returns a new instance of a WeCom notification service
-// WeCom (WeChat Work/企业微信) uses webhook for group chat notifications
+// WeCom (WeChat Work) uses webhook for group chat notifications
 // Reference: https://developer.work.weixin.qq.com/document/path/90236
 func NewWeComProvider(webhookURL string) (notify.Notifier, error) {
 	wecomSrv := &wecomService{
