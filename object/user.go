@@ -208,6 +208,9 @@ type User struct {
 	MfaRadiusEnabled    bool                  `json:"mfaRadiusEnabled"`
 	MfaRadiusUsername   string                `xorm:"varchar(100)" json:"mfaRadiusUsername"`
 	MfaRadiusProvider   string                `xorm:"varchar(100)" json:"mfaRadiusProvider"`
+	MfaPushEnabled      bool                  `json:"mfaPushEnabled"`
+	MfaPushReceiver     string                `xorm:"varchar(100)" json:"mfaPushReceiver"`
+	MfaPushProvider     string                `xorm:"varchar(100)" json:"mfaPushProvider"`
 	MultiFactorAuths    []*MfaProps           `xorm:"-" json:"multiFactorAuths,omitempty"`
 	Invitation          string                `xorm:"varchar(100) index" json:"invitation"`
 	InvitationCode      string                `xorm:"varchar(100) index" json:"invitationCode"`

@@ -135,6 +135,17 @@ func (c *ApiController) MfaSetupVerify() {
 			return
 		}
 		config.URL = secret
+	} else if mfaType == object.PushType {
+		if dest == "" {
+			c.ResponseError("push notification receiver is missing")
+			return
+		}
+		config.Secret = dest
+		if secret == "" {
+			c.ResponseError("push notification provider is missing")
+			return
+		}
+		config.URL = secret
 	}
 
 	mfaUtil := object.GetMfaUtil(mfaType, config)
@@ -219,6 +230,17 @@ func (c *ApiController) MfaSetupEnable() {
 		config.Secret = dest
 		if secret == "" {
 			c.ResponseError("RADIUS provider is missing")
+			return
+		}
+		config.URL = secret
+	} else if mfaType == object.PushType {
+		if dest == "" {
+			c.ResponseError("push notification receiver is missing")
+			return
+		}
+		config.Secret = dest
+		if secret == "" {
+			c.ResponseError("push notification provider is missing")
 			return
 		}
 		config.URL = secret

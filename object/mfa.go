@@ -43,6 +43,7 @@ const (
 	SmsType    = "sms"
 	TotpType   = "app"
 	RadiusType = "radius"
+	PushType   = "push"
 )
 
 const (
@@ -61,6 +62,8 @@ func GetMfaUtil(mfaType string, config *MfaProps) MfaInterface {
 		return NewTotpMfaUtil(config)
 	case RadiusType:
 		return NewRadiusMfaUtil(config)
+	case PushType:
+		return NewPushMfaUtil(config)
 	}
 
 	return nil
@@ -95,7 +98,7 @@ func MfaRecover(user *User, recoveryCode string) error {
 func GetAllMfaProps(user *User, masked bool) []*MfaProps {
 	mfaProps := []*MfaProps{}
 
-	for _, mfaType := range []string{SmsType, EmailType, TotpType, RadiusType} {
+	for _, mfaType := range []string{SmsType, EmailType, TotpType, RadiusType, PushType} {
 		mfaProps = append(mfaProps, user.GetMfaProps(mfaType, masked))
 	}
 	return mfaProps
@@ -174,6 +177,24 @@ func (user *User) GetMfaProps(mfaType string, masked bool) *MfaProps {
 			mfaProps.Secret = user.MfaRadiusUsername
 		}
 		mfaProps.URL = user.MfaRadiusProvider
+	} else if mfaType == PushType {
+		if !user.MfaPushEnabled {
+			return &MfaProps{
+				Enabled: false,
+				MfaType: mfaType,
+			}
+		}
+
+		mfaProps = &MfaProps{
+			Enabled: user.MfaPushEnabled,
+			MfaType: mfaType,
+		}
+		if masked {
+			mfaProps.Secret = util.GetMaskedEmail(user.MfaPushReceiver)
+		} else {
+			mfaProps.Secret = user.MfaPushReceiver
+		}
+		mfaProps.URL = user.MfaPushProvider
 	}
 
 	if user.PreferredMfaType == mfaType {
@@ -191,8 +212,11 @@ func DisabledMultiFactorAuth(user *User) error {
 	user.MfaRadiusEnabled = false
 	user.MfaRadiusUsername = ""
 	user.MfaRadiusProvider = ""
+	user.MfaPushEnabled = false
+	user.MfaPushReceiver = ""
+	user.MfaPushProvider = ""
 
-	_, err := updateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled", "totp_secret", "mfa_radius_enabled", "mfa_radius_username", "mfa_radius_provider"})
+	_, err := updateUser(user.GetId(), user, []string{"preferred_mfa_type", "recovery_codes", "mfa_phone_enabled", "mfa_email_enabled", "totp_secret", "mfa_radius_enabled", "mfa_radius_username", "mfa_radius_provider", "mfa_push_enabled", "mfa_push_receiver", "mfa_push_provider"})
 	if err != nil {
 		return err
 	}
