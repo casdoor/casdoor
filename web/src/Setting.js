@@ -1642,7 +1642,7 @@ export function getCurrencyWithFlag(currency) {
 
   return (
     <span>
-      <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={currency} height={20} style={{marginRight: 5}} />
+      <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
       {currency}
     </span>
   );
