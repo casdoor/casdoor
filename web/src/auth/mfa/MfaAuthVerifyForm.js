@@ -16,11 +16,12 @@ import React, {Fragment, useState} from "react";
 import i18next from "i18next";
 import {Button, Input} from "antd";
 import * as AuthBackend from "../AuthBackend";
-import {EmailMfaType, RecoveryMfaType, SmsMfaType, TotpMfaType} from "../MfaSetupPage";
+import {EmailMfaType, PushMfaType, RecoveryMfaType, SmsMfaType, TotpMfaType} from "../MfaSetupPage";
 import {mfaAuth} from "./MfaVerifyForm";
 import MfaVerifySmsForm from "./MfaVerifySmsForm";
 import MfaVerifyTotpForm from "./MfaVerifyTotpForm";
 import MfaVerifyRadiusForm from "./MfaVerifyRadiusForm";
+import MfaVerifyPushForm from "./MfaVerifyPushForm";
 
 export const NextMfa = "NextMfa";
 export const RequiredMfa = "RequiredMfa";
@@ -92,6 +93,17 @@ export function MfaAuthVerifyForm({formValues, authParams, mfaProps, application
             </div>
             <MfaVerifyTotpForm
               mfaProps={mfaProps}
+              onFinish={verify}
+            />
+          </Fragment>
+        ) : mfaProps.mfaType === PushMfaType ? (
+          <Fragment>
+            <div style={{marginBottom: 24}}>
+              {i18next.t("mfa:You have enabled Multi-Factor Authentication, please enter the verification code from push notification")}
+            </div>
+            <MfaVerifyPushForm
+              mfaProps={mfaProps}
+              method={mfaAuth}
               onFinish={verify}
             />
           </Fragment>
