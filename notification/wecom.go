@@ -63,14 +63,23 @@ func (s *wecomService) Send(ctx context.Context, subject, content string) error 
 		return fmt.Errorf("failed to marshal WeCom message: %w", err)
 	}
 
-	resp, err := http.Post(s.webhookURL, "application/json", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, "POST", s.webhookURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("failed to create WeCom request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send WeCom message: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("WeCom webhook returned status code: %d", resp.StatusCode)
+		body := make([]byte, 1024)
+		n, _ := resp.Body.Read(body)
+		return fmt.Errorf("WeCom webhook returned status code %d: %s", resp.StatusCode, string(body[:n]))
 	}
 
 	return nil
