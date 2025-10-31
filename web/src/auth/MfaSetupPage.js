@@ -28,6 +28,7 @@ export const EmailMfaType = "email";
 export const SmsMfaType = "sms";
 export const TotpMfaType = "app";
 export const RadiusMfaType = "radius";
+export const PushMfaType = "push";
 export const RecoveryMfaType = "recovery";
 
 class MfaSetupPage extends React.Component {
@@ -162,12 +163,27 @@ class MfaSetupPage extends React.Component {
       );
     };
 
+    const renderPushLink = () => {
+      if (this.state.mfaType === PushMfaType) {
+        return null;
+      }
+      return (<Button type={"link"} onClick={() => {
+        this.setState({
+          mfaType: PushMfaType,
+        });
+        this.props.history.push(`/mfa/setup?mfaType=${PushMfaType}`);
+      }
+      }>{i18next.t("mfa:Use Push Notification")}</Button>
+      );
+    };
+
     return !this.state.isPromptPage ? (
       <React.Fragment>
         {renderSmsLink()}
         {renderEmailLink()}
         {renderTotpLink()}
         {renderRadiusLink()}
+        {renderPushLink()}
       </React.Fragment>
     ) : null;
   }
