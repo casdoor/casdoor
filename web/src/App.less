@@ -113,11 +113,20 @@ img {
   display: flex;
   background-color: rgb(255 255 255);
   overflow: hidden;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
 }
 
 .login-form {
   text-align: center;
   padding: 30px;
+
+  @media screen and (max-width: 768px) {
+    padding: 20px 15px;
+  }
 }
 
 .login-content {
@@ -137,6 +146,11 @@ img {
   background: #fff no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
+
+  @media screen and (max-width: 768px) {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
 }
 
 .loginBackgroundDark {
@@ -146,6 +160,11 @@ img {
   background: #000 no-repeat;
   background-size: 100% 100%;
   background-attachment: fixed;
+
+  @media screen and (max-width: 768px) {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
 }
 
 .ant-menu-horizontal {
