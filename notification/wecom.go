@@ -33,21 +33,18 @@ type wecomService struct {
 // WeCom (WeChat Work/企业微信) uses webhook for group chat notifications
 // Reference: https://developer.work.weixin.qq.com/document/path/90236
 func NewWeComProvider(webhookURL string) (notify.Notifier, error) {
-	svc := &wecomService{
+	wecomSrv := &wecomService{
 		webhookURL: webhookURL,
 	}
 
-	notifier := &wecomNotifier{service: svc}
+	notifier := notify.New()
+	notifier.UseServices(wecomSrv)
+
 	return notifier, nil
 }
 
-// wecomNotifier implements the notify.Notifier interface
-type wecomNotifier struct {
-	service *wecomService
-}
-
 // Send sends a text message to WeCom group chat via webhook
-func (n *wecomNotifier) Send(ctx context.Context, subject, content string) error {
+func (s *wecomService) Send(ctx context.Context, subject, content string) error {
 	text := subject
 	if content != "" {
 		text = subject + "\n" + content
@@ -66,7 +63,7 @@ func (n *wecomNotifier) Send(ctx context.Context, subject, content string) error
 		return fmt.Errorf("failed to marshal WeCom message: %w", err)
 	}
 
-	resp, err := http.Post(n.service.webhookURL, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(s.webhookURL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to send WeCom message: %w", err)
 	}
