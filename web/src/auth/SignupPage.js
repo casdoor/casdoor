@@ -192,6 +192,12 @@ class SignupPage extends React.Component {
           return;
         }
         this.setState({invitation: res.data});
+        if (res.data.email) {
+          this.setState({validEmail: true, email: res.data.email});
+        }
+        if (res.data.phone) {
+          this.setState({validPhone: true, phone: res.data.phone});
+        }
       });
   }
 
