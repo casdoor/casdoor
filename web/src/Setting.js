@@ -416,6 +416,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/cucloud.png`,
       url: "https://www.cucloud.cn/",
     },
+    "WeCom": {
+      logo: `${StaticBaseUrl}/img/social_wecom.png`,
+      url: "https://work.weixin.qq.com/",
+    },
   },
   "Face ID": {
     "Alibaba Cloud Facebody": {
