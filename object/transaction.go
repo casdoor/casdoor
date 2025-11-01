@@ -107,7 +107,7 @@ func GetTransaction(id string) (*Transaction, error) {
 	return getTransaction(owner, name)
 }
 
-func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
+func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, error) {
 	owner, name := util.GetOwnerAndNameFromId(id)
 	oldTransaction, err := getTransaction(owner, name)
 	if err != nil {
@@ -117,7 +117,7 @@ func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
 	}
 
 	// Revert old balance changes
-	if err := updateBalanceForTransaction(oldTransaction, -oldTransaction.Amount); err != nil {
+	if err := updateBalanceForTransaction(oldTransaction, -oldTransaction.Amount, lang); err != nil {
 		return false, err
 	}
 
@@ -128,7 +128,7 @@ func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
 
 	// Apply new balance changes
 	if affected != 0 {
-		if err := updateBalanceForTransaction(transaction, transaction.Amount); err != nil {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
 			return false, err
 		}
 	}
@@ -136,14 +136,14 @@ func UpdateTransaction(id string, transaction *Transaction) (bool, error) {
 	return affected != 0, nil
 }
 
-func AddTransaction(transaction *Transaction) (bool, error) {
+func AddTransaction(transaction *Transaction, lang string) (bool, error) {
 	affected, err := ormer.Engine.Insert(transaction)
 	if err != nil {
 		return false, err
 	}
 
 	if affected != 0 {
-		if err := updateBalanceForTransaction(transaction, transaction.Amount); err != nil {
+		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
 			return false, err
 		}
 	}
@@ -151,9 +151,9 @@ func AddTransaction(transaction *Transaction) (bool, error) {
 	return affected != 0, nil
 }
 
-func DeleteTransaction(transaction *Transaction) (bool, error) {
+func DeleteTransaction(transaction *Transaction, lang string) (bool, error) {
 	// Revert balance changes before deleting
-	if err := updateBalanceForTransaction(transaction, -transaction.Amount); err != nil {
+	if err := updateBalanceForTransaction(transaction, -transaction.Amount, lang); err != nil {
 		return false, err
 	}
 
@@ -169,20 +169,20 @@ func (transaction *Transaction) GetId() string {
 	return fmt.Sprintf("%s/%s", transaction.Owner, transaction.Name)
 }
 
-func updateBalanceForTransaction(transaction *Transaction, amount float64) error {
+func updateBalanceForTransaction(transaction *Transaction, amount float64, lang string) error {
 	if transaction.Category == "Organization" {
 		// Update organization's own balance
-		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, true)
+		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, true, lang)
 	} else if transaction.Category == "User" {
 		// Update user's balance
 		if transaction.User == "" {
-			return fmt.Errorf(i18n.Translate("en", "general:User is required for User category transaction"))
+			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
-		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount); err != nil {
+		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, lang); err != nil {
 			return err
 		}
 		// Update organization's user balance sum
-		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, false)
+		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, false, lang)
 	}
 	return nil
 }

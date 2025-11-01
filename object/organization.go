@@ -571,13 +571,13 @@ func (org *Organization) GetInitScore() (int, error) {
 	}
 }
 
-func UpdateOrganizationBalance(owner string, name string, balance float64, isOrgBalance bool) error {
+func UpdateOrganizationBalance(owner string, name string, balance float64, isOrgBalance bool, lang string) error {
 	organization, err := getOrganization(owner, name)
 	if err != nil {
 		return err
 	}
 	if organization == nil {
-		return fmt.Errorf(i18n.Translate("en", "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
+		return fmt.Errorf(i18n.Translate(lang, "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
 	}
 
 	var columns []string
