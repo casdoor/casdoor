@@ -82,6 +82,16 @@ class LoginPage extends React.Component {
     localStorage.setItem("signinUrl", window.location.pathname + window.location.search);
 
     this.form = React.createRef();
+    this.refreshInlineCaptcha = this.refreshInlineCaptcha.bind(this);
+  }
+
+  refreshInlineCaptcha() {
+    this.captchaRef.current?.loadCaptcha?.();
+    this.setState({captchaValues: undefined});
+  }
+
+  isInlineCaptchaEnabled(application = this.getApplicationObj()) {
+    return application?.signinItems?.some(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline");
   }
 
   componentDidMount() {
@@ -442,8 +452,8 @@ class LoginPage extends React.Component {
       }
       const captchaRule = this.getCaptchaRule(this.getApplicationObj());
       const application = this.getApplicationObj();
-      const noModal = application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true);
-      if (!noModal) {
+      const inlineCaptchaEnabled = this.isInlineCaptchaEnabled(application);
+      if (!inlineCaptchaEnabled) {
         if (captchaRule === CaptchaRule.Always) {
           this.setState({
             openCaptchaModal: true,
@@ -470,6 +480,7 @@ class LoginPage extends React.Component {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     const usedCaptcha = this.state.captchaValues !== undefined;
+    const skipCaptchaRefreshOnSignIn = this.state.loginMethod?.includes("verificationCode") && this.isInlineCaptchaEnabled();
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
@@ -496,8 +507,8 @@ class LoginPage extends React.Component {
           Setting.checkLoginMfa(res, values, casParams, loginHandler, this);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-          if (usedCaptcha) {
-            this.captchaRef.current?.loadCaptcha?.();
+          if (usedCaptcha && !skipCaptchaRefreshOnSignIn) {
+            this.refreshInlineCaptcha();
           }
         }
       }).finally(() => {
@@ -572,8 +583,8 @@ class LoginPage extends React.Component {
             Setting.checkLoginMfa(res, values, oAuthParams, loginHandler, this);
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-            if (usedCaptcha) {
-              this.captchaRef.current?.loadCaptcha?.();
+            if (usedCaptcha && !skipCaptchaRefreshOnSignIn) {
+              this.refreshInlineCaptcha();
             }
           }
         }).finally(() => {
@@ -1337,7 +1348,8 @@ class LoginPage extends React.Component {
                 onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
                 application={application}
                 captchaValue={this.state.captchaValues}
-                useInlineCaptcha={application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true)}
+                useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
+                refreshCaptcha={this.refreshInlineCaptcha}
               />
             </Form.Item>
           </div>
@@ -1365,7 +1377,8 @@ class LoginPage extends React.Component {
               onButtonClickArgs={[this.state.username, this.state.validEmail ? "email" : "phone", Setting.getApplicationName(application)]}
               application={application}
               captchaValue={this.state.captchaValues}
-              useInlineCaptcha={application?.signinItems.map(signinItem => signinItem.name === "Captcha" && signinItem.rule === "inline").includes(true)}
+              useInlineCaptcha={this.isInlineCaptchaEnabled(application)}
+              refreshCaptcha={this.refreshInlineCaptcha}
             />
           </Form.Item>
         </Col>
