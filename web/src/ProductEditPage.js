@@ -233,7 +233,7 @@ class ProductEditPage extends React.Component {
                   {id: "TWD", name: "TWD"},
                   {id: "CZK", name: "CZK"},
                   {id: "HUF", name: "HUF"},
-                ].map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                ].map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
               }
             </Select>
           </Col>

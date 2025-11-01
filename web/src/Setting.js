@@ -1601,6 +1601,53 @@ export function getCurrencySymbol(currency) {
   }
 }
 
+export function getCurrencyCountryCode(currency) {
+  const currencyToCountry = {
+    USD: "US",
+    CNY: "CN",
+    EUR: "EU",
+    JPY: "JP",
+    GBP: "GB",
+    AUD: "AU",
+    CAD: "CA",
+    CHF: "CH",
+    HKD: "HK",
+    SGD: "SG",
+    BRL: "BR",
+    PLN: "PL",
+    KRW: "KR",
+    INR: "IN",
+    RUB: "RU",
+    MXN: "MX",
+    ZAR: "ZA",
+    TRY: "TR",
+    SEK: "SE",
+    NOK: "NO",
+    DKK: "DK",
+    THB: "TH",
+    MYR: "MY",
+    TWD: "TW",
+    CZK: "CZ",
+    HUF: "HU",
+  };
+
+  return currencyToCountry[currency?.toUpperCase()] || null;
+}
+
+export function getCurrencyWithFlag(currency) {
+  const countryCode = getCurrencyCountryCode(currency);
+  if (!countryCode) {
+    return currency;
+  }
+
+  return (
+    <span>
+      <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
+      {currency}
+    </span>
+  );
+}
+
 export function getFriendlyUserName(account) {
   if (account.firstName !== "" && account.lastName !== "") {
     return `${account.firstName}, ${account.lastName}`;
