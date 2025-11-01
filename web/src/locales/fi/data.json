@@ -525,7 +525,7 @@
     "Show all": "Näytä kaikki",
     "Upload (.xlsx)": "Lataa (.xlsx)",
     "Virtual": "Virtuaalinen",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -\u003e [Ryhmät]."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
   },
   "home": {
     "New users past 30 days": "Uudet käyttäjät viimeisen 30 päivän aikana",
