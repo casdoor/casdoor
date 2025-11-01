@@ -307,7 +307,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 	if provider.Type == "Dummy" {
 		payment.State = pp.PaymentStatePaid
-		err = UpdateUserBalance(user.Owner, user.Name, payment.Price)
+		err = UpdateUserBalance(user.Owner, user.Name, payment.Price, "en")
 		if err != nil {
 			return nil, nil, err
 		}
@@ -316,7 +316,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			return nil, nil, fmt.Errorf("insufficient user balance")
 		}
 		transaction.Amount = -transaction.Amount
-		err = UpdateUserBalance(user.Owner, user.Name, -product.Price)
+		err = UpdateUserBalance(user.Owner, user.Name, -product.Price, "en")
 		if err != nil {
 			return nil, nil, err
 		}
@@ -334,7 +334,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	}
 
 	if product.IsRecharge || provider.Type == "Balance" {
-		affected, err = AddTransaction(transaction)
+		affected, err = AddTransaction(transaction, "en")
 		if err != nil {
 			return nil, nil, err
 		}

@@ -863,7 +863,7 @@ func initDefinedTransaction(transaction *Transaction) {
 		if initDataNewOnly {
 			return
 		}
-		affected, err := DeleteTransaction(transaction)
+		affected, err := DeleteTransaction(transaction, "en")
 		if err != nil {
 			panic(err)
 		}
@@ -872,7 +872,7 @@ func initDefinedTransaction(transaction *Transaction) {
 		}
 	}
 	transaction.CreatedTime = util.GetCurrentTime()
-	_, err = AddTransaction(transaction)
+	_, err = AddTransaction(transaction, "en")
 	if err != nil {
 		panic(err)
 	}

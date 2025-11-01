@@ -43,6 +43,8 @@ import AccountAvatar from "./account/AccountAvatar";
 import FaceIdTable from "./table/FaceIdTable";
 import MfaAccountTable from "./table/MfaAccountTable";
 import MfaTable from "./table/MfaTable";
+import TransactionTable from "./table/TransactionTable";
+import * as TransactionBackend from "./backend/TransactionBackend";
 
 const {Option} = Select;
 
@@ -63,6 +65,7 @@ class UserEditPage extends React.Component {
       returnUrl: null,
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
       openFaceRecognitionModal: false,
+      transactions: [],
     };
   }
 
@@ -100,6 +103,25 @@ class UserEditPage extends React.Component {
           multiFactorAuths: res.data?.multiFactorAuths ?? [],
           loading: false,
         });
+
+        // Load user transactions
+        this.getUserTransactions();
+      });
+  }
+
+  getUserTransactions() {
+    TransactionBackend.getUserTransactions(this.state.organizationName, this.state.userName)
+      .then((res) => {
+        if (res.status === "ok") {
+          this.setState({
+            transactions: res.data ?? [],
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to load")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
@@ -1197,53 +1219,60 @@ class UserEditPage extends React.Component {
 
   renderUser() {
     return (
-      <Card size="small" title={
-        (this.props.account === null) ? i18next.t("user:User Profile") : (
-          <div>
-            {this.state.mode === "add" ? i18next.t("user:New User") : (this.isSelf() ? i18next.t("account:My Account") : i18next.t("user:Edit User"))}&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
-            <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
-          </div>
-        )
-      } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
-        <Form>
-          {
-            this.getUserOrganization()?.accountItems?.map(accountItem => {
-              if (!accountItem.visible) {
-                return null;
-              }
-
-              const isAdmin = Setting.isLocalAdminUser(this.props.account);
-
-              if (accountItem.viewRule === "Self") {
-                if (!this.isSelfOrAdmin()) {
+      <div>
+        <Card size="small" title={
+          (this.props.account === null) ? i18next.t("user:User Profile") : (
+            <div>
+              {this.state.mode === "add" ? i18next.t("user:New User") : (this.isSelf() ? i18next.t("account:My Account") : i18next.t("user:Edit User"))}&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button onClick={() => this.submitUserEdit(false)}>{i18next.t("general:Save")}</Button>
+              <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitUserEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+              {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
+            </div>
+          )
+        } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
+          <Form>
+            {
+              this.getUserOrganization()?.accountItems?.map(accountItem => {
+                if (!accountItem.visible) {
                   return null;
                 }
-              } else if (accountItem.viewRule === "Admin") {
-                if (!isAdmin) {
-                  return null;
+
+                const isAdmin = Setting.isLocalAdminUser(this.props.account);
+
+                if (accountItem.viewRule === "Self") {
+                  if (!this.isSelfOrAdmin()) {
+                    return null;
+                  }
+                } else if (accountItem.viewRule === "Admin") {
+                  if (!isAdmin) {
+                    return null;
+                  }
                 }
-              }
-              return (
-                <React.Fragment key={accountItem.name}>
-                  <Form.Item name={accountItem.name}
-                    validateTrigger="onChange"
-                    rules={[
-                      {
-                        pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
-                        message: i18next.t("user:This field value doesn't match the pattern rule"),
-                      },
-                    ]}
-                    style={{margin: 0}}>
-                    {this.renderAccountItem(accountItem)}
-                  </Form.Item>
-                </React.Fragment>
-              );
-            })
-          }
-        </Form>
-      </Card>
+                return (
+                  <React.Fragment key={accountItem.name}>
+                    <Form.Item name={accountItem.name}
+                      validateTrigger="onChange"
+                      rules={[
+                        {
+                          pattern: accountItem.regex ? new RegExp(accountItem.regex, "g") : null,
+                          message: i18next.t("user:This field value doesn't match the pattern rule"),
+                        },
+                      ]}
+                      style={{margin: 0}}>
+                      {this.renderAccountItem(accountItem)}
+                    </Form.Item>
+                  </React.Fragment>
+                );
+              })
+            }
+          </Form>
+        </Card>
+        {this.state.mode !== "add" && this.state.transactions.length > 0 ? (
+          <Card size="small" title={i18next.t("transaction:Transactions")} style={{marginTop: "20px", ...(Setting.isMobile() ? {margin: "5px"} : {})}} type="inner">
+            <TransactionTable transactions={this.state.transactions} />
+          </Card>
+        ) : null}
+      </div>
     );
   }
 

@@ -88,6 +88,9 @@ type Organization struct {
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
+
+	OrgBalance  float64 `json:"orgBalance"`
+	UserBalance float64 `json:"userBalance"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {
@@ -566,4 +569,26 @@ func (org *Organization) GetInitScore() (int, error) {
 	} else {
 		return strconv.Atoi(conf.GetConfigString("initScore"))
 	}
+}
+
+func UpdateOrganizationBalance(owner string, name string, balance float64, isOrgBalance bool, lang string) error {
+	organization, err := getOrganization(owner, name)
+	if err != nil {
+		return err
+	}
+	if organization == nil {
+		return fmt.Errorf(i18n.Translate(lang, "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
+	}
+
+	var columns []string
+	if isOrgBalance {
+		organization.OrgBalance += balance
+		columns = []string{"org_balance"}
+	} else {
+		organization.UserBalance += balance
+		columns = []string{"user_balance"}
+	}
+
+	_, err = ormer.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(organization)
+	return err
 }

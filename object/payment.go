@@ -201,7 +201,7 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 	}
 
 	if payment.IsRecharge {
-		err = UpdateUserBalance(payment.Owner, payment.User, payment.Price)
+		err = UpdateUserBalance(payment.Owner, payment.User, payment.Price, "en")
 		return payment, notifyResult, err
 	}
 
@@ -230,7 +230,7 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 
 		if transaction != nil {
 			transaction.State = payment.State
-			_, err = UpdateTransaction(transaction.GetId(), transaction)
+			_, err = UpdateTransaction(transaction.GetId(), transaction, "en")
 			if err != nil {
 				return nil, err
 			}
