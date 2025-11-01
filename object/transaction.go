@@ -17,6 +17,7 @@ package object
 import (
 	"fmt"
 
+	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -175,7 +176,7 @@ func updateBalanceForTransaction(transaction *Transaction, amount float64) error
 	} else if transaction.Category == "User" {
 		// Update user's balance
 		if transaction.User == "" {
-			return fmt.Errorf("user is required for User category transaction")
+			return fmt.Errorf(i18n.Translate("en", "general:User is required for User category transaction"))
 		}
 		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount); err != nil {
 			return err

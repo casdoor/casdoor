@@ -117,11 +117,11 @@ class UserEditPage extends React.Component {
             transactions: res.data ?? [],
           });
         } else {
-          Setting.showMessage("error", `Failed to load transactions: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to load")}: ${res.msg}`);
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Failed to connect to server: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 

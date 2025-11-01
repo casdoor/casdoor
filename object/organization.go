@@ -577,7 +577,7 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, isOrg
 		return err
 	}
 	if organization == nil {
-		return fmt.Errorf("organization not found: %s/%s", owner, name)
+		return fmt.Errorf(i18n.Translate("en", "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
 	}
 
 	var columns []string
