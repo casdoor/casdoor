@@ -525,7 +525,7 @@
     "Show all": "عرض الكل",
     "Upload (.xlsx)": "تحميل (.xlsx)",
     "Virtual": "افتراضي",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -\u003e [المجموعات]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
   },
   "home": {
     "New users past 30 days": "مستخدمون جدد خلال آخر 30 يومًا",
