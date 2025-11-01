@@ -310,7 +310,7 @@
     "Failed to copy": "کپی ناموفق بود",
     "Failed to delete": "عدم موفقیت در حذف",
     "Failed to enable": "عدم موفقیت در فعال‌سازی",
-    "Failed to get TermsOfUse URL": "عدم موفقیت در دریافت آدرس شرایط استفاده",
+    "Failed to get": "دریافت ناموفق بود",
     "Failed to remove": "عدم موفقیت در حذف",
     "Failed to save": "عدم موفقیت در ذخیره",
     "Failed to sync": "عدم موفقیت در همگام‌سازی",
@@ -509,7 +509,7 @@
     "Show all": "نمایش همه",
     "Upload (.xlsx)": "آپلود (.xlsx)",
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -\u003e [گروه‌ها] مشاهده کنید"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "هر بار که به حساب خود وارد می‌شوید، به رمز عبور و یک کد تأیید نیاز خواهید داشت",
     "Enable multi-factor authentication": "فعال کردن احراز هویت چندعاملی",
-    "Failed to get application": "عدم موفقیت در دریافت برنامه",
     "Failed to initiate MFA": "عدم موفقیت در آغاز MFA",
     "Have problems?": "مشکلی دارید؟",
     "Multi-factor authentication": "احراز هویت چندعاملی",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "کپی آدرس صفحه قیمت‌گذاری",
     "Edit Pricing": "ویرایش قیمت‌گذاری",
-    "Failed to get plans": "عدم موفقیت در دریافت طرح‌ها",
     "Free": "رایگان",
     "Getting started": "شروع به کار",
     "New Pricing": "قیمت‌گذاری جدید",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "استفاده CPU",
     "Community": "جامعه",
     "Count": "تعداد",
-    "Failed to get CPU usage": "عدم موفقیت در دریافت استفاده CPU",
-    "Failed to get memory usage": "عدم موفقیت در دریافت استفاده حافظه",
     "Latency": "تأخیر",
     "Memory Usage": "استفاده حافظه",
     "Official website": "وب‌سایت رسمی",

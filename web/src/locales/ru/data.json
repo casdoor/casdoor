@@ -79,7 +79,7 @@
     "Grant types - Tooltip": "Выберите, какие типы грантов разрешены в протоколе OAuth",
     "Header HTML": "HTML заголовка",
     "Header HTML - Edit": "Редактировать HTML заголовка",
-    "Header HTML - Tooltip": "Настройте тег \u003chead\u003e страницы входа в приложение",
+    "Header HTML - Tooltip": "Настройте тег <head> страницы входа в приложение",
     "Incremental": "Инкрементный",
     "Inline": "Встроенный",
     "Input": "Ввод",
@@ -310,7 +310,7 @@
     "Failed to copy": "Не удалось скопировать",
     "Failed to delete": "Не удалось удалить",
     "Failed to enable": "Не удалось включить",
-    "Failed to get TermsOfUse URL": "Не удалось получить URL условий использования",
+    "Failed to get": "Не удалось получить",
     "Failed to remove": "Не удалось удалить",
     "Failed to save": "Не удалось сохранить",
     "Failed to sync": "Не удалось синхронизировать",
@@ -509,7 +509,7 @@
     "Show all": "Показать все",
     "Upload (.xlsx)": "Загрузить (.xlsx)",
     "Virtual": "Виртуальная",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Сначала удалите все подгруппы. Подгруппы можно просмотреть в дереве групп слева на странице [Организации] -\u003e [Группы]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Сначала удалите все подгруппы. Подгруппы можно просмотреть в дереве групп слева на странице [Организации] -> [Группы]"
   },
   "home": {
     "New users past 30 days": "Новые пользователи за 30 дней",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "При каждом входе в аккаунт вам понадобится пароль и код подтверждения",
     "Enable multi-factor authentication": "Включить многофакторную аутентификацию",
-    "Failed to get application": "Не удалось получить приложение",
     "Failed to initiate MFA": "Не удалось начать MFA",
     "Have problems?": "Возникли проблемы?",
     "Multi-factor authentication": "Многофакторная аутентификация",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Скопировать URL прайс-листа",
     "Edit Pricing": "Редактировать ценообразование",
-    "Failed to get plans": "Не удалось получить планы",
     "Free": "Бесплатно",
     "Getting started": "Выьрать план",
     "New Pricing": "Новое ценообразование",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Использование ЦПУ",
     "Community": "Сообщество",
     "Count": "Количество",
-    "Failed to get CPU usage": "Не удалось получить использование процессора",
-    "Failed to get memory usage": "Не удалось получить использование памяти",
     "Latency": "Задержка",
     "Memory Usage": "Использование памяти",
     "Official website": "Официальный веб-сайт",

@@ -310,7 +310,7 @@
     "Failed to copy": "Kopyalama uğursuz oldu",
     "Failed to delete": "Silmə uğursuz oldu",
     "Failed to enable": "Aktiv etmə uğursuz oldu",
-    "Failed to get TermsOfUse URL": "TermsOfUse URL-i almaq uğursuz oldu",
+    "Failed to get": "Əldə edilə bilmədi",
     "Failed to remove": "Silmə uğursuz oldu",
     "Failed to save": "Yadda saxlama uğursuz oldu",
     "Failed to sync": "Sinxronlaşdırma uğursuz oldu",
@@ -509,7 +509,7 @@
     "Show all": "Hamısını göstər",
     "Upload (.xlsx)": "Yüklə (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -\u003e [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -> [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
   },
   "home": {
     "New users past 30 days": "Son 30 gündə yeni istifadəçilər",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Hesabınıza hər daxil olarkən şifrəniz və təsdiqləmə kodunuz lazım olacaq",
     "Enable multi-factor authentication": "Çox-faktorlu təsdiqi aktiv et",
-    "Failed to get application": "Tətbiqi əldə etmək uğursuz oldu",
     "Failed to initiate MFA": "MFA-nı başlatmaq uğursuz oldu",
     "Have problems?": "Problemləriniz var?",
     "Multi-factor authentication": "Çox-faktorlu təsdiq",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Qiymətləndirmə səhifəsi URL-ini köçür",
     "Edit Pricing": "Qiymətləndirməni Redaktə Et",
-    "Failed to get plans": "Planları əldə etmək uğursuz oldu",
     "Free": "Pulsuz",
     "Getting started": "Başlanğıc",
     "New Pricing": "Yeni Qiymətləndirmə",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU İstifadəsi",
     "Community": "İcma",
     "Count": "Say",
-    "Failed to get CPU usage": "CPU istifadəsini almaq uğursuz oldu",
-    "Failed to get memory usage": "Yaddaş istifadəsini almaq uğursuz oldu",
     "Latency": "Gecikmə",
     "Memory Usage": "Yaddaş İstifadəsi",
     "Official website": "Rəsmi sayt",

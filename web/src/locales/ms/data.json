@@ -310,7 +310,7 @@
     "Failed to copy": "Gagal menyalin",
     "Failed to delete": "Gagal untuk padam",
     "Failed to enable": "Gagal untuk dayakan",
-    "Failed to get TermsOfUse URL": "Gagal untuk dapatkan URL Terma Penggunaan",
+    "Failed to get": "Gagal mendapatkan",
     "Failed to remove": "Gagal untuk buang",
     "Failed to save": "Gagal untuk simpan",
     "Failed to sync": "Gagal untuk segerakkan",
@@ -509,7 +509,7 @@
     "Show all": "Tunjukkan semua",
     "Upload (.xlsx)": "Muat naik (.xlsx)",
     "Virtual": "Maya",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Anda perlu padam semua subkumpulan terlebih dahulu. Anda boleh lihat subkumpulan dalam pokok kumpulan kiri halaman [Organisasi] -\u003e [Kumpulan]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Anda perlu padam semua subkumpulan terlebih dahulu. Anda boleh lihat subkumpulan dalam pokok kumpulan kiri halaman [Organisasi] -> [Kumpulan]"
   },
   "home": {
     "New users past 30 days": "Pengguna baharu 30 hari lalu",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Setiap kali anda log masuk ke Akaun anda, anda perlukan kata laluan dan kod pengesahan",
     "Enable multi-factor authentication": "Dayakan pengesahan berbilang faktor",
-    "Failed to get application": "Gagal mendapatkan aplikasi",
     "Failed to initiate MFA": "Gagal memulakan MFA",
     "Have problems?": "Ada masalah?",
     "Multi-factor authentication": "Pengesahan berbilang faktor",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Salin URL halaman harga",
     "Edit Pricing": "Edit Harga",
-    "Failed to get plans": "Gagal mendapatkan pelan",
     "Free": "Percuma",
     "Getting started": "Permulaan",
     "New Pricing": "Harga Baharu",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Penggunaan CPU",
     "Community": "Komuniti",
     "Count": "Kiraan",
-    "Failed to get CPU usage": "Gagal mendapatkan penggunaan CPU",
-    "Failed to get memory usage": "Gagal mendapatkan penggunaan memori",
     "Latency": "Kelewatan",
     "Memory Usage": "Penggunaan Memori",
     "Official website": "Laman web rasmi",

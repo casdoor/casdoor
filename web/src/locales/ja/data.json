@@ -310,7 +310,7 @@
     "Failed to copy": "コピーに失敗しました",
     "Failed to delete": "削除に失敗しました",
     "Failed to enable": "有効化に失敗しました",
-    "Failed to get TermsOfUse URL": "利用規約URLの取得に失敗しました",
+    "Failed to get": "取得に失敗しました",
     "Failed to remove": "削除に失敗しました",
     "Failed to save": "保存に失敗しました",
     "Failed to sync": "同期に失敗しました",
@@ -509,7 +509,7 @@
     "Show all": "すべて表示",
     "Upload (.xlsx)": "アップロード (.xlsx)",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "アカウントにサインインするたびに、パスワードと認証コードが必要です",
     "Enable multi-factor authentication": "多要素認証を有効にする",
-    "Failed to get application": "アプリケーションの取得に失敗しました",
     "Failed to initiate MFA": "MFAの開始に失敗しました",
     "Have problems?": "問題がありますか？",
     "Multi-factor authentication": "多要素認証",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "価格ページのURLをコピー",
     "Edit Pricing": "価格設定を編集",
-    "Failed to get plans": "計画の取得に失敗しました",
     "Free": "無料",
     "Getting started": "はじめる",
     "New Pricing": "新しい価格設定",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU使用率",
     "Community": "コミュニティ",
     "Count": "カウント",
-    "Failed to get CPU usage": "CPU使用率を取得できませんでした",
-    "Failed to get memory usage": "メモリ使用量を取得できませんでした",
     "Latency": "遅延",
     "Memory Usage": "メモリ使用量",
     "Official website": "公式ウェブサイト",

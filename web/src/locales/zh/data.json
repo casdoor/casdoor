@@ -310,7 +310,7 @@
     "Failed to copy": "复制失败",
     "Failed to delete": "删除失败",
     "Failed to enable": "启用失败",
-    "Failed to get TermsOfUse URL": "获取TermsOfUse链接失败",
+    "Failed to get": "获取失败",
     "Failed to remove": "移除失败",
     "Failed to save": "保存失败",
     "Failed to sync": "同步失败",
@@ -509,7 +509,7 @@
     "Show all": "显示全部",
     "Upload (.xlsx)": "上传(.xlsx)",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "每次登录帐户时，都需要密码和认证码",
     "Enable multi-factor authentication": "启用多因素认证",
-    "Failed to get application": "获取应用失败",
     "Failed to initiate MFA": "初始化 MFA 失败",
     "Have problems?": "遇到问题?",
     "Multi-factor authentication": "多因素认证",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "复制定价页面链接",
     "Edit Pricing": "编辑定价",
-    "Failed to get plans": "未能获取计划",
     "Free": "免费",
     "Getting started": "开始使用",
     "New Pricing": "添加定价",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU使用率",
     "Community": "社区",
     "Count": "次数",
-    "Failed to get CPU usage": "获取CPU使用率失败",
-    "Failed to get memory usage": "获取内存使用率失败",
     "Latency": "延迟",
     "Memory Usage": "内存使用率",
     "Official website": "官方网站",

@@ -64,7 +64,7 @@ class SystemInfo extends React.Component {
             this.stopTimer();
           }
         }).catch(error => {
-          Setting.showMessage("error", `System info failed to get: ${error}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${error}`);
           this.stopTimer();
         });
         SystemBackend.getPrometheusInfo().then(res => {
@@ -76,7 +76,7 @@ class SystemInfo extends React.Component {
 
       this.setState({intervalId: id});
     }).catch(error => {
-      Setting.showMessage("error", `System info failed to get: ${error}`);
+      Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${error}`);
       this.stopTimer();
     });
 
@@ -90,7 +90,7 @@ class SystemInfo extends React.Component {
         this.stopTimer();
       }
     }).catch(err => {
-      Setting.showMessage("error", `Version info failed to get: ${err}`);
+      Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${err}`);
       this.stopTimer();
     });
   }
@@ -142,14 +142,14 @@ class SystemInfo extends React.Component {
   };
 
   render() {
-    const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("system:Failed to get CPU usage") :
+    const cpuUi = this.state.systemInfo.cpuUsage?.length <= 0 ? i18next.t("general:Failed to get") :
       this.state.systemInfo.cpuUsage.map((usage, i) => {
         return (
           <Progress key={i} percent={Number(usage.toFixed(1))} />
         );
       });
 
-    const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("system:Failed to get memory usage") :
+    const memUi = this.state.systemInfo.memoryUsed && this.state.systemInfo.memoryTotal && this.state.systemInfo.memoryTotal <= 0 ? i18next.t("general:Failed to get") :
       <div>
         {Setting.getFriendlyFileSize(this.state.systemInfo.memoryUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.memoryTotal)}
         <br /> <br />

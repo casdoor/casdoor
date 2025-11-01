@@ -310,7 +310,7 @@
     "Failed to copy": "Kopírovanie zlyhalo",
     "Failed to delete": "Neúspešne odstránené",
     "Failed to enable": "Nepodarilo sa povoliť",
-    "Failed to get TermsOfUse URL": "Nepodarilo sa získať URL podmienok použitia",
+    "Failed to get": "Nepodarilo sa získať",
     "Failed to remove": "Nepodarilo sa odstrániť",
     "Failed to save": "Nepodarilo sa uložiť",
     "Failed to sync": "Nepodarilo sa synchronizovať",
@@ -509,7 +509,7 @@
     "Show all": "Zobraziť všetko",
     "Upload (.xlsx)": "Nahrať (.xlsx)",
     "Virtual": "Virtuálna",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Najprv musíte odstrániť všetky podprupy. Podprupy môžete zobraziť v ľavom stromu skupín na stránke [Organizácie] -\u003e [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Najprv musíte odstrániť všetky podprupy. Podprupy môžete zobraziť v ľavom stromu skupín na stránke [Organizácie] -> [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví používatelia za posledných 30 dní",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Každýkrát, keď sa prihlásite do svojho účtu, budete potrebovať svoje heslo a overovací kód",
     "Enable multi-factor authentication": "Povoliť viacfaktorovú autentifikáciu",
-    "Failed to get application": "Nepodarilo sa získať aplikáciu",
     "Failed to initiate MFA": "Nepodarilo sa inicializovať MFA",
     "Have problems?": "Máte problémy?",
     "Multi-factor authentication": "Viacfaktorová autentifikácia",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Skopírovať URL stránky s cenami",
     "Edit Pricing": "Upraviť cenové podmienky",
-    "Failed to get plans": "Nepodarilo sa získať plány",
     "Free": "Bezplatné",
     "Getting started": "Začať",
     "New Pricing": "Nové cenové podmienky",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Vyťaženosť CPU",
     "Community": "Komunita",
     "Count": "Počet",
-    "Failed to get CPU usage": "Nepodarilo sa získať vyťaženosť CPU",
-    "Failed to get memory usage": "Nepodarilo sa získať vyťaženosť pamäte",
     "Latency": "Latencia",
     "Memory Usage": "Vyťaženosť pamäte",
     "Official website": "Oficiálna stránka",

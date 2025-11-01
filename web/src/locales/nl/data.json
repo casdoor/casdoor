@@ -310,7 +310,7 @@
     "Failed to copy": "Kopiëren mislukt",
     "Failed to delete": "Verwijderen mislukt",
     "Failed to enable": "Inschakelen mislukt",
-    "Failed to get TermsOfUse URL": "Ophalen van Gebruiksvoorwaarden-URL mislukt",
+    "Failed to get": "Ophalen mislukt",
     "Failed to remove": "Verwijderen mislukt",
     "Failed to save": "Opslaan mislukt",
     "Failed to sync": "Synchroniseren mislukt",
@@ -509,7 +509,7 @@
     "Show all": "Alles weergeven",
     "Upload (.xlsx)": "Uploaden (.xlsx)",
     "Virtual": "Virtueel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -\u003e [Groepen] pagina"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -> [Groepen] pagina"
   },
   "home": {
     "New users past 30 days": "Nieuwe gebruikers afgelopen 30 dagen",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Elke keer dat je inlogt, heb je je wachtwoord en een verificatiecode nodig",
     "Enable multi-factor authentication": "Multifactor-authenticatie inschakelen",
-    "Failed to get application": "Toepassing ophalen mislukt",
     "Failed to initiate MFA": "Starten van MFA mislukt",
     "Have problems?": "Problemen?",
     "Multi-factor authentication": "Multifactor-authenticatie",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Kopieer prijspagina-URL",
     "Edit Pricing": "Prijzen bewerken",
-    "Failed to get plans": "Plannen ophalen mislukt",
     "Free": "Gratis",
     "Getting started": "Aan de slag",
     "New Pricing": "Nieuwe prijs",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU-gebruik",
     "Community": "Community",
     "Count": "Aantal",
-    "Failed to get CPU usage": "CPU-gebruik ophalen mislukt",
-    "Failed to get memory usage": "Geheugengebruik ophalen mislukt",
     "Latency": "Latentie",
     "Memory Usage": "Geheugengebruik",
     "Official website": "Officiële website",

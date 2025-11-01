@@ -310,7 +310,7 @@
     "Failed to copy": "Kopiering misslyckades",
     "Failed to delete": "Misslyckades att ta bort",
     "Failed to enable": "Misslyckades att aktivera",
-    "Failed to get TermsOfUse URL": "Misslyckades att hämta användarvillkor-URL",
+    "Failed to get": "Hämtning misslyckades",
     "Failed to remove": "Misslyckades att ta bort",
     "Failed to save": "Misslyckades att spara",
     "Failed to sync": "Misslyckades att synkronisera",
@@ -509,7 +509,7 @@
     "Show all": "Visa alla",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -\u003e [Grupper]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -> [Grupper]"
   },
   "home": {
     "New users past 30 days": "Nya användare senaste 30 dagarna",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Varje gång du loggar in på ditt konto behöver du ditt lösenord och en verifieringskod",
     "Enable multi-factor authentication": "Aktivera multifaktorautentisering",
-    "Failed to get application": "Misslyckades att hämta applikation",
     "Failed to initiate MFA": "Misslyckades att initiera MFA",
     "Have problems?": "Har du problem?",
     "Multi-factor authentication": "Multifaktorautentisering",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Kopiera prissidans URL",
     "Edit Pricing": "Redigera prissättning",
-    "Failed to get plans": "Misslyckades att hämta planer",
     "Free": "Gratis",
     "Getting started": "Kom igång",
     "New Pricing": "Ny prissättning",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU-användning",
     "Community": "Gemenskap",
     "Count": "Antal",
-    "Failed to get CPU usage": "Misslyckades att hämta CPU-användning",
-    "Failed to get memory usage": "Misslyckades att hämta minnesanvändning",
     "Latency": "Latens",
     "Memory Usage": "Minnesanvändning",
     "Official website": "Officiell webbplats",

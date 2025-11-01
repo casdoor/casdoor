@@ -310,7 +310,7 @@
     "Failed to copy": "ההעתקה נכשלה",
     "Failed to delete": "מחיקה נכשלה",
     "Failed to enable": "הפעלה נכשלה",
-    "Failed to get TermsOfUse URL": "קבלת כתובת תנאי שימוש נכשלה",
+    "Failed to get": "נכשל בקבלת",
     "Failed to remove": "הסרה נכשלה",
     "Failed to save": "שמירה נכשלה",
     "Failed to sync": "סינכרון נכשל",
@@ -509,7 +509,7 @@
     "Show all": "הצג הכול",
     "Upload (.xlsx)": "העלה (.xlsx)",
     "Virtual": "וירטואלי",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -\u003e [קבוצות]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -> [קבוצות]"
   },
   "home": {
     "New users past 30 days": "משתמשים חדשים ב-30 הימים האחרונים",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "בכל פעם שתתחבר לחשבונך, תזדקק לסיסמה ולקוד אימות",
     "Enable multi-factor authentication": "הפעל אימות דו-גורמי",
-    "Failed to get application": "קבלת האפליקציה נכשלה",
     "Failed to initiate MFA": "התחלת MFA נכשלה",
     "Have problems?": "יש בעיות?",
     "Multi-factor authentication": "אימות דו-גורמי",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "העתק כתובת דף תמחור",
     "Edit Pricing": "ערוך תמחור",
-    "Failed to get plans": "קבלת תוכניות נכשלה",
     "Free": "חינם",
     "Getting started": "התחלה",
     "New Pricing": "תמחור חדש",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "שימוש במעבד",
     "Community": "קהילה",
     "Count": "ספירה",
-    "Failed to get CPU usage": "נכשל לקבל שימוש במעבד",
-    "Failed to get memory usage": "נכשל לקבל שימוש בזיכרון",
     "Latency": "זמן תגובה",
     "Memory Usage": "שימוש בזיכרון",
     "Official website": "אתר רשמי",

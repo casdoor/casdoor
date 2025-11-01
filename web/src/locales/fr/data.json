@@ -310,7 +310,7 @@
     "Failed to copy": "Échec de la copie",
     "Failed to delete": "Échec de la suppression",
     "Failed to enable": "Échec de l'activation",
-    "Failed to get TermsOfUse URL": "Échec de récupération de l'URL des conditions d'utilisation",
+    "Failed to get": "Échec de la récupération",
     "Failed to remove": "Échec de la suppression",
     "Failed to save": "Échec de sauvegarde",
     "Failed to sync": "Échec de la synchronisation",
@@ -509,7 +509,7 @@
     "Show all": "Afficher tout",
     "Upload (.xlsx)": "Télécharger (.xlsx)",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -\u003e [Groupes]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users past 30 days": "Nouveaux utilisateurs ces 30 derniers jours",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Chaque fois que vous vous connectez à votre compte, vous aurez besoin de votre mot de passe et d'un code d'authentification",
     "Enable multi-factor authentication": "Activer l'authentification multi-facteur",
-    "Failed to get application": "Échec de récupération de l'application",
     "Failed to initiate MFA": "Échec de l'initialisation MFA",
     "Have problems?": "Des problèmes ?",
     "Multi-factor authentication": "Authentification multi-facteur",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Copier l'URL de la page tarifs",
     "Edit Pricing": "Modifier la tarification",
-    "Failed to get plans": "Échec de la récupération des offres",
     "Free": "Gratuit",
     "Getting started": "Commencer",
     "New Pricing": "Nouvelle tarification",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Utilisation du processeur",
     "Community": "Communauté",
     "Count": "Comptage",
-    "Failed to get CPU usage": "Echec de récupération de l'utilisation du processeur (CPU)",
-    "Failed to get memory usage": "Échec de l'obtention de l'utilisation de la mémoire",
     "Latency": "Retard",
     "Memory Usage": "Utilisation de la mémoire",
     "Official website": "Site web officiel",

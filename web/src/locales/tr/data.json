@@ -310,7 +310,7 @@
     "Failed to copy": "Kopyalama başarısız",
     "Failed to delete": "Silme başarısız oldu",
     "Failed to enable": "Etkinleştirme başarısız",
-    "Failed to get TermsOfUse URL": "Kullanım Şartları URL'si alınamadı",
+    "Failed to get": "Alınamadı",
     "Failed to remove": "Kaldırma başarısız",
     "Failed to save": "Kaydetme başarısız oldu",
     "Failed to sync": "Senkronizasyon başarısız",
@@ -509,7 +509,7 @@
     "Show all": "Tümünü göster",
     "Upload (.xlsx)": "Yükle (.xlsx)",
     "Virtual": "Sanal",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -\u003e [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Önce tüm alt grupları silmeniz gerekir. Alt grupları [Organizasyonlar] -> [Gruplar] sayfasının sol grup ağacından görüntüleyebilirsiniz."
   },
   "home": {
     "New users past 30 days": "Son 30 gündeki yeni kullanıcılar",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Hesabınıza her oturum açtığınızda şifreniz ve bir doğrulama kodu gerekecek",
     "Enable multi-factor authentication": "Çok faktörlü kimlik doğrulamayı etkinleştir",
-    "Failed to get application": "Uygulama alınamadı",
     "Failed to initiate MFA": "MFA başlatılamadı",
     "Have problems?": "Sorun mu var?",
     "Multi-factor authentication": "Çok faktörlü kimlik doğrulama",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Fiyat sayfası URL'sini Kopyala",
     "Edit Pricing": "Fiyatlandırmayı Düzenle",
-    "Failed to get plans": "Planları almak başarısız oldu",
     "Free": "Ücretsiz",
     "Getting started": "Başlarken",
     "New Pricing": "Yeni Fiyatlandırma",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU Kullanımı",
     "Community": "Topluluk",
     "Count": "Sayım",
-    "Failed to get CPU usage": "CPU kullanımını almak başarısız oldu",
-    "Failed to get memory usage": "Bellek kullanımını almak başarısız oldu",
     "Latency": "Gecikme",
     "Memory Usage": "Bellek Kullanımı",
     "Official website": "Resmi web sitesi",

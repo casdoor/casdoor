@@ -310,7 +310,7 @@
     "Failed to copy": "Sao chép thất bại",
     "Failed to delete": "Không thể xoá",
     "Failed to enable": "Bật thất bại",
-    "Failed to get TermsOfUse URL": "Lấy URL Điều khoản sử dụng thất bại",
+    "Failed to get": "Không lấy được",
     "Failed to remove": "Xóa thất bại",
     "Failed to save": "Không thể lưu lại",
     "Failed to sync": "Đồng bộ thất bại",
@@ -509,7 +509,7 @@
     "Show all": "Hiển thị tất cả",
     "Upload (.xlsx)": "Tải lên (.xlsx)",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Mỗi lần đăng nhập vào Tài khoản của bạn, bạn sẽ cần mật khẩu và mã xác thực",
     "Enable multi-factor authentication": "Bật xác thực đa yếu tố",
-    "Failed to get application": "Lấy ứng dụng thất bại",
     "Failed to initiate MFA": "Khởi tạo MFA thất bại",
     "Have problems?": "Có vấn đề?",
     "Multi-factor authentication": "Xác thực đa yếu tố",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Sao chép URL trang bảng giá",
     "Edit Pricing": "Chỉnh sửa giá",
-    "Failed to get plans": "Không thể lấy được các kế hoạch",
     "Free": "Miễn phí",
     "Getting started": "Bắt đầu",
     "New Pricing": "Giá mới",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Sử dụng CPU",
     "Community": "Cộng đồng",
     "Count": "Đếm",
-    "Failed to get CPU usage": "Không thể lấy được thông tin sử dụng CPU",
-    "Failed to get memory usage": "Không thể lấy được thông tin về sử dụng bộ nhớ",
     "Latency": "Trì hoãn",
     "Memory Usage": "Sử dụng bộ nhớ",
     "Official website": "Trang web chính thức",

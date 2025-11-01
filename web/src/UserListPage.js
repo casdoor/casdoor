@@ -171,7 +171,7 @@ class UserListPage extends BaseListPage {
             organization: res.data,
           });
         } else {
-          Setting.showMessage("error", `Failed to get organization: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
         }
       });
   }

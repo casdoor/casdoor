@@ -310,7 +310,7 @@
     "Failed to copy": "Kopiointi epäonnistui",
     "Failed to delete": "Poistaminen epäonnistui",
     "Failed to enable": "Käyttöön ottaminen epäonnistui",
-    "Failed to get TermsOfUse URL": "Käyttöehdot URL:n hakeminen epäonnistui",
+    "Failed to get": "Haku epäonnistui",
     "Failed to remove": "Poistaminen epäonnistui",
     "Failed to save": "Tallentaminen epäonnistui",
     "Failed to sync": "Synkronointi epäonnistui",
@@ -509,7 +509,7 @@
     "Show all": "Näytä kaikki",
     "Upload (.xlsx)": "Lataa (.xlsx)",
     "Virtual": "Virtuaalinen",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -\u003e [Ryhmät]."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sinun täytyy poistaa kaikki aliryhmät ensin. Voit tarkastella aliryhmiä vasemmanpuoleisesta ryhmäpuusta sivulla [Organisaatiot] -> [Ryhmät]."
   },
   "home": {
     "New users past 30 days": "Uudet käyttäjät viimeisen 30 päivän aikana",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Joka kerta kirjautuessasi tilillesi tarvitset salasanasi ja tunnistuskoodin",
     "Enable multi-factor authentication": "Ota monivaiheinen tunnistus käyttöön",
-    "Failed to get application": "Sovelluksen haku epäonnistui",
     "Failed to initiate MFA": "MFA:n käynnistys epäonnistui",
     "Have problems?": "Ongelmia?",
     "Multi-factor authentication": "Monivaiheinen tunnistus",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Kopioi hinnoittelusivun URL",
     "Edit Pricing": "Muokkaa hinnoittelua",
-    "Failed to get plans": "Suunnitelmien haku epäonnistui",
     "Free": "Ilmainen",
     "Getting started": "Aloitus",
     "New Pricing": "Uusi hinnoittelu",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU-käyttö",
     "Community": "Yhteisö",
     "Count": "Lukumäärä",
-    "Failed to get CPU usage": "CPU-käytön haku epäonnistui",
-    "Failed to get memory usage": "Muistin käytön haku epäonnistui",
     "Latency": "Viive",
     "Memory Usage": "Muistin käyttö",
     "Official website": "Virallinen verkkosivu",

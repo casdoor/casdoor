@@ -310,7 +310,7 @@
     "Failed to copy": "Failed to copy",
     "Failed to delete": "Failed to delete",
     "Failed to enable": "Failed to enable",
-    "Failed to get TermsOfUse URL": "Failed to get TermsOfUse URL",
+    "Failed to get": "Failed to get",
     "Failed to remove": "Failed to remove",
     "Failed to save": "Failed to save",
     "Failed to sync": "Failed to sync",
@@ -509,7 +509,7 @@
     "Show all": "Show all",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Each time you sign in to your Account, you'll need your password and a authentication code",
     "Enable multi-factor authentication": "Enable multi-factor authentication",
-    "Failed to get application": "Failed to get application",
     "Failed to initiate MFA": "Failed to initiate MFA",
     "Have problems?": "Have problems?",
     "Multi-factor authentication": "Multi-factor authentication",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Copy pricing page URL",
     "Edit Pricing": "Edit Pricing",
-    "Failed to get plans": "Failed to get plans",
     "Free": "Free",
     "Getting started": "Getting started",
     "New Pricing": "New Pricing",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU Usage",
     "Community": "Community",
     "Count": "Count",
-    "Failed to get CPU usage": "Failed to get CPU usage",
-    "Failed to get memory usage": "Failed to get memory usage",
     "Latency": "Latency",
     "Memory Usage": "Memory Usage",
     "Official website": "Official website",

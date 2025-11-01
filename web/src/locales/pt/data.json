@@ -310,7 +310,7 @@
     "Failed to copy": "Falha ao copiar",
     "Failed to delete": "Falha ao excluir",
     "Failed to enable": "Falha ao ativar",
-    "Failed to get TermsOfUse URL": "Falha ao obter URL dos Termos de Uso",
+    "Failed to get": "Falha ao obter",
     "Failed to remove": "Falha ao remover",
     "Failed to save": "Falha ao salvar",
     "Failed to sync": "Falha ao sincronizar",
@@ -509,7 +509,7 @@
     "Show all": "Mostrar todos",
     "Upload (.xlsx)": "Carregar (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -\u003e [Grupos]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Você precisa excluir todos os subgrupos primeiro. Você pode visualizar os subgrupos na árvore de grupos à esquerda na página [Organizações] -> [Grupos]"
   },
   "home": {
     "New users past 30 days": "Novos usuários nos últimos 30 dias",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Cada vez que você entrar na sua conta, precisará da sua senha e de um código de autenticação",
     "Enable multi-factor authentication": "Ativar autenticação multifator",
-    "Failed to get application": "Falha ao obter aplicação",
     "Failed to initiate MFA": "Falha ao iniciar MFA",
     "Have problems?": "Está com problemas?",
     "Multi-factor authentication": "Autenticação multifator",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Sao chép URL trang bảng giá",
     "Edit Pricing": "Editar Preço",
-    "Failed to get plans": "Falha ao obter planos",
     "Free": "Miễn phí",
     "Getting started": "Bắt đầu",
     "New Pricing": "Novo Preço",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Uso da CPU",
     "Community": "Comunidade",
     "Count": "Contagem",
-    "Failed to get CPU usage": "Falha ao obter o uso da CPU",
-    "Failed to get memory usage": "Falha ao obter o uso da memória",
     "Latency": "Latência",
     "Memory Usage": "Uso da Memória",
     "Official website": "Website oficial",

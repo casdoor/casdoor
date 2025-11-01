@@ -310,7 +310,7 @@
     "Failed to copy": "복사 실패",
     "Failed to delete": "삭제에 실패했습니다",
     "Failed to enable": "활성화 실패",
-    "Failed to get TermsOfUse URL": "이용약관 URL을 가져오지 못했습니다.",
+    "Failed to get": "가져오기 실패",
     "Failed to remove": "제거 실패",
     "Failed to save": "저장에 실패했습니다",
     "Failed to sync": "동기화 실패",
@@ -509,7 +509,7 @@
     "Show all": "모두 표시",
     "Upload (.xlsx)": "업로드 (.xlsx)",
     "Virtual": "가상",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -\u003e [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -> [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
   },
   "home": {
     "New users past 30 days": "지난 30일간 새 사용자",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "계정에 로그인할 때마다 비밀번호와 인증 코드가 필요합니다.",
     "Enable multi-factor authentication": "다단계 인증 활성화",
-    "Failed to get application": "애플리케이션을 가져오지 못했습니다.",
     "Failed to initiate MFA": "MFA 시작 실패",
     "Have problems?": "문제가 있습니까?",
     "Multi-factor authentication": "다단계 인증",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "가격 페이지 URL 복사",
     "Edit Pricing": "가격 편집",
-    "Failed to get plans": "계획을 가져오지 못했습니다.",
     "Free": "무료",
     "Getting started": "시작하기",
     "New Pricing": "새 가격",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU 사용량",
     "Community": "커뮤니티",
     "Count": "카운트",
-    "Failed to get CPU usage": "CPU 사용률을 얻지 못했습니다",
-    "Failed to get memory usage": "메모리 사용률을 가져오는 데 실패했습니다",
     "Latency": "지연",
     "Memory Usage": "메모리 사용량",
     "Official website": "공식 웹사이트",

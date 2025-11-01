@@ -310,7 +310,7 @@
     "Failed to copy": "Көшіру сәтсіз аяқталды",
     "Failed to delete": "Жою сәтсіз аяқталды",
     "Failed to enable": "Қосу сәтсіз аяқталды",
-    "Failed to get TermsOfUse URL": "Қолдану шарттары URL алу сәтсіз аяқталды",
+    "Failed to get": "Алу сәтсіз аяқталды",
     "Failed to remove": "Жою сәтсіз аяқталды",
     "Failed to save": "Сақтау сәтсіз аяқталды",
     "Failed to sync": "Синхрондау сәтсіз аяқталды",
@@ -509,7 +509,7 @@
     "Show all": "Барлығын көрсету",
     "Upload (.xlsx)": "Жүктеу (.xlsx)",
     "Virtual": "Виртуалды",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -\u003e [Топтар] парағының сол жақ топ ағашында көре аласыз"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Алдымен барлық ішкі топтарды жою керек. Ішкі топтарды [Ұйымдар] -> [Топтар] парағының сол жақ топ ағашында көре аласыз"
   },
   "home": {
     "New users past 30 days": "Соңғы 30 күнде жаңа пайдаланушылар",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Әр кірген сайын құпия сөзіңіз бен растау кодын енгізу керек болады",
     "Enable multi-factor authentication": "Көп факторлы растауды қосу",
-    "Failed to get application": "Қолданбаны алу сәтсіз аяқталды",
     "Failed to initiate MFA": "MFA бастау сәтсіз аяқталды",
     "Have problems?": "Мәселе туындады ма?",
     "Multi-factor authentication": "Көп факторлы растау",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Баға парағының URL-ын көшіріп алу",
     "Edit Pricing": "Бағаны өңдеу",
-    "Failed to get plans": "Жоспарлар алынбады",
     "Free": "Тегін",
     "Getting started": "Бастау",
     "New Pricing": "Жаңа баға",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU пайдалану",
     "Community": "Қоғамдастық",
     "Count": "Сан",
-    "Failed to get CPU usage": "CPU пайдалануын алу сәтсіз",
-    "Failed to get memory usage": "Жедел жады пайдалануын алу сәтсіз",
     "Latency": "Кідіріс",
     "Memory Usage": "Жедел жады пайдалану",
     "Official website": "Ресми сайт",

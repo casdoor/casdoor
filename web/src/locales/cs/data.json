@@ -310,7 +310,7 @@
     "Failed to copy": "Kopírování se nezdařilo",
     "Failed to delete": "Nepodařilo se smazat",
     "Failed to enable": "Povolení se nezdařilo",
-    "Failed to get TermsOfUse URL": "Nepodařilo se získat URL podmínek použití",
+    "Failed to get": "Nepodařilo se získat",
     "Failed to remove": "Odstranění se nezdařilo",
     "Failed to save": "Nepodařilo se uložit",
     "Failed to sync": "Synchronizace se nezdařila",
@@ -509,7 +509,7 @@
     "Show all": "Zobrazit vše",
     "Upload (.xlsx)": "Nahrát (.xlsx)",
     "Virtual": "Virtuální",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -\u003e [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -> [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví uživatelé za posledních 30 dní",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Při každém přihlášení do vašeho účtu budete potřebovat heslo a ověřovací kód",
     "Enable multi-factor authentication": "Povolit vícefaktorové ověřování",
-    "Failed to get application": "Nepodařilo se získat aplikaci",
     "Failed to initiate MFA": "Nepodařilo se zahájit MFA",
     "Have problems?": "Máte problémy?",
     "Multi-factor authentication": "Vícefaktorové ověřování",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Zkopírovat URL stránky s cenami",
     "Edit Pricing": "Upravit ceny",
-    "Failed to get plans": "Nepodařilo se získat plány",
     "Free": "Zdarma",
     "Getting started": "Začínáme",
     "New Pricing": "Nové ceny",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Využití CPU",
     "Community": "Komunita",
     "Count": "Počet",
-    "Failed to get CPU usage": "Nepodařilo se získat využití CPU",
-    "Failed to get memory usage": "Nepodařilo se získat využití paměti",
     "Latency": "Latence",
     "Memory Usage": "Využití paměti",
     "Official website": "Oficiální web",

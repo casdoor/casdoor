@@ -310,7 +310,7 @@
     "Failed to copy": "Copia fallita",
     "Failed to delete": "Eliminazione fallita",
     "Failed to enable": "Impossibile abilitare",
-    "Failed to get TermsOfUse URL": "Impossibile ottenere l'URL dei Termini di utilizzo",
+    "Failed to get": "Impossibile ottenere",
     "Failed to remove": "Impossibile rimuovere",
     "Failed to save": "Salvataggio fallito",
     "Failed to sync": "Impossibile sincronizzare",
@@ -509,7 +509,7 @@
     "Show all": "Mostra tutto",
     "Upload (.xlsx)": "Carica (.xlsx)",
     "Virtual": "Virtuale",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Devi eliminare prima tutti i sottogruppi. Puoi visualizzarli nell'albero a sinistra in [Organizzazioni] -\u003e [Gruppi]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Devi eliminare prima tutti i sottogruppi. Puoi visualizzarli nell'albero a sinistra in [Organizzazioni] -> [Gruppi]"
   },
   "home": {
     "New users past 30 days": "Nuovi utenti ultimi 30 giorni",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Ogni volta che accedi al tuo Account, ti serviranno password e codice di autenticazione",
     "Enable multi-factor authentication": "Abilita autenticazione a più fattori",
-    "Failed to get application": "Impossibile ottenere l'applicazione",
     "Failed to initiate MFA": "Impossibile avviare MFA",
     "Have problems?": "Hai problemi?",
     "Multi-factor authentication": "Autenticazione a più fattori",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Copia URL pagina prezzi",
     "Edit Pricing": "Modifica prezzi",
-    "Failed to get plans": "Recupero piani fallito",
     "Free": "Gratuito",
     "Getting started": "Iniziare",
     "New Pricing": "Nuovi prezzi",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Utilizzo CPU",
     "Community": "Comunità",
     "Count": "Conteggio",
-    "Failed to get CPU usage": "Recupero utilizzo CPU fallito",
-    "Failed to get memory usage": "Recupero utilizzo memoria fallito",
     "Latency": "Latenza",
     "Memory Usage": "Utilizzo memoria",
     "Official website": "Sito ufficiale",

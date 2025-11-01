@@ -310,7 +310,7 @@
     "Failed to copy": "Kopieren fehlgeschlagen",
     "Failed to delete": "Konnte nicht gelöscht werden",
     "Failed to enable": "Aktivierung fehlgeschlagen",
-    "Failed to get TermsOfUse URL": "Fehler beim Abrufen der Nutzungsbedingungs-URL",
+    "Failed to get": "Abruf fehlgeschlagen",
     "Failed to remove": "Entfernen fehlgeschlagen",
     "Failed to save": "Konnte nicht gespeichert werden",
     "Failed to sync": "Synchronisation fehlgeschlagen",
@@ -509,7 +509,7 @@
     "Show all": "Alle anzeigen",
     "Upload (.xlsx)": "Hochladen (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -\u003e [Gruppen] anzeigen."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Sie müssen zuerst alle Untergruppen löschen. Sie können die Untergruppen im linken Gruppenbaum unter [Organisationen] -> [Gruppen] anzeigen."
   },
   "home": {
     "New users past 30 days": "Neue Benutzer der letzten 30 Tage",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Jedes Mal, wenn Sie sich anmelden, benötigen Sie Ihr Passwort und einen Authentifizierungscode.",
     "Enable multi-factor authentication": "Mehrfaktorauthentifizierung aktivieren",
-    "Failed to get application": "Anwendung konnte nicht abgerufen werden",
     "Failed to initiate MFA": "MFA-Initialisierung fehlgeschlagen",
     "Have problems?": "Probleme?",
     "Multi-factor authentication": "Mehrfaktorauthentifizierung",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Preisseite URL kopieren",
     "Edit Pricing": "Preise bearbeiten",
-    "Failed to get plans": "Es konnten keine Pläne abgerufen werden",
     "Free": "Kostenlos",
     "Getting started": "Loslegen",
     "New Pricing": "Neue Preisgestaltung",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "CPU-Auslastung",
     "Community": "Gemeinschaft",
     "Count": "Zählen",
-    "Failed to get CPU usage": "Konnte CPU-Auslastung nicht abrufen",
-    "Failed to get memory usage": "Fehler beim Abrufen der Speichernutzung",
     "Latency": "Latenz",
     "Memory Usage": "Speichernutzung",
     "Official website": "Offizielle Webseite",

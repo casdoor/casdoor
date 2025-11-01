@@ -310,7 +310,7 @@
     "Failed to copy": "فشل النسخ",
     "Failed to delete": "فشل الحذف",
     "Failed to enable": "فشل التمكين",
-    "Failed to get TermsOfUse URL": "فشل الحصول على رابط شروط الاستخدام",
+    "Failed to get": "فشل في الحصول على",
     "Failed to remove": "فشل الإزالة",
     "Failed to save": "فشل الحفظ",
     "Failed to sync": "فشل المزامنة",
@@ -509,7 +509,7 @@
     "Show all": "عرض الكل",
     "Upload (.xlsx)": "تحميل (.xlsx)",
     "Virtual": "افتراضي",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -\u003e [المجموعات]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "تحتاج إلى حذف جميع المجموعات الفرعية أولاً. يمكنك عرض المجموعات الفرعية في شجرة المجموعات على اليسار في صفحة [المنظمات] -> [المجموعات]"
   },
   "home": {
     "New users past 30 days": "مستخدمون جدد خلال آخر 30 يومًا",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "في كل مرة تسجل الدخول إلى حسابك، ستحتاج إلى كلمة المرور ورمز مصادقة",
     "Enable multi-factor authentication": "تمكين المصادقة متعددة العوامل",
-    "Failed to get application": "فشل الحصول على التطبيق",
     "Failed to initiate MFA": "فشل بدء MFA",
     "Have problems?": "هل تواجه مشكلات؟",
     "Multi-factor authentication": "المصادقة متعددة العوامل",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "نسخ رابط صفحة التسعير",
     "Edit Pricing": "تعديل التسعير",
-    "Failed to get plans": "فشل الحصول على الخطط",
     "Free": "مجاني",
     "Getting started": "ابدأ الآن",
     "New Pricing": "تسعير جديد",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "استخدام المعالج",
     "Community": "المجتمع",
     "Count": "العدد",
-    "Failed to get CPU usage": "فشل الحصول على استخدام المعالج",
-    "Failed to get memory usage": "فشل الحصول على استخدام الذاكرة",
     "Latency": "زمن الوصول",
     "Memory Usage": "استخدام الذاكرة",
     "Official website": "الموقع الرسمي",

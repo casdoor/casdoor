@@ -310,7 +310,7 @@
     "Failed to copy": "Nie udało się skopiować",
     "Failed to delete": "Nie udało się usunąć",
     "Failed to enable": "Nie udało się włączyć",
-    "Failed to get TermsOfUse URL": "Nie udało się pobrać URL regulaminu",
+    "Failed to get": "Nie udało się pobrać",
     "Failed to remove": "Nie udało się usunąć",
     "Failed to save": "Nie udało się zapisać",
     "Failed to sync": "Nie udało się zsynchronizować",
@@ -509,7 +509,7 @@
     "Show all": "Pokaż wszystko",
     "Upload (.xlsx)": "Prześlij (.xlsx)",
     "Virtual": "Wirtualna",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -\u003e [Grupy]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Musisz najpierw usunąć wszystkie podgrupy. Możesz przeglądać podgrupy w lewym drzewie grup na stronie [Organizacje] -> [Grupy]"
   },
   "home": {
     "New users past 30 days": "Nowi użytkownicy w ciągu ostatnich 30 dni",
@@ -631,7 +631,6 @@
   "mfa": {
     "Each time you sign in to your Account, you'll need your password and a authentication code": "Za każdym razem, gdy logujesz się na swoje konto, potrzebujesz hasła i kodu uwierzytelniającego",
     "Enable multi-factor authentication": "Włącz uwierzytelnianie wieloskładnikowe",
-    "Failed to get application": "Nie udało się pobrać aplikacji",
     "Failed to initiate MFA": "Nie udało się zainicjować MFA",
     "Have problems?": "Masz problemy?",
     "Multi-factor authentication": "Uwierzytelnianie wieloskładnikowe",
@@ -803,7 +802,6 @@
   "pricing": {
     "Copy pricing page URL": "Kopiuj adres strony z cenami",
     "Edit Pricing": "Edytuj cennik",
-    "Failed to get plans": "Nie udało się pobrać planów",
     "Free": "Darmowy",
     "Getting started": "Rozpocznij",
     "New Pricing": "Nowy cennik",
@@ -1189,8 +1187,6 @@
     "CPU Usage": "Wykorzystanie procesora",
     "Community": "Społeczność",
     "Count": "Liczba",
-    "Failed to get CPU usage": "Nie udało się pobrać wykorzystania procesora",
-    "Failed to get memory usage": "Nie udało się pobrać wykorzystania pamięci",
     "Latency": "Opóźnienie",
     "Memory Usage": "Wykorzystanie pamięci",
     "Official website": "Oficjalna strona",

@@ -81,7 +81,7 @@ class MfaSetupPage extends React.Component {
             application: res.data,
           });
         } else {
-          Setting.showMessage("error", i18next.t("mfa:Failed to get application"));
+          Setting.showMessage("error", i18next.t("general:Failed to get"));
         }
       });
   }
