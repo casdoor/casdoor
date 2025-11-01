@@ -81,7 +81,7 @@ export const PasswordModal = (props) => {
     setConfirmLoading(true);
 
     if (organization === null) {
-      Setting.showMessage("error", "organization is null");
+      Setting.showMessage("error", i18next.t("general:Organization is null"));
       setConfirmLoading(false);
       return;
     }

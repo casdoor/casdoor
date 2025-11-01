@@ -118,7 +118,7 @@ class MfaTable extends React.Component {
                 });
 
                 if (value === MfaRuleRequired && requiredCount >= 1) {
-                  Setting.showMessage("error", "Only 1 MFA methods can be required");
+                  Setting.showMessage("error", i18next.t("general:Only 1 MFA method can be required"));
                   return;
                 }
                 this.updateField(table, index, "rule", value);

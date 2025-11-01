@@ -467,7 +467,7 @@ class PermissionEditPage extends React.Component {
 
   submitPermissionEdit(exitAfterSave) {
     if (this.state.permission.users.length === 0 && this.state.permission.roles.length === 0) {
-      Setting.showMessage("error", "The users and roles cannot be empty at the same time");
+      Setting.showMessage("error", i18next.t("general:The users and roles cannot be empty at the same time"));
       return;
     }
     // if (this.state.permission.domains.length === 0) {
@@ -475,15 +475,15 @@ class PermissionEditPage extends React.Component {
     //   return;
     // }
     if (this.state.permission.resources.length === 0) {
-      Setting.showMessage("error", "The resources cannot be empty");
+      Setting.showMessage("error", i18next.t("general:The resources cannot be empty"));
       return;
     }
     if (this.state.permission.actions.length === 0) {
-      Setting.showMessage("error", "The actions cannot be empty");
+      Setting.showMessage("error", i18next.t("general:The actions cannot be empty"));
       return;
     }
     if (!Setting.isLocalAdminUser(this.props.account) && this.state.permission.submitter !== this.props.account.name) {
-      Setting.showMessage("error", "A normal user can only modify the permission submitted by itself");
+      Setting.showMessage("error", i18next.t("general:A normal user can only modify the permission submitted by itself"));
       return;
     }
 

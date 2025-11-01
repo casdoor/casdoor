@@ -39,7 +39,7 @@ class LdapSyncPage extends React.Component {
   syncUsers() {
     const selectedUsers = this.state.selectedUsers;
     if (selectedUsers === null || selectedUsers.length === 0) {
-      Setting.showMessage("error", "Please select al least 1 user first");
+      Setting.showMessage("error", i18next.t("general:Please select at least 1 user first"));
       return;
     }
 
@@ -58,14 +58,14 @@ class LdapSyncPage extends React.Component {
               exist.forEach(elem => {
                 existUser.push(elem.cn);
               });
-              Setting.showMessage("error", `User [${existUser}] is already exist`);
+              Setting.showMessage("error", `${i18next.t("general:User already exists")}: [${existUser}]`);
             }
 
             if (failed && failed.length > 0) {
               failed.forEach(elem => {
                 failedUser.push(elem.cn);
               });
-              Setting.showMessage("error", `Sync [${failedUser}] failed`);
+              Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: [${failedUser}]`);
             }
           }
         } else {

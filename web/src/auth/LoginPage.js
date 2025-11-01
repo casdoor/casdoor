@@ -91,7 +91,7 @@ class LoginPage extends React.Component {
       } else if (this.state.type === "code" || this.state.type === "cas" || this.state.type === "device") {
         this.getApplicationLogin();
       } else {
-        Setting.showMessage("error", `Unknown authentication type: ${this.state.type}`);
+        Setting.showMessage("error", `${i18next.t("general:Unknown authentication type")}: ${this.state.type}`);
       }
     }
   }

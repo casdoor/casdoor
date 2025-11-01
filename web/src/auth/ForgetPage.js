@@ -93,7 +93,7 @@ class ForgetPage extends React.Component {
             const email = res.data.email;
 
             if (!phone && !email) {
-              Setting.showMessage("error", "no verification method!");
+              Setting.showMessage("error", i18next.t("general:No verification method"));
             } else {
               this.setState({
                 name: res.data.name,

@@ -96,10 +96,10 @@ class GroupListPage extends BaseListPage {
         const {pagination} = this.state;
         this.fetch({pagination});
       } else {
-        Setting.showMessage("error", `Groups failed to upload: ${res.msg}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${res.msg}`);
       }
     } else if (status === "error") {
-      Setting.showMessage("error", "File failed to upload");
+      Setting.showMessage("error", i18next.t("general:Failed to upload"));
     }
   }
 

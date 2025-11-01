@@ -70,7 +70,7 @@ class LdapTable extends React.Component {
       }
       )
       .catch(error => {
-        Setting.showMessage("error", `Add LDAP server failed: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${error}`);
       });
   }
 
@@ -86,7 +86,7 @@ class LdapTable extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Delete LDAP server failed: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to delete")}: ${error}`);
       });
   }
 

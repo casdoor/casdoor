@@ -118,7 +118,7 @@ function ManagementPage(props) {
             Setting.goToLinkSoft({props}, "/");
           }
         } else {
-          Setting.showMessage("error", `Failed to log out: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to log out")}: ${res.msg}`);
         }
       });
   }

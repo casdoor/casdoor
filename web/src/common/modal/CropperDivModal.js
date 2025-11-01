@@ -57,7 +57,7 @@ export const CropperDivModal = (props) => {
   const uploadAvatar = () => {
     cropper.getCroppedCanvas().toBlob(blob => {
       if (blob === null) {
-        Setting.showMessage("error", "You must select a picture first!");
+        Setting.showMessage("error", i18next.t("general:You must select a picture first"));
         return false;
       }
       // Setting.showMessage("success", "uploading...");
