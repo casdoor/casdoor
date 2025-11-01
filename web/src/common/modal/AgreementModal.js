@@ -52,7 +52,7 @@ function getTermsOfUseContent(url) {
   })
     .then(r => r.text())
     .catch(error => {
-      Setting.showMessage("error", `${i18next.t("general:Failed to get TermsOfUse URL")}: ${url}, ${error}`);
+      Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${url}, ${error}`);
     });
 }
 

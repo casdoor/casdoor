@@ -156,10 +156,10 @@ class UserListPage extends BaseListPage {
         const {pagination} = this.state;
         this.fetch({pagination});
       } else {
-        Setting.showMessage("error", `Users failed to upload: ${res.msg}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${res.msg}`);
       }
     } else if (status === "error") {
-      Setting.showMessage("error", "File failed to upload");
+      Setting.showMessage("error", i18next.t("general:Failed to upload"));
     }
   }
 
@@ -171,7 +171,7 @@ class UserListPage extends BaseListPage {
             organization: res.data,
           });
         } else {
-          Setting.showMessage("error", `Failed to get organization: ${res.msg}`);
+          Setting.showMessage("error", `${i18next.t("general:Failed to get")}: ${res.msg}`);
         }
       });
   }

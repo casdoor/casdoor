@@ -320,7 +320,7 @@ class LdapEditPage extends React.Component {
         }
       })
       .catch(error => {
-        Setting.showMessage("error", `Update LDAP server failed: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to update")}: ${error}`);
       });
   }
 

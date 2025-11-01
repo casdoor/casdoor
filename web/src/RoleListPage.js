@@ -88,7 +88,7 @@ class RoleListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: ${res.msg}`);
       }
     } else if (status === "error") {
-      Setting.showMessage("error", "File failed to upload");
+      Setting.showMessage("error", i18next.t("general:Failed to upload"));
     }
   }
 

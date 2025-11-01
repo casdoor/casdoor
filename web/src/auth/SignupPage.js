@@ -131,7 +131,7 @@ class SignupPage extends React.Component {
       } else if (oAuthParams !== null) {
         this.getApplicationLogin(oAuthParams);
       } else {
-        Setting.showMessage("error", `Unknown application name: ${this.state.applicationName}`);
+        Setting.showMessage("error", `${i18next.t("general:Unknown application name")}: ${this.state.applicationName}`);
         this.onUpdateApplication(null);
       }
     }

@@ -99,7 +99,7 @@ class SyncerListPage extends BaseListPage {
       )
       .catch(error => {
         this.setState({loading: false});
-        Setting.showMessage("error", `Syncer failed to sync users: ${error}`);
+        Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: ${error}`);
       });
   }
 
