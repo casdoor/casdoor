@@ -480,6 +480,8 @@ class LoginPage extends React.Component {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     const usedCaptcha = this.state.captchaValues !== undefined;
+    // For verification code login methods with inline captcha, don't refresh captcha on sign-in error
+    // because the captcha refresh should happen when Send Code button is clicked instead
     const skipCaptchaRefreshOnSignIn = this.state.loginMethod?.includes("verificationCode") && this.isInlineCaptchaEnabled();
     if (this.state.type === "cas") {
       // CAS
