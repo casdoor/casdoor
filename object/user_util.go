@@ -74,7 +74,8 @@ func GetUserByFields(organization string, field string) (*User, error) {
 
 	// check email
 	if strings.Contains(field, "@") {
-		user, err = GetUserByField(organization, "email", field)
+		normalizedEmail := strings.ToLower(field)
+		user, err = GetUserByField(organization, "email", normalizedEmail)
 		if user != nil || err != nil {
 			return user, err
 		}
