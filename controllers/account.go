@@ -218,7 +218,7 @@ func (c *ApiController) Signup() {
 		Tag:               authForm.Tag,
 		Education:         authForm.Education,
 		Avatar:            organization.DefaultAvatar,
-		Email:             authForm.Email,
+		Email:             strings.ToLower(authForm.Email),
 		Phone:             authForm.Phone,
 		CountryCode:       authForm.CountryCode,
 		Address:           []string{},
