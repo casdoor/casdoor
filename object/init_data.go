@@ -82,157 +82,155 @@ func InitFromFile() {
 
 	logs.Info("InitFromFile: successfully loaded init data file, beginning import...")
 
-	if initData != nil {
-		if len(initData.Organizations) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d organizations", len(initData.Organizations)))
-			for _, organization := range initData.Organizations {
-				initDefinedOrganization(organization)
-			}
+	if len(initData.Organizations) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d organizations", len(initData.Organizations)))
+		for _, organization := range initData.Organizations {
+			initDefinedOrganization(organization)
 		}
-		if len(initData.Providers) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d providers", len(initData.Providers)))
-			for _, provider := range initData.Providers {
-				initDefinedProvider(provider)
-			}
+	}
+	if len(initData.Providers) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d providers", len(initData.Providers)))
+		for _, provider := range initData.Providers {
+			initDefinedProvider(provider)
 		}
-		if len(initData.Applications) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d applications", len(initData.Applications)))
-			for _, application := range initData.Applications {
-				initDefinedApplication(application)
-			}
+	}
+	if len(initData.Applications) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d applications", len(initData.Applications)))
+		for _, application := range initData.Applications {
+			initDefinedApplication(application)
 		}
-		if len(initData.Users) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d users", len(initData.Users)))
-			for _, user := range initData.Users {
-				initDefinedUser(user)
-			}
+	}
+	if len(initData.Users) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d users", len(initData.Users)))
+		for _, user := range initData.Users {
+			initDefinedUser(user)
 		}
-		if len(initData.Certs) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d certs", len(initData.Certs)))
-			for _, cert := range initData.Certs {
-				initDefinedCert(cert)
-			}
+	}
+	if len(initData.Certs) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d certs", len(initData.Certs)))
+		for _, cert := range initData.Certs {
+			initDefinedCert(cert)
 		}
-		if len(initData.Ldaps) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d ldaps", len(initData.Ldaps)))
-			for _, ldap := range initData.Ldaps {
-				initDefinedLdap(ldap)
-			}
+	}
+	if len(initData.Ldaps) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d ldaps", len(initData.Ldaps)))
+		for _, ldap := range initData.Ldaps {
+			initDefinedLdap(ldap)
 		}
-		if len(initData.Models) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d models", len(initData.Models)))
-			for _, model := range initData.Models {
-				initDefinedModel(model)
-			}
+	}
+	if len(initData.Models) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d models", len(initData.Models)))
+		for _, model := range initData.Models {
+			initDefinedModel(model)
 		}
-		if len(initData.Payments) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d payments", len(initData.Payments)))
-			for _, payment := range initData.Payments {
-				initDefinedPayment(payment)
-			}
+	}
+	if len(initData.Payments) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d payments", len(initData.Payments)))
+		for _, payment := range initData.Payments {
+			initDefinedPayment(payment)
 		}
-		if len(initData.Products) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d products", len(initData.Products)))
-			for _, product := range initData.Products {
-				initDefinedProduct(product)
-			}
+	}
+	if len(initData.Products) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d products", len(initData.Products)))
+		for _, product := range initData.Products {
+			initDefinedProduct(product)
 		}
-		if len(initData.Resources) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d resources", len(initData.Resources)))
-			for _, resource := range initData.Resources {
-				initDefinedResource(resource)
-			}
+	}
+	if len(initData.Resources) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d resources", len(initData.Resources)))
+		for _, resource := range initData.Resources {
+			initDefinedResource(resource)
 		}
-		if len(initData.Roles) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d roles", len(initData.Roles)))
-			for _, role := range initData.Roles {
-				initDefinedRole(role)
-			}
+	}
+	if len(initData.Roles) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d roles", len(initData.Roles)))
+		for _, role := range initData.Roles {
+			initDefinedRole(role)
 		}
-		if len(initData.Syncers) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d syncers", len(initData.Syncers)))
-			for _, syncer := range initData.Syncers {
-				initDefinedSyncer(syncer)
-			}
+	}
+	if len(initData.Syncers) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d syncers", len(initData.Syncers)))
+		for _, syncer := range initData.Syncers {
+			initDefinedSyncer(syncer)
 		}
-		if len(initData.Tokens) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d tokens", len(initData.Tokens)))
-			for _, token := range initData.Tokens {
-				initDefinedToken(token)
-			}
+	}
+	if len(initData.Tokens) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d tokens", len(initData.Tokens)))
+		for _, token := range initData.Tokens {
+			initDefinedToken(token)
 		}
-		if len(initData.Webhooks) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d webhooks", len(initData.Webhooks)))
-			for _, webhook := range initData.Webhooks {
-				initDefinedWebhook(webhook)
-			}
+	}
+	if len(initData.Webhooks) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d webhooks", len(initData.Webhooks)))
+		for _, webhook := range initData.Webhooks {
+			initDefinedWebhook(webhook)
 		}
-		if len(initData.Groups) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d groups", len(initData.Groups)))
-			for _, group := range initData.Groups {
-				initDefinedGroup(group)
-			}
+	}
+	if len(initData.Groups) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d groups", len(initData.Groups)))
+		for _, group := range initData.Groups {
+			initDefinedGroup(group)
 		}
-		if len(initData.Adapters) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d adapters", len(initData.Adapters)))
-			for _, adapter := range initData.Adapters {
-				initDefinedAdapter(adapter)
-			}
+	}
+	if len(initData.Adapters) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d adapters", len(initData.Adapters)))
+		for _, adapter := range initData.Adapters {
+			initDefinedAdapter(adapter)
 		}
-		if len(initData.Enforcers) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d enforcers", len(initData.Enforcers)))
-			for _, enforcer := range initData.Enforcers {
-				policies := initData.EnforcerPolicies[enforcer.GetId()]
-				initDefinedEnforcer(enforcer, policies)
-			}
+	}
+	if len(initData.Enforcers) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d enforcers", len(initData.Enforcers)))
+		for _, enforcer := range initData.Enforcers {
+			policies := initData.EnforcerPolicies[enforcer.GetId()]
+			initDefinedEnforcer(enforcer, policies)
 		}
-		if len(initData.Permissions) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d permissions", len(initData.Permissions)))
-			for _, permission := range initData.Permissions {
-				initDefinedPermission(permission)
-			}
+	}
+	if len(initData.Permissions) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d permissions", len(initData.Permissions)))
+		for _, permission := range initData.Permissions {
+			initDefinedPermission(permission)
 		}
-		if len(initData.Plans) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d plans", len(initData.Plans)))
-			for _, plan := range initData.Plans {
-				initDefinedPlan(plan)
-			}
+	}
+	if len(initData.Plans) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d plans", len(initData.Plans)))
+		for _, plan := range initData.Plans {
+			initDefinedPlan(plan)
 		}
-		if len(initData.Pricings) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d pricings", len(initData.Pricings)))
-			for _, pricing := range initData.Pricings {
-				initDefinedPricing(pricing)
-			}
+	}
+	if len(initData.Pricings) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d pricings", len(initData.Pricings)))
+		for _, pricing := range initData.Pricings {
+			initDefinedPricing(pricing)
 		}
-		if len(initData.Invitations) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d invitations", len(initData.Invitations)))
-			for _, invitation := range initData.Invitations {
-				initDefinedInvitation(invitation)
-			}
+	}
+	if len(initData.Invitations) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d invitations", len(initData.Invitations)))
+		for _, invitation := range initData.Invitations {
+			initDefinedInvitation(invitation)
 		}
-		if len(initData.Records) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d records", len(initData.Records)))
-			for _, record := range initData.Records {
-				initDefinedRecord(record)
-			}
+	}
+	if len(initData.Records) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d records", len(initData.Records)))
+		for _, record := range initData.Records {
+			initDefinedRecord(record)
 		}
-		if len(initData.Sessions) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d sessions", len(initData.Sessions)))
-			for _, session := range initData.Sessions {
-				initDefinedSession(session)
-			}
+	}
+	if len(initData.Sessions) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d sessions", len(initData.Sessions)))
+		for _, session := range initData.Sessions {
+			initDefinedSession(session)
 		}
-		if len(initData.Subscriptions) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d subscriptions", len(initData.Subscriptions)))
-			for _, subscription := range initData.Subscriptions {
-				initDefinedSubscription(subscription)
-			}
+	}
+	if len(initData.Subscriptions) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d subscriptions", len(initData.Subscriptions)))
+		for _, subscription := range initData.Subscriptions {
+			initDefinedSubscription(subscription)
 		}
-		if len(initData.Transactions) > 0 {
-			logs.Info(fmt.Sprintf("InitFromFile: importing %d transactions", len(initData.Transactions)))
-			for _, transaction := range initData.Transactions {
-				initDefinedTransaction(transaction)
-			}
+	}
+	if len(initData.Transactions) > 0 {
+		logs.Info(fmt.Sprintf("InitFromFile: importing %d transactions", len(initData.Transactions)))
+		for _, transaction := range initData.Transactions {
+			initDefinedTransaction(transaction)
 		}
 	}
 
