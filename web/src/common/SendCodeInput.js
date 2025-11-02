@@ -76,8 +76,8 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
       return;
     }
 
-    if (!captchaValue?.captchaType) {
-      Setting.showMessage("error", i18next.t(i18next.t("code:Empty code")));
+    if (!captchaValue?.captchaType || !captchaValue?.captchaToken) {
+      Setting.showMessage("error", i18next.t("general:Please complete the captcha") || "Please complete the captcha");
       return;
     }
     handleOk(captchaValue.captchaType, captchaValue.captchaToken, captchaValue.clientSecret);
