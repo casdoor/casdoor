@@ -35,7 +35,8 @@ type Session struct {
 
 	SessionId []string `json:"sessionId"`
 
-	ExclusiveSignin bool `xorm:"-"`
+	ExclusiveSignin   bool `xorm:"-"`
+	DeleteAllSessions bool `xorm:"-" json:"deleteAllSessions,omitempty"`
 }
 
 func GetSessions(owner string) ([]*Session, error) {
@@ -154,10 +155,39 @@ func AddSession(session *Session) (bool, error) {
 	}
 }
 
-func DeleteSession(id string) (bool, error) {
+func DeleteSession(id string, deleteAllSessions bool) (bool, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
+	session, err := GetSingleSession(id)
+
 	if owner == CasdoorOrganization && application == CasdoorApplication {
-		session, err := GetSingleSession(id)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	var affected int64
+	if deleteAllSessions {
+		// Get all sessions for this organization and user (without application filter)
+		sessions := []*Session{}
+		err = ormer.Engine.Where("owner = ? AND name = ?", owner, name).Find(&sessions)
+		if err != nil {
+			return false, err
+		}
+
+		// Delete all session IDs from beego session store
+		for _, sess := range sessions {
+			if sess.SessionId != nil {
+				DeleteBeegoSession(sess.SessionId)
+			}
+		}
+
+		// Delete all sessions from database
+		affected, err = ormer.Engine.Where("owner = ? AND name = ?", owner, name).Delete(&Session{})
+		if err != nil {
+			return false, err
+		}
+	} else {
+		affected, err = ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
 		if err != nil {
 			return false, err
 		}
@@ -165,11 +195,6 @@ func DeleteSession(id string) (bool, error) {
 		if session != nil {
 			DeleteBeegoSession(session.SessionId)
 		}
-	}
-
-	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
-	if err != nil {
-		return false, err
 	}
 
 	return affected != 0, nil
@@ -191,7 +216,7 @@ func DeleteSessionId(id string, sessionId string) (bool, error) {
 
 	session.SessionId = util.DeleteVal(session.SessionId, sessionId)
 	if len(session.SessionId) == 0 {
-		return DeleteSession(id)
+		return DeleteSession(id, false)
 	} else {
 		return UpdateSession(id, session)
 	}
