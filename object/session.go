@@ -157,15 +157,10 @@ func AddSession(session *Session) (bool, error) {
 
 func DeleteSession(id string, deleteAllSessions bool) (bool, error) {
 	owner, name, application := util.GetOwnerAndNameAndOtherFromId(id)
-	session, err := GetSingleSession(id)
-
-	if owner == CasdoorOrganization && application == CasdoorApplication {
-		if err != nil {
-			return false, err
-		}
-	}
 
 	var affected int64
+	var err error
+
 	if deleteAllSessions {
 		// Get all sessions for this organization and user (without application filter)
 		sessions := []*Session{}
@@ -174,7 +169,7 @@ func DeleteSession(id string, deleteAllSessions bool) (bool, error) {
 			return false, err
 		}
 
-		// Delete all session IDs from beego session store
+		// Delete all session IDs from beego session store first
 		for _, sess := range sessions {
 			if sess.SessionId != nil {
 				DeleteBeegoSession(sess.SessionId)
@@ -187,13 +182,21 @@ func DeleteSession(id string, deleteAllSessions bool) (bool, error) {
 			return false, err
 		}
 	} else {
+		// For single application session deletion
+		if owner == CasdoorOrganization && application == CasdoorApplication {
+			session, err := GetSingleSession(id)
+			if err != nil {
+				return false, err
+			}
+
+			if session != nil {
+				DeleteBeegoSession(session.SessionId)
+			}
+		}
+
 		affected, err = ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
 		if err != nil {
 			return false, err
-		}
-
-		if session != nil {
-			DeleteBeegoSession(session.SessionId)
 		}
 	}
 
