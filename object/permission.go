@@ -477,13 +477,19 @@ func (p *Permission) GetModelAndAdapter() string {
 }
 
 func (p *Permission) isUserHit(name string) bool {
-	targetOrg, targetName := util.GetOwnerAndNameFromId(name)
+	targetOrg, targetName, err := util.GetOwnerAndNameFromIdWithError(name)
+	if err != nil {
+		return false
+	}
 	for _, user := range p.Users {
 		if user == "*" {
 			return true
 		}
 
-		userOrg, userName := util.GetOwnerAndNameFromId(user)
+		userOrg, userName, err := util.GetOwnerAndNameFromIdWithError(user)
+		if err != nil {
+			continue
+		}
 		if userOrg == targetOrg && (userName == "*" || userName == targetName) {
 			return true
 		}

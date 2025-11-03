@@ -98,7 +98,10 @@ func getPricing(owner, name string) (*Pricing, error) {
 }
 
 func GetPricing(id string) (*Pricing, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getPricing(owner, name)
 }
 
@@ -117,7 +120,10 @@ func GetApplicationDefaultPricing(owner, appName string) (*Pricing, error) {
 }
 
 func UpdatePricing(id string, pricing *Pricing) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if p, err := getPricing(owner, name); err != nil {
 		return false, err
 	} else if p == nil {

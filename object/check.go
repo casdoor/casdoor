@@ -568,7 +568,10 @@ func CheckApiPermission(userId string, organization string, path string, method 
 }
 
 func CheckLoginPermission(userId string, application *Application) (bool, error) {
-	owner, _ := util.GetOwnerAndNameFromId(userId)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		return false, err
+	}
 	if owner == "built-in" {
 		return true, nil
 	}

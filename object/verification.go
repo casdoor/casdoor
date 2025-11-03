@@ -426,6 +426,9 @@ func getVerification(owner string, name string) (*VerificationRecord, error) {
 }
 
 func GetVerification(id string) (*VerificationRecord, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getVerification(owner, name)
 }

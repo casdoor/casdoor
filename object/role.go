@@ -342,7 +342,10 @@ func roleChangeTrigger(oldName string, newName string) error {
 				continue
 			}
 
-			owner, name := util.GetOwnerAndNameFromId(u)
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			if err != nil {
+				return err
+			}
 			if name == oldName {
 				role.Roles[j] = util.GetId(owner, newName)
 			}
@@ -366,7 +369,10 @@ func roleChangeTrigger(oldName string, newName string) error {
 				continue
 			}
 
-			owner, name := util.GetOwnerAndNameFromId(u)
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			if err != nil {
+				return err
+			}
 			if name == oldName {
 				permission.Roles[j] = util.GetId(owner, newName)
 			}

@@ -77,7 +77,11 @@ func AfterRecordMessage(ctx *context.Context) {
 
 	userId := ctx.Input.Params()["recordUserId"]
 	if userId != "" {
-		record.Organization, record.User = util.GetOwnerAndNameFromId(userId)
+		owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
+		if err != nil {
+			panic(err)
+		}
+		record.Organization, record.User = owner, user
 	}
 
 	var record2 *casvisorsdk.Record

@@ -103,12 +103,18 @@ func getTransaction(owner string, name string) (*Transaction, error) {
 }
 
 func GetTransaction(id string) (*Transaction, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getTransaction(owner, name)
 }
 
 func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	oldTransaction, err := getTransaction(owner, name)
 	if err != nil {
 		return false, err

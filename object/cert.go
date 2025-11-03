@@ -149,7 +149,10 @@ func getCertByName(name string) (*Cert, error) {
 }
 
 func GetCert(id string) (*Cert, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	cert, err := getCert(owner, name)
 	if cert == nil && owner != "admin" {
 		return getCert("admin", name)
@@ -159,7 +162,10 @@ func GetCert(id string) (*Cert, error) {
 }
 
 func UpdateCert(id string, cert *Cert) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if c, err := getCert(owner, name); err != nil {
 		return false, err
 	} else if c == nil {
@@ -167,13 +173,13 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 	}
 
 	if name != cert.Name {
-		err := certChangeTrigger(name, cert.Name)
+		err = certChangeTrigger(name, cert.Name)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	err := cert.populateContent()
+	err = cert.populateContent()
 	if err != nil {
 		return false, err
 	}

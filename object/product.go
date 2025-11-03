@@ -94,12 +94,18 @@ func getProduct(owner string, name string) (*Product, error) {
 }
 
 func GetProduct(id string) (*Product, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getProduct(owner, name)
 }
 
 func UpdateProduct(id string, product *Product) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if p, err := getProduct(owner, name); err != nil {
 		return false, err
 	} else if p == nil {

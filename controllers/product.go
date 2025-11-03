@@ -180,7 +180,11 @@ func (c *ApiController) BuyProduct() {
 	pricingName := c.Input().Get("pricingName")
 	planName := c.Input().Get("planName")
 	paidUserName := c.Input().Get("userName")
-	owner, _ := util.GetOwnerAndNameFromId(id)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	userId := util.GetId(owner, paidUserName)
 	if paidUserName != "" && paidUserName != c.GetSessionUsername() && !c.IsAdmin() {
 		c.ResponseError(c.T("general:Only admin user can specify user"))

@@ -101,12 +101,18 @@ func getWebhook(owner string, name string) (*Webhook, error) {
 }
 
 func GetWebhook(id string) (*Webhook, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getWebhook(owner, name)
 }
 
 func UpdateWebhook(id string, webhook *Webhook, isGlobalAdmin bool, lang string) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if w, err := getWebhook(owner, name); err != nil {
 		return false, err
 	} else if w == nil {

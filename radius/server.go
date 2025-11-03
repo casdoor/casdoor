@@ -152,7 +152,13 @@ func handleAccountingRequest(w radius.ResponseWriter, r *radius.Request) {
 	organization := rfc2865.Class_GetString(r.Packet)
 
 	if strings.Contains(username, "/") {
-		organization, username = util.GetOwnerAndNameFromId(username)
+		var err error
+		organization, username, err = util.GetOwnerAndNameFromIdWithError(username)
+		if err != nil {
+			log.Printf("handleAccountingRequest() failed to parse username, err = %v", err)
+			w.Write(r.Response(radius.CodeAccessReject))
+			return
+		}
 	}
 
 	log.Printf("handleAccountingRequest() username=%v, org=%v, statusType=%v", username, organization, statusType)

@@ -119,7 +119,10 @@ func getSyncer(owner string, name string) (*Syncer, error) {
 }
 
 func GetSyncer(id string) (*Syncer, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getSyncer(owner, name)
 }
 
@@ -155,7 +158,10 @@ func GetMaskedSyncers(syncers []*Syncer, errs ...error) ([]*Syncer, error) {
 }
 
 func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	s, err := getSyncer(owner, name)
 	if err != nil {
 		return false, err

@@ -47,7 +47,11 @@ type LdapSyncResp struct {
 func (c *ApiController) GetLdapUsers() {
 	id := c.Input().Get("id")
 
-	_, ldapId := util.GetOwnerAndNameFromId(id)
+	_, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	ldapServer, err := object.GetLdap(ldapId)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -125,7 +129,11 @@ func (c *ApiController) GetLdap() {
 		return
 	}
 
-	_, name := util.GetOwnerAndNameFromId(id)
+	_, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	ldap, err := object.GetLdap(name)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -255,9 +263,13 @@ func (c *ApiController) DeleteLdap() {
 func (c *ApiController) SyncLdapUsers() {
 	id := c.Input().Get("id")
 
-	owner, ldapId := util.GetOwnerAndNameFromId(id)
+	owner, ldapId, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 	var users []object.LdapUser
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &users)
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &users)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

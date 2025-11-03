@@ -116,12 +116,18 @@ func getPayment(owner string, name string) (*Payment, error) {
 }
 
 func GetPayment(id string) (*Payment, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getPayment(owner, name)
 }
 
 func UpdatePayment(id string, payment *Payment) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if p, err := getPayment(owner, name); err != nil {
 		return false, err
 	} else if p == nil {

@@ -182,7 +182,10 @@ func getProvider(owner string, name string) (*Provider, error) {
 }
 
 func GetProvider(id string) (*Provider, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getProvider(owner, name)
 }
 
@@ -197,7 +200,10 @@ func GetWechatMiniProgramProvider(application *Application) *Provider {
 }
 
 func UpdateProvider(id string, provider *Provider) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if p, err := getProvider(owner, name); err != nil {
 		return false, err
 	} else if p == nil {
@@ -349,7 +355,10 @@ func (p *Provider) GetId() string {
 }
 
 func GetCaptchaProviderByOwnerName(applicationId, lang string) (*Provider, error) {
-	owner, name := util.GetOwnerAndNameFromId(applicationId)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(applicationId)
+	if err != nil {
+		return nil, err
+	}
 	provider := Provider{Owner: owner, Name: name, Category: "Captcha"}
 	existed, err := ormer.Engine.Get(&provider)
 	if err != nil {
@@ -387,7 +396,10 @@ func GetCaptchaProviderByApplication(applicationId, isCurrentProvider, lang stri
 }
 
 func GetFaceIdProviderByOwnerName(applicationId, lang string) (*Provider, error) {
-	owner, name := util.GetOwnerAndNameFromId(applicationId)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(applicationId)
+	if err != nil {
+		return nil, err
+	}
 	provider := Provider{Owner: owner, Name: name, Category: "Face ID"}
 	existed, err := ormer.Engine.Get(&provider)
 	if err != nil {

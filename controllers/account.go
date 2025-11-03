@@ -343,8 +343,12 @@ func (c *ApiController) Logout() {
 
 		c.ClearUserSession()
 		c.ClearTokenSession()
-		owner, username := util.GetOwnerAndNameFromId(user)
-		_, err := object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+		owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -391,7 +395,11 @@ func (c *ApiController) Logout() {
 		c.ClearUserSession()
 		c.ClearTokenSession()
 		// TODO https://github.com/casdoor/casdoor/pull/1494#discussion_r1095675265
-		owner, username := util.GetOwnerAndNameFromId(user)
+		owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 
 		_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
 		if err != nil {
