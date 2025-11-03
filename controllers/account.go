@@ -462,6 +462,7 @@ func (c *ApiController) LogoutAll() {
 	_, err = object.ExpireTokenByUser(owner, username)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
 	}
 
 	sessions, err := object.GetUserSessions(owner, username)
@@ -480,8 +481,13 @@ func (c *ApiController) LogoutAll() {
 		}
 	}
 
-	util.LogInfo(c.Ctx, "API: [%s] logged out from all application", user)
-	c.ResponseOk(object.DeleteAllUserSessions(owner, username))
+	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
+	_, err = object.DeleteAllUserSessions(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	c.ResponseOk()
 }
 
 // GetAccount
