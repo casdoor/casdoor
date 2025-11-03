@@ -60,7 +60,7 @@ func getSubject(ctx *context.Context) (string, string) {
 	// username == "built-in/admin"
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(username)
 	if err != nil {
-		return "anonymous", "anonymous"
+		panic(err)
 	}
 	return owner, name
 }

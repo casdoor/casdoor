@@ -79,8 +79,7 @@ func AfterRecordMessage(ctx *context.Context) {
 	if userId != "" {
 		owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
 		if err != nil {
-			util.LogInfo(ctx, "Failed to parse userId: %v", err)
-			return
+			panic(err)
 		}
 		record.Organization, record.User = owner, user
 	}
