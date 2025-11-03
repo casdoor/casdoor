@@ -851,16 +851,14 @@ func (c *ApiController) Login() {
 				}
 
 				if user == nil {
-					// Check if provider-level signup is allowed first
+					// Check if provider-level signup is allowed
 					if !providerItem.CanSignUp {
 						c.ResponseError(fmt.Sprintf(c.T("auth:The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up"), provider.Type, userInfo.Username, userInfo.DisplayName, provider.Type))
 						return
 					}
 
-					// If provider allows signup (providerItem.CanSignUp is true), skip the application.EnableSignUp check
-					// This allows OAuth providers to auto-create users even when general manual signup is disabled
-					// Only check application.EnableSignUp if provider-level signup is enabled but we still want to respect app-level settings
-					// Note: Since providerItem.CanSignUp is true at this point, we allow OAuth auto-registration
+					// If provider allows signup, allow OAuth auto-registration regardless of application.EnableSignUp
+					// This enables OAuth providers to auto-create users even when manual signup is disabled
 
 					if application.IsSignupItemRequired("Invitation code") {
 						c.ResponseError(c.T("check:Invitation code cannot be blank"))
