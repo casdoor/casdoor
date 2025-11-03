@@ -84,12 +84,18 @@ func getEnforcer(owner string, name string) (*Enforcer, error) {
 }
 
 func GetEnforcer(id string) (*Enforcer, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getEnforcer(owner, name)
 }
 
 func UpdateEnforcer(id string, enforcer *Enforcer) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if oldEnforcer, err := getEnforcer(owner, name); err != nil {
 		return false, err
 	} else if oldEnforcer == nil {

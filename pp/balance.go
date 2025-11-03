@@ -28,7 +28,10 @@ func NewBalancePaymentProvider() (*BalancePaymentProvider, error) {
 }
 
 func (pp *BalancePaymentProvider) Pay(r *PayReq) (*PayResp, error) {
-	owner, _ := util.GetOwnerAndNameFromId(r.PayerId)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(r.PayerId)
+	if err != nil {
+		return nil, err
+	}
 	return &PayResp{
 		PayUrl:  r.ReturnUrl,
 		OrderId: fmt.Sprintf("%s/%s", owner, r.PaymentName),

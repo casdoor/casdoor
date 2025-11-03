@@ -449,7 +449,10 @@ func GetApplicationByUser(user *User) (*Application, error) {
 }
 
 func GetApplicationByUserId(userId string) (application *Application, err error) {
-	_, name := util.GetOwnerAndNameFromId(userId)
+	_, name, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		return nil, err
+	}
 	if IsAppUser(userId) {
 		application, err = getApplication("admin", name)
 		return
@@ -646,7 +649,10 @@ func GetAllowedApplications(applications []*Application, userId string, lang str
 }
 
 func UpdateApplication(id string, application *Application, isGlobalAdmin bool, lang string) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	oldApplication, err := getApplication(owner, name)
 	if oldApplication == nil {
 		return false, err

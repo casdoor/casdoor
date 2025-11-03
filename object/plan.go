@@ -108,12 +108,18 @@ func getPlan(owner, name string) (*Plan, error) {
 }
 
 func GetPlan(id string) (*Plan, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getPlan(owner, name)
 }
 
 func UpdatePlan(id string, plan *Plan) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if p, err := getPlan(owner, name); err != nil {
 		return false, err
 	} else if p == nil {

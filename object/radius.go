@@ -69,7 +69,10 @@ func getPaginationRadiusAccounting(owner, field, value, sortField, sortOrder str
 }
 
 func GetRadiusAccounting(id string) (*RadiusAccounting, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getRadiusAccounting(owner, name)
 }
 
@@ -95,8 +98,11 @@ func DeleteRadiusAccounting(ra *RadiusAccounting) error {
 }
 
 func UpdateRadiusAccounting(id string, ra *RadiusAccounting) error {
-	owner, name := util.GetOwnerAndNameFromId(id)
-	_, err := ormer.Engine.ID(core.PK{owner, name}).Update(ra)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return err
+	}
+	_, err = ormer.Engine.ID(core.PK{owner, name}).Update(ra)
 	return err
 }
 

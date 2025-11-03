@@ -52,7 +52,11 @@ func (c *ApiController) UploadUsers() {
 	}
 
 	userId := c.GetSessionUsername()
-	owner, user := util.GetOwnerAndNameFromId(userId)
+	owner, user, err := util.GetOwnerAndNameFromIdWithError(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
 	file, header, err := c.Ctx.Request.FormFile("file")
 	if err != nil {

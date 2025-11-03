@@ -634,7 +634,10 @@ func GetUserByAccessKey(accessKey string) (*User, error) {
 }
 
 func GetUser(id string) (*User, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getUser(owner, name)
 }
 
@@ -859,7 +862,10 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 
 func UpdateUserForAllFields(id string, user *User) (bool, error) {
 	var err error
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	oldUser, err := getUser(owner, name)
 	if err != nil {
 		return false, err
@@ -1233,7 +1239,10 @@ func userChangeTrigger(oldName string, newName string) error {
 	for _, role := range roles {
 		for j, u := range role.Users {
 			// u = organization/username
-			owner, name := util.GetOwnerAndNameFromId(u)
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			if err != nil {
+				return err
+			}
 			if name == oldName {
 				role.Users[j] = util.GetId(owner, newName)
 			}
@@ -1256,7 +1265,10 @@ func userChangeTrigger(oldName string, newName string) error {
 			}
 
 			// u = organization/username
-			owner, name := util.GetOwnerAndNameFromId(u)
+			owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+			if err != nil {
+				return err
+			}
 			if name == oldName {
 				permission.Users[j] = util.GetId(owner, newName)
 			}

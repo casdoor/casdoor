@@ -135,12 +135,18 @@ func getGroup(owner string, name string) (*Group, error) {
 }
 
 func GetGroup(id string) (*Group, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getGroup(owner, name)
 }
 
 func UpdateGroup(id string, group *Group) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	oldGroup, err := getGroup(owner, name)
 	if oldGroup == nil {
 		return false, err
@@ -299,7 +305,10 @@ func ConvertToTreeData(groups []*Group, parentId string) []*Group {
 }
 
 func GetGroupUserCount(groupId string, field, value string) (int64, error) {
-	owner, _ := util.GetOwnerAndNameFromId(groupId)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return 0, err
+	}
 	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
 	if err != nil {
 		return 0, err
@@ -318,7 +327,10 @@ func GetGroupUserCount(groupId string, field, value string) (int64, error) {
 
 func GetPaginationGroupUsers(groupId string, offset, limit int, field, value, sortField, sortOrder string) ([]*User, error) {
 	users := []*User{}
-	owner, _ := util.GetOwnerAndNameFromId(groupId)
+	owner, _, err := util.GetOwnerAndNameFromIdWithError(groupId)
+	if err != nil {
+		return nil, err
+	}
 	names, err := userEnforcer.GetUserNamesByGroupName(groupId)
 	if err != nil {
 		return nil, err

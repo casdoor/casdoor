@@ -210,12 +210,18 @@ func getSubscription(owner string, name string) (*Subscription, error) {
 }
 
 func GetSubscription(id string) (*Subscription, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getSubscription(owner, name)
 }
 
 func UpdateSubscription(id string, subscription *Subscription) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if s, err := getSubscription(owner, name); err != nil {
 		return false, err
 	} else if s == nil {

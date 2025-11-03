@@ -80,12 +80,18 @@ func getModel(owner string, name string) (*Model, error) {
 }
 
 func GetModel(id string) (*Model, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getModel(owner, name)
 }
 
 func GetModelEx(id string) (*Model, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	model, err := getModel(owner, name)
 	if err != nil {
 		return nil, err
@@ -112,7 +118,10 @@ func UpdateModelWithCheck(id string, modelObj *Model) error {
 }
 
 func UpdateModel(id string, modelObj *Model) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if m, err := getModel(owner, name); err != nil {
 		return false, err
 	} else if m == nil {

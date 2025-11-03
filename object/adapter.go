@@ -88,12 +88,18 @@ func getAdapter(owner, name string) (*Adapter, error) {
 }
 
 func GetAdapter(id string) (*Adapter, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return nil, err
+	}
 	return getAdapter(owner, name)
 }
 
 func UpdateAdapter(id string, adapter *Adapter) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	if adapter, err := getAdapter(owner, name); adapter == nil {
 		return false, err
 	}

@@ -205,7 +205,10 @@ func GetMaskedOrganizations(organizations []*Organization, errs ...error) ([]*Or
 }
 
 func UpdateOrganization(id string, organization *Organization, isGlobalAdmin bool) (bool, error) {
-	owner, name := util.GetOwnerAndNameFromId(id)
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
+	if err != nil {
+		return false, err
+	}
 	org, err := getOrganization(owner, name)
 	if err != nil {
 		return false, err
@@ -425,14 +428,20 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range role.Users {
 		// u = organization/username
-		owner, name := util.GetOwnerAndNameFromId(u)
+		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+		if err != nil {
+			return err
+		}
 		if name == oldName {
 			role.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range role.Roles {
 		// u = organization/username
-		owner, name := util.GetOwnerAndNameFromId(u)
+		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+		if err != nil {
+			return err
+		}
 		if name == oldName {
 			role.Roles[i] = util.GetId(owner, newName)
 		}
@@ -450,14 +459,20 @@ func organizationChangeTrigger(oldName string, newName string) error {
 	}
 	for i, u := range permission.Users {
 		// u = organization/username
-		owner, name := util.GetOwnerAndNameFromId(u)
+		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+		if err != nil {
+			return err
+		}
 		if name == oldName {
 			permission.Users[i] = util.GetId(owner, newName)
 		}
 	}
 	for i, u := range permission.Roles {
 		// u = organization/username
-		owner, name := util.GetOwnerAndNameFromId(u)
+		owner, name, err := util.GetOwnerAndNameFromIdWithError(u)
+		if err != nil {
+			return err
+		}
 		if name == oldName {
 			permission.Roles[i] = util.GetId(owner, newName)
 		}

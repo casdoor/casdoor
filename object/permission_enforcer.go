@@ -138,7 +138,10 @@ func getPolicies(permission *Permission) [][]string {
 }
 
 func getRolesInRole(roleId string, visited map[string]struct{}) ([]*Role, error) {
-	roleOwner, roleName := util.GetOwnerAndNameFromId(roleId)
+	roleOwner, roleName, err := util.GetOwnerAndNameFromIdWithError(roleId)
+	if err != nil {
+		return []*Role{}, err
+	}
 	if roleName == "*" {
 		roles, err := GetRoles(roleOwner)
 		if err != nil {
