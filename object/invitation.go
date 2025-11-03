@@ -152,7 +152,7 @@ func UpdateInvitation(id string, invitation *Invitation, lang string) (bool, err
 		invitation.IsRegexp = isRegexp
 	}
 
-	err := CheckInvitationDefaultCode(invitation.Code, invitation.DefaultCode, lang)
+	err = CheckInvitationDefaultCode(invitation.Code, invitation.DefaultCode, lang)
 	if err != nil {
 		return false, err
 	}

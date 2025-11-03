@@ -173,13 +173,13 @@ func UpdateCert(id string, cert *Cert) (bool, error) {
 	}
 
 	if name != cert.Name {
-		err := certChangeTrigger(name, cert.Name)
+		err = certChangeTrigger(name, cert.Name)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	err := cert.populateContent()
+	err = cert.populateContent()
 	if err != nil {
 		return false, err
 	}
