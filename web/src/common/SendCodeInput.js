@@ -76,6 +76,7 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
       return;
     }
 
+    // client secret is validated in backend 
     if (!captchaValue?.captchaType || !captchaValue?.captchaToken) {
       Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
       return;

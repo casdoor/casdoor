@@ -87,7 +87,6 @@ class LoginPage extends React.Component {
 
   refreshInlineCaptcha() {
     this.captchaRef.current?.loadCaptcha?.();
-    this.setState({captchaValues: undefined});
   }
 
   isInlineCaptchaEnabled(application = this.getApplicationObj()) {
@@ -480,9 +479,8 @@ class LoginPage extends React.Component {
     // here we are supposed to determine whether Casdoor is working as an OAuth server or CAS server
     values["language"] = this.state.userLang ?? "";
     const usedCaptcha = this.state.captchaValues !== undefined;
-    // For verification code login methods with inline captcha, don't refresh captcha on sign-in error
-    // because the captcha refresh should happen when Send Code button is clicked instead
-    const skipCaptchaRefreshOnSignIn = this.state.loginMethod?.includes("verificationCode") && this.isInlineCaptchaEnabled();
+    const inlineCaptchaEnabled = this.isInlineCaptchaEnabled();
+    const shouldRefreshCaptcha = usedCaptcha && inlineCaptchaEnabled && !this.state.loginMethod?.includes("verificationCode");
     if (this.state.type === "cas") {
       // CAS
       const casParams = Util.getCasParameters();
@@ -509,7 +507,7 @@ class LoginPage extends React.Component {
           Setting.checkLoginMfa(res, values, casParams, loginHandler, this);
         } else {
           Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-          if (usedCaptcha && !skipCaptchaRefreshOnSignIn) {
+          if (shouldRefreshCaptcha) {
             this.refreshInlineCaptcha();
           }
         }
@@ -585,7 +583,7 @@ class LoginPage extends React.Component {
             Setting.checkLoginMfa(res, values, oAuthParams, loginHandler, this);
           } else {
             Setting.showMessage("error", `${i18next.t("application:Failed to sign in")}: ${res.msg}`);
-            if (usedCaptcha && !skipCaptchaRefreshOnSignIn) {
+            if (shouldRefreshCaptcha) {
               this.refreshInlineCaptcha();
             }
           }
