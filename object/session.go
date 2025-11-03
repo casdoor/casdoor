@@ -53,6 +53,17 @@ func GetSessions(owner string) ([]*Session, error) {
 	return sessions, nil
 }
 
+func GetUserSessions(owner string, name string) ([]*Session, error) {
+	sessions := []*Session{}
+
+	err := ormer.Engine.Desc("created_time").Where("owner = ? and name = ?", owner, name).Find(&sessions)
+	if err != nil {
+		return sessions, err
+	}
+
+	return sessions, nil
+}
+
 func GetUserAppSessions(owner string, name string, application string) ([]*Session, error) {
 	sessions := []*Session{}
 
@@ -168,6 +179,15 @@ func DeleteSession(id string) (bool, error) {
 	}
 
 	affected, err := ormer.Engine.ID(core.PK{owner, name, application}).Delete(&Session{})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
+
+func DeleteAllUserSessions(owner string, name string) (bool, error) {
+	affected, err := ormer.Engine.Where("owner = ? and name = ?", owner, name).Delete(&Session{})
 	if err != nil {
 		return false, err
 	}

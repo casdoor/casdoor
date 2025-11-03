@@ -20,6 +20,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -429,6 +430,58 @@ func (c *ApiController) Logout() {
 			}
 		}
 	}
+}
+
+// LogoutAll
+// @Title LogoutAll
+// @Tag Login API
+// @Description logout the current user from all application
+// @Success 200 {object} controllers.Response The Response object
+// @router /logout-all [post]
+func (c *ApiController) LogoutAll() {
+	user := c.GetSessionUsername()
+
+	if user == "" {
+		c.ResponseOk()
+		return
+	}
+
+	c.ClearUserSession()
+	c.ClearTokenSession()
+	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	_, err = object.ExpireTokenByUser(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+	}
+
+	sessions, err := object.GetUserSessions(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error(), nil)
+		return
+	}
+
+	for _, session := range sessions {
+		for _, sid := range session.SessionId {
+			err := beego.GlobalSessions.GetProvider().SessionDestroy(sid)
+			if err != nil {
+				c.ResponseError(err.Error(), nil)
+				return
+			}
+		}
+	}
+
+	util.LogInfo(c.Ctx, "API: [%s] logged out from all application", user)
+	c.ResponseOk(object.DeleteAllUserSessions(owner, username))
 }
 
 // GetAccount
