@@ -857,8 +857,9 @@ func (c *ApiController) Login() {
 						return
 					}
 
-					// If provider allows signup, allow OAuth auto-registration regardless of application.EnableSignUp
-					// This enables OAuth providers to auto-create users even when manual signup is disabled
+					// Provider allows signup, proceed with OAuth auto-registration
+					// Note: This bypasses the application.EnableSignUp check to allow OAuth providers
+					// to auto-create users even when manual signup is disabled
 
 					if application.IsSignupItemRequired("Invitation code") {
 						c.ResponseError(c.T("check:Invitation code cannot be blank"))
