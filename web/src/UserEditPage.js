@@ -110,7 +110,7 @@ class UserEditPage extends React.Component {
   }
 
   getUserTransactions() {
-    TransactionBackend.getUserTransactions(this.state.organizationName, this.state.userName)
+    TransactionBackend.getTransactions(this.state.organizationName, "", "", "user", this.state.userName)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({

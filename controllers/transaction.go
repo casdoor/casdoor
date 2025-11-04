@@ -65,28 +65,6 @@ func (c *ApiController) GetTransactions() {
 	}
 }
 
-// GetUserTransactions
-// @Title GetUserTransaction
-// @Tag Transaction API
-// @Description get transactions for a user
-// @Param   owner     query    string  true        "The owner of transactions"
-// @Param   organization    query   string  true   "The organization of the user"
-// @Param   user    query   string  true           "The username of the user"
-// @Success 200 {array} object.Transaction The Response object
-// @router /get-user-transactions [get]
-func (c *ApiController) GetUserTransactions() {
-	owner := c.Input().Get("owner")
-	user := c.Input().Get("user")
-
-	transactions, err := object.GetUserTransactions(owner, user)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk(transactions)
-}
-
 // GetTransaction
 // @Title GetTransaction
 // @Tag Transaction API

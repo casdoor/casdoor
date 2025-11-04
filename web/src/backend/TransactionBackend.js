@@ -69,13 +69,3 @@ export function deleteTransaction(transaction) {
     },
   }).then(res => res.json());
 }
-
-export function getUserTransactions(owner, user) {
-  return fetch(`${Setting.ServerUrl}/api/get-user-transactions?owner=${owner}&user=${user}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
-}
