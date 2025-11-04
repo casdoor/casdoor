@@ -63,16 +63,6 @@ func GetTransactions(owner string) ([]*Transaction, error) {
 	return transactions, nil
 }
 
-func GetUserTransactions(owner, user string) ([]*Transaction, error) {
-	transactions := []*Transaction{}
-	err := ormer.Engine.Desc("created_time").Find(&transactions, &Transaction{Owner: owner, User: user})
-	if err != nil {
-		return nil, err
-	}
-
-	return transactions, nil
-}
-
 func GetPaginationTransactions(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Transaction, error) {
 	transactions := []*Transaction{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)

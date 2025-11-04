@@ -34,7 +34,7 @@ func TestTransactionBalanceUpdate(t *testing.T) {
 	}
 
 	// Verify updateBalanceForTransaction for User category
-	err := updateBalanceForTransaction(userTransaction, 100.0)
+	err := updateBalanceForTransaction(userTransaction, 100.0, "en")
 	if err != nil {
 		// Expected to fail if test user/org doesn't exist
 		t.Logf("Expected error for non-existent user: %v", err)
@@ -49,7 +49,7 @@ func TestTransactionBalanceUpdate(t *testing.T) {
 	}
 
 	// Verify updateBalanceForTransaction for Organization category
-	err = updateBalanceForTransaction(orgTransaction, 200.0)
+	err = updateBalanceForTransaction(orgTransaction, 200.0, "en")
 	if err != nil {
 		// Expected to fail if test org doesn't exist
 		t.Logf("Expected error for non-existent organization: %v", err)
