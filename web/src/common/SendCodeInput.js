@@ -22,7 +22,7 @@ import {CaptchaModal} from "./modal/CaptchaModal";
 
 const {Search} = Input;
 
-export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode}) => {
+export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, textBefore, onChange, onButtonClickArgs, application, method, countryCode, refreshCaptcha}) => {
   const [visible, setVisible] = React.useState(false);
   const [buttonLeftTime, setButtonLeftTime] = React.useState(0);
   const [buttonLoading, setButtonLoading] = React.useState(false);
@@ -53,6 +53,15 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
       setButtonLoading(false);
       if (res) {
         handleCountDown(getCodeResendTimeout());
+      } else {
+        if (useInlineCaptcha) {
+          refreshCaptcha?.();
+        }
+      }
+    }).catch(() => {
+      setButtonLoading(false);
+      if (useInlineCaptcha) {
+        refreshCaptcha?.();
       }
     });
   };
@@ -67,8 +76,9 @@ export const SendCodeInput = ({value, disabled, captchaValue, useInlineCaptcha, 
       return;
     }
 
-    if (!captchaValue?.captchaType) {
-      Setting.showMessage("error", i18next.t(i18next.t("code:Empty code")));
+    // client secret is validated in backend 
+    if (!captchaValue?.captchaType || !captchaValue?.captchaToken) {
+      Setting.showMessage("error", i18next.t("general:Please complete the captcha correctly"));
       return;
     }
     handleOk(captchaValue.captchaType, captchaValue.captchaToken, captchaValue.clientSecret);
