@@ -38,6 +38,18 @@ func main() {
 	object.CreateTables()
 
 	object.InitDb()
+
+	// Handle export command
+	if object.ShouldExportData() {
+		err := object.DumpToFile("init_data_dump.json")
+		if err != nil {
+			fmt.Printf("Error exporting data: %v\n", err)
+			panic(err)
+		}
+		fmt.Println("Data exported successfully to init_data_dump.json")
+		return
+	}
+
 	object.InitDefaultStorageProvider()
 	object.InitLdapAutoSynchronizer()
 	proxy.InitHttpClient()

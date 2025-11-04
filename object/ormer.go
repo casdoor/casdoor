@@ -42,23 +42,22 @@ var (
 	ormer          *Ormer = nil
 	createDatabase        = true
 	configPath            = "conf/app.conf"
+	exportData            = false
 )
 
 func InitFlag() {
-	createDatabase = getCreateDatabaseFlag()
-	configPath = getConfigFlag()
+	createDatabasePtr := flag.Bool("createDatabase", false, "true if you need to create database")
+	configPathPtr := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
+	exportDataPtr := flag.Bool("export", false, "export database to init_data_dump.json file and exit")
+	flag.Parse()
+
+	createDatabase = *createDatabasePtr
+	configPath = *configPathPtr
+	exportData = *exportDataPtr
 }
 
-func getCreateDatabaseFlag() bool {
-	res := flag.Bool("createDatabase", false, "true if you need to create database")
-	flag.Parse()
-	return *res
-}
-
-func getConfigFlag() string {
-	res := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
-	flag.Parse()
-	return *res
+func ShouldExportData() bool {
+	return exportData
 }
 
 func InitConfig() {
