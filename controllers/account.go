@@ -435,7 +435,7 @@ func (c *ApiController) Logout() {
 // LogoutAll
 // @Title LogoutAll
 // @Tag Login API
-// @Description logout the current user from all application
+// @Description logout the current user from all applications
 // @Success 200 {object} controllers.Response The Response object
 // @router /logout-all [post]
 func (c *ApiController) LogoutAll() {
@@ -481,12 +481,14 @@ func (c *ApiController) LogoutAll() {
 		}
 	}
 
-	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
 	_, err = object.DeleteAllUserSessions(owner, username)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return
 	}
+
+	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
+
 	c.ResponseOk()
 }
 
