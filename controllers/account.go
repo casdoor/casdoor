@@ -436,7 +436,7 @@ func (c *ApiController) Logout() {
 // @Tag Login API
 // @Description logout the current user from all applications
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout-all [get,post]
+// @router /sso-logout [get,post]
 func (c *ApiController) LogoutAll() {
 	user := c.GetSessionUsername()
 
