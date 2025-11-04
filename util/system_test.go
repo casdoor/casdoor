@@ -40,6 +40,30 @@ func TestGetMemoryUsage(t *testing.T) {
 	t.Log(used, total)
 }
 
+func TestGetDiskUsage(t *testing.T) {
+	used, total, err := getDiskUsage()
+	assert.Nil(t, err)
+	assert.Greater(t, total, uint64(0))
+	t.Log(used, total)
+}
+
+func TestGetNetworkUsage(t *testing.T) {
+	sent, recv, total, err := getNetworkUsage()
+	assert.Nil(t, err)
+	assert.GreaterOrEqual(t, total, uint64(0))
+	t.Log(sent, recv, total)
+}
+
+func TestGetSystemInfo(t *testing.T) {
+	systemInfo, err := GetSystemInfo()
+	assert.Nil(t, err)
+	assert.NotNil(t, systemInfo)
+	assert.Greater(t, len(systemInfo.CpuUsage), 0)
+	assert.Greater(t, systemInfo.MemoryTotal, uint64(0))
+	assert.Greater(t, systemInfo.DiskTotal, uint64(0))
+	t.Log(systemInfo)
+}
+
 func TestGetVersionInfo(t *testing.T) {
 	versionInfo, err := GetVersionInfo()
 	assert.Nil(t, err)
