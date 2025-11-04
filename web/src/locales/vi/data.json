@@ -525,7 +525,7 @@
     "Show all": "Hiển thị tất cả",
     "Upload (.xlsx)": "Tải lên (.xlsx)",
     "Virtual": "Ảo",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -\u003e [Nhóm]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Bạn cần xóa tất cả nhóm con trước. Bạn có thể xem các nhóm con trong cây nhóm bên trái của trang [Tổ chức] -> [Nhóm]"
   },
   "home": {
     "New users past 30 days": "Người dùng mới trong 30 ngày qua",
@@ -1215,7 +1215,13 @@
     "Throughput": "Thông lượng",
     "Total Throughput": "Tổng thông lượng",
     "Unknown version": "Phiên bản không rõ",
-    "Version": "Phiên bản"
+    "Version": "Phiên bản",
+    "Disk Usage": "Sử dụng ổ đĩa",
+    "Network Usage": "Sử dụng mạng",
+    "Failed to get disk usage": "Không thể lấy mức sử dụng ổ đĩa",
+    "Failed to get network usage": "Không thể lấy mức sử dụng mạng",
+    "Sent": "Đã gửi",
+    "Received": "Đã nhận"
   },
   "theme": {
     "Blossom": "hoa nở",

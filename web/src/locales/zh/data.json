@@ -525,7 +525,7 @@
     "Show all": "显示全部",
     "Upload (.xlsx)": "上传(.xlsx)",
     "Virtual": "虚拟组",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
     "New users past 30 days": "过去 30 天新增的用户",
@@ -1215,7 +1215,13 @@
     "Throughput": "吞吐量",
     "Total Throughput": "总吞吐量",
     "Unknown version": "未知版本",
-    "Version": "版本"
+    "Version": "版本",
+    "Disk Usage": "磁盘使用率",
+    "Network Usage": "网络使用率",
+    "Failed to get disk usage": "获取磁盘使用率失败",
+    "Failed to get network usage": "获取网络使用率失败",
+    "Sent": "发送",
+    "Received": "接收"
   },
   "theme": {
     "Blossom": "桃花缘",

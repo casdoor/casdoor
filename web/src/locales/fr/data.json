@@ -525,7 +525,7 @@
     "Show all": "Afficher tout",
     "Upload (.xlsx)": "Télécharger (.xlsx)",
     "Virtual": "Virtuel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -\u003e [Groupes]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Vous devez d'abord supprimer tous les sous-groupes. Vous pouvez voir les sous-groupes dans l'arborescence des groupes à gauche de la page [Organisations] -> [Groupes]"
   },
   "home": {
     "New users past 30 days": "Nouveaux utilisateurs ces 30 derniers jours",
@@ -1215,7 +1215,13 @@
     "Throughput": "Débit",
     "Total Throughput": "Débit total",
     "Unknown version": "Version inconnue",
-    "Version": "Version"
+    "Version": "Version",
+    "Disk Usage": "Utilisation du disque",
+    "Network Usage": "Utilisation du réseau",
+    "Failed to get disk usage": "Échec de l'obtention de l'utilisation du disque",
+    "Failed to get network usage": "Échec de l'obtention de l'utilisation du réseau",
+    "Sent": "Envoyé",
+    "Received": "Reçu"
   },
   "theme": {
     "Blossom": "Fleurir",

@@ -525,7 +525,7 @@
     "Show all": "모두 표시",
     "Upload (.xlsx)": "업로드 (.xlsx)",
     "Virtual": "가상",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -\u003e [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "모든 하위 그룹을 먼저 삭제해야 합니다. [조직] -> [그룹] 페이지의 왼쪽 그룹 트리에서 하위 그룹을 확인할 수 있습니다."
   },
   "home": {
     "New users past 30 days": "지난 30일간 새 사용자",
@@ -1215,7 +1215,13 @@
     "Throughput": "처리량",
     "Total Throughput": "총 처리량",
     "Unknown version": "알 수 없는 버전",
-    "Version": "버전"
+    "Version": "버전",
+    "Disk Usage": "디스크 사용량",
+    "Network Usage": "네트워크 사용량",
+    "Failed to get disk usage": "디스크 사용량을 가져오지 못했습니다",
+    "Failed to get network usage": "네트워크 사용량을 가져오지 못했습니다",
+    "Sent": "전송",
+    "Received": "수신"
   },
   "theme": {
     "Blossom": "꽃이 피다",

@@ -79,7 +79,7 @@
     "Grant types - Tooltip": "Выберите, какие типы грантов разрешены в протоколе OAuth",
     "Header HTML": "HTML заголовка",
     "Header HTML - Edit": "Редактировать HTML заголовка",
-    "Header HTML - Tooltip": "Настройте тег \u003chead\u003e страницы входа в приложение",
+    "Header HTML - Tooltip": "Настройте тег <head> страницы входа в приложение",
     "Incremental": "Инкрементный",
     "Inline": "Встроенный",
     "Input": "Ввод",
@@ -525,7 +525,7 @@
     "Show all": "Показать все",
     "Upload (.xlsx)": "Загрузить (.xlsx)",
     "Virtual": "Виртуальная",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Сначала удалите все подгруппы. Подгруппы можно просмотреть в дереве групп слева на странице [Организации] -\u003e [Группы]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Сначала удалите все подгруппы. Подгруппы можно просмотреть в дереве групп слева на странице [Организации] -> [Группы]"
   },
   "home": {
     "New users past 30 days": "Новые пользователи за 30 дней",
@@ -1215,7 +1215,13 @@
     "Throughput": "Пропускная способность",
     "Total Throughput": "Общая пропускная способность",
     "Unknown version": "Неизвестная версия",
-    "Version": "Версия"
+    "Version": "Версия",
+    "Disk Usage": "Использование диска",
+    "Network Usage": "Использование сети",
+    "Failed to get disk usage": "Не удалось получить использование диска",
+    "Failed to get network usage": "Не удалось получить использование сети",
+    "Sent": "Отправлено",
+    "Received": "Получено"
   },
   "theme": {
     "Blossom": "Цветок",

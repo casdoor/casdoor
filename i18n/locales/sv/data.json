@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "Inga autentiseringsuppgifter hittades för denna användare",
     "Please call WebAuthnSigninBegin first": "Anropa WebAuthnSigninBegin först"
+  },
+  "system": {
+    "CPU Usage": "CPU-användning",
+    "Memory Usage": "Minnesanvändning",
+    "Disk Usage": "Diskanvändning",
+    "Network Usage": "Nätverksanvändning",
+    "Failed to get disk usage": "Det gick inte att hämta diskanvändning",
+    "Failed to get network usage": "Det gick inte att hämta nätverksanvändning",
+    "Sent": "Skickat",
+    "Received": "Mottaget"
   }
 }

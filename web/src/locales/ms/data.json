@@ -525,7 +525,7 @@
     "Show all": "Tunjukkan semua",
     "Upload (.xlsx)": "Muat naik (.xlsx)",
     "Virtual": "Maya",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Anda perlu padam semua subkumpulan terlebih dahulu. Anda boleh lihat subkumpulan dalam pokok kumpulan kiri halaman [Organisasi] -\u003e [Kumpulan]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Anda perlu padam semua subkumpulan terlebih dahulu. Anda boleh lihat subkumpulan dalam pokok kumpulan kiri halaman [Organisasi] -> [Kumpulan]"
   },
   "home": {
     "New users past 30 days": "Pengguna baharu 30 hari lalu",
@@ -1215,7 +1215,13 @@
     "Throughput": "Kelulusan",
     "Total Throughput": "Jumlah kelulusan",
     "Unknown version": "Versi tidak diketahui",
-    "Version": "Versi"
+    "Version": "Versi",
+    "Disk Usage": "Penggunaan Cakera",
+    "Network Usage": "Penggunaan Rangkaian",
+    "Failed to get disk usage": "Gagal mendapatkan penggunaan cakera",
+    "Failed to get network usage": "Gagal mendapatkan penggunaan rangkaian",
+    "Sent": "Dihantar",
+    "Received": "Diterima"
   },
   "theme": {
     "Blossom": "Bunga",

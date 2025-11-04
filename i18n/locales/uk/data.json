@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "Облікові дані для цього користувача не знайдено",
     "Please call WebAuthnSigninBegin first": "Спочатку викличте WebAuthnSigninBegin"
+  },
+  "system": {
+    "CPU Usage": "Використання CPU",
+    "Memory Usage": "Використання пам'яті",
+    "Disk Usage": "Використання диска",
+    "Network Usage": "Використання мережі",
+    "Failed to get disk usage": "Не вдалося отримати використання диска",
+    "Failed to get network usage": "Не вдалося отримати використання мережі",
+    "Sent": "Відправлено",
+    "Received": "Отримано"
   }
 }

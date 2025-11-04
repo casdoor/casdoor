@@ -525,7 +525,7 @@
     "Show all": "Alles weergeven",
     "Upload (.xlsx)": "Uploaden (.xlsx)",
     "Virtual": "Virtueel",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -\u003e [Groepen] pagina"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "U moet eerst alle subgroepen verwijderen. U kunt de subgroepen bekijken in de linkergroepenboom van de [Organisaties] -> [Groepen] pagina"
   },
   "home": {
     "New users past 30 days": "Nieuwe gebruikers afgelopen 30 dagen",
@@ -1215,7 +1215,13 @@
     "Throughput": "Doorvoer",
     "Total Throughput": "Totale doorvoer",
     "Unknown version": "Onbekende versie",
-    "Version": "Versie"
+    "Version": "Versie",
+    "Disk Usage": "Schijfgebruik",
+    "Network Usage": "Netwerkgebruik",
+    "Failed to get disk usage": "Kan schijfgebruik niet ophalen",
+    "Failed to get network usage": "Kan netwerkgebruik niet ophalen",
+    "Sent": "Verzonden",
+    "Received": "Ontvangen"
   },
   "theme": {
     "Blossom": "Bloesem",

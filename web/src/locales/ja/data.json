@@ -525,7 +525,7 @@
     "Show all": "すべて表示",
     "Upload (.xlsx)": "アップロード (.xlsx)",
     "Virtual": "仮想",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -\u003e [グループ]ページの左側のグループツリーでサブグループを確認できます"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "最初にすべてのサブグループを削除する必要があります。[組織] -> [グループ]ページの左側のグループツリーでサブグループを確認できます"
   },
   "home": {
     "New users past 30 days": "過去30日間の新規ユーザー",
@@ -1215,7 +1215,13 @@
     "Throughput": "スループット",
     "Total Throughput": "総スループット",
     "Unknown version": "不明なバージョン",
-    "Version": "バージョン"
+    "Version": "バージョン",
+    "Disk Usage": "ディスク使用量",
+    "Network Usage": "ネットワーク使用量",
+    "Failed to get disk usage": "ディスク使用量の取得に失敗しました",
+    "Failed to get network usage": "ネットワーク使用量の取得に失敗しました",
+    "Sent": "送信",
+    "Received": "受信"
   },
   "theme": {
     "Blossom": "花開く",

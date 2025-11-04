@@ -525,7 +525,7 @@
     "Show all": "Покажи все",
     "Upload (.xlsx)": "Завантажити (.xlsx)",
     "Virtual": "Віртуальний",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -\u003e [Групи]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Спочатку потрібно видалити всі підгрупи. Підгрупи можна переглянути у лівому дереві груп на сторінці [Організації] -> [Групи]"
   },
   "home": {
     "New users past 30 days": "Нові користувачі за останні 30 днів",
@@ -1215,7 +1215,13 @@
     "Throughput": "Пропускна здатність",
     "Total Throughput": "Загальна пропускна здатність",
     "Unknown version": "Невідома версія",
-    "Version": "Версія"
+    "Version": "Версія",
+    "Disk Usage": "Використання диска",
+    "Network Usage": "Використання мережі",
+    "Failed to get disk usage": "Не вдалося отримати використання диска",
+    "Failed to get network usage": "Не вдалося отримати використання мережі",
+    "Sent": "Відправлено",
+    "Received": "Отримано"
   },
   "theme": {
     "Blossom": "цвітіння",

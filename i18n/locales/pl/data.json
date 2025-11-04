@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "Nie znaleziono danych uwierzytelniających dla tego użytkownika",
     "Please call WebAuthnSigninBegin first": "Najpierw wywołaj WebAuthnSigninBegin"
+  },
+  "system": {
+    "CPU Usage": "Użycie CPU",
+    "Memory Usage": "Użycie pamięci",
+    "Disk Usage": "Użycie dysku",
+    "Network Usage": "Użycie sieci",
+    "Failed to get disk usage": "Nie udało się pobrać użycia dysku",
+    "Failed to get network usage": "Nie udało się pobrać użycia sieci",
+    "Sent": "Wysłano",
+    "Received": "Odebrano"
   }
 }

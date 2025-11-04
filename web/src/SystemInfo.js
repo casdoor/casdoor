@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {Card, Col, Divider, Progress, Row, Spin, Tour} from "antd";
+import {Card, Col, Progress, Row, Spin, Tour} from "antd";
 import * as SystemBackend from "./backend/SystemInfo";
 import React from "react";
 import * as Setting from "./Setting";
@@ -25,7 +25,7 @@ class SystemInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0},
+      systemInfo: {cpuUsage: [], memoryUsed: 0, memoryTotal: 0, diskUsed: 0, diskTotal: 0, networkSent: 0, networkRecv: 0, networkTotal: 0},
       versionInfo: {},
       prometheusInfo: {apiThroughput: [], apiLatency: [], totalThroughput: 0},
       intervalId: null,
@@ -155,6 +155,23 @@ class SystemInfo extends React.Component {
         <br /> <br />
         <Progress type="circle" percent={Number((Number(this.state.systemInfo.memoryUsed) / Number(this.state.systemInfo.memoryTotal) * 100).toFixed(2))} />
       </div>;
+
+    const diskUi = this.state.systemInfo.diskUsed && this.state.systemInfo.diskTotal && this.state.systemInfo.diskTotal <= 0 ? i18next.t("system:Failed to get disk usage") :
+      <div>
+        {Setting.getFriendlyFileSize(this.state.systemInfo.diskUsed)} / {Setting.getFriendlyFileSize(this.state.systemInfo.diskTotal)}
+        <br /> <br />
+        <Progress type="circle" percent={Number((Number(this.state.systemInfo.diskUsed) / Number(this.state.systemInfo.diskTotal) * 100).toFixed(2))} />
+      </div>;
+
+    const networkUi = this.state.systemInfo.networkTotal <= 0 ? i18next.t("system:Failed to get network usage") :
+      <div>
+        {i18next.t("system:Sent")}: {Setting.getFriendlyFileSize(this.state.systemInfo.networkSent)}
+        <br />
+        {i18next.t("system:Received")}: {Setting.getFriendlyFileSize(this.state.systemInfo.networkRecv)}
+        <br /> <br />
+        <Progress type="circle" percent={100} format={() => Setting.getFriendlyFileSize(this.state.systemInfo.networkTotal)} />
+      </div>;
+
     const latencyUi = this.state.prometheusInfo?.apiLatency === null || this.state.prometheusInfo?.apiLatency?.length <= 0 ? <Spin size="large" /> :
       <PrometheusInfoTable prometheusInfo={this.state.prometheusInfo} table={"latency"} />;
     const throughputUi = this.state.prometheusInfo?.apiThroughput === null || this.state.prometheusInfo?.apiThroughput?.length <= 0 ? <Spin size="large" /> :
@@ -169,43 +186,54 @@ class SystemInfo extends React.Component {
       return (
         <>
           <Row>
-            <Col span={6}></Col>
-            <Col span={12}>
-              <Row gutter={[10, 10]}>
-                <Col span={12}>
+            <Col span={2}></Col>
+            <Col span={20}>
+              <Row gutter={[16, 16]}>
+                <Col span={6}>
                   <Card id="cpu-card" title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                     {this.state.loading ? <Spin size="large" /> : cpuUi}
                   </Card>
                 </Col>
-                <Col span={12}>
+                <Col span={6}>
                   <Card id="memory-card" title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                     {this.state.loading ? <Spin size="large" /> : memUi}
                   </Card>
                 </Col>
-                <Col span={24}>
+                <Col span={6}>
+                  <Card id="disk-card" title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : diskUi}
+                  </Card>
+                </Col>
+                <Col span={6}>
+                  <Card id="network-card" title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", height: "100%"}}>
+                    {this.state.loading ? <Spin size="large" /> : networkUi}
+                  </Card>
+                </Col>
+                <Col span={12}>
                   <Card id="latency-card" title={i18next.t("system:API Latency")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                     {this.state.loading ? <Spin size="large" /> : latencyUi}
                   </Card>
                 </Col>
-                <Col span={24}>
+                <Col span={12}>
                   <Card id="throughput-card" title={i18next.t("system:API Throughput")} bordered={true} style={{textAlign: "center", height: "100%"}}>
                     {this.state.loading ? <Spin size="large" /> : throughputUi}
                   </Card>
                 </Col>
+                <Col span={24}>
+                  <Card id="about-card" title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
+                    <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
+                    GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
+                    <br />
+                    {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
+                    <br />
+                    {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
+                    <br />
+                    {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
+                  </Card>
+                </Col>
               </Row>
-              <Divider />
-              <Card id="about-card" title={i18next.t("system:About Casdoor")} bordered={true} style={{textAlign: "center"}}>
-                <div>{i18next.t("system:An Identity and Access Management (IAM) / Single-Sign-On (SSO) platform with web UI supporting OAuth 2.0, OIDC, SAML and CAS")}</div>
-                GitHub: <a target="_blank" rel="noreferrer" href="https://github.com/casdoor/casdoor">Casdoor</a>
-                <br />
-                {i18next.t("system:Version")}: <a target="_blank" rel="noreferrer" href={link}>{versionText}</a>
-                <br />
-                {i18next.t("system:Official website")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org">https://casdoor.org</a>
-                <br />
-                {i18next.t("system:Community")}: <a target="_blank" rel="noreferrer" href="https://casdoor.org/#:~:text=Casdoor%20API-,Community,-GitHub">Get in Touch!</a>
-              </Card>
             </Col>
-            <Col span={6}></Col>
+            <Col span={2}></Col>
           </Row>
           <Tour
             open={Setting.isMobile() ? false : this.state.isTourVisible}
@@ -222,7 +250,7 @@ class SystemInfo extends React.Component {
       );
     } else {
       return (
-        <Row gutter={[16, 0]}>
+        <Row gutter={[16, 16]}>
           <Col span={24}>
             <Card title={i18next.t("system:CPU Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
               {this.state.loading ? <Spin size="large" /> : cpuUi}
@@ -231,6 +259,16 @@ class SystemInfo extends React.Component {
           <Col span={24}>
             <Card title={i18next.t("system:Memory Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
               {this.state.loading ? <Spin size="large" /> : memUi}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:Disk Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : diskUi}
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card title={i18next.t("system:Network Usage")} bordered={true} style={{textAlign: "center", width: "100%"}}>
+              {this.state.loading ? <Spin size="large" /> : networkUi}
             </Card>
           </Col>
           <Col span={24}>

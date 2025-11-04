@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "اطلاعات ورود برای این کاربر یافت نشد",
     "Please call WebAuthnSigninBegin first": "لطفاً ابتدا WebAuthnSigninBegin را فراخوانی کنید"
+  },
+  "system": {
+    "CPU Usage": "استفاده از CPU",
+    "Memory Usage": "استفاده از حافظه",
+    "Disk Usage": "استفاده از دیسک",
+    "Network Usage": "استفاده از شبکه",
+    "Failed to get disk usage": "دریافت استفاده از دیسک ناموفق بود",
+    "Failed to get network usage": "دریافت استفاده از شبکه ناموفق بود",
+    "Sent": "ارسال شده",
+    "Received": "دریافت شده"
   }
 }

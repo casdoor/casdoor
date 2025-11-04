@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "لم يتم العثور على بيانات اعتماد لهذا المستخدم",
     "Please call WebAuthnSigninBegin first": "يرجى استدعاء WebAuthnSigninBegin أولاً"
+  },
+  "system": {
+    "CPU Usage": "استخدام المعالج",
+    "Memory Usage": "استخدام الذاكرة",
+    "Disk Usage": "استخدام القرص",
+    "Network Usage": "استخدام الشبكة",
+    "Failed to get disk usage": "فشل في الحصول على استخدام القرص",
+    "Failed to get network usage": "فشل في الحصول على استخدام الشبكة",
+    "Sent": "مرسل",
+    "Received": "مستلم"
   }
 }

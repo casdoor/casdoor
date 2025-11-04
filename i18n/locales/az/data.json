@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "Bu istifadəçi üçün heç bir etimadnamə tapılmadı",
     "Please call WebAuthnSigninBegin first": "Xahiş edirik əvvəlcə WebAuthnSigninBegin çağırın"
+  },
+  "system": {
+    "CPU Usage": "CPU İstifadəsi",
+    "Memory Usage": "Yaddaş İstifadəsi",
+    "Disk Usage": "Disk İstifadəsi",
+    "Network Usage": "Şəbəkə İstifadəsi",
+    "Failed to get disk usage": "Disk istifadəsini əldə etmək alınmadı",
+    "Failed to get network usage": "Şəbəkə istifadəsini əldə etmək alınmadı",
+    "Sent": "Göndərilən",
+    "Received": "Qəbul edilən"
   }
 }

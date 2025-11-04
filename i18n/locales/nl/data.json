@@ -198,5 +198,15 @@
   "webauthn": {
     "Found no credentials for this user": "Geen inloggegevens gevonden voor deze gebruiker",
     "Please call WebAuthnSigninBegin first": "Roep eerst WebAuthnSigninBegin aan"
+  },
+  "system": {
+    "CPU Usage": "CPU-gebruik",
+    "Memory Usage": "Geheugengebruik",
+    "Disk Usage": "Schijfgebruik",
+    "Network Usage": "Netwerkgebruik",
+    "Failed to get disk usage": "Kan schijfgebruik niet ophalen",
+    "Failed to get network usage": "Kan netwerkgebruik niet ophalen",
+    "Sent": "Verzonden",
+    "Received": "Ontvangen"
   }
 }
