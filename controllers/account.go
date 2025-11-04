@@ -431,6 +431,62 @@ func (c *ApiController) Logout() {
 	}
 }
 
+// LogoutAll
+// @Title LogoutAll
+// @Tag Login API
+// @Description logout the current user from all applications
+// @Success 200 {object} controllers.Response The Response object
+// @router /logout-all [get,post]
+func (c *ApiController) LogoutAll() {
+	user := c.GetSessionUsername()
+
+	if user == "" {
+		c.ResponseOk()
+		return
+	}
+
+	c.ClearUserSession()
+	c.ClearTokenSession()
+	owner, username, err := util.GetOwnerAndNameFromIdWithError(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	_, err = object.DeleteSessionId(util.GetSessionId(owner, username, object.CasdoorApplication), c.Ctx.Input.CruSession.SessionID())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	_, err = object.ExpireTokenByUser(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	sessions, err := object.GetUserSessions(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	var sessionIds []string
+	for _, session := range sessions {
+		sessionIds = append(sessionIds, session.SessionId...)
+	}
+	object.DeleteBeegoSession(sessionIds)
+
+	_, err = object.DeleteAllUserSessions(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
+
+	c.ResponseOk()
+}
+
 // GetAccount
 // @Title GetAccount
 // @Tag Account API

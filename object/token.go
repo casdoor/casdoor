@@ -225,3 +225,12 @@ func DeleteToken(token *Token) (bool, error) {
 
 	return affected != 0, nil
 }
+
+func ExpireTokenByUser(owner, username string) (bool, error) {
+	affected, err := ormer.Engine.Where("organization = ? and user = ?", owner, username).Cols("expires_in").Update(&Token{ExpiresIn: 0})
+	if err != nil {
+		return false, err
+	}
+
+	return affected != 0, nil
+}
