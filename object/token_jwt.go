@@ -362,20 +362,17 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 		selectedFields[field] = true
 	}
 
-	// Only include optional fields if they are selected or have non-empty values
-	if claims.Nonce != "" || selectedFields["nonce"] {
+	// Only include optional fields if they are explicitly selected in tokenFields
+	if selectedFields["nonce"] {
 		res["nonce"] = claims.Nonce
 	}
-	if claims.Tag != "" || selectedFields["Tag"] || selectedFields["tag"] {
-		res["tag"] = claims.Tag
-	}
-	if claims.Scope != "" || selectedFields["scope"] {
+	if selectedFields["scope"] {
 		res["scope"] = claims.Scope
 	}
-	if claims.SigninMethod != "" || selectedFields["signinMethod"] {
+	if selectedFields["signinMethod"] {
 		res["signinMethod"] = claims.SigninMethod
 	}
-	if claims.Provider != "" || selectedFields["provider"] {
+	if selectedFields["provider"] {
 		res["provider"] = claims.Provider
 	}
 

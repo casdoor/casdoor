@@ -32,13 +32,13 @@ func TestGetClaimsCustom(t *testing.T) {
 
 	// Create test claims
 	testClaims := Claims{
-		User:      testUser,
-		TokenType: "access-token",
-		Nonce:     "",
-		Tag:       "",
-		Scope:     "",
-		Azp:       "test-client-id",
-		Provider:  "",
+		User:         testUser,
+		TokenType:    "access-token",
+		Nonce:        "",
+		Tag:          "",
+		Scope:        "",
+		Azp:          "test-client-id",
+		Provider:     "",
 		SigninMethod: "",
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "http://localhost:8000",
@@ -52,10 +52,10 @@ func TestGetClaimsCustom(t *testing.T) {
 	}
 
 	tests := []struct {
-		name                string
-		tokenFields         []string
-		expectedFields      []string
-		unexpectedFields    []string
+		name             string
+		tokenFields      []string
+		expectedFields   []string
+		unexpectedFields []string
 	}{
 		{
 			name:             "Only selected fields (Name, Id)",
@@ -104,12 +104,13 @@ func TestGetClaimsCustom(t *testing.T) {
 	}
 }
 
-func TestGetClaimsCustomWithNonEmptyValues(t *testing.T) {
+func TestGetClaimsCustomWithNonEmptyValuesNotSelected(t *testing.T) {
 	// Create a test user
 	testUser := &User{
 		Owner: "test-org",
 		Name:  "test-user",
 		Id:    "test-id-123",
+		Tag:   "test-tag",
 	}
 
 	// Create test claims with non-empty optional fields
@@ -133,37 +134,92 @@ func TestGetClaimsCustomWithNonEmptyValues(t *testing.T) {
 		},
 	}
 
-	// Test with only Name and Id selected, but other fields have non-empty values
+	// Test with only Name and Id selected, even though other fields have non-empty values
+	// they should NOT be included since they are not selected
 	tokenFields := []string{"Name", "Id"}
 	result := getClaimsCustom(testClaims, tokenFields, nil)
 
-	// These fields should be present because they have non-empty values
+	// These fields should be present
 	expectedPresentFields := []string{
 		"iss", "sub", "aud", "exp", "nbf", "iat", "jti",
 		"tokenType", "azp", "name", "id",
-		"nonce", "tag", "scope", "provider", "signinMethod",
 	}
 
 	for _, field := range expectedPresentFields {
 		if _, ok := result[field]; !ok {
-			t.Errorf("Expected field %s to be present in claims (non-empty value)", field)
+			t.Errorf("Expected field %s to be present in claims", field)
 		}
 	}
 
-	// Verify the values are correct
-	if result["nonce"] != "test-nonce" {
-		t.Errorf("Expected nonce to be 'test-nonce', got %v", result["nonce"])
+	// These fields should NOT be present even though they have non-empty values
+	// because they were not selected in tokenFields
+	unexpectedFields := []string{"nonce", "scope", "provider", "signinMethod", "tag"}
+	for _, field := range unexpectedFields {
+		if _, ok := result[field]; ok {
+			t.Errorf("Expected field %s to NOT be present in claims (not selected in tokenFields)", field)
+		}
 	}
-	if result["tag"] != "test-tag" {
-		t.Errorf("Expected tag to be 'test-tag', got %v", result["tag"])
+}
+
+func TestGetClaimsCustomWithSelectedFieldsIncludingEmpty(t *testing.T) {
+	// Create a test user
+	testUser := &User{
+		Owner: "test-org",
+		Name:  "test-user",
+		Id:    "test-id-123",
 	}
-	if result["scope"] != "openid profile" {
-		t.Errorf("Expected scope to be 'openid profile', got %v", result["scope"])
+
+	// Create test claims with empty optional fields
+	testClaims := Claims{
+		User:         testUser,
+		TokenType:    "access-token",
+		Nonce:        "", // empty but will be selected
+		Tag:          "",
+		Scope:        "", // empty but will be selected
+		Azp:          "test-client-id",
+		Provider:     "github", // not selected but has value
+		SigninMethod: "",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "http://localhost:8000",
+			Subject:   "test-id-123",
+			Audience:  []string{"test-client-id"},
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ID:        "test-jti",
+		},
 	}
-	if result["provider"] != "github" {
-		t.Errorf("Expected provider to be 'github', got %v", result["provider"])
+
+	// Test with Name, Id, nonce, and scope selected
+	tokenFields := []string{"Name", "Id", "nonce", "scope"}
+	result := getClaimsCustom(testClaims, tokenFields, nil)
+
+	// These fields should be present (including selected empty fields)
+	expectedPresentFields := []string{
+		"iss", "sub", "aud", "exp", "nbf", "iat", "jti",
+		"tokenType", "azp", "name", "id", "nonce", "scope",
 	}
-	if result["signinMethod"] != "oauth" {
-		t.Errorf("Expected signinMethod to be 'oauth', got %v", result["signinMethod"])
+
+	for _, field := range expectedPresentFields {
+		if _, ok := result[field]; !ok {
+			t.Errorf("Expected field %s to be present in claims", field)
+		}
+	}
+
+	// Provider should NOT be present even though it has a non-empty value
+	// because it was not selected in tokenFields
+	unexpectedFields := []string{"provider", "signinMethod", "tag"}
+	for _, field := range unexpectedFields {
+		if _, ok := result[field]; ok {
+			t.Errorf("Expected field %s to NOT be present in claims (not selected)", field)
+		}
+	}
+
+	// Verify empty selected fields have empty values
+	if result["nonce"] != "" {
+		t.Errorf("Expected nonce to be empty string, got %v", result["nonce"])
+	}
+	if result["scope"] != "" {
+		t.Errorf("Expected scope to be empty string, got %v", result["scope"])
 	}
 }
