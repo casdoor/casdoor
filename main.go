@@ -41,12 +41,12 @@ func main() {
 
 	// Handle export command
 	if object.ShouldExportData() {
-		err := object.DumpToFile("init_data_dump.json")
+		exportPath := object.GetExportFilePath()
+		err := object.DumpToFile(exportPath)
 		if err != nil {
-			fmt.Printf("Error exporting data: %v\n", err)
-			panic(err)
+			panic(fmt.Sprintf("Error exporting data to %s: %v", exportPath, err))
 		}
-		fmt.Println("Data exported successfully to init_data_dump.json")
+		fmt.Printf("Data exported successfully to %s\n", exportPath)
 		return
 	}
 

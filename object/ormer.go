@@ -43,21 +43,28 @@ var (
 	createDatabase        = true
 	configPath            = "conf/app.conf"
 	exportData            = false
+	exportFilePath        = "init_data_dump.json"
 )
 
 func InitFlag() {
 	createDatabasePtr := flag.Bool("createDatabase", false, "true if you need to create database")
 	configPathPtr := flag.String("config", "conf/app.conf", "set it to \"/your/path/app.conf\" if your config file is not in: \"/conf/app.conf\"")
 	exportDataPtr := flag.Bool("export", false, "export database to init_data_dump.json file and exit")
+	exportFilePathPtr := flag.String("exportPath", "init_data_dump.json", "path to the exported data file (used with -export)")
 	flag.Parse()
 
 	createDatabase = *createDatabasePtr
 	configPath = *configPathPtr
 	exportData = *exportDataPtr
+	exportFilePath = *exportFilePathPtr
 }
 
 func ShouldExportData() bool {
 	return exportData
+}
+
+func GetExportFilePath() string {
+	return exportFilePath
 }
 
 func InitConfig() {
