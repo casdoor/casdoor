@@ -1189,6 +1189,19 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Transactions") {
+      return (
+        this.state.mode !== "add" && this.state.transactions.length > 0 ? (
+          <Row style={{marginTop: "20px"}} >
+            <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+              {Setting.getLabel(i18next.t("transaction:Transactions"), i18next.t("transaction:Transactions"))} :
+            </Col>
+            <Col span={22}>
+              <TransactionTable transactions={this.state.transactions} />
+            </Col>
+          </Row>
+        ) : null
+      );
     }
   }
 
@@ -1267,11 +1280,6 @@ class UserEditPage extends React.Component {
             }
           </Form>
         </Card>
-        {this.state.mode !== "add" && this.state.transactions.length > 0 ? (
-          <Card size="small" title={i18next.t("transaction:Transactions")} style={{marginTop: "20px", ...(Setting.isMobile() ? {margin: "5px"} : {})}} type="inner">
-            <TransactionTable transactions={this.state.transactions} />
-          </Card>
-        ) : null}
       </div>
     );
   }
