@@ -339,6 +339,7 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 
 	userValue := reflect.ValueOf(claims.User).Elem()
 
+	// Always include standard JWT registered claims
 	res["iss"] = claims.RegisteredClaims.Issuer
 	res["sub"] = claims.RegisteredClaims.Subject
 	res["aud"] = claims.RegisteredClaims.Audience
@@ -346,13 +347,34 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 	res["nbf"] = claims.RegisteredClaims.NotBefore
 	res["iat"] = claims.RegisteredClaims.IssuedAt
 	res["jti"] = claims.RegisteredClaims.ID
+
+	// Always include tokenType (essential metadata)
 	res["tokenType"] = claims.TokenType
-	res["nonce"] = claims.Nonce
-	res["tag"] = claims.Tag
-	res["scope"] = claims.Scope
-	res["azp"] = claims.Azp
-	res["signinMethod"] = claims.SigninMethod
-	res["provider"] = claims.Provider
+
+	// Always include azp if present (authorized party)
+	if claims.Azp != "" {
+		res["azp"] = claims.Azp
+	}
+
+	// Create a map for quick lookup of selected token fields
+	selectedFields := make(map[string]bool)
+	for _, field := range tokenField {
+		selectedFields[field] = true
+	}
+
+	// Only include optional fields if they are explicitly selected in tokenFields
+	if selectedFields["nonce"] {
+		res["nonce"] = claims.Nonce
+	}
+	if selectedFields["scope"] {
+		res["scope"] = claims.Scope
+	}
+	if selectedFields["signinMethod"] {
+		res["signinMethod"] = claims.SigninMethod
+	}
+	if selectedFields["provider"] {
+		res["provider"] = claims.Provider
+	}
 
 	for _, field := range tokenField {
 		if strings.HasPrefix(field, "Properties.") {
