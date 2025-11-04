@@ -20,7 +20,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/beego/beego"
 	"github.com/casdoor/casdoor/form"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -471,15 +470,11 @@ func (c *ApiController) LogoutAll() {
 		return
 	}
 
+	var sessionIds []string
 	for _, session := range sessions {
-		for _, sid := range session.SessionId {
-			err := beego.GlobalSessions.GetProvider().SessionDestroy(sid)
-			if err != nil {
-				c.ResponseError(err.Error())
-				return
-			}
-		}
+		sessionIds = append(sessionIds, session.SessionId...)
 	}
+	object.DeleteBeegoSession(sessionIds)
 
 	_, err = object.DeleteAllUserSessions(owner, username)
 	if err != nil {
