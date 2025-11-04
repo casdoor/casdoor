@@ -1,0 +1,169 @@
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package object
+
+import (
+	"testing"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
+
+func TestGetClaimsCustom(t *testing.T) {
+	// Create a test user
+	testUser := &User{
+		Owner: "test-org",
+		Name:  "test-user",
+		Id:    "test-id-123",
+		Tag:   "test-tag",
+	}
+
+	// Create test claims
+	testClaims := Claims{
+		User:      testUser,
+		TokenType: "access-token",
+		Nonce:     "",
+		Tag:       "",
+		Scope:     "",
+		Azp:       "test-client-id",
+		Provider:  "",
+		SigninMethod: "",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "http://localhost:8000",
+			Subject:   "test-id-123",
+			Audience:  []string{"test-client-id"},
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ID:        "test-jti",
+		},
+	}
+
+	tests := []struct {
+		name                string
+		tokenFields         []string
+		expectedFields      []string
+		unexpectedFields    []string
+	}{
+		{
+			name:             "Only selected fields (Name, Id)",
+			tokenFields:      []string{"Name", "Id"},
+			expectedFields:   []string{"iss", "sub", "aud", "exp", "nbf", "iat", "jti", "tokenType", "azp", "name", "id"},
+			unexpectedFields: []string{"nonce", "tag", "scope", "signinMethod", "provider"},
+		},
+		{
+			name:             "Empty token fields",
+			tokenFields:      []string{},
+			expectedFields:   []string{"iss", "sub", "aud", "exp", "nbf", "iat", "jti", "tokenType", "azp"},
+			unexpectedFields: []string{"nonce", "tag", "scope", "signinMethod", "provider"},
+		},
+		{
+			name:             "Include provider when selected",
+			tokenFields:      []string{"Name", "provider"},
+			expectedFields:   []string{"iss", "sub", "aud", "exp", "nbf", "iat", "jti", "tokenType", "azp", "name", "provider"},
+			unexpectedFields: []string{"nonce", "tag", "scope", "signinMethod"},
+		},
+		{
+			name:             "Include scope when selected",
+			tokenFields:      []string{"Id", "scope"},
+			expectedFields:   []string{"iss", "sub", "aud", "exp", "nbf", "iat", "jti", "tokenType", "azp", "id", "scope"},
+			unexpectedFields: []string{"nonce", "tag", "signinMethod", "provider"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := getClaimsCustom(testClaims, tt.tokenFields, nil)
+
+			// Check expected fields are present
+			for _, field := range tt.expectedFields {
+				if _, ok := result[field]; !ok {
+					t.Errorf("Expected field %s to be present in claims", field)
+				}
+			}
+
+			// Check unexpected fields are NOT present
+			for _, field := range tt.unexpectedFields {
+				if _, ok := result[field]; ok {
+					t.Errorf("Expected field %s to NOT be present in claims, but it was found", field)
+				}
+			}
+		})
+	}
+}
+
+func TestGetClaimsCustomWithNonEmptyValues(t *testing.T) {
+	// Create a test user
+	testUser := &User{
+		Owner: "test-org",
+		Name:  "test-user",
+		Id:    "test-id-123",
+	}
+
+	// Create test claims with non-empty optional fields
+	testClaims := Claims{
+		User:         testUser,
+		TokenType:    "access-token",
+		Nonce:        "test-nonce",
+		Tag:          "test-tag",
+		Scope:        "openid profile",
+		Azp:          "test-client-id",
+		Provider:     "github",
+		SigninMethod: "oauth",
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "http://localhost:8000",
+			Subject:   "test-id-123",
+			Audience:  []string{"test-client-id"},
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ID:        "test-jti",
+		},
+	}
+
+	// Test with only Name and Id selected, but other fields have non-empty values
+	tokenFields := []string{"Name", "Id"}
+	result := getClaimsCustom(testClaims, tokenFields, nil)
+
+	// These fields should be present because they have non-empty values
+	expectedPresentFields := []string{
+		"iss", "sub", "aud", "exp", "nbf", "iat", "jti",
+		"tokenType", "azp", "name", "id",
+		"nonce", "tag", "scope", "provider", "signinMethod",
+	}
+
+	for _, field := range expectedPresentFields {
+		if _, ok := result[field]; !ok {
+			t.Errorf("Expected field %s to be present in claims (non-empty value)", field)
+		}
+	}
+
+	// Verify the values are correct
+	if result["nonce"] != "test-nonce" {
+		t.Errorf("Expected nonce to be 'test-nonce', got %v", result["nonce"])
+	}
+	if result["tag"] != "test-tag" {
+		t.Errorf("Expected tag to be 'test-tag', got %v", result["tag"])
+	}
+	if result["scope"] != "openid profile" {
+		t.Errorf("Expected scope to be 'openid profile', got %v", result["scope"])
+	}
+	if result["provider"] != "github" {
+		t.Errorf("Expected provider to be 'github', got %v", result["provider"])
+	}
+	if result["signinMethod"] != "oauth" {
+		t.Errorf("Expected signinMethod to be 'oauth', got %v", result["signinMethod"])
+	}
+}
