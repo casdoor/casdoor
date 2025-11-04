@@ -467,7 +467,7 @@ func (c *ApiController) LogoutAll() {
 
 	sessions, err := object.GetUserSessions(owner, username)
 	if err != nil {
-		c.ResponseError(err.Error(), nil)
+		c.ResponseError(err.Error())
 		return
 	}
 
@@ -475,7 +475,7 @@ func (c *ApiController) LogoutAll() {
 		for _, sid := range session.SessionId {
 			err := beego.GlobalSessions.GetProvider().SessionDestroy(sid)
 			if err != nil {
-				c.ResponseError(err.Error(), nil)
+				c.ResponseError(err.Error())
 				return
 			}
 		}
