@@ -431,13 +431,13 @@ func (c *ApiController) Logout() {
 	}
 }
 
-// LogoutAll
-// @Title LogoutAll
+// SsoLogout
+// @Title SsoLogout
 // @Tag Login API
 // @Description logout the current user from all applications
 // @Success 200 {object} controllers.Response The Response object
-// @router /logout-all [get,post]
-func (c *ApiController) LogoutAll() {
+// @router /sso-logout [get,post]
+func (c *ApiController) SsoLogout() {
 	user := c.GetSessionUsername()
 
 	if user == "" {
