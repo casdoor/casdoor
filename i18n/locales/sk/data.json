@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Pre tohto používateľa sa nenašli žiadne prihlasovacie údaje",
     "Please call WebAuthnSigninBegin first": "Najskôr prosím zavolajte WebAuthnSigninBegin"
-  },
-  "system": {
-    "CPU Usage": "Využitie CPU",
-    "Memory Usage": "Využitie pamäte",
-    "Disk Usage": "Využitie disku",
-    "Network Usage": "Využitie siete",
-    "Failed to get disk usage": "Nepodarilo sa získať využitie disku",
-    "Failed to get network usage": "Nepodarilo sa získať využitie siete",
-    "Sent": "Odoslané",
-    "Received": "Prijaté"
   }
 }

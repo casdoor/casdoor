@@ -525,7 +525,7 @@
     "Show all": "Zobrazit vše",
     "Upload (.xlsx)": "Nahrát (.xlsx)",
     "Virtual": "Virtuální",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -> [Skupiny]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Nejprve musíte odstranit všechny podskupiny. Podskupiny můžete zobrazit ve stromu skupin vlevo na stránce [Organizace] -\u003e [Skupiny]"
   },
   "home": {
     "New users past 30 days": "Noví uživatelé za posledních 30 dní",
@@ -1215,13 +1215,7 @@
     "Throughput": "Propustnost",
     "Total Throughput": "Celková propustnost",
     "Unknown version": "Neznámá verze",
-    "Version": "Verze",
-    "Disk Usage": "Využití disku",
-    "Network Usage": "Využití sítě",
-    "Failed to get disk usage": "Nepodařilo se získat využití disku",
-    "Failed to get network usage": "Nepodařilo se získat využití sítě",
-    "Sent": "Odesláno",
-    "Received": "Přijato"
+    "Version": "Verze"
   },
   "theme": {
     "Blossom": "Květ",

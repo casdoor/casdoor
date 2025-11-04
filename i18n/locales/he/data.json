@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "לא נמצאו אישורים עבור משתמש זה",
     "Please call WebAuthnSigninBegin first": "אנא קרא ל-WebAuthnSigninBegin תחילה"
-  },
-  "system": {
-    "CPU Usage": "שימוש ב-CPU",
-    "Memory Usage": "שימוש בזיכרון",
-    "Disk Usage": "שימוש בדיסק",
-    "Network Usage": "שימוש ברשת",
-    "Failed to get disk usage": "נכשל בקבלת שימוש בדיסק",
-    "Failed to get network usage": "נכשל בקבלת שימוש ברשת",
-    "Sent": "נשלח",
-    "Received": "התקבל"
   }
 }

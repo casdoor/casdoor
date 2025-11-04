@@ -1216,12 +1216,8 @@
     "Total Throughput": "Total de Throughput",
     "Unknown version": "Versão desconhecida",
     "Version": "Versão",
-    "Disk Usage": "Uso do disco",
-    "Network Usage": "Uso da rede",
-    "Failed to get disk usage": "Falha ao obter o uso do disco",
-    "Failed to get network usage": "Falha ao obter o uso da rede",
-    "Sent": "Enviado",
-    "Received": "Recebido"
+    "Disk Usage": "Uso do Disco",
+    "Failed to get disk usage": "Falha ao obter uso do disco"
   },
   "theme": {
     "Blossom": "Blossom",

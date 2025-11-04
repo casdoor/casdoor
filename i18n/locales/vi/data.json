@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Không tìm thấy thông tin xác thực cho người dùng này",
     "Please call WebAuthnSigninBegin first": "Vui lòng gọi WebAuthnSigninBegin trước"
-  },
-  "system": {
-    "CPU Usage": "Sử dụng CPU",
-    "Memory Usage": "Sử dụng bộ nhớ",
-    "Disk Usage": "Sử dụng ổ đĩa",
-    "Network Usage": "Sử dụng mạng",
-    "Failed to get disk usage": "Không thể lấy mức sử dụng ổ đĩa",
-    "Failed to get network usage": "Không thể lấy mức sử dụng mạng",
-    "Sent": "Đã gửi",
-    "Received": "Đã nhận"
   }
 }

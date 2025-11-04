@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Bu kullanıcı için kimlik bilgisi bulunamadı",
     "Please call WebAuthnSigninBegin first": "Lütfen önce WebAuthnSigninBegin çağırın"
-  },
-  "system": {
-    "CPU Usage": "CPU Kullanımı",
-    "Memory Usage": "Bellek Kullanımı",
-    "Disk Usage": "Disk Kullanımı",
-    "Network Usage": "Ağ Kullanımı",
-    "Failed to get disk usage": "Disk kullanımı alınamadı",
-    "Failed to get network usage": "Ağ kullanımı alınamadı",
-    "Sent": "Gönderilen",
-    "Received": "Alınan"
   }
 }

@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Tälle käyttäjälle ei löytynyt kirjautumistietoja",
     "Please call WebAuthnSigninBegin first": "Kutsu ensin WebAuthnSigninBegin"
-  },
-  "system": {
-    "CPU Usage": "Suorittimen käyttö",
-    "Memory Usage": "Muistin käyttö",
-    "Disk Usage": "Levyn käyttö",
-    "Network Usage": "Verkon käyttö",
-    "Failed to get disk usage": "Levyn käytön haku epäonnistui",
-    "Failed to get network usage": "Verkon käytön haku epäonnistui",
-    "Sent": "Lähetetty",
-    "Received": "Vastaanotettu"
   }
 }

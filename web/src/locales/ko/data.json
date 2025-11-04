@@ -1217,11 +1217,7 @@
     "Unknown version": "알 수 없는 버전",
     "Version": "버전",
     "Disk Usage": "디스크 사용량",
-    "Network Usage": "네트워크 사용량",
-    "Failed to get disk usage": "디스크 사용량을 가져오지 못했습니다",
-    "Failed to get network usage": "네트워크 사용량을 가져오지 못했습니다",
-    "Sent": "전송",
-    "Received": "수신"
+    "Failed to get disk usage": "디스크 사용량을 가져오지 못했습니다"
   },
   "theme": {
     "Blossom": "꽃이 피다",

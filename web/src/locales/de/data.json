@@ -1217,11 +1217,7 @@
     "Unknown version": "Unbekannte Version",
     "Version": "Version",
     "Disk Usage": "Festplattennutzung",
-    "Network Usage": "Netzwerknutzung",
-    "Failed to get disk usage": "Festplattennutzung konnte nicht abgerufen werden",
-    "Failed to get network usage": "Netzwerknutzung konnte nicht abgerufen werden",
-    "Sent": "Gesendet",
-    "Received": "Empfangen"
+    "Failed to get disk usage": "Abrufen der Festplattennutzung fehlgeschlagen"
   },
   "theme": {
     "Blossom": "Blüte",

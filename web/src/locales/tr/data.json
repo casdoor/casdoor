@@ -1217,11 +1217,7 @@
     "Unknown version": "Bilinmeyen sürüm",
     "Version": "Versiyon",
     "Disk Usage": "Disk Kullanımı",
-    "Network Usage": "Ağ Kullanımı",
-    "Failed to get disk usage": "Disk kullanımı alınamadı",
-    "Failed to get network usage": "Ağ kullanımı alınamadı",
-    "Sent": "Gönderilen",
-    "Received": "Alınan"
+    "Failed to get disk usage": "Disk kullanımı alınamadı"
   },
   "theme": {
     "Blossom": "Çiçek",

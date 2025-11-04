@@ -525,7 +525,7 @@
     "Show all": "Visa alla",
     "Upload (.xlsx)": "Ladda upp (.xlsx)",
     "Virtual": "Virtuell",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -> [Grupper]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Du måste ta bort alla undergrupper först. Du kan se undergrupperna i det vänstra gruppträdet på sidan [Organisationer] -\u003e [Grupper]"
   },
   "home": {
     "New users past 30 days": "Nya användare senaste 30 dagarna",
@@ -1215,13 +1215,7 @@
     "Throughput": "Genomströmning",
     "Total Throughput": "Total genomströmning",
     "Unknown version": "Okänd version",
-    "Version": "Version",
-    "Disk Usage": "Diskanvändning",
-    "Network Usage": "Nätverksanvändning",
-    "Failed to get disk usage": "Det gick inte att hämta diskanvändning",
-    "Failed to get network usage": "Det gick inte att hämta nätverksanvändning",
-    "Sent": "Skickat",
-    "Received": "Mottaget"
+    "Version": "Version"
   },
   "theme": {
     "Blossom": "Blomma",

@@ -1217,11 +1217,7 @@
     "Unknown version": "Неизвестная версия",
     "Version": "Версия",
     "Disk Usage": "Использование диска",
-    "Network Usage": "Использование сети",
-    "Failed to get disk usage": "Не удалось получить использование диска",
-    "Failed to get network usage": "Не удалось получить использование сети",
-    "Sent": "Отправлено",
-    "Received": "Получено"
+    "Failed to get disk usage": "Не удалось получить использование диска"
   },
   "theme": {
     "Blossom": "Цветок",

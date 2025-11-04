@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Учетные данные для этого пользователя не найдены",
     "Please call WebAuthnSigninBegin first": "Пожалуйста, сначала вызовите WebAuthnSigninBegin"
-  },
-  "system": {
-    "CPU Usage": "Использование CPU",
-    "Memory Usage": "Использование памяти",
-    "Disk Usage": "Использование диска",
-    "Network Usage": "Использование сети",
-    "Failed to get disk usage": "Не удалось получить использование диска",
-    "Failed to get network usage": "Не удалось получить использование сети",
-    "Sent": "Отправлено",
-    "Received": "Получено"
   }
 }

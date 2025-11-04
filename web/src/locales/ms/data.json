@@ -1216,12 +1216,8 @@
     "Total Throughput": "Jumlah kelulusan",
     "Unknown version": "Versi tidak diketahui",
     "Version": "Versi",
-    "Disk Usage": "Penggunaan Cakera",
-    "Network Usage": "Penggunaan Rangkaian",
-    "Failed to get disk usage": "Gagal mendapatkan penggunaan cakera",
-    "Failed to get network usage": "Gagal mendapatkan penggunaan rangkaian",
-    "Sent": "Dihantar",
-    "Received": "Diterima"
+    "Disk Usage": "Penggunaan Disk",
+    "Failed to get disk usage": "Gagal mendapatkan penggunaan disk"
   },
   "theme": {
     "Blossom": "Bunga",

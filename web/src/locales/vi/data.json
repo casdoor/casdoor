@@ -1216,12 +1216,8 @@
     "Total Throughput": "Tổng thông lượng",
     "Unknown version": "Phiên bản không rõ",
     "Version": "Phiên bản",
-    "Disk Usage": "Sử dụng ổ đĩa",
-    "Network Usage": "Sử dụng mạng",
-    "Failed to get disk usage": "Không thể lấy mức sử dụng ổ đĩa",
-    "Failed to get network usage": "Không thể lấy mức sử dụng mạng",
-    "Sent": "Đã gửi",
-    "Received": "Đã nhận"
+    "Disk Usage": "Sử dụng đĩa",
+    "Failed to get disk usage": "Không thể lấy thông tin sử dụng đĩa"
   },
   "theme": {
     "Blossom": "hoa nở",

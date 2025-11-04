@@ -1217,11 +1217,7 @@
     "Unknown version": "Versi tidak diketahui",
     "Version": "Versi",
     "Disk Usage": "Penggunaan Disk",
-    "Network Usage": "Penggunaan Jaringan",
-    "Failed to get disk usage": "Gagal mendapatkan penggunaan disk",
-    "Failed to get network usage": "Gagal mendapatkan penggunaan jaringan",
-    "Sent": "Terkirim",
-    "Received": "Diterima"
+    "Failed to get disk usage": "Gagal mendapatkan penggunaan disk"
   },
   "theme": {
     "Blossom": "Bunga mekar",

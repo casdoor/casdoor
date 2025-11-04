@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "无法找到此用户的证书",
     "Please call WebAuthnSigninBegin first": "请先调用WebAuthnSigninBegin函数"
-  },
-  "system": {
-    "CPU Usage": "CPU使用率",
-    "Memory Usage": "内存使用率",
-    "Disk Usage": "磁盘使用率",
-    "Network Usage": "网络使用率",
-    "Failed to get disk usage": "获取磁盘使用率失败",
-    "Failed to get network usage": "获取网络使用率失败",
-    "Sent": "发送",
-    "Received": "接收"
   }
 }

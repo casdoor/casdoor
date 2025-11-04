@@ -1217,11 +1217,7 @@
     "Unknown version": "Version inconnue",
     "Version": "Version",
     "Disk Usage": "Utilisation du disque",
-    "Network Usage": "Utilisation du réseau",
-    "Failed to get disk usage": "Échec de l'obtention de l'utilisation du disque",
-    "Failed to get network usage": "Échec de l'obtention de l'utilisation du réseau",
-    "Sent": "Envoyé",
-    "Received": "Reçu"
+    "Failed to get disk usage": "Échec de la récupération de l'utilisation du disque"
   },
   "theme": {
     "Blossom": "Fleurir",

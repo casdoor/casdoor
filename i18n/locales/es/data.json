@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "No se encontraron credenciales para este usuario",
     "Please call WebAuthnSigninBegin first": "Por favor, llama primero a WebAuthnSigninBegin"
-  },
-  "system": {
-    "CPU Usage": "Uso de CPU",
-    "Memory Usage": "Uso de memoria",
-    "Disk Usage": "Uso del disco",
-    "Network Usage": "Uso de la red",
-    "Failed to get disk usage": "No se pudo obtener el uso del disco",
-    "Failed to get network usage": "No se pudo obtener el uso de la red",
-    "Sent": "Enviado",
-    "Received": "Recibido"
   }
 }

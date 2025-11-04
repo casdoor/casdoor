@@ -525,7 +525,7 @@
     "Show all": "نمایش همه",
     "Upload (.xlsx)": "آپلود (.xlsx)",
     "Virtual": "مجازی",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -> [گروه‌ها] مشاهده کنید"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "ابتدا باید همه زیرگروه‌ها را حذف کنید. می‌توانید زیرگروه‌ها را در درخت گروه سمت چپ صفحه [سازمان‌ها] -\u003e [گروه‌ها] مشاهده کنید"
   },
   "home": {
     "New users past 30 days": "کاربران جدید در ۳۰ روز گذشته",
@@ -1215,13 +1215,7 @@
     "Throughput": "بازدهی",
     "Total Throughput": "کل بازدهی",
     "Unknown version": "نسخه ناشناخته",
-    "Version": "نسخه",
-    "Disk Usage": "استفاده از دیسک",
-    "Network Usage": "استفاده از شبکه",
-    "Failed to get disk usage": "دریافت استفاده از دیسک ناموفق بود",
-    "Failed to get network usage": "دریافت استفاده از شبکه ناموفق بود",
-    "Sent": "ارسال شده",
-    "Received": "دریافت شده"
+    "Version": "نسخه"
   },
   "theme": {
     "Blossom": "شکوفه",

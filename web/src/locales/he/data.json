@@ -525,7 +525,7 @@
     "Show all": "הצג הכול",
     "Upload (.xlsx)": "העלה (.xlsx)",
     "Virtual": "וירטואלי",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -> [קבוצות]"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "עליך למחוק תחילה את כל הקבוצות המשנה. ניתן להציג את הקבוצות המשנה בעץ הקבוצות בצד שמאל בדף [ארגונים] -\u003e [קבוצות]"
   },
   "home": {
     "New users past 30 days": "משתמשים חדשים ב-30 הימים האחרונים",
@@ -1215,13 +1215,7 @@
     "Throughput": "קצב",
     "Total Throughput": "קצב כולל",
     "Unknown version": "גרסה לא ידועה",
-    "Version": "גרסה",
-    "Disk Usage": "שימוש בדיסק",
-    "Network Usage": "שימוש ברשת",
-    "Failed to get disk usage": "נכשל בקבלת שימוש בדיסק",
-    "Failed to get network usage": "נכשל בקבלת שימוש ברשת",
-    "Sent": "נשלח",
-    "Received": "התקבל"
+    "Version": "גרסה"
   },
   "theme": {
     "Blossom": "פריחה",

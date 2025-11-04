@@ -525,7 +525,7 @@
     "Show all": "Hamısını göstər",
     "Upload (.xlsx)": "Yüklə (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -> [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "Əvvəlcə bütün alt qrupları silməlisiniz. Alt qrupları [Təşkilatlar] -\u003e [Qruplar] səhifəsinin sol qrup ağacında görə bilərsiniz"
   },
   "home": {
     "New users past 30 days": "Son 30 gündə yeni istifadəçilər",
@@ -1215,13 +1215,7 @@
     "Throughput": "Keçirməzlik",
     "Total Throughput": "Ümumi Keçirməzlik",
     "Unknown version": "Naməlum versiya",
-    "Version": "Versiya",
-    "Disk Usage": "Disk İstifadəsi",
-    "Network Usage": "Şəbəkə İstifadəsi",
-    "Failed to get disk usage": "Disk istifadəsini əldə etmək alınmadı",
-    "Failed to get network usage": "Şəbəkə istifadəsini əldə etmək alınmadı",
-    "Sent": "Göndərilən",
-    "Received": "Qəbul edilən"
+    "Version": "Versiya"
   },
   "theme": {
     "Blossom": "Çiçəklənmə",

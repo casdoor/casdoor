@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Бұл пайдаланушы үшін тіркелгі деректері табылмады",
     "Please call WebAuthnSigninBegin first": "Roep eerst WebAuthnSigninBegin aan"
-  },
-  "system": {
-    "CPU Usage": "CPU пайдалану",
-    "Memory Usage": "Жад пайдалану",
-    "Disk Usage": "Дискіні пайдалану",
-    "Network Usage": "Желі пайдалану",
-    "Failed to get disk usage": "Дискіні пайдалануды алу сәтсіз аяқталды",
-    "Failed to get network usage": "Желі пайдалануды алу сәтсіз аяқталды",
-    "Sent": "Жіберілген",
-    "Received": "Алынған"
   }
 }

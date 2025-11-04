@@ -198,15 +198,5 @@
   "webauthn": {
     "Found no credentials for this user": "Tiada kelayakan dijumpai untuk pengguna ini",
     "Please call WebAuthnSigninBegin first": "Sila panggil WebAuthnSigninBegin dahulu"
-  },
-  "system": {
-    "CPU Usage": "Penggunaan CPU",
-    "Memory Usage": "Penggunaan Memori",
-    "Disk Usage": "Penggunaan Cakera",
-    "Network Usage": "Penggunaan Rangkaian",
-    "Failed to get disk usage": "Gagal mendapatkan penggunaan cakera",
-    "Failed to get network usage": "Gagal mendapatkan penggunaan rangkaian",
-    "Sent": "Dihantar",
-    "Received": "Diterima"
   }
 }

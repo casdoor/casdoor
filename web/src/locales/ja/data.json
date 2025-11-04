@@ -1217,11 +1217,7 @@
     "Unknown version": "不明なバージョン",
     "Version": "バージョン",
     "Disk Usage": "ディスク使用量",
-    "Network Usage": "ネットワーク使用量",
-    "Failed to get disk usage": "ディスク使用量の取得に失敗しました",
-    "Failed to get network usage": "ネットワーク使用量の取得に失敗しました",
-    "Sent": "送信",
-    "Received": "受信"
+    "Failed to get disk usage": "ディスク使用量の取得に失敗しました"
   },
   "theme": {
     "Blossom": "花開く",
