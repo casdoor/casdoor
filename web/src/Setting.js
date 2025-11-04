@@ -1185,6 +1185,7 @@ export function getProviderTypeOptions(category) {
       {id: "Rocket Chat", name: "Rocket Chat"},
       {id: "Viber", name: "Viber"},
       {id: "CUCloud", name: "CUCloud"},
+      {id: "WeCom", name: "WeCom"},
     ]);
   } else if (category === "Face ID") {
     return ([
