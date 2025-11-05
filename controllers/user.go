@@ -523,14 +523,15 @@ func (c *ApiController) SetPassword() {
 		return
 	}
 
-	// Try to deobfuscate passwords if organization has password obfuscator configured
+	// Deobfuscate passwords if organization has password obfuscator configured
+	// Note: Deobfuscation is optional - if it fails, we treat the password as plain text
+	// This allows SDKs and raw HTTP API calls to work without obfuscation support
 	if organization.PasswordObfuscatorType != "" && organization.PasswordObfuscatorType != "Plain" {
 		if oldPassword != "" {
 			deobfuscatedOldPassword, deobfuscateErr := util.GetUnobfuscatedPassword(organization.PasswordObfuscatorType, organization.PasswordObfuscatorKey, oldPassword)
 			if deobfuscateErr == nil {
 				oldPassword = deobfuscatedOldPassword
 			}
-			// If deobfuscation fails, treat as plain text (backward compatibility)
 		}
 
 		if newPassword != "" {
@@ -538,7 +539,6 @@ func (c *ApiController) SetPassword() {
 			if deobfuscateErr == nil {
 				newPassword = deobfuscatedNewPassword
 			}
-			// If deobfuscation fails, treat as plain text (backward compatibility)
 		}
 	}
 

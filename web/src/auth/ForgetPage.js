@@ -182,7 +182,7 @@ class ForgetPage extends React.Component {
         organization.passwordObfuscatorKey,
         values?.newPassword
       );
-      if (errorMessage) {
+      if (errorMessage.length > 0) {
         Setting.showMessage("error", errorMessage);
         return;
       }
