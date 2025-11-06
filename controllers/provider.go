@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -135,6 +136,10 @@ func (c *ApiController) GetProvider() {
 	provider, err := object.GetProvider(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The provider: %s does not exist"), id))
 		return
 	}
 

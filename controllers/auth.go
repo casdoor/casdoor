@@ -1222,6 +1222,10 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), providerId))
+		return
+	}
 	if data.Ticket == "" {
 		c.ResponseError("empty ticket")
 		return
@@ -1275,6 +1279,10 @@ func (c *ApiController) GetQRCode() {
 	provider, err := object.GetProvider(providerId)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The provider: %s does not exist"), providerId))
 		return
 	}
 	code, ticket, err := idp.GetWechatOfficialAccountQRCode(provider.ClientId2, provider.ClientSecret2, providerId)
