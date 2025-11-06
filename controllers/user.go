@@ -500,11 +500,6 @@ func (c *ApiController) SetPassword() {
 	//	return
 	// }
 
-	if strings.Contains(newPassword, " ") {
-		c.ResponseError(c.T("user:New password cannot contain blank space."))
-		return
-	}
-
 	userId := util.GetId(userOwner, userName)
 
 	user, err := object.GetUser(userId)
@@ -514,6 +509,41 @@ func (c *ApiController) SetPassword() {
 	}
 	if user == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return
+	}
+
+	// Get organization to check for password obfuscation settings
+	organization, err := object.GetOrganizationByUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:the organization: %s is not found"), user.Owner))
+		return
+	}
+
+	// Deobfuscate passwords if organization has password obfuscator configured
+	// Note: Deobfuscation is optional - if it fails, we treat the password as plain text
+	// This allows SDKs and raw HTTP API calls to work without obfuscation support
+	if organization.PasswordObfuscatorType != "" && organization.PasswordObfuscatorType != "Plain" {
+		if oldPassword != "" {
+			deobfuscatedOldPassword, deobfuscateErr := util.GetUnobfuscatedPassword(organization.PasswordObfuscatorType, organization.PasswordObfuscatorKey, oldPassword)
+			if deobfuscateErr == nil {
+				oldPassword = deobfuscatedOldPassword
+			}
+		}
+
+		if newPassword != "" {
+			deobfuscatedNewPassword, deobfuscateErr := util.GetUnobfuscatedPassword(organization.PasswordObfuscatorType, organization.PasswordObfuscatorKey, newPassword)
+			if deobfuscateErr == nil {
+				newPassword = deobfuscatedNewPassword
+			}
+		}
+	}
+
+	if strings.Contains(newPassword, " ") {
+		c.ResponseError(c.T("user:New password cannot contain blank space."))
 		return
 	}
 
@@ -576,16 +606,6 @@ func (c *ApiController) SetPassword() {
 	msg := object.CheckPasswordComplexity(targetUser, newPassword)
 	if msg != "" {
 		c.ResponseError(msg)
-		return
-	}
-
-	organization, err := object.GetOrganizationByUser(targetUser)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if organization == nil {
-		c.ResponseError(fmt.Sprintf(c.T("auth:the organization: %s is not found"), targetUser.Owner))
 		return
 	}
 

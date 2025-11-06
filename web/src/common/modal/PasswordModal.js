@@ -18,6 +18,7 @@ import React from "react";
 import * as UserBackend from "../../backend/UserBackend";
 import * as Setting from "../../Setting";
 import * as PasswordChecker from "../PasswordChecker";
+import * as Obfuscator from "../../auth/Obfuscator";
 
 export const PasswordModal = (props) => {
   const [visible, setVisible] = React.useState(false);
@@ -93,7 +94,37 @@ export const PasswordModal = (props) => {
       return;
     }
 
-    UserBackend.setPassword(user.owner, userName, oldPassword, newPassword)
+    // Encrypt passwords using password obfuscator if configured
+    let encryptedOldPassword = oldPassword;
+    let encryptedNewPassword = newPassword;
+
+    if (organization.passwordObfuscatorType && organization.passwordObfuscatorType !== "Plain") {
+      const [oldPasswordCipher, oldPasswordError] = Obfuscator.encryptByPasswordObfuscator(
+        organization.passwordObfuscatorType,
+        organization.passwordObfuscatorKey,
+        oldPassword
+      );
+      if (oldPasswordError) {
+        Setting.showMessage("error", oldPasswordError);
+        setConfirmLoading(false);
+        return;
+      }
+      encryptedOldPassword = oldPasswordCipher;
+
+      const [newPasswordCipher, newPasswordError] = Obfuscator.encryptByPasswordObfuscator(
+        organization.passwordObfuscatorType,
+        organization.passwordObfuscatorKey,
+        newPassword
+      );
+      if (newPasswordError) {
+        Setting.showMessage("error", newPasswordError);
+        setConfirmLoading(false);
+        return;
+      }
+      encryptedNewPassword = newPasswordCipher;
+    }
+
+    UserBackend.setPassword(user.owner, userName, encryptedOldPassword, encryptedNewPassword)
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Password set successfully"));

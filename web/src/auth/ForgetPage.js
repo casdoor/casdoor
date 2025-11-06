@@ -25,6 +25,7 @@ import {ArrowLeftOutlined, CheckCircleOutlined, KeyOutlined, LockOutlined, Solut
 import CustomGithubCorner from "../common/CustomGithubCorner";
 import {withRouter} from "react-router-dom";
 import * as PasswordChecker from "../common/PasswordChecker";
+import * as Obfuscator from "./Obfuscator";
 
 const {Option} = Select;
 
@@ -171,7 +172,24 @@ class ForgetPage extends React.Component {
       }
     }
 
-    UserBackend.setPassword(values.userOwner, values.username, "", values?.newPassword, this.state.code).then(res => {
+    // Encrypt password using password obfuscator if configured
+    let encryptedNewPassword = values?.newPassword;
+    const organization = this.getApplicationObj()?.organizationObj;
+
+    if (organization?.passwordObfuscatorType && organization.passwordObfuscatorType !== "Plain") {
+      const [passwordCipher, errorMessage] = Obfuscator.encryptByPasswordObfuscator(
+        organization.passwordObfuscatorType,
+        organization.passwordObfuscatorKey,
+        values?.newPassword
+      );
+      if (errorMessage.length > 0) {
+        Setting.showMessage("error", errorMessage);
+        return;
+      }
+      encryptedNewPassword = passwordCipher;
+    }
+
+    UserBackend.setPassword(values.userOwner, values.username, "", encryptedNewPassword, this.state.code).then(res => {
       if (res.status === "ok") {
         const linkInStorage = sessionStorage.getItem("signinUrl");
         if (linkInStorage !== null && linkInStorage !== "") {
