@@ -102,6 +102,10 @@ func (c *ApiController) GetInvitationCodeInfo() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), applicationId))
+		return
+	}
 
 	invitation, msg := object.GetInvitationByCode(code, application.Organization, c.GetAcceptLanguage())
 	if msg != "" {
@@ -223,6 +227,10 @@ func (c *ApiController) SendInvitation() {
 	organization, err := object.GetOrganization(fmt.Sprintf("admin/%s", invitation.Owner))
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if organization == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s does not exist"), invitation.Owner))
 		return
 	}
 

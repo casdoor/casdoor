@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -157,6 +158,10 @@ func (c *ApiController) RunSyncer() {
 	syncer, err := object.GetSyncer(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if syncer == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The syncer: %s does not exist"), id))
 		return
 	}
 
