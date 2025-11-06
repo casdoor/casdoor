@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -93,6 +94,10 @@ func (c *ApiController) GetForm() {
 	form, err := object.GetForm(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if form == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The form: %s does not exist"), id))
 		return
 	}
 

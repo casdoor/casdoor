@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -100,6 +101,10 @@ func (c *ApiController) GetPayment() {
 	payment, err := object.GetPayment(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if payment == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The payment: %s does not exist"), id))
 		return
 	}
 

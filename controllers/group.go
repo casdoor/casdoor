@@ -116,6 +116,10 @@ func (c *ApiController) GetGroup() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if group == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The group: %s does not exist"), id))
+		return
+	}
 
 	err = object.ExtendGroupWithUsers(group)
 	if err != nil {

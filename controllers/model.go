@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -78,6 +79,10 @@ func (c *ApiController) GetModel() {
 	model, err := object.GetModel(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if model == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The model: %s does not exist"), id))
 		return
 	}
 

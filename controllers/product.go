@@ -82,6 +82,10 @@ func (c *ApiController) GetProduct() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if product == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The product: %s does not exist"), id))
+		return
+	}
 
 	err = object.ExtendProductWithProviders(product)
 	if err != nil {
