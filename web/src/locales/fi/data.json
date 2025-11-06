@@ -312,6 +312,7 @@
     "Failed to delete": "Poistaminen epäonnistui",
     "Failed to enable": "Käyttöön ottaminen epäonnistui",
     "Failed to get": "Haku epäonnistui",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Poistaminen epäonnistui",
     "Failed to save": "Tallentaminen epäonnistui",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Tilaussuunnitelma",
     "Plans": "Suunnitelmat",
     "Plans - Tooltip": "Suunnitelmat - työkalupala",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Esikatselu",
     "Preview - Tooltip": "Esikatsele määritettyjä vaikutuksia",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Navigaatiopalkin kohteet – ohje",
     "New Organization": "Uusi organisaatio",
     "Optional": "Valinnainen",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Salasanan vanhenemispäivät",
     "Password expire days - Tooltip": "Salasanan vanhenemispäivät – ohje",
     "Prompt": "Kehote",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Käyttäjien valittavissa olevat tunnisteet",
     "Use Email as username": "Käytä sähköpostia käyttäjänimenä",
     "Use Email as username - Tooltip": "Käytä sähköpostia käyttäjänimenä, jos käyttäjätunnuskenttä ei ole näkyvissä rekisteröityessä",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Käyttäjätyypit",
     "User types - Tooltip": "Käyttäjätyypit – ohje",
     "View rule": "Katselusääntö",
@@ -1249,9 +1255,13 @@
   "transaction": {
     "Amount": "Määrä",
     "Amount - Tooltip": "Kaupan tuotteiden määrä",
+    "Category": "Category",
     "Edit Transaction": "Muokkaa tapahtumaa",
     "New Transaction": "Uusi tapahtuma",
-    "Tag - Tooltip": "Tapahtuman tunniste"
+    "State": "State",
+    "Tag - Tooltip": "Tapahtuman tunniste",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Kolmannen osapuolen kirjautumiset",

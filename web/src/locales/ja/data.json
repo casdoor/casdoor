@@ -312,6 +312,7 @@
     "Failed to delete": "削除に失敗しました",
     "Failed to enable": "有効化に失敗しました",
     "Failed to get": "取得に失敗しました",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "削除に失敗しました",
     "Failed to save": "保存に失敗しました",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "サブスクリプションプラン",
     "Plans": "プラン",
     "Plans - Tooltip": "プラン - ツールチップ",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "プレビュー",
     "Preview - Tooltip": "構成されたエフェクトをプレビューする",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "ナビバー項目 - ツールチップ",
     "New Organization": "新しい組織",
     "Optional": "オプション",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "パスワード有効期限（日）",
     "Password expire days - Tooltip": "パスワード有効期限（日） - ツールチップ",
     "Prompt": "プロンプト",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "ユーザーが選択できるタグのコレクション",
     "Use Email as username": "メールアドレスをユーザー名として使用",
     "Use Email as username - Tooltip": "ユーザー名フィールドがサインアップ時に表示されない場合、メールアドレスをユーザー名として使用します",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "ユーザータイプ",
     "User types - Tooltip": "ユーザータイプ - ツールチップ",
     "View rule": "ビュールール",
@@ -1249,9 +1255,13 @@
   "transaction": {
     "Amount": "金額",
     "Amount - Tooltip": "取引製品の金額",
+    "Category": "Category",
     "Edit Transaction": "取引を編集",
     "New Transaction": "新しい取引",
-    "Tag - Tooltip": "取引のタグ"
+    "State": "State",
+    "Tag - Tooltip": "取引のタグ",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "サードパーティログイン",
