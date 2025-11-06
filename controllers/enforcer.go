@@ -83,6 +83,10 @@ func (c *ApiController) GetEnforcer() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if enforcer == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The enforcer: %s does not exist"), id))
+		return
+	}
 
 	if loadModelCfg == "true" && enforcer.Model != "" {
 		err := enforcer.LoadModelCfg()

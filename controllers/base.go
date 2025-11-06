@@ -15,6 +15,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -139,6 +140,10 @@ func (c *ApiController) GetSessionApplication() *object.Application {
 	application, err := object.GetApplicationByClientId(clientId.(string))
 	if err != nil {
 		c.ResponseError(err.Error())
+		return nil
+	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The application with clientId: %s does not exist"), clientId.(string)))
 		return nil
 	}
 

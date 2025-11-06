@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
@@ -55,6 +56,10 @@ func (c *ApiController) GetLdapUsers() {
 	ldapServer, err := object.GetLdap(ldapId)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if ldapServer == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The LDAP: %s does not exist"), ldapId))
 		return
 	}
 
@@ -137,6 +142,10 @@ func (c *ApiController) GetLdap() {
 	ldap, err := object.GetLdap(name)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if ldap == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The LDAP: %s does not exist"), name))
 		return
 	}
 	c.ResponseOk(object.GetMaskedLdap(ldap))

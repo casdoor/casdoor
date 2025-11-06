@@ -89,6 +89,10 @@ func (c *ApiController) GetApplication() {
 		c.ResponseError(err.Error())
 		return
 	}
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), id))
+		return
+	}
 
 	if c.Input().Get("withKey") != "" && application != nil && application.Cert != "" {
 		cert, err := object.GetCert(util.GetId(application.Owner, application.Cert))

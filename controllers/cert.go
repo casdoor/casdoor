@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -118,6 +119,10 @@ func (c *ApiController) GetCert() {
 	cert, err := object.GetCert(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if cert == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The cert: %s does not exist"), id))
 		return
 	}
 
