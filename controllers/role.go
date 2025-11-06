@@ -16,7 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -79,10 +78,6 @@ func (c *ApiController) GetRole() {
 	role, err := object.GetRole(id)
 	if err != nil {
 		c.ResponseError(err.Error())
-		return
-	}
-	if role == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The role: %s does not exist"), id))
 		return
 	}
 

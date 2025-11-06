@@ -144,10 +144,6 @@ func (c *ApiController) GetLdap() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if ldap == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The LDAP: %s does not exist"), name))
-		return
-	}
 	c.ResponseOk(object.GetMaskedLdap(ldap))
 }
 

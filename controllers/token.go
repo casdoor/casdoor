@@ -83,10 +83,6 @@ func (c *ApiController) GetToken() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if token == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The token: %s does not exist"), id))
-		return
-	}
 
 	c.ResponseOk(token)
 }

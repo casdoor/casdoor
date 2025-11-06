@@ -312,7 +312,6 @@
     "Failed to delete": "No se pudo eliminar",
     "Failed to enable": "Error al habilitar",
     "Failed to get": "Error al obtener",
-    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Error al eliminar",
     "Failed to save": "No se pudo guardar",
@@ -411,7 +410,6 @@
     "Plan - Tooltip": "Plan de suscripción",
     "Plans": "Planes",
     "Plans - Tooltip": "Planes - Información adicional",
-    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Avance",
     "Preview - Tooltip": "Vista previa de los efectos configurados",
@@ -716,8 +714,6 @@
     "Navbar items - Tooltip": "Elementos de la barra de navegación - Información adicional",
     "New Organization": "Nueva organización",
     "Optional": "Opcional",
-    "Org balance": "Org balance",
-    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Días de expiración de contraseña",
     "Password expire days - Tooltip": "Días de expiración de contraseña - Información adicional",
     "Prompt": "Sugerencia",
@@ -728,8 +724,6 @@
     "Tags - Tooltip": "Colección de etiquetas disponibles para que los usuarios elijan",
     "Use Email as username": "Usar correo electrónico como nombre de usuario",
     "Use Email as username - Tooltip": "Usar correo electrónico como nombre de usuario si el campo de nombre de usuario no es visible al registrarse",
-    "User balance": "User balance",
-    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Tipos de usuario",
     "User types - Tooltip": "Tipos de usuario - Información adicional",
     "View rule": "Regla de visualización",
@@ -1255,13 +1249,9 @@
   "transaction": {
     "Amount": "Monto",
     "Amount - Tooltip": "Cantidad de productos intercambiados",
-    "Category": "Category",
     "Edit Transaction": "Editar transacción",
     "New Transaction": "Nueva transacción",
-    "State": "State",
-    "Tag - Tooltip": "Etiqueta de la transacción",
-    "Transactions": "Transactions",
-    "Type": "Type"
+    "Tag - Tooltip": "Etiqueta de la transacción"
   },
   "user": {
     "3rd-party logins": "Inicio de sesión de terceros",

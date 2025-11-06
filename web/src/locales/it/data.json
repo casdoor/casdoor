@@ -312,7 +312,6 @@
     "Failed to delete": "Eliminazione fallita",
     "Failed to enable": "Impossibile abilitare",
     "Failed to get": "Impossibile ottenere",
-    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Impossibile rimuovere",
     "Failed to save": "Salvataggio fallito",
@@ -411,7 +410,6 @@
     "Plan - Tooltip": "Piano di abbonamento",
     "Plans": "Piani",
     "Plans - Tooltip": "Piani - Tooltip",
-    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Anteprima",
     "Preview - Tooltip": "Anteprima degli effetti configurati",
@@ -716,8 +714,6 @@
     "Navbar items - Tooltip": "Elementi navbar - Tooltip",
     "New Organization": "Nuova Organizzazione",
     "Optional": "Opzionale",
-    "Org balance": "Org balance",
-    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Giorni scadenza password",
     "Password expire days - Tooltip": "Giorni scadenza password - Tooltip",
     "Prompt": "Prompt",
@@ -728,8 +724,6 @@
     "Tags - Tooltip": "Raccolta di tag disponibili per gli utenti da scegliere",
     "Use Email as username": "Usa email come nome utente",
     "Use Email as username - Tooltip": "Usa email come nome utente se il campo username non è visibile in registrazione",
-    "User balance": "User balance",
-    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Tipi utente",
     "User types - Tooltip": "Tipi utente - Tooltip",
     "View rule": "Regola visualizzazione",
@@ -1255,13 +1249,9 @@
   "transaction": {
     "Amount": "Importo",
     "Amount - Tooltip": "Quantità di prodotti scambiati",
-    "Category": "Category",
     "Edit Transaction": "Modifica transazione",
     "New Transaction": "Nuova transazione",
-    "State": "State",
-    "Tag - Tooltip": "Tag della transazione",
-    "Transactions": "Transactions",
-    "Type": "Type"
+    "Tag - Tooltip": "Tag della transazione"
   },
   "user": {
     "3rd-party logins": "Accessi di terze parti",

@@ -119,10 +119,6 @@ func (c *ApiController) GetResource() {
 		c.ResponseError(err.Error())
 		return
 	}
-	if resource == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The resource: %s does not exist"), id))
-		return
-	}
 
 	c.ResponseOk(resource)
 }
