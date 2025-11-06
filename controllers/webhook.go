@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -81,6 +82,10 @@ func (c *ApiController) GetWebhook() {
 	webhook, err := object.GetWebhook(id)
 	if err != nil {
 		c.ResponseError(err.Error())
+		return
+	}
+	if webhook == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The webhook: %s does not exist"), id))
 		return
 	}
 
