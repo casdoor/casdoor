@@ -233,6 +233,15 @@ const Dashboard = (props) => {
     };
     myChart.setOption(option);
 
+    // Validate data array length
+    if (!dashboardData.userCounts || dashboardData.userCounts.length < 31) {
+      return (
+        <div style={{display: "flex", justifyContent: "center", alignItems: "center", padding: "40px"}}>
+          <span style={{color: "rgba(0,0,0,0.45)"}}>No data available</span>
+        </div>
+      );
+    }
+
     // Calculate statistics for cards
     const totalUsers = dashboardData.userCounts[30];
     const usersToday = dashboardData.userCounts[30] - dashboardData.userCounts[29];
@@ -241,7 +250,14 @@ const Dashboard = (props) => {
 
     // Calculate percentage changes (using last 7 days vs previous 7 days)
     const weekBeforeLast = dashboardData.userCounts[23] - dashboardData.userCounts[16];
-    const weeklyGrowth = weekBeforeLast > 0 ? ((usersWeek - weekBeforeLast) / weekBeforeLast * 100).toFixed(1) : (weekBeforeLast === 0 && usersWeek > 0 ? 100 : 0);
+    let weeklyGrowth = 0;
+    if (weekBeforeLast > 0) {
+      weeklyGrowth = ((usersWeek - weekBeforeLast) / weekBeforeLast * 100).toFixed(1);
+    } else if (weekBeforeLast === 0 && usersWeek > 0) {
+      weeklyGrowth = 100;
+    } else if (weekBeforeLast === 0 && usersWeek < 0) {
+      weeklyGrowth = -100;
+    }
 
     // Get last 7 days data for mini charts
     const last7Days = dashboardData.userCounts.slice(24, 31);
@@ -249,9 +265,17 @@ const Dashboard = (props) => {
     // Calculate daily sales average
     const dailySales = totalUsers > 0 ? (totalUsers / 30).toFixed(0) : 0;
 
-    // Calculate monthly growth percentage
-    const monthlyGrowthPercent = totalUsers > 0 ? Math.min((usersMonth / totalUsers * 100), 100) : 0;
-    const monthlyGrowthDisplay = totalUsers > 0 ? (usersMonth / totalUsers * 100).toFixed(1) : 0;
+    // Calculate monthly growth percentage (relative to the previous 30 days period)
+    const previousMonthTotal = dashboardData.userCounts[0];
+    let monthlyGrowthPercent = 0;
+    let monthlyGrowthDisplay = 0;
+    if (previousMonthTotal > 0) {
+      monthlyGrowthPercent = Math.min((usersMonth / previousMonthTotal * 100), 100);
+      monthlyGrowthDisplay = (usersMonth / previousMonthTotal * 100).toFixed(1);
+    } else if (usersMonth > 0) {
+      monthlyGrowthPercent = 100;
+      monthlyGrowthDisplay = 100;
+    }
 
     return (
       <div style={{width: "100%", maxWidth: "1400px"}}>
