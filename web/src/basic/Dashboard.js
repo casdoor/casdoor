@@ -244,9 +244,9 @@ const Dashboard = (props) => {
 
     // Calculate statistics for cards
     const totalUsers = dashboardData.userCounts[30];
-    const usersToday = dashboardData.userCounts[30] - dashboardData.userCounts[29];
-    const usersWeek = dashboardData.userCounts[30] - dashboardData.userCounts[23];
-    const usersMonth = dashboardData.userCounts[30] - dashboardData.userCounts[0];
+    const usersToday = Math.max(0, dashboardData.userCounts[30] - dashboardData.userCounts[29]);
+    const usersWeek = Math.max(0, dashboardData.userCounts[30] - dashboardData.userCounts[23]);
+    const usersMonth = Math.max(0, dashboardData.userCounts[30] - dashboardData.userCounts[0]);
 
     // Calculate percentage changes (using last 7 days vs previous 7 days)
     const weekBeforeLast = dashboardData.userCounts[23] - dashboardData.userCounts[16];
@@ -267,10 +267,10 @@ const Dashboard = (props) => {
 
     // Calculate monthly growth percentage (relative to the previous 30 days period)
     const previousMonthTotal = dashboardData.userCounts[0];
-    let monthlyGrowthPercent = 0;
-    let monthlyGrowthDisplay = 0;
+    let monthlyGrowthPercent = 0; // Capped at 100% for progress bar display
+    let monthlyGrowthDisplay = 0; // Actual percentage shown as text
     if (previousMonthTotal > 0) {
-      monthlyGrowthPercent = Math.min((usersMonth / previousMonthTotal * 100), 100);
+      monthlyGrowthPercent = Math.min((usersMonth / previousMonthTotal * 100), 100); // Progress bar max is 100%
       monthlyGrowthDisplay = (usersMonth / previousMonthTotal * 100).toFixed(1);
     } else if (usersMonth > 0) {
       monthlyGrowthPercent = 100;
