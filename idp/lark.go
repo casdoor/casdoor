@@ -83,8 +83,6 @@ type LarkAccessToken struct {
 	Expire            int    `json:"expire"`
 }
 
-// GetToken use code get access_token (*operation of getting code ought to be done in front)
-// get more detail via: https://docs.microsoft.com/en-us/linkedIn/shared/authentication/authorization-code-flow?context=linkedIn%2Fcontext&tabs=HTTPS
 func (idp *LarkIdProvider) GetToken(code string) (*oauth2.Token, error) {
 	params := &struct {
 		AppID     string `json:"app_id"`
@@ -170,8 +168,6 @@ type LarkUserInfo struct {
 	} `json:"data"`
 }
 
-// GetUserInfo use LarkAccessToken gotten before return LinkedInUserInfo
-// get more detail via: https://docs.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin?context=linkedin/consumer/context
 func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	body := &struct {
 		GrantType string `json:"grant_type"`
