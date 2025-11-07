@@ -214,13 +214,10 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		email = larkUserInfo.Data.EnterpriseEmail
 	}
 
-	// Use fallback mechanism for username: UserId -> Name -> EnName -> OpenId
+	// Use fallback mechanism for username: UserId -> UnionId -> OpenId
 	username := larkUserInfo.Data.UserId
 	if username == "" {
-		username = larkUserInfo.Data.Name
-	}
-	if username == "" {
-		username = larkUserInfo.Data.EnName
+		username = larkUserInfo.Data.UnionId
 	}
 	if username == "" {
 		username = larkUserInfo.Data.OpenId
