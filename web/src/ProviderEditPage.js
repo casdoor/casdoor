@@ -460,6 +460,13 @@ class ProviderEditPage extends React.Component {
           {id: "Third-party", name: i18next.t("provider:Third-party")},
         ]
       );
+    } else if (type === "WeChat") {
+      return (
+        [
+          {id: "Web", name: i18next.t("provider:Web")},
+          {id: "Mobile", name: i18next.t("provider:Mobile")},
+        ]
+      );
     } else {
       return [];
     }
@@ -764,7 +771,7 @@ class ProviderEditPage extends React.Component {
           </Col>
         </Row>
         {
-          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" ? null : (
+          this.state.provider.type !== "WeCom" && this.state.provider.type !== "Infoflow" && this.state.provider.type !== "WeChat" ? null : (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
