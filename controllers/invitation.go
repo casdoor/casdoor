@@ -107,7 +107,7 @@ func (c *ApiController) GetInvitationCodeInfo() {
 		return
 	}
 
-	invitation, msg := object.GetInvitationByCode(code, application.Organization, c.GetAcceptLanguage())
+	invitation, msg := object.GetInvitationByCode(code, application.Organization, application.Name, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -234,15 +234,29 @@ func (c *ApiController) SendInvitation() {
 		return
 	}
 
-	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
-		return
+	var application *object.Application
+	// If invitation specifies a particular application, use it
+	if invitation.Application != "" && invitation.Application != "All" {
+		application, err = object.GetApplication(fmt.Sprintf("%s/%s", invitation.Owner, invitation.Application))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), invitation.Application))
+			return
+		}
+	} else {
+		// For "All" or empty application, get any application from the organization
+		application, err = object.GetApplicationByOrganizationName(invitation.Owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
+			return
+		}
 	}
 
 	provider, err := application.GetEmailProvider("Invitation")
@@ -251,7 +265,7 @@ func (c *ApiController) SendInvitation() {
 		return
 	}
 	if provider == nil {
-		c.ResponseError(fmt.Sprintf(c.T("verification:please add an Email provider to the \"Providers\" list for the application: %s"), invitation.Owner))
+		c.ResponseError(fmt.Sprintf(c.T("verification:please add an Email provider to the \"Providers\" list for the application: %s"), application.Name))
 		return
 	}
 

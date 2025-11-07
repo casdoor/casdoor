@@ -97,13 +97,16 @@ func GetInvitation(id string) (*Invitation, error) {
 	return getInvitation(owner, name)
 }
 
-func GetInvitationByCode(code string, organizationName string, lang string) (*Invitation, string) {
+func GetInvitationByCode(code string, organizationName string, applicationName string, lang string) (*Invitation, string) {
 	invitations, err := GetInvitations(organizationName)
 	if err != nil {
 		return nil, err.Error()
 	}
 	errMsg := ""
 	for _, invitation := range invitations {
+		if invitation.Application != applicationName && invitation.Application != "All" {
+			continue
+		}
 		if isValid, msg := invitation.SimpleCheckInvitationCode(code, lang); isValid {
 			return invitation, msg
 		} else if msg != "" && errMsg == "" {
