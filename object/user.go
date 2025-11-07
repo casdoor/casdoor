@@ -786,7 +786,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 	// Auto-upgrade guest users when they update their username or password
 	if oldUser.Tag == "guest-user" {
 		// Check if username is being changed from the generated guest username
-		usernameChanged := name != user.Name && !strings.HasPrefix(user.Name, "guest_")
+		usernameChanged := oldUser.Name != user.Name && !strings.HasPrefix(user.Name, "guest_")
 		// Check if password is being updated (not the placeholder ***)
 		passwordChanged := user.Password != "***" && user.Password != "" && user.Password != oldUser.Password
 

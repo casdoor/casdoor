@@ -477,15 +477,12 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 	}
 
 	// Get initial score
-	initScore := 0
-	if organization != nil {
-		initScore, err = organization.GetInitScore()
-		if err != nil {
-			return nil, &TokenError{
-				Error:            EndpointError,
-				ErrorDescription: fmt.Sprintf("failed to get init score: %s", err.Error()),
-			}, nil
-		}
+	initScore, err := organization.GetInitScore()
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to get init score: %s", err.Error()),
+		}, nil
 	}
 
 	// Create the guest user
@@ -577,7 +574,11 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 
 // generateGuestUsername generates a unique username for guest users
 func generateGuestUsername() string {
-	uid, _ := uuid.NewRandom()
+	uid, err := uuid.NewRandom()
+	if err != nil {
+		// Fallback to a timestamp-based unique ID if UUID generation fails
+		return fmt.Sprintf("guest_%d", time.Now().UnixNano())
+	}
 	return fmt.Sprintf("guest_%s", uid.String())
 }
 
