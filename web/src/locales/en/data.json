@@ -312,6 +312,7 @@
     "Failed to delete": "Failed to delete",
     "Failed to enable": "Failed to enable",
     "Failed to get": "Failed to get",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Failed to remove",
     "Failed to save": "Failed to save",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Plan in the subscription",
     "Plans": "Plans",
     "Plans - Tooltip": "Plans in the subscription",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Preview",
     "Preview - Tooltip": "Preview the configured effects",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Items displayed in the navigation bar",
     "New Organization": "New Organization",
     "Optional": "Optional",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Password expire days",
     "Password expire days - Tooltip": "Number of days before password expires",
     "Prompt": "Prompt",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Collection of tags available for users to choose from",
     "Use Email as username": "Use Email as username",
     "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "User types",
     "User types - Tooltip": "Available user types in the system",
     "View rule": "View rule",
@@ -964,6 +970,7 @@
     "Metadata url": "Metadata url",
     "Metadata url - Tooltip": "SAML metadata URL",
     "Method - Tooltip": "Login method, QR code or silent login",
+    "Mobile": "Mobile",
     "New Provider": "New Provider",
     "Normal": "Normal",
     "Parameter": "Parameter",
@@ -1052,8 +1059,6 @@
     "Test Email - Tooltip": "Email address to receive test mails",
     "Test SMTP Connection": "Test SMTP Connection",
     "Third-party": "Third-party",
-    "Web": "Web",
-    "Mobile": "Mobile",
     "This field is required": "This field is required",
     "To address": "To address",
     "To address - Tooltip": "Email address of \"To\"",
@@ -1077,6 +1082,7 @@
     "UserInfo URL - Tooltip": "Custom OAuth UserInfo URL",
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Supported digital wallets",
+    "Web": "Web",
     "admin (Shared)": "admin (Shared)"
   },
   "record": {
@@ -1251,9 +1257,13 @@
   "transaction": {
     "Amount": "Amount",
     "Amount - Tooltip": "The amount of traded products",
+    "Category": "Category",
     "Edit Transaction": "Edit Transaction",
     "New Transaction": "New Transaction",
-    "Tag - Tooltip": "The tag of the transaction"
+    "State": "State",
+    "Tag - Tooltip": "The tag of the transaction",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "3rd-party logins",

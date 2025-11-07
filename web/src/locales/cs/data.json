@@ -312,6 +312,7 @@
     "Failed to delete": "Nepodařilo se smazat",
     "Failed to enable": "Povolení se nezdařilo",
     "Failed to get": "Nepodařilo se získat",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Odstranění se nezdařilo",
     "Failed to save": "Nepodařilo se uložit",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Plán předplatného",
     "Plans": "Plány",
     "Plans - Tooltip": "Plány - popisek",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Náhled",
     "Preview - Tooltip": "Náhled nakonfigurovaných efektů",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Položky zobrazované v navigační liště",
     "New Organization": "Nová organizace",
     "Optional": "Volitelné",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Dnů do vypršení hesla",
     "Password expire days - Tooltip": "Počet dnů před vypršením hesla",
     "Prompt": "Výzva",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Kolekce štítků dostupných pro uživatele k výběru",
     "Use Email as username": "Použít e-mail jako uživatelské jméno",
     "Use Email as username - Tooltip": "Použít e-mail jako uživatelské jméno, pokud není pole uživatelského jména viditelné při registraci",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Typy uživatelů",
     "User types - Tooltip": "Dostupné typy uživatelů v systému",
     "View rule": "Zobrazit pravidlo",
@@ -964,6 +970,7 @@
     "Metadata url": "URL metadat",
     "Metadata url - Tooltip": "URL SAML metadat",
     "Method - Tooltip": "Metoda přihlášení, QR kód nebo tiché přihlášení",
+    "Mobile": "移动版",
     "New Provider": "Nový poskytovatel",
     "Normal": "Normální",
     "Parameter": "Parametr",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "Vlastní OAuth UserInfo URL",
     "Wallets": "Peněženky",
     "Wallets - Tooltip": "Podporované digitální peněženky",
+    "Web": "网页版",
     "admin (Shared)": "admin (Sdílený)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Částka",
     "Amount - Tooltip": "Množství obchodovaných produktů",
+    "Category": "Category",
     "Edit Transaction": "Upravit transakci",
     "New Transaction": "Nová transakce",
-    "Tag - Tooltip": "Štítek transakce"
+    "State": "State",
+    "Tag - Tooltip": "Štítek transakce",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Přihlášení třetími stranami",

@@ -312,6 +312,7 @@
     "Failed to delete": "Жою сәтсіз аяқталды",
     "Failed to enable": "Қосу сәтсіз аяқталды",
     "Failed to get": "Алу сәтсіз аяқталды",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Жою сәтсіз аяқталды",
     "Failed to save": "Сақтау сәтсіз аяқталды",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Жазылым жоспары",
     "Plans": "Жоспарлар",
     "Plans - Tooltip": "Жоспарлар - Қысқаша түсінік",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Алдын ала қарау",
     "Preview - Tooltip": "Теңшеу әсерлерін алдын ала қарау",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Навигация элементтері - Құралдың түсіндірмесі",
     "New Organization": "Жаңа ұйым",
     "Optional": "Міндетті емес",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Құпия сөздің мерзімі",
     "Password expire days - Tooltip": "Құпия сөздің мерзімі - Құралдың түсіндірмесі",
     "Prompt": "Нұсқау",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Пайдаланушылардың таңдауына арналған тегтер жинағы",
     "Use Email as username": "Электрондық поштаны пайдаланушы аты ретінде пайдалану",
     "Use Email as username - Tooltip": "Егер пайдаланушы аты өрісі тіркелу кезінде көрсетілмесе, электрондық поштаны пайдаланушы аты ретінде пайдалану",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Пайдаланушы түрлері",
     "User types - Tooltip": "Пайдаланушы түрлері - Құралдың түсіндірмесі",
     "View rule": "Көру ережесі",
@@ -964,6 +970,7 @@
     "Metadata url": "Метадеректер URL-ы",
     "Metadata url - Tooltip": "Метадеректер URL-ы - Құралдың түсіндірмесі",
     "Method - Tooltip": "Кіру әдісі, QR код немесе тыныш кіру",
+    "Mobile": "移动版",
     "New Provider": "Жаңа провайдер",
     "Normal": "Қалыпты",
     "Parameter": "Параметр",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "Пайдаланушы ақпараты URL-ы",
     "Wallets": "Әмияндар",
     "Wallets - Tooltip": "Әмияндар - Құралдың түсіндірмесі",
+    "Web": "网页版",
     "admin (Shared)": "әкімші (Ортақ)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Сома",
     "Amount - Tooltip": "Сауда жасалған өнімдердің сомасы",
+    "Category": "Category",
     "Edit Transaction": "Транзакцияны өңдеу",
     "New Transaction": "Жаңа транзакция",
-    "Tag - Tooltip": "Транзакцияның тегі"
+    "State": "State",
+    "Tag - Tooltip": "Транзакцияның тегі",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "3-тілдік кірулер",

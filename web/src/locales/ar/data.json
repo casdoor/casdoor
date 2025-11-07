@@ -312,6 +312,7 @@
     "Failed to delete": "فشل الحذف",
     "Failed to enable": "فشل التمكين",
     "Failed to get": "فشل في الحصول على",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "فشل الإزالة",
     "Failed to save": "فشل الحفظ",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "خطة الاشتراك",
     "Plans": "الخطط",
     "Plans - Tooltip": "الخطط - تلميح",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "معاينة",
     "Preview - Tooltip": "معاينة التأثيرات المُعدّلة",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "العناصر المعروضة في شريط التنقل",
     "New Organization": "منظمة جديدة",
     "Optional": "اختياري",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "أيام انتهاء صلاحية كلمة المرور",
     "Password expire days - Tooltip": "عدد الأيام قبل انتهاء صلاحية كلمة المرور",
     "Prompt": "الطلب",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "مجموعة من الوسوم المتاحة للمستخدمين لاختيارها",
     "Use Email as username": "استخدم البريد الإلكتروني كاسم مستخدم",
     "Use Email as username - Tooltip": "استخدم البريد الإلكتروني كاسم مستخدم إذا لم يكن حقل اسم المستخدم مرئياً عند التسجيل",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "أنواع المستخدمين",
     "User types - Tooltip": "أنواع المستخدمين المتاحة في النظام",
     "View rule": "قاعدة العرض",
@@ -964,6 +970,7 @@
     "Metadata url": "رابط البيانات الوصفية",
     "Metadata url - Tooltip": "عنوان URL للبيانات الوصفية SAML",
     "Method - Tooltip": "طريقة تسجيل الدخول، رمز QR أو تسجيل صامت",
+    "Mobile": "移动版",
     "New Provider": "مزود جديد",
     "Normal": "عادي",
     "Parameter": "المعامل",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "عنوان URL مخصص لمعلومات مستخدم OAuth",
     "Wallets": "المحافظ",
     "Wallets - Tooltip": "المحافظ الرقمية المدعومة",
+    "Web": "网页版",
     "admin (Shared)": "المسؤول (مشترك)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "المبلغ",
     "Amount - Tooltip": "مبلغ المنتجات المتداولة",
+    "Category": "Category",
     "Edit Transaction": "تعديل المعاملة",
     "New Transaction": "معاملة جديدة",
-    "Tag - Tooltip": "العلامة للمعاملة"
+    "State": "State",
+    "Tag - Tooltip": "العلامة للمعاملة",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "تسجيلات الدخول من جهات خارجية",

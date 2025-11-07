@@ -312,6 +312,7 @@
     "Failed to delete": "Misslyckades att ta bort",
     "Failed to enable": "Misslyckades att aktivera",
     "Failed to get": "Hämtning misslyckades",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Misslyckades att ta bort",
     "Failed to save": "Misslyckades att spara",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Abonnemangsplan",
     "Plans": "Planer",
     "Plans - Tooltip": "Planer",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Förhandsvisning",
     "Preview - Tooltip": "Förhandsgranska de konfigurerade effekterna",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Navigeringsfältets objekt - Tooltip",
     "New Organization": "Ny organisation",
     "Optional": "Valfritt",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Lösenordets giltighetstid i dagar",
     "Password expire days - Tooltip": "Lösenordets giltighetstid i dagar - Tooltip",
     "Prompt": "Meddelande",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Samling av taggar som användare kan välja bland",
     "Use Email as username": "Använd e-post som användarnamn",
     "Use Email as username - Tooltip": "Använd e-post som användarnamn om användarnamnsfältet inte visas vid registrering",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Användartyper",
     "User types - Tooltip": "Användartyper - Tooltip",
     "View rule": "Visningsregel",
@@ -964,6 +970,7 @@
     "Metadata url": "Metadata-URL",
     "Metadata url - Tooltip": "Metadata-URL - Tooltip",
     "Method - Tooltip": "Inloggningsmetod, QR-kod eller tyst inloggning",
+    "Mobile": "移动版",
     "New Provider": "Ny leverantör",
     "Normal": "Normal",
     "Parameter": "Parameter",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "UserInfo-URL",
     "Wallets": "Plånböcker",
     "Wallets - Tooltip": "Plånböcker - Tooltip",
+    "Web": "网页版",
     "admin (Shared)": "admin (Delad)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Belopp",
     "Amount - Tooltip": "Mängden handlade produkter",
+    "Category": "Category",
     "Edit Transaction": "Redigera transaktion",
     "New Transaction": "Ny transaktion",
-    "Tag - Tooltip": "Transaktionens tagg"
+    "State": "State",
+    "Tag - Tooltip": "Transaktionens tagg",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Inloggningar från tredje part",

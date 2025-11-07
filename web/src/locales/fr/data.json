@@ -312,6 +312,7 @@
     "Failed to delete": "Échec de la suppression",
     "Failed to enable": "Échec de l'activation",
     "Failed to get": "Échec de la récupération",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Échec de la suppression",
     "Failed to save": "Échec de sauvegarde",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Plan d'abonnement",
     "Plans": "Offres",
     "Plans - Tooltip": "Plans - Infobulle",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Aperçu",
     "Preview - Tooltip": "Prévisualisation des effets configurés",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Éléments de la barre de navigation - Infobulle",
     "New Organization": "Nouvelle organisation",
     "Optional": "Optionnel",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Jours d'expiration du mot de passe",
     "Password expire days - Tooltip": "Jours d'expiration du mot de passe - Infobulle",
     "Prompt": "Invite",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Collection d'étiquettes disponibles pour les comptes",
     "Use Email as username": "Utiliser l'e-mail comme nom d'utilisateur",
     "Use Email as username - Tooltip": "Utiliser l'e-mail comme nom d'utilisateur si le champ nom d'utilisateur n'est pas visible à l'inscription",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Types d'utilisateurs",
     "User types - Tooltip": "Types d'utilisateurs - Infobulle",
     "View rule": "Règle de visibilité",
@@ -964,6 +970,7 @@
     "Metadata url": "URL des métadonnées",
     "Metadata url - Tooltip": "URL des métadonnées - Infobulle",
     "Method - Tooltip": "Méthode de connexion, code QR ou connexion silencieuse",
+    "Mobile": "移动版",
     "New Provider": "Nouveau fournisseur",
     "Normal": "Normal",
     "Parameter": "Paramètre",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "URL d'information du compte (UserInfo)",
     "Wallets": "Portefeuilles",
     "Wallets - Tooltip": "Portefeuilles - Infobulle",
+    "Web": "网页版",
     "admin (Shared)": "admin (Partagé)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Montant",
     "Amount - Tooltip": "Le montant des produits échangés",
+    "Category": "Category",
     "Edit Transaction": "Modifier la transaction",
     "New Transaction": "Nouvelle transaction",
-    "Tag - Tooltip": "L'étiquette de la transaction"
+    "State": "State",
+    "Tag - Tooltip": "L'étiquette de la transaction",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Services de connexions tiers",

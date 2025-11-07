@@ -312,6 +312,7 @@
     "Failed to delete": "Gagal menghapus",
     "Failed to enable": "Gagal mengaktifkan",
     "Failed to get": "Gagal mendapatkan",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Gagal menghapus",
     "Failed to save": "Gagal menyimpan",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Paket berlangganan",
     "Plans": "Rencana",
     "Plans - Tooltip": "Rencana - Tooltip",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Tinjauan",
     "Preview - Tooltip": "Mengawali pratinjau efek yang sudah dikonfigurasi",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Item navbar - Tooltip",
     "New Organization": "Organisasi baru",
     "Optional": "Opsional",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Hari kedaluwarsa kata sandi",
     "Password expire days - Tooltip": "Hari kedaluwarsa kata sandi - Tooltip",
     "Prompt": "Prompt",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Kumpulan tag yang tersedia bagi pengguna untuk dipilih",
     "Use Email as username": "Gunakan Email sebagai nama pengguna",
     "Use Email as username - Tooltip": "Gunakan Email sebagai nama pengguna jika bidang nama pengguna tidak terlihat saat pendaftaran",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Tipe pengguna",
     "User types - Tooltip": "Tipe pengguna - Tooltip",
     "View rule": "Aturan tampilan",
@@ -964,6 +970,7 @@
     "Metadata url": "URL metadata",
     "Metadata url - Tooltip": "URL metadata - Tooltip",
     "Method - Tooltip": "Metode login, kode QR atau login tanpa suara",
+    "Mobile": "移动版",
     "New Provider": "Penyedia Baru",
     "Normal": "Normal",
     "Parameter": "Parameter",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "URL Informasi Pengguna",
     "Wallets": "Dompet",
     "Wallets - Tooltip": "Dompet - Tooltip",
+    "Web": "网页版",
     "admin (Shared)": "Admin (Berbagi)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Jumlah",
     "Amount - Tooltip": "Jumlah produk yang diperdagangkan",
+    "Category": "Category",
     "Edit Transaction": "Edit Transaksi",
     "New Transaction": "Transaksi Baru",
-    "Tag - Tooltip": "Tag transaksi"
+    "State": "State",
+    "Tag - Tooltip": "Tag transaksi",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Masuk pihak ketiga",
