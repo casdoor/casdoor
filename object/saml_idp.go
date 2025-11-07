@@ -48,6 +48,8 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(time.RFC3339)
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")
 	samlResponse.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
+	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+	samlResponse.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
 	arId := uuid.New()
 
 	samlResponse.CreateAttr("ID", fmt.Sprintf("_%s", arId))
@@ -61,8 +63,6 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 
 	assertion := samlResponse.CreateElement("saml:Assertion")
 	assertion.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
-	assertion.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
-	assertion.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
 	assertion.CreateAttr("ID", fmt.Sprintf("_%s", uuid.New()))
 	assertion.CreateAttr("Version", "2.0")
 	assertion.CreateAttr("IssueInstant", now)
@@ -132,8 +132,6 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 		valueList := replaceAttributeValue(user, item.Value)
 		for _, value := range valueList {
 			av := role.CreateElement("saml:AttributeValue")
-			av.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
-			av.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 			av.CreateAttr("xsi:type", "xs:string").Element().SetText(value)
 		}
 	}
