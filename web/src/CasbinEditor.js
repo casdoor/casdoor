@@ -23,6 +23,7 @@ const CasbinEditor = ({model, onModelTextChange}) => {
   const [activeKey, setActiveKey] = useState("advanced");
   const iframeRef = useRef(null);
   const [localModelText, setLocalModelText] = useState(model.modelText);
+  const [currentLanguage, setCurrentLanguage] = useState(i18next.language);
 
   const handleModelTextChange = useCallback((newModelText) => {
     if (!Setting.builtInObject(model)) {
@@ -61,6 +62,23 @@ const CasbinEditor = ({model, onModelTextChange}) => {
   useEffect(() => {
     setLocalModelText(model.modelText);
   }, [model.modelText]);
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      const newLanguage = i18next.language;
+      if (newLanguage !== currentLanguage) {
+        setCurrentLanguage(newLanguage);
+        if (activeKey === "advanced" && iframeRef.current) {
+          iframeRef.current.updateLanguage(newLanguage);
+        }
+      }
+    };
+
+    i18next.on("languageChanged", handleLanguageChange);
+    return () => {
+      i18next.off("languageChanged", handleLanguageChange);
+    };
+  }, [activeKey, currentLanguage]);
 
   return (
     <div style={{height: "100%", width: "100%", display: "flex", flexDirection: "column"}}>

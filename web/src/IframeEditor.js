@@ -57,6 +57,14 @@ const IframeEditor = forwardRef(({initialModelText, onModelTextChange}, ref) => 
         }, "*");
       }
     },
+    updateLanguage: (language) => {
+      if (iframeReady && iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage({
+          type: "updateLanguage",
+          language: language,
+        }, "*");
+      }
+    },
   }));
 
   return (
