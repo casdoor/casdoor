@@ -22,12 +22,18 @@ import * as Setting from "../Setting";
 import * as TourConfig from "../TourConfig";
 
 const MiniChart = ({data, color = "#1890ff"}) => {
-  const chartId = React.useRef(`mini-chart-${Math.random().toString(36).substr(2, 9)}`);
+  const chartIdRef = React.useRef(null);
+  const chartId = React.useMemo(() => {
+    if (!chartIdRef.current) {
+      chartIdRef.current = `mini-chart-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    }
+    return chartIdRef.current;
+  }, []);
 
   React.useEffect(() => {
     if (!data || data.length === 0) {return;}
 
-    const chartDom = document.getElementById(chartId.current);
+    const chartDom = document.getElementById(chartId);
     if (!chartDom) {return;}
 
     const myChart = echarts.init(chartDom);
@@ -63,9 +69,9 @@ const MiniChart = ({data, color = "#1890ff"}) => {
     return () => {
       myChart.dispose();
     };
-  }, [data, color]);
+  }, [data, color, chartId]);
 
-  return <div id={chartId.current} style={{width: "100%", height: "46px"}} />;
+  return <div id={chartId} style={{width: "100%", height: "46px"}} />;
 };
 
 const Dashboard = (props) => {
@@ -235,10 +241,17 @@ const Dashboard = (props) => {
 
     // Calculate percentage changes (using last 7 days vs previous 7 days)
     const weekBeforeLast = dashboardData.userCounts[23] - dashboardData.userCounts[16];
-    const weeklyGrowth = weekBeforeLast > 0 ? ((usersWeek - weekBeforeLast) / weekBeforeLast * 100).toFixed(1) : 0;
+    const weeklyGrowth = weekBeforeLast > 0 ? ((usersWeek - weekBeforeLast) / weekBeforeLast * 100).toFixed(1) : (weekBeforeLast === 0 && usersWeek > 0 ? 100 : 0);
 
     // Get last 7 days data for mini charts
     const last7Days = dashboardData.userCounts.slice(24, 31);
+
+    // Calculate daily sales average
+    const dailySales = totalUsers > 0 ? (totalUsers / 30).toFixed(0) : 0;
+
+    // Calculate monthly growth percentage
+    const monthlyGrowthPercent = totalUsers > 0 ? Math.min((usersMonth / totalUsers * 100), 100) : 0;
+    const monthlyGrowthDisplay = totalUsers > 0 ? (usersMonth / totalUsers * 100).toFixed(1) : 0;
 
     return (
       <div style={{width: "100%", maxWidth: "1400px"}}>
@@ -261,7 +274,7 @@ const Dashboard = (props) => {
               <div style={{display: "flex", alignItems: "center", fontSize: "12px"}}>
                 <span style={{color: "rgba(0,0,0,0.45)"}}>{i18next.t("home:Daily sales")}</span>
                 <span style={{marginLeft: "auto", color: "rgba(0,0,0,0.85)"}}>
-                  {(totalUsers / 30).toFixed(0)}
+                  {dailySales}
                 </span>
               </div>
             </Card>
@@ -329,7 +342,7 @@ const Dashboard = (props) => {
               </div>
               <div>
                 <Progress
-                  percent={Math.min((usersMonth / totalUsers * 100), 100)}
+                  percent={monthlyGrowthPercent}
                   strokeColor="#52c41a"
                   showInfo={false}
                   size="small"
@@ -337,7 +350,7 @@ const Dashboard = (props) => {
                 <div style={{display: "flex", alignItems: "center", fontSize: "12px", marginTop: "4px"}}>
                   <span style={{color: "rgba(0,0,0,0.45)"}}>{i18next.t("home:Monthly growth")}</span>
                   <span style={{marginLeft: "auto", color: "rgba(0,0,0,0.85)"}}>
-                    {(usersMonth / totalUsers * 100).toFixed(1)}%
+                    {monthlyGrowthDisplay}%
                   </span>
                 </div>
               </div>
