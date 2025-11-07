@@ -111,7 +111,9 @@ func (idp *WeComIdProvider) GetToken(code string) (*oauth2.Token, error) {
        "userid":"xxxx",
        "open_userid":"xxx",
        "name":"xxxx",
-       "avatar":"xxxx"
+       "avatar":"xxxx",
+       "email":"xxxx",
+       "mobile":"xxxx"
    },
    "corp_info":{
        "corpid":"wxCorpId",
@@ -141,6 +143,8 @@ type WeComUserInfo struct {
 		OpenUserid string `json:"open_userid"`
 		Name       string `json:"name"`
 		Avatar     string `json:"avatar"`
+		Email      string `json:"email"`
+		Mobile     string `json:"mobile"`
 	} `json:"user_info"`
 	CorpInfo struct {
 		Corpid string `json:"corpid"`
@@ -185,6 +189,8 @@ func (idp *WeComIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) 
 		Username:    wecomUserInfo.UserInfo.Name,
 		DisplayName: wecomUserInfo.UserInfo.Name,
 		AvatarUrl:   wecomUserInfo.UserInfo.Avatar,
+		Email:       wecomUserInfo.UserInfo.Email,
+		Phone:       wecomUserInfo.UserInfo.Mobile,
 	}
 
 	if idp.UseIdAsName {

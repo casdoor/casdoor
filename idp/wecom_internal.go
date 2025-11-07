@@ -106,6 +106,8 @@ type WecomInternalUserResp struct {
 	Errmsg  string `json:"errmsg"`
 	UserId  string `json:"UserId"`
 	OpenId  string `json:"OpenId"`
+	Email   string `json:"email"`
+	Mobile  string `json:"mobile"`
 }
 
 type WecomInternalUserInfo struct {
@@ -113,6 +115,7 @@ type WecomInternalUserInfo struct {
 	Errmsg  string `json:"errmsg"`
 	Name    string `json:"name"`
 	Email   string `json:"email"`
+	Mobile  string `json:"mobile"`
 	Avatar  string `json:"avatar"`
 	OpenId  string `json:"open_userid"`
 	UserId  string `json:"userid"`
@@ -160,11 +163,27 @@ func (idp *WeComInternalIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo,
 	if infoResp.Errcode != 0 {
 		return nil, fmt.Errorf("userInfoResp.errcode = %d, userInfoResp.errmsg = %s", infoResp.Errcode, infoResp.Errmsg)
 	}
+
+	// Use email from getuserinfo response if available (when using snsapi_privateinfo scope),
+	// otherwise use email from user/get response
+	email := userResp.Email
+	if email == "" {
+		email = infoResp.Email
+	}
+
+	// Use mobile from getuserinfo response if available (when using snsapi_privateinfo scope),
+	// otherwise use mobile from user/get response
+	mobile := userResp.Mobile
+	if mobile == "" {
+		mobile = infoResp.Mobile
+	}
+
 	userInfo := UserInfo{
 		Id:          infoResp.UserId,
 		Username:    infoResp.Name,
 		DisplayName: infoResp.Name,
-		Email:       infoResp.Email,
+		Email:       email,
+		Phone:       mobile,
 		AvatarUrl:   infoResp.Avatar,
 	}
 

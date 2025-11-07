@@ -817,6 +817,20 @@ class ProviderEditPage extends React.Component {
                         }} />
                       </Col>
                     </Row>
+                    {
+                      this.state.provider.method === "Silent" ? (
+                        <Row style={{marginTop: "20px"}} >
+                          <Col style={{marginTop: "5px"}} span={2}>
+                            {Setting.getLabel(i18next.t("provider:Scope"), i18next.t("provider:Scope - Tooltip"))} :
+                          </Col>
+                          <Col span={22} >
+                            <Input value={this.state.provider.scopes} onChange={e => {
+                              this.updateProviderField("scopes", e.target.value);
+                            }} placeholder="snsapi_userinfo or snsapi_privateinfo" />
+                          </Col>
+                        </Row>
+                      ) : null
+                    }
                   </React.Fragment>)
               }
             </React.Fragment>
