@@ -528,11 +528,14 @@
     "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "您需要先删除所有子组。您可以在 [组织] -\u003e [群组] 页面左侧的群组树中查看子组"
   },
   "home": {
+    "Daily sales": "日均销售",
+    "Monthly growth": "月度增长",
     "New users past 30 days": "过去 30 天新增的用户",
     "New users past 7 days": "过去 7 天新增的用户",
     "New users today": "今天新增的用户",
     "Past 30 Days": "过去 30 天",
-    "Total users": "用户总数"
+    "Total users": "用户总数",
+    "Week over week": "周环比"
   },
   "invitation": {
     "Code": "邀请码",

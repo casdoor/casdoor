@@ -528,11 +528,14 @@
     "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
   },
   "home": {
+    "Daily sales": "Daily sales",
+    "Monthly growth": "Monthly growth",
     "New users past 30 days": "New users past 30 days",
     "New users past 7 days": "New users past 7 days",
     "New users today": "New users today",
     "Past 30 Days": "Past 30 Days",
-    "Total users": "Total users"
+    "Total users": "Total users",
+    "Week over week": "Week over week"
   },
   "invitation": {
     "Code": "Code",
