@@ -27,13 +27,13 @@ func TestSamlResponse_RootNamespaceDeclarations(t *testing.T) {
 		Space: "samlp",
 		Tag:   "Response",
 	}
-	
+
 	// Add namespace declarations as they are in the actual code
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")
 	samlResponse.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 	samlResponse.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
-	
+
 	// Create a simple assertion with attribute that uses xsi:type
 	assertion := samlResponse.CreateElement("saml:Assertion")
 	attributes := assertion.CreateElement("saml:AttributeStatement")
@@ -76,7 +76,7 @@ func TestSamlResponse_RootNamespaceDeclarations(t *testing.T) {
 	if xsAttr == nil || xsAttr.Value != "http://www.w3.org/2001/XMLSchema" {
 		t.Error("Root element does not have correct xmlns:xs attribute")
 	}
-	
+
 	// Print the XML for manual verification (optional)
 	t.Logf("Generated SAML Response XML:\n%s", xmlString)
 }
@@ -88,27 +88,27 @@ func TestSamlResponse_AttributeValueWithType(t *testing.T) {
 		Space: "samlp",
 		Tag:   "Response",
 	}
-	
+
 	// Declare namespaces at root (as fixed in the code)
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")
 	samlResponse.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 	samlResponse.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
-	
+
 	// Create multiple AttributeValue elements as in the actual code
 	assertion := samlResponse.CreateElement("saml:Assertion")
 	attributes := assertion.CreateElement("saml:AttributeStatement")
-	
+
 	// Email attribute
 	email := attributes.CreateElement("saml:Attribute")
 	email.CreateAttr("Name", "Email")
 	email.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText("test@example.com")
-	
+
 	// Name attribute
 	name := attributes.CreateElement("saml:Attribute")
 	name.CreateAttr("Name", "Name")
 	name.CreateElement("saml:AttributeValue").CreateAttr("xsi:type", "xs:string").Element().SetText("testuser")
-	
+
 	// DisplayName attribute
 	displayName := attributes.CreateElement("saml:Attribute")
 	displayName.CreateAttr("Name", "DisplayName")
@@ -134,10 +134,10 @@ func TestSamlResponse_AttributeValueWithType(t *testing.T) {
 	if !strings.Contains(xmlString, `xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`) {
 		t.Error("Missing xmlns:xsi at root")
 	}
-	
+
 	if !strings.Contains(xmlString, `xmlns:xs="http://www.w3.org/2001/XMLSchema"`) {
 		t.Error("Missing xmlns:xs at root")
 	}
-	
+
 	t.Logf("Generated SAML Response with multiple attributes:\n%s", xmlString)
 }
