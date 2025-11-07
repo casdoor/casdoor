@@ -312,7 +312,6 @@
     "Failed to delete": "عدم موفقیت در حذف",
     "Failed to enable": "عدم موفقیت در فعال‌سازی",
     "Failed to get": "دریافت ناموفق بود",
-    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "عدم موفقیت در حذف",
     "Failed to save": "عدم موفقیت در ذخیره",
@@ -411,7 +410,6 @@
     "Plan - Tooltip": "برنامه اشتراک",
     "Plans": "طرح‌ها",
     "Plans - Tooltip": "طرح‌ها - راهنمای ابزار",
-    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "پیش‌نمایش",
     "Preview - Tooltip": "پیش‌نمایش اثرات پیکربندی شده",
@@ -716,8 +714,6 @@
     "Navbar items - Tooltip": "آیتم‌های نوار ناوبری - توصیه",
     "New Organization": "سازمان جدید",
     "Optional": "اختیاری",
-    "Org balance": "Org balance",
-    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "روزهای انقضا رمز",
     "Password expire days - Tooltip": "روزهای انقضا رمز - توصیه",
     "Prompt": "اعلان",
@@ -728,8 +724,6 @@
     "Tags - Tooltip": "مجموعه‌ای از برچسب‌های موجود برای انتخاب کاربران",
     "Use Email as username": "استفاده از ایمیل به‌عنوان نام کاربری",
     "Use Email as username - Tooltip": "اگر فیلد نام کاربری در ثبت‌نام قابل مشاهده نباشد، از ایمیل به‌عنوان نام کاربری استفاده کنید",
-    "User balance": "User balance",
-    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "انواع کاربر",
     "User types - Tooltip": "انواع کاربر - توصیه",
     "View rule": "قانون مشاهده",
@@ -970,7 +964,6 @@
     "Metadata url": "URL متادیتا",
     "Metadata url - Tooltip": "URL متادیتا - توصیه",
     "Method - Tooltip": "روش ورود، کد QR یا ورود بی‌صدا",
-    "Mobile": "移动版",
     "New Provider": "ارائه‌دهنده جدید",
     "Normal": "عادی",
     "Parameter": "پارامتر",
@@ -1082,7 +1075,6 @@
     "UserInfo URL - Tooltip": "آدرس UserInfo",
     "Wallets": "کیف پول‌ها",
     "Wallets - Tooltip": "کیف پول‌ها - راهنمای ابزار",
-    "Web": "网页版",
     "admin (Shared)": "مدیر (مشترک)"
   },
   "record": {
@@ -1257,13 +1249,9 @@
   "transaction": {
     "Amount": "مقدار",
     "Amount - Tooltip": "مقدار محصولات معامله شده",
-    "Category": "Category",
     "Edit Transaction": "ویرایش تراکنش",
     "New Transaction": "تراکنش جدید",
-    "State": "State",
-    "Tag - Tooltip": "برچسب تراکنش",
-    "Transactions": "Transactions",
-    "Type": "Type"
+    "Tag - Tooltip": "برچسب تراکنش"
   },
   "user": {
     "3rd-party logins": "ورودهای شخص ثالث",

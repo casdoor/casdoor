@@ -312,7 +312,6 @@
     "Failed to delete": "Не вдалося видалити",
     "Failed to enable": "Не вдалося ввімкнути",
     "Failed to get": "Не вдалося отримати",
-    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Не вдалося видалити",
     "Failed to save": "Не вдалося зберегти",
@@ -411,7 +410,6 @@
     "Plan - Tooltip": "План підписки",
     "Plans": "Плани",
     "Plans - Tooltip": "Плани - підказка",
-    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Попередній перегляд",
     "Preview - Tooltip": "Перегляньте налаштовані ефекти",
@@ -716,8 +714,6 @@
     "Navbar items - Tooltip": "Елементи панелі навігації - підказка",
     "New Organization": "Нова організація",
     "Optional": "Додатково",
-    "Org balance": "Org balance",
-    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Кількість днів дії паролю",
     "Password expire days - Tooltip": "Кількість днів дії паролю - підказка",
     "Prompt": "Підкажіть",
@@ -728,8 +724,6 @@
     "Tags - Tooltip": "Колекція тегів, доступна для вибору користувачами",
     "Use Email as username": "Використовувати Email як ім'я користувача",
     "Use Email as username - Tooltip": "Використовувати Email як ім'я користувача, якщо поле імені користувача не відображається під час реєстрації",
-    "User balance": "User balance",
-    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Типи користувачів",
     "User types - Tooltip": "Типи користувачів - підказка",
     "View rule": "Переглянути правило",
@@ -970,7 +964,6 @@
     "Metadata url": "URL метаданих",
     "Metadata url - Tooltip": "URL метаданих - підказка",
     "Method - Tooltip": "Метод входу, QR-код або тихий вхід",
-    "Mobile": "移动版",
     "New Provider": "Новий постачальник",
     "Normal": "Звичайний",
     "Parameter": "Параметр",
@@ -1082,7 +1075,6 @@
     "UserInfo URL - Tooltip": "URL-адреса інформації про користувача",
     "Wallets": "Гаманці",
     "Wallets - Tooltip": "Гаманці – підказка",
-    "Web": "网页版",
     "admin (Shared)": "адміністратор (спільно)"
   },
   "record": {
@@ -1257,13 +1249,9 @@
   "transaction": {
     "Amount": "Сума",
     "Amount - Tooltip": "Обсяг проданої продукції",
-    "Category": "Category",
     "Edit Transaction": "Редагувати транзакцію",
     "New Transaction": "Нова транзакція",
-    "State": "State",
-    "Tag - Tooltip": "Тег транзакції",
-    "Transactions": "Transactions",
-    "Type": "Type"
+    "Tag - Tooltip": "Тег транзакції"
   },
   "user": {
     "3rd-party logins": "Логіни третіх сторін",

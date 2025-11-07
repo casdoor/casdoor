@@ -312,7 +312,6 @@
     "Failed to delete": "Konnte nicht gelöscht werden",
     "Failed to enable": "Aktivierung fehlgeschlagen",
     "Failed to get": "Abruf fehlgeschlagen",
-    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Entfernen fehlgeschlagen",
     "Failed to save": "Konnte nicht gespeichert werden",
@@ -411,7 +410,6 @@
     "Plan - Tooltip": "Abonnementplan",
     "Plans": "Pläne",
     "Plans - Tooltip": "Pläne",
-    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Vorschau",
     "Preview - Tooltip": "Vorschau der konfigurierten Effekte",
@@ -716,8 +714,6 @@
     "Navbar items - Tooltip": "In der Navigationsleiste angezeigte Elemente",
     "New Organization": "Neue Organisation",
     "Optional": "Optional",
-    "Org balance": "Org balance",
-    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Passwort läuft ab in Tagen",
     "Password expire days - Tooltip": "Anzahl der Tage vor dem Ablauf des Passworts",
     "Prompt": "Aufforderung",
@@ -728,8 +724,6 @@
     "Tags - Tooltip": "Sammlung von Tags, die für Benutzer zur Auswahl zur Verfügung stehen",
     "Use Email as username": "E-Mail als Benutzername verwenden",
     "Use Email as username - Tooltip": "E-Mail als Benutzername verwenden, wenn das Feld „Benutzername“ bei der Registrierung nicht sichtbar ist.",
-    "User balance": "User balance",
-    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Benutzertypen",
     "User types - Tooltip": "Verfügbare Benutzertypen im System",
     "View rule": "Ansichtsregel",
@@ -970,7 +964,6 @@
     "Metadata url": "Metadaten-URL",
     "Metadata url - Tooltip": "SAML-Metadaten-URL",
     "Method - Tooltip": "Anmeldeverfahren, QR-Code oder Silent-Login",
-    "Mobile": "移动版",
     "New Provider": "Neuer Anbieter",
     "Normal": "Normal",
     "Parameter": "Parameter",
@@ -1082,7 +1075,6 @@
     "UserInfo URL - Tooltip": "Benutzerdefinierte OAuth UserInfo-URL",
     "Wallets": "Brieftaschen",
     "Wallets - Tooltip": "Unterstützte digitale Brieftaschen",
-    "Web": "网页版",
     "admin (Shared)": "admin (Gemeinsam)"
   },
   "record": {
@@ -1257,13 +1249,9 @@
   "transaction": {
     "Amount": "Betrag",
     "Amount - Tooltip": "Der Betrag der gehandelten Produkte",
-    "Category": "Category",
     "Edit Transaction": "Transaktion bearbeiten",
     "New Transaction": "Neue Transaktion",
-    "State": "State",
-    "Tag - Tooltip": "Das Tag der Transaktion",
-    "Transactions": "Transactions",
-    "Type": "Type"
+    "Tag - Tooltip": "Das Tag der Transaktion"
   },
   "user": {
     "3rd-party logins": "Drittanbieter-Logins",
