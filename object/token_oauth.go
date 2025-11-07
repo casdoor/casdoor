@@ -457,7 +457,7 @@ func createGuestUserToken(application *Application, clientSecret string, verifie
 
 	// Generate a unique guest username
 	guestUsername := generateGuestUsername()
-	
+
 	// Generate a random password for the guest user
 	guestPassword := util.GenerateId()
 
@@ -581,7 +581,6 @@ func generateGuestUsername() string {
 	}
 	return fmt.Sprintf("guest_%s", uid.String())
 }
-
 
 // GetAuthorizationCodeToken
 // Authorization code flow
