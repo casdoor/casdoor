@@ -67,7 +67,12 @@ func GetIdProvider(idpInfo *ProviderInfo, redirectUrl string) (IdProvider, error
 	case "QQ":
 		return NewQqIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "WeChat":
-		return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		if idpInfo.SubType == "Mobile" {
+			return NewWeChatMobileIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		} else {
+			// Default to Web (PC QR code login) for backward compatibility
+			return NewWeChatIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
+		}
 	case "Facebook":
 		return NewFacebookIdProvider(idpInfo.ClientId, idpInfo.ClientSecret, redirectUrl), nil
 	case "DingTalk":

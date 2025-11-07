@@ -1052,6 +1052,8 @@
     "Test Email - Tooltip": "Email address to receive test mails",
     "Test SMTP Connection": "Test SMTP Connection",
     "Third-party": "Third-party",
+    "Web": "Web",
+    "Mobile": "Mobile",
     "This field is required": "This field is required",
     "To address": "To address",
     "To address - Tooltip": "Email address of \"To\"",

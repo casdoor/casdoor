@@ -1052,6 +1052,8 @@
     "Test Email - Tooltip": "接收测试邮件的Email邮箱",
     "Test SMTP Connection": "测试SMTP连接",
     "Third-party": "第三方",
+    "Web": "网页版",
+    "Mobile": "移动版",
     "This field is required": "此字段是必需的",
     "To address": "To address",
     "To address - Tooltip": "Email address of \"To\"",
