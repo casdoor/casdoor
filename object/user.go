@@ -783,6 +783,23 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		return false, fmt.Errorf("the user: %s is not found", id)
 	}
 
+	// Auto-upgrade guest users when they update their username or password
+	if oldUser.Tag == "guest-user" {
+		// Check if username is being changed from the generated guest username
+		usernameChanged := oldUser.Name != user.Name && !strings.HasPrefix(user.Name, "guest_")
+		// Check if password is being updated (not the placeholder ***)
+		passwordChanged := user.Password != "***" && user.Password != "" && user.Password != oldUser.Password
+
+		if usernameChanged || passwordChanged {
+			// Upgrade to normal user
+			user.Tag = "normal-user"
+			// Ensure tag is included in the update columns
+			if !util.InSlice(columns, "tag") && len(columns) > 0 {
+				columns = append(columns, "tag")
+			}
+		}
+	}
+
 	if name != user.Name {
 		err := userChangeTrigger(name, user.Name)
 		if err != nil {

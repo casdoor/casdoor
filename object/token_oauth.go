@@ -24,6 +24,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
 	"github.com/casdoor/casdoor/util"
+	"github.com/google/uuid"
 	"github.com/xorm-io/core"
 )
 
@@ -444,6 +445,143 @@ func IsGrantTypeValid(method string, grantTypes []string) bool {
 	return false
 }
 
+// createGuestUserToken creates a new guest user and returns a token for them
+func createGuestUserToken(application *Application, clientSecret string, verifier string) (*Token, *TokenError, error) {
+	// Verify client secret if provided
+	if clientSecret != "" && application.ClientSecret != clientSecret {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: "client_secret is invalid",
+		}, nil
+	}
+
+	// Generate a unique guest username
+	guestUsername := generateGuestUsername()
+
+	// Generate a random password for the guest user
+	guestPassword := util.GenerateId()
+
+	// Get organization
+	organization, err := GetOrganization(util.GetId("admin", application.Organization))
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to get organization: %s", err.Error()),
+		}, nil
+	}
+	if organization == nil {
+		return nil, &TokenError{
+			Error:            InvalidClient,
+			ErrorDescription: fmt.Sprintf("organization: %s does not exist", application.Organization),
+		}, nil
+	}
+
+	// Get initial score
+	initScore, err := organization.GetInitScore()
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to get init score: %s", err.Error()),
+		}, nil
+	}
+
+	// Create the guest user
+	guestUser := &User{
+		Owner:             application.Organization,
+		Name:              guestUsername,
+		CreatedTime:       util.GetCurrentTime(),
+		Id:                util.GenerateId(),
+		Type:              "normal-user",
+		Password:          guestPassword,
+		Tag:               "guest-user",
+		DisplayName:       fmt.Sprintf("Guest_%s", guestUsername[:8]),
+		Avatar:            "",
+		Address:           []string{},
+		Email:             "",
+		Phone:             "",
+		Score:             initScore,
+		IsAdmin:           false,
+		IsForbidden:       false,
+		IsDeleted:         false,
+		SignupApplication: application.Name,
+		Properties:        map[string]string{},
+		RegisterType:      "Guest Signup",
+		RegisterSource:    fmt.Sprintf("%s/%s", application.Organization, application.Name),
+	}
+
+	// Add the user
+	affected, err := AddUser(guestUser, "en")
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to create guest user: %s", err.Error()),
+		}, nil
+	}
+	if !affected {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: "failed to create guest user",
+		}, nil
+	}
+
+	// Extend user with roles and permissions
+	err = ExtendUserWithRolesAndPermissions(guestUser)
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to extend user: %s", err.Error()),
+		}, nil
+	}
+
+	// Generate JWT token
+	accessToken, refreshToken, tokenName, err := generateJwtToken(application, guestUser, "", "", "", "", "")
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to generate token: %s", err.Error()),
+		}, nil
+	}
+
+	// Create token object
+	token := &Token{
+		Owner:         application.Owner,
+		Name:          tokenName,
+		CreatedTime:   util.GetCurrentTime(),
+		Application:   application.Name,
+		Organization:  guestUser.Owner,
+		User:          guestUser.Name,
+		Code:          util.GenerateClientId(),
+		AccessToken:   accessToken,
+		RefreshToken:  refreshToken,
+		ExpiresIn:     application.ExpireInHours * hourSeconds,
+		Scope:         "",
+		TokenType:     "Bearer",
+		CodeChallenge: "",
+		CodeIsUsed:    true,
+		CodeExpireIn:  0,
+	}
+
+	_, err = AddToken(token)
+	if err != nil {
+		return nil, &TokenError{
+			Error:            EndpointError,
+			ErrorDescription: fmt.Sprintf("failed to add token: %s", err.Error()),
+		}, nil
+	}
+
+	return token, nil, nil
+}
+
+// generateGuestUsername generates a unique username for guest users
+func generateGuestUsername() string {
+	uid, err := uuid.NewRandom()
+	if err != nil {
+		// Fallback to a timestamp-based unique ID if UUID generation fails
+		return fmt.Sprintf("guest_%d", time.Now().UnixNano())
+	}
+	return fmt.Sprintf("guest_%s", uid.String())
+}
+
 // GetAuthorizationCodeToken
 // Authorization code flow
 func GetAuthorizationCodeToken(application *Application, clientSecret string, code string, verifier string) (*Token, *TokenError, error) {
@@ -452,6 +590,11 @@ func GetAuthorizationCodeToken(application *Application, clientSecret string, co
 			Error:            InvalidRequest,
 			ErrorDescription: "authorization code should not be empty",
 		}, nil
+	}
+
+	// Handle guest user creation
+	if code == "guest-user" {
+		return createGuestUserToken(application, clientSecret, verifier)
 	}
 
 	token, err := getTokenByCode(code)

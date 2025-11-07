@@ -367,6 +367,11 @@ func CheckUserPassword(organization string, username string, password string, la
 		return nil, fmt.Errorf(i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator"))
 	}
 
+	// Prevent direct login for guest users without upgrading
+	if user.Tag == "guest-user" {
+		return nil, fmt.Errorf(i18n.Translate(lang, "check:Guest users must upgrade their account by setting a username and password before they can sign in directly"))
+	}
+
 	if isSigninViaLdap {
 		if user.Ldap == "" {
 			return nil, fmt.Errorf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
