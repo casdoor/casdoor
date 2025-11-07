@@ -214,6 +214,15 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 		email = larkUserInfo.Data.EnterpriseEmail
 	}
 
+	// Use fallback mechanism for username: UserId -> UnionId -> OpenId
+	username := larkUserInfo.Data.UserId
+	if username == "" {
+		username = larkUserInfo.Data.UnionId
+	}
+	if username == "" {
+		username = larkUserInfo.Data.OpenId
+	}
+
 	var phoneNumber string
 	var countryCode string
 	if len(larkUserInfo.Data.Mobile) != 0 {
@@ -228,7 +237,7 @@ func (idp *LarkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	userInfo := UserInfo{
 		Id:          larkUserInfo.Data.OpenId,
 		DisplayName: larkUserInfo.Data.Name,
-		Username:    larkUserInfo.Data.UserId,
+		Username:    username,
 		Email:       email,
 		AvatarUrl:   larkUserInfo.Data.AvatarUrl,
 		Phone:       phoneNumber,
