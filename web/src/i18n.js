@@ -14,12 +14,12 @@
 
 import i18n from "i18next";
 import * as Conf from "./Conf";
-import {initReactI18next} from "react-i18next";
+import { initReactI18next } from "react-i18next";
 import en from "./locales/en/data.json";
 
 const resourcesToBackend = (res) => ({
   type: "backend",
-  init(services, backendOptions, i18nextOptions) {/* use services and options */},
+  init(services, backendOptions, i18nextOptions) {/* use services and options */ },
   read(language, namespace, callback) {
     if (typeof res === "function") {
       if (res.length < 3) {
@@ -44,108 +44,103 @@ const resourcesToBackend = (res) => ({
 
 function initLanguage() {
   let language = localStorage.getItem("language");
+
   if (language === undefined || language === null || language === "") {
-    if (Conf.ForceLanguage !== "") {
-      language = Conf.ForceLanguage;
-    } else {
-      const userLanguage = navigator.language;
-      switch (userLanguage) {
-      case "en":
-        language = "en";
-        break;
-      case "en-US":
-        language = "en";
-        break;
-      case "zh-CN":
-        language = "zh";
-        break;
-      case "zh":
-        language = "zh";
-        break;
-      case "es":
-        language = "es";
-        break;
-      case "fr":
-        language = "fr";
-        break;
-      case "de":
-        language = "de";
-        break;
-      case "id":
-        language = "id";
-        break;
-      case "ja":
-        language = "ja";
-        break;
-      case "ko":
-        language = "ko";
-        break;
-      case "ru":
-        language = "ru";
-        break;
-      case "vi":
-        language = "vi";
-        break;
-      case "pt":
-        language = "pt";
-        break;
-      case "it":
-        language = "it";
-        break;
-      case "ms":
-        language = "ms";
-        break;
-      case "tr":
-        language = "tr";
-        break;
-      case "ar":
-        language = "ar";
-        break;
-      case "he":
-        language = "he";
-        break;
-      case "nl":
-        language = "nl";
-        break;
-      case "pl":
-        language = "pl";
-        break;
-      case "fi":
-        language = "fi";
-        break;
-      case "sv":
-        language = "sv";
-        break;
-      case "uk":
-        language = "uk";
-        break;
-      case "kk":
-        language = "kk";
-        break;
-      case "fa":
-        language = "fa";
-        break;
-      case "cs":
-      case "cs-CZ":
-        language = "cs";
-        break;
-      case "sk":
-      case "sk-SK":
-        language = "sk";
-        break;
-      case "az":
-        language = "az";
-        break;
-      default:
-        language = Conf.DefaultLanguage;
-      }
-    }
+    language = Conf.ForceLanguage !== "" ? Conf.ForceLanguage : navigator.language;
+  }
+
+  switch (userLanguage) {
+    case "en":
+    case "en-US":
+      language = "en";
+      break;
+    case "zh":
+    case "zh-CN":
+      language = "zh";
+      break;
+    case "es":
+      language = "es";
+      break;
+    case "fr":
+      language = "fr";
+      break;
+    case "de":
+      language = "de";
+      break;
+    case "id":
+      language = "id";
+      break;
+    case "ja":
+      language = "ja";
+      break;
+    case "ko":
+      language = "ko";
+      break;
+    case "ru":
+    case "ru-RU":
+      language = "ru";
+      break;
+    case "vi":
+      language = "vi";
+      break;
+    case "pt":
+      language = "pt";
+      break;
+    case "it":
+      language = "it";
+      break;
+    case "ms":
+      language = "ms";
+      break;
+    case "tr":
+      language = "tr";
+      break;
+    case "ar":
+      language = "ar";
+      break;
+    case "he":
+      language = "he";
+      break;
+    case "nl":
+      language = "nl";
+      break;
+    case "pl":
+      language = "pl";
+      break;
+    case "fi":
+      language = "fi";
+      break;
+    case "sv":
+      language = "sv";
+      break;
+    case "uk":
+      language = "uk";
+      break;
+    case "kk":
+      language = "kk";
+      break;
+    case "fa":
+      language = "fa";
+      break;
+    case "cs":
+    case "cs-CZ":
+      language = "cs";
+      break;
+    case "sk":
+    case "sk-SK":
+      language = "sk";
+      break;
+    case "az":
+      language = "az";
+      break;
+    default:
+      language = Conf.DefaultLanguage;
   }
 
   return language;
 }
 
-i18n.use(resourcesToBackend(async(language, namespace) => {
+i18n.use(resourcesToBackend(async (language, namespace) => {
   const res = await import(`./locales/${language}/data.json`);
   return res.default[namespace];
 }
