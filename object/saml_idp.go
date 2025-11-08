@@ -105,6 +105,13 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	authnStatement.CreateElement("saml:AuthnContext").CreateElement("saml:AuthnContextClassRef").SetText("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport")
 
 	attributes := assertion.CreateElement("saml:AttributeStatement")
+	// Add namespace declarations for C14N10 compatibility
+	// When using C14N10 exclusive canonicalization, namespace declarations need to be
+	// present on elements where they're used to ensure they're included in the canonicalized output
+	if application.EnableSamlC14n10 {
+		attributes.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+		attributes.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
+	}
 
 	email := attributes.CreateElement("saml:Attribute")
 	email.CreateAttr("Name", "Email")
