@@ -19,7 +19,7 @@ import en from "./locales/en/data.json";
 
 const resourcesToBackend = (res) => ({
   type: "backend",
-  init(services, backendOptions, i18nextOptions) {/* use services and options */ },
+  init(services, backendOptions, i18nextOptions) {/* use services and options */},
   read(language, namespace, callback) {
     if (typeof res === "function") {
       if (res.length < 3) {
