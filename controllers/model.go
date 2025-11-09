@@ -27,6 +27,7 @@ import (
 // @Tag Model API
 // @Description get models
 // @Param   owner     query    string  true        "The owner of models"
+// @Param   includeBuiltIn     query    string  false        "Include built-in models"
 // @Success 200 {array} object.Model The Response object
 // @router /get-models [get]
 func (c *ApiController) GetModels() {
@@ -37,9 +38,18 @@ func (c *ApiController) GetModels() {
 	value := c.Input().Get("value")
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
+	includeBuiltIn := c.Input().Get("includeBuiltIn")
 
 	if limit == "" || page == "" {
-		models, err := object.GetModels(owner)
+		var models []*object.Model
+		var err error
+
+		if includeBuiltIn == "1" || includeBuiltIn == "true" {
+			models, err = object.GetModelsIncludingBuiltIn(owner)
+		} else {
+			models, err = object.GetModels(owner)
+		}
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

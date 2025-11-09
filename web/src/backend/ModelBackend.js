@@ -14,8 +14,9 @@
 
 import * as Setting from "../Setting";
 
-export function getModels(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-models?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
+export function getModels(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "", includeBuiltIn = false) {
+  const includeBuiltInParam = includeBuiltIn ? "&includeBuiltIn=true" : "";
+  return fetch(`${Setting.ServerUrl}/api/get-models?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}${includeBuiltInParam}`, {
     method: "GET",
     credentials: "include",
     headers: {

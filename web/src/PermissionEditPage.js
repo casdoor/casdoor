@@ -129,7 +129,7 @@ class PermissionEditPage extends React.Component {
   }
 
   getModels(organizationName) {
-    ModelBackend.getModels(organizationName)
+    ModelBackend.getModels(organizationName, "", "", "", "", "", "", true)
       .then((res) => {
         if (res.status === "error") {
           Setting.showMessage("error", res.msg);

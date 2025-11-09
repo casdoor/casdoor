@@ -50,6 +50,28 @@ func GetModels(owner string) ([]*Model, error) {
 	return models, nil
 }
 
+func GetModelsIncludingBuiltIn(owner string) ([]*Model, error) {
+	models := []*Model{}
+
+	// Get models for the specified owner
+	err := ormer.Engine.Desc("created_time").Find(&models, &Model{Owner: owner})
+	if err != nil {
+		return models, err
+	}
+
+	// Get built-in models if owner is not "built-in"
+	if owner != "built-in" {
+		builtInModels := []*Model{}
+		err = ormer.Engine.Desc("created_time").Find(&builtInModels, &Model{Owner: "built-in"})
+		if err != nil {
+			return models, err
+		}
+		models = append(models, builtInModels...)
+	}
+
+	return models, nil
+}
+
 func GetPaginationModels(owner string, offset, limit int, field, value, sortField, sortOrder string) ([]*Model, error) {
 	models := []*Model{}
 	session := GetSession(owner, offset, limit, field, value, sortField, sortOrder)
