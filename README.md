@@ -65,6 +65,10 @@
 
 https://casdoor.org
 
+### Getting Started Guides
+
+- [How to Setup Roles and Permissions](./SETUP_ROLES_PERMISSIONS.md) - Comprehensive guide for configuring RBAC in Casdoor
+
 ## Install
 
 - By source code: https://casdoor.org/docs/basic/server-installation
