@@ -73,7 +73,7 @@ class PermissionEditPage extends React.Component {
         this.getRoles(permission.owner);
         this.getModels(permission.owner);
         this.getResources(permission.owner);
-        this.getModel(permission.owner, permission.model);
+        this.getModel(permission.model);
       });
   }
 
@@ -142,10 +142,13 @@ class PermissionEditPage extends React.Component {
       });
   }
 
-  getModel(organizationName, modelName) {
-    if (modelName === "") {
+  getModel(modelId) {
+    if (modelId === "") {
       return;
     }
+
+    const organizationName = modelId.split("/")[0];
+    const modelName = modelId.split("/")[1];
     ModelBackend.getModel(organizationName, modelName)
       .then((res) => {
         this.setState({
@@ -172,7 +175,7 @@ class PermissionEditPage extends React.Component {
 
   updatePermissionField(key, value) {
     if (key === "model") {
-      this.getModel(this.state.permission.owner, value);
+      this.getModel(value);
     }
 
     value = this.parsePermissionField(key, value);
@@ -256,18 +259,8 @@ class PermissionEditPage extends React.Component {
             <Select virtual={false} style={{width: "100%"}} value={this.state.permission.model} onChange={(model => {
               this.updatePermissionField("model", model);
             })}
-            options={this.state.models.map((model) => Setting.getOption(model.name, model.name))
+            options={this.state.models.map((model) => Setting.getOption(`${model.owner}/${model.name}`, `${model.owner}/${model.name}`))
             } />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Adapter"), i18next.t("general:Adapter - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.permission.adapter} onChange={e => {
-              this.updatePermissionField("adapter", e.target.value);
-            }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

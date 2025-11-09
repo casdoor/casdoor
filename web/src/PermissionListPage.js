@@ -173,6 +173,22 @@ class PermissionListPage extends BaseListPage {
         ...this.getColumnSearchProps("displayName"),
       },
       {
+        title: i18next.t("general:Model"),
+        dataIndex: "model",
+        key: "model",
+        width: "250px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("name"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/models/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("role:Sub users"),
         dataIndex: "users",
         key: "users",
