@@ -312,6 +312,7 @@
     "Failed to delete": "삭제에 실패했습니다",
     "Failed to enable": "활성화 실패",
     "Failed to get": "가져오기 실패",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "제거 실패",
     "Failed to save": "저장에 실패했습니다",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "구독 계획",
     "Plans": "플랜",
     "Plans - Tooltip": "요금제 - 툴팁",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "미리보기",
     "Preview - Tooltip": "구성된 효과를 미리보기합니다",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "네비게이션 바 항목 - 툴팁",
     "New Organization": "새로운 조직",
     "Optional": "선택 사항",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Organization's balance",
     "Password expire days": "비밀번호 만료 일수",
     "Password expire days - Tooltip": "비밀번호 만료 일수 - 툴팁",
     "Prompt": "프롬프트",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "사용자가 선택할 수 있는 태그 컬렉션",
     "Use Email as username": "이메일을 사용자명으로 사용",
     "Use Email as username - Tooltip": "가입 시 사용자명 필드가 보이지 않으면 이메일을 사용자명으로 사용합니다.",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User's balance",
     "User types": "사용자 유형",
     "User types - Tooltip": "사용자 유형 - 툴팁",
     "View rule": "보기 규칙",
@@ -894,6 +900,8 @@
     "Base URL - Tooltip": "기본 URL - 툴팁",
     "Bucket": "양동이",
     "Bucket - Tooltip": "양동이의 이름",
+    "Button text": "Button text",
+    "Button text - Tooltip": "Text for payment button",
     "Can not parse metadata": "메타데이터를 구문 분석할 수 없습니다",
     "Can signin": "로그인할 수 있나요?",
     "Can signup": "가입할 수 있나요?",
@@ -964,6 +972,7 @@
     "Metadata url": "메타데이터 URL",
     "Metadata url - Tooltip": "메타데이터 URL - 툴팁",
     "Method - Tooltip": "로그인 방법, QR 코드 또는 음성 로그인",
+    "Mobile": "Mobile",
     "New Provider": "새로운 공급 업체",
     "Normal": "일반",
     "Parameter": "매개변수",
@@ -1075,6 +1084,7 @@
     "UserInfo URL - Tooltip": "UserInfo URL: 사용자 정보 URL",
     "Wallets": "지갑",
     "Wallets - Tooltip": "지갑 - 툴팁",
+    "Web": "Web",
     "admin (Shared)": "관리자 (공유)"
   },
   "record": {
@@ -1249,9 +1259,13 @@
   "transaction": {
     "Amount": "금액",
     "Amount - Tooltip": "거래된 제품의 금액",
+    "Category": "Category",
     "Edit Transaction": "거래 편집",
     "New Transaction": "새 거래",
-    "Tag - Tooltip": "거래 태그"
+    "State": "State",
+    "Tag - Tooltip": "거래 태그",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "제3자 로그인",

@@ -274,6 +274,10 @@ class ProductBuyPage extends React.Component {
       text = i18next.t("product:AirWallex");
     }
 
+    if (provider.content) {
+      text = provider.content;
+    }
+
     return (
       <Button style={{height: "50px", borderWidth: "2px"}} shape="round" icon={
         <img style={{marginRight: "10px"}} width={36} height={36} src={Setting.getProviderLogoURL(provider)} alt={provider.displayName} />

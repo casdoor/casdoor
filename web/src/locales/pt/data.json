@@ -312,6 +312,7 @@
     "Failed to delete": "Falha ao excluir",
     "Failed to enable": "Falha ao ativar",
     "Failed to get": "Falha ao obter",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Falha ao remover",
     "Failed to save": "Falha ao salvar",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Plano de assinatura",
     "Plans": "Kế hoạch",
     "Plans - Tooltip": "Dica: planos",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Visualizar",
     "Preview - Tooltip": "Visualizar os efeitos configurados",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Dica: itens da barra de navegação",
     "New Organization": "Nova Organização",
     "Optional": "Opcional",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Organization's balance",
     "Password expire days": "Dias para expiração da senha",
     "Password expire days - Tooltip": "Dica: dias para expiração da senha",
     "Prompt": "Prompt",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Coleção de tags disponíveis para os usuários escolherem",
     "Use Email as username": "Usar e-mail como nome de usuário",
     "Use Email as username - Tooltip": "Usar e-mail como nome de usuário se o campo de nome de usuário não estiver visível no cadastro",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User's balance",
     "User types": "Tipos de usuário",
     "User types - Tooltip": "Dica: tipos de usuário",
     "View rule": "Ver regra",
@@ -894,6 +900,8 @@
     "Base URL - Tooltip": "Dica: URL base",
     "Bucket": "Bucket",
     "Bucket - Tooltip": "Nome do bucket",
+    "Button text": "Button text",
+    "Button text - Tooltip": "Text for payment button",
     "Can not parse metadata": "Não é possível analisar metadados",
     "Can signin": "Pode fazer login",
     "Can signup": "Pode se inscrever",
@@ -964,6 +972,7 @@
     "Metadata url": "URL de metadados",
     "Metadata url - Tooltip": "Dica: URL de metadados",
     "Method - Tooltip": "Método de login, código QR ou login silencioso",
+    "Mobile": "Mobile",
     "New Provider": "Novo Provedor",
     "Normal": "Normal",
     "Parameter": "Parâmetro",
@@ -1075,6 +1084,7 @@
     "UserInfo URL - Tooltip": "URL do UserInfo",
     "Wallets": "Carteiras",
     "Wallets - Tooltip": "Dica: carteiras",
+    "Web": "Web",
     "admin (Shared)": "admin (Compartilhado)"
   },
   "record": {
@@ -1249,9 +1259,13 @@
   "transaction": {
     "Amount": "Valor",
     "Amount - Tooltip": "Dica: valor do produto negociado",
+    "Category": "Category",
     "Edit Transaction": "Editar Transação",
     "New Transaction": "Nova Transação",
-    "Tag - Tooltip": "Dica: tag da transação"
+    "State": "State",
+    "Tag - Tooltip": "Dica: tag da transação",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Logins de terceiros",

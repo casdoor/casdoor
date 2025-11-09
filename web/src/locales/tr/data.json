@@ -312,6 +312,7 @@
     "Failed to delete": "Silme başarısız oldu",
     "Failed to enable": "Etkinleştirme başarısız",
     "Failed to get": "Alınamadı",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Kaldırma başarısız",
     "Failed to save": "Kaydetme başarısız oldu",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Abonelik planı",
     "Plans": "Planlar",
     "Plans - Tooltip": "Planlar - Araç ipucu",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Önizleme",
     "Preview - Tooltip": "Yapılandırılmış efektleri önizle",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Gezinme çubuğu öğeleri - Araç ipucu",
     "New Organization": "Yeni Organizasyon",
     "Optional": "İsteğe bağlı",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Organization's balance",
     "Password expire days": "Şifre son kullanma günleri",
     "Password expire days - Tooltip": "Şifre son kullanma günleri - Araç ipucu",
     "Prompt": "İstem",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Kullanıcıların seçebileceği etiket koleksiyonu",
     "Use Email as username": "Kullanıcı adı olarak E-posta kullan",
     "Use Email as username - Tooltip": "Kullanıcı adı alanı kayıtta görünür değilse kullanıcı adı olarak E-posta kullan",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User's balance",
     "User types": "Kullanıcı türleri",
     "User types - Tooltip": "Kullanıcı türleri - Araç ipucu",
     "View rule": "Kuralı Görüntüle",
@@ -894,6 +900,8 @@
     "Base URL - Tooltip": "Temel URL - Araç ipucu",
     "Bucket": "Bucket",
     "Bucket - Tooltip": "Bucket adı",
+    "Button text": "Button text",
+    "Button text - Tooltip": "Text for payment button",
     "Can not parse metadata": "Meta verileri ayrıştırılamıyor",
     "Can signin": "Giriş yapabilir",
     "Can signup": "Kayıt yapabilir",
@@ -964,6 +972,7 @@
     "Metadata url": "Meta veri URL'si",
     "Metadata url - Tooltip": "Meta veri URL'si - Araç ipucu",
     "Method - Tooltip": "Giriş yöntemi, QR kodu veya sessiz giriş",
+    "Mobile": "Mobile",
     "New Provider": "Yeni Sağlayıcı",
     "Normal": "Normal",
     "Parameter": "Parametre",
@@ -1075,6 +1084,7 @@
     "UserInfo URL - Tooltip": "Kullanıcı Bilgisi URL'si",
     "Wallets": "Cüzdanlar",
     "Wallets - Tooltip": "Cüzdanlar - Araç ipucu",
+    "Web": "Web",
     "admin (Shared)": "yönetici (Paylaşılan)"
   },
   "record": {
@@ -1249,9 +1259,13 @@
   "transaction": {
     "Amount": "Tutar",
     "Amount - Tooltip": "İşlem gören ürünlerin tutarı",
+    "Category": "Category",
     "Edit Transaction": "İşlemi Düzenle",
     "New Transaction": "Yeni İşlem",
-    "Tag - Tooltip": "İşlemin etiketi"
+    "State": "State",
+    "Tag - Tooltip": "İşlemin etiketi",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Üçüncü taraf girişler",

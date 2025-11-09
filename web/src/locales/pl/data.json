@@ -312,6 +312,7 @@
     "Failed to delete": "Nie udało się usunąć",
     "Failed to enable": "Nie udało się włączyć",
     "Failed to get": "Nie udało się pobrać",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Nie udało się usunąć",
     "Failed to save": "Nie udało się zapisać",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Plan subskrypcji",
     "Plans": "Plany",
     "Plans - Tooltip": "Plany - Tooltip",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Podgląd",
     "Preview - Tooltip": "Podgląd skonfigurowanych efektów",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Elementy paska nawigacji - Tooltip",
     "New Organization": "Nowa organizacja",
     "Optional": "Opcjonalne",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Organization's balance",
     "Password expire days": "Dni ważności hasła",
     "Password expire days - Tooltip": "Dni ważności hasła - Tooltip",
     "Prompt": "Monit",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Zbiór tagów dostępnych dla użytkowników do wyboru",
     "Use Email as username": "Użyj e-mail jako nazwy użytkownika",
     "Use Email as username - Tooltip": "Użyj e-mail jako nazwy użytkownika, jeśli pole nazwy użytkownika nie jest widoczne przy rejestracji",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User's balance",
     "User types": "Typy użytkowników",
     "User types - Tooltip": "Typy użytkowników - Tooltip",
     "View rule": "Zasada przeglądania",
@@ -894,6 +900,8 @@
     "Base URL - Tooltip": "Podstawowy adres URL - Tooltip",
     "Bucket": "Wiadro",
     "Bucket - Tooltip": "Nazwa wiadra",
+    "Button text": "Button text",
+    "Button text - Tooltip": "Text for payment button",
     "Can not parse metadata": "Nie można przeanalizować metadanych",
     "Can signin": "Można się zalogować",
     "Can signup": "Można się zarejestrować",
@@ -964,6 +972,7 @@
     "Metadata url": "Adres URL metadanych",
     "Metadata url - Tooltip": "Adres URL metadanych - Tooltip",
     "Method - Tooltip": "Metoda logowania, kod QR lub ciche logowanie",
+    "Mobile": "Mobile",
     "New Provider": "Nowy dostawca",
     "Normal": "Normalny",
     "Parameter": "Parametr",
@@ -1075,6 +1084,7 @@
     "UserInfo URL - Tooltip": "Adres URL informacji użytkownika",
     "Wallets": "Portfele",
     "Wallets - Tooltip": "Portfele - Tooltip",
+    "Web": "Web",
     "admin (Shared)": "admin (Wspólny)"
   },
   "record": {
@@ -1249,9 +1259,13 @@
   "transaction": {
     "Amount": "Kwota",
     "Amount - Tooltip": "Ilość handlowanych produktów",
+    "Category": "Category",
     "Edit Transaction": "Edytuj transakcję",
     "New Transaction": "Nowa transakcja",
-    "Tag - Tooltip": "Znacznik transakcji"
+    "State": "State",
+    "Tag - Tooltip": "Znacznik transakcji",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Logowania zewnętrzne",
