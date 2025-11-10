@@ -44,6 +44,11 @@ const (
 // @Success 200 {array} object.Verification The Response object
 // @router /get-payments [get]
 func (c *ApiController) GetVerifications() {
+	organization, ok := c.RequireAdmin()
+	if !ok {
+		return
+	}
+
 	owner := c.Input().Get("owner")
 	limit := c.Input().Get("pageSize")
 	page := c.Input().Get("p")
@@ -52,8 +57,13 @@ func (c *ApiController) GetVerifications() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
+	// Global admins can specify an owner, org admins can only see their own organization
+	if c.IsGlobalAdmin() && owner != "" {
+		organization = owner
+	}
+
 	if limit == "" || page == "" {
-		payments, err := object.GetVerifications(owner)
+		payments, err := object.GetVerifications(organization)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -62,14 +72,14 @@ func (c *ApiController) GetVerifications() {
 		c.ResponseOk(payments)
 	} else {
 		limit := util.ParseInt(limit)
-		count, err := object.GetVerificationCount(owner, field, value)
+		count, err := object.GetVerificationCount(organization, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
 		}
 
 		paginator := pagination.SetPaginator(c.Ctx, limit, count)
-		payments, err := object.GetPaginationVerifications(owner, paginator.Offset(), limit, field, value, sortField, sortOrder)
+		payments, err := object.GetPaginationVerifications(organization, paginator.Offset(), limit, field, value, sortField, sortOrder)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
