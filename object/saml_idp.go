@@ -418,6 +418,10 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	if application.EnableSamlC14n10 {
 		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
+		// Ensure xsi and xs namespaces are present on Response and Assertion elements BEFORE signing
+		// This is critical for C14N10 which may remove namespace declarations during canonicalization
+		// If we add namespaces after signing, the XML won't match the signature
+		ensureNamespaces(samlResponse)
 	}
 
 	// signedXML, err := ctx.SignEnvelopedLimix(samlResponse)
@@ -443,13 +447,6 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	samlResponse.InsertChildAt(1, sig)
-
-	// Ensure xsi and xs namespaces are present on Response and Assertion elements
-	// This is especially important for C14N10 which may remove namespaces during canonicalization
-	// C14N10 Exclusive Canonicalization can strip namespace declarations even if they're used in attributes
-	if application.EnableSamlC14n10 {
-		ensureNamespaces(samlResponse)
-	}
 
 	doc := etree.NewDocument()
 	doc.SetRoot(samlResponse)
