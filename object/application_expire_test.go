@@ -22,8 +22,8 @@ import (
 func TestApplicationExpireInHoursFloat64(t *testing.T) {
 	// Test that ExpireInHours accepts float64 values
 	app := &Application{
-		ExpireInHours:        0.25,  // 15 minutes
-		RefreshExpireInHours: 0.5,   // 30 minutes
+		ExpireInHours:        0.25, // 15 minutes
+		RefreshExpireInHours: 0.5,  // 30 minutes
 	}
 
 	// Verify the values are stored correctly
