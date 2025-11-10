@@ -149,6 +149,40 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 	return samlResponse, nil
 }
 
+// ensureNamespaces ensures that xsi and xs namespaces are present on Response and Assertion elements
+// This is needed because C14N10 Exclusive Canonicalization may remove namespace declarations
+// during the canonicalization process, even if they are used in attributes like xsi:type="xs:string"
+func ensureNamespaces(samlResponse *etree.Element) {
+	xsiNS := "http://www.w3.org/2001/XMLSchema-instance"
+	xsNS := "http://www.w3.org/2001/XMLSchema"
+
+	// Ensure namespaces on Response element
+	// Check if namespaces exist and update/add them
+	setNamespaceAttr(samlResponse, "xmlns:xsi", xsiNS)
+	setNamespaceAttr(samlResponse, "xmlns:xs", xsNS)
+
+	// Find and ensure namespaces on Assertion element
+	assertion := samlResponse.FindElement("./Assertion")
+	if assertion != nil {
+		setNamespaceAttr(assertion, "xmlns:xsi", xsiNS)
+		setNamespaceAttr(assertion, "xmlns:xs", xsNS)
+	}
+}
+
+// setNamespaceAttr sets a namespace attribute on an element, removing any existing one first
+func setNamespaceAttr(elem *etree.Element, key, value string) {
+	// Remove existing attribute if present by filtering the Attr slice
+	newAttrs := []etree.Attr{}
+	for _, attr := range elem.Attr {
+		if attr.Key != key {
+			newAttrs = append(newAttrs, attr)
+		}
+	}
+	elem.Attr = newAttrs
+	// Add the new attribute
+	elem.CreateAttr(key, value)
+}
+
 type X509Key struct {
 	X509Certificate string
 	PrivateKey      string
@@ -410,8 +444,17 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 
 	samlResponse.InsertChildAt(1, sig)
 
+	// Ensure xsi and xs namespaces are present on Response and Assertion elements
+	// This is especially important for C14N10 which may remove namespaces during canonicalization
+	// C14N10 Exclusive Canonicalization can strip namespace declarations even if they're used in attributes
+	if application.EnableSamlC14n10 {
+		ensureNamespaces(samlResponse)
+	}
+
 	doc := etree.NewDocument()
 	doc.SetRoot(samlResponse)
+
+	// Write to bytes and ensure namespaces are preserved in the final XML
 	xmlBytes, err := doc.WriteToBytes()
 	if err != nil {
 		return "", "", "", fmt.Errorf("err: Failed to serializes the SAML request into bytes, %s", err.Error())
@@ -450,6 +493,8 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	}
 
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:1.0:protocol")
+	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+	samlResponse.CreateAttr("xmlns:xs", "http://www.w3.org/2001/XMLSchema")
 	samlResponse.CreateAttr("MajorVersion", "1")
 	samlResponse.CreateAttr("MinorVersion", "1")
 
