@@ -52,6 +52,23 @@ func (c *ApiController) GetVerifications() {
 	sortField := c.Input().Get("sortField")
 	sortOrder := c.Input().Get("sortOrder")
 
+	// Check user permissions
+	isGlobalAdmin, user := c.isGlobalAdmin()
+	if !isGlobalAdmin && user == nil {
+		c.ResponseError(c.T("general:Unauthorized"))
+		return
+	}
+
+	// If not global admin, only allow org admins to see their own org's verifications
+	if !isGlobalAdmin {
+		if !user.IsAdmin {
+			c.ResponseError(c.T("general:Unauthorized"))
+			return
+		}
+		// For org admin, set owner to their organization
+		owner = user.Owner
+	}
+
 	if limit == "" || page == "" {
 		payments, err := object.GetVerifications(owner)
 		if err != nil {
