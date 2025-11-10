@@ -87,11 +87,12 @@ func GetModel(id string) (*Model, error) {
 	return getModel(owner, name)
 }
 
-func GetModelEx(id string) (*Model, error) {
+func getModelEx(id string) (*Model, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {
 		return nil, err
 	}
+
 	model, err := getModel(owner, name)
 	if err != nil {
 		return nil, err
