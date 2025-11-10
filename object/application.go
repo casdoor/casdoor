@@ -117,8 +117,8 @@ type Application struct {
 	TokenSigningMethod      string     `xorm:"varchar(100)" json:"tokenSigningMethod"`
 	TokenFields             []string   `xorm:"varchar(1000)" json:"tokenFields"`
 	TokenAttributes         []*JwtItem `xorm:"mediumtext" json:"tokenAttributes"`
-	ExpireInHours           int        `json:"expireInHours"`
-	RefreshExpireInHours    int        `json:"refreshExpireInHours"`
+	ExpireInHours           float64    `json:"expireInHours"`
+	RefreshExpireInHours    float64    `json:"refreshExpireInHours"`
 	SignupUrl               string     `xorm:"varchar(200)" json:"signupUrl"`
 	SigninUrl               string     `xorm:"varchar(200)" json:"signinUrl"`
 	ForgetUrl               string     `xorm:"varchar(200)" json:"forgetUrl"`
