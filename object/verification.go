@@ -139,7 +139,7 @@ func SendVerificationCodeToEmail(organization *Organization, user *User, provide
 		return err
 	}
 
-	err = AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
+	err = AddToVerificationRecord(user, provider, organization, remoteAddr, provider.Category, dest, code)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 		return err
 	}
 
-	err = AddToVerificationRecord(user, provider, remoteAddr, provider.Category, dest, code)
+	err = AddToVerificationRecord(user, provider, organization, remoteAddr, provider.Category, dest, code)
 	if err != nil {
 		return err
 	}
@@ -171,14 +171,14 @@ func SendVerificationCodeToPhone(organization *Organization, user *User, provide
 	return nil
 }
 
-func AddToVerificationRecord(user *User, provider *Provider, remoteAddr, recordType, dest, code string) error {
+func AddToVerificationRecord(user *User, provider *Provider, organization *Organization, remoteAddr, recordType, dest, code string) error {
 	var record VerificationRecord
 	record.RemoteAddr = remoteAddr
 	record.Type = recordType
 	if user != nil {
 		record.User = user.GetId()
 	}
-	record.Owner = provider.Owner
+	record.Owner = organization.Name
 	record.Name = util.GenerateId()
 	record.CreatedTime = util.GetCurrentTime()
 
