@@ -1,6 +1,8 @@
 module github.com/casdoor/casdoor
 
-go 1.21
+go 1.23.0
+
+toolchain go1.24.9
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
@@ -29,7 +31,8 @@ require (
 	github.com/go-git/go-git/v5 v5.13.0
 	github.com/go-ldap/ldap/v3 v3.4.6
 	github.com/go-mysql-org/go-mysql v1.7.0
-	github.com/go-pay/gopay v1.5.72
+	github.com/go-pay/gopay v1.5.115
+	github.com/go-pay/util v0.0.4
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-webauthn/webauthn v0.10.2
@@ -59,10 +62,10 @@ require (
 	github.com/xorm-io/builder v0.3.13
 	github.com/xorm-io/core v0.7.4
 	github.com/xorm-io/xorm v1.1.6
-	golang.org/x/crypto v0.33.0
-	golang.org/x/net v0.35.0
+	golang.org/x/crypto v0.39.0
+	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.17.0
-	golang.org/x/text v0.22.0
+	golang.org/x/text v0.26.0
 	google.golang.org/api v0.150.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 	layeh.com/radius v0.0.0-20231213012653-1006025d24f8
@@ -128,6 +131,11 @@ require (
 	github.com/go-git/go-billy/v5 v5.6.0 // indirect
 	github.com/go-lark/lark v1.9.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/go-pay/crypto v0.0.1 // indirect
+	github.com/go-pay/errgroup v0.0.3 // indirect
+	github.com/go-pay/smap v0.0.2 // indirect
+	github.com/go-pay/xlog v0.0.3 // indirect
+	github.com/go-pay/xtime v0.0.2 // indirect
 	github.com/go-webauthn/x v0.1.9 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -217,11 +225,11 @@ require (
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
-	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.23.0 // indirect
+	golang.org/x/tools v0.33.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20231016165738-49dd2c1f3d0b // indirect

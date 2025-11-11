@@ -24,7 +24,7 @@ import (
 
 	"github.com/go-pay/gopay"
 	"github.com/go-pay/gopay/paypal"
-	"github.com/go-pay/gopay/pkg/util"
+	"github.com/go-pay/util"
 )
 
 type PaypalPaymentProvider struct {
@@ -53,7 +53,7 @@ func (pp *PaypalPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 	// https://github.com/go-pay/gopay/blob/main/doc/paypal.md
 	units := make([]*paypal.PurchaseUnit, 0, 1)
 	unit := &paypal.PurchaseUnit{
-		ReferenceId: util.GetRandomString(16),
+		ReferenceId: util.RandomString(16),
 		Amount: &paypal.Amount{
 			CurrencyCode: r.Currency,                    // e.g."USD"
 			Value:        priceFloat64ToString(r.Price), // e.g."100.00"
