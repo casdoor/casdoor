@@ -16,7 +16,6 @@ package object
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/pp"
@@ -85,16 +84,12 @@ func (sub *Subscription) UpdateState() error {
 	}
 
 	if sub.State == SubStateActive || sub.State == SubStateUpcoming || sub.State == SubStateExpired {
-		timeFormat := time.RFC3339
-		if strings.Index(sub.StartTime, "T") == -1 {
-			timeFormat = time.DateTime
-		}
-		startTime, err := time.Parse(timeFormat, sub.StartTime)
+		startTime, err := time.Parse(time.RFC3339, sub.StartTime)
 		if err != nil {
 			return err
 		}
 
-		endTime, err := time.Parse(timeFormat, sub.EndTime)
+		endTime, err := time.Parse(time.RFC3339, sub.EndTime)
 		if err != nil {
 			return err
 		}
