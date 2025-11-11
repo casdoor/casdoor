@@ -1,6 +1,6 @@
 module github.com/casdoor/casdoor
 
-go 1.21
+go 1.23.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
