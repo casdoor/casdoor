@@ -312,6 +312,7 @@
     "Failed to delete": "Не удалось удалить",
     "Failed to enable": "Не удалось включить",
     "Failed to get": "Не удалось получить",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Не удалось удалить",
     "Failed to save": "Не удалось сохранить",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "План подписки",
     "Plans": "Планы",
     "Plans - Tooltip": "Подсказка: планы",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Предварительный просмотр",
     "Preview - Tooltip": "Предварительный просмотр настроенных эффектов",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Подсказка: элементы навигации",
     "New Organization": "Новая организация",
     "Optional": "Необязательный",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Дней до истечения пароля",
     "Password expire days - Tooltip": "Подсказка: дней до истечения пароля",
     "Prompt": "Подсказка",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Коллекция тегов, доступных для выбора пользователями",
     "Use Email as username": "Использовать Email как имя пользователя",
     "Use Email as username - Tooltip": "Использовать Email как имя пользователя, если поле имени не отображается при регистрации",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Типы пользователей",
     "User types - Tooltip": "Подсказка: типы пользователей",
     "View rule": "Правило просмотра",
@@ -964,6 +970,7 @@
     "Metadata url": "URL метаданных",
     "Metadata url - Tooltip": "Подсказка: URL метаданных",
     "Method - Tooltip": "Метод входа, QR-код или беззвучный вход",
+    "Mobile": "Mobile",
     "New Provider": "Новый провайдер",
     "Normal": "Обычный",
     "Parameter": "Параметр",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "URL пользовательской информации (URL информации о пользователе)",
     "Wallets": "Кошельки",
     "Wallets - Tooltip": "Подсказка: кошельки",
+    "Web": "Web",
     "admin (Shared)": "администратор (общий)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Сумма",
     "Amount - Tooltip": "Количество купленных продуктов",
+    "Category": "Category",
     "Edit Transaction": "Редактировать транзакцию",
     "New Transaction": "Новая транзакция",
-    "Tag - Tooltip": "Тег транзакции"
+    "State": "State",
+    "Tag - Tooltip": "Тег транзакции",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Авторизация сторонних участников",

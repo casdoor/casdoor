@@ -312,6 +312,7 @@
     "Failed to delete": "Verwijderen mislukt",
     "Failed to enable": "Inschakelen mislukt",
     "Failed to get": "Ophalen mislukt",
+    "Failed to load": "Failed to load",
     "Failed to log out": "Failed to log out",
     "Failed to remove": "Verwijderen mislukt",
     "Failed to save": "Opslaan mislukt",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "Abonnementsplan",
     "Plans": "Plannen",
     "Plans - Tooltip": "Plannen - Tooltip",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "Please select at least 1 user first",
     "Preview": "Voorbeeld",
     "Preview - Tooltip": "Bekijk de geconfigureerde effecten",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "Navigatie-items - Tooltip",
     "New Organization": "Nieuwe organisatie",
     "Optional": "Optioneel",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "Wachtwoord verloopt na dagen",
     "Password expire days - Tooltip": "Wachtwoord verloopt na dagen - Tooltip",
     "Prompt": "Prompt",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "Verzameling van tags die gebruikers kunnen kiezen",
     "Use Email as username": "E-mailadres als gebruikersnaam gebruiken",
     "Use Email as username - Tooltip": "Gebruik e-mailadres als gebruikersnaam als het veld gebruikersnaam niet zichtbaar is bij registratie",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "Gebruikerstypes",
     "User types - Tooltip": "Gebruikerstypes - Tooltip",
     "View rule": "Weergaveregel",
@@ -964,6 +970,7 @@
     "Metadata url": "Metadata-URL",
     "Metadata url - Tooltip": "Metadata-URL - Tooltip",
     "Method - Tooltip": "Inlogmethode: QR-code of stille inlog",
+    "Mobile": "Mobile",
     "New Provider": "Nieuwe provider",
     "Normal": "Normaal",
     "Parameter": "Parameter",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "UserInfo-URL",
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Wallets - Tooltip",
+    "Web": "Web",
     "admin (Shared)": "beheerder (gedeeld)"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "Bedrag",
     "Amount - Tooltip": "Het bedrag van de verhandelde producten",
+    "Category": "Category",
     "Edit Transaction": "Transactie bewerken",
     "New Transaction": "Nieuwe transactie",
-    "Tag - Tooltip": "De tag van de transactie"
+    "State": "State",
+    "Tag - Tooltip": "De tag van de transactie",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "Inloggen via derden",

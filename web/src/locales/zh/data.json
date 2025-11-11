@@ -312,6 +312,7 @@
     "Failed to delete": "删除失败",
     "Failed to enable": "启用失败",
     "Failed to get": "获取失败",
+    "Failed to load": "Failed to load",
     "Failed to log out": "登出失败",
     "Failed to remove": "移除失败",
     "Failed to save": "保存失败",
@@ -410,6 +411,7 @@
     "Plan - Tooltip": "订阅里的计划",
     "Plans": "计划",
     "Plans - Tooltip": "订阅里的计划",
+    "Please complete the captcha correctly": "Please complete the captcha correctly",
     "Please select at least 1 user first": "请至少选择1个用户",
     "Preview": "预览",
     "Preview - Tooltip": "可预览所配置的效果",
@@ -714,6 +716,8 @@
     "Navbar items - Tooltip": "导航栏中显示的项目",
     "New Organization": "添加组织",
     "Optional": "可选",
+    "Org balance": "Org balance",
+    "Org balance - Tooltip": "Org balance - Tooltip",
     "Password expire days": "密码过期天数",
     "Password expire days - Tooltip": "密码过期前的天数",
     "Prompt": "提示",
@@ -724,6 +728,8 @@
     "Tags - Tooltip": "可供用户选择的标签集合",
     "Use Email as username": "邮箱作为用户名",
     "Use Email as username - Tooltip": "如果注册时用户名不可见，则使用邮箱作为用户名",
+    "User balance": "User balance",
+    "User balance - Tooltip": "User balance - Tooltip",
     "User types": "用户类型",
     "User types - Tooltip": "系统中可用的用户类型",
     "View rule": "查看规则",
@@ -964,6 +970,7 @@
     "Metadata url": "Metadata链接",
     "Metadata url - Tooltip": "SAML的Metadata链接",
     "Method - Tooltip": "登录方法，二维码或者静默授权登录",
+    "Mobile": "Mobile",
     "New Provider": "添加提供商",
     "Normal": "标准",
     "Parameter": "参数",
@@ -1075,6 +1082,7 @@
     "UserInfo URL - Tooltip": "自定义OAuth的UserInfo链接",
     "Wallets": "钱包",
     "Wallets - Tooltip": "支持的数字钱包",
+    "Web": "Web",
     "admin (Shared)": "admin（共享）"
   },
   "record": {
@@ -1249,9 +1257,13 @@
   "transaction": {
     "Amount": "数量",
     "Amount - Tooltip": "交易产品的数量",
+    "Category": "Category",
     "Edit Transaction": "编辑交易",
     "New Transaction": "添加交易",
-    "Tag - Tooltip": "交易的标签"
+    "State": "State",
+    "Tag - Tooltip": "交易的标签",
+    "Transactions": "Transactions",
+    "Type": "Type"
   },
   "user": {
     "3rd-party logins": "第三方登录",

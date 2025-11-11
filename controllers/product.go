@@ -185,12 +185,14 @@ func (c *ApiController) BuyProduct() {
 		c.ResponseError(err.Error())
 		return
 	}
-	userId := util.GetId(owner, paidUserName)
-	if paidUserName != "" && paidUserName != c.GetSessionUsername() && !c.IsAdmin() {
-		c.ResponseError(c.T("general:Only admin user can specify user"))
-		return
-	}
-	if paidUserName == "" {
+	var userId string
+	if paidUserName != "" {
+		userId = util.GetId(owner, paidUserName)
+		if userId != c.GetSessionUsername() && !c.IsAdmin() {
+			c.ResponseError(c.T("general:Only admin user can specify user"))
+			return
+		}
+	} else {
 		userId = c.GetSessionUsername()
 	}
 	if userId == "" {
