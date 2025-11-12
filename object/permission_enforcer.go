@@ -90,7 +90,7 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 }
 
 func (p *Permission) setEnforcerModel(enforcer *casbin.Enforcer) error {
-	permissionModel, err := GetModel(util.GetId(p.Owner, p.Model))
+	permissionModel, err := GetModel(p.Model)
 	if err != nil {
 		return err
 	}
