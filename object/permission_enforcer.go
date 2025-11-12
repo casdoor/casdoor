@@ -90,9 +90,13 @@ func (p *Permission) setEnforcerAdapter(enforcer *casbin.Enforcer) error {
 }
 
 func (p *Permission) setEnforcerModel(enforcer *casbin.Enforcer) error {
-	permissionModel, err := GetModel(p.Model)
-	if err != nil {
-		return err
+	var permissionModel *Model
+	var err error
+	if p.Model != "" {
+		permissionModel, err = GetModel(p.Model)
+		if err != nil {
+			return err
+		}
 	}
 
 	// TODO: return error if permissionModel is nil.
