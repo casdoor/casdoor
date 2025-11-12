@@ -51,12 +51,14 @@ func NewWechatPaymentProvider(mchId string, apiV3Key string, appId string, seria
 		return nil, err
 	}
 
-	platformCert, serialNo, err := clientV3.GetAndSelectNewestCert()
+	// AutoVerifySign: automatically fetch and verify platform certificate
+	err = clientV3.AutoVerifySign()
 	if err != nil {
 		return nil, err
 	}
+
 	pp := &WechatPaymentProvider{
-		Client: clientV3.SetPlatformCert([]byte(platformCert), serialNo),
+		Client: clientV3,
 		AppId:  appId,
 	}
 
