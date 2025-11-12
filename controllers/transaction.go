@@ -43,7 +43,12 @@ func (c *ApiController) GetTransactions() {
 		var err error
 
 		if c.IsAdmin() {
-			transactions, err = object.GetTransactions(owner)
+			// If field is "user", filter by that user even for admins
+			if field == "user" && value != "" {
+				transactions, err = object.GetUserTransactions(owner, value)
+			} else {
+				transactions, err = object.GetTransactions(owner)
+			}
 		} else {
 			user := c.GetSessionUsername()
 			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
