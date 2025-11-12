@@ -131,7 +131,7 @@ jobs:
         with:
           browser: chrome
           start: yarn start
-          wait-on: 'http://localhost:7001, http://localhost:8000'
+          wait-on: 'http://localhost:7001'
           wait-on-timeout: 210
           working-directory: ./web
 
