@@ -71,7 +71,7 @@ func CheckUserSignup(application *Application, organization *Organization, authF
 	}
 
 	if application.IsSignupItemVisible("Password") {
-		msg := CheckPasswordComplexityByOrg(organization, authForm.Password)
+		msg := CheckPasswordComplexityByOrg(organization, authForm.Password, lang)
 		if msg != "" {
 			return msg
 		}
@@ -282,14 +282,14 @@ func CheckPassword(user *User, password string, lang string, options ...bool) er
 	return resetUserSigninErrorTimes(user)
 }
 
-func CheckPasswordComplexityByOrg(organization *Organization, password string) string {
-	errorMsg := checkPasswordComplexity(password, organization.PasswordOptions)
+func CheckPasswordComplexityByOrg(organization *Organization, password string, lang string) string {
+	errorMsg := checkPasswordComplexity(password, organization.PasswordOptions, lang)
 	return errorMsg
 }
 
-func CheckPasswordComplexity(user *User, password string) string {
+func CheckPasswordComplexity(user *User, password string, lang string) string {
 	organization, _ := GetOrganizationByUser(user)
-	return CheckPasswordComplexityByOrg(organization, password)
+	return CheckPasswordComplexityByOrg(organization, password, lang)
 }
 
 func CheckLdapUserPassword(user *User, password string, lang string) error {
