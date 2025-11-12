@@ -18,9 +18,10 @@ import (
 	"regexp"
 
 	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/i18n"
 )
 
-type ValidatorFunc func(password string) string
+type ValidatorFunc func(password string, lang string) string
 
 var (
 	regexLowerCase = regexp.MustCompile(`[a-z]`)
@@ -29,50 +30,50 @@ var (
 	regexSpecial   = regexp.MustCompile("[!-/:-@[-`{-~]")
 )
 
-func isValidOption_AtLeast6(password string) string {
+func isValidOption_AtLeast6(password string, lang string) string {
 	if len(password) < 6 {
-		return "The password must have at least 6 characters"
+		return i18n.Translate(lang, "check:The password must have at least 6 characters")
 	}
 	return ""
 }
 
-func isValidOption_AtLeast8(password string) string {
+func isValidOption_AtLeast8(password string, lang string) string {
 	if len(password) < 8 {
-		return "The password must have at least 8 characters"
+		return i18n.Translate(lang, "check:The password must have at least 8 characters")
 	}
 	return ""
 }
 
-func isValidOption_Aa123(password string) string {
+func isValidOption_Aa123(password string, lang string) string {
 	hasLowerCase := regexLowerCase.MatchString(password)
 	hasUpperCase := regexUpperCase.MatchString(password)
 	hasDigit := regexDigit.MatchString(password)
 
 	if !hasLowerCase || !hasUpperCase || !hasDigit {
-		return "The password must contain at least one uppercase letter, one lowercase letter and one digit"
+		return i18n.Translate(lang, "check:The password must contain at least one uppercase letter, one lowercase letter and one digit")
 	}
 	return ""
 }
 
-func isValidOption_SpecialChar(password string) string {
+func isValidOption_SpecialChar(password string, lang string) string {
 	if !regexSpecial.MatchString(password) {
-		return "The password must contain at least one special character"
+		return i18n.Translate(lang, "check:The password must contain at least one special character")
 	}
 	return ""
 }
 
-func isValidOption_NoRepeat(password string) string {
+func isValidOption_NoRepeat(password string, lang string) string {
 	for i := 0; i < len(password)-1; i++ {
 		if password[i] == password[i+1] {
-			return "The password must not contain any repeated characters"
+			return i18n.Translate(lang, "check:The password must not contain any repeated characters")
 		}
 	}
 	return ""
 }
 
-func checkPasswordComplexity(password string, options []string) string {
+func checkPasswordComplexity(password string, options []string, lang string) string {
 	if len(password) == 0 {
-		return "Please input your password!"
+		return i18n.Translate(lang, "check:Password cannot be empty")
 	}
 
 	if len(options) == 0 {
@@ -90,7 +91,7 @@ func checkPasswordComplexity(password string, options []string) string {
 	for _, option := range options {
 		checkerFunc, ok := checkers[option]
 		if ok {
-			errorMsg := checkerFunc(password)
+			errorMsg := checkerFunc(password, lang)
 			if errorMsg != "" {
 				return errorMsg
 			}
