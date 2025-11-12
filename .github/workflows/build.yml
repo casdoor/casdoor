@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: '^1.16.5'
+          go-version: '1.23'
           cache-dependency-path: ./go.mod
       - name: Tests
         run: |
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: '^1.16.5'
+          go-version: '1.23'
           cache-dependency-path: ./go.mod
       - run: go version
       - name: Build
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: '^1.16.5'
+          go-version: '1.23'
           cache: false
 
       # gen a dummy config file
@@ -98,11 +98,28 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: '^1.16.5'
+          go-version: '1.23'
           cache-dependency-path: ./go.mod
       - name: start backend
-        run: nohup go run ./main.go &
+        run: nohup go run ./main.go > /tmp/backend.log 2>&1 &
         working-directory: ./
+      - name: Wait for backend to be ready
+        run: |
+          echo "Waiting for backend server to start on port 8000..."
+          for i in {1..60}; do
+            if curl -s http://localhost:8000 > /dev/null 2>&1; then
+              echo "Backend is ready!"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "Backend failed to start within 60 seconds"
+              echo "Backend logs:"
+              cat /tmp/backend.log || echo "No backend logs available"
+              exit 1
+            fi
+            echo "Waiting... ($i/60)"
+            sleep 1
+          done
       - uses: actions/setup-node@v3
         with:
           node-version: 20
