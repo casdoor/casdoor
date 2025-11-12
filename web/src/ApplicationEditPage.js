@@ -537,7 +537,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Token expire"), i18next.t("application:Token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.expireInHours} min={0.01} step={0.01} precision={2} addonAfter="Hours" onChange={value => {
+            <InputNumber style={{width: "150px"}} value={this.state.application.expireInHours} min={0.01} step={1} precision={2} addonAfter="Hours" onChange={value => {
               this.updateApplicationField("expireInHours", value);
             }} />
           </Col>
@@ -547,7 +547,7 @@ class ApplicationEditPage extends React.Component {
             {Setting.getLabel(i18next.t("application:Refresh token expire"), i18next.t("application:Refresh token expire - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={0.01} step={0.01} precision={2} addonAfter="Hours" onChange={value => {
+            <InputNumber style={{width: "150px"}} value={this.state.application.refreshExpireInHours} min={0.01} step={1} precision={2} addonAfter="Hours" onChange={value => {
               this.updateApplicationField("refreshExpireInHours", value);
             }} />
           </Col>
