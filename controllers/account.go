@@ -290,6 +290,8 @@ func (c *ApiController) Signup() {
 
 	if user.Type == "normal-user" {
 		c.SetSessionUsername(user.GetId())
+	} else if user.Type == "paid-user" {
+		c.SetSession("paidUsername", user.GetId())
 	}
 
 	if authForm.Email != "" {

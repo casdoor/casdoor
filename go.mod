@@ -2,8 +2,6 @@ module github.com/casdoor/casdoor
 
 go 1.23.0
 
-toolchain go1.24.9
-
 require (
 	github.com/Masterminds/squirrel v1.5.3
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387

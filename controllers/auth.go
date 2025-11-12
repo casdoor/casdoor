@@ -137,6 +137,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 				c.ResponseError(fmt.Sprintf(c.T("auth:paid-user %s does not have active or pending subscription and the application: %s does not have default pricing"), user.Name, application.Name))
 				return
 			} else {
+				c.SetSession("paidUsername", user.GetId())
 				// let the paid-user select plan
 				c.ResponseOk("SelectPlan", pricing)
 				return
