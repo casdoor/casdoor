@@ -39,7 +39,26 @@ func (c *ApiController) GetTransactions() {
 	sortOrder := c.Input().Get("sortOrder")
 
 	if limit == "" || page == "" {
-		transactions, err := object.GetTransactions(owner)
+		var transactions []*object.Transaction
+		var err error
+
+		if c.IsAdmin() {
+			// If field is "user", filter by that user even for admins
+			if field == "user" && value != "" {
+				transactions, err = object.GetUserTransactions(owner, value)
+			} else {
+				transactions, err = object.GetTransactions(owner)
+			}
+		} else {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			transactions, err = object.GetUserTransactions(owner, userName)
+		}
+
 		if err != nil {
 			c.ResponseError(err.Error())
 			return
@@ -48,6 +67,19 @@ func (c *ApiController) GetTransactions() {
 		c.ResponseOk(transactions)
 	} else {
 		limit := util.ParseInt(limit)
+
+		// Apply user filter for non-admin users
+		if !c.IsAdmin() {
+			user := c.GetSessionUsername()
+			_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+			if userErr != nil {
+				c.ResponseError(userErr.Error())
+				return
+			}
+			field = "user"
+			value = userName
+		}
+
 		count, err := object.GetTransactionCount(owner, field, value)
 		if err != nil {
 			c.ResponseError(err.Error())
