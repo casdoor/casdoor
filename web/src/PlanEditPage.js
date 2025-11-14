@@ -150,6 +150,7 @@ class PlanEditPage extends React.Component {
               this.updatePlanField("owner", owner);
               this.getUsers(owner);
               this.getRoles(owner);
+              this.getPaymentProviders(owner);
             })}
             options={this.state.organizations.map((organization) => Setting.getOption(organization.name, organization.name))
             } />
