@@ -14,7 +14,10 @@
 
 package object
 
-import "github.com/casdoor/casdoor/cred"
+import (
+	"github.com/casdoor/casdoor/cred"
+	"github.com/casdoor/casdoor/util"
+)
 
 func calculateHash(user *User) (string, error) {
 	syncer, err := getDbSyncerForUser(user)
@@ -42,9 +45,11 @@ func (user *User) UpdateUserHash() error {
 func (user *User) UpdateUserPassword(organization *Organization) {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
-		hashedPassword := credManager.GetHashedPassword(user.Password, organization.PasswordSalt)
+		// Generate a unique random salt for each user
+		randomSalt := util.GeneratePasswordSalt()
+		hashedPassword := credManager.GetHashedPassword(user.Password, randomSalt)
 		user.Password = hashedPassword
 		user.PasswordType = organization.PasswordType
-		user.PasswordSalt = organization.PasswordSalt
+		user.PasswordSalt = randomSalt
 	}
 }

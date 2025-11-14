@@ -23,3 +23,7 @@ func GenerateClientId() string {
 func GenerateClientSecret() string {
 	return randstr.Hex(20)
 }
+
+func GeneratePasswordSalt() string {
+	return randstr.Hex(10)
+}
