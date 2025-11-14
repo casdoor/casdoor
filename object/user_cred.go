@@ -45,11 +45,14 @@ func (user *User) UpdateUserHash() error {
 func (user *User) UpdateUserPassword(organization *Organization) {
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
-		// Generate a unique random salt for each user
-		randomSalt := util.GeneratePasswordSalt()
-		hashedPassword := credManager.GetHashedPassword(user.Password, randomSalt)
+		// Use organization salt if available, otherwise generate a random salt for the user
+		salt := organization.PasswordSalt
+		if salt == "" {
+			salt = util.GeneratePasswordSalt()
+		}
+		hashedPassword := credManager.GetHashedPassword(user.Password, salt)
 		user.Password = hashedPassword
 		user.PasswordType = organization.PasswordType
-		user.PasswordSalt = randomSalt
+		user.PasswordSalt = salt
 	}
 }
