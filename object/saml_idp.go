@@ -417,7 +417,10 @@ func GetSamlResponse(application *Application, user *User, samlRequest string, h
 	}
 
 	if application.EnableSamlC14n10 {
-		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("")
+		// Include xsi and xs in the inclusive namespace prefix list to prevent C14N10 Exclusive
+		// Canonicalization from removing these namespace declarations during signing.
+		// These namespaces are used in attributes like xsi:type="xs:string" in AttributeValue elements.
+		ctx.Canonicalizer = dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList("xsi xs")
 		// Ensure xsi and xs namespaces are present on Response and Assertion elements BEFORE signing
 		// This is critical for C14N10 which may remove namespace declarations during canonicalization
 		// If we add namespaces after signing, the XML won't match the signature
