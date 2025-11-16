@@ -157,6 +157,10 @@ func (idp *DingTalkIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 		return nil, err
 	}
 
+	if dtUserInfo.OpenId == "" || dtUserInfo.UnionId == "" {
+		return nil, fmt.Errorf(string(data))
+	}
+
 	countryCode, err := util.GetCountryCode(dtUserInfo.StateCode, dtUserInfo.Mobile)
 	if err != nil {
 		return nil, err
