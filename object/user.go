@@ -978,6 +978,10 @@ func AddUser(user *User, lang string) (bool, error) {
 		user.CreatedTime = util.GetCurrentTime()
 	}
 
+	if user.UpdatedTime == "" {
+		user.UpdatedTime = user.CreatedTime
+	}
+
 	err = user.UpdateUserHash()
 	if err != nil {
 		return false, err
@@ -1037,6 +1041,14 @@ func AddUsers(users []*User) (bool, error) {
 	for _, user := range users {
 		// this function is only used for syncer or batch upload, so no need to encrypt the password
 		// user.UpdateUserPassword(organization)
+
+		if user.CreatedTime == "" {
+			user.CreatedTime = util.GetCurrentTime()
+		}
+
+		if user.UpdatedTime == "" {
+			user.UpdatedTime = user.CreatedTime
+		}
 
 		err := user.UpdateUserHash()
 		if err != nil {
