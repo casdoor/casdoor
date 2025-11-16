@@ -529,13 +529,13 @@ class SyncerEditPage extends React.Component {
                 )} :
               </Col>
               <Col span={22} >
-                <Input.TextArea 
+                <Input.TextArea
                   rows={this.state.syncer.type === "Google Workspace" ? 4 : 1}
-                  prefix={this.state.syncer.type === "Google Workspace" ? null : <LinkOutlined />} 
-                  value={this.state.syncer.host} 
+                  prefix={this.state.syncer.type === "Google Workspace" ? null : <LinkOutlined />}
+                  value={this.state.syncer.host}
                   onChange={e => {
                     this.updateSyncerField("host", e.target.value);
-                  }} 
+                  }}
                 />
               </Col>
             </Row>
