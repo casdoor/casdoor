@@ -69,6 +69,7 @@ class SyncerEditPage extends React.Component {
   }
 
   getCerts(owner) {
+    // Load certificates for the given organization
     CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
