@@ -78,11 +78,6 @@ func parseListItem(lines *[]string, i int) []string {
 func UploadUsers(owner string, path string, userObj *User, lang string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
-	oldUserMap, err := getUserMap(owner)
-	if err != nil {
-		return false, err
-	}
-
 	uploadedUsers, err := StringArrayToStruct[User](table)
 	if err != nil {
 		return false, err
@@ -102,6 +97,11 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 	}
 	if organization == nil {
 		return false, fmt.Errorf(i18n.Translate(lang, "auth:The organization: %s does not exist"), organizationName)
+	}
+
+	oldUserMap, err := getUserMap(organizationName)
+	if err != nil {
+		return false, err
 	}
 
 	newUsers := []*User{}
