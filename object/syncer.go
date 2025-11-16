@@ -323,6 +323,12 @@ func TestSyncer(syncer Syncer) error {
 		return err
 	}
 
+	// For Google Workspace syncer, test by connecting to API
+	if syncer.Type == "Google Workspace" {
+		err := syncer.testGoogleWorkspaceConnection()
+		return err
+	}
+
 	err = syncer.initAdapter()
 	if err != nil {
 		return err
