@@ -304,7 +304,7 @@ const FaceRecognitionModal = (props) => {
               if (maxScore < 0.9) {
                 message.error(i18next.t("login:Face recognition failed"));
               }
-            }}> {i18next.t("application:Generate Face ID")}</Button> : null
+            }}> {i18next.t("general:Generate")}</Button> : null
           }
         </Space>
         {

@@ -360,7 +360,7 @@
     "Logo - Tooltip": "应用程序向外展示的图标",
     "Logo dark": "暗黑logo",
     "Logo dark - Tooltip": "暗黑主题下使用的logo",
-    "MFA items": "MFA 项",
+    "MFA items": "MFA设置项",
     "MFA items - Tooltip": "多因素认证项目",
     "Master password": "万能密码",
     "Master password - Tooltip": "可用来登录该组织下的所有用户，方便管理员以该用户身份登录，以解决技术问题",
@@ -1247,8 +1247,8 @@
     "Token type - Tooltip": "令牌类型"
   },
   "transaction": {
-    "Amount": "数量",
-    "Amount - Tooltip": "交易产品的数量",
+    "Amount": "金额",
+    "Amount - Tooltip": "交易产品的金额",
     "Edit Transaction": "编辑交易",
     "New Transaction": "添加交易",
     "Tag - Tooltip": "交易的标签"

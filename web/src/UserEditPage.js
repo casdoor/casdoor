@@ -316,11 +316,6 @@ class UserEditPage extends React.Component {
       }
     }
 
-    let isKeysGenerated = false;
-    if (this.state.user.accessKey !== "" && this.state.user.accessKey !== "") {
-      isKeysGenerated = true;
-    }
-
     if (accountItem.name === "Organization") {
       return (
         <Row style={{marginTop: "10px"}} >
@@ -835,7 +830,7 @@ class UserEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Access key"), i18next.t("general:Access key - Tooltip"))} :
               </Col>
               <Col span={22} >
@@ -843,16 +838,18 @@ class UserEditPage extends React.Component {
               </Col>
             </Row>
             <Row style={{marginTop: "20px"}} >
-              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 1}>
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:Access secret"), i18next.t("general:Access secret - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.user.accessSecret} disabled={true} />
               </Col>
             </Row>
-            <Row style={{marginTop: "20px"}} >
+            <Row style={{marginTop: "20px", marginBottom: "20px"}} >
               <Col span={22} >
-                <Button onClick={() => this.addUserKeys()}>{i18next.t(isKeysGenerated ? "general:update" : "general:generate")}</Button>
+                <Button type="primary" onClick={() => this.addUserKeys()}>
+                  {i18next.t("general:Generate")}
+                </Button>
               </Col>
             </Row>
           </Col>
