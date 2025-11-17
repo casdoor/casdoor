@@ -61,10 +61,15 @@ class SyncerEditPage extends React.Component {
         this.setState({
           syncer: res.data,
         });
+
+        if (res.data && res.data.organization) {
+          this.getCerts(res.data.organization);
+        }
       });
   }
 
   getCerts(owner) {
+    // Load certificates for the given organization
     CertBackend.getCerts(owner)
       .then((res) => {
         this.setState({
@@ -79,9 +84,6 @@ class SyncerEditPage extends React.Component {
         this.setState({
           organizations: res.data || [],
         });
-        if (res.data) {
-          this.getCerts(`${res.data.owner}/${res.data.name}`);
-        }
       });
   }
 
@@ -96,6 +98,12 @@ class SyncerEditPage extends React.Component {
     value = this.parseSyncerField(key, value);
 
     const syncer = this.state.syncer;
+    if (key === "organization" && syncer["organization"] !== value) {
+      // the syncer changed the organization, reset the cert and reload certs
+      syncer["cert"] = "";
+      this.getCerts(value);
+    }
+
     syncer[key] = value;
     this.setState({
       syncer: syncer,
