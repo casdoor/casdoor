@@ -43,13 +43,13 @@ class TransactionTable extends React.Component {
         },
       },
       {
-        title: i18next.t("transaction:Category"),
+        title: i18next.t("provider:Category"),
         dataIndex: "category",
         key: "category",
         width: "120px",
       },
       {
-        title: i18next.t("transaction:Type"),
+        title: i18next.t("provider:Type"),
         dataIndex: "type",
         key: "type",
         width: "120px",
@@ -64,7 +64,7 @@ class TransactionTable extends React.Component {
         },
       },
       {
-        title: i18next.t("transaction:State"),
+        title: i18next.t("general:State"),
         dataIndex: "state",
         key: "state",
         width: "100px",

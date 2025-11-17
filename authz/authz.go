@@ -100,6 +100,7 @@ p, *, *, *, /api/metrics, *, *
 p, *, *, GET, /api/get-pricing, *, *
 p, *, *, GET, /api/get-plan, *, *
 p, *, *, GET, /api/get-subscription, *, *
+p, *, *, GET, /api/get-transactions, *, *
 p, *, *, GET, /api/get-provider, *, *
 p, *, *, GET, /api/get-organization-names, *, *
 p, *, *, GET, /api/get-all-objects, *, *

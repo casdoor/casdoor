@@ -91,6 +91,7 @@ class AccountTable extends React.Component {
       {name: "Birthday", label: i18next.t("user:Birthday")},
       {name: "Education", label: i18next.t("user:Education")},
       {name: "Balance", label: i18next.t("user:Balance")},
+      {name: "Transactions", label: i18next.t("transaction:Transactions")},
       {name: "Score", label: i18next.t("user:Score")},
       {name: "Karma", label: i18next.t("user:Karma")},
       {name: "Ranking", label: i18next.t("user:Ranking")},
@@ -113,7 +114,6 @@ class AccountTable extends React.Component {
       {name: "Face ID", label: i18next.t("user:Face ID")},
       {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
       {name: "MFA items", label: i18next.t("general:MFA items")},
-      {name: "Transactions", label: i18next.t("transaction:Transactions")},
     ];
   };
 
