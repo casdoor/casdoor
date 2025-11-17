@@ -43,6 +43,11 @@ func (user *User) UpdateUserHash() error {
 }
 
 func (user *User) UpdateUserPassword(organization *Organization) {
+	// Don't hash empty passwords (e.g., for OAuth users)
+	if user.Password == "" {
+		return
+	}
+
 	credManager := cred.GetCredManager(organization.PasswordType)
 	if credManager != nil {
 		// Use organization salt if available, otherwise generate a random salt for the user

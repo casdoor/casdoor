@@ -914,7 +914,6 @@ func (c *ApiController) Login() {
 						CreatedTime:       util.GetCurrentTime(),
 						Id:                userId,
 						Type:              "normal-user",
-						Password:          "123",
 						DisplayName:       userInfo.DisplayName,
 						Avatar:            userInfo.AvatarUrl,
 						Address:           []string{},
