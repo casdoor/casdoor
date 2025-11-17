@@ -178,7 +178,7 @@ func (transaction *Transaction) GetId() string {
 func updateBalanceForTransaction(transaction *Transaction, amount float64, lang string) error {
 	if transaction.Category == "Organization" {
 		// Update organization's own balance
-		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, true, lang)
+		return UpdateOrganizationBalance("admin", transaction.Owner, amount, true, lang)
 	} else if transaction.Category == "User" {
 		// Update user's balance
 		if transaction.User == "" {
@@ -188,7 +188,7 @@ func updateBalanceForTransaction(transaction *Transaction, amount float64, lang 
 			return err
 		}
 		// Update organization's user balance sum
-		return UpdateOrganizationBalance(transaction.Owner, transaction.Owner, amount, false, lang)
+		return UpdateOrganizationBalance("admin", transaction.Owner, amount, false, lang)
 	}
 	return nil
 }
