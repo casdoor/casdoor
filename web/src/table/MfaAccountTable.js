@@ -179,7 +179,7 @@ class MfaAccountTable extends React.Component {
               overlayInnerStyle={{padding: 0}}
               content={<CasdoorAppQrCode accessToken={this.props.accessToken} icon={this.state.icon} />}
             >
-              <Button style={{marginRight: "10px"}} type="primary" size="small">
+              <Button style={{marginRight: "10px"}} size="small">
                 {i18next.t("general:QR Code")}
               </Button>
             </Popover>
@@ -187,7 +187,7 @@ class MfaAccountTable extends React.Component {
               trigger="click"
               content={<CasdoorAppUrl accessToken={this.props.accessToken} />}
             >
-              <Button type="primary" size="small">
+              <Button size="small">
                 {i18next.t("general:URL")}
               </Button>
             </Popover>

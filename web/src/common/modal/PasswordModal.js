@@ -142,7 +142,7 @@ export const PasswordModal = (props) => {
 
   return (
     <Row>
-      <Button type="default" disabled={props.disabled} onClick={showModal}>
+      <Button type="primary" disabled={props.disabled} onClick={showModal}>
         {hasOldPassword ? i18next.t("user:Modify password...") : i18next.t("user:Set password...")}
       </Button>
       <Modal

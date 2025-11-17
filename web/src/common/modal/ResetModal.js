@@ -69,7 +69,7 @@ export const ResetModal = (props) => {
 
   return (
     <Row>
-      <Button type="default" onClick={showModal}>
+      <Button type="primary" onClick={showModal}>
         {buttonText}
       </Button>
       <Modal

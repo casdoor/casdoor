@@ -460,7 +460,7 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Email"), i18next.t("general:Email - Tooltip"))} :
           </Col>
-          <Col style={{paddingRight: "20px"}} span={11} >
+          <Col style={{paddingRight: "20px"}} span={5} >
             <Input
               value={this.state.user.email}
               style={{width: "280Px"}}
@@ -470,7 +470,7 @@ class UserEditPage extends React.Component {
               }}
             />
           </Col>
-          <Col span={Setting.isMobile() ? 22 : 11} >
+          <Col span={Setting.isMobile() ? 22 : 5} >
             {/* backend auto get the current user, so admin can not edit. Just self can reset*/}
             {this.isSelf() ? <ResetModal application={this.state.application} disabled={disabled} buttonText={i18next.t("user:Reset Email...")} destType={"email"} /> : null}
           </Col>
@@ -482,7 +482,7 @@ class UserEditPage extends React.Component {
           <Col style={{marginTop: "5px"}} span={Setting.isMobile() ? 22 : 2}>
             {Setting.getLabel(i18next.t("general:Phone"), i18next.t("general:Phone - Tooltip"))} :
           </Col>
-          <Col style={{paddingRight: "20px"}} span={11} >
+          <Col style={{paddingRight: "20px"}} span={5} >
             <Input.Group compact style={{width: "280Px"}}>
               <CountryCodeSelect
                 style={{width: "30%"}}
@@ -501,7 +501,7 @@ class UserEditPage extends React.Component {
                 }} />
             </Input.Group>
           </Col>
-          <Col span={Setting.isMobile() ? 24 : 11} >
+          <Col span={Setting.isMobile() ? 24 : 5} >
             {this.isSelf() ? (<ResetModal application={this.state.application} countryCode={this.getCountryCode()} disabled={disabled} buttonText={i18next.t("user:Reset Phone...")} destType={"phone"} />) : null}
           </Col>
         </Row>
