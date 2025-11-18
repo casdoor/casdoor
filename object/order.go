@@ -34,17 +34,17 @@ type Order struct {
 	Tag                string  `xorm:"varchar(100)" json:"tag"`
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Price              float64 `json:"price"`
-	
+
 	// User Info
 	User string `xorm:"varchar(100)" json:"user"`
-	
+
 	// Payment Info
 	Payment string `xorm:"varchar(100)" json:"payment"`
-	
+
 	// Order State
 	State   string `xorm:"varchar(100)" json:"state"`
 	Message string `xorm:"varchar(2000)" json:"message"`
-	
+
 	// Order Duration
 	StartTime string `xorm:"varchar(100)" json:"startTime"`
 	EndTime   string `xorm:"varchar(100)" json:"endTime"`

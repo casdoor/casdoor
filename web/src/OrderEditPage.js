@@ -102,8 +102,8 @@ class OrderEditPage extends React.Component {
   }
 
   parseOrderField(key, value) {
-    if (["price"].includes(key)) {
-      value = Setting.myParseFloat(value);
+    if ([""].includes(key)) {
+      value = Setting.myParseInt(value);
     }
     return value;
   }
