@@ -1,0 +1,207 @@
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package object
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+
+	"github.com/casdoor/casdoor/util"
+	"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/jwt"
+	admin "google.golang.org/api/admin/directory/v1"
+	"google.golang.org/api/option"
+)
+
+// GoogleWorkspaceSyncerProvider implements SyncerProvider for Google Workspace API-based syncers
+type GoogleWorkspaceSyncerProvider struct {
+	Syncer *Syncer
+}
+
+// InitAdapter initializes the Google Workspace syncer (no database adapter needed)
+func (p *GoogleWorkspaceSyncerProvider) InitAdapter() error {
+	// Google Workspace syncer doesn't need database adapter
+	return nil
+}
+
+// GetOriginalUsers retrieves all users from Google Workspace API
+func (p *GoogleWorkspaceSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
+	return p.getGoogleWorkspaceOriginalUsers()
+}
+
+// AddUser adds a new user to Google Workspace (not supported for read-only API)
+func (p *GoogleWorkspaceSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
+	// Google Workspace syncer is typically read-only
+	return false, fmt.Errorf("adding users to Google Workspace is not supported")
+}
+
+// UpdateUser updates an existing user in Google Workspace (not supported for read-only API)
+func (p *GoogleWorkspaceSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
+	// Google Workspace syncer is typically read-only
+	return false, fmt.Errorf("updating users in Google Workspace is not supported")
+}
+
+// TestConnection tests the Google Workspace API connection
+func (p *GoogleWorkspaceSyncerProvider) TestConnection() error {
+	_, err := p.getAdminService()
+	return err
+}
+
+// getAdminService creates and returns a Google Workspace Admin SDK service
+func (p *GoogleWorkspaceSyncerProvider) getAdminService() (*admin.Service, error) {
+	// syncer.Host should be the admin email (impersonation account)
+	// syncer.User should be the service account email or client_email
+	// syncer.Password should be the service account private key (JSON key file content)
+
+	adminEmail := p.Syncer.Host
+	if adminEmail == "" {
+		return nil, fmt.Errorf("admin email (host field) is required for Google Workspace syncer")
+	}
+
+	// Parse the service account credentials from the password field
+	serviceAccountKey := p.Syncer.Password
+	if serviceAccountKey == "" {
+		return nil, fmt.Errorf("service account key (password field) is required for Google Workspace syncer")
+	}
+
+	// Parse the JSON key
+	var serviceAccount struct {
+		Type        string `json:"type"`
+		ClientEmail string `json:"client_email"`
+		PrivateKey  string `json:"private_key"`
+	}
+
+	err := json.Unmarshal([]byte(serviceAccountKey), &serviceAccount)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse service account key: %v", err)
+	}
+
+	// Create JWT config for service account with domain-wide delegation
+	config := &jwt.Config{
+		Email:      serviceAccount.ClientEmail,
+		PrivateKey: []byte(serviceAccount.PrivateKey),
+		Scopes: []string{
+			admin.AdminDirectoryUserReadonlyScope,
+		},
+		TokenURL: google.JWTTokenURL,
+		Subject:  adminEmail, // Impersonate the admin user
+	}
+
+	client := config.Client(context.Background())
+
+	// Create Admin SDK service
+	service, err := admin.NewService(context.Background(), option.WithHTTPClient(client))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create admin service: %v", err)
+	}
+
+	return service, nil
+}
+
+// getGoogleWorkspaceUsers gets all users from Google Workspace using Admin SDK API
+func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceUsers(service *admin.Service) ([]*admin.User, error) {
+	allUsers := []*admin.User{}
+	pageToken := ""
+
+	// Get the customer ID (use "my_customer" for the domain)
+	customer := "my_customer"
+
+	for {
+		call := service.Users.List().Customer(customer).MaxResults(500)
+		if pageToken != "" {
+			call = call.PageToken(pageToken)
+		}
+
+		resp, err := call.Do()
+		if err != nil {
+			return nil, fmt.Errorf("failed to list users: %v", err)
+		}
+
+		allUsers = append(allUsers, resp.Users...)
+
+		// Handle pagination
+		if resp.NextPageToken == "" {
+			break
+		}
+		pageToken = resp.NextPageToken
+	}
+
+	return allUsers, nil
+}
+
+// googleWorkspaceUserToOriginalUser converts Google Workspace user to Casdoor OriginalUser
+func (p *GoogleWorkspaceSyncerProvider) googleWorkspaceUserToOriginalUser(gwUser *admin.User) *OriginalUser {
+	user := &OriginalUser{
+		Id:         gwUser.Id,
+		Name:       gwUser.PrimaryEmail,
+		Email:      gwUser.PrimaryEmail,
+		Avatar:     gwUser.ThumbnailPhotoUrl,
+		Address:    []string{},
+		Properties: map[string]string{},
+		Groups:     []string{},
+	}
+
+	// Set name fields if Name is not nil
+	if gwUser.Name != nil {
+		user.DisplayName = gwUser.Name.FullName
+		user.FirstName = gwUser.Name.GivenName
+		user.LastName = gwUser.Name.FamilyName
+	}
+
+	// Set IsForbidden based on account status
+	user.IsForbidden = gwUser.Suspended
+
+	// Set IsAdmin
+	user.IsAdmin = gwUser.IsAdmin
+
+	// If display name is empty, construct from first and last name
+	if user.DisplayName == "" && (user.FirstName != "" || user.LastName != "") {
+		user.DisplayName = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+	}
+
+	// Set CreatedTime from Google or current time
+	if gwUser.CreationTime != "" {
+		user.CreatedTime = gwUser.CreationTime
+	} else {
+		user.CreatedTime = util.GetCurrentTime()
+	}
+
+	return user
+}
+
+// getGoogleWorkspaceOriginalUsers is the main entry point for Google Workspace syncer
+func (p *GoogleWorkspaceSyncerProvider) getGoogleWorkspaceOriginalUsers() ([]*OriginalUser, error) {
+	// Get Admin SDK service
+	service, err := p.getAdminService()
+	if err != nil {
+		return nil, err
+	}
+
+	// Get all users from Google Workspace
+	gwUsers, err := p.getGoogleWorkspaceUsers(service)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert Google Workspace users to Casdoor OriginalUser
+	originalUsers := []*OriginalUser{}
+	for _, gwUser := range gwUsers {
+		originalUser := p.googleWorkspaceUserToOriginalUser(gwUser)
+		originalUsers = append(originalUsers, originalUser)
+	}
+
+	return originalUsers, nil
+}

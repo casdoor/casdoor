@@ -40,6 +40,8 @@ func GetSyncerProvider(syncer *Syncer) SyncerProvider {
 		return &WecomSyncerProvider{Syncer: syncer}
 	case "Azure AD":
 		return &AzureAdSyncerProvider{Syncer: syncer}
+	case "Google Workspace":
+		return &GoogleWorkspaceSyncerProvider{Syncer: syncer}
 	case "Keycloak":
 		return &KeycloakSyncerProvider{
 			DatabaseSyncerProvider: DatabaseSyncerProvider{Syncer: syncer},
