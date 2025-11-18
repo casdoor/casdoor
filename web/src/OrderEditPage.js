@@ -14,14 +14,12 @@
 
 import React from "react";
 import {Button, Card, Col, Input, InputNumber, Row, Select} from "antd";
-import {LinkOutlined} from "@ant-design/icons";
 import * as OrderBackend from "./backend/OrderBackend";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as UserBackend from "./backend/UserBackend";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import moment from "moment";
 
 const {Option} = Select;
 
