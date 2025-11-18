@@ -26,6 +26,40 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// WecomSyncerProvider implements SyncerProvider for WeCom (WeChat Work) API-based syncers
+type WecomSyncerProvider struct {
+	Syncer *Syncer
+}
+
+// InitAdapter initializes the WeCom syncer (no database adapter needed)
+func (p *WecomSyncerProvider) InitAdapter() error {
+	// WeCom syncer doesn't need database adapter
+	return nil
+}
+
+// GetOriginalUsers retrieves all users from WeCom API
+func (p *WecomSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
+	return p.getWecomUsers()
+}
+
+// AddUser adds a new user to WeCom (not supported for read-only API)
+func (p *WecomSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
+	// WeCom syncer is typically read-only
+	return false, fmt.Errorf("adding users to WeCom is not supported")
+}
+
+// UpdateUser updates an existing user in WeCom (not supported for read-only API)
+func (p *WecomSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
+	// WeCom syncer is typically read-only
+	return false, fmt.Errorf("updating users in WeCom is not supported")
+}
+
+// TestConnection tests the WeCom API connection
+func (p *WecomSyncerProvider) TestConnection() error {
+	_, err := p.getWecomAccessToken()
+	return err
+}
+
 type WecomAccessTokenResp struct {
 	Errcode     int    `json:"errcode"`
 	Errmsg      string `json:"errmsg"`
@@ -61,9 +95,9 @@ type WecomDeptListResp struct {
 }
 
 // getWecomAccessToken gets access token from WeCom API
-func (syncer *Syncer) getWecomAccessToken() (string, error) {
+func (p *WecomSyncerProvider) getWecomAccessToken() (string, error) {
 	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s",
-		url.QueryEscape(syncer.User), url.QueryEscape(syncer.Password))
+		url.QueryEscape(p.Syncer.User), url.QueryEscape(p.Syncer.Password))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -100,7 +134,7 @@ func (syncer *Syncer) getWecomAccessToken() (string, error) {
 }
 
 // getWecomDepartments gets all department IDs from WeCom API
-func (syncer *Syncer) getWecomDepartments(accessToken string) ([]int, error) {
+func (p *WecomSyncerProvider) getWecomDepartments(accessToken string) ([]int, error) {
 	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/department/list?access_token=%s",
 		url.QueryEscape(accessToken))
 
@@ -144,7 +178,7 @@ func (syncer *Syncer) getWecomDepartments(accessToken string) ([]int, error) {
 }
 
 // getWecomUsersFromDept gets users from a specific department
-func (syncer *Syncer) getWecomUsersFromDept(accessToken string, deptId int) ([]*WecomUser, error) {
+func (p *WecomSyncerProvider) getWecomUsersFromDept(accessToken string, deptId int) ([]*WecomUser, error) {
 	apiUrl := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/user/list?access_token=%s&department_id=%d",
 		url.QueryEscape(accessToken), deptId)
 
@@ -183,15 +217,15 @@ func (syncer *Syncer) getWecomUsersFromDept(accessToken string, deptId int) ([]*
 }
 
 // getWecomUsers gets all users from WeCom API
-func (syncer *Syncer) getWecomUsers() ([]*OriginalUser, error) {
+func (p *WecomSyncerProvider) getWecomUsers() ([]*OriginalUser, error) {
 	// Get access token
-	accessToken, err := syncer.getWecomAccessToken()
+	accessToken, err := p.getWecomAccessToken()
 	if err != nil {
 		return nil, err
 	}
 
 	// Get all departments
-	deptIds, err := syncer.getWecomDepartments(accessToken)
+	deptIds, err := p.getWecomDepartments(accessToken)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +233,7 @@ func (syncer *Syncer) getWecomUsers() ([]*OriginalUser, error) {
 	// Get users from all departments (deduplicate by userid)
 	userMap := make(map[string]*WecomUser)
 	for _, deptId := range deptIds {
-		users, err := syncer.getWecomUsersFromDept(accessToken, deptId)
+		users, err := p.getWecomUsersFromDept(accessToken, deptId)
 		if err != nil {
 			return nil, err
 		}
@@ -215,7 +249,7 @@ func (syncer *Syncer) getWecomUsers() ([]*OriginalUser, error) {
 	// Convert WeCom users to Casdoor OriginalUser
 	originalUsers := []*OriginalUser{}
 	for _, wecomUser := range userMap {
-		originalUser := syncer.wecomUserToOriginalUser(wecomUser)
+		originalUser := p.wecomUserToOriginalUser(wecomUser)
 		originalUsers = append(originalUsers, originalUser)
 	}
 
@@ -223,7 +257,7 @@ func (syncer *Syncer) getWecomUsers() ([]*OriginalUser, error) {
 }
 
 // wecomUserToOriginalUser converts WeCom user to Casdoor OriginalUser
-func (syncer *Syncer) wecomUserToOriginalUser(wecomUser *WecomUser) *OriginalUser {
+func (p *WecomSyncerProvider) wecomUserToOriginalUser(wecomUser *WecomUser) *OriginalUser {
 	user := &OriginalUser{
 		Id:          wecomUser.UserId,
 		Name:        wecomUser.UserId,
@@ -262,9 +296,4 @@ func (syncer *Syncer) wecomUserToOriginalUser(wecomUser *WecomUser) *OriginalUse
 	}
 
 	return user
-}
-
-// getWecomOriginalUsers is the main entry point for WeCom syncer
-func (syncer *Syncer) getWecomOriginalUsers() ([]*OriginalUser, error) {
-	return syncer.getWecomUsers()
 }

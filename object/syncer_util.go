@@ -26,6 +26,11 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+type Credential struct {
+	Value string `json:"value"`
+	Salt  string `json:"salt"`
+}
+
 func (syncer *Syncer) getFullAvatarUrl(avatar string) string {
 	if syncer.AvatarBaseUrl == "" {
 		return avatar
