@@ -40,6 +40,7 @@ type Transaction struct {
 	Currency           string  `xorm:"varchar(100)" json:"currency"`
 	Amount             float64 `json:"amount"`
 	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
+	Url                string  `xorm:"varchar(1000)" json:"url"`
 	// User Info
 	User        string `xorm:"varchar(100)" json:"user"`
 	Application string `xorm:"varchar(100)" json:"application"`
@@ -176,15 +177,23 @@ func (transaction *Transaction) GetId() string {
 }
 
 func updateBalanceForTransaction(transaction *Transaction, amount float64, lang string) error {
-	if transaction.Category == "Organization" {
+	if transaction.Tag == "Organization" {
 		// Update organization's own balance
 		return UpdateOrganizationBalance("admin", transaction.Owner, amount, true, lang)
-	} else if transaction.Category == "User" {
+	} else if transaction.Tag == "User" {
 		// Update user's balance
 		if transaction.User == "" {
 			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
-		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, lang); err != nil {
+		user, err := getUser(transaction.Owner, transaction.User)
+		if err != nil {
+			return err
+		}
+		if user == nil {
+			return UpdateOrganizationBalance("admin", transaction.Owner, amount, false, lang)
+		}
+
+		if err = UpdateUserBalanceByUser(user, amount); err != nil {
 			return err
 		}
 		// Update organization's user balance sum
