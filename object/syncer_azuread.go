@@ -26,6 +26,40 @@ import (
 	"github.com/casdoor/casdoor/util"
 )
 
+// AzureAdSyncerProvider implements SyncerProvider for Azure AD API-based syncers
+type AzureAdSyncerProvider struct {
+	Syncer *Syncer
+}
+
+// InitAdapter initializes the Azure AD syncer (no database adapter needed)
+func (p *AzureAdSyncerProvider) InitAdapter() error {
+	// Azure AD syncer doesn't need database adapter
+	return nil
+}
+
+// GetOriginalUsers retrieves all users from Azure AD API
+func (p *AzureAdSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
+	return p.getAzureAdOriginalUsers()
+}
+
+// AddUser adds a new user to Azure AD (not supported for read-only API)
+func (p *AzureAdSyncerProvider) AddUser(user *OriginalUser) (bool, error) {
+	// Azure AD syncer is typically read-only
+	return false, fmt.Errorf("adding users to Azure AD is not supported")
+}
+
+// UpdateUser updates an existing user in Azure AD (not supported for read-only API)
+func (p *AzureAdSyncerProvider) UpdateUser(user *OriginalUser) (bool, error) {
+	// Azure AD syncer is typically read-only
+	return false, fmt.Errorf("updating users in Azure AD is not supported")
+}
+
+// TestConnection tests the Azure AD API connection
+func (p *AzureAdSyncerProvider) TestConnection() error {
+	_, err := p.getAzureAdAccessToken()
+	return err
+}
+
 type AzureAdAccessTokenResp struct {
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
@@ -55,22 +89,22 @@ type AzureAdUserListResp struct {
 }
 
 // getAzureAdAccessToken gets access token from Azure AD API using client credentials flow
-func (syncer *Syncer) getAzureAdAccessToken() (string, error) {
+func (p *AzureAdSyncerProvider) getAzureAdAccessToken() (string, error) {
 	// syncer.Host should be the tenant ID or tenant domain
 	// syncer.User should be the client ID (application ID)
 	// syncer.Password should be the client secret
 
-	tenantId := syncer.Host
+	tenantId := p.Syncer.Host
 	if tenantId == "" {
 		return "", fmt.Errorf("tenant ID (host field) is required for Azure AD syncer")
 	}
 
-	clientId := syncer.User
+	clientId := p.Syncer.User
 	if clientId == "" {
 		return "", fmt.Errorf("client ID (user field) is required for Azure AD syncer")
 	}
 
-	clientSecret := syncer.Password
+	clientSecret := p.Syncer.Password
 	if clientSecret == "" {
 		return "", fmt.Errorf("client secret (password field) is required for Azure AD syncer")
 	}
@@ -124,7 +158,7 @@ func (syncer *Syncer) getAzureAdAccessToken() (string, error) {
 }
 
 // getAzureAdUsers gets all users from Azure AD using Microsoft Graph API
-func (syncer *Syncer) getAzureAdUsers(accessToken string) ([]*AzureAdUser, error) {
+func (p *AzureAdSyncerProvider) getAzureAdUsers(accessToken string) ([]*AzureAdUser, error) {
 	allUsers := []*AzureAdUser{}
 	nextLink := "https://graph.microsoft.com/v1.0/users?$top=999"
 
@@ -173,7 +207,7 @@ func (syncer *Syncer) getAzureAdUsers(accessToken string) ([]*AzureAdUser, error
 }
 
 // azureAdUserToOriginalUser converts Azure AD user to Casdoor OriginalUser
-func (syncer *Syncer) azureAdUserToOriginalUser(azureUser *AzureAdUser) *OriginalUser {
+func (p *AzureAdSyncerProvider) azureAdUserToOriginalUser(azureUser *AzureAdUser) *OriginalUser {
 	user := &OriginalUser{
 		Id:          azureUser.Id,
 		Name:        azureUser.UserPrincipalName,
@@ -212,15 +246,15 @@ func (syncer *Syncer) azureAdUserToOriginalUser(azureUser *AzureAdUser) *Origina
 }
 
 // getAzureAdOriginalUsers is the main entry point for Azure AD syncer
-func (syncer *Syncer) getAzureAdOriginalUsers() ([]*OriginalUser, error) {
+func (p *AzureAdSyncerProvider) getAzureAdOriginalUsers() ([]*OriginalUser, error) {
 	// Get access token
-	accessToken, err := syncer.getAzureAdAccessToken()
+	accessToken, err := p.getAzureAdAccessToken()
 	if err != nil {
 		return nil, err
 	}
 
 	// Get all users from Azure AD
-	azureUsers, err := syncer.getAzureAdUsers(accessToken)
+	azureUsers, err := p.getAzureAdUsers(accessToken)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +262,7 @@ func (syncer *Syncer) getAzureAdOriginalUsers() ([]*OriginalUser, error) {
 	// Convert Azure AD users to Casdoor OriginalUser
 	originalUsers := []*OriginalUser{}
 	for _, azureUser := range azureUsers {
-		originalUser := syncer.azureAdUserToOriginalUser(azureUser)
+		originalUser := p.azureAdUserToOriginalUser(azureUser)
 		originalUsers = append(originalUsers, originalUser)
 	}
 

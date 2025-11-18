@@ -15,62 +15,22 @@
 package object
 
 import (
-	"context"
-	"database/sql"
-	"database/sql/driver"
-	"fmt"
 	"strings"
 	"time"
 
-	"golang.org/x/crypto/ssh"
-
 	"github.com/casdoor/casdoor/util"
-	"github.com/go-sql-driver/mysql"
 )
 
 type OriginalUser = User
 
-type Credential struct {
-	Value string `json:"value"`
-	Salt  string `json:"salt"`
-}
-
 func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
-	// Handle WeCom syncer separately
-	if syncer.Type == "WeCom" {
-		return syncer.getWecomOriginalUsers()
-	}
-
-	// Handle Azure AD syncer separately
-	if syncer.Type == "Azure AD" {
-		return syncer.getAzureAdOriginalUsers()
-	}
-
-	var results []map[string]sql.NullString
-	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
-	if err != nil {
-		return nil, err
-	}
-
-	// Memory leak problem handling
-	// https://github.com/casdoor/casdoor/issues/1256
-	users := syncer.getOriginalUsersFromMap(results)
-	for _, m := range results {
-		for k := range m {
-			delete(m, k)
-		}
-	}
-
-	return users, nil
+	provider := GetSyncerProvider(syncer)
+	return provider.GetOriginalUsers()
 }
 
 func (syncer *Syncer) addUser(user *OriginalUser) (bool, error) {
-	m := syncer.getMapFromOriginalUser(user)
-	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).Insert(m)
-	if err != nil {
-		return false, err
-	}
-	return affected != 0, nil
+	provider := GetSyncerProvider(syncer)
+	return provider.AddUser(user)
 }
 
 func (syncer *Syncer) getCasdoorColumns() []string {
@@ -85,16 +45,8 @@ func (syncer *Syncer) getCasdoorColumns() []string {
 }
 
 func (syncer *Syncer) updateUser(user *OriginalUser) (bool, error) {
-	key := syncer.getTargetTablePrimaryKey()
-	m := syncer.getMapFromOriginalUser(user)
-	pkValue := m[key]
-	delete(m, key)
-
-	affected, err := syncer.Ormer.Engine.Table(syncer.getTable()).Where(fmt.Sprintf("%s = ?", key), pkValue).Update(&m)
-	if err != nil {
-		return false, err
-	}
-	return affected != 0, nil
+	provider := GetSyncerProvider(syncer)
+	return provider.UpdateUser(user)
 }
 
 func (syncer *Syncer) updateUserForOriginalFields(user *User, key string) (bool, error) {
@@ -139,80 +91,9 @@ func (syncer *Syncer) calculateHash(user *OriginalUser) string {
 	return util.GetMd5Hash(s)
 }
 
-type dsnConnector struct {
-	dsn    string
-	driver driver.Driver
-}
-
-func (t dsnConnector) Connect(ctx context.Context) (driver.Conn, error) {
-	return t.driver.Open(t.dsn)
-}
-
-func (t dsnConnector) Driver() driver.Driver {
-	return t.driver
-}
-
 func (syncer *Syncer) initAdapter() error {
-	if syncer.Ormer != nil {
-		return nil
-	}
-
-	// WeCom syncer doesn't need database adapter
-	if syncer.Type == "WeCom" {
-		return nil
-	}
-
-	// Azure AD syncer doesn't need database adapter
-	if syncer.Type == "Azure AD" {
-		return nil
-	}
-
-	var dataSourceName string
-	if syncer.DatabaseType == "mssql" {
-		dataSourceName = fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, syncer.Database)
-	} else if syncer.DatabaseType == "postgres" {
-		sslMode := "disable"
-		if syncer.SslMode != "" {
-			sslMode = syncer.SslMode
-		}
-		dataSourceName = fmt.Sprintf("user=%s password=%s host=%s port=%d sslmode=%s dbname=%s", syncer.User, syncer.Password, syncer.Host, syncer.Port, sslMode, syncer.Database)
-	} else {
-		dataSourceName = fmt.Sprintf("%s:%s@tcp(%s:%d)/", syncer.User, syncer.Password, syncer.Host, syncer.Port)
-	}
-
-	var db *sql.DB
-	var err error
-
-	if syncer.SshType != "" && (syncer.DatabaseType == "mysql" || syncer.DatabaseType == "postgres" || syncer.DatabaseType == "mssql") {
-		var dial *ssh.Client
-		if syncer.SshType == "password" {
-			dial, err = DialWithPassword(syncer.SshUser, syncer.SshPassword, syncer.SshHost, syncer.SshPort)
-		} else {
-			dial, err = DialWithCert(syncer.SshUser, syncer.Owner+"/"+syncer.Cert, syncer.SshHost, syncer.SshPort)
-		}
-		if err != nil {
-			return err
-		}
-
-		if syncer.DatabaseType == "mysql" {
-			dataSourceName = fmt.Sprintf("%s:%s@%s(%s:%d)/", syncer.User, syncer.Password, syncer.Owner+syncer.Name, syncer.Host, syncer.Port)
-			mysql.RegisterDialContext(syncer.Owner+syncer.Name, (&ViaSSHDialer{Client: dial, Context: nil}).MysqlDial)
-		} else if syncer.DatabaseType == "postgres" || syncer.DatabaseType == "mssql" {
-			db = sql.OpenDB(dsnConnector{dsn: dataSourceName, driver: &ViaSSHDialer{Client: dial, Context: nil, DatabaseType: syncer.DatabaseType}})
-		}
-	}
-
-	if !isCloudIntranet {
-		dataSourceName = strings.ReplaceAll(dataSourceName, "dbi.", "db.")
-	}
-
-	if db != nil {
-		syncer.Ormer, err = NewAdapterFromDb(syncer.DatabaseType, dataSourceName, syncer.Database, db)
-	} else {
-		syncer.Ormer, err = NewAdapter(syncer.DatabaseType, dataSourceName, syncer.Database)
-	}
-
-	return err
+	provider := GetSyncerProvider(syncer)
+	return provider.InitAdapter()
 }
 
 func RunSyncUsersJob() {

@@ -311,26 +311,6 @@ func TestSyncer(syncer Syncer) error {
 		syncer.Password = oldSyncer.Password
 	}
 
-	// For WeCom syncer, test by getting access token
-	if syncer.Type == "WeCom" {
-		_, err := syncer.getWecomAccessToken()
-		return err
-	}
-
-	// For Azure AD syncer, test by getting access token
-	if syncer.Type == "Azure AD" {
-		_, err := syncer.getAzureAdAccessToken()
-		return err
-	}
-
-	err = syncer.initAdapter()
-	if err != nil {
-		return err
-	}
-
-	err = syncer.Ormer.Engine.Ping()
-	if err != nil {
-		return err
-	}
-	return nil
+	provider := GetSyncerProvider(&syncer)
+	return provider.TestConnection()
 }
