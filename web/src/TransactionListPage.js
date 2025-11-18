@@ -16,7 +16,6 @@ import BaseListPage from "./BaseListPage";
 import i18next from "i18next";
 import {Link} from "react-router-dom";
 import * as Setting from "./Setting";
-import * as Provider from "./auth/Provider";
 import {Button, Table} from "antd";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import React from "react";
@@ -34,14 +33,15 @@ class TransactionListPage extends BaseListPage {
       displayName: `New Transaction - ${randomName}`,
       provider: "provider_pay_paypal",
       category: "",
-      type: "PayPal",
+      type: "",
       productName: "computer-1",
       productDisplayName: "A notebook computer",
       detail: "This is a computer with excellent CPU, memory and disk",
-      tag: "Promotion-1",
+      tag: "Organization",
       currency: "USD",
       amount: 0,
       returnUrl: "https://door.casdoor.com/transactions",
+      url: "",
       user: "admin",
       application: "",
       payment: "payment_bhn1ra",
@@ -89,16 +89,16 @@ class TransactionListPage extends BaseListPage {
   renderTable(transactions) {
     const columns = [
       {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
+        title: i18next.t("general:Display name"),
+        dataIndex: "displayName",
+        key: "displayName",
         width: "180px",
         fixed: "left",
         sorter: true,
-        ...this.getColumnSearchProps("name"),
+        ...this.getColumnSearchProps("displayName"),
         render: (text, record, index) => {
           return (
-            <Link to={`/transactions/${record.owner}/${text}`}>
+            <Link to={`/transactions/${record.owner}/${record.name}`}>
               {text}
             </Link>
           );
@@ -121,19 +121,78 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
+        title: i18next.t("general:Created time"),
+        dataIndex: "createdTime",
+        key: "createdTime",
+        width: "160px",
         sorter: true,
-        ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
-          return (
-            <Link to={`/providers/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
+          return Setting.getFormattedDate(text);
         },
+      },
+      {
+        title: i18next.t("general:Domain"),
+        dataIndex: "url",
+        key: "url",
+        width: "200px",
+        sorter: true,
+        ...this.getColumnSearchProps("url"),
+        render: (text, record, index) => {
+          if (text) {
+            return (
+              <a href={text} target="_blank" rel="noopener noreferrer">
+                {text}
+              </a>
+            );
+          }
+          return text;
+        },
+      },
+      {
+        title: i18next.t("provider:Category"),
+        dataIndex: "category",
+        key: "category",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("category"),
+        render: (text, record, index) => {
+          if (text && record.url) {
+            const chatUrl = `${record.url}/chats/${text}`;
+            return (
+              <a href={chatUrl} target="_blank" rel="noopener noreferrer">
+                {text}
+              </a>
+            );
+          }
+          return text;
+        },
+      },
+      {
+        title: i18next.t("provider:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("type"),
+        render: (text, record, index) => {
+          if (text && record.url) {
+            const messageUrl = `${record.url}/messages/${text}`;
+            return (
+              <a href={messageUrl} target="_blank" rel="noopener noreferrer">
+                {text}
+              </a>
+            );
+          }
+          return text;
+        },
+      },
+      {
+        title: i18next.t("user:Tag"),
+        dataIndex: "tag",
+        key: "tag",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("tag"),
       },
       {
         title: i18next.t("general:User"),
@@ -150,29 +209,30 @@ class TransactionListPage extends BaseListPage {
           );
         },
       },
-
       {
-        title: i18next.t("general:Created time"),
-        dataIndex: "createdTime",
-        key: "createdTime",
-        width: "160px",
+        title: i18next.t("general:Provider"),
+        dataIndex: "provider",
+        key: "provider",
+        width: "150px",
         sorter: true,
+        ...this.getColumnSearchProps("provider"),
         render: (text, record, index) => {
-          return Setting.getFormattedDate(text);
-        },
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        align: "center",
-        filterMultiple: false,
-        filters: Setting.getProviderTypeOptions("Payment").map((o) => {return {text: o.id, value: o.name};}),
-        sorter: true,
-        render: (text, record, index) => {
-          record.category = "Payment";
-          return Provider.getProviderLogoWidget(record);
+          if (!text) {
+            return text;
+          }
+          if (record.url) {
+            const casibaseUrl = `${record.url}/providers/${text}`;
+            return (
+              <a href={casibaseUrl} target="_blank" rel="noopener noreferrer">
+                {text}
+              </a>
+            );
+          }
+          return (
+            <Link to={`/providers/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
         },
       },
       {
@@ -183,20 +243,15 @@ class TransactionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("productDisplayName"),
         render: (text, record, index) => {
+          if (record.productName === "AI Message") {
+            return text;
+          }
           return (
             <Link to={`/products/${record.owner}/${record.productName}`}>
               {text}
             </Link>
           );
         },
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
       },
       {
         title: i18next.t("transaction:Amount"),
@@ -207,12 +262,12 @@ class TransactionListPage extends BaseListPage {
         ...this.getColumnSearchProps("amount"),
       },
       {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
+        title: i18next.t("payment:Currency"),
+        dataIndex: "currency",
+        key: "currency",
         width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps("user"),
+        ...this.getColumnSearchProps("currency"),
       },
       {
         title: i18next.t("general:Application"),
@@ -259,12 +314,14 @@ class TransactionListPage extends BaseListPage {
         width: "240px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const isAdmin = Setting.isLocalAdminUser(this.props.account);
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/transactions/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push({pathname: `/transactions/${record.owner}/${record.name}`, mode: isAdmin ? "edit" : "view"})}>{isAdmin ? i18next.t("general:Edit") : i18next.t("general:View")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteTransaction(index)}
+                disabled={!isAdmin}
               >
               </PopconfirmModal>
             </div>
@@ -283,12 +340,15 @@ class TransactionListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={transactions} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
-            <div>
-              {i18next.t("general:Transactions")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
-            </div>
-          )}
+          title={() => {
+            const isAdmin = Setting.isLocalAdminUser(this.props.account);
+            return (
+              <div>
+                {i18next.t("general:Transactions")}&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
+              </div>
+            );
+          }}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />
