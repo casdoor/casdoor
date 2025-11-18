@@ -46,6 +46,11 @@ func (syncer *Syncer) getOriginalUsers() ([]*OriginalUser, error) {
 		return syncer.getAzureAdOriginalUsers()
 	}
 
+	// Handle Active Directory syncer separately
+	if syncer.Type == "Active Directory" {
+		return syncer.getActiveDirectoryOriginalUsers()
+	}
+
 	var results []map[string]sql.NullString
 	err := syncer.Ormer.Engine.Table(syncer.getTable()).Find(&results)
 	if err != nil {
@@ -164,6 +169,11 @@ func (syncer *Syncer) initAdapter() error {
 
 	// Azure AD syncer doesn't need database adapter
 	if syncer.Type == "Azure AD" {
+		return nil
+	}
+
+	// Active Directory syncer doesn't need database adapter
+	if syncer.Type == "Active Directory" {
 		return nil
 	}
 

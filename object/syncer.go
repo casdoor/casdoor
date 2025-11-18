@@ -323,6 +323,12 @@ func TestSyncer(syncer Syncer) error {
 		return err
 	}
 
+	// For Active Directory syncer, test by getting access token
+	if syncer.Type == "Active Directory" {
+		_, err := syncer.getActiveDirectoryAccessToken()
+		return err
+	}
+
 	err = syncer.initAdapter()
 	if err != nil {
 		return err
