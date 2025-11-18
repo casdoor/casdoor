@@ -21,7 +21,6 @@ import * as UserBackend from "./backend/UserBackend";
 import * as PaymentBackend from "./backend/PaymentBackend";
 import * as Setting from "./Setting";
 import i18next from "i18next";
-import * as Conf from "./Conf";
 import moment from "moment";
 
 const {Option} = Select;
@@ -216,7 +215,34 @@ class OrderEditPage extends React.Component {
               this.updateOrderField("currency", value);
             }} >
               {
-                Conf.CurrencySymbols.map((item, index) => <Option key={index} value={item.key}>{Setting.getCurrencyText(item)}</Option>)
+                [
+                  {id: "USD", name: "USD"},
+                  {id: "CNY", name: "CNY"},
+                  {id: "EUR", name: "EUR"},
+                  {id: "JPY", name: "JPY"},
+                  {id: "GBP", name: "GBP"},
+                  {id: "AUD", name: "AUD"},
+                  {id: "CAD", name: "CAD"},
+                  {id: "CHF", name: "CHF"},
+                  {id: "HKD", name: "HKD"},
+                  {id: "SGD", name: "SGD"},
+                  {id: "BRL", name: "BRL"},
+                  {id: "PLN", name: "PLN"},
+                  {id: "KRW", name: "KRW"},
+                  {id: "INR", name: "INR"},
+                  {id: "RUB", name: "RUB"},
+                  {id: "MXN", name: "MXN"},
+                  {id: "ZAR", name: "ZAR"},
+                  {id: "TRY", name: "TRY"},
+                  {id: "SEK", name: "SEK"},
+                  {id: "NOK", name: "NOK"},
+                  {id: "DKK", name: "DKK"},
+                  {id: "THB", name: "THB"},
+                  {id: "MYR", name: "MYR"},
+                  {id: "TWD", name: "TWD"},
+                  {id: "CZK", name: "CZK"},
+                  {id: "HUF", name: "HUF"},
+                ].map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
               }
             </Select>
           </Col>
