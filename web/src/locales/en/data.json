@@ -384,6 +384,7 @@
     "Organization - Tooltip": "Similar to concepts such as tenants or user pools, each user and application belongs to an organization",
     "Organization is null": "Organization is null",
     "Organizations": "Organizations",
+    "Orders": "Orders",
     "Password": "Password",
     "Password - Tooltip": "Make sure the password is correct",
     "Password complexity options": "Password complexity options",
@@ -732,6 +733,18 @@
     "Website URL - Tooltip": "The homepage URL of the organization. This field is not used in Casdoor",
     "Widget items": "Widget items",
     "Widget items - Tooltip": "Items displayed in the widget"
+  },
+  "order": {
+    "Edit Order": "Edit Order",
+    "End time": "End time",
+    "End time - Tooltip": "When the order expires (e.g., for time-limited purchases)",
+    "New Order": "New Order",
+    "Payment": "Payment",
+    "Payment - Tooltip": "The payment associated with this order",
+    "Product": "Product",
+    "Product - Tooltip": "The product that was purchased",
+    "Start time": "Start time",
+    "Start time - Tooltip": "When the order starts"
   },
   "payment": {
     "Confirm your invoice information": "Confirm your invoice information",

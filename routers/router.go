@@ -201,6 +201,13 @@ func initAPI() {
 	beego.Router("/api/delete-product", &controllers.ApiController{}, "POST:DeleteProduct")
 	beego.Router("/api/buy-product", &controllers.ApiController{}, "POST:BuyProduct")
 
+	beego.Router("/api/get-orders", &controllers.ApiController{}, "GET:GetOrders")
+	beego.Router("/api/get-user-orders", &controllers.ApiController{}, "GET:GetUserOrders")
+	beego.Router("/api/get-order", &controllers.ApiController{}, "GET:GetOrder")
+	beego.Router("/api/update-order", &controllers.ApiController{}, "POST:UpdateOrder")
+	beego.Router("/api/add-order", &controllers.ApiController{}, "POST:AddOrder")
+	beego.Router("/api/delete-order", &controllers.ApiController{}, "POST:DeleteOrder")
+
 	beego.Router("/api/get-payments", &controllers.ApiController{}, "GET:GetPayments")
 	beego.Router("/api/get-user-payments", &controllers.ApiController{}, "GET:GetUserPayments")
 	beego.Router("/api/get-payment", &controllers.ApiController{}, "GET:GetPayment")
