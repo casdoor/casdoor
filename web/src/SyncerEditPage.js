@@ -458,6 +458,10 @@ class SyncerEditPage extends React.Component {
     }
   }
 
+  needSshfields() {
+    return this.state.syncer.type === "Database" && (this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres");
+  }
+
   renderSyncer() {
     return (
       <Card size="small" title={
@@ -567,7 +571,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : this.state.syncer.type === "Google Workspace" ? i18next.t("provider:Admin Email") : this.state.syncer.type === "Active Directory" ? i18next.t("provider:Server") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Admin Email") : this.state.syncer.type === "Active Directory" ? i18next.t("ldap:Server") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.syncer.host} onChange={e => {
@@ -581,7 +585,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:LDAP Port") : i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:LDAP port") : i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <InputNumber value={this.state.syncer.port} onChange={value => {
@@ -596,9 +600,9 @@ class SyncerEditPage extends React.Component {
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(
-                  this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp ID") :
+                  this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp ID") :
                     this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client ID") :
-                      this.state.syncer.type === "Active Directory" ? i18next.t("provider:Bind DN") :
+                      this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Bind DN") :
                         i18next.t("general:User"),
                   i18next.t("general:User - Tooltip")
                 )} :
@@ -614,9 +618,9 @@ class SyncerEditPage extends React.Component {
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(
-              this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp Secret") :
-                this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client Secret") :
-                  this.state.syncer.type === "Google Workspace" ? i18next.t("provider:Service Account Key") :
+              this.state.syncer.type === "WeCom" ? i18next.t("syncer:Corp secret") :
+                this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client secret") :
+                  this.state.syncer.type === "Google Workspace" ? i18next.t("syncer:Service account key") :
                     i18next.t("general:Password"),
               i18next.t("general:Password - Tooltip")
             )} :
@@ -639,7 +643,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("syncer:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.syncer.database} onChange={e => {
@@ -650,7 +654,7 @@ class SyncerEditPage extends React.Component {
           )
         }
         {
-          this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres" ? (
+          this.needSshfields() ? (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("general:SSH type"), i18next.t("general:SSH type - Tooltip"))} :
@@ -668,7 +672,7 @@ class SyncerEditPage extends React.Component {
           ) : null
         }
         {
-          this.state.syncer.sshType && this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres" ? (
+          this.state.syncer.sshType && this.needSshfields() ? (
             <React.Fragment>
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -701,7 +705,7 @@ class SyncerEditPage extends React.Component {
                 </Col>
               </Row>
               {
-                this.state.syncer.sshType === "password" && (this.state.syncer.databaseType === "mysql" || this.state.syncer.databaseType === "mssql" || this.state.syncer.databaseType === "postgres") ?
+                this.state.syncer.sshType === "password" && this.needSshfields() ?
                   (
                     <Row style={{marginTop: "20px"}} >
                       <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
