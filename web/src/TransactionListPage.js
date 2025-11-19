@@ -31,20 +31,16 @@ class TransactionListPage extends BaseListPage {
       name: `transaction_${randomName}`,
       createdTime: moment().format(),
       displayName: `New Transaction - ${randomName}`,
-      provider: "provider_pay_paypal",
-      category: "",
-      type: "",
-      productName: "computer-1",
-      productDisplayName: "A notebook computer",
-      detail: "This is a computer with excellent CPU, memory and disk",
-      tag: "Organization",
-      currency: "USD",
-      amount: 0,
-      returnUrl: "https://door.casdoor.com/transactions",
-      url: "",
+      application: "app-built-in",
+      url: "https://ai-admin.casibase.com",
+      category: "chat_id",
+      type: "message_id",
+      provider: "provider_chatgpt",
       user: "admin",
-      application: "",
-      payment: "payment_bhn1ra",
+      tag: "AI message",
+      amount: 0.1,
+      currency: "USD",
+      payment: "payment_paypal_001",
       state: "Paid",
     };
   }
@@ -89,22 +85,6 @@ class TransactionListPage extends BaseListPage {
   renderTable(transactions) {
     const columns = [
       {
-        title: i18next.t("general:Display name"),
-        dataIndex: "displayName",
-        key: "displayName",
-        width: "180px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("displayName"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/transactions/${record.owner}/${record.name}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Organization"),
         dataIndex: "owner",
         key: "owner",
@@ -121,6 +101,22 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("general:Name"),
+        dataIndex: "name",
+        key: "name",
+        width: "180px",
+        fixed: "left",
+        sorter: true,
+        ...this.getColumnSearchProps("name"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/transactions/${record.owner}/${record.name}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Created time"),
         dataIndex: "createdTime",
         key: "createdTime",
@@ -131,21 +127,37 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:Domain"),
-        dataIndex: "url",
-        key: "url",
+        title: i18next.t("general:Application"),
+        dataIndex: "application",
+        key: "application",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("application"),
+        render: (text, record, index) => {
+          return (
+            <Link to={`/applications/${record.owner}/${record.application}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
+        title: i18next.t("provider:Domain"),
+        dataIndex: "domain",
+        key: "domain",
         width: "200px",
         sorter: true,
-        ...this.getColumnSearchProps("url"),
+        ...this.getColumnSearchProps("domain"),
         render: (text, record, index) => {
-          if (text) {
-            return (
-              <a href={text} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
+          if (!text) {
+            return null;
           }
-          return text;
+
+          return (
+            <a href={text} target="_blank" rel="noopener noreferrer">
+              {text}
+            </a>
+          );
         },
       },
       {
@@ -187,29 +199,6 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("user:Tag"),
-        dataIndex: "tag",
-        key: "tag",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("tag"),
-      },
-      {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/users/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
         title: i18next.t("general:Provider"),
         dataIndex: "provider",
         key: "provider",
@@ -236,22 +225,27 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("payment:Product"),
-        dataIndex: "productDisplayName",
-        key: "productDisplayName",
-        // width: '160px',
+        title: i18next.t("general:User"),
+        dataIndex: "user",
+        key: "user",
+        width: "120px",
         sorter: true,
-        ...this.getColumnSearchProps("productDisplayName"),
+        ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
-          if (record.productName === "AI Message") {
-            return text;
-          }
           return (
-            <Link to={`/products/${record.owner}/${record.productName}`}>
+            <Link to={`/users/${record.owner}/${text}`}>
               {text}
             </Link>
           );
         },
+      },
+      {
+        title: i18next.t("user:Tag"),
+        dataIndex: "tag",
+        key: "tag",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("tag"),
       },
       {
         title: i18next.t("transaction:Amount"),
@@ -268,21 +262,6 @@ class TransactionListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("currency"),
-      },
-      {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("application"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/applications/${record.owner}/${record.application}`}>
-              {text}
-            </Link>
-          );
-        },
       },
       {
         title: i18next.t("general:Payment"),

@@ -291,24 +291,19 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	transaction := &Transaction{
 		Owner:       payment.Owner,
 		Name:        payment.Name,
+		CreatedTime: util.GetCurrentTime(),
 		DisplayName: payment.DisplayName,
-		Provider:    provider.Name,
+		Application: owner,
+		Domain:      "",
 		Category:    provider.Category,
 		Type:        provider.Type,
-
-		ProductName:        product.Name,
-		ProductDisplayName: product.DisplayName,
-		Detail:             product.Detail,
-		Tag:                product.Tag,
-		Currency:           product.Currency,
-		Amount:             payment.Price,
-		ReturnUrl:          payment.ReturnUrl,
-
+		Provider:    provider.Name,
 		User:        payment.User,
-		Application: owner,
+		Tag:         product.Tag,
+		Amount:      payment.Price,
+		Currency:    product.Currency,
 		Payment:     payment.GetId(),
-
-		State: pp.PaymentStateCreated,
+		State:       pp.PaymentStateCreated,
 	}
 
 	if provider.Type == "Dummy" {

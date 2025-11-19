@@ -163,21 +163,21 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.displayName} onChange={e => {
-              this.updatePaymentField("displayName", e.target.value);
+            <Input disabled={true} value={this.state.transaction.application} onChange={e => {
+              // this.updatePaymentField('amount', e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Provider"), i18next.t("general:Provider - Tooltip"))} :
+            {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.provider} onChange={e => {
-              // this.updatePaymentField('provider', e.target.value);
+            <Input disabled={true} value={this.state.transaction.domain} onChange={e => {
+              // this.updatePaymentField('domain', e.target.value);
             }} />
           </Col>
         </Row>
@@ -203,21 +203,21 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Product"), i18next.t("payment:Product - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:Provider"), i18next.t("general:Provider - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.productName} onChange={e => {
-              // this.updatePaymentField('productName', e.target.value);
+            <Input disabled={true} value={this.state.transaction.provider} onChange={e => {
+              // this.updatePaymentField('provider', e.target.value);
             }} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Detail"), i18next.t("product:Detail - Tooltip"))} :
+            {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.detail} onChange={e => {
-              // this.updatePaymentField('currency', e.target.value);
+            <Input disabled={true} value={this.state.transaction.user} onChange={e => {
+              // this.updatePaymentField('amount', e.target.value);
             }} />
           </Col>
         </Row>
@@ -227,16 +227,6 @@ class TransactionEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Input disabled={true} value={this.state.transaction.tag} onChange={e => {
-              // this.updatePaymentField('currency', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.currency} onChange={e => {
               // this.updatePaymentField('currency', e.target.value);
             }} />
           </Col>
@@ -253,31 +243,11 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("product:Return URL"), i18next.t("product:Return URL - Tooltip"))} :
+            {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.user} onChange={e => {
-              // this.updatePaymentField('amount', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:User"), i18next.t("general:User - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.user} onChange={e => {
-              // this.updatePaymentField('amount', e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:Application"), i18next.t("general:Application - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.application} onChange={e => {
-              // this.updatePaymentField('amount', e.target.value);
+            <Input disabled={true} value={this.state.transaction.currency} onChange={e => {
+              // this.updatePaymentField('currency', e.target.value);
             }} />
           </Col>
         </Row>

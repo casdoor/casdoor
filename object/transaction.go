@@ -28,23 +28,19 @@ type Transaction struct {
 	Name        string `xorm:"varchar(100) notnull pk" json:"name"`
 	CreatedTime string `xorm:"varchar(100)" json:"createdTime"`
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
-	// Transaction Provider Info
-	Provider string `xorm:"varchar(100)" json:"provider"`
-	Category string `xorm:"varchar(100)" json:"category"`
-	Type     string `xorm:"varchar(100)" json:"type"`
-	// Product Info
-	ProductName        string  `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
-	Detail             string  `xorm:"varchar(255)" json:"detail"`
-	Tag                string  `xorm:"varchar(100)" json:"tag"`
-	Currency           string  `xorm:"varchar(100)" json:"currency"`
-	Amount             float64 `json:"amount"`
-	ReturnUrl          string  `xorm:"varchar(1000)" json:"returnUrl"`
-	Url                string  `xorm:"varchar(1000)" json:"url"`
-	// User Info
-	User        string `xorm:"varchar(100)" json:"user"`
+
 	Application string `xorm:"varchar(100)" json:"application"`
-	Payment     string `xorm:"varchar(100)" json:"payment"`
+	Domain      string `xorm:"varchar(1000)" json:"domain"`
+	Category    string `xorm:"varchar(100)" json:"category"`
+	Type        string `xorm:"varchar(100)" json:"type"`
+	Provider    string `xorm:"varchar(100)" json:"provider"`
+	User        string `xorm:"varchar(100)" json:"user"`
+	Tag         string `xorm:"varchar(100)" json:"tag"`
+
+	Amount   float64 `json:"amount"`
+	Currency string  `xorm:"varchar(100)" json:"currency"`
+
+	Payment string `xorm:"varchar(100)" json:"payment"`
 
 	State pp.PaymentState `xorm:"varchar(100)" json:"state"`
 }
