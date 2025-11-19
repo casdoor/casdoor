@@ -870,6 +870,11 @@ func updateUser(id string, user *User, columns []string) (int64, error) {
 		return 0, err
 	}
 
+	// Ensure hash column is included in updates when columns are specified
+	if len(columns) > 0 && !util.InSlice(columns, "hash") {
+		columns = append(columns, "hash")
+	}
+
 	affected, err := ormer.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(user)
 	if err != nil {
 		return 0, err
