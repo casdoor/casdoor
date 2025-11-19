@@ -32,7 +32,7 @@ class TransactionListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Transaction - ${randomName}`,
       application: "app-built-in",
-      url: "https://ai-admin.casibase.com",
+      domain: "https://ai-admin.casibase.com",
       category: "chat_id",
       type: "message_id",
       provider: "provider_chatgpt",
@@ -168,8 +168,8 @@ class TransactionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("category"),
         render: (text, record, index) => {
-          if (text && record.url) {
-            const chatUrl = `${record.url}/chats/${text}`;
+          if (text && record.domain) {
+            const chatUrl = `${record.domain}/chats/${text}`;
             return (
               <a href={chatUrl} target="_blank" rel="noopener noreferrer">
                 {text}
@@ -187,8 +187,8 @@ class TransactionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("type"),
         render: (text, record, index) => {
-          if (text && record.url) {
-            const messageUrl = `${record.url}/messages/${text}`;
+          if (text && record.domain) {
+            const messageUrl = `${record.domain}/messages/${text}`;
             return (
               <a href={messageUrl} target="_blank" rel="noopener noreferrer">
                 {text}
@@ -209,8 +209,8 @@ class TransactionListPage extends BaseListPage {
           if (!text) {
             return text;
           }
-          if (record.url) {
-            const casibaseUrl = `${record.url}/providers/${text}`;
+          if (record.domain) {
+            const casibaseUrl = `${record.domain}/providers/${text}`;
             return (
               <a href={casibaseUrl} target="_blank" rel="noopener noreferrer">
                 {text}
