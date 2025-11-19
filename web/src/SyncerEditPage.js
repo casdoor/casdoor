@@ -380,6 +380,79 @@ class SyncerEditPage extends React.Component {
           "values": [],
         },
       ];
+    case "Active Directory":
+      return [
+        {
+          "name": "objectGUID",
+          "type": "string",
+          "casdoorName": "Id",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "sAMAccountName",
+          "type": "string",
+          "casdoorName": "Name",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "displayName",
+          "type": "string",
+          "casdoorName": "DisplayName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "givenName",
+          "type": "string",
+          "casdoorName": "FirstName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "sn",
+          "type": "string",
+          "casdoorName": "LastName",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "mail",
+          "type": "string",
+          "casdoorName": "Email",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "mobile",
+          "type": "string",
+          "casdoorName": "Phone",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "casdoorName": "Title",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "casdoorName": "Affiliation",
+          "isHashed": true,
+          "values": [],
+        },
+        {
+          "name": "userAccountControl",
+          "type": "string",
+          "casdoorName": "IsForbidden",
+          "isHashed": true,
+          "values": [],
+        },
+      ];
     default:
       return [];
     }
@@ -432,14 +505,14 @@ class SyncerEditPage extends React.Component {
               });
             })}>
               {
-                ["Database", "Keycloak", "WeCom", "Azure AD", "Google Workspace"]
+                ["Database", "Keycloak", "WeCom", "Azure AD", "Active Directory", "Google Workspace"]
                   .map((item, index) => <Option key={index} value={item}>{item}</Option>)
               }
             </Select>
           </Col>
         </Row>
         {
-          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" ? null : (
+          this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Active Directory" || this.state.syncer.type === "Google Workspace" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("syncer:Database type"), i18next.t("syncer:Database type - Tooltip"))} :
@@ -494,7 +567,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : this.state.syncer.type === "Google Workspace" ? i18next.t("provider:Admin Email") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Azure AD" ? i18next.t("provider:Tenant ID") : this.state.syncer.type === "Google Workspace" ? i18next.t("provider:Admin Email") : this.state.syncer.type === "Active Directory" ? i18next.t("provider:Server") : i18next.t("provider:Host"), i18next.t("provider:Host - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input prefix={<LinkOutlined />} value={this.state.syncer.host} onChange={e => {
@@ -508,7 +581,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:LDAP Port") : i18next.t("provider:Port"), i18next.t("provider:Port - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <InputNumber value={this.state.syncer.port} onChange={value => {
@@ -525,7 +598,8 @@ class SyncerEditPage extends React.Component {
                 {Setting.getLabel(
                   this.state.syncer.type === "WeCom" ? i18next.t("provider:Corp ID") :
                     this.state.syncer.type === "Azure AD" ? i18next.t("provider:Client ID") :
-                      i18next.t("general:User"),
+                      this.state.syncer.type === "Active Directory" ? i18next.t("provider:Bind DN") :
+                        i18next.t("general:User"),
                   i18next.t("general:User - Tooltip")
                 )} :
               </Col>
@@ -565,7 +639,7 @@ class SyncerEditPage extends React.Component {
           this.state.syncer.type === "WeCom" || this.state.syncer.type === "Azure AD" || this.state.syncer.type === "Google Workspace" ? null : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-                {Setting.getLabel(i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
+                {Setting.getLabel(this.state.syncer.type === "Active Directory" ? i18next.t("provider:Base DN") : i18next.t("syncer:Database"), i18next.t("syncer:Database - Tooltip"))} :
               </Col>
               <Col span={22} >
                 <Input value={this.state.syncer.database} onChange={e => {
