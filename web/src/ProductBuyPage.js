@@ -118,66 +118,8 @@ class ProductBuyPage extends React.Component {
     }
   }
 
-  getCurrencySymbol(product) {
-    if (product?.currency === "USD") {
-      return "$";
-    } else if (product?.currency === "CNY") {
-      return "￥";
-    } else if (product?.currency === "EUR") {
-      return "€";
-    } else if (product?.currency === "JPY") {
-      return "¥";
-    } else if (product?.currency === "GBP") {
-      return "£";
-    } else if (product?.currency === "AUD") {
-      return "A$";
-    } else if (product?.currency === "CAD") {
-      return "C$";
-    } else if (product?.currency === "CHF") {
-      return "CHF";
-    } else if (product?.currency === "HKD") {
-      return "HK$";
-    } else if (product?.currency === "SGD") {
-      return "S$";
-    } else if (product?.currency === "BRL") {
-      return "R$";
-    } else if (product?.currency === "PLN") {
-      return "zł";
-    } else if (product?.currency === "KRW") {
-      return "₩";
-    } else if (product?.currency === "INR") {
-      return "₹";
-    } else if (product?.currency === "RUB") {
-      return "₽";
-    } else if (product?.currency === "MXN") {
-      return "$";
-    } else if (product?.currency === "ZAR") {
-      return "R";
-    } else if (product?.currency === "TRY") {
-      return "₺";
-    } else if (product?.currency === "SEK") {
-      return "kr";
-    } else if (product?.currency === "NOK") {
-      return "kr";
-    } else if (product?.currency === "DKK") {
-      return "kr";
-    } else if (product?.currency === "THB") {
-      return "฿";
-    } else if (product?.currency === "MYR") {
-      return "RM";
-    } else if (product?.currency === "TWD") {
-      return "NT$";
-    } else if (product?.currency === "CZK") {
-      return "Kč";
-    } else if (product?.currency === "HUF") {
-      return "Ft";
-    } else {
-      return "(Unknown currency)";
-    }
-  }
-
   getPrice(product) {
-    return `${this.getCurrencySymbol(product)}${product?.price} (${Setting.getCurrencyText(product)})`;
+    return `${Setting.getCurrencySymbol(product?.currency)}${product?.price} (${Setting.getCurrencyText(product)})`;
   }
 
   // Call Weechat Pay via jsapi

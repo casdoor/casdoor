@@ -1544,6 +1544,35 @@ export function builtInObject(obj) {
   return obj.owner === "built-in" && BuiltInObjects.includes(obj.name);
 }
 
+export const CurrencyOptions = [
+  {id: "USD", name: "USD"},
+  {id: "CNY", name: "CNY"},
+  {id: "EUR", name: "EUR"},
+  {id: "JPY", name: "JPY"},
+  {id: "GBP", name: "GBP"},
+  {id: "AUD", name: "AUD"},
+  {id: "CAD", name: "CAD"},
+  {id: "CHF", name: "CHF"},
+  {id: "HKD", name: "HKD"},
+  {id: "SGD", name: "SGD"},
+  {id: "BRL", name: "BRL"},
+  {id: "PLN", name: "PLN"},
+  {id: "KRW", name: "KRW"},
+  {id: "INR", name: "INR"},
+  {id: "RUB", name: "RUB"},
+  {id: "MXN", name: "MXN"},
+  {id: "ZAR", name: "ZAR"},
+  {id: "TRY", name: "TRY"},
+  {id: "SEK", name: "SEK"},
+  {id: "NOK", name: "NOK"},
+  {id: "DKK", name: "DKK"},
+  {id: "THB", name: "THB"},
+  {id: "MYR", name: "MYR"},
+  {id: "TWD", name: "TWD"},
+  {id: "CZK", name: "CZK"},
+  {id: "HUF", name: "HUF"},
+];
+
 export function getCurrencySymbol(currency) {
   if (currency === "USD" || currency === "usd") {
     return "$";
