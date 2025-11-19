@@ -334,6 +334,32 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		return nil, nil, fmt.Errorf("failed to add payment: %s", util.StructToJson(payment))
 	}
 
+	// Create an order for this product purchase (not for subscriptions)
+	if pricingName == "" && planName == "" {
+		orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
+		order := &Order{
+			Owner:       product.Owner,
+			Name:        orderName,
+			CreatedTime: util.GetCurrentTime(),
+			DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
+			ProductName: product.Name,
+			User:        user.Name,
+			Payment:     paymentName,
+			State:       "Created",
+			Message:     "",
+			StartTime:   util.GetCurrentTime(),
+			EndTime:     "",
+		}
+
+		affected, err = AddOrder(order)
+		if err != nil {
+			return nil, nil, err
+		}
+		if !affected {
+			return nil, nil, fmt.Errorf("failed to add order: %s", util.StructToJson(order))
+		}
+	}
+
 	if product.IsRecharge || provider.Type == "Balance" {
 		affected, err = AddTransaction(transaction, "en")
 		if err != nil {
