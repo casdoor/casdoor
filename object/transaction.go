@@ -185,15 +185,7 @@ func updateBalanceForTransaction(transaction *Transaction, amount float64, lang 
 		if transaction.User == "" {
 			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
-		user, err := getUser(transaction.Owner, transaction.User)
-		if err != nil {
-			return err
-		}
-		if user == nil {
-			return UpdateOrganizationBalance("admin", transaction.Owner, amount, false, lang)
-		}
-
-		if err = UpdateUserBalanceByUser(user, amount); err != nil {
+		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, lang); err != nil {
 			return err
 		}
 		// Update organization's user balance sum

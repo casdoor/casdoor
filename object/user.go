@@ -1473,11 +1473,7 @@ func UpdateUserBalance(owner string, name string, balance float64, lang string) 
 	if user == nil {
 		return fmt.Errorf(i18n.Translate(lang, "general:The user: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
 	}
-	return UpdateUserBalanceByUser(user, balance)
-}
-
-func UpdateUserBalanceByUser(user *User, balance float64) error {
-	user.Balance += balance
-	_, err := UpdateUser(user.GetId(), user, []string{"balance"}, true)
+	user.Balance = AddPrices(user.Balance, balance)
+	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
 }

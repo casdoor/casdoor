@@ -597,10 +597,10 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, isOrg
 
 	var columns []string
 	if isOrgBalance {
-		organization.OrgBalance += balance
+		organization.OrgBalance = AddPrices(organization.OrgBalance, balance)
 		columns = []string{"org_balance"}
 	} else {
-		organization.UserBalance += balance
+		organization.UserBalance = AddPrices(organization.UserBalance, balance)
 		columns = []string{"user_balance"}
 	}
 
