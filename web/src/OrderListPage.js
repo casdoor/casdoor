@@ -32,11 +32,6 @@ class OrderListPage extends BaseListPage {
       createdTime: moment().format(),
       displayName: `New Order - ${randomName}`,
       productName: "",
-      productDisplayName: "",
-      detail: "",
-      tag: "",
-      currency: "USD",
-      price: 0,
       user: "",
       payment: "",
       state: "Created",
@@ -135,17 +130,17 @@ class OrderListPage extends BaseListPage {
       },
       {
         title: i18next.t("order:Product"),
-        dataIndex: "productDisplayName",
-        key: "productDisplayName",
+        dataIndex: "productName",
+        key: "productName",
         width: "170px",
         sorter: true,
-        ...this.getColumnSearchProps("productDisplayName"),
+        ...this.getColumnSearchProps("productName"),
         render: (text, record, index) => {
-          if (record.productName === "") {
+          if (text === "") {
             return "(empty)";
           }
           return (
-            <Link to={`/products/${record.owner}/${record.productName}`}>
+            <Link to={`/products/${record.owner}/${text}`}>
               {text}
             </Link>
           );
@@ -168,25 +163,6 @@ class OrderListPage extends BaseListPage {
             </Link>
           );
         },
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
-        title: i18next.t("product:Price"),
-        dataIndex: "price",
-        key: "price",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("price"),
       },
       {
         title: i18next.t("general:State"),

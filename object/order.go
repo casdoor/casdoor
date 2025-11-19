@@ -28,12 +28,7 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
-	ProductName        string  `xorm:"varchar(100)" json:"productName"`
-	ProductDisplayName string  `xorm:"varchar(100)" json:"productDisplayName"`
-	Detail             string  `xorm:"varchar(255)" json:"detail"`
-	Tag                string  `xorm:"varchar(100)" json:"tag"`
-	Currency           string  `xorm:"varchar(100)" json:"currency"`
-	Price              float64 `json:"price"`
+	ProductName string `xorm:"varchar(100)" json:"productName"`
 
 	// User Info
 	User string `xorm:"varchar(100)" json:"user"`

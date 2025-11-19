@@ -343,22 +343,17 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	if pricingName == "" && planName == "" {
 		orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
 		order := &Order{
-			Owner:              product.Owner,
-			Name:               orderName,
-			CreatedTime:        util.GetCurrentTime(),
-			DisplayName:        fmt.Sprintf("Order for %s", product.DisplayName),
-			ProductName:        product.Name,
-			ProductDisplayName: product.DisplayName,
-			Detail:             product.Detail,
-			Tag:                product.Tag,
-			Currency:           product.Currency,
-			Price:              product.Price,
-			User:               user.Name,
-			Payment:            paymentName,
-			State:              "Created",
-			Message:            "",
-			StartTime:          util.GetCurrentTime(),
-			EndTime:            "",
+			Owner:       product.Owner,
+			Name:        orderName,
+			CreatedTime: util.GetCurrentTime(),
+			DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
+			ProductName: product.Name,
+			User:        user.Name,
+			Payment:     paymentName,
+			State:       "Created",
+			Message:     "",
+			StartTime:   util.GetCurrentTime(),
+			EndTime:     "",
 		}
 
 		affected, err = AddOrder(order)

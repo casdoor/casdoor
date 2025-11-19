@@ -159,15 +159,7 @@ class OrderEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.order.productName} onChange={(value) => {
-              const product = this.state.products.find(p => p.name === value);
-              if (product) {
-                this.updateOrderField("productName", value);
-                this.updateOrderField("productDisplayName", product.displayName);
-                this.updateOrderField("detail", product.detail);
-                this.updateOrderField("tag", product.tag);
-                this.updateOrderField("currency", product.currency);
-                this.updateOrderField("price", product.price);
-              }
+              this.updateOrderField("productName", value);
             }}>
               {
                 this.state.products?.map((product, index) => <Option key={index} value={product.name}>{product.displayName}</Option>)
@@ -206,57 +198,6 @@ class OrderEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("payment:Currency")}:
-          </Col>
-          <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.currency} onChange={(value) => {
-              this.updateOrderField("currency", value);
-            }} >
-              {
-                [
-                  {id: "USD", name: "USD"},
-                  {id: "CNY", name: "CNY"},
-                  {id: "EUR", name: "EUR"},
-                  {id: "JPY", name: "JPY"},
-                  {id: "GBP", name: "GBP"},
-                  {id: "AUD", name: "AUD"},
-                  {id: "CAD", name: "CAD"},
-                  {id: "CHF", name: "CHF"},
-                  {id: "HKD", name: "HKD"},
-                  {id: "SGD", name: "SGD"},
-                  {id: "BRL", name: "BRL"},
-                  {id: "PLN", name: "PLN"},
-                  {id: "KRW", name: "KRW"},
-                  {id: "INR", name: "INR"},
-                  {id: "RUB", name: "RUB"},
-                  {id: "MXN", name: "MXN"},
-                  {id: "ZAR", name: "ZAR"},
-                  {id: "TRY", name: "TRY"},
-                  {id: "SEK", name: "SEK"},
-                  {id: "NOK", name: "NOK"},
-                  {id: "DKK", name: "DKK"},
-                  {id: "THB", name: "THB"},
-                  {id: "MYR", name: "MYR"},
-                  {id: "TWD", name: "TWD"},
-                  {id: "CZK", name: "CZK"},
-                  {id: "HUF", name: "HUF"},
-                ].map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
-              }
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("product:Price")}:
-          </Col>
-          <Col span={22} >
-            <InputNumber value={this.state.order.price} onChange={value => {
-              this.updateOrderField("price", value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {i18next.t("general:State")}:
           </Col>
           <Col span={22} >
@@ -283,26 +224,6 @@ class OrderEditPage extends React.Component {
           <Col span={22} >
             <Input value={this.state.order.message} onChange={e => {
               this.updateOrderField("message", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("user:Tag")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.order.tag} onChange={e => {
-              this.updateOrderField("tag", e.target.value);
-            }} />
-          </Col>
-        </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {i18next.t("product:Detail")}:
-          </Col>
-          <Col span={22} >
-            <Input value={this.state.order.detail} onChange={e => {
-              this.updateOrderField("detail", e.target.value);
             }} />
           </Col>
         </Row>
