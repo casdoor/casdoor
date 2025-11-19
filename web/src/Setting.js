@@ -1661,6 +1661,14 @@ export function getFriendlyUserName(account) {
   }
 }
 
+export function isAnonymousUserName(userName) {
+  if (!userName) {
+    return false;
+  }
+
+  return /^u-[0-9a-f]{8}$/i.test(userName);
+}
+
 export function getUserCommonFields() {
   return ["Owner", "Name", "CreatedTime", "UpdatedTime", "DeletedTime", "Id", "Type", "Password", "PasswordSalt", "DisplayName", "FirstName", "LastName", "Avatar", "PermanentAvatar",
     "Email", "EmailVerified", "Phone", "Location", "Address", "Affiliation", "Title", "IdCardType", "IdCard", "Homepage", "Bio", "Tag", "Region",

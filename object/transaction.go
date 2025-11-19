@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/pp"
@@ -139,19 +140,22 @@ func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, 
 	return affected != 0, nil
 }
 
-func AddTransaction(transaction *Transaction, lang string) (bool, error) {
+func AddTransaction(transaction *Transaction, lang string) (bool, string, error) {
+	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
+	transaction.Name = transactionId
+
 	affected, err := ormer.Engine.Insert(transaction)
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
 
 	if affected != 0 {
 		if err := updateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
-			return false, err
+			return false, transactionId, err
 		}
 	}
 
-	return affected != 0, nil
+	return affected != 0, transactionId, nil
 }
 
 func DeleteTransaction(transaction *Transaction, lang string) (bool, error) {
