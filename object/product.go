@@ -361,7 +361,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 	}
 
 	if product.IsRecharge || provider.Type == "Balance" {
-		affected, err = AddTransaction(transaction, "en")
+		affected, _, err = AddTransaction(transaction, "en")
 		if err != nil {
 			return nil, nil, err
 		}

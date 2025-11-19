@@ -153,8 +153,19 @@ func (c *ApiController) AddTransaction() {
 		return
 	}
 
-	c.Data["json"] = wrapActionResponse(object.AddTransaction(&transaction, c.GetAcceptLanguage()))
-	c.ServeJSON()
+	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage())
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if !affected {
+		c.Data["json"] = wrapActionResponse(false)
+		c.ServeJSON()
+		return
+	}
+
+	c.ResponseOk(transactionId)
 }
 
 // DeleteTransaction

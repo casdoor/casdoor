@@ -232,6 +232,10 @@ class TransactionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
+          if (!text || Setting.isAnonymousUserName(text)) {
+            return text;
+          }
+
           return (
             <Link to={`/users/${record.owner}/${text}`}>
               {text}
