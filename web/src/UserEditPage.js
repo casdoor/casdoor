@@ -752,7 +752,7 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Transactions"), i18next.t("general:Transactions"))} :
           </Col>
           <Col span={22}>
-            <TransactionTable transactions={this.state.transactions} />
+            <TransactionTable transactions={this.state.transactions} hideTag={true} />
           </Col>
         </Row>
       );

@@ -16,8 +16,10 @@ import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import * as Setting from "./Setting";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
-import {Button, Card, Col, Input, Row} from "antd";
+import {Button, Card, Col, Input, Row, Select} from "antd";
 import i18next from "i18next";
+
+const {Option} = Select;
 
 class TransactionEditPage extends React.Component {
   constructor(props) {
@@ -243,12 +245,16 @@ class TransactionEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
+            {Setting.getLabel(i18next.t("currency:Currency"), i18next.t("currency:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.currency} onChange={e => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.transaction.currency} disabled={true} onChange={(value => {
               // this.updatePaymentField('currency', e.target.value);
-            }} />
+            })}>
+              {
+                Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

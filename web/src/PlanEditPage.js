@@ -230,7 +230,7 @@ class PlanEditPage extends React.Component {
               this.updatePlanField("currency", value);
             })}>
               {
-                Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{item.name}</Option>)
+                Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
               }
             </Select>
           </Col>
