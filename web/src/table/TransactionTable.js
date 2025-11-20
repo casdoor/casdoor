@@ -60,7 +60,11 @@ class TransactionTable extends React.Component {
         key: "amount",
         width: "100px",
         render: (text, record, index) => {
-          return `${record.currency} ${text}`;
+          return (
+            <span>
+              {Setting.getCurrencyWithFlag(record.currency)} {text}
+            </span>
+          );
         },
       },
       {
