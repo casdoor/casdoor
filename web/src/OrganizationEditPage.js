@@ -611,7 +611,7 @@ class OrganizationEditPage extends React.Component {
         </Row>
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("organization:Navbar items"), i18next.t("organization:Navbar items - Tooltip"))} :
+            {Setting.getLabel(i18next.t("organization:Admin navbar items"), i18next.t("organization:Admin navbar items - Tooltip"))} :
           </Col>
           <Col span={22} >
             <NavItemTree
@@ -620,6 +620,21 @@ class OrganizationEditPage extends React.Component {
               defaultExpandedKeys={["all"]}
               onCheck={(checked, _) => {
                 this.updateOrganizationField("navItems", checked);
+              }}
+            />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("organization:User navbar items"), i18next.t("organization:User navbar items - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <NavItemTree
+              disabled={!Setting.isAdminUser(this.props.account)}
+              checkedKeys={this.state.organization.userNavItems ?? []}
+              defaultExpandedKeys={["all"]}
+              onCheck={(checked, _) => {
+                this.updateOrganizationField("userNavItems", checked);
               }}
             />
           </Col>
