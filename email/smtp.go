@@ -38,6 +38,9 @@ func NewSmtpEmailProvider(userName string, password string, host string, port in
 		if socks5Proxy != "" {
 			dialer.SetSocks5Proxy(socks5Proxy)
 		}
+		// Note: If enableProxy is true but socks5Proxy is not configured (empty string),
+		// the proxy will not be used and the connection will proceed without proxy.
+		// This prevents potential panics when proxy is enabled but not properly configured.
 	}
 
 	return &SmtpEmailProvider{Dialer: dialer}
