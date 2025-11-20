@@ -218,6 +218,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+          build-args: |
+            CASDOOR_VERSION=${{steps.get-current-tag.outputs.tag}}
+            CASDOOR_COMMIT_ID=${{github.sha}}
+            CASDOOR_COMMIT_OFFSET=0
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
@@ -228,6 +232,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+          build-args: |
+            CASDOOR_VERSION=${{steps.get-current-tag.outputs.tag}}
+            CASDOOR_COMMIT_ID=${{github.sha}}
+            CASDOOR_COMMIT_OFFSET=0
 
       - uses: actions/checkout@v3
         if: steps.should_push.outputs.push=='true'

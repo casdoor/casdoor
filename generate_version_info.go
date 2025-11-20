@@ -17,20 +17,41 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/casdoor/casdoor/util"
 )
 
 func main() {
-	versionInfo, err := util.GetVersionInfo()
-	if err != nil {
-		// If git operations fail, use default values
-		fmt.Fprintf(os.Stderr, "Warning: Failed to get version info from git: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Using default version info\n")
+	var versionInfo *util.VersionInfo
+
+	// First, try to get version info from environment variables (set during Docker build)
+	version := os.Getenv("CASDOOR_VERSION")
+	commitId := os.Getenv("CASDOOR_COMMIT_ID")
+	commitOffsetStr := os.Getenv("CASDOOR_COMMIT_OFFSET")
+
+	if version != "" && commitId != "" {
+		// Use environment variables if available
+		commitOffset, _ := strconv.Atoi(commitOffsetStr)
 		versionInfo = &util.VersionInfo{
-			Version:      "unknown",
-			CommitId:     "unknown",
-			CommitOffset: 0,
+			Version:      version,
+			CommitId:     commitId,
+			CommitOffset: commitOffset,
+		}
+		fmt.Fprintf(os.Stderr, "Using version info from environment variables\n")
+	} else {
+		// Fall back to git if environment variables are not set
+		var err error
+		versionInfo, err = util.GetVersionInfo()
+		if err != nil {
+			// If git operations fail, use default values
+			fmt.Fprintf(os.Stderr, "Warning: Failed to get version info from git: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Using default version info\n")
+			versionInfo = &util.VersionInfo{
+				Version:      "unknown",
+				CommitId:     "unknown",
+				CommitOffset: 0,
+			}
 		}
 	}
 

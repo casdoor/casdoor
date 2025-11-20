@@ -5,10 +5,13 @@ RUN yarn install --frozen-lockfile --network-timeout 1000000 && NODE_OPTIONS="--
 
 
 FROM --platform=$BUILDPLATFORM golang:1.23.12 AS BACK
+ARG CASDOOR_VERSION
+ARG CASDOOR_COMMIT_ID
+ARG CASDOOR_COMMIT_OFFSET
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
-RUN go run generate_version_info.go > version_info.txt
+RUN CASDOOR_VERSION="${CASDOOR_VERSION}" CASDOOR_COMMIT_ID="${CASDOOR_COMMIT_ID}" CASDOOR_COMMIT_OFFSET="${CASDOOR_COMMIT_OFFSET}" go run generate_version_info.go > version_info.txt
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
