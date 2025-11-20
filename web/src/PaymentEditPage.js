@@ -233,9 +233,13 @@ class PaymentEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.payment.currency} onChange={e => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.payment.currency} disabled={true} onChange={(value => {
               // this.updatePaymentField('currency', e.target.value);
-            }} />
+            })}>
+              {
+                Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
+              }
+            </Select>
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >

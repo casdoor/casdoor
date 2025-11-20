@@ -136,6 +136,9 @@ class PlanListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("currency"),
+        render: (text, record, index) => {
+          return Setting.getCurrencyWithFlag(text);
+        },
       },
       {
         title: i18next.t("plan:Price"),

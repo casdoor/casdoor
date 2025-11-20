@@ -1665,15 +1665,19 @@ export function getCurrencyCountryCode(currency) {
 }
 
 export function getCurrencyWithFlag(currency) {
+  const translationKey = `currency:${currency}`;
+  const translatedText = i18next.t(translationKey);
+  const currencyText = translatedText === translationKey ? currency : translatedText;
+
   const countryCode = getCurrencyCountryCode(currency);
   if (!countryCode) {
-    return currency;
+    return currencyText;
   }
 
   return (
     <span>
       <img src={`${StaticBaseUrl}/flag-icons/${countryCode}.svg`} alt={`${currency} flag`} height={20} style={{marginRight: 5}} />
-      {currency}
+      {currencyText}
     </span>
   );
 }
