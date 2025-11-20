@@ -43,7 +43,6 @@ func UploadPermissions(owner string, path string) (bool, error) {
 
 	newPermissions := []*Permission{}
 	for index, line := range table {
-		line := line
 		if index == 0 || parseLineItem(&line, 0) == "" {
 			continue
 		}

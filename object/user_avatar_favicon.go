@@ -124,7 +124,6 @@ func chooseFaviconLinkBySizes(links []Link) *Link {
 	var chosenLink *Link
 
 	for _, link := range links {
-		link := link
 		if chosenLink == nil || compareSizes(link.Sizes, chosenLink.Sizes) > 0 {
 			chosenLink = &link
 		}
