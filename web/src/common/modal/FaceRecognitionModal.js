@@ -35,6 +35,10 @@ const FaceRecognitionModal = (props) => {
   const [currentFaceIndex, setCurrentFaceIndex] = React.useState();
 
   React.useEffect(() => {
+    if (!visible || modelsLoaded) {
+      return;
+    }
+
     const loadModels = async() => {
       // const MODEL_URL = "https://justadudewhohacks.github.io/face-api.js/models";
       const MODEL_URL = `${Setting.StaticBaseUrl}/casdoor/models`;
@@ -51,7 +55,7 @@ const FaceRecognitionModal = (props) => {
       });
     };
     loadModels();
-  }, []);
+  }, [visible, modelsLoaded]);
 
   React.useEffect(() => {
     if (withImage) {
