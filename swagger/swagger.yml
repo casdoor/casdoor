@@ -4724,6 +4724,10 @@ definitions:
         type: array
         items:
           type: string
+      userNavItems:
+        type: array
+        items:
+          type: string
       owner:
         type: string
       passwordExpireDays:

@@ -83,6 +83,7 @@ type Organization struct {
 	DisableSignin          bool       `json:"disableSignin"`
 	IpRestriction          string     `json:"ipRestriction"`
 	NavItems               []string   `xorm:"mediumtext" json:"navItems"`
+	UserNavItems           []string   `xorm:"mediumtext" json:"userNavItems"`
 	WidgetItems            []string   `xorm:"mediumtext" json:"widgetItems"`
 
 	MfaItems           []*MfaItem     `xorm:"varchar(300)" json:"mfaItems"`
@@ -237,6 +238,7 @@ func UpdateOrganization(id string, organization *Organization, isGlobalAdmin boo
 
 	if !isGlobalAdmin {
 		organization.NavItems = org.NavItems
+		organization.UserNavItems = org.UserNavItems
 		organization.WidgetItems = org.WidgetItems
 	}
 

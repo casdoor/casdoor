@@ -7187,6 +7187,12 @@
                         "type": "string"
                     }
                 },
+                "userNavItems": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "owner": {
                     "type": "string"
                 },
