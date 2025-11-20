@@ -1,4 +1,4 @@
-// Copyright 2022 The Casdoor Authors. All Rights Reserved.
+// Copyright 2025 The Casdoor Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ func main() {
 			CommitOffset: 0,
 		}
 	}
-	
+
 	// Output in the format expected by GetVersionInfoFromFile()
 	// Format: {version commitId commitOffset}
 	fmt.Printf("{%s %s %d}\n", versionInfo.Version, versionInfo.CommitId, versionInfo.CommitOffset)
