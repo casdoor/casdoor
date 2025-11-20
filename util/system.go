@@ -101,6 +101,27 @@ func GetVersionInfo() (*VersionInfo, error) {
 		CommitOffset: -1,
 	}
 
+	// First, try to get version info from environment variables (set during Docker build)
+	version := os.Getenv("CASDOOR_VERSION")
+	commitId := os.Getenv("CASDOOR_COMMIT_ID")
+	commitOffsetStr := os.Getenv("CASDOOR_COMMIT_OFFSET")
+
+	if version != "" && commitId != "" {
+		// Use environment variables if available
+		commitOffset := -1
+		if commitOffsetStr != "" {
+			if val, err := strconv.Atoi(commitOffsetStr); err == nil {
+				commitOffset = val
+			}
+		}
+		return &VersionInfo{
+			Version:      version,
+			CommitId:     commitId,
+			CommitOffset: commitOffset,
+		}, nil
+	}
+
+	// Fall back to git if environment variables are not set
 	_, filename, _, _ := runtime.Caller(0)
 	rootPath := path.Dir(path.Dir(filename))
 	r, err := git.PlainOpen(rootPath)
@@ -135,7 +156,7 @@ func GetVersionInfo() (*VersionInfo, error) {
 	}
 
 	commitOffset := 0
-	version := ""
+	version = ""
 	// iterates over the commits
 	err = cIter.ForEach(func(c *object.Commit) error {
 		tag, ok := tagMap[c.Hash]

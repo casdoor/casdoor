@@ -11,7 +11,7 @@ ARG CASDOOR_COMMIT_OFFSET
 WORKDIR /go/src/casdoor
 COPY . .
 RUN ./build.sh
-RUN CASDOOR_VERSION="${CASDOOR_VERSION}" CASDOOR_COMMIT_ID="${CASDOOR_COMMIT_ID}" CASDOOR_COMMIT_OFFSET="${CASDOOR_COMMIT_OFFSET}" go run generate_version_info.go > version_info.txt
+RUN CASDOOR_VERSION="${CASDOOR_VERSION}" CASDOOR_COMMIT_ID="${CASDOOR_COMMIT_ID}" CASDOOR_COMMIT_OFFSET="${CASDOOR_COMMIT_OFFSET}" go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go > version_info.txt
 
 FROM alpine:latest AS STANDARD
 LABEL MAINTAINER="https://casdoor.org/"
