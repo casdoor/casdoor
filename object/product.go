@@ -343,6 +343,7 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 			CreatedTime: util.GetCurrentTime(),
 			DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
 			ProductName: product.Name,
+			Products:    []string{product.Name},
 			User:        user.Name,
 			Payment:     paymentName,
 			State:       "Created",
@@ -357,6 +358,16 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		}
 		if !affected {
 			return nil, nil, fmt.Errorf("failed to add order: %s", util.StructToJson(order))
+		}
+
+		// Update order state for immediate payment methods
+		if provider.Type == "Dummy" || provider.Type == "Balance" {
+			order.State = "Paid"
+			order.Message = "Payment successful"
+			_, err = UpdateOrder(order.GetId(), order)
+			if err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 
