@@ -18,6 +18,7 @@ import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
 import * as PricingBackend from "./backend/PricingBackend";
+import * as OrderBackend from "./backend/OrderBackend";
 import * as Setting from "./Setting";
 
 class ProductBuyPage extends React.Component {
@@ -239,6 +240,33 @@ class ProductBuyPage extends React.Component {
     );
   }
 
+  placeOrder(product) {
+    this.setState({
+      isPlacingOrder: true,
+    });
+
+    const productId = `${product.owner}/${product.name}`;
+    OrderBackend.placeOrder(productId)
+      .then((res) => {
+        if (res.status === "ok") {
+          const order = res.data;
+          // Redirect to order pay page
+          Setting.goToLink(`/orders/${order.owner}/${order.name}/pay`);
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
+          this.setState({
+            isPlacingOrder: false,
+          });
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.setState({
+          isPlacingOrder: false,
+        });
+      });
+  }
+
   renderPay(product) {
     if (product === undefined || product === null) {
       return null;
@@ -254,6 +282,32 @@ class ProductBuyPage extends React.Component {
     return product.providerObjs.map(provider => {
       return this.renderProviderButton(provider, product);
     });
+  }
+
+  renderPlaceOrderButton(product) {
+    if (product === undefined || product === null) {
+      return null;
+    }
+
+    if (product.state !== "Published") {
+      return i18next.t("product:This product is currently not in sale.");
+    }
+
+    // For subscription plans, don't show Place Order button
+    if (this.state.pricingName && this.state.planName) {
+      return null;
+    }
+
+    return (
+      <Button
+        type="primary"
+        size="large"
+        style={{height: "50px", fontSize: "18px", marginBottom: "20px"}}
+        onClick={() => this.placeOrder(product)}
+      >
+        {i18next.t("order:Place Order")}
+      </Button>
+    );
   }
 
   render() {
@@ -299,7 +353,12 @@ class ProductBuyPage extends React.Component {
                 </React.Fragment>
               )
             }
-            <Descriptions.Item label={i18next.t("product:Pay")} span={3}>
+            <Descriptions.Item label={i18next.t("order:Place Order")} span={3}>
+              {
+                this.renderPlaceOrderButton(product)
+              }
+            </Descriptions.Item>
+            <Descriptions.Item label={i18next.t("product:Or Pay Directly")} span={3}>
               {
                 this.renderPay(product)
               }

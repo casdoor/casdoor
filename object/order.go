@@ -28,7 +28,8 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
-	ProductName string `xorm:"varchar(100)" json:"productName"`
+	ProductName string   `xorm:"varchar(100)" json:"productName"`
+	Products    []string `xorm:"varchar(1000)" json:"products"` // Support multiple products in future
 
 	// User Info
 	User string `xorm:"varchar(100)" json:"user"`
@@ -146,4 +147,76 @@ func DeleteOrder(order *Order) (bool, error) {
 
 func (order *Order) GetId() string {
 	return fmt.Sprintf("%s/%s", order.Owner, order.Name)
+}
+
+func PlaceOrder(productId string, user *User) (*Order, error) {
+	product, err := GetProduct(productId)
+	if err != nil {
+		return nil, err
+	}
+	if product == nil {
+		return nil, fmt.Errorf("the product: %s does not exist", productId)
+	}
+
+	orderName := fmt.Sprintf("order_%v", util.GenerateTimeId())
+	order := &Order{
+		Owner:       product.Owner,
+		Name:        orderName,
+		CreatedTime: util.GetCurrentTime(),
+		DisplayName: fmt.Sprintf("Order for %s", product.DisplayName),
+		ProductName: product.Name,
+		Products:    []string{product.Name},
+		User:        user.Name,
+		Payment:     "", // Payment will be set when user pays
+		State:       "Created",
+		Message:     "",
+		StartTime:   util.GetCurrentTime(),
+		EndTime:     "",
+	}
+
+	affected, err := AddOrder(order)
+	if err != nil {
+		return nil, err
+	}
+	if !affected {
+		return nil, fmt.Errorf("failed to add order: %s", util.StructToJson(order))
+	}
+
+	return order, nil
+}
+
+func GetOrderByPayment(owner string, paymentName string) (*Order, error) {
+	order := &Order{Owner: owner, Payment: paymentName}
+	existed, err := ormer.Engine.Get(order)
+	if err != nil {
+		return nil, err
+	}
+	if existed {
+		return order, nil
+	}
+	return nil, nil
+}
+
+func CancelOrder(orderId string) (bool, error) {
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(orderId)
+	if err != nil {
+		return false, err
+	}
+
+	order, err := getOrder(owner, name)
+	if err != nil {
+		return false, err
+	}
+	if order == nil {
+		return false, fmt.Errorf("the order: %s does not exist", orderId)
+	}
+
+	// Only allow cancellation of unpaid orders
+	if order.State != "Created" {
+		return false, fmt.Errorf("cannot cancel order in state: %s", order.State)
+	}
+
+	order.State = "Canceled"
+	order.Message = "Canceled by user"
+	return UpdateOrder(orderId, order)
 }
