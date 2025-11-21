@@ -166,6 +166,14 @@ class TransactionListPage extends BaseListPage {
         width: "120px",
         sorter: true,
         ...this.getColumnSearchProps("category"),
+      },
+      {
+        title: i18next.t("provider:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("type"),
         render: (text, record, index) => {
           if (text && record.domain) {
             const chatUrl = `${record.domain}/chats/${text}`;
@@ -177,14 +185,6 @@ class TransactionListPage extends BaseListPage {
           }
           return text;
         },
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        sorter: true,
-        ...this.getColumnSearchProps("type"),
       },
       {
         title: i18next.t("provider:Subtype"),

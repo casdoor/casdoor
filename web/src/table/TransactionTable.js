@@ -86,6 +86,12 @@ class TransactionTable extends React.Component {
         dataIndex: "category",
         key: "category",
         width: "120px",
+      },
+      {
+        title: i18next.t("provider:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "140px",
         render: (text, record) => {
           if (text && record.domain) {
             const chatUrl = `${record.domain}/chats/${text}`;
@@ -97,12 +103,6 @@ class TransactionTable extends React.Component {
           }
           return text;
         },
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
       },
       {
         title: i18next.t("provider:Subtype"),
