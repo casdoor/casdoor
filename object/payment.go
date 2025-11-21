@@ -207,7 +207,11 @@ func notifyPayment(body []byte, owner string, paymentName string) (*Payment, *pp
 	}
 
 	if payment.IsRecharge {
-		err = UpdateUserBalance(payment.Owner, payment.User, payment.Price, "en")
+		currency := payment.Currency
+		if currency == "" {
+			currency = "USD"
+		}
+		err = UpdateUserBalance(payment.Owner, payment.User, payment.Price, currency, "en")
 		return payment, notifyResult, err
 	}
 

@@ -589,7 +589,7 @@ func (org *Organization) GetInitScore() (int, error) {
 	}
 }
 
-func UpdateOrganizationBalance(owner string, name string, balance float64, isOrgBalance bool, lang string) error {
+func UpdateOrganizationBalance(owner string, name string, balance float64, currency string, isOrgBalance bool, lang string) error {
 	organization, err := getOrganization(owner, name)
 	if err != nil {
 		return err
@@ -598,12 +598,19 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, isOrg
 		return fmt.Errorf(i18n.Translate(lang, "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
 	}
 
+	// Convert the balance amount from transaction currency to organization's balance currency
+	balanceCurrency := organization.BalanceCurrency
+	if balanceCurrency == "" {
+		balanceCurrency = "USD"
+	}
+	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
+
 	var columns []string
 	if isOrgBalance {
-		organization.OrgBalance = AddPrices(organization.OrgBalance, balance)
+		organization.OrgBalance = AddPrices(organization.OrgBalance, convertedBalance)
 		columns = []string{"org_balance"}
 	} else {
-		organization.UserBalance = AddPrices(organization.UserBalance, balance)
+		organization.UserBalance = AddPrices(organization.UserBalance, convertedBalance)
 		columns = []string{"user_balance"}
 	}
 
