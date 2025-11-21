@@ -24,13 +24,10 @@ import moment from "moment/moment";
 
 class TransactionListPage extends BaseListPage {
   newTransaction() {
-    const randomName = Setting.getRandomName();
     const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
       owner: organizationName,
-      name: `transaction_${randomName}`,
       createdTime: moment().format(),
-      displayName: `New Transaction - ${randomName}`,
       application: "app-built-in",
       domain: "https://ai-admin.casibase.com",
       category: "chat_id",
@@ -70,7 +67,8 @@ class TransactionListPage extends BaseListPage {
     TransactionBackend.addTransaction(newTransaction)
       .then((res) => {
         if (res.status === "ok") {
-          this.props.history.push({pathname: `/transactions/${newTransaction.owner}/${newTransaction.name}`, mode: "add"});
+          const transactionId = res.data;
+          this.props.history.push({pathname: `/transactions/${newTransaction.owner}/${transactionId}`, mode: "add"});
           Setting.showMessage("success", i18next.t("general:Successfully added"));
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
