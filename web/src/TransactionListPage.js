@@ -81,6 +81,39 @@ class TransactionListPage extends BaseListPage {
       });
   }
 
+  rechargeTransaction() {
+    const organizationName = Setting.getRequestOrganization(this.props.account);
+    const newTransaction = {
+      owner: organizationName,
+      createdTime: moment().format(),
+      application: "",
+      domain: "",
+      category: "",
+      type: "",
+      subtype: "",
+      provider: "",
+      user: "",
+      tag: "Organization",
+      amount: 0,
+      currency: "USD",
+      payment: "",
+      state: "Paid",
+    };
+    TransactionBackend.addTransaction(newTransaction)
+      .then((res) => {
+        if (res.status === "ok") {
+          const transactionId = res.data;
+          this.props.history.push({pathname: `/transactions/${newTransaction.owner}/${transactionId}`, mode: "recharge"});
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   renderTable(transactions) {
     const columns = [
       {
@@ -340,6 +373,8 @@ class TransactionListPage extends BaseListPage {
             const isAdmin = Setting.isLocalAdminUser(this.props.account);
             return (
               <div>
+                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.rechargeTransaction.bind(this)}>{i18next.t("transaction:Recharge")}</Button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
                 {i18next.t("general:Transactions")}&nbsp;&nbsp;&nbsp;&nbsp;
                 <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
               </div>

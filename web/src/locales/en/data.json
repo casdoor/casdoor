@@ -1264,6 +1264,7 @@
     "Amount - Tooltip": "The amount of traded products",
     "Edit Transaction": "Edit Transaction",
     "New Transaction": "New Transaction",
+    "Recharge": "Recharge",
     "Tag - Tooltip": "The tag of the transaction"
   },
   "user": {
