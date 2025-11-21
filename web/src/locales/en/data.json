@@ -730,7 +730,7 @@
     "Use Email as username": "Use Email as username",
     "Use Email as username - Tooltip": "Use Email as username if the username field is not visible at signup",
     "User balance": "User balance",
-    "User balance - Tooltip": "Total balance of all users in the organization",
+    "User balance - Tooltip": "Aggregate balance of all users in the organization",
     "User types": "User types",
     "User types - Tooltip": "Available user types in the system",
     "View rule": "View rule",
