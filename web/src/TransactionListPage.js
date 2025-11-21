@@ -94,20 +94,21 @@ class TransactionListPage extends BaseListPage {
 
   handleRechargeOk = (rechargeData) => {
     const organizationName = rechargeData.organization || Setting.getRequestOrganization(this.props.account);
+    // Create a recharge transaction with minimal required fields
     const newTransaction = {
       owner: organizationName,
       createdTime: moment().format(),
       application: rechargeData.application || "",
       domain: "",
-      category: "",
-      type: "",
+      category: "Recharge",
+      type: "Manual",
       provider: "",
       user: "",
       tag: rechargeData.tag,
       amount: rechargeData.amount,
       currency: rechargeData.currency,
       payment: "",
-      state: "Paid",
+      state: "Paid", // Recharge transactions are considered completed immediately
     };
 
     TransactionBackend.addTransaction(newTransaction)

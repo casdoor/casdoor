@@ -40,9 +40,12 @@ class RechargeModal extends React.Component {
     this.loadApplications();
   }
 
+  isGlobalAdmin() {
+    return Setting.isAdminUser(this.props.account);
+  }
+
   loadOrganizations() {
-    const isAdmin = Setting.isAdminUser(this.props.account);
-    if (isAdmin) {
+    if (this.isGlobalAdmin()) {
       // Global admin can see all organizations
       OrganizationBackend.getOrganizations("admin")
         .then((res) => {
@@ -69,8 +72,7 @@ class RechargeModal extends React.Component {
   }
 
   loadApplications() {
-    const isAdmin = Setting.isAdminUser(this.props.account);
-    if (isAdmin) {
+    if (this.isGlobalAdmin()) {
       // Global admin can see all applications
       ApplicationBackend.getApplications("admin")
         .then((res) => {
@@ -98,6 +100,17 @@ class RechargeModal extends React.Component {
 
   handleOk = () => {
     const {tag, amount, currency, application, organization} = this.state;
+
+    // Validation
+    if (!tag || tag.trim() === "") {
+      Setting.showMessage("error", i18next.t("general:Please input") + " " + i18next.t("user:Tag"));
+      return;
+    }
+    if (amount <= 0) {
+      Setting.showMessage("error", i18next.t("transaction:Amount") + " must be greater than 0");
+      return;
+    }
+
     this.props.onOk({
       tag,
       amount,
