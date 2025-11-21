@@ -250,27 +250,29 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 
 		if order != nil {
 			// Map payment state to order state
+			orderStateChanged := false
 			switch payment.State {
 			case pp.PaymentStatePaid:
 				order.State = "Paid"
-				order.Message = payment.Message
-				order.EndTime = util.GetCurrentTime()
+				orderStateChanged = true
 			case pp.PaymentStateError:
 				order.State = "Failed"
-				order.Message = payment.Message
-				order.EndTime = util.GetCurrentTime()
+				orderStateChanged = true
 			case pp.PaymentStateCanceled:
 				order.State = "Canceled"
-				order.Message = payment.Message
-				order.EndTime = util.GetCurrentTime()
+				orderStateChanged = true
 			case pp.PaymentStateTimeout:
 				order.State = "Timeout"
+				orderStateChanged = true
+			}
+
+			if orderStateChanged {
 				order.Message = payment.Message
 				order.EndTime = util.GetCurrentTime()
-			}
-			_, err = UpdateOrder(order.GetId(), order)
-			if err != nil {
-				return nil, err
+				_, err = UpdateOrder(order.GetId(), order)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	}
