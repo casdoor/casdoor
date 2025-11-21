@@ -745,6 +745,23 @@ class UserEditPage extends React.Component {
           </Col>
         </Row>
       );
+    } else if (accountItem.name === "Balance currency") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Balance currency"), i18next.t("user:Balance currency - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Select virtual={false} style={{width: "100%"}} value={this.state.user.balanceCurrency || "USD"} onChange={(value => {
+              this.updateUserField("balanceCurrency", value);
+            })}>
+              {
+                Setting.CurrencyOptions.map((item, index) => <Option key={index} value={item.id}>{Setting.getCurrencyWithFlag(item.id)}</Option>)
+              }
+            </Select>
+          </Col>
+        </Row>
+      );
     } else if (accountItem.name === "Transactions") {
       return (
         <Row style={{marginTop: "20px"}} >

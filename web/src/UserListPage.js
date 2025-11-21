@@ -87,6 +87,7 @@ class UserListPage extends BaseListPage {
       signupApplication: this.state.organization.defaultApplication,
       registerType: "Add User",
       registerSource: `${this.props.account.owner}/${this.props.account.name}`,
+      balanceCurrency: this.state.organization.balanceCurrency || "USD",
     };
   }
 
@@ -373,6 +374,16 @@ class UserListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return text ?? 0;
+        },
+      },
+      {
+        title: i18next.t("user:Balance currency"),
+        dataIndex: "balanceCurrency",
+        key: "balanceCurrency",
+        width: "140px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text || "USD";
         },
       },
       {
