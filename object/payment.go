@@ -254,15 +254,19 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 			case pp.PaymentStatePaid:
 				order.State = "Paid"
 				order.Message = payment.Message
+				order.EndTime = util.GetCurrentTime()
 			case pp.PaymentStateError:
 				order.State = "Failed"
 				order.Message = payment.Message
+				order.EndTime = util.GetCurrentTime()
 			case pp.PaymentStateCanceled:
 				order.State = "Canceled"
 				order.Message = payment.Message
+				order.EndTime = util.GetCurrentTime()
 			case pp.PaymentStateTimeout:
 				order.State = "Timeout"
 				order.Message = payment.Message
+				order.EndTime = util.GetCurrentTime()
 			}
 			_, err = UpdateOrder(order.GetId(), order)
 			if err != nil {
