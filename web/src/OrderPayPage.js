@@ -44,7 +44,7 @@ class OrderPayPage extends React.Component {
     });
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getOrder();
     this.getPaymentEnv();
   }
@@ -138,7 +138,13 @@ class OrderPayPage extends React.Component {
       isProcessingPayment: true,
     });
 
-    ProductBackend.buyProduct(product.owner, product.name, provider.name, "", "", "", this.state.paymentEnv, 0)
+    // For order payment, no pricing/plan/user params needed
+    const pricingName = "";
+    const planName = "";
+    const userName = "";
+    const customPrice = 0;
+
+    ProductBackend.buyProduct(product.owner, product.name, provider.name, pricingName, planName, userName, this.state.paymentEnv, customPrice)
       .then((res) => {
         if (res.status === "ok") {
           const payment = res.data;
