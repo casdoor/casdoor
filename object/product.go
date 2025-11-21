@@ -295,15 +295,30 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		DisplayName: payment.DisplayName,
 		Application: owner,
 		Domain:      "",
-		Category:    provider.Category,
-		Type:        provider.Type,
-		Provider:    provider.Name,
-		User:        payment.User,
-		Tag:         product.Tag,
 		Amount:      payment.Price,
 		Currency:    product.Currency,
-		Payment:     payment.GetId(),
+		Payment:     payment.Name,
 		State:       pp.PaymentStateCreated,
+	}
+
+	// Set Category, Type, Subtype, Provider, and Tag based on product type
+	if product.IsRecharge {
+		// For recharge products: Category="Recharge", Type/Subtype/Provider are blank, Tag="User", State="Paid"
+		transaction.Category = "Recharge"
+		transaction.Type = ""
+		transaction.Subtype = ""
+		transaction.Provider = ""
+		transaction.Tag = "User"
+		transaction.User = payment.User
+		transaction.State = pp.PaymentStatePaid
+	} else {
+		// For non-recharge products: move provider.Category to Type, provider.Type to Subtype
+		transaction.Category = ""
+		transaction.Type = provider.Category
+		transaction.Subtype = provider.Type
+		transaction.Provider = provider.Name
+		transaction.Tag = product.Tag
+		transaction.User = payment.User
 	}
 
 	if provider.Type == "Dummy" {

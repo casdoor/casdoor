@@ -30,8 +30,9 @@ class TransactionListPage extends BaseListPage {
       createdTime: moment().format(),
       application: "app-built-in",
       domain: "https://ai-admin.casibase.com",
-      category: "chat_id",
-      type: "message_id",
+      category: "",
+      type: "chat_id",
+      subtype: "message_id",
       provider: "provider_chatgpt",
       user: "admin",
       tag: "AI message",
@@ -184,6 +185,14 @@ class TransactionListPage extends BaseListPage {
         width: "140px",
         sorter: true,
         ...this.getColumnSearchProps("type"),
+      },
+      {
+        title: i18next.t("provider:Subtype"),
+        dataIndex: "subtype",
+        key: "subtype",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("subtype"),
         render: (text, record, index) => {
           if (text && record.domain) {
             const messageUrl = `${record.domain}/messages/${text}`;
@@ -276,8 +285,11 @@ class TransactionListPage extends BaseListPage {
         sorter: true,
         ...this.getColumnSearchProps("payment"),
         render: (text, record, index) => {
+          if (!text) {
+            return text;
+          }
           return (
-            <Link to={`/payments/${record.owner}/${record.payment}`}>
+            <Link to={`/payments/${record.owner}/${text}`}>
               {text}
             </Link>
           );

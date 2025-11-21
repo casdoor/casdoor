@@ -34,6 +34,7 @@ type Transaction struct {
 	Domain      string `xorm:"varchar(1000)" json:"domain"`
 	Category    string `xorm:"varchar(100)" json:"category"`
 	Type        string `xorm:"varchar(100)" json:"type"`
+	Subtype     string `xorm:"varchar(100)" json:"subtype"`
 	Provider    string `xorm:"varchar(100)" json:"provider"`
 	User        string `xorm:"varchar(100)" json:"user"`
 	Tag         string `xorm:"varchar(100)" json:"tag"`
