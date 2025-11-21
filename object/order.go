@@ -107,6 +107,23 @@ func GetOrder(id string) (*Order, error) {
 	return getOrder(owner, name)
 }
 
+func GetOrderByPayment(owner string, paymentName string) (*Order, error) {
+	if owner == "" || paymentName == "" {
+		return nil, nil
+	}
+
+	order := Order{}
+	existed, err := ormer.Engine.Where("owner = ? AND payment = ?", owner, paymentName).Get(&order)
+	if err != nil {
+		return nil, err
+	}
+
+	if existed {
+		return &order, nil
+	}
+	return nil, nil
+}
+
 func UpdateOrder(id string, order *Order) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {

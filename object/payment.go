@@ -241,6 +241,34 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 				return nil, err
 			}
 		}
+
+		// Update order state when payment state changes
+		order, err := GetOrderByPayment(owner, paymentName)
+		if err != nil {
+			return nil, err
+		}
+
+		if order != nil {
+			// Map payment state to order state
+			switch payment.State {
+			case pp.PaymentStatePaid:
+				order.State = "Paid"
+				order.Message = payment.Message
+			case pp.PaymentStateError:
+				order.State = "Failed"
+				order.Message = payment.Message
+			case pp.PaymentStateCanceled:
+				order.State = "Canceled"
+				order.Message = payment.Message
+			case pp.PaymentStateTimeout:
+				order.State = "Timeout"
+				order.Message = payment.Message
+			}
+			_, err = UpdateOrder(order.GetId(), order)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	return payment, nil
