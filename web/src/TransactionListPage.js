@@ -129,7 +129,7 @@ class TransactionListPage extends BaseListPage {
         }
       })
       .catch(() => {
-        Setting.showMessage("error", i18next.t("general:Failed to connect to server"));
+        Setting.showMessage("error", i18next.t("general:Failed to add"));
       });
   };
 
