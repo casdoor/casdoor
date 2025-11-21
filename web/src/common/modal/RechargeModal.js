@@ -165,7 +165,7 @@ class RechargeModal extends React.Component {
               style={{width: "100%"}}
               value={this.state.amount}
               onChange={(value) => this.setState({amount: value})}
-              min={0}
+              min={0.01}
               step={0.01}
             />
           </Col>
