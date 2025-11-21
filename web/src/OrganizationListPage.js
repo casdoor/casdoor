@@ -51,6 +51,7 @@ class OrganizationListPage extends BaseListPage {
       enableTour: true,
       disableSignin: false,
       mfaRememberInHours: DefaultMfaRememberInHours,
+      balanceCurrency: "USD",
       accountItems: [
         {name: "Organization", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "ID", visible: true, viewRule: "Public", modifyRule: "Immutable"},
@@ -81,6 +82,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Karma", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Ranking", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Balance", visible: true, viewRule: "Public", modifyRule: "Admin"},
+        {name: "Balance currency", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Signup application", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Register type", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Register source", visible: true, viewRule: "Public", modifyRule: "Admin"},
@@ -256,6 +258,16 @@ class OrganizationListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return text ?? 0;
+        },
+      },
+      {
+        title: i18next.t("organization:Balance currency"),
+        dataIndex: "balanceCurrency",
+        key: "balanceCurrency",
+        width: "140px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text || "USD";
         },
       },
       {
