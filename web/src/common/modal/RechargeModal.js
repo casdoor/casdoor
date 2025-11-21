@@ -102,8 +102,7 @@ class RechargeModal extends React.Component {
     const {tag, amount, currency, application, organization} = this.state;
 
     // Validation
-    const tagValue = typeof tag === "string" ? tag : "";
-    if (!tagValue || tagValue.trim() === "") {
+    if (!tag || tag.trim() === "") {
       Setting.showMessage("error", i18next.t("general:Please input") + " " + i18next.t("user:Tag"));
       return;
     }
@@ -113,7 +112,7 @@ class RechargeModal extends React.Component {
     }
 
     this.props.onOk({
-      tag: tagValue,
+      tag,
       amount,
       currency,
       application,
@@ -144,11 +143,10 @@ class RechargeModal extends React.Component {
             <Select
               virtual={false}
               style={{width: "100%"}}
-              value={this.state.tag}
+              value={[this.state.tag]}
               onChange={(value) => {
-                // Handle array from tags mode - take the first (and only) value
-                const tagValue = Array.isArray(value) ? value[0] : value;
-                this.setState({tag: tagValue});
+                // Tags mode returns array, take first element
+                this.setState({tag: value[0] || ""});
               }}
               mode="tags"
               maxCount={1}
