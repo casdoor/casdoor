@@ -178,19 +178,24 @@ func (transaction *Transaction) GetId() string {
 }
 
 func updateBalanceForTransaction(transaction *Transaction, amount float64, lang string) error {
+	currency := transaction.Currency
+	if currency == "" {
+		currency = "USD"
+	}
+
 	if transaction.Tag == "Organization" {
 		// Update organization's own balance
-		return UpdateOrganizationBalance("admin", transaction.Owner, amount, true, lang)
+		return UpdateOrganizationBalance("admin", transaction.Owner, amount, currency, true, lang)
 	} else if transaction.Tag == "User" {
 		// Update user's balance
 		if transaction.User == "" {
 			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
 		}
-		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, lang); err != nil {
+		if err := UpdateUserBalance(transaction.Owner, transaction.User, amount, currency, lang); err != nil {
 			return err
 		}
 		// Update organization's user balance sum
-		return UpdateOrganizationBalance("admin", transaction.Owner, amount, false, lang)
+		return UpdateOrganizationBalance("admin", transaction.Owner, amount, currency, false, lang)
 	}
 	return nil
 }

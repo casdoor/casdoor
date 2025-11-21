@@ -24,17 +24,37 @@ import (
 func TestTransactionBalanceUpdate(t *testing.T) {
 	InitConfig()
 
-	// Test User category transaction
+	// Test User category transaction with USD
 	userTransaction := &Transaction{
 		Owner:    "test-org",
 		Name:     "test-user-transaction",
 		Category: "User",
 		User:     "test-user",
 		Amount:   100.0,
+		Currency: "USD",
+		Tag:      "User",
 	}
 
 	// Verify updateBalanceForTransaction for User category
 	err := updateBalanceForTransaction(userTransaction, 100.0, "en")
+	if err != nil {
+		// Expected to fail if test user/org doesn't exist
+		t.Logf("Expected error for non-existent user: %v", err)
+	}
+
+	// Test User category transaction with EUR
+	userTransactionEUR := &Transaction{
+		Owner:    "test-org",
+		Name:     "test-user-transaction-eur",
+		Category: "User",
+		User:     "test-user",
+		Amount:   100.0,
+		Currency: "EUR",
+		Tag:      "User",
+	}
+
+	// Verify updateBalanceForTransaction for User category with EUR
+	err = updateBalanceForTransaction(userTransactionEUR, 100.0, "en")
 	if err != nil {
 		// Expected to fail if test user/org doesn't exist
 		t.Logf("Expected error for non-existent user: %v", err)
@@ -46,10 +66,29 @@ func TestTransactionBalanceUpdate(t *testing.T) {
 		Name:     "test-org-transaction",
 		Category: "Organization",
 		Amount:   200.0,
+		Currency: "USD",
+		Tag:      "Organization",
 	}
 
 	// Verify updateBalanceForTransaction for Organization category
 	err = updateBalanceForTransaction(orgTransaction, 200.0, "en")
+	if err != nil {
+		// Expected to fail if test org doesn't exist
+		t.Logf("Expected error for non-existent organization: %v", err)
+	}
+
+	// Test Organization category transaction with JPY
+	orgTransactionJPY := &Transaction{
+		Owner:    "test-org",
+		Name:     "test-org-transaction-jpy",
+		Category: "Organization",
+		Amount:   10000.0,
+		Currency: "JPY",
+		Tag:      "Organization",
+	}
+
+	// Verify updateBalanceForTransaction for Organization category with JPY
+	err = updateBalanceForTransaction(orgTransactionJPY, 10000.0, "en")
 	if err != nil {
 		// Expected to fail if test org doesn't exist
 		t.Logf("Expected error for non-existent organization: %v", err)

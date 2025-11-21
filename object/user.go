@@ -1479,7 +1479,7 @@ func GenerateIdForNewUser(application *Application) (string, error) {
 	return res, nil
 }
 
-func UpdateUserBalance(owner string, name string, balance float64, lang string) error {
+func UpdateUserBalance(owner string, name string, balance float64, currency string, lang string) error {
 	user, err := getUser(owner, name)
 	if err != nil {
 		return err
@@ -1487,7 +1487,21 @@ func UpdateUserBalance(owner string, name string, balance float64, lang string) 
 	if user == nil {
 		return fmt.Errorf(i18n.Translate(lang, "general:The user: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
 	}
-	user.Balance = AddPrices(user.Balance, balance)
+
+	// Convert the balance amount from transaction currency to user's balance currency
+	balanceCurrency := user.BalanceCurrency
+	if balanceCurrency == "" {
+		// Get organization's balance currency as fallback
+		org, err := getOrganization("admin", owner)
+		if err == nil && org != nil && org.BalanceCurrency != "" {
+			balanceCurrency = org.BalanceCurrency
+		} else {
+			balanceCurrency = "USD"
+		}
+	}
+	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
+
+	user.Balance = AddPrices(user.Balance, convertedBalance)
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
 }

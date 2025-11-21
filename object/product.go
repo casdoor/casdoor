@@ -323,16 +323,30 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 
 	if provider.Type == "Dummy" {
 		payment.State = pp.PaymentStatePaid
-		err = UpdateUserBalance(user.Owner, user.Name, payment.Price, "en")
+		currency := payment.Currency
+		if currency == "" {
+			currency = "USD"
+		}
+		err = UpdateUserBalance(user.Owner, user.Name, payment.Price, currency, "en")
 		if err != nil {
 			return nil, nil, err
 		}
 	} else if provider.Type == "Balance" {
-		if product.Price > user.Balance {
+		// Convert product price to user's balance currency for comparison
+		productCurrency := product.Currency
+		if productCurrency == "" {
+			productCurrency = "USD"
+		}
+		userBalanceCurrency := user.BalanceCurrency
+		if userBalanceCurrency == "" {
+			userBalanceCurrency = "USD"
+		}
+		convertedPrice := ConvertCurrency(product.Price, productCurrency, userBalanceCurrency)
+		if convertedPrice > user.Balance {
 			return nil, nil, fmt.Errorf("insufficient user balance")
 		}
 		transaction.Amount = -transaction.Amount
-		err = UpdateUserBalance(user.Owner, user.Name, -product.Price, "en")
+		err = UpdateUserBalance(user.Owner, user.Name, -product.Price, productCurrency, "en")
 		if err != nil {
 			return nil, nil, err
 		}
