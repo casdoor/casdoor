@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -162,5 +163,54 @@ func (c *ApiController) DeleteOrder() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteOrder(&order))
+	c.ServeJSON()
+}
+
+// PlaceOrder
+// @Title PlaceOrder
+// @Tag Order API
+// @Description place an order for a product
+// @Param   productId     query    string  true        "The id ( owner/name ) of the product"
+// @Success 200 {object} object.Order The Response object
+// @router /place-order [post]
+func (c *ApiController) PlaceOrder() {
+	productId := c.Input().Get("productId")
+
+	userId := c.GetSessionUsername()
+	if userId == "" {
+		c.ResponseError(c.T("general:Please login first"))
+		return
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return
+	}
+
+	order, err := object.PlaceOrder(productId, user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(order)
+}
+
+// CancelOrder
+// @Title CancelOrder
+// @Tag Order API
+// @Description cancel an order
+// @Param   id     query    string  true        "The id ( owner/name ) of the order"
+// @Success 200 {object} controllers.Response The Response object
+// @router /cancel-order [post]
+func (c *ApiController) CancelOrder() {
+	id := c.Input().Get("id")
+
+	c.Data["json"] = wrapActionResponse(object.CancelOrder(id))
 	c.ServeJSON()
 }

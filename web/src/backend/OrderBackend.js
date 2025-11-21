@@ -79,3 +79,23 @@ export function deleteOrder(order) {
     },
   }).then(res => res.json());
 }
+
+export function placeOrder(productId) {
+  return fetch(`${Setting.ServerUrl}/api/place-order?productId=${productId}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function cancelOrder(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/cancel-order?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
