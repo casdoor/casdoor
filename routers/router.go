@@ -58,7 +58,7 @@ func initAPI() {
 	beego.Router("/api/user", &controllers.ApiController{}, "GET:GetUserinfo2")
 	beego.Router("/api/unlink", &controllers.ApiController{}, "POST:Unlink")
 	beego.Router("/api/get-saml-login", &controllers.ApiController{}, "GET:GetSamlLogin")
-	beego.Router("/api/acs", &controllers.ApiController{}, "POST:HandleSamlLogin")
+	beego.Router("/api/acs", &controllers.ApiController{}, "GET,POST:HandleSamlLogin")
 	beego.Router("/api/saml/metadata", &controllers.ApiController{}, "GET:GetSamlMeta")
 	beego.Router("/api/saml/redirect/:owner/:application", &controllers.ApiController{}, "*:HandleSamlRedirect")
 	beego.Router("/api/webhook", &controllers.ApiController{}, "*:HandleOfficialAccountEvent")

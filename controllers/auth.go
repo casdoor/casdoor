@@ -1160,6 +1160,13 @@ func (c *ApiController) GetSamlLogin() {
 }
 
 func (c *ApiController) HandleSamlLogin() {
+	// This endpoint is designed to receive POST requests from SAML Identity Providers
+	// GET requests are not supported for SAML assertions
+	if c.Ctx.Request.Method == "GET" {
+		c.ResponseError(c.T("auth:This endpoint only accepts POST requests from SAML Identity Providers"))
+		return
+	}
+
 	relayState := c.Input().Get("RelayState")
 	samlResponse := c.Input().Get("SAMLResponse")
 	decode, err := base64.StdEncoding.DecodeString(relayState)
