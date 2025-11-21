@@ -26,7 +26,7 @@ class RechargeModal extends React.Component {
     super(props);
     this.state = {
       tag: "Organization",
-      amount: 0,
+      amount: null,
       currency: "USD",
       application: "",
       organization: props.currentOrganization || "",
@@ -106,8 +106,8 @@ class RechargeModal extends React.Component {
       Setting.showMessage("error", i18next.t("general:Please input") + " " + i18next.t("user:Tag"));
       return;
     }
-    if (amount <= 0) {
-      Setting.showMessage("error", i18next.t("transaction:Amount") + " must be greater than 0");
+    if (!amount || amount <= 0) {
+      Setting.showMessage("error", i18next.t("general:Please input") + " " + i18next.t("transaction:Amount"));
       return;
     }
 

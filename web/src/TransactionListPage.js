@@ -23,6 +23,11 @@ import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import moment from "moment/moment";
 
+// Constants for transaction types
+const TRANSACTION_CATEGORY_RECHARGE = "Recharge";
+const TRANSACTION_TYPE_MANUAL = "Manual";
+const TRANSACTION_STATE_PAID = "Paid";
+
 class TransactionListPage extends BaseListPage {
   constructor(props) {
     super(props);
@@ -100,15 +105,15 @@ class TransactionListPage extends BaseListPage {
       createdTime: moment().format(),
       application: rechargeData.application || "",
       domain: "",
-      category: "Recharge",
-      type: "Manual",
+      category: TRANSACTION_CATEGORY_RECHARGE,
+      type: TRANSACTION_TYPE_MANUAL,
       provider: "",
       user: "",
       tag: rechargeData.tag,
       amount: rechargeData.amount,
       currency: rechargeData.currency,
       payment: "",
-      state: "Paid", // Recharge transactions are considered completed immediately
+      state: TRANSACTION_STATE_PAID, // Recharge transactions are considered completed immediately
     };
 
     TransactionBackend.addTransaction(newTransaction)
@@ -123,8 +128,8 @@ class TransactionListPage extends BaseListPage {
           Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
         }
       })
-      .catch(error => {
-        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      .catch(() => {
+        Setting.showMessage("error", i18next.t("general:Failed to connect to server"));
       });
   };
 
