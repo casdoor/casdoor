@@ -165,6 +165,10 @@ func (c *ApiController) AddOrganization() {
 		return
 	}
 
+	if organization.BalanceCurrency == "" {
+		organization.BalanceCurrency = "USD"
+	}
+
 	c.Data["json"] = wrapActionResponse(object.AddOrganization(&organization))
 	c.ServeJSON()
 }
