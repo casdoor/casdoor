@@ -161,7 +161,7 @@ class RechargeModal extends React.Component {
             <InputNumber
               style={{width: "100%"}}
               value={this.state.amount}
-              onChange={(value) => this.setState({amount: value || 0})}
+              onChange={(value) => this.setState({amount: value})}
               min={0}
               step={0.01}
             />
