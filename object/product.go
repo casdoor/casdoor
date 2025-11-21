@@ -339,7 +339,13 @@ func BuyProduct(id string, user *User, providerName, pricingName, planName, host
 		}
 		userBalanceCurrency := user.BalanceCurrency
 		if userBalanceCurrency == "" {
-			userBalanceCurrency = "USD"
+			// Get organization's balance currency as fallback
+			org, err := getOrganization("admin", user.Owner)
+			if err == nil && org != nil && org.BalanceCurrency != "" {
+				userBalanceCurrency = org.BalanceCurrency
+			} else {
+				userBalanceCurrency = "USD"
+			}
 		}
 		convertedPrice := ConvertCurrency(product.Price, productCurrency, userBalanceCurrency)
 		if convertedPrice > user.Balance {

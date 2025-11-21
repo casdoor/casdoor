@@ -17,7 +17,8 @@ package object
 import "math"
 
 // Fixed exchange rates (temporary implementation as per requirements)
-// All rates are relative to USD (1 USD = X currency)
+// All rates represent how many units of the currency equal 1 USD
+// Example: EUR: 0.92 means 1 USD = 0.92 EUR
 var exchangeRates = map[string]float64{
 	"USD": 1.0,
 	"EUR": 0.92,
