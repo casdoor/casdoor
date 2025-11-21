@@ -154,6 +154,9 @@ class TransactionEditPage extends React.Component {
   parseTransactionField(key, value) {
     if (["amount"].includes(key)) {
       value = parseFloat(value);
+      if (isNaN(value)) {
+        value = 0;
+      }
     }
     return value;
   }
@@ -315,7 +318,8 @@ class TransactionEditPage extends React.Component {
               <Select virtual={false} mode="tags" style={{width: "100%"}}
                 value={this.state.transaction.tag ? [this.state.transaction.tag] : []}
                 onChange={(value) => {
-                  this.updateTransactionField("tag", value.length > 0 ? value[value.length - 1] : "");
+                  const newTag = value.length > 0 ? value.slice(-1)[0] : "";
+                  this.updateTransactionField("tag", newTag);
                 }}>
                 <Option value="Organization">Organization</Option>
                 <Option value="User">User</Option>
