@@ -18,11 +18,19 @@ import {Link} from "react-router-dom";
 import * as Setting from "./Setting";
 import {Button, Table} from "antd";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
+import RechargeModal from "./common/modal/RechargeModal";
 import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import moment from "moment/moment";
 
 class TransactionListPage extends BaseListPage {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      rechargeModalVisible: false,
+    };
+  }
   newTransaction() {
     const organizationName = Setting.getRequestOrganization(this.props.account);
     return {
@@ -79,6 +87,49 @@ class TransactionListPage extends BaseListPage {
         Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
+
+  showRechargeModal = () => {
+    this.setState({rechargeModalVisible: true});
+  };
+
+  handleRechargeOk = (rechargeData) => {
+    const organizationName = rechargeData.organization || Setting.getRequestOrganization(this.props.account);
+    const newTransaction = {
+      owner: organizationName,
+      createdTime: moment().format(),
+      application: rechargeData.application || "",
+      domain: "",
+      category: "",
+      type: "",
+      provider: "",
+      user: "",
+      tag: rechargeData.tag,
+      amount: rechargeData.amount,
+      currency: rechargeData.currency,
+      payment: "",
+      state: "Paid",
+    };
+
+    TransactionBackend.addTransaction(newTransaction)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully added"));
+          this.setState({rechargeModalVisible: false});
+          this.fetch({
+            pagination: this.state.pagination,
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to add")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  };
+
+  handleRechargeCancel = () => {
+    this.setState({rechargeModalVisible: false});
+  };
 
   renderTable(transactions) {
     const columns = [
@@ -329,12 +380,21 @@ class TransactionListPage extends BaseListPage {
             return (
               <div>
                 {i18next.t("general:Transactions")}&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.showRechargeModal}>{i18next.t("transaction:Recharge")}</Button>
+                &nbsp;&nbsp;
                 <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
               </div>
             );
           }}
           loading={this.state.loading}
           onChange={this.handleTableChange}
+        />
+        <RechargeModal
+          visible={this.state.rechargeModalVisible}
+          onOk={this.handleRechargeOk}
+          onCancel={this.handleRechargeCancel}
+          account={this.props.account}
+          currentOrganization={Setting.getRequestOrganization(this.props.account)}
         />
       </div>
     );
