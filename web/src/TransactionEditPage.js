@@ -15,7 +15,6 @@
 import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import * as Setting from "./Setting";
-import * as ApplicationBackend from "./backend/ApplicationBackend";
 import {Button, Card, Col, Input, Row, Select} from "antd";
 import i18next from "i18next";
 
@@ -28,9 +27,7 @@ class TransactionEditPage extends React.Component {
       classes: props,
       organizationName: props.organizationName !== undefined ? props.organizationName : props.match.params.organizationName,
       transactionName: props.match.params.transactionName,
-      application: null,
       transaction: null,
-      providers: [],
       mode: props.location.mode !== undefined ? props.location.mode : "edit",
     };
   }
@@ -47,15 +44,26 @@ class TransactionEditPage extends React.Component {
           return;
         }
 
+        if (res.status === "error") {
+          Setting.showMessage("error", res.msg);
+          return;
+        }
+
         this.setState({
           transaction: res.data,
         });
 
         Setting.scrollToDiv("invoice-area");
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
       });
   }
 
   submitTransactionEdit(exitAfterSave) {
+    if (this.state.transaction === null) {
+      return;
+    }
     const transaction = Setting.deepCopy(this.state.transaction);
     TransactionBackend.updateTransaction(this.state.transaction.owner, this.state.transactionName, transaction)
       .then((res) => {
@@ -72,7 +80,7 @@ class TransactionEditPage extends React.Component {
           }
         } else {
           Setting.showMessage("error", `${i18next.t("general:Failed to save")}: ${res.msg}`);
-          this.updatePaymentField("name", this.state.transactionName);
+          this.updateTransactionField("name", this.state.transactionName);
         }
       })
       .catch(error => {
@@ -81,6 +89,9 @@ class TransactionEditPage extends React.Component {
   }
 
   deleteTransaction() {
+    if (this.state.transaction === null) {
+      return;
+    }
     TransactionBackend.deleteTransaction(this.state.transaction)
       .then((res) => {
         if (res.status === "ok") {
@@ -101,36 +112,14 @@ class TransactionEditPage extends React.Component {
     return value;
   }
 
-  getApplication() {
-    ApplicationBackend.getApplication("admin", this.state.applicationName)
-      .then((res) => {
-        if (res.data === null) {
-          this.props.history.push("/404");
-          return;
-        }
+  updateTransactionField(key, value) {
+    value = this.parseTransactionField(key, value);
 
-        if (res.status === "error") {
-          Setting.showMessage("error", res.msg);
-          return;
-        }
-
-        const application = res.data;
-        if (application.grantTypes === null || application.grantTypes === undefined || application.grantTypes.length === 0) {
-          application.grantTypes = ["authorization_code"];
-        }
-
-        if (application.tags === null || application.tags === undefined) {
-          application.tags = [];
-        }
-
-        this.setState({
-          application: application,
-        });
-
-        this.getCerts(application);
-
-        this.getSamlMetadata(application.enableSamlPostBinding);
-      });
+    const transaction = this.state.transaction;
+    transaction[key] = value;
+    this.setState({
+      transaction: transaction,
+    });
   }
 
   renderTransaction() {
@@ -188,9 +177,7 @@ class TransactionEditPage extends React.Component {
             {Setting.getLabel(i18next.t("provider:Category"), i18next.t("provider:Category - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input disabled={true} value={this.state.transaction.category} onChange={e => {
-              this.updatePaymentField("displayName", e.target.value);
-            }} />
+            <Input disabled={true} value={this.state.transaction.category} />
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
@@ -285,13 +272,17 @@ class TransactionEditPage extends React.Component {
     return (
       <div>
         {
-          this.state.transaction !== null ? this.renderTransaction() : null
+          this.state.transaction !== null ? (
+            <>
+              {this.renderTransaction()}
+              <div style={{marginTop: "20px", marginLeft: "40px"}}>
+                <Button size="large" onClick={() => this.submitTransactionEdit(false)}>{i18next.t("general:Save")}</Button>
+                <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitTransactionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+                {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteTransaction()}>{i18next.t("general:Cancel")}</Button> : null}
+              </div>
+            </>
+          ) : null
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
-          <Button size="large" onClick={() => this.submitTransactionEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitTransactionEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteTransaction()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
       </div>
     );
   }
