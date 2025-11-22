@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/notification"
 	"github.com/casdoor/notify"
 )
@@ -45,16 +44,25 @@ func SendNotification(provider *Provider, content string) error {
 }
 
 // SendSsoLogoutNotifications sends logout notifications to all notification providers
-// configured in applications within the user's organization
+// configured in the user's signup application
 func SendSsoLogoutNotifications(user *User) error {
 	if user == nil {
 		return nil
 	}
 
-	// Get all applications in the user's organization
-	applications, err := GetOrganizationApplications("admin", user.Owner)
+	// If user's signup application is empty, don't send notifications
+	if user.SignupApplication == "" {
+		return nil
+	}
+
+	// Get the user's signup application
+	application, err := GetApplication(user.SignupApplication)
 	if err != nil {
-		return fmt.Errorf("failed to get organization applications: %w", err)
+		return fmt.Errorf("failed to get signup application: %w", err)
+	}
+
+	if application == nil {
+		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
 	}
 
 	// Prepare sanitized user data for notification
@@ -74,26 +82,21 @@ func SendSsoLogoutNotifications(user *User) error {
 	}
 	content := string(userData)
 
-	// Send notifications to all notification providers in each application
-	for _, app := range applications {
-		for _, providerItem := range app.Providers {
-			if providerItem.Provider == nil {
-				continue
-			}
+	// Send notifications to all notification providers in the signup application
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil {
+			continue
+		}
 
-			// Only send to notification providers
-			if providerItem.Provider.Category != "Notification" {
-				continue
-			}
+		// Only send to notification providers
+		if providerItem.Provider.Category != "Notification" {
+			continue
+		}
 
-			// Send the notification using the provider from the providerItem
-			err = SendNotification(providerItem.Provider, content)
-			if err != nil {
-				logs.Error("Failed to send SSO logout notification to provider %s/%s: %v", providerItem.Provider.Owner, providerItem.Provider.Name, err)
-				continue
-			}
-
-			logs.Debug("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", providerItem.Provider.Owner, providerItem.Provider.Name, user.Owner, user.Name)
+		// Send the notification using the provider from the providerItem
+		err = SendNotification(providerItem.Provider, content)
+		if err != nil {
+			return fmt.Errorf("failed to send SSO logout notification to provider %s/%s: %w", providerItem.Provider.Owner, providerItem.Provider.Name, err)
 		}
 	}
 

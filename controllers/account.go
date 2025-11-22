@@ -484,14 +484,18 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
-	// Send SSO logout notifications to all notification providers in organization applications
+	// Send SSO logout notifications to all notification providers in the user's signup application
 	userObj, err := object.GetUser(user)
 	if err != nil {
-		util.LogInfo(c.Ctx, "Failed to get user for SSO logout notification: %v", err)
-	} else if userObj != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if userObj != nil {
 		err = object.SendSsoLogoutNotifications(userObj)
 		if err != nil {
-			util.LogInfo(c.Ctx, "Failed to send SSO logout notifications: %v", err)
+			c.ResponseError(err.Error())
+			return
 		}
 	}
 
