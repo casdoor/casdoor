@@ -18,7 +18,6 @@ import * as Setting from "./Setting";
 import * as ProductBackend from "./backend/ProductBackend";
 import i18next from "i18next";
 
-const {Meta} = Card;
 const {Text, Title} = Typography;
 
 class ProductStorePage extends React.Component {
@@ -64,50 +63,54 @@ class ProductStorePage extends React.Component {
       <Col xs={24} sm={12} md={8} lg={6} key={`${product.owner}/${product.name}`} style={{marginBottom: "20px"}}>
         <Card
           hoverable
+          onClick={() => this.handleBuyProduct(product)}
+          style={{cursor: "pointer", height: "100%", display: "flex", flexDirection: "column"}}
           cover={
-            <img
-              alt={product.displayName}
-              src={product.image}
-              style={{height: "200px", objectFit: "cover"}}
-            />
+            <div style={{height: "200px", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f0f0f0"}}>
+              <img
+                alt={product.displayName}
+                src={product.image}
+                style={{width: "100%", height: "100%", objectFit: "contain"}}
+              />
+            </div>
           }
           actions={[
             <Button
               key="buy"
               type="primary"
-              onClick={() => this.handleBuyProduct(product)}
-              style={{width: "90%"}}
+              onClick={(e) => {
+                e.stopPropagation();
+                this.handleBuyProduct(product);
+              }}
             >
               {i18next.t("product:Buy")}
             </Button>,
           ]}
+          bodyStyle={{flex: 1, display: "flex", flexDirection: "column"}}
         >
-          <Meta
-            title={<Title level={5} style={{marginBottom: 8}}>{Setting.getLanguageText(product.displayName)}</Title>}
-            description={
-              <div>
-                <Text style={{display: "block", marginBottom: 8}} ellipsis={{rows: 2}}>
-                  {Setting.getLanguageText(product.detail)}
+          <div style={{flex: 1, display: "flex", flexDirection: "column"}}>
+            <Title level={5} ellipsis={{rows: 2}} style={{marginBottom: 8, minHeight: "56px"}}>
+              {Setting.getLanguageText(product.displayName)}
+            </Title>
+            <Text style={{display: "block", marginBottom: 8, minHeight: "44px"}} ellipsis={{rows: 2}}>
+              {Setting.getLanguageText(product.detail)}
+            </Text>
+            {product.tag && (
+              <Tag color="blue" style={{marginBottom: 8}}>{product.tag}</Tag>
+            )}
+            <div style={{marginTop: "auto"}}>
+              <div style={{marginBottom: 8}}>
+                <Text strong style={{fontSize: "18px", color: "#ff4d4f"}}>
+                  {Setting.getCurrencyWithFlag(product.currency)} {Setting.getCurrencySymbol(product.currency)}{product.price}
                 </Text>
-                {product.tag && (
-                  <Tag color="blue" style={{marginBottom: 8}}>{product.tag}</Tag>
-                )}
-                <div style={{marginBottom: 8}}>
-                  <Text strong style={{fontSize: "18px", color: "#ff4d4f"}}>
-                    {Setting.getCurrencySymbol(product.currency)}{product.price}
-                  </Text>
-                  <Text type="secondary" style={{marginLeft: 8}}>
-                    {Setting.getCurrencyText(product)}
-                  </Text>
-                </div>
-                <div>
-                  <Text type="secondary" style={{fontSize: "12px"}}>
-                    {i18next.t("product:Quantity")}: {product.quantity} | {i18next.t("product:Sold")}: {product.sold}
-                  </Text>
-                </div>
               </div>
-            }
-          />
+              <div>
+                <Text type="secondary" style={{fontSize: "12px"}}>
+                  {i18next.t("product:Sold")}: {product.sold}
+                </Text>
+              </div>
+            </div>
+          </div>
         </Card>
       </Col>
     );
@@ -116,9 +119,6 @@ class ProductStorePage extends React.Component {
   render() {
     return (
       <div>
-        <Title level={2} style={{marginBottom: 24}}>
-          {i18next.t("general:Product Store")}
-        </Title>
         <Row gutter={[16, 16]}>
           {this.state.loading ? (
             <Col span={24}>
