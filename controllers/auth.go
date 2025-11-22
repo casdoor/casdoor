@@ -867,6 +867,11 @@ func (c *ApiController) Login() {
 						return
 					}
 
+					// Handle UseEmailAsUsername for OAuth and Web3
+					if organization.UseEmailAsUsername && userInfo.Email != "" {
+						userInfo.Username = userInfo.Email
+					}
+
 					// Handle username conflicts
 					var tmpUser *object.User
 					tmpUser, err = object.GetUser(util.GetId(application.Organization, userInfo.Username))
