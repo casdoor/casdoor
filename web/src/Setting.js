@@ -435,11 +435,11 @@ export const OtherProviderInfo = {
   },
 };
 
-export const UserFields = ["owner", "name", "id", "external_id", "display_name", "first_name",
-  "last_name", "avatar", "type", "password", "password_salt", "password_type",
-  "avatar_type", "permanent_avatar", "email", "email_verified", "phone", "country_code", "region", "location", "address",
-  "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday",
-  "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online", "is_admin",
+export const UserFields = ["owner", "name", "display_name", "id", "type", "email", "country_code", "phone", "gender",
+  "is_admin", "homepage", "birthday", "password", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
+  "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
+  "affiliation", "title", "id_card_type", "id_card", "bio", "tag", "language",
+  "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
   "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
   "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
   "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs", "baidu", "alipay", "casdoor", "infoflow", "apple",
@@ -532,6 +532,9 @@ export function getUserColumns() {
         .replace("Ip", "IP")
         .replace("Id", "ID")
         .replace("id", "ID");
+    }
+    if (transField === "Owner") {
+      transField = "Organization";
     }
     const transFieldItem = items.find(item => item.name === transField);
     if (transFieldItem === undefined) {
