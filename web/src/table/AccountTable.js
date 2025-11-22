@@ -91,6 +91,7 @@ class AccountTable extends React.Component {
       {name: "Birthday", label: i18next.t("user:Birthday")},
       {name: "Education", label: i18next.t("user:Education")},
       {name: "Balance", label: i18next.t("user:Balance")},
+      {name: "Balance currency", label: i18next.t("user:Balance currency")},
       {name: "Transactions", label: i18next.t("transaction:Transactions")},
       {name: "Score", label: i18next.t("user:Score")},
       {name: "Karma", label: i18next.t("user:Karma")},
