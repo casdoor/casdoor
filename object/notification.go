@@ -21,7 +21,6 @@ import (
 
 	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/notification"
-	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/notify"
 )
 
@@ -87,25 +86,14 @@ func SendSsoLogoutNotifications(user *User) error {
 				continue
 			}
 
-			// Get the full provider object
-			provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
+			// Send the notification using the provider from the providerItem
+			err = SendNotification(providerItem.Provider, content)
 			if err != nil {
-				logs.Info("Failed to get provider %s/%s for SSO logout notification: %v", providerItem.Owner, providerItem.Name, err)
+				logs.Info("Failed to send SSO logout notification to provider %s/%s: %v", providerItem.Provider.Owner, providerItem.Provider.Name, err)
 				continue
 			}
 
-			if provider == nil {
-				continue
-			}
-
-			// Send the notification
-			err = SendNotification(provider, content)
-			if err != nil {
-				logs.Info("Failed to send SSO logout notification to provider %s/%s: %v", provider.Owner, provider.Name, err)
-				continue
-			}
-
-			logs.Info("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", provider.Owner, provider.Name, user.Owner, user.Name)
+			logs.Info("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", providerItem.Provider.Owner, providerItem.Provider.Name, user.Owner, user.Name)
 		}
 	}
 
