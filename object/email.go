@@ -16,10 +16,22 @@
 
 package object
 
-import "github.com/casdoor/casdoor/email"
+import (
+	"fmt"
+
+	"github.com/casdoor/casdoor/email"
+)
 
 // TestSmtpServer Test the SMTP server
-func TestSmtpServer(provider *Provider) error {
+func TestSmtpServer(provider *Provider) (err error) {
+	// Recover from any panic that might occur during SMTP connection
+	// This is especially important when proxy is enabled but not properly configured
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("SMTP connection failed: %v. Please check your SMTP configuration and proxy settings", r)
+		}
+	}()
+
 	smtpEmailProvider := email.NewSmtpEmailProvider(provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.Type, provider.DisableSsl, provider.EnableProxy)
 	sender, err := smtpEmailProvider.Dialer.Dial()
 	if err != nil {
@@ -30,7 +42,15 @@ func TestSmtpServer(provider *Provider) error {
 	return nil
 }
 
-func SendEmail(provider *Provider, title string, content string, dest []string, sender string) error {
+func SendEmail(provider *Provider, title string, content string, dest []string, sender string) (err error) {
+	// Recover from any panic that might occur during email sending
+	// This is especially important when proxy is enabled but not properly configured
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("Email sending failed: %v. Please check your email provider configuration and proxy settings", r)
+		}
+	}()
+
 	emailProvider := email.GetEmailProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Host, provider.Port, provider.DisableSsl, provider.Endpoint, provider.Method, provider.HttpHeaders, provider.UserMapping, provider.IssuerUrl, provider.EnableProxy)
 
 	fromAddress := provider.ClientId2
