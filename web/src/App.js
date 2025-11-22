@@ -158,25 +158,133 @@ class App extends Component {
     }
   }
 
+  shouldFlattenMenu() {
+    const MAX_ITEMS_FOR_FLAT_MENU = 7;
+    const organization = this.state.account?.organization;
+    const navItems = Setting.isLocalAdminUser(this.state.account) ? organization?.navItems : (organization?.userNavItems ?? []);
+    
+    // If navItems is "all" or not configured, don't flatten
+    if (!Array.isArray(navItems) || navItems?.includes("all")) {
+      return false;
+    }
+    
+    // Count how many items would be visible
+    const count = navItems.length;
+    return count <= MAX_ITEMS_FOR_FLAT_MENU;
+  }
+
   updateMenuKey() {
     const uri = location.pathname;
     this.setState({
       uri: uri,
     });
+    
+    const isFlatMenu = this.shouldFlattenMenu();
+    
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
-      this.setState({selectedMenuKey: "/home"});
+      if (isFlatMenu) {
+        if (uri === "/") {
+          this.setState({selectedMenuKey: "/"});
+        } else if (uri.includes("/shortcuts")) {
+          this.setState({selectedMenuKey: "/shortcuts"});
+        } else if (uri.includes("/apps")) {
+          this.setState({selectedMenuKey: "/apps"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/home"});
+      }
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
-      this.setState({selectedMenuKey: "/orgs"});
+      if (isFlatMenu) {
+        if (uri.includes("/organizations")) {
+          this.setState({selectedMenuKey: "/organizations"});
+        } else if (uri.includes("/groups")) {
+          this.setState({selectedMenuKey: "/groups"});
+        } else if (uri.includes("/users")) {
+          this.setState({selectedMenuKey: "/users"});
+        } else if (uri.includes("/invitations")) {
+          this.setState({selectedMenuKey: "/invitations"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/orgs"});
+      }
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
-      this.setState({selectedMenuKey: "/identity"});
+      if (isFlatMenu) {
+        if (uri.includes("/applications")) {
+          this.setState({selectedMenuKey: "/applications"});
+        } else if (uri.includes("/providers")) {
+          this.setState({selectedMenuKey: "/providers"});
+        } else if (uri.includes("/resources")) {
+          this.setState({selectedMenuKey: "/resources"});
+        } else if (uri.includes("/certs")) {
+          this.setState({selectedMenuKey: "/certs"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/identity"});
+      }
     } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
-      this.setState({selectedMenuKey: "/auth"});
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
-      this.setState({selectedMenuKey: "/logs"});
+      if (isFlatMenu) {
+        if (uri.includes("/roles")) {
+          this.setState({selectedMenuKey: "/roles"});
+        } else if (uri.includes("/permissions")) {
+          this.setState({selectedMenuKey: "/permissions"});
+        } else if (uri.includes("/models")) {
+          this.setState({selectedMenuKey: "/models"});
+        } else if (uri.includes("/adapters")) {
+          this.setState({selectedMenuKey: "/adapters"});
+        } else if (uri.includes("/enforcers")) {
+          this.setState({selectedMenuKey: "/enforcers"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/auth"});
+      }
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
+      if (isFlatMenu) {
+        if (uri.includes("/sessions")) {
+          this.setState({selectedMenuKey: "/sessions"});
+        } else if (uri.includes("/records")) {
+          this.setState({selectedMenuKey: "/records"});
+        } else if (uri.includes("/tokens")) {
+          this.setState({selectedMenuKey: "/tokens"});
+        } else if (uri.includes("/verifications")) {
+          this.setState({selectedMenuKey: "/verifications"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/logs"});
+      }
     } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
-      this.setState({selectedMenuKey: "/business"});
+      if (isFlatMenu) {
+        if (uri.includes("/products")) {
+          this.setState({selectedMenuKey: "/products"});
+        } else if (uri.includes("/orders")) {
+          this.setState({selectedMenuKey: "/orders"});
+        } else if (uri.includes("/payments")) {
+          this.setState({selectedMenuKey: "/payments"});
+        } else if (uri.includes("/plans")) {
+          this.setState({selectedMenuKey: "/plans"});
+        } else if (uri.includes("/pricings")) {
+          this.setState({selectedMenuKey: "/pricings"});
+        } else if (uri.includes("/subscriptions")) {
+          this.setState({selectedMenuKey: "/subscriptions"});
+        } else if (uri.includes("/transactions")) {
+          this.setState({selectedMenuKey: "/transactions"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/business"});
+      }
     } else if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks")) {
-      this.setState({selectedMenuKey: "/admin"});
+      if (isFlatMenu) {
+        if (uri.includes("/sysinfo")) {
+          this.setState({selectedMenuKey: "/sysinfo"});
+        } else if (uri.includes("/forms")) {
+          this.setState({selectedMenuKey: "/forms"});
+        } else if (uri.includes("/syncers")) {
+          this.setState({selectedMenuKey: "/syncers"});
+        } else if (uri.includes("/webhooks")) {
+          this.setState({selectedMenuKey: "/webhooks"});
+        }
+      } else {
+        this.setState({selectedMenuKey: "/admin"});
+      }
     } else if (uri.includes("/signup")) {
       this.setState({selectedMenuKey: "/signup"});
     } else if (uri.includes("/login")) {
