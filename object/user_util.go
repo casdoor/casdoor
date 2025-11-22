@@ -188,7 +188,7 @@ func GetUserOAuthToken(user *User, providerType string) (string, error) {
 	if user == nil {
 		return "", fmt.Errorf("user is nil")
 	}
-	
+
 	tokenJson := getUserProperty(user, fmt.Sprintf("oauth_%s_token", providerType))
 	return tokenJson, nil
 }
