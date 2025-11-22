@@ -16,8 +16,12 @@ package object
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
+	"github.com/beego/beego/logs"
 	"github.com/casdoor/casdoor/notification"
+	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/notify"
 )
 
@@ -39,4 +43,61 @@ func SendNotification(provider *Provider, content string) error {
 
 	err = client.Send(context.Background(), "", content)
 	return err
+}
+
+// SendSsoLogoutNotifications sends logout notifications to all notification providers
+// configured in applications within the user's organization
+func SendSsoLogoutNotifications(user *User) error {
+	if user == nil {
+		return nil
+	}
+
+	// Get all applications in the user's organization
+	applications, err := GetOrganizationApplications("admin", user.Owner)
+	if err != nil {
+		return fmt.Errorf("failed to get organization applications: %w", err)
+	}
+
+	// Prepare user data for notification
+	userData, err := json.Marshal(user)
+	if err != nil {
+		return fmt.Errorf("failed to marshal user data: %w", err)
+	}
+	content := string(userData)
+
+	// Send notifications to all notification providers in each application
+	for _, app := range applications {
+		for _, providerItem := range app.Providers {
+			if providerItem.Provider == nil {
+				continue
+			}
+
+			// Only send to notification providers
+			if providerItem.Provider.Category != "Notification" {
+				continue
+			}
+
+			// Get the full provider object
+			provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
+			if err != nil {
+				logs.Info("Failed to get provider %s/%s: %v", providerItem.Owner, providerItem.Name, err)
+				continue
+			}
+
+			if provider == nil {
+				continue
+			}
+
+			// Send the notification
+			err = SendNotification(provider, content)
+			if err != nil {
+				logs.Info("Failed to send SSO logout notification to provider %s/%s: %v", provider.Owner, provider.Name, err)
+				continue
+			}
+
+			logs.Info("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", provider.Owner, provider.Name, user.Owner, user.Name)
+		}
+	}
+
+	return nil
 }
