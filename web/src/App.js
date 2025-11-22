@@ -183,118 +183,122 @@ class App extends Component {
     return count <= Conf.MaxItemsForFlatMenu;
   }
 
+  getSelectedMenuKeyForFlatMenu(uri) {
+    // For flattened menu, return the actual child path instead of parent group
+    if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
+      if (uri === "/") {
+        return "/";
+      } else if (uri.includes("/shortcuts")) {
+        return "/shortcuts";
+      } else if (uri.includes("/apps")) {
+        return "/apps";
+      }
+    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
+      if (uri.includes("/organizations")) {
+        return "/organizations";
+      } else if (uri.includes("/groups")) {
+        return "/groups";
+      } else if (uri.includes("/users")) {
+        return "/users";
+      } else if (uri.includes("/invitations")) {
+        return "/invitations";
+      }
+    } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
+      if (uri.includes("/applications")) {
+        return "/applications";
+      } else if (uri.includes("/providers")) {
+        return "/providers";
+      } else if (uri.includes("/resources")) {
+        return "/resources";
+      } else if (uri.includes("/certs")) {
+        return "/certs";
+      }
+    } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
+      if (uri.includes("/roles")) {
+        return "/roles";
+      } else if (uri.includes("/permissions")) {
+        return "/permissions";
+      } else if (uri.includes("/models")) {
+        return "/models";
+      } else if (uri.includes("/adapters")) {
+        return "/adapters";
+      } else if (uri.includes("/enforcers")) {
+        return "/enforcers";
+      }
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
+      if (uri.includes("/sessions")) {
+        return "/sessions";
+      } else if (uri.includes("/records")) {
+        return "/records";
+      } else if (uri.includes("/tokens")) {
+        return "/tokens";
+      } else if (uri.includes("/verifications")) {
+        return "/verifications";
+      }
+    } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
+      if (uri.includes("/products")) {
+        return "/products";
+      } else if (uri.includes("/orders")) {
+        return "/orders";
+      } else if (uri.includes("/payments")) {
+        return "/payments";
+      } else if (uri.includes("/plans")) {
+        return "/plans";
+      } else if (uri.includes("/pricings")) {
+        return "/pricings";
+      } else if (uri.includes("/subscriptions")) {
+        return "/subscriptions";
+      } else if (uri.includes("/transactions")) {
+        return "/transactions";
+      }
+    } else if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks")) {
+      if (uri.includes("/sysinfo")) {
+        return "/sysinfo";
+      } else if (uri.includes("/forms")) {
+        return "/forms";
+      } else if (uri.includes("/syncers")) {
+        return "/syncers";
+      } else if (uri.includes("/webhooks")) {
+        return "/webhooks";
+      }
+    } else if (uri.includes("/signup")) {
+      return "/signup";
+    } else if (uri.includes("/login")) {
+      return "/login";
+    } else if (uri.includes("/result")) {
+      return "/result";
+    }
+    return -1;
+  }
+
   updateMenuKey() {
     const uri = location.pathname;
     this.setState({
       uri: uri,
     });
     
-    const isFlatMenu = this.shouldFlattenMenu();
+    // Check if menu should be flattened and use appropriate key selection
+    if (this.shouldFlattenMenu()) {
+      const selectedKey = this.getSelectedMenuKeyForFlatMenu(uri);
+      this.setState({selectedMenuKey: selectedKey});
+      return;
+    }
     
+    // Original logic for grouped menu
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
-      if (isFlatMenu) {
-        if (uri === "/") {
-          this.setState({selectedMenuKey: "/"});
-        } else if (uri.includes("/shortcuts")) {
-          this.setState({selectedMenuKey: "/shortcuts"});
-        } else if (uri.includes("/apps")) {
-          this.setState({selectedMenuKey: "/apps"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/home"});
-      }
+      this.setState({selectedMenuKey: "/home"});
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
-      if (isFlatMenu) {
-        if (uri.includes("/organizations")) {
-          this.setState({selectedMenuKey: "/organizations"});
-        } else if (uri.includes("/groups")) {
-          this.setState({selectedMenuKey: "/groups"});
-        } else if (uri.includes("/users")) {
-          this.setState({selectedMenuKey: "/users"});
-        } else if (uri.includes("/invitations")) {
-          this.setState({selectedMenuKey: "/invitations"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/orgs"});
-      }
+      this.setState({selectedMenuKey: "/orgs"});
     } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
-      if (isFlatMenu) {
-        if (uri.includes("/applications")) {
-          this.setState({selectedMenuKey: "/applications"});
-        } else if (uri.includes("/providers")) {
-          this.setState({selectedMenuKey: "/providers"});
-        } else if (uri.includes("/resources")) {
-          this.setState({selectedMenuKey: "/resources"});
-        } else if (uri.includes("/certs")) {
-          this.setState({selectedMenuKey: "/certs"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/identity"});
-      }
+      this.setState({selectedMenuKey: "/identity"});
     } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
-      if (isFlatMenu) {
-        if (uri.includes("/roles")) {
-          this.setState({selectedMenuKey: "/roles"});
-        } else if (uri.includes("/permissions")) {
-          this.setState({selectedMenuKey: "/permissions"});
-        } else if (uri.includes("/models")) {
-          this.setState({selectedMenuKey: "/models"});
-        } else if (uri.includes("/adapters")) {
-          this.setState({selectedMenuKey: "/adapters"});
-        } else if (uri.includes("/enforcers")) {
-          this.setState({selectedMenuKey: "/enforcers"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/auth"});
-      }
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
-      if (isFlatMenu) {
-        if (uri.includes("/sessions")) {
-          this.setState({selectedMenuKey: "/sessions"});
-        } else if (uri.includes("/records")) {
-          this.setState({selectedMenuKey: "/records"});
-        } else if (uri.includes("/tokens")) {
-          this.setState({selectedMenuKey: "/tokens"});
-        } else if (uri.includes("/verifications")) {
-          this.setState({selectedMenuKey: "/verifications"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/logs"});
-      }
+      this.setState({selectedMenuKey: "/auth"});
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
+      this.setState({selectedMenuKey: "/logs"});
     } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
-      if (isFlatMenu) {
-        if (uri.includes("/products")) {
-          this.setState({selectedMenuKey: "/products"});
-        } else if (uri.includes("/orders")) {
-          this.setState({selectedMenuKey: "/orders"});
-        } else if (uri.includes("/payments")) {
-          this.setState({selectedMenuKey: "/payments"});
-        } else if (uri.includes("/plans")) {
-          this.setState({selectedMenuKey: "/plans"});
-        } else if (uri.includes("/pricings")) {
-          this.setState({selectedMenuKey: "/pricings"});
-        } else if (uri.includes("/subscriptions")) {
-          this.setState({selectedMenuKey: "/subscriptions"});
-        } else if (uri.includes("/transactions")) {
-          this.setState({selectedMenuKey: "/transactions"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/business"});
-      }
+      this.setState({selectedMenuKey: "/business"});
     } else if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks")) {
-      if (isFlatMenu) {
-        if (uri.includes("/sysinfo")) {
-          this.setState({selectedMenuKey: "/sysinfo"});
-        } else if (uri.includes("/forms")) {
-          this.setState({selectedMenuKey: "/forms"});
-        } else if (uri.includes("/syncers")) {
-          this.setState({selectedMenuKey: "/syncers"});
-        } else if (uri.includes("/webhooks")) {
-          this.setState({selectedMenuKey: "/webhooks"});
-        }
-      } else {
-        this.setState({selectedMenuKey: "/admin"});
-      }
+      this.setState({selectedMenuKey: "/admin"});
     } else if (uri.includes("/signup")) {
       this.setState({selectedMenuKey: "/signup"});
     } else if (uri.includes("/login")) {
