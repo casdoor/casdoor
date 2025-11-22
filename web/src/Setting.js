@@ -435,8 +435,8 @@ export const OtherProviderInfo = {
   },
 };
 
-export const UserFields = ["owner", "name", "display_name", "id", "type", "email", "country_code", "phone", "gender",
-  "is_admin", "homepage", "birthday", "password", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
+export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
+  "is_admin", "homepage", "birthday", "gender", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
   "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
   "affiliation", "title", "id_card_type", "id_card", "bio", "tag", "language",
   "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
