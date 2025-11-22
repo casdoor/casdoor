@@ -293,7 +293,7 @@ class App extends Component {
       this.setState({selectedMenuKey: "/identity"});
     } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
       this.setState({selectedMenuKey: "/auth"});
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
       this.setState({selectedMenuKey: "/logs"});
     } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
       this.setState({selectedMenuKey: "/business"});
