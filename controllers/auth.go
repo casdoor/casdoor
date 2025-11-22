@@ -724,7 +724,7 @@ func (c *ApiController) Login() {
 			return
 		}
 		userInfo := &idp.UserInfo{}
-		var token *oauth2.Token
+		var token *oauth2.Token // Will be nil for SAML, set for OAuth/Web3
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)

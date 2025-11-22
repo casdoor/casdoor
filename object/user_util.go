@@ -241,7 +241,8 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 
-	// Store OAuth provider token if provided (only for OAuth/Web3 providers)
+	// Store OAuth provider token if provided
+	// Token will be nil for SAML providers and is only set for OAuth/Web3 providers
 	if oauthToken != nil {
 		tokenJson, err := jsoniter.Marshal(oauthToken)
 		if err != nil {
