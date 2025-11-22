@@ -363,10 +363,36 @@ function ManagementPage(props) {
       return item;
     });
 
-    return resFiltered.filter(item => {
+    const filteredResult = resFiltered.filter(item => {
       if (item.key === "#" || item.key === "logo") {return true;}
       return Array.isArray(item.children) && item.children.length > 0;
     });
+
+    // Count total end items (leaf nodes)
+    let totalEndItems = 0;
+    filteredResult.forEach(item => {
+      if (Array.isArray(item.children)) {
+        totalEndItems += item.children.length;
+      }
+    });
+
+    // If total end items <= 7, flatten the menu (show only one level)
+    if (totalEndItems <= 7) {
+      const flattenedResult = [];
+      filteredResult.forEach(item => {
+        if (item.key === "#" || item.key === "logo") {
+          flattenedResult.push(item);
+        } else if (Array.isArray(item.children)) {
+          // Add children directly without parent group
+          item.children.forEach(child => {
+            flattenedResult.push(child);
+          });
+        }
+      });
+      return flattenedResult;
+    }
+
+    return filteredResult;
   }
 
   function renderLoginIfNotLoggedIn(component) {
