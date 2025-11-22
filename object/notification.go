@@ -89,11 +89,11 @@ func SendSsoLogoutNotifications(user *User) error {
 			// Send the notification using the provider from the providerItem
 			err = SendNotification(providerItem.Provider, content)
 			if err != nil {
-				logs.Info("Failed to send SSO logout notification to provider %s/%s: %v", providerItem.Provider.Owner, providerItem.Provider.Name, err)
+				logs.Error("Failed to send SSO logout notification to provider %s/%s: %v", providerItem.Provider.Owner, providerItem.Provider.Name, err)
 				continue
 			}
 
-			logs.Info("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", providerItem.Provider.Owner, providerItem.Provider.Name, user.Owner, user.Name)
+			logs.Debug("Successfully sent SSO logout notification to provider %s/%s for user %s/%s", providerItem.Provider.Owner, providerItem.Provider.Name, user.Owner, user.Name)
 		}
 	}
 
