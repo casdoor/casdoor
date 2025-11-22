@@ -30,13 +30,14 @@ class ProductStorePage extends React.Component {
     };
   }
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.getProducts();
   }
 
   getProducts() {
+    const pageSize = 100; // Max products to display in the store
     this.setState({loading: true});
-    ProductBackend.getProducts("", 1, 100, "state", "Published", "", "")
+    ProductBackend.getProducts("", 1, pageSize, "state", "Published", "", "")
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
