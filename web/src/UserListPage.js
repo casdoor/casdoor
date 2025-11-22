@@ -246,7 +246,10 @@ class UserListPage extends BaseListPage {
               },
             })
               .then((res) => res.json())
-              .then((res) => {uploadThis.uploadFile(res);});
+              .then((res) => {uploadThis.uploadFile(res);})
+              .catch((error) => {
+                Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${error.message}`);
+              });
           }}
           cancelText={i18next.t("general:Cancel")}
           onCancel={() => {this.setState({showUploadModal: false, uploadJsonData: [], uploadColumns: []});}}
