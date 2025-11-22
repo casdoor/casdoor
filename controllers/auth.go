@@ -48,6 +48,26 @@ func codeToResponse(code *object.Code) *Response {
 	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
+// storeOAuthToken stores the OAuth provider token in the user's OriginalToken field
+func storeOAuthToken(user *object.User, token *oauth2.Token) error {
+	if token == nil {
+		return nil
+	}
+
+	tokenJson, err := json.Marshal(token)
+	if err != nil {
+		return fmt.Errorf("failed to marshal OAuth token: %w", err)
+	}
+
+	user.OriginalToken = string(tokenJson)
+	_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+	if err != nil {
+		return fmt.Errorf("failed to update user with OAuth token: %w", err)
+	}
+
+	return nil
+}
+
 func tokenToResponse(token *object.Token) *Response {
 	if token.AccessToken == "" {
 		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
