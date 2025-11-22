@@ -189,6 +189,10 @@ function ManagementPage(props) {
     return !Array.isArray(widgetItems) || !!widgetItems?.includes("all");
   }
 
+  function isSpecialMenuItem(item) {
+    return item.key === "#" || item.key === "logo";
+  }
+
   function renderWidgets() {
     const widgets = [
       Setting.getItem(<ThemeSelect themeAlgorithm={props.themeAlgorithm} onChange={props.setLogoAndThemeAlgorithm} />, "theme"),
@@ -363,10 +367,36 @@ function ManagementPage(props) {
       return item;
     });
 
-    return resFiltered.filter(item => {
-      if (item.key === "#" || item.key === "logo") {return true;}
+    const filteredResult = resFiltered.filter(item => {
+      if (isSpecialMenuItem(item)) {return true;}
       return Array.isArray(item.children) && item.children.length > 0;
     });
+
+    // Count total end items (leaf nodes)
+    let totalEndItems = 0;
+    filteredResult.forEach(item => {
+      if (Array.isArray(item.children)) {
+        totalEndItems += item.children.length;
+      }
+    });
+
+    // If total end items <= MaxItemsForFlatMenu, flatten the menu (show only one level)
+    if (totalEndItems <= Conf.MaxItemsForFlatMenu) {
+      const flattenedResult = [];
+      filteredResult.forEach(item => {
+        if (isSpecialMenuItem(item)) {
+          flattenedResult.push(item);
+        } else if (Array.isArray(item.children)) {
+          // Add children directly without parent group
+          item.children.forEach(child => {
+            flattenedResult.push(child);
+          });
+        }
+      });
+      return flattenedResult;
+    }
+
+    return filteredResult;
   }
 
   function renderLoginIfNotLoggedIn(component) {

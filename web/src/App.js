@@ -158,11 +158,133 @@ class App extends Component {
     }
   }
 
+  shouldFlattenMenu() {
+    const organization = this.state.account?.organization;
+    const navItems = Setting.isLocalAdminUser(this.state.account) ? organization?.navItems : (organization?.userNavItems ?? []);
+
+    // If navItems is "all" or not configured, don't flatten
+    if (!Array.isArray(navItems) || navItems?.includes("all")) {
+      return false;
+    }
+
+    // Count how many valid menu items would be visible
+    // Filter out any invalid or non-existent menu items
+    const validMenuItems = [
+      "/", "/shortcuts", "/apps", // Home group
+      "/organizations", "/groups", "/users", "/invitations", // User Management
+      "/applications", "/providers", "/resources", "/certs", // Identity
+      "/roles", "/permissions", "/models", "/adapters", "/enforcers", // Authorization
+      "/sessions", "/records", "/tokens", "/verifications", // Logging & Auditing
+      "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
+      "/sysinfo", "/forms", "/syncers", "/webhooks", "/swagger", // Admin
+    ];
+
+    const count = navItems.filter(item => validMenuItems.includes(item)).length;
+    return count <= Conf.MaxItemsForFlatMenu;
+  }
+
+  getSelectedMenuKeyForFlatMenu(uri) {
+    // For flattened menu, return the actual child path instead of parent group
+    if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
+      if (uri === "/") {
+        return "/";
+      } else if (uri.includes("/shortcuts")) {
+        return "/shortcuts";
+      } else if (uri.includes("/apps")) {
+        return "/apps";
+      }
+    } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
+      if (uri.includes("/organizations")) {
+        return "/organizations";
+      } else if (uri.includes("/groups")) {
+        return "/groups";
+      } else if (uri.includes("/users")) {
+        return "/users";
+      } else if (uri.includes("/invitations")) {
+        return "/invitations";
+      }
+    } else if (uri.includes("/applications") || uri.includes("/providers") || uri.includes("/resources") || uri.includes("/certs")) {
+      if (uri.includes("/applications")) {
+        return "/applications";
+      } else if (uri.includes("/providers")) {
+        return "/providers";
+      } else if (uri.includes("/resources")) {
+        return "/resources";
+      } else if (uri.includes("/certs")) {
+        return "/certs";
+      }
+    } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
+      if (uri.includes("/roles")) {
+        return "/roles";
+      } else if (uri.includes("/permissions")) {
+        return "/permissions";
+      } else if (uri.includes("/models")) {
+        return "/models";
+      } else if (uri.includes("/adapters")) {
+        return "/adapters";
+      } else if (uri.includes("/enforcers")) {
+        return "/enforcers";
+      }
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
+      if (uri.includes("/sessions")) {
+        return "/sessions";
+      } else if (uri.includes("/records")) {
+        return "/records";
+      } else if (uri.includes("/tokens")) {
+        return "/tokens";
+      } else if (uri.includes("/verifications")) {
+        return "/verifications";
+      }
+    } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
+      if (uri.includes("/products")) {
+        return "/products";
+      } else if (uri.includes("/orders")) {
+        return "/orders";
+      } else if (uri.includes("/payments")) {
+        return "/payments";
+      } else if (uri.includes("/plans")) {
+        return "/plans";
+      } else if (uri.includes("/pricings")) {
+        return "/pricings";
+      } else if (uri.includes("/subscriptions")) {
+        return "/subscriptions";
+      } else if (uri.includes("/transactions")) {
+        return "/transactions";
+      }
+    } else if (uri.includes("/sysinfo") || uri.includes("/forms") || uri.includes("/syncers") || uri.includes("/webhooks")) {
+      if (uri.includes("/sysinfo")) {
+        return "/sysinfo";
+      } else if (uri.includes("/forms")) {
+        return "/forms";
+      } else if (uri.includes("/syncers")) {
+        return "/syncers";
+      } else if (uri.includes("/webhooks")) {
+        return "/webhooks";
+      }
+    } else if (uri.includes("/signup")) {
+      return "/signup";
+    } else if (uri.includes("/login")) {
+      return "/login";
+    } else if (uri.includes("/result")) {
+      return "/result";
+    }
+    return -1;
+  }
+
   updateMenuKey() {
     const uri = location.pathname;
     this.setState({
       uri: uri,
     });
+
+    // Check if menu should be flattened and use appropriate key selection
+    if (this.shouldFlattenMenu()) {
+      const selectedKey = this.getSelectedMenuKeyForFlatMenu(uri);
+      this.setState({selectedMenuKey: selectedKey});
+      return;
+    }
+
+    // Original logic for grouped menu
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
       this.setState({selectedMenuKey: "/home"});
     } else if (uri.includes("/organizations") || uri.includes("/trees") || uri.includes("/groups") || uri.includes("/users") || uri.includes("/invitations")) {
@@ -171,7 +293,7 @@ class App extends Component {
       this.setState({selectedMenuKey: "/identity"});
     } else if (uri.includes("/roles") || uri.includes("/permissions") || uri.includes("/models") || uri.includes("/adapters") || uri.includes("/enforcers")) {
       this.setState({selectedMenuKey: "/auth"});
-    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions")) {
+    } else if (uri.includes("/records") || uri.includes("/tokens") || uri.includes("/sessions") || uri.includes("/verifications")) {
       this.setState({selectedMenuKey: "/logs"});
     } else if (uri.includes("/products") || uri.includes("/orders") || uri.includes("/payments") || uri.includes("/plans") || uri.includes("/pricings") || uri.includes("/subscriptions") || uri.includes("/transactions")) {
       this.setState({selectedMenuKey: "/business"});
