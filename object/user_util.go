@@ -30,6 +30,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
+	"golang.org/x/oauth2"
 )
 
 func GetUserByField(organizationName string, field string, value string) (*User, error) {
@@ -197,7 +198,7 @@ func GetUserOAuthToken(user *User, providerType string) (string, error) {
 	return tokenJson, nil
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, oauthToken interface{}, userMapping ...map[string]string) (bool, error) {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, oauthToken *oauth2.Token, userMapping ...map[string]string) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
