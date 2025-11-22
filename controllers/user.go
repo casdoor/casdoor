@@ -777,3 +777,62 @@ func (c *ApiController) RemoveUserFromGroup() {
 
 	c.ResponseOk(affected)
 }
+
+// GetUserOAuthToken
+// @Title GetUserOAuthToken
+// @Tag User API
+// @Description get OAuth provider token for a user
+// @Param   id     query    string  true        "The id (owner/name) of the user"
+// @Param   provider     query    string  true        "The OAuth provider type (e.g., GitHub, Google)"
+// @Success 200 {object} controllers.Response The Response object
+// @router /get-user-oauth-token [get]
+func (c *ApiController) GetUserOAuthToken() {
+	userId := c.Input().Get("id")
+	provider := c.Input().Get("provider")
+
+	if userId == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": id")
+		return
+	}
+
+	if provider == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": provider")
+		return
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return
+	}
+
+	// Security check: only allow users to get their own OAuth tokens or admins
+	currentUser := c.GetSessionUsername()
+	if currentUser == "" {
+		c.ResponseError(c.T("general:Please sign in first"))
+		return
+	}
+
+	if currentUser != user.GetId() && !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	tokenJson, err := object.GetUserOAuthToken(user, provider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if tokenJson == "" {
+		c.ResponseError(fmt.Sprintf("No OAuth token found for provider: %s", provider))
+		return
+	}
+
+	c.ResponseOk(tokenJson)
+}

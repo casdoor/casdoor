@@ -183,7 +183,17 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping ...map[string]string) (bool, error) {
+// GetUserOAuthToken retrieves the OAuth provider token for a user
+func GetUserOAuthToken(user *User, providerType string) (string, error) {
+	if user == nil {
+		return "", fmt.Errorf("user is nil")
+	}
+	
+	tokenJson := getUserProperty(user, fmt.Sprintf("oauth_%s_token", providerType))
+	return tokenJson, nil
+}
+
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, oauthToken interface{}, userMapping ...map[string]string) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -223,6 +233,15 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		setUserProperty(user, propertyName, userInfo.AvatarUrl)
 		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
 			user.Avatar = userInfo.AvatarUrl
+		}
+	}
+
+	// Store OAuth provider token if provided
+	if oauthToken != nil {
+		tokenJson, err := jsoniter.Marshal(oauthToken)
+		if err == nil {
+			propertyName := fmt.Sprintf("oauth_%s_token", providerType)
+			setUserProperty(user, propertyName, string(tokenJson))
 		}
 	}
 
