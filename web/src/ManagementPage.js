@@ -103,6 +103,7 @@ function ManagementPage(props) {
   const organization = props.account?.organization;
   const navItems = Setting.isLocalAdminUser(props.account) ? organization?.navItems : (organization?.userNavItems ?? []);
   const widgetItems = organization?.widgetItems;
+  const MAX_ITEMS_FOR_FLAT_MENU = 7;
 
   function logout() {
     AuthBackend.logout()
@@ -187,6 +188,10 @@ function ManagementPage(props) {
 
   function widgetItemsIsAll() {
     return !Array.isArray(widgetItems) || !!widgetItems?.includes("all");
+  }
+
+  function isSpecialMenuItem(item) {
+    return item.key === "#" || item.key === "logo";
   }
 
   function renderWidgets() {
@@ -364,7 +369,7 @@ function ManagementPage(props) {
     });
 
     const filteredResult = resFiltered.filter(item => {
-      if (item.key === "#" || item.key === "logo") {return true;}
+      if (isSpecialMenuItem(item)) {return true;}
       return Array.isArray(item.children) && item.children.length > 0;
     });
 
@@ -376,11 +381,11 @@ function ManagementPage(props) {
       }
     });
 
-    // If total end items <= 7, flatten the menu (show only one level)
-    if (totalEndItems <= 7) {
+    // If total end items <= MAX_ITEMS_FOR_FLAT_MENU, flatten the menu (show only one level)
+    if (totalEndItems <= MAX_ITEMS_FOR_FLAT_MENU) {
       const flattenedResult = [];
       filteredResult.forEach(item => {
-        if (item.key === "#" || item.key === "logo") {
+        if (isSpecialMenuItem(item)) {
           flattenedResult.push(item);
         } else if (Array.isArray(item.children)) {
           // Add children directly without parent group
