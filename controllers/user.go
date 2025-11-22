@@ -812,14 +812,10 @@ func (c *ApiController) GetUserOAuthToken() {
 	}
 
 	// Security check: only allow users to get their own OAuth tokens or admins
-	currentUser := c.GetSessionUsername()
-	if currentUser == "" {
-		c.ResponseError(c.T("general:Please sign in first"))
-		return
-	}
-
-	if currentUser != user.GetId() && !c.IsAdmin() {
-		c.ResponseError(c.T("auth:Unauthorized operation"))
+	requestUserId := c.GetSessionUsername()
+	hasPermission, err := object.CheckUserPermission(requestUserId, userId, true, c.GetAcceptLanguage())
+	if !hasPermission {
+		c.ResponseError(err.Error())
 		return
 	}
 
