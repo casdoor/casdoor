@@ -92,6 +92,7 @@ type User struct {
 	Karma             int      `json:"karma"`
 	Ranking           int      `json:"ranking"`
 	Balance           float64  `json:"balance"`
+	BalanceCredit     float64  `json:"balanceCredit"`
 	Currency          string   `xorm:"varchar(100)" json:"currency"`
 	BalanceCurrency   string   `xorm:"varchar(100)" json:"balanceCurrency"`
 	IsDefaultAvatar   bool     `json:"isDefaultAvatar"`
@@ -1490,9 +1491,10 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 
 	// Convert the balance amount from transaction currency to user's balance currency
 	balanceCurrency := user.BalanceCurrency
+	var org *Organization
 	if balanceCurrency == "" {
 		// Get organization's balance currency as fallback
-		org, err := getOrganization("admin", owner)
+		org, err = getOrganization("admin", owner)
 		if err == nil && org != nil && org.BalanceCurrency != "" {
 			balanceCurrency = org.BalanceCurrency
 		} else {
@@ -1501,7 +1503,33 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 	}
 	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
 
-	user.Balance = AddPrices(user.Balance, convertedBalance)
+	// Calculate new balance
+	newBalance := AddPrices(user.Balance, convertedBalance)
+
+	// Check balance credit limit
+	// User.BalanceCredit takes precedence over Organization.BalanceCredit
+	var balanceCredit float64
+	if user.BalanceCredit != 0 {
+		balanceCredit = user.BalanceCredit
+	} else {
+		// Get organization's balance credit as fallback
+		if org == nil {
+			org, err = getOrganization("admin", owner)
+			if err != nil {
+				return err
+			}
+		}
+		if org != nil {
+			balanceCredit = org.OrgBalanceCredit
+		}
+	}
+
+	// Validate new balance against credit limit
+	if newBalance < balanceCredit {
+		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would be below credit limit %v"), newBalance, balanceCredit)
+	}
+
+	user.Balance = newBalance
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
 }

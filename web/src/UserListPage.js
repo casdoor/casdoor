@@ -377,6 +377,16 @@ class UserListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("user:Balance credit"),
+        dataIndex: "balanceCredit",
+        key: "balanceCredit",
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text ?? 0;
+        },
+      },
+      {
         title: i18next.t("user:Balance currency"),
         dataIndex: "balanceCurrency",
         key: "balanceCurrency",

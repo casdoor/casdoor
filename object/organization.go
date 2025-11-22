@@ -90,9 +90,10 @@ type Organization struct {
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
 
-	OrgBalance      float64 `json:"orgBalance"`
-	UserBalance     float64 `json:"userBalance"`
-	BalanceCurrency string  `xorm:"varchar(100)" json:"balanceCurrency"`
+	OrgBalance       float64 `json:"orgBalance"`
+	UserBalance      float64 `json:"userBalance"`
+	OrgBalanceCredit float64 `json:"orgBalanceCredit"`
+	BalanceCurrency  string  `xorm:"varchar(100)" json:"balanceCurrency"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {
@@ -606,10 +607,18 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
 
 	var columns []string
+	var newBalance float64
 	if isOrgBalance {
-		organization.OrgBalance = AddPrices(organization.OrgBalance, convertedBalance)
+		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
+		// Check organization balance credit limit
+		if newBalance < organization.OrgBalanceCredit {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
+		}
+		organization.OrgBalance = newBalance
 		columns = []string{"org_balance"}
 	} else {
+		// User balance is just a sum of all users' balances, no credit limit check here
+		// Individual user credit limits are checked in UpdateUserBalance
 		organization.UserBalance = AddPrices(organization.UserBalance, convertedBalance)
 		columns = []string{"user_balance"}
 	}
