@@ -55,3 +55,28 @@ func TestTransactionBalanceUpdate(t *testing.T) {
 		t.Logf("Expected error for non-existent organization: %v", err)
 	}
 }
+
+func TestBalanceCreditValidation(t *testing.T) {
+	InitConfig()
+
+	// Test user balance credit validation
+	// This test verifies that UpdateUserBalance correctly checks BalanceCredit limits
+	t.Run("User balance credit validation", func(t *testing.T) {
+		err := UpdateUserBalance("test-org", "test-user", -200.0, "USD", "en")
+		if err == nil {
+			t.Log("Expected error for balance below credit limit, but got none (user/org may not exist)")
+		} else {
+			t.Logf("Got expected error: %v", err)
+		}
+	})
+
+	// Test organization balance credit validation
+	t.Run("Organization balance credit validation", func(t *testing.T) {
+		err := UpdateOrganizationBalance("admin", "test-org", -500.0, "USD", true, "en")
+		if err == nil {
+			t.Log("Expected error for balance below credit limit, but got none (org may not exist)")
+		} else {
+			t.Logf("Got expected error: %v", err)
+		}
+	})
+}

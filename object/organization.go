@@ -90,10 +90,10 @@ type Organization struct {
 	MfaRememberInHours int            `json:"mfaRememberInHours"`
 	AccountItems       []*AccountItem `xorm:"mediumtext" json:"accountItems"`
 
-	OrgBalance      float64 `json:"orgBalance"`
-	UserBalance     float64 `json:"userBalance"`
+	OrgBalance       float64 `json:"orgBalance"`
+	UserBalance      float64 `json:"userBalance"`
 	OrgBalanceCredit float64 `json:"orgBalanceCredit"`
-	BalanceCurrency string  `xorm:"varchar(100)" json:"balanceCurrency"`
+	BalanceCurrency  string  `xorm:"varchar(100)" json:"balanceCurrency"`
 }
 
 func GetOrganizationCount(owner, name, field, value string) (int64, error) {
