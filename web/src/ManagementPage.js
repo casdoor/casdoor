@@ -61,6 +61,7 @@ import SessionListPage from "./SessionListPage";
 import TokenListPage from "./TokenListPage";
 import TokenEditPage from "./TokenEditPage";
 import ProductListPage from "./ProductListPage";
+import ProductStorePage from "./ProductStorePage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
 import OrderListPage from "./OrderListPage";
@@ -321,6 +322,7 @@ function ManagementPage(props) {
     ]));
 
     res.push(Setting.getItem(<Link style={{color: textColor}} to="/products">{i18next.t("general:Business & Payments")}</Link>, "/business", <DollarTwoTone twoToneColor={twoToneColor} />, [
+      Setting.getItem(<Link to="/product-store">{i18next.t("general:Product Store")}</Link>, "/product-store"),
       Setting.getItem(<Link to="/products">{i18next.t("general:Products")}</Link>, "/products"),
       Setting.getItem(<Link to="/orders">{i18next.t("general:Orders")}</Link>, "/orders"),
       Setting.getItem(<Link to="/payments">{i18next.t("general:Payments")}</Link>, "/payments"),
@@ -425,6 +427,7 @@ function ManagementPage(props) {
         <Route exact path="/sessions" render={(props) => renderLoginIfNotLoggedIn(<SessionListPage account={account} {...props} />)} />
         <Route exact path="/tokens" render={(props) => renderLoginIfNotLoggedIn(<TokenListPage account={account} {...props} />)} />
         <Route exact path="/tokens/:tokenName" render={(props) => renderLoginIfNotLoggedIn(<TokenEditPage account={account} {...props} />)} />
+        <Route exact path="/product-store" render={(props) => renderLoginIfNotLoggedIn(<ProductStorePage account={account} {...props} />)} />
         <Route exact path="/products" render={(props) => renderLoginIfNotLoggedIn(<ProductListPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName" render={(props) => renderLoginIfNotLoggedIn(<ProductEditPage account={account} {...props} />)} />
         <Route exact path="/products/:organizationName/:productName/buy" render={(props) => renderLoginIfNotLoggedIn(<ProductBuyPage account={account} {...props} />)} />
