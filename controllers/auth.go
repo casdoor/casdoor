@@ -48,6 +48,26 @@ func codeToResponse(code *object.Code) *Response {
 	return &Response{Status: "ok", Msg: "", Data: code.Code}
 }
 
+// storeOAuthToken stores the OAuth provider token in the user's OriginalToken field
+func storeOAuthToken(user *object.User, token *oauth2.Token) error {
+	if token == nil {
+		return nil
+	}
+
+	tokenJson, err := json.Marshal(token)
+	if err != nil {
+		return fmt.Errorf("failed to marshal OAuth token: %w", err)
+	}
+
+	user.OriginalToken = string(tokenJson)
+	_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+	if err != nil {
+		return fmt.Errorf("failed to update user with OAuth token: %w", err)
+	}
+
+	return nil
+}
+
 func tokenToResponse(token *object.Token) *Response {
 	if token.AccessToken == "" {
 		return &Response{Status: "error", Msg: "fail to get accessToken", Data: token.AccessToken}
@@ -724,6 +744,7 @@ func (c *ApiController) Login() {
 			return
 		}
 		userInfo := &idp.UserInfo{}
+		var token *oauth2.Token
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
@@ -754,7 +775,6 @@ func (c *ApiController) Login() {
 			}
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-			var token *oauth2.Token
 			token, err = idProvider.GetToken(authForm.Code)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -808,6 +828,19 @@ func (c *ApiController) Login() {
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
+				}
+
+				// Store the original OAuth provider token
+				if token != nil {
+					tokenJson, err := json.Marshal(token)
+					if err == nil {
+						user.OriginalToken = string(tokenJson)
+						_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+					}
 				}
 
 				if checkMfaEnable(c, user, organization, verificationType) {
@@ -960,6 +993,19 @@ func (c *ApiController) Login() {
 					return
 				}
 
+				// Store the original OAuth provider token
+				if token != nil {
+					tokenJson, err := json.Marshal(token)
+					if err == nil {
+						user.OriginalToken = string(tokenJson)
+						_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+					}
+				}
+
 				_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
 				if err != nil {
 					c.ResponseError(err.Error())
@@ -1006,6 +1052,19 @@ func (c *ApiController) Login() {
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
+			}
+
+			// Store the original OAuth provider token
+			if token != nil {
+				tokenJson, err := json.Marshal(token)
+				if err == nil {
+					user.OriginalToken = string(tokenJson)
+					_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+				}
 			}
 
 			var isLinked bool
