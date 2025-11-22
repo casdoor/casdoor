@@ -108,6 +108,7 @@ type User struct {
 	AccessKey         string   `xorm:"varchar(100)" json:"accessKey"`
 	AccessSecret      string   `xorm:"varchar(100)" json:"accessSecret"`
 	AccessToken       string   `xorm:"mediumtext" json:"accessToken"`
+	OriginalToken     string   `xorm:"mediumtext" json:"originalToken"`
 
 	CreatedIp      string `xorm:"varchar(100)" json:"createdIp"`
 	LastSigninTime string `xorm:"varchar(100)" json:"lastSigninTime"`

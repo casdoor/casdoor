@@ -30,7 +30,6 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/xorm-io/core"
-	"golang.org/x/oauth2"
 )
 
 func GetUserByField(organizationName string, field string, value string) (*User, error) {
@@ -184,21 +183,7 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-// GetUserOAuthToken retrieves the OAuth provider token for a user.
-// Returns the token as JSON string, or an error if the user is nil or token not found.
-func GetUserOAuthToken(user *User, providerType string) (string, error) {
-	if user == nil {
-		return "", fmt.Errorf("user is nil")
-	}
-
-	tokenJson := getUserProperty(user, fmt.Sprintf("oauth_%s_token", providerType))
-	if tokenJson == "" {
-		return "", fmt.Errorf("no OAuth token found for provider: %s", providerType)
-	}
-	return tokenJson, nil
-}
-
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, oauthToken *oauth2.Token, userMapping ...map[string]string) (bool, error) {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping ...map[string]string) (bool, error) {
 	if userInfo.Id != "" {
 		propertyName := fmt.Sprintf("oauth_%s_id", providerType)
 		setUserProperty(user, propertyName, userInfo.Id)
@@ -239,17 +224,6 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		if user.Avatar == "" || user.Avatar == organization.DefaultAvatar {
 			user.Avatar = userInfo.AvatarUrl
 		}
-	}
-
-	// Store OAuth provider token if provided
-	// Token will be nil for SAML providers and is only set for OAuth/Web3 providers
-	if oauthToken != nil {
-		tokenJson, err := jsoniter.Marshal(oauthToken)
-		if err != nil {
-			return false, fmt.Errorf("failed to marshal OAuth token: %w", err)
-		}
-		propertyName := fmt.Sprintf("oauth_%s_token", providerType)
-		setUserProperty(user, propertyName, string(tokenJson))
 	}
 
 	// Apply custom user mapping from provider configuration

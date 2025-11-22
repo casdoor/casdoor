@@ -724,7 +724,7 @@ func (c *ApiController) Login() {
 			return
 		}
 		userInfo := &idp.UserInfo{}
-		var token *oauth2.Token // Will be nil for SAML, set for OAuth/Web3
+		var token *oauth2.Token
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
@@ -804,10 +804,23 @@ func (c *ApiController) Login() {
 			if user != nil && !user.IsDeleted {
 				// Sign in via OAuth (want to sign up but already have account)
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, token, provider.UserMapping)
+				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
+				}
+
+				// Store the original OAuth provider token
+				if token != nil {
+					tokenJson, err := json.Marshal(token)
+					if err == nil {
+						user.OriginalToken = string(tokenJson)
+						_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+					}
 				}
 
 				if checkMfaEnable(c, user, organization, verificationType) {
@@ -954,10 +967,23 @@ func (c *ApiController) Login() {
 				}
 
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, token, provider.UserMapping)
+				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
+				}
+
+				// Store the original OAuth provider token
+				if token != nil {
+					tokenJson, err := json.Marshal(token)
+					if err == nil {
+						user.OriginalToken = string(tokenJson)
+						_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+						if err != nil {
+							c.ResponseError(err.Error())
+							return
+						}
+					}
 				}
 
 				_, err = object.LinkUserAccount(user, provider.Type, userInfo.Id)
@@ -1002,10 +1028,23 @@ func (c *ApiController) Login() {
 			}
 
 			// sync info from 3rd-party if possible
-			_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, token, provider.UserMapping)
+			_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
+			}
+
+			// Store the original OAuth provider token
+			if token != nil {
+				tokenJson, err := json.Marshal(token)
+				if err == nil {
+					user.OriginalToken = string(tokenJson)
+					_, err = object.UpdateUser(user.GetId(), user, []string{"original_token"}, false)
+					if err != nil {
+						c.ResponseError(err.Error())
+						return
+					}
+				}
 			}
 
 			var isLinked bool
