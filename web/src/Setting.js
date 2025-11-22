@@ -435,6 +435,115 @@ export const OtherProviderInfo = {
   },
 };
 
+export const UserFields = ["owner", "name", "id", "external_id", "display_name", "first_name",
+  "last_name", "avatar", "type", "password", "password_salt", "password_type",
+  "avatar_type", "permanent_avatar", "email", "email_verified", "phone", "country_code", "region", "location", "address",
+  "affiliation", "title", "id_card_type", "id_card", "homepage", "bio", "tag", "language", "gender", "birthday",
+  "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online", "is_admin",
+  "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
+  "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
+  "weibo", "gitee", "linkedin", "wecom", "lark", "gitlab", "adfs", "baidu", "alipay", "casdoor", "infoflow", "apple",
+  "azuread", "azureadb2c", "slack", "steam", "bilibili", "okta", "douyin", "kwai", "line", "amazon", "auth0",
+  "battlenet", "bitbucket", "box", "cloudfoundry", "dailymotion", "deezer", "digitalocean", "discord", "dropbox",
+  "eveonline", "fitbit", "gitea", "heroku", "influxcloud", "instagram", "intercom", "kakao", "lastfm", "mailru",
+  "meetup", "microsoftonline", "naver", "nextcloud", "onedrive", "oura", "patreon", "paypal", "salesforce", "shopify",
+  "soundcloud", "spotify", "strava", "stripe", "tiktok", "tumblr", "twitch", "twitter", "typetalk", "uber", "vk",
+  "wepay", "xero", "yahoo", "yammer", "yandex", "zoom", "metamask", "web3onboard", "custom", "webauthnCredentials",
+  "preferred_mfa_type", "recovery_codes", "totp_secret", "mfa_phone_enabled", "mfa_email_enabled", "invitation",
+  "invitation_code", "face_ids", "ldap", "properties", "roles", "permissions", "groups", "last_change_password_time",
+  "last_signin_wrong_time", "signin_wrong_times", "managedAccounts", "mfaAccounts", "need_update_password",
+  "created_time", "updated_time", "deleted_time",
+  "ip_whitelist"];
+
+export const GetTranslatedUserItems = () => {
+  return [
+    {name: "Organization", label: i18next.t("general:Organization")},
+    {name: "ID", label: i18next.t("general:ID")},
+    {name: "Name", label: i18next.t("general:Name")},
+    {name: "Display name", label: i18next.t("general:Display name")},
+    {name: "First name", label: i18next.t("general:First name")},
+    {name: "Last name", label: i18next.t("general:Last name")},
+    {name: "Avatar", label: i18next.t("general:Avatar")},
+    {name: "User type", label: i18next.t("general:User type")},
+    {name: "Password", label: i18next.t("general:Password")},
+    {name: "Email", label: i18next.t("general:Email")},
+    {name: "Phone", label: i18next.t("general:Phone")},
+    {name: "Country code", label: i18next.t("user:Country code")},
+    {name: "Country/Region", label: i18next.t("user:Country/Region")},
+    {name: "Location", label: i18next.t("user:Location")},
+    {name: "Address", label: i18next.t("user:Address")},
+    {name: "Affiliation", label: i18next.t("user:Affiliation")},
+    {name: "Title", label: i18next.t("user:Title")},
+    {name: "ID card type", label: i18next.t("user:ID card type")},
+    {name: "ID card", label: i18next.t("user:ID card")},
+    {name: "ID card info", label: i18next.t("user:ID card info")},
+    {name: "Homepage", label: i18next.t("user:Homepage")},
+    {name: "Bio", label: i18next.t("user:Bio")},
+    {name: "Tag", label: i18next.t("user:Tag")},
+    {name: "Language", label: i18next.t("user:Language")},
+    {name: "Gender", label: i18next.t("user:Gender")},
+    {name: "Birthday", label: i18next.t("user:Birthday")},
+    {name: "Education", label: i18next.t("user:Education")},
+    {name: "Balance", label: i18next.t("user:Balance")},
+    {name: "Transactions", label: i18next.t("transaction:Transactions")},
+    {name: "Score", label: i18next.t("user:Score")},
+    {name: "Karma", label: i18next.t("user:Karma")},
+    {name: "Ranking", label: i18next.t("user:Ranking")},
+    {name: "Signup application", label: i18next.t("general:Signup application")},
+    {name: "API key", label: i18next.t("general:API key")},
+    {name: "Groups", label: i18next.t("general:Groups")},
+    {name: "Roles", label: i18next.t("general:Roles")},
+    {name: "Permissions", label: i18next.t("general:Permissions")},
+    {name: "3rd-party logins", label: i18next.t("user:3rd-party logins")},
+    {name: "Properties", label: i18next.t("user:Properties")},
+    {name: "Is online", label: i18next.t("user:Is online")},
+    {name: "Is admin", label: i18next.t("user:Is admin")},
+    {name: "Is forbidden", label: i18next.t("user:Is forbidden")},
+    {name: "Is deleted", label: i18next.t("user:Is deleted")},
+    {name: "Need update password", label: i18next.t("user:Need update password")},
+    {name: "IP whitelist", label: i18next.t("general:IP whitelist")},
+    {name: "Multi-factor authentication", label: i18next.t("user:Multi-factor authentication")},
+    {name: "WebAuthn credentials", label: i18next.t("user:WebAuthn credentials")},
+    {name: "Managed accounts", label: i18next.t("user:Managed accounts")},
+    {name: "Face ID", label: i18next.t("user:Face ID")},
+    {name: "MFA accounts", label: i18next.t("user:MFA accounts")},
+    {name: "MFA items", label: i18next.t("general:MFA items")},
+  ];
+};
+
+export function getUserColumns() {
+  const items = GetTranslatedUserItems();
+  return UserFields.map(field => {
+    let transField = "";
+    if (field === "webauthnCredentials") {
+      transField = "WebAuthn credentials";
+    } else if (field === "region") {
+      transField = "Country/Region";
+    } else if (field === "mfaAccounts") {
+      transField = "MFA accounts";
+    } else if (field === "face_ids") {
+      transField = "Face ID";
+    } else if (field === "managedAccounts") {
+      transField = "Managed accounts";
+    } else {
+      transField = field.toLowerCase().split("_").join(" ");
+      transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+      transField = transField.replace("ip", "IP")
+        .replace("Ip", "IP")
+        .replace("Id", "ID")
+        .replace("id", "ID");
+    }
+    const transFieldItem = items.find(item => item.name === transField);
+    if (transFieldItem === undefined) {
+      const toTranslateList = ["general", "user", "organization"].map(ns => `${ns}:${transField}`);
+      const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+        .find(item => item !== null);
+      transField = transResult ? transResult : transField;
+    }
+    return `${transFieldItem ? transFieldItem.label : transField}#${field}`;
+  });
+}
+
 export function initCountries() {
   const countries = require("i18n-iso-countries");
   countries.registerLocale(require("i18n-iso-countries/langs/" + getLanguage() + ".json"));
