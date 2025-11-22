@@ -484,6 +484,21 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
+	// Send SSO logout notifications to all notification providers in the user's signup application
+	userObj, err := object.GetUser(user)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if userObj != nil {
+		err = object.SendSsoLogoutNotifications(userObj)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	}
+
 	util.LogInfo(c.Ctx, "API: [%s] logged out from all applications", user)
 
 	c.ResponseOk()

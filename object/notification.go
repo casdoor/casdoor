@@ -16,6 +16,8 @@ package object
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"github.com/casdoor/casdoor/notification"
 	"github.com/casdoor/notify"
@@ -39,4 +41,64 @@ func SendNotification(provider *Provider, content string) error {
 
 	err = client.Send(context.Background(), "", content)
 	return err
+}
+
+// SendSsoLogoutNotifications sends logout notifications to all notification providers
+// configured in the user's signup application
+func SendSsoLogoutNotifications(user *User) error {
+	if user == nil {
+		return nil
+	}
+
+	// If user's signup application is empty, don't send notifications
+	if user.SignupApplication == "" {
+		return nil
+	}
+
+	// Get the user's signup application
+	application, err := GetApplication(user.SignupApplication)
+	if err != nil {
+		return fmt.Errorf("failed to get signup application: %w", err)
+	}
+
+	if application == nil {
+		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
+	}
+
+	// Prepare sanitized user data for notification
+	// Only include safe, non-sensitive fields
+	sanitizedData := map[string]interface{}{
+		"owner":       user.Owner,
+		"name":        user.Name,
+		"displayName": user.DisplayName,
+		"email":       user.Email,
+		"phone":       user.Phone,
+		"id":          user.Id,
+		"event":       "sso-logout",
+	}
+	userData, err := json.Marshal(sanitizedData)
+	if err != nil {
+		return fmt.Errorf("failed to marshal user data: %w", err)
+	}
+	content := string(userData)
+
+	// Send notifications to all notification providers in the signup application
+	for _, providerItem := range application.Providers {
+		if providerItem.Provider == nil {
+			continue
+		}
+
+		// Only send to notification providers
+		if providerItem.Provider.Category != "Notification" {
+			continue
+		}
+
+		// Send the notification using the provider from the providerItem
+		err = SendNotification(providerItem.Provider, content)
+		if err != nil {
+			return fmt.Errorf("failed to send SSO logout notification to provider %s/%s: %w", providerItem.Provider.Owner, providerItem.Provider.Name, err)
+		}
+	}
+
+	return nil
 }
