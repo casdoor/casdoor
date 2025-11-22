@@ -183,13 +183,17 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-// GetUserOAuthToken retrieves the OAuth provider token for a user
+// GetUserOAuthToken retrieves the OAuth provider token for a user.
+// Returns the token as JSON string, or an error if the user is nil or token not found.
 func GetUserOAuthToken(user *User, providerType string) (string, error) {
 	if user == nil {
 		return "", fmt.Errorf("user is nil")
 	}
 
 	tokenJson := getUserProperty(user, fmt.Sprintf("oauth_%s_token", providerType))
+	if tokenJson == "" {
+		return "", fmt.Errorf("no OAuth token found for provider: %s", providerType)
+	}
 	return tokenJson, nil
 }
 
@@ -236,13 +240,14 @@ func SetUserOAuthProperties(organization *Organization, user *User, providerType
 		}
 	}
 
-	// Store OAuth provider token if provided
+	// Store OAuth provider token if provided (only for OAuth/Web3 providers)
 	if oauthToken != nil {
 		tokenJson, err := jsoniter.Marshal(oauthToken)
-		if err == nil {
-			propertyName := fmt.Sprintf("oauth_%s_token", providerType)
-			setUserProperty(user, propertyName, string(tokenJson))
+		if err != nil {
+			return false, fmt.Errorf("failed to marshal OAuth token: %w", err)
 		}
+		propertyName := fmt.Sprintf("oauth_%s_token", providerType)
+		setUserProperty(user, propertyName, string(tokenJson))
 	}
 
 	// Apply custom user mapping from provider configuration

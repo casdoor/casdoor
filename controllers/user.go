@@ -829,10 +829,5 @@ func (c *ApiController) GetUserOAuthToken() {
 		return
 	}
 
-	if tokenJson == "" {
-		c.ResponseError(fmt.Sprintf("No OAuth token found for provider: %s", provider))
-		return
-	}
-
 	c.ResponseOk(tokenJson)
 }
