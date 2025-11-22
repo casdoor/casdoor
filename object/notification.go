@@ -58,8 +58,18 @@ func SendSsoLogoutNotifications(user *User) error {
 		return fmt.Errorf("failed to get organization applications: %w", err)
 	}
 
-	// Prepare user data for notification
-	userData, err := json.Marshal(user)
+	// Prepare sanitized user data for notification
+	// Only include safe, non-sensitive fields
+	sanitizedData := map[string]interface{}{
+		"owner":       user.Owner,
+		"name":        user.Name,
+		"displayName": user.DisplayName,
+		"email":       user.Email,
+		"phone":       user.Phone,
+		"id":          user.Id,
+		"event":       "sso-logout",
+	}
+	userData, err := json.Marshal(sanitizedData)
 	if err != nil {
 		return fmt.Errorf("failed to marshal user data: %w", err)
 	}
@@ -80,7 +90,7 @@ func SendSsoLogoutNotifications(user *User) error {
 			// Get the full provider object
 			provider, err := GetProvider(util.GetId(providerItem.Owner, providerItem.Name))
 			if err != nil {
-				logs.Info("Failed to get provider %s/%s: %v", providerItem.Owner, providerItem.Name, err)
+				logs.Info("Failed to get provider %s/%s for SSO logout notification: %v", providerItem.Owner, providerItem.Name, err)
 				continue
 			}
 
