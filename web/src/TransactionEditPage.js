@@ -330,7 +330,6 @@ class TransactionEditPage extends React.Component {
               </Select>
             ) : (
               <Input disabled={true} value={this.state.transaction.tag} onChange={e => {
-                // this.updatePaymentField('currency', e.target.value);
               }} />
             )}
           </Col>
