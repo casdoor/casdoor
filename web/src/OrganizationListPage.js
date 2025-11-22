@@ -325,17 +325,6 @@ class OrganizationListPage extends BaseListPage {
           )}
           loading={this.state.loading}
           onChange={this.handleTableChange}
-          showSorterTooltip={{
-            title: (sorter) => {
-              if (sorter.order === "ascend") {
-                return i18next.t("general:Click to cancel sorting");
-              } else if (sorter.order === "descend") {
-                return i18next.t("general:Click to cancel sorting");
-              } else {
-                return i18next.t("general:Click to sort ascending");
-              }
-            },
-          }}
         />
       </div>
     );

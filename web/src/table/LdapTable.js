@@ -180,17 +180,6 @@ class LdapTable extends React.Component {
               onClick={() => this.addRow(table)}>{i18next.t("general:Add")}</Button>
           </div>
         )}
-        showSorterTooltip={{
-          title: (sorter) => {
-            if (sorter.order === "ascend") {
-              return i18next.t("general:Click to cancel sorting");
-            } else if (sorter.order === "descend") {
-              return i18next.t("general:Click to cancel sorting");
-            } else {
-              return i18next.t("general:Click to sort ascending");
-            }
-          },
-        }}
       />
     );
   }
