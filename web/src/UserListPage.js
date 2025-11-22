@@ -158,6 +158,7 @@ class UserListPage extends BaseListPage {
     } else if (status === "error") {
       Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${msg}`);
     }
+    this.setState({uploadJsonData: [], uploadColumns: [], showUploadModal: false});
   }
 
   generateDownloadTemplate() {
@@ -190,50 +191,30 @@ class UserListPage extends BaseListPage {
     const props = {
       name: "file",
       accept: ".xlsx",
-      method: "post",
-      action: `${Setting.ServerUrl}/api/upload-users`,
-      withCredentials: true,
+      showUploadList: false,
       beforeUpload: (file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const binary = e.target.result;
-          const workbook = XLSX.read(binary, {type: "binary"});
+
+          const workbook = XLSX.read(binary, {type: "array"});
+          if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+            Setting.showMessage("error", i18next.t("general:No sheets found in file"));
+            return;
+          }
+
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
+          this.setState({uploadJsonData: jsonData, file: file});
 
-          const header = [];
-          for (const key in worksheet) {
-            if (key[0] === "!") {continue;}
-            const col = key.replace(/[0-9]/g, "");
-            if (!header.includes(col)) {
-              header.push(col);
-            }
-          }
           const columns = Setting.getUserColumns().map(el => {
             return {title: el.split("#")[0], dataIndex: el, key: el};
           });
+          this.setState({uploadColumns: columns}, () => {this.setState({showUploadModal: true});});
+        };
 
-          Modal.info({
-            title: i18next.t("user:Upload (.xlsx)"),
-            content: (
-              <div style={{marginRight: "34px"}}>
-                <Table scroll={{x: "max-content"}} dataSource={jsonData} columns={columns} />
-              </div>
-            ),
-            width: "100%",
-            onOk() {
-              const formData = new FormData();
-              formData.append("file", file);
-              fetch(`${Setting.ServerUrl}/api/upload-users`, {
-                method: "post",
-                body: formData,
-              })
-                .then((res) => res.json())
-                .then((res) => {uploadThis.uploadFile(res);});
-            },
-            okText: i18next.t("general:Click to Upload"),
-            closable: true,
-          });
+        reader.onerror = (error) => {
+          Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${error?.message || error}`);
         };
 
         reader.readAsArrayBuffer(file);
@@ -242,11 +223,39 @@ class UserListPage extends BaseListPage {
     };
 
     return (
-      <Upload {...props}>
-        <Button icon={<UploadOutlined />} id="upload-button" size="small">
-          {i18next.t("user:Upload (.xlsx)")}
-        </Button>
-      </Upload>
+      <>
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />} id="upload-button" size="small">
+            {i18next.t("user:Upload (.xlsx)")}
+          </Button>
+        </Upload>
+        <Modal title={i18next.t("user:Upload (.xlsx)")}
+          width={"100%"}
+          closable={true}
+          open={this.state.showUploadModal}
+          okText={i18next.t("general:Click to Upload")}
+          onOk = {() => {
+            const formData = new FormData();
+            formData.append("file", this.state.file);
+            fetch(`${Setting.ServerUrl}/api/upload-users`, {
+              method: "post",
+              body: formData,
+              credentials: "include",
+              headers: {
+                "Accept-Language": Setting.getAcceptLanguage(),
+              },
+            })
+              .then((res) => res.json())
+              .then((res) => {uploadThis.uploadFile(res);});
+          }}
+          cancelText={i18next.t("general:Cancel")}
+          onCancel={() => {this.setState({showUploadModal: false, uploadJsonData: [], uploadColumns: []});}}
+        >
+          <div style={{marginRight: "34px"}}>
+            <Table scroll={{x: "max-content"}} dataSource={this.state.uploadJsonData} columns={this.state.uploadColumns} />
+          </div>
+        </Modal>
+      </>
     );
   }
 

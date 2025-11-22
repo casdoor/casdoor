@@ -78,9 +78,13 @@ func parseListItem(lines *[]string, i int) []string {
 func UploadUsers(owner string, path string, userObj *User, lang string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
+	if len(table) == 0 {
+		return false, fmt.Errorf("empty table")
+	}
+
 	for idx, row := range table[0] {
 		splitRow := strings.Split(row, "#")
-		if len(strings.Split(row, "#")) > 1 {
+		if len(splitRow) > 1 {
 			table[0][idx] = splitRow[1]
 		}
 	}
