@@ -38,7 +38,67 @@ import {setTwoToneColor} from "@ant-design/icons";
 import * as ApplicationBackend from "./backend/ApplicationBackend";
 import * as Cookie from "cookie";
 
+// Ant Design locale imports
+import enUS from "antd/locale/en_US";
+import zhCN from "antd/locale/zh_CN";
+import zhTW from "antd/locale/zh_TW";
+import esES from "antd/locale/es_ES";
+import frFR from "antd/locale/fr_FR";
+import deDE from "antd/locale/de_DE";
+import idID from "antd/locale/id_ID";
+import jaJP from "antd/locale/ja_JP";
+import koKR from "antd/locale/ko_KR";
+import ruRU from "antd/locale/ru_RU";
+import viVN from "antd/locale/vi_VN";
+import ptBR from "antd/locale/pt_BR";
+import itIT from "antd/locale/it_IT";
+import msMY from "antd/locale/ms_MY";
+import trTR from "antd/locale/tr_TR";
+import arEG from "antd/locale/ar_EG";
+import heIL from "antd/locale/he_IL";
+import nlNL from "antd/locale/nl_NL";
+import plPL from "antd/locale/pl_PL";
+import fiFI from "antd/locale/fi_FI";
+import svSE from "antd/locale/sv_SE";
+import ukUA from "antd/locale/uk_UA";
+import faIR from "antd/locale/fa_IR";
+import csCZ from "antd/locale/cs_CZ";
+import skSK from "antd/locale/sk_SK";
+
 setTwoToneColor("rgb(87,52,211)");
+
+function getAntdLocale(language) {
+  const localeMap = {
+    "en": enUS,
+    "zh": zhCN,
+    "zh-tw": zhTW,
+    "es": esES,
+    "fr": frFR,
+    "de": deDE,
+    "id": idID,
+    "ja": jaJP,
+    "ko": koKR,
+    "ru": ruRU,
+    "vi": viVN,
+    "pt": ptBR,
+    "it": itIT,
+    "ms": msMY,
+    "tr": trTR,
+    "ar": arEG,
+    "he": heIL,
+    "nl": nlNL,
+    "pl": plPL,
+    "fi": fiFI,
+    "sv": svSE,
+    "uk": ukUA,
+    "fa": faIR,
+    "cs": csCZ,
+    "sk": skSK,
+    "kk": ruRU, // Use Russian for Kazakh as antd doesn't have Kazakh
+    "az": trTR, // Use Turkish for Azerbaijani as they're similar
+  };
+  return localeMap[language] || enUS;
+}
 
 class App extends Component {
   constructor(props) {
@@ -390,13 +450,15 @@ class App extends Component {
       }
 
       return (
-        <ConfigProvider theme={{
-          token: {
-            colorPrimary: themeData.colorPrimary,
-            borderRadius: themeData.borderRadius,
-          },
-          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
-        }}>
+        <ConfigProvider
+          locale={getAntdLocale(Setting.getLanguage())}
+          theme={{
+            token: {
+              colorPrimary: themeData.colorPrimary,
+              borderRadius: themeData.borderRadius,
+            },
+            algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
+          }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             <Layout id="parent-area">
               <Content style={{display: "flex", justifyContent: "center"}}>
@@ -529,14 +591,16 @@ class App extends Component {
             <link rel="icon" href={this.state.account.organization?.favicon} />
           </Helmet>
         }
-        <ConfigProvider theme={{
-          token: {
-            colorPrimary: this.state.themeData.colorPrimary,
-            colorInfo: this.state.themeData.colorPrimary,
-            borderRadius: this.state.themeData.borderRadius,
-          },
-          algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
-        }}>
+        <ConfigProvider
+          locale={getAntdLocale(Setting.getLanguage())}
+          theme={{
+            token: {
+              colorPrimary: this.state.themeData.colorPrimary,
+              colorInfo: this.state.themeData.colorPrimary,
+              borderRadius: this.state.themeData.borderRadius,
+            },
+            algorithm: Setting.getAlgorithm(this.state.themeAlgorithm),
+          }}>
           <StyleProvider hashPriority="high" transformers={[legacyLogicalPropertiesTransformer]}>
             {
               this.renderPage()
