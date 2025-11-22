@@ -167,8 +167,19 @@ class App extends Component {
       return false;
     }
     
-    // Count how many items would be visible
-    const count = navItems.length;
+    // Count how many valid menu items would be visible
+    // Filter out any invalid or non-existent menu items
+    const validMenuItems = [
+      "/", "/shortcuts", "/apps", // Home group
+      "/organizations", "/groups", "/users", "/invitations", // User Management
+      "/applications", "/providers", "/resources", "/certs", // Identity
+      "/roles", "/permissions", "/models", "/adapters", "/enforcers", // Authorization
+      "/sessions", "/records", "/tokens", "/verifications", // Logging & Auditing
+      "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
+      "/sysinfo", "/forms", "/syncers", "/webhooks", "/swagger", // Admin
+    ];
+    
+    const count = navItems.filter(item => validMenuItems.includes(item)).length;
     return count <= Conf.MaxItemsForFlatMenu;
   }
 
