@@ -32,7 +32,7 @@ class TransactionTable extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
-        width: "180px",
+        width: "190px",
         render: (text, record) => {
           return (
             <Link to={`/transactions/${record.owner}/${record.name}`}>
@@ -68,7 +68,7 @@ class TransactionTable extends React.Component {
         title: i18next.t("provider:Domain"),
         dataIndex: "domain",
         key: "domain",
-        width: "200px",
+        width: "250px",
         render: (text) => {
           if (!text) {
             return null;
