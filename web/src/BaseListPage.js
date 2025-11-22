@@ -114,7 +114,7 @@ class BaseListPage extends React.Component {
           ref={node => {
             this.searchInput = node;
           }}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={i18next.t("general:Please input your search")}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
@@ -129,10 +129,10 @@ class BaseListPage extends React.Component {
             size="small"
             style={{width: 90}}
           >
-                        Search
+            {i18next.t("general:Search")}
           </Button>
           <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{width: 90}}>
-                        Reset
+            {i18next.t("general:Reset")}
           </Button>
           <Button
             type="link"
@@ -145,7 +145,7 @@ class BaseListPage extends React.Component {
               });
             }}
           >
-                        Filter
+            {i18next.t("general:Filter")}
           </Button>
         </Space>
       </div>

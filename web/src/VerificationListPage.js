@@ -154,7 +154,7 @@ class VerificationListPage extends BaseListPage {
         sorter: true,
         render: (text, record, index) => {
           return (
-            <Switch disabled checkedChildren="ON" unCheckedChildren="OFF" checked={text} />
+            <Switch disabled checkedChildren={i18next.t("general:ON")} unCheckedChildren={i18next.t("general:OFF")} checked={text} />
           );
         },
       },
@@ -177,6 +177,17 @@ class VerificationListPage extends BaseListPage {
           )}
           loading={this.state.loading}
           onChange={this.handleTableChange}
+          showSorterTooltip={{
+            title: (sorter) => {
+              if (sorter.order === "ascend") {
+                return i18next.t("general:Click to cancel sorting");
+              } else if (sorter.order === "descend") {
+                return i18next.t("general:Click to cancel sorting");
+              } else {
+                return i18next.t("general:Click to sort ascending");
+              }
+            },
+          }}
         />
       </div>
     );
