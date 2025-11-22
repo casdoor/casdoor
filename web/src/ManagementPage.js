@@ -103,7 +103,6 @@ function ManagementPage(props) {
   const organization = props.account?.organization;
   const navItems = Setting.isLocalAdminUser(props.account) ? organization?.navItems : (organization?.userNavItems ?? []);
   const widgetItems = organization?.widgetItems;
-  const MAX_ITEMS_FOR_FLAT_MENU = 7;
 
   function logout() {
     AuthBackend.logout()
@@ -381,8 +380,8 @@ function ManagementPage(props) {
       }
     });
 
-    // If total end items <= MAX_ITEMS_FOR_FLAT_MENU, flatten the menu (show only one level)
-    if (totalEndItems <= MAX_ITEMS_FOR_FLAT_MENU) {
+    // If total end items <= MaxItemsForFlatMenu, flatten the menu (show only one level)
+    if (totalEndItems <= Conf.MaxItemsForFlatMenu) {
       const flattenedResult = [];
       filteredResult.forEach(item => {
         if (isSpecialMenuItem(item)) {

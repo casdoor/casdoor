@@ -159,7 +159,6 @@ class App extends Component {
   }
 
   shouldFlattenMenu() {
-    const MAX_ITEMS_FOR_FLAT_MENU = 7;
     const organization = this.state.account?.organization;
     const navItems = Setting.isLocalAdminUser(this.state.account) ? organization?.navItems : (organization?.userNavItems ?? []);
     
@@ -170,7 +169,7 @@ class App extends Component {
     
     // Count how many items would be visible
     const count = navItems.length;
-    return count <= MAX_ITEMS_FOR_FLAT_MENU;
+    return count <= Conf.MaxItemsForFlatMenu;
   }
 
   updateMenuKey() {
