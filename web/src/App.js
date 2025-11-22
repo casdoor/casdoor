@@ -161,12 +161,12 @@ class App extends Component {
   shouldFlattenMenu() {
     const organization = this.state.account?.organization;
     const navItems = Setting.isLocalAdminUser(this.state.account) ? organization?.navItems : (organization?.userNavItems ?? []);
-    
+
     // If navItems is "all" or not configured, don't flatten
     if (!Array.isArray(navItems) || navItems?.includes("all")) {
       return false;
     }
-    
+
     // Count how many valid menu items would be visible
     // Filter out any invalid or non-existent menu items
     const validMenuItems = [
@@ -178,7 +178,7 @@ class App extends Component {
       "/products", "/orders", "/payments", "/plans", "/pricings", "/subscriptions", "/transactions", // Business
       "/sysinfo", "/forms", "/syncers", "/webhooks", "/swagger", // Admin
     ];
-    
+
     const count = navItems.filter(item => validMenuItems.includes(item)).length;
     return count <= Conf.MaxItemsForFlatMenu;
   }
@@ -276,14 +276,14 @@ class App extends Component {
     this.setState({
       uri: uri,
     });
-    
+
     // Check if menu should be flattened and use appropriate key selection
     if (this.shouldFlattenMenu()) {
       const selectedKey = this.getSelectedMenuKeyForFlatMenu(uri);
       this.setState({selectedMenuKey: selectedKey});
       return;
     }
-    
+
     // Original logic for grouped menu
     if (uri === "/" || uri.includes("/shortcuts") || uri.includes("/apps")) {
       this.setState({selectedMenuKey: "/home"});
