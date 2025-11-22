@@ -617,12 +617,9 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 		organization.OrgBalance = newBalance
 		columns = []string{"org_balance"}
 	} else {
-		newBalance = AddPrices(organization.UserBalance, convertedBalance)
-		// Check organization balance credit limit for user balance too
-		if newBalance < organization.OrgBalanceCredit {
-			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new user balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
-		}
-		organization.UserBalance = newBalance
+		// User balance is just a sum of all users' balances, no credit limit check here
+		// Individual user credit limits are checked in UpdateUserBalance
+		organization.UserBalance = AddPrices(organization.UserBalance, convertedBalance)
 		columns = []string{"user_balance"}
 	}
 

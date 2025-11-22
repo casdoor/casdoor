@@ -348,7 +348,6 @@
     "Identity": "Identity",
     "Insufficient balance: new balance %v would be below credit limit %v": "Insufficient balance: new balance %v would be below credit limit %v",
     "Insufficient balance: new organization balance %v would be below credit limit %v": "Insufficient balance: new organization balance %v would be below credit limit %v",
-    "Insufficient balance: new user balance %v would be below credit limit %v": "Insufficient balance: new user balance %v would be below credit limit %v",
     "Invitations": "Invitations",
     "Is enabled": "Is enabled",
     "Is enabled - Tooltip": "Set whether it can use",
