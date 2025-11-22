@@ -82,6 +82,7 @@ class OrganizationListPage extends BaseListPage {
         {name: "Karma", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Ranking", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Balance", visible: true, viewRule: "Public", modifyRule: "Admin"},
+        {name: "Balance credit", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Balance currency", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Signup application", visible: true, viewRule: "Public", modifyRule: "Admin"},
         {name: "Register type", visible: true, viewRule: "Public", modifyRule: "Admin"},
@@ -254,6 +255,16 @@ class OrganizationListPage extends BaseListPage {
         title: i18next.t("organization:User balance"),
         dataIndex: "userBalance",
         key: "userBalance",
+        width: "120px",
+        sorter: true,
+        render: (text, record, index) => {
+          return text ?? 0;
+        },
+      },
+      {
+        title: i18next.t("organization:Balance credit"),
+        dataIndex: "orgBalanceCredit",
+        key: "orgBalanceCredit",
         width: "120px",
         sorter: true,
         render: (text, record, index) => {

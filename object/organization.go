@@ -92,6 +92,7 @@ type Organization struct {
 
 	OrgBalance      float64 `json:"orgBalance"`
 	UserBalance     float64 `json:"userBalance"`
+	OrgBalanceCredit float64 `json:"orgBalanceCredit"`
 	BalanceCurrency string  `xorm:"varchar(100)" json:"balanceCurrency"`
 }
 
@@ -606,11 +607,22 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
 
 	var columns []string
+	var newBalance float64
 	if isOrgBalance {
-		organization.OrgBalance = AddPrices(organization.OrgBalance, convertedBalance)
+		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
+		// Check organization balance credit limit
+		if newBalance < organization.OrgBalanceCredit {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
+		}
+		organization.OrgBalance = newBalance
 		columns = []string{"org_balance"}
 	} else {
-		organization.UserBalance = AddPrices(organization.UserBalance, convertedBalance)
+		newBalance = AddPrices(organization.UserBalance, convertedBalance)
+		// Check organization balance credit limit for user balance too
+		if newBalance < organization.OrgBalanceCredit {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new user balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
+		}
+		organization.UserBalance = newBalance
 		columns = []string{"user_balance"}
 	}
 
