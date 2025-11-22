@@ -32,7 +32,7 @@ class TransactionTable extends React.Component {
         title: i18next.t("general:Name"),
         dataIndex: "name",
         key: "name",
-        width: "190px",
+        width: "280px",
         render: (text, record) => {
           return (
             <Link to={`/transactions/${record.owner}/${record.name}`}>
@@ -68,7 +68,7 @@ class TransactionTable extends React.Component {
         title: i18next.t("provider:Domain"),
         dataIndex: "domain",
         key: "domain",
-        width: "250px",
+        width: "270px",
         render: (text) => {
           if (!text) {
             return null;
@@ -152,21 +152,6 @@ class TransactionTable extends React.Component {
         width: "120px",
       }] : []),
       {
-        title: i18next.t("transaction:Amount"),
-        dataIndex: "amount",
-        key: "amount",
-        width: "120px",
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
         title: i18next.t("general:Payment"),
         dataIndex: "payment",
         key: "payment",
@@ -187,6 +172,23 @@ class TransactionTable extends React.Component {
         dataIndex: "state",
         key: "state",
         width: "120px",
+      },
+      {
+        title: i18next.t("transaction:Amount"),
+        dataIndex: "amount",
+        key: "amount",
+        width: "120px",
+        fixed: (Setting.isMobile()) ? "false" : "right",
+      },
+      {
+        title: i18next.t("payment:Currency"),
+        dataIndex: "currency",
+        key: "currency",
+        width: "120px",
+        fixed: (Setting.isMobile()) ? "false" : "right",
+        render: (text, record, index) => {
+          return Setting.getCurrencyWithFlag(text);
+        },
       },
     ];
 
