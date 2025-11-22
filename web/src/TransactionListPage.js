@@ -159,6 +159,33 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("user:Tag"),
+        dataIndex: "tag",
+        key: "tag",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("tag"),
+      },
+      {
+        title: i18next.t("general:User"),
+        dataIndex: "user",
+        key: "user",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("user"),
+        render: (text, record, index) => {
+          if (!text || Setting.isAnonymousUserName(text)) {
+            return text;
+          }
+
+          return (
+            <Link to={`/users/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:Application"),
         dataIndex: "application",
         key: "application",
@@ -265,52 +292,6 @@ class TransactionListPage extends BaseListPage {
         },
       },
       {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
-          if (!text || Setting.isAnonymousUserName(text)) {
-            return text;
-          }
-
-          return (
-            <Link to={`/users/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("user:Tag"),
-        dataIndex: "tag",
-        key: "tag",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("tag"),
-      },
-      {
-        title: i18next.t("transaction:Amount"),
-        dataIndex: "amount",
-        key: "amount",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("amount"),
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
         title: i18next.t("general:Payment"),
         dataIndex: "payment",
         key: "payment",
@@ -337,10 +318,31 @@ class TransactionListPage extends BaseListPage {
         ...this.getColumnSearchProps("state"),
       },
       {
+        title: i18next.t("transaction:Amount"),
+        dataIndex: "amount",
+        key: "amount",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("amount"),
+        fixed: (Setting.isMobile()) ? "false" : "right",
+      },
+      {
+        title: i18next.t("payment:Currency"),
+        dataIndex: "currency",
+        key: "currency",
+        width: "120px",
+        sorter: true,
+        ...this.getColumnSearchProps("currency"),
+        fixed: (Setting.isMobile()) ? "false" : "right",
+        render: (text, record, index) => {
+          return Setting.getCurrencyWithFlag(text);
+        },
+      },
+      {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "240px",
+        width: "200px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           const isAdmin = Setting.isLocalAdminUser(this.props.account);
@@ -374,7 +376,7 @@ class TransactionListPage extends BaseListPage {
             return (
               <div>
                 {i18next.t("general:Transactions")}&nbsp;&nbsp;&nbsp;&nbsp;
-                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
+                <Button size="small" disabled={!isAdmin} onClick={this.addTransaction.bind(this)}>{i18next.t("general:Add")}</Button>
                 &nbsp;&nbsp;
                 <Button type="primary" size="small" disabled={!isAdmin} onClick={this.rechargeTransaction.bind(this)}>{i18next.t("transaction:Recharge")}</Button>
               </div>
