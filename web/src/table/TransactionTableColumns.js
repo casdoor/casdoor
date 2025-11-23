@@ -56,7 +56,7 @@ export function getTransactionTableColumns(options = {}) {
     title: i18next.t("general:Name"),
     dataIndex: "name",
     key: "name",
-    width: "280px",
+    width: includeOrganization ? "180px" : "280px",
     fixed: includeOrganization ? "left" : false,
     sorter: includeActions,
     ...(getColumnSearchProps ? getColumnSearchProps("name") : {}),
