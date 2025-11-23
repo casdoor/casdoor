@@ -292,7 +292,7 @@ const authInfo = {
   },
   Telegram: {
     scope: "",
-    endpoint: "https://oauth.telegram.org/auth",
+    endpoint: "https://telegram.org/",
   },
   Typetalk: {
     scope: "my",

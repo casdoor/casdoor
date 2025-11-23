@@ -20,7 +20,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"sort"
 	"strconv"
@@ -71,10 +70,21 @@ func (idp *TelegramIdProvider) GetToken(code string) (*oauth2.Token, error) {
 		return nil, fmt.Errorf("invalid user id in auth data")
 	}
 
+	// Store the complete auth data in the token for later retrieval
+	authDataJson, err := json.Marshal(authData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal auth data: %v", err)
+	}
+
 	token := &oauth2.Token{
 		AccessToken: fmt.Sprintf("telegram_%d", int64(userId)),
 		TokenType:   "Bearer",
 	}
+
+	// Store auth data in token extras to avoid additional API calls
+	token = token.WithExtra(map[string]interface{}{
+		"telegram_auth_data": string(authDataJson),
+	})
 
 	return token, nil
 }
@@ -137,87 +147,38 @@ type TelegramUserInfo struct {
 }
 
 func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
-	// Extract user ID from token
-	accessToken := token.AccessToken
-	if !strings.HasPrefix(accessToken, "telegram_") {
-		return nil, fmt.Errorf("invalid Telegram access token format")
+	// Extract auth data from token
+	authDataStr, ok := token.Extra("telegram_auth_data").(string)
+	if !ok {
+		return nil, fmt.Errorf("telegram auth data not found in token")
 	}
 
-	// Get user info from Telegram API
-	// Note: Telegram's Login Widget doesn't provide an API endpoint to fetch user info
-	// The user data is passed during authentication and validated via hash
-	// We need to fetch the user info using the Bot API
-	userId := strings.TrimPrefix(accessToken, "telegram_")
-
-	// Use Telegram Bot API to get user info
-	apiUrl := fmt.Sprintf("https://api.telegram.org/bot%s/getChat?chat_id=%s", idp.ClientSecret, userId)
-
-	resp, err := idp.Client.Get(apiUrl)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user info from Telegram: %v", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
+	// Parse the auth data
+	var authData map[string]interface{}
+	if err := json.Unmarshal([]byte(authDataStr), &authData); err != nil {
+		return nil, fmt.Errorf("failed to parse auth data: %v", err)
 	}
 
-	// Parse Telegram API response
-	var apiResponse struct {
-		Ok     bool `json:"ok"`
-		Result struct {
-			Id        int64  `json:"id"`
-			FirstName string `json:"first_name"`
-			LastName  string `json:"last_name"`
-			Username  string `json:"username"`
-			Photo     struct {
-				SmallFileId string `json:"small_file_id"`
-				BigFileId   string `json:"big_file_id"`
-			} `json:"photo"`
-		} `json:"result"`
-		Description string `json:"description,omitempty"`
+	// Extract user information from auth data
+	userId, ok := authData["id"].(float64)
+	if !ok {
+		return nil, fmt.Errorf("invalid user id in auth data")
 	}
 
-	if err := json.Unmarshal(body, &apiResponse); err != nil {
-		return nil, fmt.Errorf("failed to parse Telegram API response: %v", err)
-	}
-
-	if !apiResponse.Ok {
-		return nil, fmt.Errorf("Telegram API error: %s", apiResponse.Description)
-	}
+	firstName, _ := authData["first_name"].(string)
+	lastName, _ := authData["last_name"].(string)
+	username, _ := authData["username"].(string)
+	photoUrl, _ := authData["photo_url"].(string)
 
 	// Build display name
-	displayName := apiResponse.Result.FirstName
-	if apiResponse.Result.LastName != "" {
-		displayName = displayName + " " + apiResponse.Result.LastName
-	}
-
-	// Get photo URL if available
-	photoUrl := ""
-	if apiResponse.Result.Photo.BigFileId != "" {
-		// Get file path for the photo
-		fileResp, err := idp.Client.Get(fmt.Sprintf("https://api.telegram.org/bot%s/getFile?file_id=%s",
-			idp.ClientSecret, apiResponse.Result.Photo.BigFileId))
-		if err == nil {
-			defer fileResp.Body.Close()
-			fileBody, _ := io.ReadAll(fileResp.Body)
-			var fileResponse struct {
-				Ok     bool `json:"ok"`
-				Result struct {
-					FilePath string `json:"file_path"`
-				} `json:"result"`
-			}
-			if json.Unmarshal(fileBody, &fileResponse) == nil && fileResponse.Ok {
-				photoUrl = fmt.Sprintf("https://api.telegram.org/file/bot%s/%s",
-					idp.ClientSecret, fileResponse.Result.FilePath)
-			}
-		}
+	displayName := firstName
+	if lastName != "" {
+		displayName = displayName + " " + lastName
 	}
 
 	userInfo := UserInfo{
-		Id:          strconv.FormatInt(apiResponse.Result.Id, 10),
-		Username:    apiResponse.Result.Username,
+		Id:          strconv.FormatInt(int64(userId), 10),
+		Username:    username,
 		DisplayName: displayName,
 		AvatarUrl:   photoUrl,
 	}
