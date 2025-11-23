@@ -184,11 +184,7 @@ func getUserExtraProperty(user *User, providerType, key string) (string, error) 
 	return extra[key], nil
 }
 
-func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, userMapping ...map[string]string) (bool, error) {
-	return SetUserOAuthPropertiesWithToken(organization, user, providerType, userInfo, nil, userMapping...)
-}
-
-func SetUserOAuthPropertiesWithToken(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, token *oauth2.Token, userMapping ...map[string]string) (bool, error) {
+func SetUserOAuthProperties(organization *Organization, user *User, providerType string, userInfo *idp.UserInfo, token *oauth2.Token, userMapping ...map[string]string) (bool, error) {
 	// Store the original OAuth provider token if available
 	if token != nil && token.AccessToken != "" {
 		user.OriginalToken = token.AccessToken
