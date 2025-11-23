@@ -667,7 +667,7 @@ func GetMaskedUser(user *User, isAdminOrSelf bool, errs ...error) (*User, error)
 			user.AccessSecret = "***"
 		}
 		if user.OriginalToken != "" {
-			user.OriginalToken = ""
+			user.OriginalToken = "***"
 		}
 	}
 
