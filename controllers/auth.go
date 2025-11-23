@@ -724,6 +724,7 @@ func (c *ApiController) Login() {
 			return
 		}
 		userInfo := &idp.UserInfo{}
+		var token *oauth2.Token
 		if provider.Category == "SAML" {
 			// SAML
 			userInfo, err = object.ParseSamlResponse(authForm.SamlResponse, provider, c.Ctx.Request.Host)
@@ -754,7 +755,6 @@ func (c *ApiController) Login() {
 			}
 
 			// https://github.com/golang/oauth2/issues/123#issuecomment-103715338
-			var token *oauth2.Token
 			token, err = idProvider.GetToken(authForm.Code)
 			if err != nil {
 				c.ResponseError(err.Error())
@@ -804,7 +804,7 @@ func (c *ApiController) Login() {
 			if user != nil && !user.IsDeleted {
 				// Sign in via OAuth (want to sign up but already have account)
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
+				_, err = object.SetUserOAuthPropertiesWithToken(organization, user, provider.Type, userInfo, token, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -954,7 +954,7 @@ func (c *ApiController) Login() {
 				}
 
 				// sync info from 3rd-party if possible
-				_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
+				_, err = object.SetUserOAuthPropertiesWithToken(organization, user, provider.Type, userInfo, token, provider.UserMapping)
 				if err != nil {
 					c.ResponseError(err.Error())
 					return
@@ -1002,7 +1002,7 @@ func (c *ApiController) Login() {
 			}
 
 			// sync info from 3rd-party if possible
-			_, err = object.SetUserOAuthProperties(organization, user, provider.Type, userInfo, provider.UserMapping)
+			_, err = object.SetUserOAuthPropertiesWithToken(organization, user, provider.Type, userInfo, token, provider.UserMapping)
 			if err != nil {
 				c.ResponseError(err.Error())
 				return
