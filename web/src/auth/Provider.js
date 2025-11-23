@@ -290,6 +290,10 @@ const authInfo = {
     scope: "users.read%20tweet.read",
     endpoint: "https://twitter.com/i/oauth2/authorize",
   },
+  Telegram: {
+    scope: "",
+    endpoint: "https://core.telegram.org/widgets/login",
+  },
   Typetalk: {
     scope: "my",
     endpoint: "https://typetalk.com/oauth2/authorize",
