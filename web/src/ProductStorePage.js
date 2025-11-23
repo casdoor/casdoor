@@ -89,19 +89,22 @@ class ProductStorePage extends React.Component {
           bodyStyle={{flex: 1, display: "flex", flexDirection: "column"}}
         >
           <div style={{flex: 1, display: "flex", flexDirection: "column"}}>
-            <Title level={5} ellipsis={{rows: 2}} style={{marginBottom: 8, minHeight: "56px"}}>
+            <Title level={5} ellipsis={{rows: 2}} style={{margin: "0 0 4px 0", minHeight: "44px"}}>
               {Setting.getLanguageText(product.displayName)}
             </Title>
-            <Text style={{display: "block", marginBottom: 8, minHeight: "44px"}} ellipsis={{rows: 2}}>
+            <Text style={{display: "block", marginBottom: 4, minHeight: "40px"}} ellipsis={{rows: 2}}>
               {Setting.getLanguageText(product.detail)}
             </Text>
             {product.tag && (
-              <Tag color="blue" style={{marginBottom: 8}}>{product.tag}</Tag>
+              <Tag color="blue" style={{marginBottom: 4, display: "inline-block"}}>{product.tag}</Tag>
             )}
             <div style={{marginTop: "auto"}}>
-              <div style={{marginBottom: 8}}>
-                <Text strong style={{fontSize: "18px", color: "#ff4d4f"}}>
-                  {Setting.getCurrencyWithFlag(product.currency)} {Setting.getCurrencySymbol(product.currency)}{product.price}
+              <div style={{marginBottom: 4}}>
+                <Text strong style={{fontSize: "24px", color: "#ff4d4f"}}>
+                  {Setting.getCurrencySymbol(product.currency)}{product.price}
+                </Text>
+                <Text type="secondary" style={{fontSize: "12px", marginLeft: 8}}>
+                  {Setting.getCurrencyWithFlag(product.currency)}
                 </Text>
               </div>
               <div>
