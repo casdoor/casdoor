@@ -63,8 +63,8 @@ func validateOrganizationBalance(owner string, name string, balance float64, cur
 	if isOrgBalance {
 		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
 		// Check organization balance credit limit
-		if newBalance < organization.OrgBalanceCredit {
-			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
+		if newBalance < organization.BalanceCredit {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.BalanceCredit)
 		}
 	} else {
 		// User balance is just a sum of all users' balances, no credit limit check here
@@ -116,7 +116,7 @@ func validateUserBalance(owner string, name string, balance float64, currency st
 			}
 		}
 		if org != nil {
-			balanceCredit = org.OrgBalanceCredit
+			balanceCredit = org.BalanceCredit
 		}
 	}
 

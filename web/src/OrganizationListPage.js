@@ -263,8 +263,8 @@ class OrganizationListPage extends BaseListPage {
       },
       {
         title: i18next.t("organization:Balance credit"),
-        dataIndex: "orgBalanceCredit",
-        key: "orgBalanceCredit",
+        dataIndex: "balanceCredit",
+        key: "balanceCredit",
         width: "120px",
         sorter: true,
         render: (text, record, index) => {

@@ -844,7 +844,7 @@ func UpdateUser(id string, user *User, columns []string, isAdmin bool) (bool, er
 		}
 	}
 	if isAdmin {
-		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "mfa_items", "register_type", "register_source")
+		columns = append(columns, "name", "id", "email", "phone", "country_code", "type", "balance", "balance_credit", "balance_currency", "mfa_items", "register_type", "register_source")
 	}
 
 	columns = append(columns, "updated_time")
@@ -1524,7 +1524,7 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 			}
 		}
 		if org != nil {
-			balanceCredit = org.OrgBalanceCredit
+			balanceCredit = org.BalanceCredit
 		}
 	}
 
