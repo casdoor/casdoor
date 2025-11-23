@@ -35,8 +35,9 @@ class ProductStorePage extends React.Component {
 
   getProducts() {
     const pageSize = 100; // Max products to display in the store
+    const owner = Setting.isDefaultOrganizationSelected(this.props.account) ? "" : Setting.getRequestOrganization(this.props.account);
     this.setState({loading: true});
-    ProductBackend.getProducts("", 1, pageSize, "state", "Published", "", "")
+    ProductBackend.getProducts(owner, 1, pageSize, "state", "Published", "", "")
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
