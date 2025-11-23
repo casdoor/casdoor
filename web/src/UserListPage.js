@@ -197,20 +197,24 @@ class UserListPage extends BaseListPage {
         reader.onload = (e) => {
           const binary = e.target.result;
 
-          const workbook = XLSX.read(binary, {type: "array"});
-          if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-            Setting.showMessage("error", i18next.t("general:No sheets found in file"));
-            return;
+          try {
+            const workbook = XLSX.read(binary, {type: "array"});
+            if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+              Setting.showMessage("error", i18next.t("general:No sheets found in file"));
+              return;
+            }
+
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            this.setState({uploadJsonData: jsonData, file: file});
+
+            const columns = Setting.getUserColumns().map(el => {
+              return {title: el.split("#")[0], dataIndex: el, key: el};
+            });
+            this.setState({uploadColumns: columns}, () => {this.setState({showUploadModal: true});});
+          } catch (err) {
+            Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${err.message}`);
           }
-
-          const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet);
-          this.setState({uploadJsonData: jsonData, file: file});
-
-          const columns = Setting.getUserColumns().map(el => {
-            return {title: el.split("#")[0], dataIndex: el, key: el};
-          });
-          this.setState({uploadColumns: columns}, () => {this.setState({showUploadModal: true});});
         };
 
         reader.onerror = (error) => {
