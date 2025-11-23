@@ -171,10 +171,7 @@ func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	photoUrl, _ := authData["photo_url"].(string)
 
 	// Build display name
-	displayName := firstName
-	if lastName != "" {
-		displayName = displayName + " " + lastName
-	}
+	displayName := strings.TrimSpace(firstName + " " + lastName)
 
 	userInfo := UserInfo{
 		Id:          strconv.FormatInt(int64(userId), 10),
