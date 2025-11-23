@@ -21,6 +21,7 @@ func GetUploadXlsxPath(fileId string) string {
 	if err != nil {
 		panic(err)
 	}
+	defer file.Close()
 
 	return file.Name()
 }
