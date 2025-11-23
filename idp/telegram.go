@@ -125,27 +125,6 @@ func (idp *TelegramIdProvider) verifyTelegramAuth(authData map[string]interface{
 	return nil
 }
 
-// TelegramUserInfo represents the user information from Telegram
-// Response format from Telegram Login Widget:
-//
-//	{
-//	  "id": 123456789,
-//	  "first_name": "John",
-//	  "last_name": "Doe",
-//	  "username": "johndoe",
-//	  "photo_url": "https://t.me/i/userpic/320/johndoe.jpg",
-//	  "auth_date": 1234567890,
-//	  "hash": "..."
-//	}
-type TelegramUserInfo struct {
-	Id        int64  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name,omitempty"`
-	Username  string `json:"username,omitempty"`
-	PhotoUrl  string `json:"photo_url,omitempty"`
-	AuthDate  int64  `json:"auth_date"`
-}
-
 func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
 	// Extract auth data from token
 	authDataStr, ok := token.Extra("telegram_auth_data").(string)
@@ -170,8 +149,14 @@ func (idp *TelegramIdProvider) GetUserInfo(token *oauth2.Token) (*UserInfo, erro
 	username, _ := authData["username"].(string)
 	photoUrl, _ := authData["photo_url"].(string)
 
-	// Build display name
+	// Build display name with fallback
 	displayName := strings.TrimSpace(firstName + " " + lastName)
+	if displayName == "" {
+		displayName = username
+	}
+	if displayName == "" {
+		displayName = strconv.FormatInt(int64(userId), 10)
+	}
 
 	userInfo := UserInfo{
 		Id:          strconv.FormatInt(int64(userId), 10),
