@@ -1218,7 +1218,7 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		return
 	}
 	if data.Ticket == "" {
-		c.ResponseError(err.Error())
+		c.ResponseError("empty ticket")
 		return
 	}
 
@@ -1233,10 +1233,6 @@ func (c *ApiController) HandleOfficialAccountEvent() {
 		return
 	}
 
-	if data.Ticket == "" {
-		c.ResponseError("empty ticket")
-		return
-	}
 	if !idp.VerifyWechatSignature(provider.Content, nonce, timestamp, signature) {
 		c.ResponseError("invalid signature")
 		return
