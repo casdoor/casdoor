@@ -132,7 +132,7 @@ export function getTransactionTableColumns(options = {}) {
     title: i18next.t("general:Application"),
     dataIndex: "application",
     key: "application",
-    width: "120px",
+    width: "150px",
     sorter: getSorter("application"),
     ...(getColumnSearchProps ? getColumnSearchProps("application") : {}),
     render: (text, record, index) => {
