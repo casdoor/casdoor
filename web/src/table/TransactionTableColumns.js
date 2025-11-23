@@ -33,6 +33,21 @@ export function getTransactionTableColumns(options = {}) {
 
   const columns = [];
 
+  // Use function-based sorter for client-side, boolean for server-side
+  const getSorter = (dataIndex) => {
+    if (includeActions) {
+      return true; // Server-side sorting
+    } else if (getColumnSearchProps) {
+      // Client-side sorting
+      return (a, b) => {
+        const aVal = a[dataIndex] || "";
+        const bVal = b[dataIndex] || "";
+        return aVal.toString().localeCompare(bVal.toString());
+      };
+    }
+    return false;
+  };
+
   if (includeOrganization) {
     columns.push({
       title: i18next.t("general:Organization"),
@@ -40,7 +55,7 @@ export function getTransactionTableColumns(options = {}) {
       key: "owner",
       width: "120px",
       fixed: "left",
-      sorter: true,
+      sorter: getSorter("owner"),
       ...(getColumnSearchProps ? getColumnSearchProps("owner") : {}),
       render: (text, record, index) => {
         return (
@@ -58,7 +73,7 @@ export function getTransactionTableColumns(options = {}) {
     key: "name",
     width: includeOrganization ? "180px" : "280px",
     fixed: includeOrganization ? "left" : false,
-    sorter: includeActions,
+    sorter: getSorter("name"),
     ...(getColumnSearchProps ? getColumnSearchProps("name") : {}),
     render: (text, record, index) => {
       return (
@@ -74,7 +89,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "createdTime",
     key: "createdTime",
     width: "160px",
-    sorter: includeActions,
+    sorter: getSorter("createdTime"),
     render: (text, record, index) => {
       return Setting.getFormattedDate(text);
     },
@@ -86,7 +101,7 @@ export function getTransactionTableColumns(options = {}) {
       dataIndex: "tag",
       key: "tag",
       width: "120px",
-      sorter: includeActions,
+      sorter: getSorter("tag"),
       ...(getColumnSearchProps ? getColumnSearchProps("tag") : {}),
     });
   }
@@ -97,7 +112,7 @@ export function getTransactionTableColumns(options = {}) {
       dataIndex: "user",
       key: "user",
       width: "120px",
-      sorter: includeActions,
+      sorter: getSorter("user"),
       ...(getColumnSearchProps ? getColumnSearchProps("user") : {}),
       render: (text, record, index) => {
         if (!text || Setting.isAnonymousUserName(text)) {
@@ -118,7 +133,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "application",
     key: "application",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("application"),
     ...(getColumnSearchProps ? getColumnSearchProps("application") : {}),
     render: (text, record, index) => {
       if (!text) {
@@ -137,7 +152,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "domain",
     key: "domain",
     width: includeOrganization ? "200px" : "270px",
-    sorter: includeActions,
+    sorter: getSorter("domain"),
     ...(getColumnSearchProps ? getColumnSearchProps("domain") : {}),
     render: (text, record, index) => {
       if (!text) {
@@ -157,7 +172,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "category",
     key: "category",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("category"),
     ...(getColumnSearchProps ? getColumnSearchProps("category") : {}),
   });
 
@@ -166,7 +181,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "type",
     key: "type",
     width: "140px",
-    sorter: includeActions,
+    sorter: getSorter("type"),
     ...(getColumnSearchProps ? getColumnSearchProps("type") : {}),
     render: (text, record, index) => {
       if (text && record.domain) {
@@ -186,7 +201,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "subtype",
     key: "subtype",
     width: "140px",
-    sorter: includeActions,
+    sorter: getSorter("subtype"),
     ...(getColumnSearchProps ? getColumnSearchProps("subtype") : {}),
     render: (text, record, index) => {
       if (text && record.domain) {
@@ -206,7 +221,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "provider",
     key: "provider",
     width: "150px",
-    sorter: includeActions,
+    sorter: getSorter("provider"),
     ...(getColumnSearchProps ? getColumnSearchProps("provider") : {}),
     render: (text, record, index) => {
       if (!text) {
@@ -233,7 +248,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "payment",
     key: "payment",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("payment"),
     ...(getColumnSearchProps ? getColumnSearchProps("payment") : {}),
     render: (text, record, index) => {
       if (!text) {
@@ -252,7 +267,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "state",
     key: "state",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("state"),
     ...(getColumnSearchProps ? getColumnSearchProps("state") : {}),
   });
 
@@ -261,7 +276,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "amount",
     key: "amount",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("amount"),
     ...(getColumnSearchProps ? getColumnSearchProps("amount") : {}),
     fixed: (Setting.isMobile()) ? "false" : "right",
   });
@@ -271,7 +286,7 @@ export function getTransactionTableColumns(options = {}) {
     dataIndex: "currency",
     key: "currency",
     width: "120px",
-    sorter: includeActions,
+    sorter: getSorter("currency"),
     ...(getColumnSearchProps ? getColumnSearchProps("currency") : {}),
     fixed: (Setting.isMobile()) ? "false" : "right",
     render: (text, record, index) => {
