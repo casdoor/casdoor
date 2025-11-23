@@ -14,13 +14,12 @@
 
 import BaseListPage from "./BaseListPage";
 import i18next from "i18next";
-import {Link} from "react-router-dom";
 import * as Setting from "./Setting";
 import {Button, Table} from "antd";
-import PopconfirmModal from "./common/modal/PopconfirmModal";
 import React from "react";
 import * as TransactionBackend from "./backend/TransactionBackend";
 import moment from "moment/moment";
+import {getTransactionTableColumns} from "./table/TransactionTableColumns";
 
 class TransactionListPage extends BaseListPage {
   newTransaction() {
@@ -115,251 +114,20 @@ class TransactionListPage extends BaseListPage {
   }
 
   renderTable(transactions) {
-    const columns = [
-      {
-        title: i18next.t("general:Organization"),
-        dataIndex: "owner",
-        key: "owner",
-        width: "120px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("owner"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/organizations/${text}`}>
-              {text}
-            </Link>
-          );
-        },
+    const columns = getTransactionTableColumns({
+      includeOrganization: true,
+      includeUser: true,
+      includeTag: true,
+      includeActions: true,
+      getColumnSearchProps: this.getColumnSearchProps,
+      account: this.props.account,
+      onEdit: (record, isAdmin) => {
+        this.props.history.push({pathname: `/transactions/${record.owner}/${record.name}`, mode: isAdmin ? "edit" : "view"});
       },
-      {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "180px",
-        fixed: "left",
-        sorter: true,
-        ...this.getColumnSearchProps("name"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/transactions/${record.owner}/${record.name}`}>
-              {text}
-            </Link>
-          );
-        },
+      onDelete: (index) => {
+        this.deleteTransaction(index);
       },
-      {
-        title: i18next.t("general:Created time"),
-        dataIndex: "createdTime",
-        key: "createdTime",
-        width: "160px",
-        sorter: true,
-        render: (text, record, index) => {
-          return Setting.getFormattedDate(text);
-        },
-      },
-      {
-        title: i18next.t("user:Tag"),
-        dataIndex: "tag",
-        key: "tag",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("tag"),
-      },
-      {
-        title: i18next.t("general:User"),
-        dataIndex: "user",
-        key: "user",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("user"),
-        render: (text, record, index) => {
-          if (!text || Setting.isAnonymousUserName(text)) {
-            return text;
-          }
-
-          return (
-            <Link to={`/users/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("application"),
-        render: (text, record, index) => {
-          return (
-            <Link to={`/applications/${record.owner}/${record.application}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Domain"),
-        dataIndex: "domain",
-        key: "domain",
-        width: "200px",
-        sorter: true,
-        ...this.getColumnSearchProps("domain"),
-        render: (text, record, index) => {
-          if (!text) {
-            return null;
-          }
-
-          return (
-            <a href={text} target="_blank" rel="noopener noreferrer">
-              {text}
-            </a>
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Category"),
-        dataIndex: "category",
-        key: "category",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("category"),
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        sorter: true,
-        ...this.getColumnSearchProps("type"),
-        render: (text, record, index) => {
-          if (text && record.domain) {
-            const chatUrl = `${record.domain}/chats/${text}`;
-            return (
-              <a href={chatUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("provider:Subtype"),
-        dataIndex: "subtype",
-        key: "subtype",
-        width: "140px",
-        sorter: true,
-        ...this.getColumnSearchProps("subtype"),
-        render: (text, record, index) => {
-          if (text && record.domain) {
-            const messageUrl = `${record.domain}/messages/${text}`;
-            return (
-              <a href={messageUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        sorter: true,
-        ...this.getColumnSearchProps("provider"),
-        render: (text, record, index) => {
-          if (!text) {
-            return text;
-          }
-          if (record.domain) {
-            const casibaseUrl = `${record.domain}/providers/${text}`;
-            return (
-              <a href={casibaseUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return (
-            <Link to={`/providers/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Payment"),
-        dataIndex: "payment",
-        key: "payment",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("payment"),
-        render: (text, record, index) => {
-          if (!text) {
-            return text;
-          }
-          return (
-            <Link to={`/payments/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:State"),
-        dataIndex: "state",
-        key: "state",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("state"),
-      },
-      {
-        title: i18next.t("transaction:Amount"),
-        dataIndex: "amount",
-        key: "amount",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("amount"),
-        fixed: (Setting.isMobile()) ? "false" : "right",
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        sorter: true,
-        ...this.getColumnSearchProps("currency"),
-        fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-      {
-        title: i18next.t("general:Action"),
-        dataIndex: "",
-        key: "op",
-        width: "200px",
-        fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
-          const isAdmin = Setting.isLocalAdminUser(this.props.account);
-          return (
-            <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push({pathname: `/transactions/${record.owner}/${record.name}`, mode: isAdmin ? "edit" : "view"})}>{isAdmin ? i18next.t("general:Edit") : i18next.t("general:View")}</Button>
-              <PopconfirmModal
-                title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
-                onConfirm={() => this.deleteTransaction(index)}
-                disabled={!isAdmin}
-              >
-              </PopconfirmModal>
-            </div>
-          );
-        },
-      },
-    ];
+    });
 
     const paginationProps = {
       total: this.state.pagination.total,

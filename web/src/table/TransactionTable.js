@@ -14,9 +14,7 @@
 
 import React from "react";
 import {Table} from "antd";
-import {Link} from "react-router-dom";
-import * as Setting from "../Setting";
-import i18next from "i18next";
+import {getTransactionTableColumns} from "./TransactionTableColumns";
 
 class TransactionTable extends React.Component {
   constructor(props) {
@@ -27,170 +25,16 @@ class TransactionTable extends React.Component {
   }
 
   render() {
-    const columns = [
-      {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "280px",
-        render: (text, record) => {
-          return (
-            <Link to={`/transactions/${record.owner}/${record.name}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Created time"),
-        dataIndex: "createdTime",
-        key: "createdTime",
-        width: "160px",
-        render: (text) => Setting.getFormattedDate(text),
-      },
-      {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
-        width: "120px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          return (
-            <Link to={`/applications/${record.owner}/${record.application}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Domain"),
-        dataIndex: "domain",
-        key: "domain",
-        width: "270px",
-        render: (text) => {
-          if (!text) {
-            return null;
-          }
-
-          return (
-            <a href={text} target="_blank" rel="noopener noreferrer">
-              {text}
-            </a>
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Category"),
-        dataIndex: "category",
-        key: "category",
-        width: "120px",
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        render: (text, record) => {
-          if (text && record.domain) {
-            const chatUrl = `${record.domain}/chats/${text}`;
-            return (
-              <a href={chatUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("provider:Subtype"),
-        dataIndex: "subtype",
-        key: "subtype",
-        width: "140px",
-        render: (text, record) => {
-          if (text && record.domain) {
-            const messageUrl = `${record.domain}/messages/${text}`;
-            return (
-              <a href={messageUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          if (record.domain) {
-            const casibaseUrl = `${record.domain}/providers/${text}`;
-            return (
-              <a href={casibaseUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return (
-            <Link to={`/providers/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      ...(!this.props.hideTag ? [{
-        title: i18next.t("user:Tag"),
-        dataIndex: "tag",
-        key: "tag",
-        width: "120px",
-      }] : []),
-      {
-        title: i18next.t("general:Payment"),
-        dataIndex: "payment",
-        key: "payment",
-        width: "120px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          return (
-            <Link to={`/payments/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:State"),
-        dataIndex: "state",
-        key: "state",
-        width: "120px",
-      },
-      {
-        title: i18next.t("transaction:Amount"),
-        dataIndex: "amount",
-        key: "amount",
-        width: "120px",
-        fixed: (Setting.isMobile()) ? "false" : "right",
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-    ];
+    const columns = getTransactionTableColumns({
+      includeOrganization: false,
+      includeUser: false,
+      includeTag: !this.props.hideTag,
+      includeActions: false,
+      getColumnSearchProps: null,
+      account: null,
+      onEdit: null,
+      onDelete: null,
+    });
 
     return (
       <Table
@@ -198,7 +42,7 @@ class TransactionTable extends React.Component {
         columns={columns}
         dataSource={this.props.transactions}
         rowKey={(record) => `${record.owner}/${record.name}`}
-        size="middle"
+        size="small"
         bordered
         pagination={{pageSize: 10}}
       />
