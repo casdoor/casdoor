@@ -152,7 +152,7 @@ func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, s
 			return false, "", err
 		}
 
-		return true, transactionId, nil
+		return true, "", nil
 	}
 
 	affected, err := ormer.Engine.Insert(transaction)
