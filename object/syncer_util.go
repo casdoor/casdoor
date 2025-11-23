@@ -246,25 +246,25 @@ func (syncer *Syncer) getOriginalUsersFromMap(results []map[string]sql.NullStrin
 
 		if syncer.Type == "Keycloak" {
 			// query and set password and password salt from credential table
-			sql := fmt.Sprintf("select * from credential where type = 'password' and user_id = '%s'", originalUser.Id)
-			credentialResult, _ := syncer.Ormer.Engine.QueryString(sql)
-			if len(credentialResult) > 0 {
+			credentialResult, err := syncer.Ormer.Engine.QueryString("select * from credential where type = 'password' and user_id = ?", originalUser.Id)
+			if err == nil && len(credentialResult) > 0 {
 				credential := Credential{}
-				_ = json.Unmarshal([]byte(credentialResult[0]["SECRET_DATA"]), &credential)
-				originalUser.Password = credential.Value
-				originalUser.PasswordSalt = credential.Salt
+				if err := json.Unmarshal([]byte(credentialResult[0]["SECRET_DATA"]), &credential); err == nil {
+					originalUser.Password = credential.Value
+					originalUser.PasswordSalt = credential.Salt
+				}
 			}
 			// query and set signup application from user group table
-			sql = fmt.Sprintf("select name from keycloak_group where id = "+
-				"(select group_id as gid from user_group_membership where user_id = '%s')", originalUser.Id)
-			groupResult, _ := syncer.Ormer.Engine.QueryString(sql)
-			if len(groupResult) > 0 {
+			groupResult, err := syncer.Ormer.Engine.QueryString("select name from keycloak_group where id = "+
+				"(select group_id as gid from user_group_membership where user_id = ?)", originalUser.Id)
+			if err == nil && len(groupResult) > 0 {
 				originalUser.SignupApplication = groupResult[0]["name"]
 			}
 			// create time
-			i, _ := strconv.ParseInt(originalUser.CreatedTime, 10, 64)
-			tm := time.Unix(i/int64(1000), 0)
-			originalUser.CreatedTime = tm.Format("2006-01-02T15:04:05+08:00")
+			if i, err := strconv.ParseInt(originalUser.CreatedTime, 10, 64); err == nil {
+				tm := time.Unix(i/int64(1000), 0)
+				originalUser.CreatedTime = tm.Format("2006-01-02T15:04:05+08:00")
+			}
 			// enable
 			value, ok := result["ENABLED"]
 			if ok {
