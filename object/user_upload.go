@@ -157,7 +157,7 @@ func UploadUsers(owner string, path string, userObj *User, lang string) (bool, e
 	}
 
 	if len(newUsers) == 0 {
-		return false, nil
+		return false, fmt.Errorf("no users are modified")
 	}
 
 	return AddUsersInBatch(newUsers)

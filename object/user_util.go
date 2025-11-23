@@ -865,7 +865,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 	instances := []*T{}
 	var err error
 
-	for _, m := range excelMap {
+	for idx, m := range excelMap {
 		instance := new(T)
 		reflectedInstance := reflect.ValueOf(instance).Elem()
 
@@ -892,7 +892,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 			case reflect.Int:
 				intVal, err := strconv.Atoi(v)
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("line %d - column %s: %s", idx+1, fName, err.Error())
 				}
 				fv.SetInt(int64(intVal))
 				continue
@@ -920,7 +920,7 @@ func StringArrayToStruct[T any](stringArray [][]string) ([]*T, error) {
 			}
 
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("line %d: %s", idx, err.Error())
 			}
 		}
 		instances = append(instances, instance)
