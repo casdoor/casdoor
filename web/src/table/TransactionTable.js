@@ -13,184 +13,117 @@
 // limitations under the License.
 
 import React from "react";
-import {Table} from "antd";
-import {Link} from "react-router-dom";
-import * as Setting from "../Setting";
+import {Button, Input, Space, Table} from "antd";
+import {SearchOutlined} from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
 import i18next from "i18next";
+import {getTransactionTableColumns} from "./TransactionTableColumns";
 
 class TransactionTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       classes: props,
+      searchText: "",
+      searchedColumn: "",
     };
   }
 
-  render() {
-    const columns = [
-      {
-        title: i18next.t("general:Name"),
-        dataIndex: "name",
-        key: "name",
-        width: "280px",
-        render: (text, record) => {
-          return (
-            <Link to={`/transactions/${record.owner}/${record.name}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:Created time"),
-        dataIndex: "createdTime",
-        key: "createdTime",
-        width: "160px",
-        render: (text) => Setting.getFormattedDate(text),
-      },
-      {
-        title: i18next.t("general:Application"),
-        dataIndex: "application",
-        key: "application",
-        width: "120px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          return (
-            <Link to={`/applications/${record.owner}/${record.application}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("provider:Domain"),
-        dataIndex: "domain",
-        key: "domain",
-        width: "270px",
-        render: (text) => {
-          if (!text) {
-            return null;
-          }
+  getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+      <div style={{padding: 8}}>
+        <Input
+          ref={node => {
+            this.searchInput = node;
+          }}
+          placeholder={i18next.t("general:Please input your search")}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{marginBottom: 8, display: "block"}}
+        />
 
-          return (
-            <a href={text} target="_blank" rel="noopener noreferrer">
-              {text}
-            </a>
-          );
-        },
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{width: 90}}
+          >
+            {i18next.t("general:Search")}
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{width: 90}}>
+            {i18next.t("general:Reset")}
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({closeDropdown: false});
+              this.setState({
+                searchText: selectedKeys[0],
+                searchedColumn: dataIndex,
+              });
+            }}
+          >
+            {i18next.t("general:Filter")}
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{color: filtered ? "#1890ff" : undefined}} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+        : "",
+    filterDropdownProps: {
+      onOpenChange: visible => {
+        if (visible) {
+          setTimeout(() => this.searchInput.select(), 100);
+        }
       },
-      {
-        title: i18next.t("provider:Category"),
-        dataIndex: "category",
-        key: "category",
-        width: "120px",
-      },
-      {
-        title: i18next.t("provider:Type"),
-        dataIndex: "type",
-        key: "type",
-        width: "140px",
-        render: (text, record) => {
-          if (text && record.domain) {
-            const chatUrl = `${record.domain}/chats/${text}`;
-            return (
-              <a href={chatUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("provider:Subtype"),
-        dataIndex: "subtype",
-        key: "subtype",
-        width: "140px",
-        render: (text, record) => {
-          if (text && record.domain) {
-            const messageUrl = `${record.domain}/messages/${text}`;
-            return (
-              <a href={messageUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return text;
-        },
-      },
-      {
-        title: i18next.t("general:Provider"),
-        dataIndex: "provider",
-        key: "provider",
-        width: "150px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          if (record.domain) {
-            const casibaseUrl = `${record.domain}/providers/${text}`;
-            return (
-              <a href={casibaseUrl} target="_blank" rel="noopener noreferrer">
-                {text}
-              </a>
-            );
-          }
-          return (
-            <Link to={`/providers/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      ...(!this.props.hideTag ? [{
-        title: i18next.t("user:Tag"),
-        dataIndex: "tag",
-        key: "tag",
-        width: "120px",
-      }] : []),
-      {
-        title: i18next.t("general:Payment"),
-        dataIndex: "payment",
-        key: "payment",
-        width: "120px",
-        render: (text, record) => {
-          if (!text) {
-            return text;
-          }
-          return (
-            <Link to={`/payments/${record.owner}/${text}`}>
-              {text}
-            </Link>
-          );
-        },
-      },
-      {
-        title: i18next.t("general:State"),
-        dataIndex: "state",
-        key: "state",
-        width: "120px",
-      },
-      {
-        title: i18next.t("transaction:Amount"),
-        dataIndex: "amount",
-        key: "amount",
-        width: "120px",
-        fixed: (Setting.isMobile()) ? "false" : "right",
-      },
-      {
-        title: i18next.t("payment:Currency"),
-        dataIndex: "currency",
-        key: "currency",
-        width: "120px",
-        fixed: (Setting.isMobile()) ? "false" : "right",
-        render: (text, record, index) => {
-          return Setting.getCurrencyWithFlag(text);
-        },
-      },
-    ];
+    },
+    render: (text, record, index) => {
+      const highlightContent = this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{backgroundColor: "#ffc069", padding: 0}}
+          searchWords={[this.state.searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ""}
+        />
+      ) : (
+        text
+      );
+
+      return highlightContent;
+    },
+  });
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState({
+      searchText: selectedKeys[0],
+      searchedColumn: dataIndex,
+    });
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState({searchText: ""});
+  };
+
+  render() {
+    const columns = getTransactionTableColumns({
+      includeOrganization: false,
+      includeUser: this.props.includeUser || false,
+      includeTag: !this.props.hideTag,
+      includeActions: false,
+      getColumnSearchProps: this.getColumnSearchProps,
+      account: null,
+      onEdit: null,
+      onDelete: null,
+    });
 
     return (
       <Table
@@ -198,9 +131,13 @@ class TransactionTable extends React.Component {
         columns={columns}
         dataSource={this.props.transactions}
         rowKey={(record) => `${record.owner}/${record.name}`}
-        size="middle"
+        size="small"
         bordered
-        pagination={{pageSize: 10}}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+        }}
       />
     );
   }
