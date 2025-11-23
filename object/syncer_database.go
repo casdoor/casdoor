@@ -98,12 +98,11 @@ func (p *DatabaseSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 	// Memory leak problem handling
 	// https://github.com/casdoor/casdoor/issues/1256
 	users := p.Syncer.getOriginalUsersFromMap(results)
-	// Clear map contents and set slice to nil to allow garbage collection
+	// Clear map contents to help garbage collection
 	for i := range results {
 		for k := range results[i] {
 			delete(results[i], k)
 		}
-		results[i] = nil
 	}
 	results = nil
 
