@@ -872,7 +872,7 @@ func initDefinedTransaction(transaction *Transaction) {
 		}
 	}
 	transaction.CreatedTime = util.GetCurrentTime()
-	_, _, err = AddTransaction(transaction, "en")
+	_, _, err = AddTransaction(transaction, "en", false)
 	if err != nil {
 		panic(err)
 	}

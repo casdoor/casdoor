@@ -141,9 +141,19 @@ func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, 
 	return affected != 0, nil
 }
 
-func AddTransaction(transaction *Transaction, lang string) (bool, string, error) {
+func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, string, error) {
 	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
 	transaction.Name = transactionId
+
+	// In dry run mode, only validate without making changes
+	if dryRun {
+		err := validateBalanceForTransaction(transaction, transaction.Amount, lang)
+		if err != nil {
+			return false, "", err
+		}
+
+		return true, transactionId, nil
+	}
 
 	affected, err := ormer.Engine.Insert(transaction)
 	if err != nil {
