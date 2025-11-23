@@ -143,6 +143,7 @@ func (c *ApiController) UpdateTransaction() {
 // @Tag Transaction API
 // @Description add transaction
 // @Param   body    body   object.Transaction  true        "The details of the transaction"
+// @Param   dryRun  query  string  false       "Dry run mode: set to 'true' or '1' to validate without committing"
 // @Success 200 {object} controllers.Response The Response object
 // @router /add-transaction [post]
 func (c *ApiController) AddTransaction() {
@@ -153,7 +154,10 @@ func (c *ApiController) AddTransaction() {
 		return
 	}
 
-	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage())
+	dryRunParam := c.Input().Get("dryRun")
+	dryRun := dryRunParam == "true" || dryRunParam == "1"
+
+	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage(), dryRun)
 	if err != nil {
 		c.ResponseError(err.Error())
 		return

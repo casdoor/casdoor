@@ -1537,3 +1537,56 @@ func UpdateUserBalance(owner string, name string, balance float64, currency stri
 	_, err = UpdateUser(user.GetId(), user, []string{"balance"}, true)
 	return err
 }
+
+func ValidateUserBalance(owner string, name string, balance float64, currency string, lang string) error {
+	user, err := getUser(owner, name)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return fmt.Errorf(i18n.Translate(lang, "general:The user: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
+	}
+
+	// Convert the balance amount from transaction currency to user's balance currency
+	balanceCurrency := user.BalanceCurrency
+	var org *Organization
+	if balanceCurrency == "" {
+		// Get organization's balance currency as fallback
+		org, err = getOrganization("admin", owner)
+		if err == nil && org != nil && org.BalanceCurrency != "" {
+			balanceCurrency = org.BalanceCurrency
+		} else {
+			balanceCurrency = "USD"
+		}
+	}
+	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
+
+	// Calculate new balance
+	newBalance := AddPrices(user.Balance, convertedBalance)
+
+	// Check balance credit limit
+	// User.BalanceCredit takes precedence over Organization.BalanceCredit
+	var balanceCredit float64
+	if user.BalanceCredit != 0 {
+		balanceCredit = user.BalanceCredit
+	} else {
+		// Get organization's balance credit as fallback
+		if org == nil {
+			org, err = getOrganization("admin", owner)
+			if err != nil {
+				return err
+			}
+		}
+		if org != nil {
+			balanceCredit = org.OrgBalanceCredit
+		}
+	}
+
+	// Validate new balance against credit limit
+	if newBalance < balanceCredit {
+		return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new balance %v would be below credit limit %v"), newBalance, balanceCredit)
+	}
+
+	// In validation mode, we don't actually update the balance
+	return nil
+}

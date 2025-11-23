@@ -626,3 +626,36 @@ func UpdateOrganizationBalance(owner string, name string, balance float64, curre
 	_, err = ormer.Engine.ID(core.PK{owner, name}).Cols(columns...).Update(organization)
 	return err
 }
+
+func ValidateOrganizationBalance(owner string, name string, balance float64, currency string, isOrgBalance bool, lang string) error {
+	organization, err := getOrganization(owner, name)
+	if err != nil {
+		return err
+	}
+	if organization == nil {
+		return fmt.Errorf(i18n.Translate(lang, "auth:the organization: %s is not found"), fmt.Sprintf("%s/%s", owner, name))
+	}
+
+	// Convert the balance amount from transaction currency to organization's balance currency
+	balanceCurrency := organization.BalanceCurrency
+	if balanceCurrency == "" {
+		balanceCurrency = "USD"
+	}
+	convertedBalance := ConvertCurrency(balance, currency, balanceCurrency)
+
+	var newBalance float64
+	if isOrgBalance {
+		newBalance = AddPrices(organization.OrgBalance, convertedBalance)
+		// Check organization balance credit limit
+		if newBalance < organization.OrgBalanceCredit {
+			return fmt.Errorf(i18n.Translate(lang, "general:Insufficient balance: new organization balance %v would be below credit limit %v"), newBalance, organization.OrgBalanceCredit)
+		}
+	} else {
+		// User balance is just a sum of all users' balances, no credit limit check here
+		// Individual user credit limits are checked in ValidateUserBalance
+		newBalance = AddPrices(organization.UserBalance, convertedBalance)
+	}
+
+	// In validation mode, we don't actually update the balance
+	return nil
+}

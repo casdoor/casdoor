@@ -55,3 +55,94 @@ func TestTransactionBalanceUpdate(t *testing.T) {
 		t.Logf("Expected error for non-existent organization: %v", err)
 	}
 }
+
+func TestTransactionDryRun(t *testing.T) {
+	InitConfig()
+
+	// Test User category transaction in dry run mode
+	userTransaction := &Transaction{
+		Owner:    "test-org",
+		Name:     "test-user-transaction-dryrun",
+		Category: "User",
+		User:     "test-user",
+		Tag:      "User",
+		Amount:   100.0,
+		Currency: "USD",
+	}
+
+	// Dry run should perform validation without inserting
+	affected, transactionId, err := AddTransaction(userTransaction, "en", true)
+	if err != nil {
+		// Expected to fail if test user/org doesn't exist
+		t.Logf("Expected error for non-existent user in dry run: %v", err)
+	} else {
+		// In dry run mode, affected should be true but no actual insertion
+		if !affected {
+			t.Errorf("Dry run should return affected=true on success")
+		}
+		if transactionId == "" {
+			t.Errorf("Dry run should return a transaction ID")
+		}
+		t.Logf("Dry run successful: transactionId=%s", transactionId)
+
+		// Verify that transaction was not actually inserted
+		retrievedTransaction, err := GetTransaction(userTransaction.Owner + "/" + transactionId)
+		if err == nil && retrievedTransaction != nil {
+			t.Errorf("Dry run should not insert transaction into database")
+		}
+	}
+
+	// Test Organization category transaction in dry run mode
+	orgTransaction := &Transaction{
+		Owner:    "test-org",
+		Name:     "test-org-transaction-dryrun",
+		Category: "Organization",
+		Tag:      "Organization",
+		Amount:   200.0,
+		Currency: "USD",
+	}
+
+	// Dry run should perform validation without inserting
+	affected, transactionId, err = AddTransaction(orgTransaction, "en", true)
+	if err != nil {
+		// Expected to fail if test org doesn't exist
+		t.Logf("Expected error for non-existent organization in dry run: %v", err)
+	} else {
+		// In dry run mode, affected should be true but no actual insertion
+		if !affected {
+			t.Errorf("Dry run should return affected=true on success")
+		}
+		if transactionId == "" {
+			t.Errorf("Dry run should return a transaction ID")
+		}
+		t.Logf("Dry run successful: transactionId=%s", transactionId)
+
+		// Verify that transaction was not actually inserted
+		retrievedTransaction, err := GetTransaction(orgTransaction.Owner + "/" + transactionId)
+		if err == nil && retrievedTransaction != nil {
+			t.Errorf("Dry run should not insert transaction into database")
+		}
+	}
+}
+
+func TestTransactionNonDryRun(t *testing.T) {
+	InitConfig()
+
+	// Test that non-dry-run mode still works correctly
+	userTransaction := &Transaction{
+		Owner:    "test-org",
+		Name:     "test-user-transaction-normal",
+		Category: "User",
+		User:     "test-user",
+		Tag:      "User",
+		Amount:   50.0,
+		Currency: "USD",
+	}
+
+	// Non-dry run should attempt actual insertion
+	_, _, err := AddTransaction(userTransaction, "en", false)
+	if err != nil {
+		// Expected to fail if test user/org doesn't exist
+		t.Logf("Expected error for non-existent user in normal mode: %v", err)
+	}
+}

@@ -141,9 +141,19 @@ func UpdateTransaction(id string, transaction *Transaction, lang string) (bool, 
 	return affected != 0, nil
 }
 
-func AddTransaction(transaction *Transaction, lang string) (bool, string, error) {
+func AddTransaction(transaction *Transaction, lang string, dryRun bool) (bool, string, error) {
 	transactionId := strings.ReplaceAll(util.GenerateId(), "-", "")
 	transaction.Name = transactionId
+
+	// In dry run mode, only validate without making changes
+	if dryRun {
+		// Perform validation checks
+		if err := validateBalanceForTransaction(transaction, transaction.Amount, lang); err != nil {
+			return false, "", err
+		}
+		// Return success without actually inserting
+		return true, transactionId, nil
+	}
 
 	affected, err := ormer.Engine.Insert(transaction)
 	if err != nil {
@@ -196,6 +206,29 @@ func updateBalanceForTransaction(transaction *Transaction, amount float64, lang 
 		}
 		// Update organization's user balance sum
 		return UpdateOrganizationBalance("admin", transaction.Owner, amount, currency, false, lang)
+	}
+	return nil
+}
+
+func validateBalanceForTransaction(transaction *Transaction, amount float64, lang string) error {
+	currency := transaction.Currency
+	if currency == "" {
+		currency = "USD"
+	}
+
+	if transaction.Tag == "Organization" {
+		// Validate organization balance change
+		return ValidateOrganizationBalance("admin", transaction.Owner, amount, currency, true, lang)
+	} else if transaction.Tag == "User" {
+		// Validate user balance change
+		if transaction.User == "" {
+			return fmt.Errorf(i18n.Translate(lang, "general:User is required for User category transaction"))
+		}
+		if err := ValidateUserBalance(transaction.Owner, transaction.User, amount, currency, lang); err != nil {
+			return err
+		}
+		// Validate organization's user balance sum change
+		return ValidateOrganizationBalance("admin", transaction.Owner, amount, currency, false, lang)
 	}
 	return nil
 }
