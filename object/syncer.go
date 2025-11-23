@@ -20,6 +20,7 @@ import (
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
+	"golang.org/x/crypto/ssh"
 )
 
 type TableColumn struct {
@@ -61,7 +62,8 @@ type Syncer struct {
 	IsReadOnly       bool           `json:"isReadOnly"`
 	IsEnabled        bool           `json:"isEnabled"`
 
-	Ormer *Ormer `xorm:"-" json:"-"`
+	Ormer     *Ormer      `xorm:"-" json:"-"`
+	SshClient *ssh.Client `xorm:"-" json:"-"`
 }
 
 func GetSyncerCount(owner, organization, field, value string) (int64, error) {
@@ -170,6 +172,9 @@ func UpdateSyncer(id string, syncer *Syncer, isGlobalAdmin bool, lang string) (b
 	} else if !isGlobalAdmin && s.Organization != syncer.Organization {
 		return false, fmt.Errorf(i18n.Translate(lang, "auth:Unauthorized operation"))
 	}
+
+	// Close old syncer connections before updating
+	_ = s.Close()
 
 	session := ormer.Engine.ID(core.PK{owner, name}).AllCols()
 	if syncer.Password == "***" {
@@ -313,4 +318,28 @@ func TestSyncer(syncer Syncer) error {
 
 	provider := GetSyncerProvider(&syncer)
 	return provider.TestConnection()
+}
+
+func (syncer *Syncer) Close() error {
+	var err error
+	if syncer.Ormer != nil {
+		if syncer.Ormer.Engine != nil {
+			err = syncer.Ormer.Engine.Close()
+			syncer.Ormer.Engine = nil
+		}
+		if syncer.Ormer.Db != nil {
+			if dbErr := syncer.Ormer.Db.Close(); dbErr != nil && err == nil {
+				err = dbErr
+			}
+			syncer.Ormer.Db = nil
+		}
+		syncer.Ormer = nil
+	}
+	if syncer.SshClient != nil {
+		if sshErr := syncer.SshClient.Close(); sshErr != nil && err == nil {
+			err = sshErr
+		}
+		syncer.SshClient = nil
+	}
+	return err
 }

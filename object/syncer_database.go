@@ -63,6 +63,9 @@ func (p *DatabaseSyncerProvider) InitAdapter() error {
 			return err
 		}
 
+		// Store SSH client for proper cleanup
+		p.Syncer.SshClient = dial
+
 		if p.Syncer.DatabaseType == "mysql" {
 			dataSourceName = fmt.Sprintf("%s:%s@%s(%s:%d)/", p.Syncer.User, p.Syncer.Password, p.Syncer.Owner+p.Syncer.Name, p.Syncer.Host, p.Syncer.Port)
 			mysql.RegisterDialContext(p.Syncer.Owner+p.Syncer.Name, (&ViaSSHDialer{Client: dial, Context: nil}).MysqlDial)
@@ -95,11 +98,14 @@ func (p *DatabaseSyncerProvider) GetOriginalUsers() ([]*OriginalUser, error) {
 	// Memory leak problem handling
 	// https://github.com/casdoor/casdoor/issues/1256
 	users := p.Syncer.getOriginalUsersFromMap(results)
-	for _, m := range results {
-		for k := range m {
-			delete(m, k)
+	// Clear map contents and set slice to nil to allow garbage collection
+	for i := range results {
+		for k := range results[i] {
+			delete(results[i], k)
 		}
+		results[i] = nil
 	}
+	results = nil
 
 	return users, nil
 }
@@ -140,6 +146,11 @@ func (p *DatabaseSyncerProvider) TestConnection() error {
 		return err
 	}
 	return nil
+}
+
+// Close closes the database connection and SSH tunnel
+func (p *DatabaseSyncerProvider) Close() error {
+	return p.Syncer.Close()
 }
 
 type dsnConnector struct {
