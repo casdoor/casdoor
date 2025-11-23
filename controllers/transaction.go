@@ -113,6 +113,27 @@ func (c *ApiController) GetTransaction() {
 		return
 	}
 
+	if transaction == nil {
+		c.ResponseOk(nil)
+		return
+	}
+
+	// Check if non-admin user is trying to access someone else's transaction
+	if !c.IsAdmin() {
+		user := c.GetSessionUsername()
+		_, userName, userErr := util.GetOwnerAndNameFromIdWithError(user)
+		if userErr != nil {
+			c.ResponseError(userErr.Error())
+			return
+		}
+
+		// Only allow users to view their own transactions
+		if transaction.User != userName {
+			c.ResponseError(c.T("auth:Unauthorized operation"))
+			return
+		}
+	}
+
 	c.ResponseOk(transaction)
 }
 
