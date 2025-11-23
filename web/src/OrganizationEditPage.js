@@ -818,7 +818,7 @@ class OrganizationEditPage extends React.Component {
         }
         {this.state.mode !== "add" && this.state.transactions.length > 0 ? (
           <Card size="small" title={i18next.t("transaction:Transactions")} style={{marginTop: "20px"}} type="inner">
-            <TransactionTable transactions={this.state.transactions} />
+            <TransactionTable transactions={this.state.transactions} includeUser={true} />
           </Card>
         ) : null}
         <div style={{marginTop: "20px", marginLeft: "40px"}}>

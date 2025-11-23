@@ -27,7 +27,7 @@ class TransactionTable extends React.Component {
   render() {
     const columns = getTransactionTableColumns({
       includeOrganization: false,
-      includeUser: false,
+      includeUser: this.props.includeUser || false,
       includeTag: !this.props.hideTag,
       includeActions: false,
       getColumnSearchProps: null,
@@ -44,7 +44,11 @@ class TransactionTable extends React.Component {
         rowKey={(record) => `${record.owner}/${record.name}`}
         size="small"
         bordered
-        pagination={{pageSize: 10}}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+        }}
       />
     );
   }
