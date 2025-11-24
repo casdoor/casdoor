@@ -107,7 +107,7 @@ func (c *ApiController) GetInvitationCodeInfo() {
 		return
 	}
 
-	invitation, msg := object.GetInvitationByCode(code, application.Organization, c.GetAcceptLanguage())
+	invitation, msg := object.GetInvitationByCode(code, application.Organization, application.Name, c.GetAcceptLanguage())
 	if msg != "" {
 		c.ResponseError(msg)
 		return
@@ -234,15 +234,29 @@ func (c *ApiController) SendInvitation() {
 		return
 	}
 
-	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	if application == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
-		return
+	var application *object.Application
+	// Use the invitation's specified application if set, otherwise get by organization
+	if invitation.Application != "" && invitation.Application != "All" {
+		// The invitation.Application is just the name, need to construct full ID
+		application, err = object.GetApplication(fmt.Sprintf("admin/%s", invitation.Application))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The application: %s does not exist"), invitation.Application))
+			return
+		}
+	} else {
+		application, err = object.GetApplicationByOrganizationName(invitation.Owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
+			return
+		}
 	}
 
 	provider, err := application.GetEmailProvider("Invitation")
