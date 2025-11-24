@@ -60,6 +60,12 @@ func (p *GoogleWorkspaceSyncerProvider) TestConnection() error {
 	return err
 }
 
+// Close closes any open connections (no-op for Google Workspace API-based syncer)
+func (p *GoogleWorkspaceSyncerProvider) Close() error {
+	// Google Workspace syncer doesn't maintain persistent connections
+	return nil
+}
+
 // getAdminService creates and returns a Google Workspace Admin SDK service
 func (p *GoogleWorkspaceSyncerProvider) getAdminService() (*admin.Service, error) {
 	// syncer.Host should be the admin email (impersonation account)

@@ -31,6 +31,9 @@ type SyncerProvider interface {
 
 	// TestConnection tests the connection to the external system
 	TestConnection() error
+
+	// Close closes any open connections and releases resources
+	Close() error
 }
 
 // GetSyncerProvider returns the appropriate SyncerProvider implementation based on syncer type

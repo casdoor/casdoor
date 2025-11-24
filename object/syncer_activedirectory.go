@@ -61,6 +61,13 @@ func (p *ActiveDirectorySyncerProvider) TestConnection() error {
 	return nil
 }
 
+// Close closes any open connections (no-op for Active Directory LDAP-based syncer)
+func (p *ActiveDirectorySyncerProvider) Close() error {
+	// Active Directory syncer doesn't maintain persistent connections
+	// LDAP connections are opened and closed per operation
+	return nil
+}
+
 // getLdapConn establishes an LDAP connection to Active Directory
 func (p *ActiveDirectorySyncerProvider) getLdapConn() (*goldap.Conn, error) {
 	// syncer.Host should be the AD server hostname/IP

@@ -60,6 +60,12 @@ func (p *AzureAdSyncerProvider) TestConnection() error {
 	return err
 }
 
+// Close closes any open connections (no-op for Azure AD API-based syncer)
+func (p *AzureAdSyncerProvider) Close() error {
+	// Azure AD syncer doesn't maintain persistent connections
+	return nil
+}
+
 type AzureAdAccessTokenResp struct {
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`

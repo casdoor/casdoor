@@ -60,6 +60,12 @@ func (p *WecomSyncerProvider) TestConnection() error {
 	return err
 }
 
+// Close closes any open connections (no-op for WeCom API-based syncer)
+func (p *WecomSyncerProvider) Close() error {
+	// WeCom syncer doesn't maintain persistent connections
+	return nil
+}
+
 type WecomAccessTokenResp struct {
 	Errcode     int    `json:"errcode"`
 	Errmsg      string `json:"errmsg"`

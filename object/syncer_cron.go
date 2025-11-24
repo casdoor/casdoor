@@ -73,4 +73,6 @@ func addSyncerJob(syncer *Syncer) error {
 
 func deleteSyncerJob(syncer *Syncer) {
 	clearCron(syncer.Name)
+	// Close any open connections when deleting the job
+	_ = syncer.Close()
 }
