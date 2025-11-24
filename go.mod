@@ -15,7 +15,7 @@ require (
 	github.com/beevik/etree v1.1.0
 	github.com/casbin/casbin/v2 v2.77.2
 	github.com/casdoor/go-sms-sender v0.25.0
-	github.com/casdoor/gomail/v2 v2.1.0
+	github.com/casdoor/gomail/v2 v2.2.0
 	github.com/casdoor/ldapserver v1.2.0
 	github.com/casdoor/notify v1.0.1
 	github.com/casdoor/oss v1.8.0

@@ -233,8 +233,8 @@ github.com/casdoor/go-reddit/v2 v2.1.0 h1:kIbfdJ7AA7H0uTQ8s0q4GGZqSS5V9wVE74RrXy
 github.com/casdoor/go-reddit/v2 v2.1.0/go.mod h1:eagkvwlZ4Hcsuc/uQsLHYEulz5jN65SVSwV/AIE7zsc=
 github.com/casdoor/go-sms-sender v0.25.0 h1:eF4cOCSbjVg7+0uLlJQnna/FQ0BWW+Fp/x4cXhzQu1Y=
 github.com/casdoor/go-sms-sender v0.25.0/go.mod h1:bOm4H8/YfJmEHjBatEVQFOnAf0OOn1B0Wi5B7zDhws0=
-github.com/casdoor/gomail/v2 v2.1.0 h1:ua97E3CARnF1Ik8ga/Drz9uGZfaElXJumFexiErWUxM=
-github.com/casdoor/gomail/v2 v2.1.0/go.mod h1:GFzOD9RhY0nODiiPaQiOa6DfoKtmO9aTesu5qrp26OI=
+github.com/casdoor/gomail/v2 v2.2.0 h1:gVMk43qvqq4XYkAJ+CDY5WWKF9yYRipuyXfp7P0HWIg=
+github.com/casdoor/gomail/v2 v2.2.0/go.mod h1:GFzOD9RhY0nODiiPaQiOa6DfoKtmO9aTesu5qrp26OI=
 github.com/casdoor/ldapserver v1.2.0 h1:HdSYe+ULU6z9K+2BqgTrJKQRR4//ERAXB64ttOun6Ow=
 github.com/casdoor/ldapserver v1.2.0/go.mod h1:VwYU2vqQ2pA8sa00PRekH71R2XmgfzMKhmp1XrrDu2s=
 github.com/casdoor/notify v1.0.1 h1:p0kzI7OBlvLbL7zWeKIu31LRcEAygNZGKr5gcFfSIoE=
