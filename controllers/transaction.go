@@ -175,7 +175,7 @@ func (c *ApiController) AddTransaction() {
 		return
 	}
 
-	dryRunParam := c.Input().Get("dryRun")
+	dryRunParam := c.Input().Get("dryrun")
 	dryRun := dryRunParam != ""
 
 	affected, transactionId, err := object.AddTransaction(&transaction, c.GetAcceptLanguage(), dryRun)
