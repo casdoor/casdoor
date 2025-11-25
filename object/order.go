@@ -28,13 +28,20 @@ type Order struct {
 	DisplayName string `xorm:"varchar(100)" json:"displayName"`
 
 	// Product Info
-	ProductName string `xorm:"varchar(100)" json:"productName"`
+	ProductName string   `xorm:"varchar(100)" json:"productName"`
+	Products    []string `xorm:"varchar(1000)" json:"products"` // Future support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed
+
+	// Subscription Info (for subscription orders)
+	PricingName string `xorm:"varchar(100)" json:"pricingName"`
+	PlanName    string `xorm:"varchar(100)" json:"planName"`
 
 	// User Info
 	User string `xorm:"varchar(100)" json:"user"`
 
 	// Payment Info
-	Payment string `xorm:"varchar(100)" json:"payment"`
+	Payment  string  `xorm:"varchar(100)" json:"payment"`
+	Price    float64 `json:"price"`
+	Currency string  `xorm:"varchar(100)" json:"currency"`
 
 	// Order State
 	State   string `xorm:"varchar(100)" json:"state"`

@@ -57,6 +57,23 @@ class OrderListPage extends BaseListPage {
       });
   }
 
+  cancelOrder(order) {
+    OrderBackend.cancelOrder(order.owner, order.name)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("general:Successfully canceled"));
+          this.fetch({
+            pagination: this.state.pagination,
+          });
+        } else {
+          Setting.showMessage("error", `${i18next.t("general:Failed to cancel")}: ${res.msg}`);
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+      });
+  }
+
   deleteOrder(i) {
     OrderBackend.deleteOrder(this.state.data[i])
       .then((res) => {
@@ -199,12 +216,18 @@ class OrderListPage extends BaseListPage {
         title: i18next.t("general:Action"),
         dataIndex: "",
         key: "op",
-        width: "170px",
+        width: "240px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
           return (
-            <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+            <div style={{display: "flex", flexWrap: "wrap", gap: "8px"}}>
+              <Button onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}/pay`)} disabled={record.state !== "Created"}>
+                {i18next.t("order:Pay")}
+              </Button>
+              <Button danger onClick={() => this.cancelOrder(record)} disabled={record.state !== "Created"}>
+                {i18next.t("general:Cancel")}
+              </Button>
+              <Button type="primary" onClick={() => this.props.history.push(`/orders/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
               <PopconfirmModal
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deleteOrder(index)}
