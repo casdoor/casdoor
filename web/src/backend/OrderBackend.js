@@ -24,6 +24,16 @@ export function getOrders(owner, page = "", pageSize = "", field = "", value = "
   }).then(res => res.json());
 }
 
+export function payOrder(owner, name, providerName, paymentEnv = "") {
+  return fetch(`${Setting.ServerUrl}/api/pay-order?id=${owner}/${encodeURIComponent(name)}&providerName=${encodeURIComponent(providerName)}&paymentEnv=${paymentEnv}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
 export function getUserOrders(owner, user) {
   return fetch(`${Setting.ServerUrl}/api/get-user-orders?owner=${owner}&user=${user}`, {
     method: "GET",
@@ -74,6 +84,26 @@ export function deleteOrder(order) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(newOrder),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function placeOrder(productId, pricingName = "", planName = "", userName = "", customPrice = 0) {
+  return fetch(`${Setting.ServerUrl}/api/place-order?productId=${encodeURIComponent(productId)}&pricingName=${encodeURIComponent(pricingName)}&planName=${encodeURIComponent(planName)}&userName=${encodeURIComponent(userName)}&customPrice=${customPrice}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}
+
+export function cancelOrder(owner, name) {
+  return fetch(`${Setting.ServerUrl}/api/cancel-order?id=${owner}/${encodeURIComponent(name)}`, {
+    method: "POST",
+    credentials: "include",
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },

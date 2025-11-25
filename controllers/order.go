@@ -16,6 +16,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -162,5 +163,35 @@ func (c *ApiController) DeleteOrder() {
 	}
 
 	c.Data["json"] = wrapActionResponse(object.DeleteOrder(&order))
+	c.ServeJSON()
+}
+
+// CancelOrder
+// @Title CancelOrder
+// @Tag Order API
+// @Description cancel an order
+// @Param   id     query    string  true        "The id ( owner/name ) of the order"
+// @Success 200 {object} controllers.Response The Response object
+// @router /cancel-order [post]
+func (c *ApiController) CancelOrder() {
+	id := c.Input().Get("id")
+	order, err := object.GetOrder(id)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	if order == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The order: %s does not exist"), id))
+		return
+	}
+
+	userId := c.GetSessionUsername()
+	orderUserId := util.GetId(order.Owner, order.User)
+	if userId != orderUserId && !c.IsAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	c.Data["json"] = wrapActionResponse(object.CancelOrder(order))
 	c.ServeJSON()
 }
