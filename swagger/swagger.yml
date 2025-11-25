@@ -10,6 +10,60 @@ schemes:
 - https
 - http
 paths:
+  /.well-known/{application}/jwks:
+    get:
+      tags:
+      - OIDC API
+      operationId: RootController.GetJwksByApplication
+      parameters:
+      - in: path
+        name: application
+        description: application name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/jose.JSONWebKey'
+  /.well-known/{application}/openid-configuration:
+    get:
+      tags:
+      - OIDC API
+      description: Get Oidc Discovery for specific application
+      operationId: RootController.GetOidcDiscoveryByApplication
+      parameters:
+      - in: path
+        name: application
+        description: application name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object.OidcDiscovery'
+  /.well-known/{application}/webfinger:
+    get:
+      tags:
+      - OIDC API
+      operationId: RootController.GetWebFingerByApplication
+      parameters:
+      - in: path
+        name: application
+        description: application name
+        required: true
+        type: string
+      - in: query
+        name: resource
+        description: resource
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/object.WebFinger'
   /.well-known/jwks:
     get:
       tags:
@@ -130,6 +184,24 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.Enforcer'
+  /api/add-form:
+    post:
+      tags:
+      - Form API
+      description: add form
+      operationId: ApiController.AddForm
+      parameters:
+      - in: body
+        name: body
+        description: The details of the form
+        required: true
+        schema:
+          $ref: '#/definitions/object.Form'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/add-group:
     post:
       tags:
@@ -197,6 +269,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Model'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/add-order:
+    post:
+      tags:
+      - Order API
+      description: add order
+      operationId: ApiController.AddOrder
+      parameters:
+      - in: body
+        name: body
+        description: The details of the order
+        required: true
+        schema:
+          $ref: '#/definitions/object.Order'
       responses:
         "200":
           description: The Response object
@@ -495,6 +585,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Transaction'
+      - in: query
+        name: dryRun
+        description: 'Dry run mode: set to ''true'' or ''1'' to validate without committing'
+        type: string
       responses:
         "200":
           description: The Response object
@@ -682,6 +776,24 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.Enforcer'
+  /api/delete-form:
+    post:
+      tags:
+      - Form API
+      description: delete form
+      operationId: ApiController.DeleteForm
+      parameters:
+      - in: body
+        name: body
+        description: The details of the form
+        required: true
+        schema:
+          $ref: '#/definitions/object.Form'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/delete-group:
     post:
       tags:
@@ -760,6 +872,24 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Model'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/delete-order:
+    post:
+      tags:
+      - Order API
+      description: delete order
+      operationId: ApiController.DeleteOrder
+      parameters:
+      - in: body
+        name: body
+        description: The details of the order
+        required: true
+        schema:
+          $ref: '#/definitions/object.Order'
       responses:
         "200":
           description: The Response object
@@ -1392,10 +1522,10 @@ paths:
             items:
               $ref: '#/definitions/object.Enforcer'
   /api/get-filtered-policies:
-    get:
+    post:
       tags:
       - Enforcer API
-      description: get filtered policies
+      description: get filtered policies with support for multiple filters via POST body
       operationId: ApiController.GetFilteredPolicies
       parameters:
       - in: query
@@ -1403,19 +1533,14 @@ paths:
         description: The id ( owner/name )  of enforcer
         required: true
         type: string
-      - in: query
-        name: ptype
-        description: Policy type, default is 'p'
-        type: string
-      - in: query
-        name: fieldIndex
-        description: Field index for filtering
-        type: integer
-        format: int64
-      - in: query
-        name: fieldValues
-        description: Field values for filtering, comma-separated
-        type: string
+      - in: body
+        name: body
+        description: Array of filter objects for multiple filters
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/object.Filter'
       responses:
         "200":
           description: ""
@@ -1423,6 +1548,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/xormadapter.CasbinRule'
+  /api/get-form:
+    get:
+      tags:
+      - Form API
+      description: get form
+      operationId: ApiController.GetForm
+      parameters:
+      - in: query
+        name: id
+        description: The id (owner/name) of form
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Form'
+  /api/get-forms:
+    get:
+      tags:
+      - Form API
+      description: get forms
+      operationId: ApiController.GetForms
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of form
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Form'
   /api/get-global-certs:
     get:
       tags:
@@ -1436,6 +1597,19 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Cert'
+  /api/get-global-forms:
+    get:
+      tags:
+      - Form API
+      description: get global forms
+      operationId: ApiController.GetGlobalForms
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Form'
   /api/get-global-providers:
     get:
       tags:
@@ -1633,6 +1807,42 @@ paths:
             type: array
             items:
               $ref: '#/definitions/object.Model'
+  /api/get-order:
+    get:
+      tags:
+      - Order API
+      description: get order
+      operationId: ApiController.GetOrder
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the order
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Order'
+  /api/get-orders:
+    get:
+      tags:
+      - Order API
+      description: get orders
+      operationId: ApiController.GetOrders
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of orders
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Order'
   /api/get-organization:
     get:
       tags:
@@ -1710,9 +1920,9 @@ paths:
   /api/get-payment:
     get:
       tags:
-      - Verification API
+      - Payment API
       description: get payment
-      operationId: ApiController.GetVerification
+      operationId: ApiController.GetPayment
       parameters:
       - in: query
         name: id
@@ -1723,13 +1933,13 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Verification'
+            $ref: '#/definitions/object.Payment'
   /api/get-payments:
     get:
       tags:
-      - Verification API
+      - Payment API
       description: get payments
-      operationId: ApiController.GetVerifications
+      operationId: ApiController.GetPayments
       parameters:
       - in: query
         name: owner
@@ -1742,7 +1952,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Verification'
+              $ref: '#/definitions/object.Payment'
   /api/get-permission:
     get:
       tags:
@@ -2450,12 +2660,36 @@ paths:
       responses:
         "200":
           description: '{int} int The count of filtered users for an organization'
+  /api/get-user-orders:
+    get:
+      tags:
+      - Order API
+      description: get orders for a user
+      operationId: ApiController.GetUserOrders
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of orders
+        required: true
+        type: string
+      - in: query
+        name: user
+        description: The username of the user
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/object.Order'
   /api/get-user-payments:
     get:
       tags:
-      - Verification API
+      - Payment API
       description: get payments for a user
-      operationId: ApiController.GetUserVerifications
+      operationId: ApiController.GetUserPayments
       parameters:
       - in: query
         name: owner
@@ -2478,36 +2712,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Verification'
-  /api/get-user-transactions:
-    get:
-      tags:
-      - Transaction API
-      description: get transactions for a user
-      operationId: ApiController.GetUserTransaction
-      parameters:
-      - in: query
-        name: owner
-        description: The owner of transactions
-        required: true
-        type: string
-      - in: query
-        name: organization
-        description: The organization of the user
-        required: true
-        type: string
-      - in: query
-        name: user
-        description: The username of the user
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/object.Transaction'
+              $ref: '#/definitions/object.Payment'
   /api/get-users:
     get:
       tags:
@@ -2836,6 +3041,15 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/metrics:
+    get:
+      tags:
+      - System API
+      description: get Prometheus metrics
+      operationId: ApiController.GetMetrics
+      responses:
+        "200":
+          description: '{string} Prometheus metrics in text format'
   /api/mfa/setup/enable:
     post:
       tags:
@@ -2999,6 +3213,31 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/send-invitation:
+    post:
+      tags:
+      - Invitation API
+      description: verify invitation
+      operationId: ApiController.VerifyInvitation
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the invitation
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the invitation
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/send-notification:
     post:
       tags:
@@ -3115,6 +3354,27 @@ paths:
         description: The password
         required: true
         type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/sso-logout:
+    get:
+      tags:
+      - Login API
+      description: logout the current user from all applications
+      operationId: ApiController.SsoLogout
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+    post:
+      tags:
+      - Login API
+      description: logout the current user from all applications
+      operationId: ApiController.SsoLogout
       responses:
         "200":
           description: The Response object
@@ -3239,6 +3499,29 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/object.Enforcer'
+  /api/update-form:
+    post:
+      tags:
+      - Form API
+      description: update form
+      operationId: ApiController.UpdateForm
+      parameters:
+      - in: query
+        name: id
+        description: The id (owner/name) of the form
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the form
+        required: true
+        schema:
+          $ref: '#/definitions/object.Form'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/update-group:
     post:
       tags:
@@ -3321,6 +3604,29 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/object.Model'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/update-order:
+    post:
+      tags:
+      - Order API
+      description: update order
+      operationId: ApiController.UpdateOrder
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the order
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: The details of the order
+        required: true
+        schema:
+          $ref: '#/definitions/object.Order'
       responses:
         "200":
           description: The Response object
@@ -3679,7 +3985,14 @@ paths:
       - in: query
         name: id
         description: The id ( owner/name ) of the user
-        required: true
+        type: string
+      - in: query
+        name: userId
+        description: The userId (UUID) of the user
+        type: string
+      - in: query
+        name: owner
+        description: The owner of the user (required when using userId)
         type: string
       - in: body
         name: body
@@ -3907,10 +4220,10 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  187812.<nil>.string:
+  217289.<nil>.string:
     title: string
     type: object
-  187870.string.string:
+  217347.string.string:
     title: string
     type: object
   Response:
@@ -4091,17 +4404,24 @@ definitions:
         type: string
       clientSecret:
         type: string
+      codeResendTimeout:
+        type: integer
+        format: int64
       createdTime:
         type: string
       defaultGroup:
         type: string
       description:
         type: string
+      disableSignin:
+        type: boolean
       displayName:
         type: string
       enableAutoSignin:
         type: boolean
       enableCodeSignin:
+        type: boolean
+      enableExclusiveSignin:
         type: boolean
       enableLinkWithEmail:
         type: boolean
@@ -4120,14 +4440,16 @@ definitions:
       enableWebAuthn:
         type: boolean
       expireInHours:
-        type: integer
-        format: int64
+        type: number
+        format: double
       failedSigninFrozenTime:
         type: integer
         format: int64
       failedSigninLimit:
         type: integer
         format: int64
+      favicon:
+        type: string
       footerHtml:
         type: string
       forcedRedirectOrigin:
@@ -4165,6 +4487,9 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: integer
+        format: int64
       orgChoiceMode:
         type: string
       organization:
@@ -4182,12 +4507,14 @@ definitions:
         items:
           type: string
       refreshExpireInHours:
-        type: integer
-        format: int64
+        type: number
+        format: double
       samlAttributes:
         type: array
         items:
           $ref: '#/definitions/object.SamlItem'
+      samlHashAlgorithm:
+        type: string
       samlReplyUrl:
         type: string
       signinHtml:
@@ -4218,6 +4545,12 @@ definitions:
         type: string
       themeData:
         $ref: '#/definitions/object.ThemeData'
+      title:
+        type: string
+      tokenAttributes:
+        type: array
+        items:
+          $ref: '#/definitions/object.JwtItem'
       tokenFields:
         type: array
         items:
@@ -4307,6 +4640,51 @@ definitions:
           type: number
           format: double
       name:
+        type: string
+  object.Filter:
+    title: Filter
+    type: object
+    properties:
+      fieldIndex:
+        type: integer
+        format: int64
+      fieldValues:
+        type: array
+        items:
+          type: string
+      ptype:
+        type: string
+  object.Form:
+    title: Form
+    type: object
+    properties:
+      createdTime:
+        type: string
+      displayName:
+        type: string
+      formItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.FormItem'
+      name:
+        type: string
+      owner:
+        type: string
+      tag:
+        type: string
+      type:
+        type: string
+  object.FormItem:
+    title: FormItem
+    type: object
+    properties:
+      label:
+        type: string
+      name:
+        type: string
+      visible:
+        type: boolean
+      width:
         type: string
   object.GaugeVecInfo:
     title: GaugeVecInfo
@@ -4453,6 +4831,14 @@ definitions:
         format: int64
       username:
         type: string
+  object.JwtItem:
+    title: JwtItem
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
   object.Ldap:
     title: Ldap
     type: object
@@ -4466,6 +4852,9 @@ definitions:
         type: string
       createdTime:
         type: string
+      customAttributes:
+        additionalProperties:
+          type: string
       defaultGroup:
         type: string
       enableSsl:
@@ -4513,7 +4902,14 @@ definitions:
         type: string
       address:
         type: string
+      attributes:
+        additionalProperties:
+          type: string
       cn:
+        type: string
+      country:
+        type: string
+      countryName:
         type: string
       displayName:
         type: string
@@ -4660,6 +5056,32 @@ definitions:
         type: string
       userinfo_endpoint:
         type: string
+  object.Order:
+    title: Order
+    type: object
+    properties:
+      createdTime:
+        type: string
+      displayName:
+        type: string
+      endTime:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      payment:
+        type: string
+      productName:
+        type: string
+      startTime:
+        type: string
+      state:
+        type: string
+      user:
+        type: string
   object.Organization:
     title: Organization
     type: object
@@ -4668,6 +5090,11 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/object.AccountItem'
+      balanceCredit:
+        type: number
+        format: double
+      balanceCurrency:
+        type: string
       countryCodes:
         type: array
         items:
@@ -4680,6 +5107,8 @@ definitions:
         type: string
       defaultPassword:
         type: string
+      disableSignin:
+        type: boolean
       displayName:
         type: string
       enableSoftDeletion:
@@ -4724,10 +5153,9 @@ definitions:
         type: array
         items:
           type: string
-      userNavItems:
-        type: array
-        items:
-          type: string
+      orgBalance:
+        type: number
+        format: double
       owner:
         type: string
       passwordExpireDays:
@@ -4753,6 +5181,13 @@ definitions:
         $ref: '#/definitions/object.ThemeData'
       useEmailAsUsername:
         type: boolean
+      userBalance:
+        type: number
+        format: double
+      userNavItems:
+        type: array
+        items:
+          type: string
       userTypes:
         type: array
         items:
@@ -5058,6 +5493,8 @@ definitions:
         type: string
       emailRegex:
         type: string
+      enableProxy:
+        type: boolean
       enableSignAuthnRequest:
         type: boolean
       endpoint:
@@ -5482,9 +5919,9 @@ definitions:
         type: string
       currency:
         type: string
-      detail:
-        type: string
       displayName:
+        type: string
+      domain:
         type: string
       name:
         type: string
@@ -5492,16 +5929,12 @@ definitions:
         type: string
       payment:
         type: string
-      productDisplayName:
-        type: string
-      productName:
-        type: string
       provider:
-        type: string
-      returnUrl:
         type: string
       state:
         $ref: '#/definitions/pp.PaymentState'
+      subtype:
+        type: string
       tag:
         type: string
       type:
@@ -5547,6 +5980,11 @@ definitions:
       balance:
         type: number
         format: double
+      balanceCredit:
+        type: number
+        format: double
+      balanceCurrency:
+        type: string
       battlenet:
         type: string
       bilibili:
@@ -5572,6 +6010,24 @@ definitions:
       currency:
         type: string
       custom:
+        type: string
+      custom2:
+        type: string
+      custom3:
+        type: string
+      custom4:
+        type: string
+      custom5:
+        type: string
+      custom6:
+        type: string
+      custom7:
+        type: string
+      custom8:
+        type: string
+      custom9:
+        type: string
+      custom10:
         type: string
       dailymotion:
         type: string
@@ -5716,6 +6172,18 @@ definitions:
           $ref: '#/definitions/object.MfaItem'
       mfaPhoneEnabled:
         type: boolean
+      mfaPushEnabled:
+        type: boolean
+      mfaPushProvider:
+        type: string
+      mfaPushReceiver:
+        type: string
+      mfaRadiusEnabled:
+        type: boolean
+      mfaRadiusProvider:
+        type: string
+      mfaRadiusUsername:
+        type: string
       mfaRememberDeadline:
         type: string
       microsoftonline:
@@ -5735,6 +6203,8 @@ definitions:
       okta:
         type: string
       onedrive:
+        type: string
+      originalToken:
         type: string
       oura:
         type: string
@@ -5775,6 +6245,10 @@ definitions:
         items:
           type: string
       region:
+        type: string
+      registerSource:
+        type: string
+      registerType:
         type: string
       roles:
         type: array
@@ -5896,13 +6370,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/187812.<nil>.string'
+        $ref: '#/definitions/217289.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/187870.string.string'
+        $ref: '#/definitions/217347.string.string'
       subject:
         type: string
   object.WebFingerLink:
@@ -5977,6 +6451,9 @@ definitions:
     type: object
   sql.DB:
     title: DB
+    type: object
+  ssh.Client:
+    title: Client
     type: object
   util.SystemInfo:
     title: SystemInfo
