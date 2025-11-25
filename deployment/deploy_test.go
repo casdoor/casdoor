@@ -13,7 +13,6 @@
 // limitations under the License.
 
 //go:build !skipCi
-// +build !skipCi
 
 package deployment
 
