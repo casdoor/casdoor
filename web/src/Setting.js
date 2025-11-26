@@ -579,6 +579,7 @@ export function getRoleColumns() {
   return RoleFields.map(field => {
     let transField = field.toLowerCase().split("_").join(" ");
     transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
     if (transField === "Owner") {
       transField = "Organization";
     }
@@ -594,6 +595,7 @@ export function getPermissionColumns() {
   return PermissionFields.map(field => {
     let transField = field.toLowerCase().split("_").join(" ");
     transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
     if (transField === "Owner") {
       transField = "Organization";
     }
