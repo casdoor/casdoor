@@ -37,11 +37,6 @@ import (
 	dsig "github.com/russellhaering/goxmldsig"
 )
 
-// SAMLTimeFormat is the time format for SAML assertions according to the SAML 2.0 specification.
-// The xs:dateTime format requires a complete ISO 8601 date-time with timezone.
-// Using a fixed format string ensures consistent timestamp formatting across all environments.
-const SAMLTimeFormat = "2006-01-02T15:04:05Z"
-
 // NewSamlResponse
 // returns a saml2 response
 func NewSamlResponse(application *Application, user *User, host string, certificate string, destination string, iss string, requestId string, redirectUri []string) (*etree.Element, error) {
@@ -49,8 +44,8 @@ func NewSamlResponse(application *Application, user *User, host string, certific
 		Space: "samlp",
 		Tag:   "Response",
 	}
-	now := time.Now().UTC().Format(SAMLTimeFormat)
-	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(SAMLTimeFormat)
+	now := time.Now().UTC().Format(time.RFC3339)
+	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(time.RFC3339)
 	samlResponse.CreateAttr("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol")
 	samlResponse.CreateAttr("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion")
 	samlResponse.CreateAttr("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
@@ -504,8 +499,8 @@ func NewSamlResponse11(application *Application, user *User, requestID string, h
 	samlResponse.CreateAttr("ResponseID", fmt.Sprintf("_%s", responseID))
 	samlResponse.CreateAttr("InResponseTo", requestID)
 
-	now := time.Now().UTC().Format(SAMLTimeFormat)
-	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(SAMLTimeFormat)
+	now := time.Now().UTC().Format(time.RFC3339)
+	expireTime := time.Now().UTC().Add(time.Hour * 24).Format(time.RFC3339)
 
 	samlResponse.CreateAttr("IssueInstant", now)
 
