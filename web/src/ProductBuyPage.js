@@ -175,6 +175,8 @@ class ProductBuyPage extends React.Component {
             paddingRight: "60px",
           }}
           onClick={() => this.placeOrder(product)}
+          disabled={this.state.isPlacingOrder}
+          loading={this.state.isPlacingOrder}
         >
           {i18next.t("order:Place Order")}
         </Button>
