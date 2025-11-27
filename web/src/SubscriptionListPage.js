@@ -143,6 +143,9 @@ class SubscriptionListPage extends BaseListPage {
         key: "startTime",
         width: "140px",
         ...this.getColumnSearchProps("startTime"),
+        render: (text, record, index) => {
+          return Setting.getFormattedDate(text);
+        },
       },
       {
         title: i18next.t("subscription:End time"),
@@ -150,6 +153,9 @@ class SubscriptionListPage extends BaseListPage {
         key: "endTime",
         width: "140px",
         ...this.getColumnSearchProps("endTime"),
+        render: (text, record, index) => {
+          return Setting.getFormattedDate(text);
+        },
       },
       {
         title: i18next.t("general:Plan"),
