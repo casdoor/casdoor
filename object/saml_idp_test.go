@@ -40,9 +40,10 @@ func TestSAMLTimeFormat(t *testing.T) {
 		t.Errorf("SAMLTimeFormat should not start with 'T', got: %s", now)
 	}
 
-	// Verify the format includes the date portion
-	if len(now) < 20 {
-		t.Errorf("SAMLTimeFormat should produce at least 20 characters (YYYY-MM-DDTHH:MM:SSZ), got %d: %s", len(now), now)
+	// Verify the format includes the date portion (length should match the format string)
+	expectedLength := len(SAMLTimeFormat)
+	if len(now) != expectedLength {
+		t.Errorf("SAMLTimeFormat should produce exactly %d characters, got %d: %s", expectedLength, len(now), now)
 	}
 }
 
