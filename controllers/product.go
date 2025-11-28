@@ -16,8 +16,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	"strconv"
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/object"
@@ -150,73 +148,4 @@ func (c *ApiController) DeleteProduct() {
 
 	c.Data["json"] = wrapActionResponse(object.DeleteProduct(&product))
 	c.ServeJSON()
-}
-
-// BuyProduct
-// @Title BuyProduct
-// @Tag Product API
-// @Description buy product
-// @Param   id     query    string  true        "The id ( owner/name ) of the product"
-// @Param   providerName    query    string  true  "The name of the provider"
-// @Success 200 {object} controllers.Response The Response object
-// @router /buy-product [post]
-func (c *ApiController) BuyProduct() {
-	id := c.Input().Get("id")
-	host := c.Ctx.Request.Host
-	providerName := c.Input().Get("providerName")
-	paymentEnv := c.Input().Get("paymentEnv")
-	customPriceStr := c.Input().Get("customPrice")
-	if customPriceStr == "" {
-		customPriceStr = "0"
-	}
-
-	customPrice, err := strconv.ParseFloat(customPriceStr, 64)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	// buy `pricingName/planName` for `paidUserName`
-	pricingName := c.Input().Get("pricingName")
-	planName := c.Input().Get("planName")
-	paidUserName := c.Input().Get("userName")
-	owner, _, err := util.GetOwnerAndNameFromIdWithError(id)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	var userId string
-	if paidUserName != "" {
-		userId = util.GetId(owner, paidUserName)
-		if userId != c.GetSessionUsername() && !c.IsAdmin() && userId != c.GetPaidUsername() {
-			c.ResponseError(c.T("general:Only admin user can specify user"))
-			return
-		}
-
-		c.SetSession("paidUsername", "")
-	} else {
-		userId = c.GetSessionUsername()
-	}
-	if userId == "" {
-		c.ResponseError(c.T("general:Please login first"))
-		return
-	}
-
-	user, err := object.GetUser(userId)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-	if user == nil {
-		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
-		return
-	}
-
-	payment, attachInfo, err := object.BuyProduct(id, user, providerName, pricingName, planName, host, paymentEnv, customPrice)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
-	}
-
-	c.ResponseOk(payment, attachInfo)
 }
