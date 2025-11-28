@@ -36,7 +36,7 @@ func TestSAMLTimeFormat(t *testing.T) {
 	}
 
 	// Verify the format starts with a date (not just T)
-	// Expected length is 20: YYYY-MM-DDTHH:MM:SSZ (4+1+2+1+2+1+2+1+2+1+2+1 = 20)
+	// Expected length is 20: YYYY-MM-DDTHH:MM:SSZ
 	const expectedLength = 20
 	if len(now) == 0 {
 		t.Fatal("SAMLTimeFormat produced empty string")
