@@ -672,28 +672,6 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/buy-product:
-    post:
-      tags:
-      - Product API
-      description: buy product
-      operationId: ApiController.BuyProduct
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of the product
-        required: true
-        type: string
-      - in: query
-        name: providerName
-        description: The name of the provider
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
   /api/check-user-password:
     post:
       tags:
