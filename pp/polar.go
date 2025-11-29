@@ -77,7 +77,6 @@ func (pp *PolarPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 
 func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResult, error) {
 	ctx := context.Background()
-	notifyResult := &NotifyResult{}
 
 	// Get checkout session status
 	res, err := pp.Client.Checkouts.Get(ctx, orderId)
@@ -94,28 +93,27 @@ func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 	// Map Polar status to payment state
 	switch checkout.Status {
 	case components.CheckoutStatusOpen:
-		notifyResult.PaymentStatus = PaymentStateCreated
-		return notifyResult, nil
+		return &NotifyResult{PaymentStatus: PaymentStateCreated}, nil
 	case components.CheckoutStatusSucceeded:
-		// Payment successful
+		// Payment successful, continue to extract payment details below
 	case components.CheckoutStatusConfirmed:
 		// Payment confirmed but not yet succeeded
-		notifyResult.PaymentStatus = PaymentStateCreated
-		return notifyResult, nil
+		return &NotifyResult{PaymentStatus: PaymentStateCreated}, nil
 	case components.CheckoutStatusExpired:
-		notifyResult.PaymentStatus = PaymentStateTimeout
-		return notifyResult, nil
+		return &NotifyResult{PaymentStatus: PaymentStateTimeout}, nil
 	case components.CheckoutStatusFailed:
-		notifyResult.PaymentStatus = PaymentStateError
-		notifyResult.NotifyMessage = "Payment failed"
-		return notifyResult, nil
+		return &NotifyResult{
+			PaymentStatus:  PaymentStateError,
+			NotifyMessage: "Payment failed",
+		}, nil
 	default:
-		notifyResult.PaymentStatus = PaymentStateError
-		notifyResult.NotifyMessage = fmt.Sprintf("unexpected polar checkout status: %v", checkout.Status)
-		return notifyResult, nil
+		return &NotifyResult{
+			PaymentStatus:  PaymentStateError,
+			NotifyMessage: fmt.Sprintf("unexpected polar checkout status: %v", checkout.Status),
+		}, nil
 	}
 
-	// Extract payment details from checkout
+	// Extract payment details from checkout for successful payment
 	var (
 		paymentName        string
 		productName        string
@@ -138,7 +136,7 @@ func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 		}
 	}
 
-	notifyResult = &NotifyResult{
+	return &NotifyResult{
 		PaymentName:   paymentName,
 		PaymentStatus: PaymentStatePaid,
 
@@ -150,8 +148,7 @@ func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 		Currency: checkout.Currency,
 
 		OrderId: orderId,
-	}
-	return notifyResult, nil
+	}, nil
 }
 
 func (pp *PolarPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
