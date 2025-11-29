@@ -333,6 +333,12 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			return nil, err
 		}
 		return pp, nil
+	} else if typ == "Polar" {
+		pp, err := pp.NewPolarPaymentProviderWithWebhookSecret(p.ClientSecret, p.Metadata)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
 	} else if typ == "AirWallex" {
 		pp, err := pp.NewAirwallexPaymentProvider(p.ClientId, p.ClientSecret)
 		if err != nil {

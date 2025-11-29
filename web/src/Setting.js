@@ -1260,6 +1260,7 @@ export function getProviderTypeOptions(category) {
       {id: "WeChat Pay", name: "WeChat Pay"},
       {id: "PayPal", name: "PayPal"},
       {id: "Stripe", name: "Stripe"},
+      {id: "Polar", name: "Polar"},
       {id: "AirWallex", name: "AirWallex"},
       {id: "GC", name: "GC"},
     ]);
