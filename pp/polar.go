@@ -16,12 +16,7 @@ package pp
 
 import (
 	"context"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/casdoor/casdoor/conf"
 	polargo "github.com/polarsource/polar-go"
@@ -29,11 +24,10 @@ import (
 )
 
 type PolarPaymentProvider struct {
-	AccessToken   string
-	WebhookSecret string
-	Server        string
-	isProd        bool
-	client        *polargo.Polar
+	AccessToken string
+	Server      string
+	isProd      bool
+	client      *polargo.Polar
 }
 
 // IsSandbox returns true if the provider is using sandbox environment
@@ -55,10 +49,6 @@ func (pp *PolarPaymentProvider) GetServerURL() string {
 }
 
 func NewPolarPaymentProvider(AccessToken string) (*PolarPaymentProvider, error) {
-	return NewPolarPaymentProviderWithWebhookSecret(AccessToken, "")
-}
-
-func NewPolarPaymentProviderWithWebhookSecret(AccessToken string, WebhookSecret string) (*PolarPaymentProvider, error) {
 	isProd := false
 	if conf.GetConfigString("runmode") == "prod" {
 		isProd = true
@@ -75,48 +65,10 @@ func NewPolarPaymentProviderWithWebhookSecret(AccessToken string, WebhookSecret 
 	)
 
 	pp := &PolarPaymentProvider{
-		AccessToken:   AccessToken,
-		WebhookSecret: WebhookSecret,
-		Server:        server,
-		isProd:        isProd,
-		client:        client,
-	}
-	return pp, nil
-}
-
-// NewPolarPaymentProviderWithEnv creates a Polar payment provider with explicit environment setting
-// This is useful for testing when you want to force sandbox or production mode
-func NewPolarPaymentProviderWithEnv(AccessToken string, environment string) (*PolarPaymentProvider, error) {
-	return NewPolarPaymentProviderWithEnvAndWebhookSecret(AccessToken, environment, "")
-}
-
-// NewPolarPaymentProviderWithEnvAndWebhookSecret creates a Polar payment provider with explicit environment setting and webhook secret
-func NewPolarPaymentProviderWithEnvAndWebhookSecret(AccessToken string, environment string, WebhookSecret string) (*PolarPaymentProvider, error) {
-	server := "sandbox"
-	isProd := false
-
-	switch environment {
-	case "production", "prod":
-		server = "production"
-		isProd = true
-	case "sandbox", "test":
-		server = "sandbox"
-		isProd = false
-	default:
-		return nil, fmt.Errorf("invalid environment: %s. Use 'sandbox' or 'production'", environment)
-	}
-
-	client := polargo.New(
-		polargo.WithSecurity(AccessToken),
-		polargo.WithServer(server),
-	)
-
-	pp := &PolarPaymentProvider{
-		AccessToken:   AccessToken,
-		WebhookSecret: WebhookSecret,
-		Server:        server,
-		isProd:        isProd,
-		client:        client,
+		AccessToken: AccessToken,
+		Server:      server,
+		isProd:      isProd,
+		client:      client,
 	}
 	return pp, nil
 }
@@ -247,69 +199,4 @@ func (pp *PolarPaymentProvider) GetResponseError(err error) string {
 	} else {
 		return "fail"
 	}
-}
-
-// VerifyWebhookSignature verifies Polar webhook signature using Standard Webhooks specification
-func (pp *PolarPaymentProvider) VerifyWebhookSignature(body []byte, signature string, timestamp string, secret string) bool {
-	if secret == "" {
-		return false
-	}
-
-	// Decode the base64 secret
-	decodedSecret, err := base64.StdEncoding.DecodeString(secret)
-	if err != nil {
-		return false
-	}
-
-	// Parse signature header (format: t=timestamp,v1=signature)
-	signatureParts := strings.Split(signature, ",")
-	var expectedSignature string
-	for _, part := range signatureParts {
-		if strings.HasPrefix(part, "v1=") {
-			expectedSignature = strings.TrimPrefix(part, "v1=")
-			break
-		}
-	}
-
-	if expectedSignature == "" {
-		return false
-	}
-
-	// Create signed payload: timestamp.body
-	signedPayload := timestamp + "." + string(body)
-
-	// Generate HMAC-SHA256 signature
-	h := hmac.New(sha256.New, decodedSecret)
-	h.Write([]byte(signedPayload))
-	computedSignature := base64.StdEncoding.EncodeToString(h.Sum(nil))
-
-	// Compare signatures
-	return hmac.Equal([]byte(expectedSignature), []byte(computedSignature))
-}
-
-// ParseWebhookEvent extracts checkout ID from Polar webhook event
-func (pp *PolarPaymentProvider) ParseWebhookEvent(body []byte) (string, error) {
-	var webhookEvent struct {
-		Type string `json:"type"`
-		Data struct {
-			ID string `json:"id"`
-		} `json:"data"`
-	}
-
-	err := json.Unmarshal(body, &webhookEvent)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse Polar webhook: %w", err)
-	}
-
-	// Only handle checkout.updated events
-	if webhookEvent.Type != "checkout.updated" {
-		return "", fmt.Errorf("unsupported webhook event type: %s", webhookEvent.Type)
-	}
-
-	checkoutId := webhookEvent.Data.ID
-	if checkoutId == "" {
-		return "", fmt.Errorf("no checkout ID found in webhook")
-	}
-
-	return checkoutId, nil
 }
