@@ -288,6 +288,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_gc.png`,
       url: "https://gc.org",
     },
+    "Polar": {
+      logo: `${StaticBaseUrl}/img/payment_polar.png`,
+      url: "https://polar.sh/",
+    },
   },
   Captcha: {
     "Default": {
@@ -1262,6 +1266,7 @@ export function getProviderTypeOptions(category) {
       {id: "Stripe", name: "Stripe"},
       {id: "AirWallex", name: "AirWallex"},
       {id: "GC", name: "GC"},
+      {id: "Polar", name: "Polar"},
     ]);
   } else if (category === "Captcha") {
     return ([
