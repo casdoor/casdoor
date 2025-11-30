@@ -351,6 +351,12 @@ func GetPaymentProvider(p *Provider) (pp.PaymentProvider, error) {
 			return nil, err
 		}
 		return pp, nil
+	} else if typ == "Paddle" {
+		pp, err := pp.NewPaddlePaymentProvider(p.ClientSecret)
+		if err != nil {
+			return nil, err
+		}
+		return pp, nil
 	} else {
 		return nil, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}
