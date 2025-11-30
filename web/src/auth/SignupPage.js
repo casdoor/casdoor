@@ -654,8 +654,9 @@ class SignupPage extends React.Component {
         return null;
       }
     } else if (signupItem.name === "Password") {
+      const isWideScreen = window.innerWidth >= 960;
       return (
-        <Popover placement={window.innerWidth >= 960 ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen} align={window.innerWidth >= 960 ? {offset: [-130, 0]} : {}}>
+        <Popover placement={isWideScreen ? "right" : "top"} content={this.state.passwordPopover} open={this.state.passwordPopoverOpen} align={isWideScreen ? {offset: [-130, 0]} : {}}>
           <Form.Item
             name="password"
             className="signup-password"
