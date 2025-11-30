@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
+	github.com/NdoleStudio/lemonsqueezy-go v1.2.4
 	github.com/PaddleHQ/paddle-go-sdk v1.0.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4

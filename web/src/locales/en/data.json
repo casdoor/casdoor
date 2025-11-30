@@ -1060,6 +1060,8 @@
     "Silent": "Silent",
     "Site key": "Site key",
     "Site key - Tooltip": "Key bound to the site, used to verify site identity and associate related services (such as CAPTCHA services)",
+    "Store ID": "Store ID",
+    "Store ID - Tooltip": "Unique identifier for the store in Lemon Squeezy",
     "Sub type": "Sub type",
     "Sub type - Tooltip": "Further subdivision category under the main type, used to more precisely distinguish objects or functions",
     "Subject": "Subject",
@@ -1097,6 +1099,8 @@
     "User mapping - Tooltip": "User attribute mapping",
     "UserInfo URL": "UserInfo URL",
     "UserInfo URL - Tooltip": "Custom OAuth UserInfo URL",
+    "Variant ID": "Variant ID",
+    "Variant ID - Tooltip": "Unique identifier for the product variant in Lemon Squeezy",
     "Wallets": "Wallets",
     "Wallets - Tooltip": "Supported digital wallets",
     "admin (Shared)": "admin (Shared)"
