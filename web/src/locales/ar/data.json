@@ -1148,6 +1148,7 @@
     "Text 4": "نص 4",
     "Text 5": "نص 5",
     "The input Email doesn't match the signup item regex!": "البريد الإلكتروني المدخل لا يطابق التعبير العادي لعنصر التسجيل!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "المدخل ليس معرف ضريبة الفاتورة!",
     "The input is not invoice title!": "المدخل ليس عنوان الفاتورة!",
     "The input is not valid Email!": "المدخل ليس بريدًا إلكترونيًا صالحًا!",

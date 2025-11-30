@@ -51,26 +51,38 @@ const formItemLayout = {
 };
 
 const renderFormItem = (signupItem) => {
-  const commonProps = {
-    name: signupItem.name.toLowerCase(),
-    label: signupItem.label || signupItem.name,
-    rules: [
-      {
-        required: signupItem.required,
-        message: i18next.t("signup:Please input your {label}!").replace("{label}", signupItem.label || signupItem.name),
-      },
-    ],
-  };
+  const commonRules = [
+    {
+      required: signupItem.required,
+      message: i18next.t("signup:Please input your {label}!").replace("{label}", signupItem.label || signupItem.name),
+    },
+  ];
 
   if (!signupItem.type || signupItem.type === "Input") {
+    const inputRules = [...commonRules];
+    if (signupItem.regex) {
+      inputRules.push({
+        pattern: new RegExp(signupItem.regex),
+        message: i18next.t("signup:The input doesn't match the signup item regex!"),
+      });
+    }
+
     return (
-      <Form.Item {...commonProps}>
+      <Form.Item
+        name={signupItem.name.toLowerCase()}
+        label={signupItem.label || signupItem.name}
+        rules={inputRules}
+      >
         <Input placeholder={signupItem.placeholder} />
       </Form.Item>
     );
   } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
     return (
-      <Form.Item {...commonProps}>
+      <Form.Item
+        name={signupItem.name.toLowerCase()}
+        label={signupItem.label || signupItem.name}
+        rules={commonRules}
+      >
         <Select
           mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
           placeholder={signupItem.placeholder}
@@ -320,6 +332,10 @@ class SignupPage extends React.Component {
               message: i18next.t("forget:Please input your username!"),
               whitespace: true,
             },
+            {
+              pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+              message: i18next.t("signup:The input doesn't match the signup item regex!"),
+            },
           ]}
         >
           <Input className="signup-username-input" placeholder={signupItem.placeholder}
@@ -340,6 +356,10 @@ class SignupPage extends React.Component {
                   message: i18next.t("signup:Please input your first name!"),
                   whitespace: true,
                 },
+                {
+                  pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+                  message: i18next.t("signup:The input doesn't match the signup item regex!"),
+                },
               ]}
             >
               <Input className="signup-first-name-input" placeholder={signupItem.placeholder} />
@@ -353,6 +373,10 @@ class SignupPage extends React.Component {
                   required: required,
                   message: i18next.t("signup:Please input your last name!"),
                   whitespace: true,
+                },
+                {
+                  pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+                  message: i18next.t("signup:The input doesn't match the signup item regex!"),
                 },
               ]}
             >
@@ -373,6 +397,10 @@ class SignupPage extends React.Component {
               message: (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
               whitespace: true,
             },
+            {
+              pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+              message: i18next.t("signup:The input doesn't match the signup item regex!"),
+            },
           ]}
         >
           <Input className="signup-name-input" placeholder={signupItem.placeholder} />
@@ -389,6 +417,10 @@ class SignupPage extends React.Component {
               required: required,
               message: i18next.t("signup:Please input your first name!"),
               whitespace: true,
+            },
+            {
+              pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+              message: i18next.t("signup:The input doesn't match the signup item regex!"),
             },
           ]}
         >
@@ -407,6 +439,10 @@ class SignupPage extends React.Component {
               message: i18next.t("signup:Please input your last name!"),
               whitespace: true,
             },
+            {
+              pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+              message: i18next.t("signup:The input doesn't match the signup item regex!"),
+            },
           ]}
         >
           <Input className="signup-last-name-input" placeholder={signupItem.placeholder} />
@@ -423,6 +459,10 @@ class SignupPage extends React.Component {
               required: required,
               message: i18next.t("signup:Please input your affiliation!"),
               whitespace: true,
+            },
+            {
+              pattern: signupItem.regex ? new RegExp(signupItem.regex) : null,
+              message: i18next.t("signup:The input doesn't match the signup item regex!"),
             },
           ]}
         >

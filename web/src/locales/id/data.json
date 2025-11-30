@@ -1148,6 +1148,7 @@
     "Text 4": "Teks 4",
     "Text 5": "Teks 5",
     "The input Email doesn't match the signup item regex!": "Email yang dimasukkan tidak cocok dengan regex item pendaftaran!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Input ini bukan Tax ID faktur!",
     "The input is not invoice title!": "Masukan bukan judul faktur!",
     "The input is not valid Email!": "Input yang dimasukkan bukan sesuai dengan format Email yang valid!",

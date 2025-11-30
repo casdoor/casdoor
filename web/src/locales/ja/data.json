@@ -1148,6 +1148,7 @@
     "Text 4": "テキスト4",
     "Text 5": "テキスト5",
     "The input Email doesn't match the signup item regex!": "入力されたメールアドレスがサインアップ項目の正規表現と一致しません！",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "入力されたものは請求書の税番号ではありません！",
     "The input is not invoice title!": "インプットは請求書タイトルではありません！",
     "The input is not valid Email!": "入力されたものは有効なメールではありません",

@@ -1148,6 +1148,7 @@
     "Text 4": "Text 4",
     "Text 5": "Text 5",
     "The input Email doesn't match the signup item regex!": "Zadaný e-mail neodpovídá regexu registrační položky!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Zadaný vstup není daňové ID faktury!",
     "The input is not invoice title!": "Zadaný vstup není název faktury!",
     "The input is not valid Email!": "Zadaný vstup není platný email!",

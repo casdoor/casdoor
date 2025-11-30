@@ -1148,6 +1148,7 @@
     "Text 4": "متن ۴",
     "Text 5": "متن ۵",
     "The input Email doesn't match the signup item regex!": "ایمیل ورودی با عبارت منظم مورد ثبت‌نام مطابقت ندارد!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "ورودی شناسه مالیاتی فاکتور نیست!",
     "The input is not invoice title!": "ورودی عنوان فاکتور نیست!",
     "The input is not valid Email!": "ورودی ایمیل معتبر نیست!",

@@ -1148,6 +1148,7 @@
     "Text 4": "Tekst 4",
     "Text 5": "Tekst 5",
     "The input Email doesn't match the signup item regex!": "Het ingevoerde e-mailadres voldoet niet aan het regex-patroon!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "De invoer is geen btw-nummer!",
     "The input is not invoice title!": "De invoer is geen factuurtitel!",
     "The input is not valid Email!": "Ongeldig e-mailadres!",

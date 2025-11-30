@@ -1148,6 +1148,7 @@
     "Text 4": "Texto 4",
     "Text 5": "Texto 5",
     "The input Email doesn't match the signup item regex!": "¡El correo electrónico ingresado no coincide con la expresión regular del elemento de registro!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "¡La entrada no es el ID fiscal de la factura!",
     "The input is not invoice title!": "¡El entrada no es el título de la factura!",
     "The input is not valid Email!": "¡La entrada no es un correo electrónico válido!",

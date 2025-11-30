@@ -1148,6 +1148,7 @@
     "Text 4": "Текст 4",
     "Text 5": "Текст 5",
     "The input Email doesn't match the signup item regex!": "Введений Email не відповідає регулярному виразу елемента реєстрації!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Введені дані не є ідентифікаційним номером платника податків!",
     "The input is not invoice title!": "Введені дані не є назвою рахунку!",
     "The input is not valid Email!": "Введена недійсна адреса електронної пошти!",
