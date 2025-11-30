@@ -58,6 +58,24 @@ func (c *ApiController) ResponseError(error string, data ...interface{}) {
 	c.ResponseJsonData(resp, data...)
 }
 
+// ResponseErrorFromError handles errors, automatically translating TranslatableError types
+// Usage: c.ResponseErrorFromError(err)
+func (c *ApiController) ResponseTError(err error, data ...interface{}) {
+	if err == nil {
+		c.ResponseError(c.T("general:Unknown error"), data...)
+		return
+	}
+
+	if transErr, ok := err.(*i18n.TranslatableError); ok {
+		language := c.GetAcceptLanguage()
+		translatedMsg := transErr.TranslateWithLanguage(language)
+		c.ResponseError(translatedMsg, data...)
+		return
+	}
+
+	c.ResponseError(err.Error(), data...)
+}
+
 func (c *ApiController) T(error string) string {
 	return i18n.Translate(c.GetAcceptLanguage(), error)
 }
