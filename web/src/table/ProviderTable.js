@@ -76,6 +76,8 @@ class ProviderTable extends React.Component {
         render: (text, record, index) => {
           return (
             <Select virtual={false} style={{width: "100%"}}
+              showSearch
+              optionFilterProp="label"
               value={text}
               onChange={value => {
                 this.updateField(table, index, "name", value);
@@ -91,7 +93,14 @@ class ProviderTable extends React.Component {
                 Setting.getDeduplicatedArray(this.props.providers, table, "name").filter(provider => provider.category !== "Captcha" || !table.some(tableItem => {
                   const existingProvider = Setting.getArrayItem(this.props.providers, "name", tableItem.name);
                   return existingProvider && existingProvider.category === "Captcha";
-                })).map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
+                })).map((provider, index) => (
+                  <Option key={index} value={provider.name} label={`${provider.name} ${provider.displayName || ""}`}>
+                    <div style={{display: "flex", alignItems: "center", gap: "8px"}}>
+                      <img width={20} height={20} src={Setting.getProviderLogoURL(provider)} alt={provider.type} />
+                      <span>{provider.displayName && provider.displayName !== provider.name ? `${provider.name} (${provider.displayName})` : provider.name}</span>
+                    </div>
+                  </Option>
+                ))
               }
             </Select>
           );
