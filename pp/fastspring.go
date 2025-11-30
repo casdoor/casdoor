@@ -24,15 +24,15 @@ import (
 )
 
 type FastSpringPaymentProvider struct {
-	ApiUsername string
-	ApiPassword string
+	ApiUsername    string
+	ApiPassword    string
 	StorefrontPath string
 }
 
 func NewFastSpringPaymentProvider(apiUsername string, apiPassword string, storefrontPath string) (*FastSpringPaymentProvider, error) {
 	pp := &FastSpringPaymentProvider{
-		ApiUsername: apiUsername,
-		ApiPassword: apiPassword,
+		ApiUsername:    apiUsername,
+		ApiPassword:    apiPassword,
 		StorefrontPath: storefrontPath,
 	}
 	return pp, nil
@@ -55,42 +55,42 @@ type fastSpringContact struct {
 }
 
 type fastSpringItem struct {
-	Product  string  `json:"product"`
-	Quantity int     `json:"quantity"`
+	Product  string             `json:"product"`
+	Quantity int                `json:"quantity"`
 	Pricing  *fastSpringPricing `json:"pricing,omitempty"`
 }
 
 type fastSpringPricing struct {
-	Price    map[string]float64 `json:"price,omitempty"`
+	Price map[string]float64 `json:"price,omitempty"`
 }
 
 type fastSpringSessionResponse struct {
-	ID          string `json:"id"`
-	Account     string `json:"account"`
-	AccountURL  string `json:"accountUrl"`
+	ID         string `json:"id"`
+	Account    string `json:"account"`
+	AccountURL string `json:"accountUrl"`
 }
 
 type fastSpringOrderResponse struct {
-	ID            string  `json:"id"`
-	Reference     string  `json:"reference"`
-	Total         float64 `json:"total"`
-	TotalDisplay  string  `json:"totalDisplay"`
-	TotalInPayoutCurrency float64 `json:"totalInPayoutCurrency"`
-	Currency      string  `json:"currency"`
-	PayoutCurrency string `json:"payoutCurrency"`
-	Completed     bool    `json:"completed"`
-	Changed       int64   `json:"changed"`
-	Tags          map[string]string `json:"tags"`
-	Items         []fastSpringOrderItem `json:"items"`
+	ID                    string                `json:"id"`
+	Reference             string                `json:"reference"`
+	Total                 float64               `json:"total"`
+	TotalDisplay          string                `json:"totalDisplay"`
+	TotalInPayoutCurrency float64               `json:"totalInPayoutCurrency"`
+	Currency              string                `json:"currency"`
+	PayoutCurrency        string                `json:"payoutCurrency"`
+	Completed             bool                  `json:"completed"`
+	Changed               int64                 `json:"changed"`
+	Tags                  map[string]string     `json:"tags"`
+	Items                 []fastSpringOrderItem `json:"items"`
 }
 
 type fastSpringOrderItem struct {
-	Product     string  `json:"product"`
-	Quantity    int     `json:"quantity"`
-	Display     string  `json:"display"`
-	Subtotal    float64 `json:"subtotal"`
-	Discount    float64 `json:"discount"`
-	Price       float64 `json:"price"`
+	Product  string  `json:"product"`
+	Quantity int     `json:"quantity"`
+	Display  string  `json:"display"`
+	Subtotal float64 `json:"subtotal"`
+	Discount float64 `json:"discount"`
+	Price    float64 `json:"price"`
 }
 
 func (pp *FastSpringPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
