@@ -300,6 +300,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_fastspring.png`,
       url: "https://fastspring.com/",
     },
+    "Lemon Squeezy": {
+      logo: `${StaticBaseUrl}/img/payment_lemonsqueezy.png`,
+      url: "https://www.lemonsqueezy.com/",
+    },
   },
   Captcha: {
     "Default": {
@@ -1277,6 +1281,7 @@ export function getProviderTypeOptions(category) {
       {id: "Polar", name: "Polar"},
       {id: "Paddle", name: "Paddle"},
       {id: "FastSpring", name: "FastSpring"},
+      {id: "Lemon Squeezy", name: "Lemon Squeezy"},
     ]);
   } else if (category === "Captcha") {
     return ([
