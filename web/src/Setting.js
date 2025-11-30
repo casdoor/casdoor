@@ -292,6 +292,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_polar.png`,
       url: "https://polar.sh/",
     },
+    "Paddle": {
+      logo: `${StaticBaseUrl}/img/payment_paddle.png`,
+      url: "https://www.paddle.com/",
+    },
   },
   Captcha: {
     "Default": {
@@ -1267,6 +1271,7 @@ export function getProviderTypeOptions(category) {
       {id: "AirWallex", name: "AirWallex"},
       {id: "GC", name: "GC"},
       {id: "Polar", name: "Polar"},
+      {id: "Paddle", name: "Paddle"},
     ]);
   } else if (category === "Captcha") {
     return ([

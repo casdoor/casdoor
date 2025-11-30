@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/Masterminds/squirrel v1.5.3
+	github.com/PaddleHQ/paddle-go-sdk v1.0.0
 	github.com/alexedwards/argon2id v0.0.0-20211130144151-3585854a6387
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4
 	github.com/alibabacloud-go/facebody-20191230/v5 v5.1.2
@@ -126,6 +127,8 @@ require (
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.6.0 // indirect
+	github.com/ggicci/httpin v0.19.0 // indirect
+	github.com/ggicci/owl v0.8.2 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.6.0 // indirect
 	github.com/go-lark/lark v1.9.0 // indirect
@@ -153,6 +156,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/gregdel/pushover v1.2.1 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -169,9 +173,9 @@ require (
 	github.com/line/line-bot-sdk-go v7.8.0+incompatible // indirect
 	github.com/markbates/going v1.0.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-ieproxy v0.0.1 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mileusna/viber v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
