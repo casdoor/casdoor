@@ -1138,6 +1138,7 @@
     "Please input your last name!": "请输入您的姓氏！",
     "Please input your phone number!": "请输入您的手机号码！",
     "Please input your real name!": "请输入您的姓名！",
+    "Please input your {label}!": "请输入您的{label}！",
     "Please select your country code!": "请选择国家代码！",
     "Please select your country/region!": "请选择您的国家或地区",
     "Regex": "正则表达式",
