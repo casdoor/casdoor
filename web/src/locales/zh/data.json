@@ -819,6 +819,7 @@
     "Submitter": "申请者",
     "Submitter - Tooltip": "申请该授权的人",
     "TreeNode": "树节点",
+    "Upload (.xlsx)": "上传 (.xlsx)",
     "Write": "写权限"
   },
   "plan": {
@@ -1112,7 +1113,8 @@
     "Sub roles": "包含角色",
     "Sub roles - Tooltip": "当前角色所包含的子角色",
     "Sub users": "包含用户",
-    "Sub users - Tooltip": "当前角色所包含的用户"
+    "Sub users - Tooltip": "当前角色所包含的用户",
+    "Upload (.xlsx)": "上传 (.xlsx)"
   },
   "signup": {
     "Accept": "阅读并接受",

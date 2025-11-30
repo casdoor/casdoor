@@ -832,6 +832,7 @@
     "Submitter": "Submitter",
     "Submitter - Tooltip": "The person applying for this permission",
     "TreeNode": "TreeNode",
+    "Upload (.xlsx)": "Upload (.xlsx)",
     "Write": "Write"
   },
   "plan": {
@@ -1125,7 +1126,8 @@
     "Sub roles": "Sub roles",
     "Sub roles - Tooltip": "Roles included in the current role",
     "Sub users": "Sub users",
-    "Sub users - Tooltip": "Users included in the current role"
+    "Sub users - Tooltip": "Users included in the current role",
+    "Upload (.xlsx)": "Upload (.xlsx)"
   },
   "signup": {
     "Accept": "Accept",

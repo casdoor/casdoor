@@ -471,6 +471,16 @@ export const UserFields = ["owner", "name", "password", "display_name", "id", "t
   "created_time", "updated_time", "deleted_time",
   "ip_whitelist"];
 
+export const GroupFields = ["owner", "name", "created_time", "updated_time", "display_name", "manager",
+  "contact_email", "type", "parent_id", "is_top_group", "is_enabled"];
+
+export const RoleFields = ["owner", "name", "created_time", "display_name", "description",
+  "users", "groups", "roles", "domains", "is_enabled"];
+
+export const PermissionFields = ["owner", "name", "created_time", "display_name", "description",
+  "users", "groups", "roles", "domains", "model", "adapter", "resource_type",
+  "resources", "actions", "effect", "is_enabled", "submitter", "approver", "approve_time", "state"];
+
 export const GetTranslatedUserItems = () => {
   return [
     {name: "Organization", label: i18next.t("general:Organization")},
@@ -562,6 +572,54 @@ export function getUserColumns() {
       transField = transResult ? transResult : transField;
     }
     return `${transFieldItem ? transFieldItem.label : transField}#${field}`;
+  });
+}
+
+export function getGroupColumns() {
+  return GroupFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "group"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getRoleColumns() {
+  return RoleFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "role"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
+  });
+}
+
+export function getPermissionColumns() {
+  return PermissionFields.map(field => {
+    let transField = field.toLowerCase().split("_").join(" ");
+    transField = transField.charAt(0).toUpperCase() + transField.slice(1);
+    transField = transField.replace("Id", "ID");
+    if (transField === "Owner") {
+      transField = "Organization";
+    }
+    const toTranslateList = ["general", "permission"].map(ns => `${ns}:${transField}`);
+    const transResult = toTranslateList.map(item => i18next.t(item) === transField ? null : i18next.t(item))
+      .find(item => item !== null);
+    transField = transResult ? transResult : transField;
+    return `${transField}#${field}`;
   });
 }
 
