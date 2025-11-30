@@ -1151,6 +1151,7 @@
     "Please input your last name!": "Please input your last name!",
     "Please input your phone number!": "Please input your phone number!",
     "Please input your real name!": "Please input your real name!",
+    "Please input your {label}!": "Please input your {label}!",
     "Please select your country code!": "Please select your country code!",
     "Please select your country/region!": "Please select your country/region!",
     "Regex": "Regex",

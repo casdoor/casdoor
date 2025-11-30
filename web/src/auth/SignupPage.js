@@ -57,7 +57,7 @@ const renderFormItem = (signupItem) => {
     rules: [
       {
         required: signupItem.required,
-        message: i18next.t(`signup:Please input your ${signupItem.label || signupItem.name}!`),
+        message: i18next.t("signup:Please input your {label}!").replace("{label}", signupItem.label || signupItem.name),
       },
     ],
   };
