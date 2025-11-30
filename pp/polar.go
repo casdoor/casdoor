@@ -102,15 +102,9 @@ func (pp *PolarPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 	case components.CheckoutStatusExpired:
 		return &NotifyResult{PaymentStatus: PaymentStateTimeout}, nil
 	case components.CheckoutStatusFailed:
-		return &NotifyResult{
-			PaymentStatus:  PaymentStateError,
-			NotifyMessage: "Payment failed",
-		}, nil
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: "Payment failed"}, nil
 	default:
-		return &NotifyResult{
-			PaymentStatus:  PaymentStateError,
-			NotifyMessage: fmt.Sprintf("unexpected polar checkout status: %v", checkout.Status),
-		}, nil
+		return &NotifyResult{PaymentStatus: PaymentStateError, NotifyMessage: fmt.Sprintf("unexpected polar checkout status: %v", checkout.Status)}, nil
 	}
 
 	// Extract payment details from checkout for successful payment
