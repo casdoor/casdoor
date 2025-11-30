@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/NdoleStudio/lemonsqueezy-go"
 )
@@ -62,6 +63,8 @@ func (pp *LemonSqueezyPaymentProvider) Pay(r *PayReq) (*PayResp, error) {
 		"product_name":         r.ProductName,
 		"product_display_name": r.ProductDisplayName,
 		"provider_name":        r.ProviderName,
+		"price":                priceFloat64ToString(r.Price),
+		"currency":             r.Currency,
 	}
 
 	// Create checkout attributes
@@ -108,12 +111,21 @@ func (pp *LemonSqueezyPaymentProvider) Notify(body []byte, orderId string) (*Not
 		return nil, fmt.Errorf("lemonsqueezy checkout not found for order: %s", orderId)
 	}
 
+	// Check if checkout has expired
+	if checkout.Data.Attributes.ExpiresAt != nil {
+		if time.Now().After(*checkout.Data.Attributes.ExpiresAt) {
+			return &NotifyResult{PaymentStatus: PaymentStateTimeout}, nil
+		}
+	}
+
 	// Extract payment details from custom data
 	var (
 		paymentName        string
 		productName        string
 		productDisplayName string
 		providerName       string
+		price              float64
+		currency           string
 	)
 
 	if checkout.Data.Attributes.CheckoutData.Custom != nil {
@@ -138,35 +150,33 @@ func (pp *LemonSqueezyPaymentProvider) Notify(body []byte, orderId string) (*Not
 					providerName = str
 				}
 			}
+			if v, ok := customData["price"]; ok {
+				if str, ok := v.(string); ok {
+					price = priceStringToFloat64(str)
+				}
+			}
+			if v, ok := customData["currency"]; ok {
+				if str, ok := v.(string); ok {
+					currency = str
+				}
+			}
 		}
 	}
 
-	// Check if checkout has a URL (meaning it's still pending)
-	// Lemon Squeezy checkouts don't have a direct "status" field
-	// We need to check if the checkout has been used to create an order
-	// For now, we'll check based on the checkout URL availability
-	if checkout.Data.Attributes.URL != "" {
-		// Checkout still has URL, may still be pending
-		// Try to check if there's an associated order by looking at expiry
-		if checkout.Data.Attributes.ExpiresAt != nil && checkout.Data.Attributes.ExpiresAt.IsZero() {
-			// Expired checkout
-			return &NotifyResult{PaymentStatus: PaymentStateTimeout}, nil
-		}
-	}
-
-	// Since Lemon Squeezy doesn't provide direct checkout status,
-	// we'll return as paid if we can successfully retrieve the checkout
-	// The actual payment status should be verified via webhooks in production
+	// Lemon Squeezy checkouts don't have a direct status field for payment completion.
+	// The checkout remains valid until it expires or is used.
+	// For proper payment status tracking, webhooks should be configured.
+	// Here we return PaymentStateCreated to indicate the checkout is still pending.
 	return &NotifyResult{
 		PaymentName:   paymentName,
-		PaymentStatus: PaymentStatePaid,
+		PaymentStatus: PaymentStateCreated,
 
 		ProductName:        productName,
 		ProductDisplayName: productDisplayName,
 		ProviderName:       providerName,
 
-		Price:    0, // Price would need to be fetched from the order
-		Currency: "",
+		Price:    price,
+		Currency: currency,
 
 		OrderId: orderId,
 	}, nil
