@@ -225,7 +225,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Amount:      payment.Price,
 		Currency:    order.Currency,
 		Payment:     payment.Name,
-		State:       pp.PaymentStateCreated,
+		State:       string(pp.PaymentStateCreated),
 	}
 
 	if product.IsRecharge {
@@ -235,7 +235,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		transaction.Provider = ""
 		transaction.Tag = "User"
 		transaction.User = payment.User
-		transaction.State = pp.PaymentStatePaid
+		transaction.State = string(pp.PaymentStatePaid)
 	} else {
 		transaction.Category = ""
 		transaction.Type = provider.Category
@@ -266,7 +266,7 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 			return nil, nil, err
 		}
 		payment.State = pp.PaymentStatePaid
-		transaction.State = pp.PaymentStatePaid
+		transaction.State = string(pp.PaymentStatePaid)
 	}
 
 	affected, err := AddPayment(payment)
