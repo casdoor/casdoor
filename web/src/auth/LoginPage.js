@@ -124,6 +124,7 @@ class LoginPage extends React.Component {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
+          return;
         }
 
         if (params.get("popup") === "1") {
@@ -133,6 +134,16 @@ class LoginPage extends React.Component {
         }
 
         if (this.props.application.enableAutoSignin) {
+          const values = {};
+          values["application"] = this.props.application.name;
+          this.login(values);
+          return;
+        }
+
+        // For OAuth/SAML/CAS flows, automatically proceed with login since the user
+        // is already authenticated to Casdoor and should be redirected back to the
+        // application with the appropriate credentials (code/assertion/ticket)
+        if (this.state.type === "code" || this.state.type === "saml" || this.state.type === "cas") {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
