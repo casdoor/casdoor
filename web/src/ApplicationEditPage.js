@@ -180,7 +180,7 @@ class ApplicationEditPage extends React.Component {
   }
 
   getGroups() {
-    GroupBackend.getGroups(this.state.organizationName)
+    GroupBackend.getGroups(this.state.owner)
       .then((res) => {
         if (res.status === "ok") {
           this.setState({
