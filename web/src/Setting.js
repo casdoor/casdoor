@@ -296,6 +296,10 @@ export const OtherProviderInfo = {
       logo: `${StaticBaseUrl}/img/payment_paddle.png`,
       url: "https://www.paddle.com/",
     },
+    "FastSpring": {
+      logo: `${StaticBaseUrl}/img/payment_fastspring.png`,
+      url: "https://fastspring.com/",
+    },
   },
   Captcha: {
     "Default": {
@@ -1272,6 +1276,7 @@ export function getProviderTypeOptions(category) {
       {id: "GC", name: "GC"},
       {id: "Polar", name: "Polar"},
       {id: "Paddle", name: "Paddle"},
+      {id: "FastSpring", name: "FastSpring"},
     ]);
   } else if (category === "Captcha") {
     return ([
