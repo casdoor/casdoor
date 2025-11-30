@@ -104,6 +104,13 @@ func (c *ApiController) getCurrentUser() *object.User {
 
 // GetSessionUsername ...
 func (c *ApiController) GetSessionUsername() string {
+	// First check if user is in the request context (API key/client secret auth)
+	contextUser := c.Ctx.Input.GetData("username")
+	if contextUser != nil {
+		return contextUser.(string)
+	}
+
+	// Then check session (interactive browser-based auth)
 	// check if user session expired
 	sessionData := c.GetSessionData()
 
