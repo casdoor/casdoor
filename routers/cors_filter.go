@@ -73,6 +73,11 @@ func CorsFilter(ctx *context.Context) {
 		return
 	}
 
+	if ctx.Request.Method == "POST" && ctx.Request.RequestURI == "/api/acs" {
+		setCorsHeaders(ctx, origin)
+		return
+	}
+
 	if ctx.Request.RequestURI == "/api/userinfo" {
 		setCorsHeaders(ctx, origin)
 		return
