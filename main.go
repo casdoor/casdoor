@@ -97,6 +97,7 @@ func main() {
 	// Note: This requires HTTPS. For HTTP development, keep this disabled.
 	if conf.GetConfigBool("enableSessionCookieSameSiteNone") {
 		beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+		logs.Info("Session cookie SameSite=None enabled. Ensure HTTPS is configured - browsers will reject these cookies over HTTP.")
 	}
 
 	var logAdapter string

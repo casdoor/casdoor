@@ -1193,7 +1193,7 @@ class LoginPage extends React.Component {
           "2. Session cookies are enabled (check browser settings)\n" +
           "3. For cross-origin iframes: SameSite=None is configured on the server (requires HTTPS)\n" +
           "4. Session has not expired\n" +
-          "See documentation: https://github.com/casdoor/casdoor/blob/master/docs/SILENT_SIGNIN.md");
+          "See documentation at https://casdoor.org or search for 'silentSignin' in Casdoor docs");
       }
       this.sendSilentSigninData("user-not-logged-in");
       return null;
