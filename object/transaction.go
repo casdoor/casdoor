@@ -19,7 +19,6 @@ import (
 	"strings"
 
 	"github.com/casdoor/casdoor/i18n"
-	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
 )
@@ -44,7 +43,7 @@ type Transaction struct {
 
 	Payment string `xorm:"varchar(100)" json:"payment"`
 
-	State pp.PaymentState `xorm:"varchar(100)" json:"state"`
+	State string `xorm:"varchar(100)" json:"state"`
 }
 
 func GetTransactionCount(owner, field, value string) (int64, error) {
