@@ -1185,6 +1185,16 @@ class LoginPage extends React.Component {
 
   renderSignedInBox() {
     if (this.props.account === undefined || this.props.account === null) {
+      const params = new URLSearchParams(this.props.location.search);
+      const silentSignin = params.get("silentSignin");
+      if (silentSignin !== null && Setting.inIframe()) {
+        console.warn("Casdoor: silentSignin parameter detected but no valid session found. Please ensure:\n" +
+          "1. User is logged in before using silentSignin\n" +
+          "2. Session cookies are enabled (check browser settings)\n" +
+          "3. For cross-origin iframes: SameSite=None is configured on the server (requires HTTPS)\n" +
+          "4. Session has not expired\n" +
+          "See documentation: https://github.com/casdoor/casdoor/blob/master/docs/SILENT_SIGNIN.md");
+      }
       this.sendSilentSigninData("user-not-logged-in");
       return null;
     }
