@@ -17,6 +17,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/logs"
@@ -90,7 +91,13 @@ func main() {
 	}
 	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 24 * 30
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24 * 30
-	// beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+	
+	// Enable SameSite=None for session cookies when configured
+	// This is required for silentSignin and iframe scenarios to work properly with modern browsers
+	// Note: This requires HTTPS. For HTTP development, keep this disabled.
+	if conf.GetConfigBool("enableSessionCookieSameSiteNone") {
+		beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+	}
 
 	var logAdapter string
 	logConfigMap := make(map[string]interface{})
