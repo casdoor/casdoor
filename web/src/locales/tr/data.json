@@ -1148,6 +1148,7 @@
     "Text 4": "Metin 4",
     "Text 5": "Metin 5",
     "The input Email doesn't match the signup item regex!": "Girilen e-posta kayıt öğesi düzenli ifadesiyle eşleşmiyor!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Girdi fatura Vergi ID'si değil!",
     "The input is not invoice title!": "Girdi fatura başlığı değil!",
     "The input is not valid Email!": "Girdi geçerli bir E-posta değil!",

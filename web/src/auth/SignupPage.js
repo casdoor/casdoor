@@ -51,26 +51,38 @@ const formItemLayout = {
 };
 
 const renderFormItem = (signupItem) => {
-  const commonProps = {
-    name: signupItem.name.toLowerCase(),
-    label: signupItem.label || signupItem.name,
-    rules: [
-      {
-        required: signupItem.required,
-        message: i18next.t("signup:Please input your {label}!").replace("{label}", signupItem.label || signupItem.name),
-      },
-    ],
-  };
+  const commonRules = [
+    {
+      required: signupItem.required,
+      message: i18next.t("signup:Please input your {label}!").replace("{label}", signupItem.label || signupItem.name),
+    },
+  ];
 
   if (!signupItem.type || signupItem.type === "Input") {
+    const inputRules = [...commonRules];
+    if (signupItem.regex) {
+      inputRules.push({
+        pattern: new RegExp(signupItem.regex),
+        message: i18next.t("signup:The input doesn't match the signup item regex!"),
+      });
+    }
+
     return (
-      <Form.Item {...commonProps}>
+      <Form.Item
+        name={signupItem.name.toLowerCase()}
+        label={signupItem.label || signupItem.name}
+        rules={inputRules}
+      >
         <Input placeholder={signupItem.placeholder} />
       </Form.Item>
     );
   } else if (signupItem.type === "Single Choice" || signupItem.type === "Multiple Choices") {
     return (
-      <Form.Item {...commonProps}>
+      <Form.Item
+        name={signupItem.name.toLowerCase()}
+        label={signupItem.label || signupItem.name}
+        rules={commonRules}
+      >
         <Select
           mode={signupItem.type === "Multiple Choices" ? "multiple" : "single"}
           placeholder={signupItem.placeholder}
@@ -309,18 +321,25 @@ class SignupPage extends React.Component {
     const required = signupItem.required;
 
     if (signupItem.name === "Username") {
+      const usernameRules = [
+        {
+          required: required,
+          message: i18next.t("forget:Please input your username!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        usernameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
       return (
         <Form.Item
           name="username"
           className="signup-username"
           label={signupItem.label ? signupItem.label : i18next.t("signup:Username")}
-          rules={[
-            {
-              required: required,
-              message: i18next.t("forget:Please input your username!"),
-              whitespace: true,
-            },
-          ]}
+          rules={usernameRules}
         >
           <Input className="signup-username-input" placeholder={signupItem.placeholder}
             disabled={this.state.invitation !== undefined && this.state.invitation.username !== ""} />
@@ -328,19 +347,35 @@ class SignupPage extends React.Component {
       );
     } else if (signupItem.name === "Display name") {
       if (signupItem.rule === "First, last" && Setting.getLanguage() !== "zh") {
+        const firstNameRules = [
+          {
+            required: required,
+            message: i18next.t("signup:Please input your first name!"),
+            whitespace: true,
+          },
+        ];
+        const lastNameRules = [
+          {
+            required: required,
+            message: i18next.t("signup:Please input your last name!"),
+            whitespace: true,
+          },
+        ];
+        if (signupItem.regex) {
+          const regexRule = {
+            pattern: new RegExp(signupItem.regex),
+            message: i18next.t("signup:The input doesn't match the signup item regex!"),
+          };
+          firstNameRules.push(regexRule);
+          lastNameRules.push(regexRule);
+        }
         return (
           <React.Fragment>
             <Form.Item
               name="firstName"
               className="signup-first-name"
               label={signupItem.label ? signupItem.label : i18next.t("general:First name")}
-              rules={[
-                {
-                  required: required,
-                  message: i18next.t("signup:Please input your first name!"),
-                  whitespace: true,
-                },
-              ]}
+              rules={firstNameRules}
             >
               <Input className="signup-first-name-input" placeholder={signupItem.placeholder} />
             </Form.Item>
@@ -348,13 +383,7 @@ class SignupPage extends React.Component {
               name="lastName"
               className="signup-last-name"
               label={signupItem.label ? signupItem.label : i18next.t("general:Last name")}
-              rules={[
-                {
-                  required: required,
-                  message: i18next.t("signup:Please input your last name!"),
-                  whitespace: true,
-                },
-              ]}
+              rules={lastNameRules}
             >
               <Input className="signup-last-name-input" placeholder={signupItem.placeholder} />
             </Form.Item>
@@ -362,69 +391,98 @@ class SignupPage extends React.Component {
         );
       }
 
+      const displayNameRules = [
+        {
+          required: required,
+          message: (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        displayNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
+
       return (
         <Form.Item
           name="name"
           className="signup-name"
           label={(signupItem.label ? signupItem.label : (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("general:Real name") : i18next.t("general:Display name"))}
-          rules={[
-            {
-              required: required,
-              message: (signupItem.rule === "Real name" || signupItem.rule === "First, last") ? i18next.t("signup:Please input your real name!") : i18next.t("signup:Please input your display name!"),
-              whitespace: true,
-            },
-          ]}
+          rules={displayNameRules}
         >
           <Input className="signup-name-input" placeholder={signupItem.placeholder} />
         </Form.Item>
       );
     } else if (signupItem.name === "First name" && this.state?.displayNameRule !== "First, last") {
+      const firstNameRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your first name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        firstNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
       return (
         <Form.Item
           name="firstName"
           className="signup-first-name"
           label={signupItem.label ? signupItem.label : i18next.t("general:First name")}
-          rules={[
-            {
-              required: required,
-              message: i18next.t("signup:Please input your first name!"),
-              whitespace: true,
-            },
-          ]}
+          rules={firstNameRules}
         >
           <Input className="signup-first-name-input" placeholder={signupItem.placeholder} />
         </Form.Item>
       );
     } else if (signupItem.name === "Last name" && this.state?.displayNameRule !== "First, last") {
+      const lastNameRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your last name!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        lastNameRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
       return (
         <Form.Item
           name="lastName"
           className="signup-last-name"
           label={signupItem.label ? signupItem.label : i18next.t("general:Last name")}
-          rules={[
-            {
-              required: required,
-              message: i18next.t("signup:Please input your last name!"),
-              whitespace: true,
-            },
-          ]}
+          rules={lastNameRules}
         >
           <Input className="signup-last-name-input" placeholder={signupItem.placeholder} />
         </Form.Item>
       );
     } else if (signupItem.name === "Affiliation") {
+      const affiliationRules = [
+        {
+          required: required,
+          message: i18next.t("signup:Please input your affiliation!"),
+          whitespace: true,
+        },
+      ];
+      if (signupItem.regex) {
+        affiliationRules.push({
+          pattern: new RegExp(signupItem.regex),
+          message: i18next.t("signup:The input doesn't match the signup item regex!"),
+        });
+      }
       return (
         <Form.Item
           name="affiliation"
           className="signup-affiliation"
           label={signupItem.label ? signupItem.label : i18next.t("user:Affiliation")}
-          rules={[
-            {
-              required: required,
-              message: i18next.t("signup:Please input your affiliation!"),
-              whitespace: true,
-            },
-          ]}
+          rules={affiliationRules}
         >
           <Input className="signup-affiliation-input" placeholder={signupItem.placeholder} />
         </Form.Item>

@@ -1148,6 +1148,7 @@
     "Text 4": "Text 4",
     "Text 5": "Text 5",
     "The input Email doesn't match the signup item regex!": "Den angivna e-posten matchar inte registreringsobjektets regex!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Inmatningen är inte fakturaskatte-ID!",
     "The input is not invoice title!": "Inmatningen är inte fakturatitel!",
     "The input is not valid Email!": "Inmatningen är inte en giltig e-post!",

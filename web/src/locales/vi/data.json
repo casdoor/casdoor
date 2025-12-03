@@ -1148,6 +1148,7 @@
     "Text 4": "Văn bản 4",
     "Text 5": "Văn bản 5",
     "The input Email doesn't match the signup item regex!": "Email nhập vào không khớp biểu thức chính quy của mục đăng ký!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Đầu vào không phải là Mã số thuế của hóa đơn!",
     "The input is not invoice title!": "Đầu vào không phải là tiêu đề hóa đơn!",
     "The input is not valid Email!": "Đầu vào không phải là địa chỉ Email hợp lệ!",

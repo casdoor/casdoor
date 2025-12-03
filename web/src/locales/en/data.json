@@ -537,7 +537,7 @@
     "Show all": "Show all",
     "Upload (.xlsx)": "Upload (.xlsx)",
     "Virtual": "Virtual",
-    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -\u003e [Groups] page"
+    "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
   "home": {
     "New users past 30 days": "New users past 30 days",
@@ -1164,6 +1164,7 @@
     "Text 4": "Text 4",
     "Text 5": "Text 5",
     "The input Email doesn't match the signup item regex!": "The input Email doesn't match the signup item regex!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "The input is not invoice Tax ID!",
     "The input is not invoice title!": "The input is not invoice title!",
     "The input is not valid Email!": "The input is not valid Email!",

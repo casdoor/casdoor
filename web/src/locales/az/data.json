@@ -1148,6 +1148,7 @@
     "Text 4": "Mətn 4",
     "Text 5": "Mətn 5",
     "The input Email doesn't match the signup item regex!": "Daxil edilən Email qeydiyyat elementi regex-inə uyğun gəlmir!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Daxil edilən faktura Vergi ID-si deyil!",
     "The input is not invoice title!": "Daxil edilən faktura başlığı deyil!",
     "The input is not valid Email!": "Daxil edilən Email etibarlı deyil!",

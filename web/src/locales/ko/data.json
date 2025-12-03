@@ -1148,6 +1148,7 @@
     "Text 4": "텍스트 4",
     "Text 5": "텍스트 5",
     "The input Email doesn't match the signup item regex!": "입력한 이메일이 가입 항목 정규식과 일치하지 않습니다!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "입력한 것은 송장 세금 ID가 아닙니다!",
     "The input is not invoice title!": "입력값은 송장 제목이 아닙니다!",
     "The input is not valid Email!": "입력 값은 유효한 이메일이 아닙니다!",

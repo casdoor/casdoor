@@ -1148,6 +1148,7 @@
     "Text 4": "Teksti 4",
     "Text 5": "Teksti 5",
     "The input Email doesn't match the signup item regex!": "Syötetty sähköposti ei vastaa rekisteröitymiskohdan regexiä!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Syöte ei ole laskun verotunnus!",
     "The input is not invoice title!": "Syöte ei ole laskun otsikko!",
     "The input is not valid Email!": "Syöte ei ole kelvollinen sähköpostiosoite!",

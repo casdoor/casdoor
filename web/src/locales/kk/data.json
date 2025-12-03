@@ -1148,6 +1148,7 @@
     "Text 4": "Мәтін 4",
     "Text 5": "Мәтін 5",
     "The input Email doesn't match the signup item regex!": "Енгізілген электрондық пошта тіркелу элементінің тұрақты тіркесіміне сәйкес келмейді!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "Енгізілген деректер есеп фактураның салық ID емес!",
     "The input is not invoice title!": "Енгізілген деректер есеп фактураның атауы емес!",
     "The input is not valid Email!": "Енгізілген электрондық пошта жарамсыз!",

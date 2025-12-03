@@ -1148,6 +1148,7 @@
     "Text 4": "טקסט 4",
     "Text 5": "טקסט 5",
     "The input Email doesn't match the signup item regex!": "הדוא\"ל שהוזן לא תואם לביטוי הרגולרי של פריט ההרשמה!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "הקלט אינו מזהה מס מסמך!",
     "The input is not invoice title!": "הקלט אינו כותרת החשבונית!",
     "The input is not valid Email!": "הקלט אינו דוא\"ל תקף!",

@@ -1151,6 +1151,7 @@
     "Text 4": "文本4",
     "Text 5": "文本5",
     "The input Email doesn't match the signup item regex!": "您输入的邮箱地址与注册项的regex表达式不匹配!",
+    "The input doesn't match the signup item regex!": "The input doesn't match the signup item regex!",
     "The input is not invoice Tax ID!": "您输入的纳税人识别号有误！",
     "The input is not invoice title!": "您输入的发票抬头有误！",
     "The input is not valid Email!": "您输入的电子邮箱格式有误！",
