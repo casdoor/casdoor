@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Descriptions, InputNumber, Space, Spin} from "antd";
+import {Button, Descriptions, Divider, InputNumber, Radio, Space, Spin, Typography} from "antd";
 import i18next from "i18next";
 import * as ProductBackend from "./backend/ProductBackend";
 import * as PlanBackend from "./backend/PlanBackend";
@@ -105,6 +105,12 @@ class ProductBuyPage extends React.Component {
       this.setState({
         product: res.data,
       });
+
+      if (res.data.isRecharge && res.data.rechargeOptions?.length > 0) {
+        this.setState({
+          customPrice: res.data.rechargeOptions[0],
+        });
+      }
     } catch (err) {
       Setting.showMessage("error", err.message);
       return;
@@ -153,6 +159,58 @@ class ProductBuyPage extends React.Component {
       });
   }
 
+  renderRechargeInput(product) {
+    const hasOptions = product.rechargeOptions && product.rechargeOptions.length > 0;
+    const disableCustom = product.disableCustomRecharge;
+
+    if (!hasOptions && disableCustom) {
+      return (
+        <Typography.Text type="danger">
+          {i18next.t("product:This product is currently not purchasable (No options available)")}
+        </Typography.Text>
+      );
+    }
+
+    return (
+      <Space direction="vertical" style={{width: "100%"}}>
+        {hasOptions && (
+          <>
+            <div>
+              <span style={{marginRight: "10px", fontSize: 16}}>
+                {i18next.t("product:Select amount")}:
+              </span>
+              <Radio.Group
+                value={this.state.customPrice}
+                onChange={(e) => {this.setState({customPrice: e.target.value});}}
+              >
+                <Space wrap>
+                  {product.rechargeOptions.map((amount, index) => (
+                    <Radio.Button key={index} value={amount}>
+                      {Setting.getCurrencySymbol(product.currency)}{amount}
+                    </Radio.Button>
+                  ))}
+                </Space>
+              </Radio.Group>
+            </div>
+            {!disableCustom && <Divider style={{margin: "10px 0"}}>{i18next.t("general:Or")}</Divider>}
+          </>
+        )}
+        <Space>
+          <span style={{fontSize: 16}}>
+            {i18next.t("product:Amount")}:
+          </span>
+          <InputNumber
+            min={0}
+            value={this.state.customPrice}
+            onChange={(e) => {this.setState({customPrice: e});}}
+            disabled={disableCustom}
+          />
+          <span style={{fontSize: 16}}>{Setting.getCurrencyText(product)}</span>
+        </Space>
+      </Space>
+    );
+  }
+
   renderPlaceOrderButton(product) {
     if (product === undefined || product === null) {
       return null;
@@ -161,6 +219,10 @@ class ProductBuyPage extends React.Component {
     if (product.state !== "Published") {
       return i18next.t("product:This product is currently not in sale.");
     }
+
+    const hasOptions = product.rechargeOptions && product.rechargeOptions.length > 0;
+    const disableCustom = product.disableCustomRecharge;
+    const isRechargeUnpurchasable = product.isRecharge && !hasOptions && disableCustom;
 
     return (
       <div style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
@@ -175,7 +237,7 @@ class ProductBuyPage extends React.Component {
             paddingRight: "60px",
           }}
           onClick={() => this.placeOrder(product)}
-          disabled={this.state.isPlacingOrder}
+          disabled={this.state.isPlacingOrder || isRechargeUnpurchasable}
           loading={this.state.isPlacingOrder}
         >
           {i18next.t("order:Place Order")}
@@ -210,9 +272,7 @@ class ProductBuyPage extends React.Component {
             {
               product.isRecharge ? (
                 <Descriptions.Item span={3} label={i18next.t("product:Price")}>
-                  <Space>
-                    <InputNumber min={0} value={this.state.customPrice} onChange={(e) => {this.setState({customPrice: e});}} /> {Setting.getCurrencyText(product)}
-                  </Space>
+                  {this.renderRechargeInput(product)}
                 </Descriptions.Item>
               ) : (
                 <React.Fragment>

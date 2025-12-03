@@ -218,11 +218,48 @@ class ProductEditPage extends React.Component {
           <Col span={22} >
             <Switch checked={this.state.product.isRecharge} onChange={value => {
               this.updateProductField("isRecharge", value);
+              if (value) {
+                this.updateProductField("price", 0);
+                this.updateProductField("disableCustomRecharge", false);
+                this.updateProductField("rechargeOptions", []);
+              }
             }} />
           </Col>
         </Row>
         {
-          this.state.product.isRecharge ? null : (
+          this.state.product.isRecharge ? (
+            <>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("product:Disable custom amount"), i18next.t("product:Disable custom amount - Tooltip"))} :
+                </Col>
+                <Col span={1} >
+                  <Switch checked={this.state.product.disableCustomRecharge} onChange={value => {
+                    this.updateProductField("disableCustomRecharge", value);
+                  }} />
+                </Col>
+              </Row>
+              <Row style={{marginTop: "20px"}} >
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("product:Recharge options"), i18next.t("product:Recharge options - Tooltip"))} :
+                </Col>
+                <Col span={22} >
+                  <Select virtual={false} mode="tags" style={{width: "100%"}}
+                    placeholder={i18next.t("product:Enter preset amounts")}
+                    value={(this.state.product.rechargeOptions || []).map(v => String(v))}
+                    onChange={(values => {
+                      const numbers = values
+                        .map(v => parseFloat(v))
+                        .filter(v => !isNaN(v) && v > 0)
+                        .filter((v, i, arr) => arr.indexOf(v) === i)
+                        .sort((a, b) => a - b);
+                      this.updateProductField("rechargeOptions", numbers);
+                    })}>
+                  </Select>
+                </Col>
+              </Row>
+            </>
+          ) : (
             <Row style={{marginTop: "20px"}} >
               <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
                 {Setting.getLabel(i18next.t("product:Price"), i18next.t("product:Price - Tooltip"))} :
@@ -333,6 +370,11 @@ class ProductEditPage extends React.Component {
 
   submitProductEdit(exitAfterSave) {
     const product = Setting.deepCopy(this.state.product);
+    if (product.isRecharge && product.disableCustomRecharge && (!product.rechargeOptions || product.rechargeOptions.length === 0)) {
+      Setting.showMessage("error", i18next.t("product:Please add at least one recharge option when custom amount is disabled"));
+      return;
+    }
+
     ProductBackend.updateProduct(this.state.organizationName, this.state.productName, product)
       .then((res) => {
         if (res.status === "ok") {
