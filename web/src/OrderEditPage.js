@@ -116,13 +116,16 @@ class OrderEditPage extends React.Component {
   }
 
   renderOrder() {
+    const isViewMode = this.state.mode === "view";
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === "add" ? i18next.t("order:New Order") : i18next.t("order:Edit Order")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitOrderEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitOrderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteOrder()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? i18next.t("order:New Order") : (isViewMode ? i18next.t("order:View Order") : i18next.t("order:Edit Order"))}&nbsp;&nbsp;&nbsp;&nbsp;
+          {!isViewMode && (<>
+            <Button onClick={() => this.submitOrderEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitOrderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deleteOrder()}>{i18next.t("general:Cancel")}</Button> : null}
+          </>)}
         </div>
       } style={{marginLeft: "5px"}} type="inner">
         <Row style={{marginTop: "10px"}} >
@@ -138,7 +141,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:Name")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.order.name} onChange={e => {
+            <Input value={this.state.order.name} disabled={isViewMode} onChange={e => {
               this.updateOrderField("name", e.target.value);
             }} />
           </Col>
@@ -148,7 +151,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:Display name")}:
           </Col>
           <Col span={22} >
-            <Input value={this.state.order.displayName} onChange={e => {
+            <Input value={this.state.order.displayName} disabled={isViewMode} onChange={e => {
               this.updateOrderField("displayName", e.target.value);
             }} />
           </Col>
@@ -158,7 +161,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("order:Product")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.productName} onChange={(value) => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.order.productName} disabled={isViewMode} onChange={(value) => {
               this.updateOrderField("productName", value);
             }}>
               {
@@ -172,7 +175,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:User")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} onChange={(value) => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.order.user} disabled={isViewMode} onChange={(value) => {
               this.updateOrderField("user", value);
             }}>
               {
@@ -186,7 +189,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("order:Payment")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.payment} onChange={(value) => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.order.payment} disabled={isViewMode} onChange={(value) => {
               this.updateOrderField("payment", value);
             }}>
               <Option value="">{"(empty)"}</Option>
@@ -201,7 +204,7 @@ class OrderEditPage extends React.Component {
             {i18next.t("general:State")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.order.state} onChange={(value) => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.order.state} disabled={isViewMode} onChange={(value) => {
               this.updateOrderField("state", value);
             }}>
               {
@@ -294,11 +297,13 @@ class OrderEditPage extends React.Component {
         {
           this.state.order !== null ? this.renderOrder() : null
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
-          <Button size="large" onClick={() => this.submitOrderEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitOrderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteOrder()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
+        {this.state.mode !== "view" && (
+          <div style={{marginTop: "20px", marginLeft: "40px"}}>
+            <Button size="large" onClick={() => this.submitOrderEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitOrderEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteOrder()}>{i18next.t("general:Cancel")}</Button> : null}
+          </div>
+        )}
       </div>
     );
   }

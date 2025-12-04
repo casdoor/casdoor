@@ -132,13 +132,16 @@ class PlanEditPage extends React.Component {
   }
 
   renderPlan() {
+    const isViewMode = this.state.mode === "view";
     return (
       <Card size="small" title={
         <div>
-          {this.state.mode === "add" ? i18next.t("plan:New Plan") : i18next.t("plan:Edit Plan")}&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={() => this.submitPlanEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitPlanEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deletePlan()}>{i18next.t("general:Cancel")}</Button> : null}
+          {this.state.mode === "add" ? i18next.t("plan:New Plan") : (isViewMode ? i18next.t("plan:View Plan") : i18next.t("plan:Edit Plan"))}&nbsp;&nbsp;&nbsp;&nbsp;
+          {!isViewMode && (<>
+            <Button onClick={() => this.submitPlanEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" onClick={() => this.submitPlanEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} onClick={() => this.deletePlan()}>{i18next.t("general:Cancel")}</Button> : null}
+          </>)}
         </div>
       } style={(Setting.isMobile()) ? {margin: "5px"} : {}} type="inner">
         <Row style={{marginTop: "10px"}} >
@@ -146,7 +149,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Organization"), i18next.t("general:Organization - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.owner} onChange={(owner => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.owner} disabled={isViewMode} onChange={(owner => {
               this.updatePlanField("owner", owner);
               this.getUsers(owner);
               this.getRoles(owner);
@@ -161,7 +164,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Name"), i18next.t("general:Name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.plan.name} onChange={e => {
+            <Input value={this.state.plan.name} disabled={isViewMode} onChange={e => {
               this.updatePlanField("name", e.target.value);
             }} />
           </Col>
@@ -171,7 +174,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Display name"), i18next.t("general:Display name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.plan.displayName} onChange={e => {
+            <Input value={this.state.plan.displayName} disabled={isViewMode} onChange={e => {
               this.updatePlanField("displayName", e.target.value);
             }} />
           </Col>
@@ -181,7 +184,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Role"), i18next.t("general:Role - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} onChange={(value => {this.updatePlanField("role", value);})}
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.role} disabled={isViewMode} onChange={(value => {this.updatePlanField("role", value);})}
               options={this.state.roles.map((role) => Setting.getOption(role.name, role.name))
               } />
           </Col>
@@ -191,7 +194,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Description"), i18next.t("general:Description - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.plan.description} onChange={e => {
+            <Input value={this.state.plan.description} disabled={isViewMode} onChange={e => {
               this.updatePlanField("description", e.target.value);
             }} />
           </Col>
@@ -201,7 +204,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("plan:Price"), i18next.t("plan:Price - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <InputNumber value={this.state.plan.price} onChange={value => {
+            <InputNumber value={this.state.plan.price} disabled={isViewMode} onChange={value => {
               this.updatePlanField("price", value);
             }} />
           </Col>
@@ -211,7 +214,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("plan:Period"), i18next.t("plan:Period - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.period} onChange={value => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.period} disabled={isViewMode} onChange={value => {
               this.updatePlanField("period", value);
             }}
             options={[
@@ -226,7 +229,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("payment:Currency"), i18next.t("payment:Currency - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.currency} onChange={(value => {
+            <Select virtual={false} style={{width: "100%"}} value={this.state.plan.currency} disabled={isViewMode} onChange={(value => {
               this.updatePlanField("currency", value);
             })}>
               {
@@ -240,7 +243,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("product:Payment providers"), i18next.t("product:Payment providers - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.plan.paymentProviders ?? []} onChange={(value => {this.updatePlanField("paymentProviders", value);})}>
+            <Select virtual={false} mode="multiple" style={{width: "100%"}} value={this.state.plan.paymentProviders ?? []} disabled={isViewMode} onChange={(value => {this.updatePlanField("paymentProviders", value);})}>
               {
                 this.state.paymentProviders.map((provider, index) => <Option key={index} value={provider.name}>{provider.name}</Option>)
               }
@@ -252,7 +255,7 @@ class PlanEditPage extends React.Component {
             {Setting.getLabel(i18next.t("general:Is enabled"), i18next.t("general:Is enabled - Tooltip"))} :
           </Col>
           <Col span={1} >
-            <Switch checked={this.state.plan.isEnabled} onChange={checked => {
+            <Switch checked={this.state.plan.isEnabled} disabled={isViewMode} onChange={checked => {
               this.updatePlanField("isEnabled", checked);
             }} />
           </Col>
@@ -306,11 +309,13 @@ class PlanEditPage extends React.Component {
         {
           this.state.plan !== null ? this.renderPlan() : null
         }
-        <div style={{marginTop: "20px", marginLeft: "40px"}}>
-          <Button size="large" onClick={() => this.submitPlanEdit(false)}>{i18next.t("general:Save")}</Button>
-          <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitPlanEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
-          {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deletePlan()}>{i18next.t("general:Cancel")}</Button> : null}
-        </div>
+        {this.state.mode !== "view" && (
+          <div style={{marginTop: "20px", marginLeft: "40px"}}>
+            <Button size="large" onClick={() => this.submitPlanEdit(false)}>{i18next.t("general:Save")}</Button>
+            <Button style={{marginLeft: "20px"}} type="primary" size="large" onClick={() => this.submitPlanEdit(true)}>{i18next.t("general:Save & Exit")}</Button>
+            {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deletePlan()}>{i18next.t("general:Cancel")}</Button> : null}
+          </div>
+        )}
       </div>
     );
   }
