@@ -164,6 +164,24 @@ class OrderListPage extends BaseListPage {
         },
       },
       {
+        title: i18next.t("order:Payment"),
+        dataIndex: "payment",
+        key: "payment",
+        width: "140px",
+        sorter: true,
+        ...this.getColumnSearchProps("payment"),
+        render: (text, record, index) => {
+          if (text === "") {
+            return "(empty)";
+          }
+          return (
+            <Link to={`/payments/${record.owner}/${text}`}>
+              {text}
+            </Link>
+          );
+        },
+      },
+      {
         title: i18next.t("general:User"),
         dataIndex: "user",
         key: "user",
