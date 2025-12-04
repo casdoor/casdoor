@@ -223,11 +223,13 @@ class PaymentListPage extends BaseListPage {
         width: "240px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const isAdmin = Setting.isLocalAdminUser(this.props.account);
           return (
             <div>
               <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} onClick={() => this.props.history.push(`/payments/${record.owner}/${record.name}/result`)}>{i18next.t("payment:Result")}</Button>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/payments/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push({pathname: `/payments/${record.owner}/${record.name}`, mode: isAdmin ? "edit" : "view"})}>{isAdmin ? i18next.t("general:Edit") : i18next.t("general:View")}</Button>
               <PopconfirmModal
+                disabled={!isAdmin}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePayment(index)}
               >
@@ -248,12 +250,15 @@ class PaymentListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={payments} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
-            <div>
-              {i18next.t("general:Payments")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addPayment.bind(this)}>{i18next.t("general:Add")}</Button>
-            </div>
-          )}
+          title={() => {
+            const isAdmin = Setting.isLocalAdminUser(this.props.account);
+            return (
+              <div>
+                {i18next.t("general:Payments")}&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addPayment.bind(this)}>{i18next.t("general:Add")}</Button>
+              </div>
+            );
+          }}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />

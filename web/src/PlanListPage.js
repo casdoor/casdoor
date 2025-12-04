@@ -201,10 +201,12 @@ class PlanListPage extends BaseListPage {
         width: "200px",
         fixed: (Setting.isMobile()) ? "false" : "right",
         render: (text, record, index) => {
+          const isAdmin = Setting.isLocalAdminUser(this.props.account);
           return (
             <div>
-              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push(`/plans/${record.owner}/${record.name}`)}>{i18next.t("general:Edit")}</Button>
+              <Button style={{marginTop: "10px", marginBottom: "10px", marginRight: "10px"}} type="primary" onClick={() => this.props.history.push({pathname: `/plans/${record.owner}/${record.name}`, mode: isAdmin ? "edit" : "view"})}>{isAdmin ? i18next.t("general:Edit") : i18next.t("general:View")}</Button>
               <PopconfirmModal
+                disabled={!isAdmin}
                 title={i18next.t("general:Sure to delete") + `: ${record.name} ?`}
                 onConfirm={() => this.deletePlan(index)}
               >
@@ -225,12 +227,15 @@ class PlanListPage extends BaseListPage {
     return (
       <div>
         <Table scroll={{x: "max-content"}} columns={columns} dataSource={plans} rowKey={(record) => `${record.owner}/${record.name}`} size="middle" bordered pagination={paginationProps}
-          title={() => (
-            <div>
-              {i18next.t("general:Plans")}&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button type="primary" size="small" onClick={this.addPlan.bind(this)}>{i18next.t("general:Add")}</Button>
-            </div>
-          )}
+          title={() => {
+            const isAdmin = Setting.isLocalAdminUser(this.props.account);
+            return (
+              <div>
+                {i18next.t("general:Plans")}&nbsp;&nbsp;&nbsp;&nbsp;
+                <Button type="primary" size="small" disabled={!isAdmin} onClick={this.addPlan.bind(this)}>{i18next.t("general:Add")}</Button>
+              </div>
+            );
+          }}
           loading={this.state.loading}
           onChange={this.handleTableChange}
         />
