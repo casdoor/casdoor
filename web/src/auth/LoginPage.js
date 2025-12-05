@@ -72,6 +72,7 @@ class LoginPage extends React.Component {
       userCode: props.userCode ?? (props.match?.params?.userCode ?? null),
       userCodeStatus: "",
       prefilledUsername: urlParams.get("username") || urlParams.get("login_hint"),
+      executedLogin: false,
     };
 
     if (this.state.type === "cas" && props.match?.params.casApplicationName !== undefined) {
@@ -113,8 +114,7 @@ class LoginPage extends React.Component {
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
     }
-
-    if (prevProps.account !== this.props.account && this.props.account !== undefined) {
+    if (this.props.account !== undefined && !this.state.executedLogin) {
       if (this.props.account && this.props.account.owner === this.props.application?.organization) {
         const params = new URLSearchParams(this.props.location.search);
         const silentSignin = params.get("silentSignin");
@@ -124,11 +124,13 @@ class LoginPage extends React.Component {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
+          this.setState({executedLogin: true});
         }
 
         if (params.get("popup") === "1") {
           window.addEventListener("beforeunload", () => {
             this.sendPopupData({type: "windowClosed"}, params.get("redirect_uri"));
+            this.setState({executedLogin: true});
           });
         }
 
@@ -136,6 +138,7 @@ class LoginPage extends React.Component {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
+          this.setState({executedLogin: true});
         }
       }
     }
