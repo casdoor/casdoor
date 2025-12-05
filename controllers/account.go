@@ -460,6 +460,13 @@ func (c *ApiController) SsoLogout() {
 		return
 	}
 
+	// Get tokens before expiring them (for session-level logout notification)
+	tokens, err := object.GetTokensByUser(owner, username)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
 	_, err = object.ExpireTokenByUser(owner, username)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -485,6 +492,7 @@ func (c *ApiController) SsoLogout() {
 	}
 
 	// Send SSO logout notifications to all notification providers in the user's signup application
+	// Now includes session-level information for targeted logout
 	userObj, err := object.GetUser(user)
 	if err != nil {
 		c.ResponseError(err.Error())
@@ -492,7 +500,7 @@ func (c *ApiController) SsoLogout() {
 	}
 
 	if userObj != nil {
-		err = object.SendSsoLogoutNotifications(userObj)
+		err = object.SendSsoLogoutNotifications(userObj, sessionIds, tokens)
 		if err != nil {
 			c.ResponseError(err.Error())
 			return

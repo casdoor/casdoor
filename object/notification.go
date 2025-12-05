@@ -18,8 +18,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/casdoor/casdoor/notification"
+	"github.com/casdoor/casdoor/util"
 	"github.com/casdoor/notify"
 )
 
@@ -43,9 +45,65 @@ func SendNotification(provider *Provider, content string) error {
 	return err
 }
 
+// SsoLogoutNotification represents the structure of a session-level SSO logout notification
+// This includes session information and a signature for authentication
+type SsoLogoutNotification struct {
+	// User information
+	Owner       string `json:"owner"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	Id          string `json:"id"`
+
+	// Event type
+	Event string `json:"event"`
+
+	// Session-level information for targeted logout
+	SessionIds       []string `json:"sessionIds"`       // List of session IDs being logged out
+	AccessTokenHashes []string `json:"accessTokenHashes"` // Hashes of access tokens being expired
+
+	// Authentication fields to prevent malicious logout requests
+	Nonce     string `json:"nonce"`     // Random nonce for replay protection
+	Timestamp int64  `json:"timestamp"` // Unix timestamp of the notification
+	Signature string `json:"signature"` // HMAC-SHA256 signature for verification
+}
+
+// GetTokensByUser retrieves all tokens for a specific user
+func GetTokensByUser(owner, username string) ([]*Token, error) {
+	tokens := []*Token{}
+	err := ormer.Engine.Where("organization = ? and user = ?", owner, username).Find(&tokens)
+	if err != nil {
+		return nil, err
+	}
+	return tokens, nil
+}
+
+// generateLogoutSignature generates an HMAC-SHA256 signature for the logout notification
+// The signature is computed over the critical fields to prevent tampering
+func generateLogoutSignature(clientSecret string, owner string, name string, nonce string, timestamp int64, sessionIds []string, accessTokenHashes []string) string {
+	// Create a deterministic string from all fields that need to be verified
+	sessionIdsStr := ""
+	for _, sid := range sessionIds {
+		sessionIdsStr += sid + ","
+	}
+	tokenHashesStr := ""
+	for _, hash := range accessTokenHashes {
+		tokenHashesStr += hash + ","
+	}
+
+	data := fmt.Sprintf("%s|%s|%s|%d|%s|%s", owner, name, nonce, timestamp, sessionIdsStr, tokenHashesStr)
+	return util.GetHmacSha256(clientSecret, data)
+}
+
 // SendSsoLogoutNotifications sends logout notifications to all notification providers
-// configured in the user's signup application
-func SendSsoLogoutNotifications(user *User) error {
+// configured in the user's signup application. The notification includes session-level
+// information and a signature for authentication.
+// Parameters:
+//   - user: The user being logged out
+//   - sessionIds: List of session IDs being logged out (can be nil for all sessions)
+//   - tokens: List of tokens being expired (can be nil if no tokens are being expired)
+func SendSsoLogoutNotifications(user *User, sessionIds []string, tokens []*Token) error {
 	if user == nil {
 		return nil
 	}
@@ -65,22 +123,50 @@ func SendSsoLogoutNotifications(user *User) error {
 		return fmt.Errorf("signup application not found: %s", user.SignupApplication)
 	}
 
-	// Prepare sanitized user data for notification
-	// Only include safe, non-sensitive fields
-	sanitizedData := map[string]interface{}{
-		"owner":       user.Owner,
-		"name":        user.Name,
-		"displayName": user.DisplayName,
-		"email":       user.Email,
-		"phone":       user.Phone,
-		"id":          user.Id,
-		"event":       "sso-logout",
+	// Extract access token hashes from tokens
+	accessTokenHashes := make([]string, 0, len(tokens))
+	for _, token := range tokens {
+		if token.AccessTokenHash != "" {
+			accessTokenHashes = append(accessTokenHashes, token.AccessTokenHash)
+		}
 	}
-	userData, err := json.Marshal(sanitizedData)
+
+	// Generate nonce and timestamp for replay protection
+	nonce := util.GenerateId()
+	timestamp := time.Now().Unix()
+
+	// Generate signature using the application's client secret
+	signature := generateLogoutSignature(
+		application.ClientSecret,
+		user.Owner,
+		user.Name,
+		nonce,
+		timestamp,
+		sessionIds,
+		accessTokenHashes,
+	)
+
+	// Prepare the notification data
+	notification := SsoLogoutNotification{
+		Owner:             user.Owner,
+		Name:              user.Name,
+		DisplayName:       user.DisplayName,
+		Email:             user.Email,
+		Phone:             user.Phone,
+		Id:                user.Id,
+		Event:             "sso-logout",
+		SessionIds:        sessionIds,
+		AccessTokenHashes: accessTokenHashes,
+		Nonce:             nonce,
+		Timestamp:         timestamp,
+		Signature:         signature,
+	}
+
+	notificationData, err := json.Marshal(notification)
 	if err != nil {
-		return fmt.Errorf("failed to marshal user data: %w", err)
+		return fmt.Errorf("failed to marshal notification data: %w", err)
 	}
-	content := string(userData)
+	content := string(notificationData)
 
 	// Send notifications to all notification providers in the signup application
 	for _, providerItem := range application.Providers {
@@ -101,4 +187,19 @@ func SendSsoLogoutNotifications(user *User) error {
 	}
 
 	return nil
+}
+
+// VerifySsoLogoutSignature verifies the signature of an SSO logout notification
+// This should be called by applications receiving logout notifications
+func VerifySsoLogoutSignature(clientSecret string, notification *SsoLogoutNotification) bool {
+	expectedSignature := generateLogoutSignature(
+		clientSecret,
+		notification.Owner,
+		notification.Name,
+		notification.Nonce,
+		notification.Timestamp,
+		notification.SessionIds,
+		notification.AccessTokenHashes,
+	)
+	return notification.Signature == expectedSignature
 }
