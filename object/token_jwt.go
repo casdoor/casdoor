@@ -141,9 +141,9 @@ type UserWithoutThirdIdp struct {
 	Ldap       string            `xorm:"ldap varchar(100)" json:"ldap"`
 	Properties map[string]string `json:"properties"`
 
-	Roles       []*Role       `json:"roles"`
-	Permissions []*Permission `json:"permissions"`
-	Groups      []string      `xorm:"groups varchar(1000)" json:"groups"`
+	Roles       []string `json:"roles"`
+	Permissions []string `json:"permissions"`
+	Groups      []string `xorm:"groups varchar(1000)" json:"groups"`
 
 	LastSigninWrongTime string `xorm:"varchar(100)" json:"lastSigninWrongTime"`
 	SigninWrongTimes    int    `json:"signinWrongTimes"`
@@ -211,6 +211,26 @@ func getStandardUser(user *User) *UserStandard {
 		Phone:       user.Phone,
 	}
 	return res
+}
+
+func getRoleNames(roles []*Role) []string {
+	names := make([]string, 0, len(roles))
+	for _, role := range roles {
+		if role != nil {
+			names = append(names, role.Name)
+		}
+	}
+	return names
+}
+
+func getPermissionNames(permissions []*Permission) []string {
+	names := make([]string, 0, len(permissions))
+	for _, permission := range permissions {
+		if permission != nil {
+			names = append(names, permission.Name)
+		}
+	}
+	return names
 }
 
 func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
@@ -292,8 +312,8 @@ func getUserWithoutThirdIdp(user *User) *UserWithoutThirdIdp {
 		Ldap:       user.Ldap,
 		Properties: user.Properties,
 
-		Roles:       user.Roles,
-		Permissions: user.Permissions,
+		Roles:       getRoleNames(user.Roles),
+		Permissions: getPermissionNames(user.Permissions),
 		Groups:      user.Groups,
 
 		LastSigninWrongTime: user.LastSigninWrongTime,
