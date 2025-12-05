@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/casdoor/casdoor/notification"
@@ -83,14 +84,9 @@ func GetTokensByUser(owner, username string) ([]*Token, error) {
 // The signature is computed over the critical fields to prevent tampering
 func generateLogoutSignature(clientSecret string, owner string, name string, nonce string, timestamp int64, sessionIds []string, accessTokenHashes []string) string {
 	// Create a deterministic string from all fields that need to be verified
-	sessionIdsStr := ""
-	for _, sid := range sessionIds {
-		sessionIdsStr += sid + ","
-	}
-	tokenHashesStr := ""
-	for _, hash := range accessTokenHashes {
-		tokenHashesStr += hash + ","
-	}
+	// Use strings.Join to avoid trailing separators and improve performance
+	sessionIdsStr := strings.Join(sessionIds, ",")
+	tokenHashesStr := strings.Join(accessTokenHashes, ",")
 
 	data := fmt.Sprintf("%s|%s|%s|%d|%s|%s", owner, name, nonce, timestamp, sessionIdsStr, tokenHashesStr)
 	return util.GetHmacSha256(clientSecret, data)
