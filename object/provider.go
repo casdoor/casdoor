@@ -22,6 +22,7 @@ import (
 	"github.com/beego/beego/context"
 	"github.com/casdoor/casdoor/i18n"
 	"github.com/casdoor/casdoor/idp"
+	"github.com/casdoor/casdoor/idv"
 	"github.com/casdoor/casdoor/pp"
 	"github.com/casdoor/casdoor/util"
 	"github.com/xorm-io/core"
@@ -455,6 +456,56 @@ func GetFaceIdProviderByApplication(applicationId, isCurrentProvider, lang strin
 		}
 		if provider.Provider.Category == "Face ID" {
 			return GetFaceIdProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
+		}
+	}
+	return nil, nil
+}
+
+func GetIdvProvider(p *Provider) (idv.IdvProvider, error) {
+	typ := p.Type
+	provider, err := idv.GetIdvProvider(typ, p.ClientId, p.ClientSecret, p.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+	return provider, nil
+}
+
+func GetIdvProviderByOwnerName(applicationId, lang string) (*Provider, error) {
+	owner, name, err := util.GetOwnerAndNameFromIdWithError(applicationId)
+	if err != nil {
+		return nil, err
+	}
+	provider := Provider{Owner: owner, Name: name, Category: "ID Verification"}
+	existed, err := ormer.Engine.Get(&provider)
+	if err != nil {
+		return nil, err
+	}
+
+	if !existed {
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:the provider: %s does not exist"), applicationId)
+	}
+
+	return &provider, nil
+}
+
+func GetIdvProviderByApplication(applicationId, isCurrentProvider, lang string) (*Provider, error) {
+	if isCurrentProvider == "true" {
+		return GetIdvProviderByOwnerName(applicationId, lang)
+	}
+	application, err := GetApplication(applicationId)
+	if err != nil {
+		return nil, err
+	}
+
+	if application == nil || len(application.Providers) == 0 {
+		return nil, fmt.Errorf(i18n.Translate(lang, "provider:Invalid application id"))
+	}
+	for _, provider := range application.Providers {
+		if provider.Provider == nil {
+			continue
+		}
+		if provider.Provider.Category == "ID Verification" {
+			return GetIdvProviderByOwnerName(util.GetId(provider.Provider.Owner, provider.Provider.Name), lang)
 		}
 	}
 	return nil, nil

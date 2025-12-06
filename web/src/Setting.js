@@ -1325,6 +1325,10 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "Alibaba Cloud Facebody", name: "Alibaba Cloud Facebody"},
     ]);
+  } else if (category === "ID Verification") {
+    return ([
+      {id: "Jumio", name: "Jumio"},
+    ]);
   } else if (category === "MFA") {
     return ([
       {id: "RADIUS", name: "RADIUS"},

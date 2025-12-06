@@ -24,6 +24,7 @@ import {authConfig} from "./auth/Auth";
 import * as ProviderEditTestEmail from "./common/TestEmailWidget";
 import * as ProviderNotification from "./common/TestNotificationWidget";
 import * as ProviderEditTestSms from "./common/TestSmsWidget";
+import * as ProviderEditTestIdv from "./common/TestIdvWidget";
 import copy from "copy-to-clipboard";
 import {CaptchaPreview} from "./common/CaptchaPreview";
 import {CountryCodeSelect} from "./common/select/CountryCodeSelect";
@@ -711,12 +712,17 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "RADIUS");
                 this.updateProviderField("host", "");
                 this.updateProviderField("port", 1812);
+              } else if (value === "ID Verification") {
+                this.updateProviderField("type", "Jumio");
+                this.updateProviderField("endpoint", "https://api.jumio.com");
               }
             })}>
               {
                 [
                   {id: "Captcha", name: "Captcha"},
                   {id: "Email", name: "Email"},
+                  {id: "Face ID", name: "Face ID"},
+                  {id: "ID Verification", name: "ID Verification"},
                   {id: "MFA", name: "MFA"},
                   {id: "Notification", name: "Notification"},
                   {id: "OAuth", name: "OAuth"},
@@ -725,7 +731,6 @@ class ProviderEditPage extends React.Component {
                   {id: "SMS", name: "SMS"},
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
-                  {id: "Face ID", name: "Face ID"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)
@@ -1071,7 +1076,7 @@ class ProviderEditPage extends React.Component {
             </Row>
           )
         }
-        {["Face ID", "Storage"].includes(this.state.provider.category) || ["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud"].includes(this.state.provider.type) ? (
+        {["Face ID", "ID Verification", "Storage"].includes(this.state.provider.category) || ["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud"].includes(this.state.provider.type) ? (
           <div>
             {["Local File System", "CUCloud"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
@@ -1085,7 +1090,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Local File System", "MinIO", "Tencent Cloud COS", "Google Cloud Storage", "Qiniu Cloud Kodo", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody", "Jumio"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Endpoint (Intranet)"), i18next.t("provider:Region endpoint for Intranet"))} :
@@ -1097,7 +1102,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Local File System", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Local File System", "CUCloud", "Alibaba Cloud Facebody", "Jumio"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {["Casdoor"].includes(this.state.provider.type) ?
@@ -1111,7 +1116,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "CUCloud", "Alibaba Cloud Facebody", "Jumio"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Path prefix"), i18next.t("provider:Path prefix - Tooltip"))} :
@@ -1123,7 +1128,7 @@ class ProviderEditPage extends React.Component {
                 </Col>
               </Row>
             )}
-            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody"].includes(this.state.provider.type) ? null : (
+            {["Custom HTTP SMS", "Custom HTTP Email", "SendGrid", "Synology", "Casdoor", "CUCloud", "Alibaba Cloud Facebody", "Jumio"].includes(this.state.provider.type) ? null : (
               <Row style={{marginTop: "20px"}} >
                 <Col style={{marginTop: "5px"}} span={2}>
                   {Setting.getLabel(i18next.t("provider:Domain"), i18next.t("provider:Domain - Tooltip"))} :
@@ -1608,6 +1613,20 @@ class ProviderEditPage extends React.Component {
                     disabled={!Setting.isValidPhone(this.state.provider.receiver) && (this.state.provider.type !== "Custom HTTP SMS" || this.state.provider.endpoint === "")}
                     onClick={() => ProviderEditTestSms.sendTestSms(this.state.provider, "+" + Setting.getCountryCode(this.state.provider.content) + this.state.provider.receiver)} >
                     {i18next.t("provider:Send Testing SMS")}
+                  </Button>
+                </Col>
+              </Row>
+            </React.Fragment>
+          ) : this.state.provider.category === "ID Verification" ? (
+            <React.Fragment>
+              <Row style={{marginTop: "20px"}}>
+                <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                  {Setting.getLabel(i18next.t("provider:Test Provider"), i18next.t("provider:Test Provider - Tooltip"))} :
+                </Col>
+                <Col span={4}>
+                  <Button style={{marginBottom: "5px"}} type="primary"
+                    onClick={() => ProviderEditTestIdv.testIdvProvider(this.state.provider)} >
+                    {i18next.t("provider:Test Connection")}
                   </Button>
                 </Col>
               </Row>

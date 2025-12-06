@@ -241,3 +241,48 @@ func (c *ApiController) DeleteProvider() {
 	c.Data["json"] = wrapActionResponse(object.DeleteProvider(&provider))
 	c.ServeJSON()
 }
+
+// TestIdvProvider
+// @Title TestIdvProvider
+// @Tag Provider API
+// @Description test ID verification provider
+// @Param   body    body   object.Provider  true        "The details of the provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /test-idv-provider [post]
+func (c *ApiController) TestIdvProvider() {
+	var provider object.Provider
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	ok := c.requireProviderPermission(&provider)
+	if !ok {
+		return
+	}
+
+	if provider.Category != "ID Verification" {
+		c.ResponseError(c.T("provider:Provider category must be 'ID Verification'"))
+		return
+	}
+
+	idvProvider, err := object.GetIdvProvider(&provider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if idvProvider == nil {
+		c.ResponseError(c.T("provider:IDV provider type not supported"))
+		return
+	}
+
+	err = idvProvider.TestConnection()
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk()
+}
