@@ -98,6 +98,35 @@ func GetProduct(id string) (*Product, error) {
 	return getProduct(owner, name)
 }
 
+func UpdateProductStock(product *Product) error {
+	var (
+		affected int64
+		err      error
+	)
+	if product.IsRecharge {
+		affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
+			Incr("sold", 1).
+			Update(&Product{})
+	} else {
+		affected, err = ormer.Engine.ID(core.PK{product.Owner, product.Name}).
+			Where("quantity > 0").
+			Decr("quantity", 1).
+			Incr("sold", 1).
+			Update(&Product{})
+	}
+
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		if product.IsRecharge {
+			return fmt.Errorf("failed to update stock for product: %s", product.Name)
+		}
+		return fmt.Errorf("insufficient stock for product: %s", product.Name)
+	}
+	return nil
+}
+
 func UpdateProduct(id string, product *Product) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {

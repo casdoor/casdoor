@@ -274,6 +274,22 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 			if err != nil {
 				return nil, err
 			}
+
+			// Update product stock after order state is persisted
+			if payment.State == pp.PaymentStatePaid {
+				product, err := getProduct(payment.Owner, payment.ProductName)
+				if err != nil {
+					return nil, err
+				}
+				if product == nil {
+					return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
+				}
+
+				err = UpdateProductStock(product)
+				if err != nil {
+					return nil, err
+				}
+			}
 		}
 	}
 
