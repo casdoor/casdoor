@@ -91,7 +91,6 @@ type Application struct {
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
-	EnableSamlAttributes  bool            `json:"enableSamlAttributes"`
 	DisableSamlAttributes bool            `json:"disableSamlAttributes"`
 	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
