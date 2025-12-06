@@ -561,7 +561,6 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.EnableSamlCompress = false
 	application.EnableSamlC14n10 = false
 	application.EnableSamlPostBinding = false
-	application.EnableSamlAttributes = false
 	application.DisableSamlAttributes = false
 	application.EnableWebAuthn = false
 	application.EnableLinkWithEmail = false
