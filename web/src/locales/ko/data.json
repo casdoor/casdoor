@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "SAML에서 C14N11 대신 C14N10 사용",
     "Enable SAML POST binding": "SAML POST 바인딩 활성화",
     "Enable SAML POST binding - Tooltip": "HTTP POST 바인딩은 HTML 폼의 입력 필드를 사용하여 SAML 메시지를 전송합니다. SP에서 사용하는 경우 활성화하세요.",
+    "Disable SAML attributes": "SAML 속성 비활성화",
+    "Disable SAML attributes - Tooltip": "활성화되면 SAML 속성(Email, Name, DisplayName, Roles 등)이 SAML 응답에 포함되지 않습니다",
     "Enable SAML compression": "SAML 압축 사용 가능하게 설정하기",
     "Enable SAML compression - Tooltip": "카스도어가 SAML idp로 사용될 때 SAML 응답 메시지를 압축할 것인지 여부",
     "Enable exclusive signin": "Enable exclusive signin",

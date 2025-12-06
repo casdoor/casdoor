@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "在SAML协议里使用C14N10，而不是C14N11",
     "Enable SAML POST binding": "启用SAML POST Binding",
     "Enable SAML POST binding - Tooltip": "HTTP POST绑定使用HTML表单中的输入字段发送SAML消息，当SP使用它时启用",
+    "Disable SAML attributes": "禁用SAML属性",
+    "Disable SAML attributes - Tooltip": "启用后，SAML响应中将不包含SAML属性（Email、Name、DisplayName、Roles等）",
     "Enable SAML compression": "压缩SAML响应",
     "Enable SAML compression - Tooltip": "Casdoor作为SAML IdP时，是否压缩SAML响应信息",
     "Enable exclusive signin": "互斥登陆",

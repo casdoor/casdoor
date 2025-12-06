@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "אפשר SAML C14N10 - תיאור",
     "Enable SAML POST binding": "אפשר קישור POST של SAML",
     "Enable SAML POST binding - Tooltip": "קישור POST HTTP משתמש בשדות קלט בטופס HTML לשליחת הודעות SAML, אפשר כאשר ה-SP שלך משתמש בו",
+    "Disable SAML attributes": "השבת תכונות SAML",
+    "Disable SAML attributes - Tooltip": "כאשר מופעל, תכונות SAML (Email, Name, DisplayName, Roles וכו') לא ייכללו בתגובת SAML",
     "Enable SAML compression": "אפשר דחיסת SAML",
     "Enable SAML compression - Tooltip": "האם לדחוס הודעות תגובה SAML כאשר Casdoor משמש כספק זהות SAML",
     "Enable exclusive signin": "Enable exclusive signin",

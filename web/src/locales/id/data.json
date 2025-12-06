@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "Gunakan C14N10 alih-alih C14N11 dalam SAML",
     "Enable SAML POST binding": "Aktifkan Pengikatan SAML POST",
     "Enable SAML POST binding - Tooltip": "Pengikatan HTTP POST menggunakan bidang input dalam formulir HTML untuk mengirim pesan SAML, aktifkan ketika SP Anda menggunakannya",
+    "Disable SAML attributes": "Nonaktifkan atribut SAML",
+    "Disable SAML attributes - Tooltip": "Ketika diaktifkan, atribut SAML (Email, Name, DisplayName, Roles, dll.) tidak akan disertakan dalam respons SAML",
     "Enable SAML compression": "Aktifkan kompresi SAML",
     "Enable SAML compression - Tooltip": "Apakah pesan respons SAML harus dikompres saat Casdoor digunakan sebagai SAML idp?",
     "Enable exclusive signin": "Enable exclusive signin",

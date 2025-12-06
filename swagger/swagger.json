@@ -6740,6 +6740,9 @@
                 "enableSamlPostBinding": {
                     "type": "boolean"
                 },
+                "disableSamlAttributes": {
+                    "type": "boolean"
+                },
                 "enableSignUp": {
                     "type": "boolean"
                 },

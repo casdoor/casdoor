@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "C14N10 anstelle von C14N11 in SAML verwenden",
     "Enable SAML POST binding": "SAML POST-Binding aktivieren",
     "Enable SAML POST binding - Tooltip": "Das HTTP-POST-Binding verwendet HTML-Formular-Eingabefelder, um SAML-Nachrichten zu senden. Aktivieren Sie diese Option, wenn Ihr SP dies verwendet.",
+    "Disable SAML attributes": "SAML-Attribute deaktivieren",
+    "Disable SAML attributes - Tooltip": "Wenn aktiviert, werden SAML-Attribute (Email, Name, DisplayName, Roles usw.) nicht in der SAML-Antwort enthalten sein",
     "Enable SAML compression": "Aktivieren Sie SAML-Komprimierung",
     "Enable SAML compression - Tooltip": "Ob SAML-Antwortnachrichten komprimiert werden sollen, wenn Casdoor als SAML-IdP verwendet wird",
     "Enable exclusive signin": "Enable exclusive signin",

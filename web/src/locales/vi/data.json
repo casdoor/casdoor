@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "Sử dụng C14N10 thay vì C14N11 trong SAML",
     "Enable SAML POST binding": "Bật liên kết SAML POST",
     "Enable SAML POST binding - Tooltip": "Liên kết HTTP POST sử dụng các trường trong biểu mẫu HTML để gửi tin nhắn SAML, bật khi SP của bạn sử dụng",
+    "Disable SAML attributes": "Tắt thuộc tính SAML",
+    "Disable SAML attributes - Tooltip": "Khi được bật, các thuộc tính SAML (Email, Name, DisplayName, Roles, v.v.) sẽ không được bao gồm trong phản hồi SAML",
     "Enable SAML compression": "Cho phép nén SAML",
     "Enable SAML compression - Tooltip": "Liệu có nén các thông điệp phản hồi SAML khi Casdoor được sử dụng làm SAML idp không?",
     "Enable exclusive signin": "Enable exclusive signin",

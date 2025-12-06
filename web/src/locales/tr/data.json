@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "SAML'de C14N11 yerine C14N10 kullan",
     "Enable SAML POST binding": "SAML POST bağlamasını etkinleştir",
     "Enable SAML POST binding - Tooltip": "HTTP POST bağlaması, HTML formundaki input alanları aracılığıyla SAML mesajları gönderir. SP'niz bunu kullanıyorsa etkinleştirin.",
+    "Disable SAML attributes": "SAML özniteliklerini devre dışı bırak",
+    "Disable SAML attributes - Tooltip": "Etkinleştirildiğinde, SAML öznitelikleri (Email, Name, DisplayName, Roles vb.) SAML yanıtına dahil edilmeyecektir",
     "Enable SAML compression": "SAML sıkıştırmasını Etkinleştir",
     "Enable SAML compression - Tooltip": "Casdoor SAML idp olarak kullanıldığında SAML yanıt mesajlarını sıkıştırıp sıkıştırmayacağı",
     "Enable exclusive signin": "Enable exclusive signin",

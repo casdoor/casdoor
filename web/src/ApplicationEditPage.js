@@ -886,6 +886,16 @@ class ApplicationEditPage extends React.Component {
           </Col>
         </Row>
         <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 19 : 2}>
+            {Setting.getLabel(i18next.t("application:Disable SAML attributes"), i18next.t("application:Disable SAML attributes - Tooltip"))} :
+          </Col>
+          <Col span={1} >
+            <Switch checked={this.state.application.disableSamlAttributes} onChange={checked => {
+              this.updateApplicationField("disableSamlAttributes", checked);
+            }} />
+          </Col>
+        </Row>
+        <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML hash algorithm"), i18next.t("application:SAML hash algorithm - Tooltip"))} :
           </Col>
@@ -905,19 +915,23 @@ class ApplicationEditPage extends React.Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{marginTop: "20px"}} >
-          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
-            {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
-          </Col>
-          <Col span={22} >
-            <SamlAttributeTable
-              title={i18next.t("general:SAML attributes")}
-              table={this.state.application.samlAttributes}
-              application={this.state.application}
-              onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
-            />
-          </Col>
-        </Row>
+        {
+          !this.state.application.disableSamlAttributes ? (
+            <Row style={{marginTop: "20px"}} >
+              <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+                {Setting.getLabel(i18next.t("general:SAML attributes"), i18next.t("general:SAML attributes - Tooltip"))} :
+              </Col>
+              <Col span={22} >
+                <SamlAttributeTable
+                  title={i18next.t("general:SAML attributes")}
+                  table={this.state.application.samlAttributes}
+                  application={this.state.application}
+                  onUpdateTable={(value) => {this.updateApplicationField("samlAttributes", value);}}
+                />
+              </Col>
+            </Row>
+          ) : null
+        }
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
             {Setting.getLabel(i18next.t("application:SAML metadata"), i18next.t("application:SAML metadata - Tooltip"))} :

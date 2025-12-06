@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "Använd C14N10 istället för C14N11 i SAML",
     "Enable SAML POST binding": "Aktivera SAML POST-bindning",
     "Enable SAML POST binding - Tooltip": "HTTP POST-bindningen använder inmatningsfält i ett HTML-formulär för att skicka SAML-meddelanden. Aktivera när din SP använder det",
+    "Disable SAML attributes": "Inaktivera SAML-attribut",
+    "Disable SAML attributes - Tooltip": "När aktiverat kommer SAML-attribut (Email, Name, DisplayName, Roles, etc.) inte att inkluderas i SAML-svaret",
     "Enable SAML compression": "Aktivera SAML-komprimering",
     "Enable SAML compression - Tooltip": "Om SAML-svarsmeddelanden ska komprimeras när Casdoor används som SAML idp",
     "Enable exclusive signin": "Enable exclusive signin",

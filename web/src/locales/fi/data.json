@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "Ota SAML C14N10 käyttöön - työkalupala",
     "Enable SAML POST binding": "Ota SAML POST -sidos käyttöön",
     "Enable SAML POST binding - Tooltip": "HTTP POST -sidos käyttää syöttökenttiä HTML-lomakkeessa SAML-viestien lähettämiseen, ota käyttöön, jos SP käyttää sitä",
+    "Disable SAML attributes": "Poista SAML-ominaisuudet käytöstä",
+    "Disable SAML attributes - Tooltip": "Kun käytössä, SAML-ominaisuudet (Email, Name, DisplayName, Roles jne.) eivät sisälly SAML-vastaukseen",
     "Enable SAML compression": "Ota SAML-pakkaus käyttöön",
     "Enable SAML compression - Tooltip": "Pakkaako SAML-vastausviestit, kun Casdoor toimii SAML-idp:nä",
     "Enable exclusive signin": "Enable exclusive signin",

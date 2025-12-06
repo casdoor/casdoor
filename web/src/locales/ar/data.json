@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "استخدام C14N10 بدلاً من C14N11 في SAML",
     "Enable SAML POST binding": "تمكين ربط POST لـ SAML",
     "Enable SAML POST binding - Tooltip": "يربط POST عبر HTTP يستخدم حقول إدخال في نموذج HTML لإرسال رسائل SAML، فعّله عندما يستخدم مزود الخدمة هذا النوع",
+    "Disable SAML attributes": "تعطيل سمات SAML",
+    "Disable SAML attributes - Tooltip": "عند التمكين، لن يتم تضمين سمات SAML (Email وName وDisplayName وRoles وما إلى ذلك) في استجابة SAML",
     "Enable SAML compression": "تمكين ضغط SAML",
     "Enable SAML compression - Tooltip": "ما إذا كان سيتم ضغط رسائل استجابة SAML عند استخدام Casdoor كمزود هوية SAML",
     "Enable exclusive signin": "تمكين تسجيل الدخول الفريد",

@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "SAML C14N10 қосу - Қысқаша түсінік",
     "Enable SAML POST binding": "SAML POST байланысын қосу",
     "Enable SAML POST binding - Tooltip": "HTTP POST байланысы HTML пішініндегі өрістер арқылы SAML хабарларын жібереді, Сіздің SP оны қолданса қосыңыз",
+    "Disable SAML attributes": "SAML атрибуттарын өшіру",
+    "Disable SAML attributes - Tooltip": "Қосылған кезде, SAML атрибуттары (Email, Name, DisplayName, Roles, т.б.) SAML жауабына қосылмайды",
     "Enable SAML compression": "SAML сығуын қосу",
     "Enable SAML compression - Tooltip": "Casdoor SAML idp ретінде пайдаланылғанда SAML жауап хабарларын сығу керек пе",
     "Enable exclusive signin": "Enable exclusive signin",

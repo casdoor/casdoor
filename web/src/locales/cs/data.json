@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "Použít C14N10 místo C14N11 v SAML",
     "Enable SAML POST binding": "Povolit SAML POST binding",
     "Enable SAML POST binding - Tooltip": "HTTP POST binding používá vstupní pole v HTML formuláři k odeslání SAML zpráv, povolte, pokud jej váš SP používá",
+    "Disable SAML attributes": "Zakázat SAML atributy",
+    "Disable SAML attributes - Tooltip": "Když je povoleno, SAML atributy (Email, Name, DisplayName, Roles atd.) nebudou zahrnuty v SAML odpovědi",
     "Enable SAML compression": "Povolit kompresi SAML",
     "Enable SAML compression - Tooltip": "Zda komprimovat SAML odpovědi, když je Casdoor použit jako SAML idp",
     "Enable exclusive signin": "Enable exclusive signin",

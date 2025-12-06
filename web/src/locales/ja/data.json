@@ -52,6 +52,8 @@
     "Enable SAML C14N10 - Tooltip": "SAMLでC14N11の代わりにC14N10を使用する",
     "Enable SAML POST binding": "SAML POSTバインディングを有効にする",
     "Enable SAML POST binding - Tooltip": "HTTP POSTバインディングはHTMLフォームの入力フィールドを使用してSAMLメッセージを送信します。SPがこれを使用する場合は有効にしてください。",
+    "Disable SAML attributes": "SAML属性を無効にする",
+    "Disable SAML attributes - Tooltip": "有効にすると、SAML属性（Email、Name、DisplayName、Rolesなど）がSAMLレスポンスに含まれなくなります",
     "Enable SAML compression": "SAMLの圧縮を有効にする",
     "Enable SAML compression - Tooltip": "CasdoorをSAML IdPとして使用する場合、SAMLレスポンスメッセージを圧縮するかどうか。圧縮する: 圧縮するかどうか。圧縮しない: 圧縮しないかどうか",
     "Enable exclusive signin": "Enable exclusive signin",
