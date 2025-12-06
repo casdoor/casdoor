@@ -98,6 +98,17 @@ func GetProduct(id string) (*Product, error) {
 	return getProduct(owner, name)
 }
 
+func UpdateProductStock(product *Product) error {
+	if !product.IsRecharge {
+		if product.Quantity > 0 {
+			product.Quantity = product.Quantity - 1
+		}
+	}
+	product.Sold = product.Sold + 1
+	_, err := UpdateProduct(product.GetId(), product)
+	return err
+}
+
 func UpdateProduct(id string, product *Product) (bool, error) {
 	owner, name, err := util.GetOwnerAndNameFromIdWithError(id)
 	if err != nil {

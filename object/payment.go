@@ -260,6 +260,20 @@ func NotifyPayment(body []byte, owner string, paymentName string) (*Payment, err
 				order.State = "Paid"
 				order.Message = "Payment successful"
 				order.EndTime = util.GetCurrentTime()
+
+				// Update product stock
+				product, err := getProduct(payment.Owner, payment.ProductName)
+				if err != nil {
+					return nil, err
+				}
+				if product == nil {
+					return nil, fmt.Errorf("the product: %s does not exist", payment.ProductName)
+				}
+
+				err = UpdateProductStock(product)
+				if err != nil {
+					return nil, err
+				}
 			} else if payment.State == pp.PaymentStateError {
 				order.State = "PaymentFailed"
 				order.Message = payment.Message

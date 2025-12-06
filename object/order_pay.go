@@ -31,6 +31,10 @@ func PlaceOrder(productId string, user *User, pricingName string, planName strin
 		return nil, fmt.Errorf("the product: %s does not exist", productId)
 	}
 
+	if !product.IsRecharge && product.Quantity <= 0 {
+		return nil, fmt.Errorf("the product: %s is out of stock", product.Name)
+	}
+
 	userBalanceCurrency := user.BalanceCurrency
 	if userBalanceCurrency == "" {
 		org, err := getOrganization("admin", user.Owner)
@@ -100,6 +104,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 	}
 	if product == nil {
 		return nil, nil, fmt.Errorf("the product: %s does not exist", productId)
+	}
+
+	if !product.IsRecharge && product.Quantity <= 0 {
+		return nil, nil, fmt.Errorf("the product: %s is out of stock", product.Name)
 	}
 
 	user, err := GetUser(util.GetId(order.Owner, order.User))
@@ -293,6 +301,12 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		order.State = "Paid"
 		order.Message = "Payment successful"
 		order.EndTime = util.GetCurrentTime()
+
+		// Update product stock for instant payment methods
+		err = UpdateProductStock(product)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 	_, err = UpdateOrder(order.GetId(), order)
 	if err != nil {
