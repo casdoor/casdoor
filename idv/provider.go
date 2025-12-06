@@ -14,6 +14,10 @@
 
 package idv
 
+import (
+	"fmt"
+)
+
 // VerificationRequest represents an ID verification request
 type VerificationRequest struct {
 	// User information
@@ -57,6 +61,6 @@ func GetIdvProvider(providerType string, clientId string, clientSecret string, e
 	case "Jumio":
 		return NewJumioIdvProvider(clientId, clientSecret, endpoint), nil
 	default:
-		return nil, nil
+		return nil, fmt.Errorf("unsupported IDV provider type: %s", providerType)
 	}
 }

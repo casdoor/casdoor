@@ -138,10 +138,15 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 
 	// Extract transaction ID
 	transactionID := ""
-	if id, ok := jumioResponse["account"].(map[string]interface{})["id"].(string); ok {
-		transactionID = id
-	} else if id, ok := jumioResponse["transactionReference"].(string); ok {
-		transactionID = id
+	if account, ok := jumioResponse["account"].(map[string]interface{}); ok && account != nil {
+		if id, ok := account["id"].(string); ok {
+			transactionID = id
+		}
+	}
+	if transactionID == "" {
+		if id, ok := jumioResponse["transactionReference"].(string); ok {
+			transactionID = id
+		}
 	}
 
 	return &VerificationResult{
@@ -244,14 +249,16 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 
 // TestConnection tests the connection to Jumio API
 func (p *JumioIdvProvider) TestConnection() error {
-	// Test with a simple API call to check credentials
-	apiURL := fmt.Sprintf("%s/api/v1/health", p.Endpoint)
+	// Test with a minimal API call to check credentials
+	// We'll use the accounts endpoint with a GET request which requires valid auth
+	apiURL := fmt.Sprintf("%s/api/v1/accounts", p.Endpoint)
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create test request: %v", err)
 	}
 
 	req.Header.Set("User-Agent", "Casdoor/1.0")
+	req.Header.Set("Accept", "application/json")
 	req.SetBasicAuth(p.ClientId, p.ClientSecret)
 
 	resp, err := p.httpClient.Do(req)
@@ -260,11 +267,13 @@ func (p *JumioIdvProvider) TestConnection() error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusUnauthorized {
+	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 		return fmt.Errorf("authentication failed: invalid credentials")
 	}
 
-	if resp.StatusCode >= 400 {
+	// Accept 200 (success), 400 (bad request but auth worked), or 404 (endpoint exists but resource not found)
+	// as indicators that the connection and authentication are working
+	if resp.StatusCode >= 500 {
 		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
 	}
