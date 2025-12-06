@@ -462,12 +462,7 @@ func GetFaceIdProviderByApplication(applicationId, isCurrentProvider, lang strin
 }
 
 func GetIdvProvider(p *Provider) (idv.IdvProvider, error) {
-	typ := p.Type
-	provider, err := idv.GetIdvProvider(typ, p.ClientId, p.ClientSecret, p.Endpoint)
-	if err != nil {
-		return nil, err
-	}
-	return provider, nil
+	return idv.GetIdvProvider(p.Type, p.ClientId, p.ClientSecret, p.Endpoint)
 }
 
 func GetIdvProviderByOwnerName(applicationId, lang string) (*Provider, error) {

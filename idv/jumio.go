@@ -34,6 +34,10 @@ type JumioIdvProvider struct {
 // NewJumioIdvProvider creates a new Jumio IDV provider
 func NewJumioIdvProvider(clientId string, clientSecret string, endpoint string) *JumioIdvProvider {
 	if endpoint == "" {
+		// Default to production endpoint
+		// For sandbox testing, use: https://api.amer.sandbox.jumio.com
+		// For EU production, use: https://api.emea.jumio.com
+		// For APAC production, use: https://api.apac.jumio.com
 		endpoint = "https://api.jumio.com"
 	}
 
@@ -267,16 +271,23 @@ func (p *JumioIdvProvider) TestConnection() error {
 	}
 	defer resp.Body.Close()
 
+	// Check authentication
 	if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
 		return fmt.Errorf("authentication failed: invalid credentials")
 	}
 
-	// Accept 200 (success), 400 (bad request but auth worked), or 404 (endpoint exists but resource not found)
-	// as indicators that the connection and authentication are working
+	// Handle server errors
 	if resp.StatusCode >= 500 {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
+		return fmt.Errorf("API server error (status %d): %s", resp.StatusCode, string(body))
 	}
 
+	// Handle client errors (400-499) which may indicate configuration issues
+	if resp.StatusCode >= 400 {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("API client error (status %d): %s - check endpoint configuration", resp.StatusCode, string(body))
+	}
+
+	// Status 200-299 indicates successful connection and authentication
 	return nil
 }
