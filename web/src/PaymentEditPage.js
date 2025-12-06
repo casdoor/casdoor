@@ -55,6 +55,20 @@ class PaymentEditPage extends React.Component {
       });
   }
 
+  goToViewOrder() {
+    const payment = this.state.payment;
+    if (payment && payment.order) {
+      const viewUrl = `/orders/${payment.owner}/${payment.order}/pay?view=true`;
+      this.props.history.push(viewUrl);
+    } else {
+      Setting.showMessage("error", i18next.t("order:Order not found"));
+    }
+  }
+
+  goToOrderList() {
+    this.props.history.push("/orders");
+  }
+
   parsePaymentField(key, value) {
     if ([""].includes(key)) {
       value = Setting.myParseInt(value);
@@ -392,7 +406,8 @@ class PaymentEditPage extends React.Component {
                 <Button type={"primary"} onClick={() => this.downloadInvoice(false)}>{i18next.t("payment:Download Invoice")}</Button>
               )
             }
-            <Button style={{marginLeft: "20px"}} onClick={() => Setting.goToLink(this.state.payment.returnUrl)}>{i18next.t("payment:Return to Website")}</Button>
+            <Button style={{marginLeft: "10px"}} onClick={() => this.goToViewOrder()}>{i18next.t("order:View Order")}</Button>
+            <Button style={{marginLeft: "10px"}} onClick={() => this.goToOrderList()}>{i18next.t("order:Return to Order List")}</Button>
           </Col>
         </Row>
       </Card>
