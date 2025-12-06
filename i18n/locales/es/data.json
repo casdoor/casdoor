@@ -3,7 +3,7 @@
     "Failed to add user": "No se pudo agregar el usuario",
     "Get init score failed, error: %w": "Error al obtener el puntaje de inicio, error: %w",
     "Please sign out first": "Por favor, cierra sesión primero",
-    "The application does not allow to sign up new account": "La aplicación no permite registrarse con una cuenta nueva"
+    "The application does not allow to sign up new account": "La aplicación no permite registrar nuevas cuentas"
   },
   "auth": {
     "Challenge method should be S256": "El método de desafío debe ser S256",
@@ -13,8 +13,8 @@
     "Invalid token": "Token inválido",
     "State expected: %s, but got: %s": "Estado esperado: %s, pero se obtuvo: %s",
     "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account via %s, please use another way to sign up": "La cuenta para el proveedor: %s y nombre de usuario: %s (%s) no existe y no está permitido registrarse como una cuenta nueva a través de %s, por favor use otro método para registrarse",
-    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "La cuenta para el proveedor: %s y el nombre de usuario: %s (%s) no existe y no se permite registrarse como una nueva cuenta, por favor contacte a su soporte de TI",
-    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "La cuenta para proveedor: %s y nombre de usuario: %s (%s) ya está vinculada a otra cuenta: %s (%s)",
+    "The account for provider: %s and username: %s (%s) does not exist and is not allowed to sign up as new account, please contact your IT support": "La cuenta para el proveedor: %s y el nombre de usuario: %s (%s) no existen y no se permite registrarse como una nueva cuenta, por favor contacte a su soporte de TI",
+    "The account for provider: %s and username: %s (%s) is already linked to another account: %s (%s)": "La cuenta para el proveedor: %s y el nombre de usuario: %s (%s) ya está vinculada a otra cuenta: %s (%s)",
     "The application: %s does not exist": "La aplicación: %s no existe",
     "The application: %s has disabled users to signin": "La aplicación: %s ha desactivado el inicio de sesión de usuarios",
     "The group: %s does not exist": "El grupo: %s no existe",
@@ -56,13 +56,13 @@
     "Face data does not exist, cannot log in": "No existen datos faciales, no se puede iniciar sesión",
     "Face data mismatch": "Los datos faciales no coinciden",
     "Failed to parse client IP: %s": "Error al analizar la IP del cliente: %s",
-    "FirstName cannot be blank": "El nombre no puede estar en blanco",
+    "FirstName cannot be blank": "El Nombre no puede estar en blanco",
     "Invitation code cannot be blank": "El código de invitación no puede estar vacío",
     "Invitation code exhausted": "Código de invitación agotado",
     "Invitation code is invalid": "Código de invitación inválido",
     "Invitation code suspended": "Código de invitación suspendido",
-    "LDAP user name or password incorrect": "Nombre de usuario o contraseña de Ldap incorrectos",
-    "LastName cannot be blank": "El apellido no puede estar en blanco",
+    "LDAP user name or password incorrect": "Nombre de usuario o contraseña de LDAP incorrectos",
+    "LastName cannot be blank": "El Apellido no puede estar en blanco",
     "Multiple accounts with same uid, please check your ldap server": "Cuentas múltiples con el mismo uid, por favor revise su servidor ldap",
     "Organization does not exist": "La organización no existe",
     "Password cannot be empty": "La contraseña no puede estar vacía",
@@ -82,7 +82,7 @@
     "The user has been deleted and cannot be used to sign in, please contact the administrator": "El usuario ha sido eliminado y no se puede usar para iniciar sesión, póngase en contacto con el administrador",
     "The user is forbidden to sign in, please contact the administrator": "El usuario no está autorizado a iniciar sesión, por favor contacte al administrador",
     "The user: %s doesn't exist in LDAP server": "El usuario: %s no existe en el servidor LDAP",
-    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "El nombre de usuario solo puede contener caracteres alfanuméricos, guiones bajos o guiones, no puede tener guiones o subrayados consecutivos, y no puede comenzar ni terminar con un guión o subrayado.",
+    "The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline.": "El nombre de usuario solo puede contener caracteres alfanuméricos, guiones bajos o medios, no puede tener guiones o subrayados consecutivos, y no puede comenzar ni terminar con un guión o subrayado.",
     "The value \\\"%s\\\" for account field \\\"%s\\\" doesn't match the account item regex": "El valor \\\"%s\\\" para el campo de cuenta \\\"%s\\\" no coincide con la expresión regular del elemento de cuenta",
     "The value \\\"%s\\\" for signup field \\\"%s\\\" doesn't match the signup item regex of the application \\\"%s\\\"": "El valor \\\"%s\\\" para el campo de registro \\\"%s\\\" no coincide con la expresión regular del elemento de registro de la aplicación \\\"%s\\\"",
     "Username already exists": "El nombre de usuario ya existe",
@@ -92,7 +92,7 @@
     "Username is too long (maximum is 255 characters).": "El nombre de usuario es demasiado largo (el máximo es de 255 caracteres).",
     "Username must have at least 2 characters": "Nombre de usuario debe tener al menos 2 caracteres",
     "Username supports email format. Also The username may only contain alphanumeric characters, underlines or hyphens, cannot have consecutive hyphens or underlines, and cannot begin or end with a hyphen or underline. Also pay attention to the email format.": "El nombre de usuario admite formato de correo electrónico. Además, el nombre de usuario solo puede contener caracteres alfanuméricos, guiones bajos o guiones, no puede tener guiones bajos o guiones consecutivos y no puede comenzar ni terminar con un guión o guión bajo. También preste atención al formato del correo electrónico.",
-    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Has ingresado la contraseña o código incorrecto demasiadas veces, por favor espera %d minutos e intenta de nuevo",
+    "You have entered the wrong password or code too many times, please wait for %d minutes and try again": "Has ingresado la contraseña o código incorrectamente demasiadas veces, por favor espera %d minutos e intenta de nuevo",
     "Your IP address: %s has been banned according to the configuration of: ": "Su dirección IP: %s ha sido bloqueada según la configuración de: ",
     "Your password has expired. Please reset your password by clicking \\\"Forgot password\\\"": "Su contraseña ha expirado. Restablezca su contraseña haciendo clic en \\\"Olvidé mi contraseña\\\"",
     "Your region is not allow to signup by phone": "Tu región no está permitida para registrarse por teléfono",
@@ -112,7 +112,7 @@
     "The organization: %s should have one application at least": "La organización: %s debe tener al menos una aplicación",
     "The user: %s doesn't exist": "El usuario: %s no existe",
     "Wrong userId": "ID de usuario incorrecto",
-    "don't support captchaProvider: ": "No apoyo a captchaProvider",
+    "don't support captchaProvider: ": "no hay soporte para el captchaProvider: ",
     "this operation is not allowed in demo mode": "esta operación no está permitida en modo de demostración",
     "this operation requires administrator to perform": "esta operación requiere que el administrador la realice"
   },
@@ -144,7 +144,7 @@
     "the provider: %s does not exist": "El proveedor: %s no existe"
   },
   "resource": {
-    "User is nil for tag: avatar": "El usuario es nulo para la etiqueta: avatar",
+    "User is nil for tag: avatar": "El usuario es nulo para el tag: avatar",
     "Username or fullFilePath is empty: username = %s, fullFilePath = %s": "Nombre de usuario o ruta completa de archivo está vacío: nombre de usuario = %s, ruta completa de archivo = %s"
   },
   "saml": {
@@ -173,7 +173,7 @@
     "Token not found, invalid accessToken": "Token no encontrado, accessToken inválido"
   },
   "user": {
-    "Display name cannot be empty": "El nombre de pantalla no puede estar vacío",
+    "Display name cannot be empty": "El nombre para mostrar no puede estar vacío",
     "MFA email is enabled but email is empty": "El correo electrónico MFA está habilitado pero el correo está vacío",
     "MFA phone is enabled but phone number is empty": "El teléfono MFA está habilitado pero el número de teléfono está vacío",
     "New password cannot contain blank space.": "La nueva contraseña no puede contener espacios en blanco.",
@@ -198,7 +198,7 @@
     "You should verify your code in %d min!": "¡Deberías verificar tu código en %d minutos!",
     "please add a SMS provider to the \\\"Providers\\\" list for the application: %s": "agregue un proveedor de SMS a la lista \\\"Proveedores\\\" para la aplicación: %s",
     "please add an Email provider to the \\\"Providers\\\" list for the application: %s": "agregue un proveedor de correo electrónico a la lista \\\"Proveedores\\\" para la aplicación: %s",
-    "the user does not exist, please sign up first": "El usuario no existe, por favor regístrese primero"
+    "the user does not exist, please sign up first": "el usuario no existe, por favor regístrese primero"
   },
   "webauthn": {
     "Found no credentials for this user": "No se encontraron credenciales para este usuario",
