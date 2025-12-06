@@ -94,3 +94,55 @@ c.ResponseOk("Verification successful", user)
 c.ResponseError(c.T("user:Verification failed"))
 }
 }
+
+type TestIdvProviderRequest struct {
+Provider   object.Provider `json:"provider"`
+IdCardType string          `json:"idCardType"`
+IdCard     string          `json:"idCard"`
+RealName   string          `json:"realName"`
+}
+
+// TestIdvProvider
+// @Title TestIdvProvider
+// @Tag Provider API
+// @Description test ID verification provider
+// @Param   body    body   TestIdvProviderRequest  true        "The details of the test request"
+// @Success 200 {object} controllers.Response The Response object
+// @router /test-idv-provider [post]
+func (c *ApiController) TestIdvProvider() {
+var req TestIdvProviderRequest
+err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
+if err != nil {
+c.ResponseError(err.Error())
+return
+}
+
+if req.IdCardType == "" {
+req.IdCardType = "ID_CARD"
+}
+
+if req.IdCard == "" {
+req.IdCard = "123456789"
+}
+
+if req.RealName == "" {
+req.RealName = "Test User"
+}
+
+testUser := &object.User{
+IdCardType: req.IdCardType,
+IdCard:     req.IdCard,
+}
+
+verified, err := object.VerifyIdentification(testUser, &req.Provider, req.RealName, c.GetAcceptLanguage())
+if err != nil {
+c.ResponseError(err.Error())
+return
+}
+
+if verified {
+c.ResponseOk("Test successful - Provider is working correctly")
+} else {
+c.ResponseError(c.T("provider:Test failed - Provider verification returned false"))
+}
+}

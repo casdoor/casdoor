@@ -242,3 +242,14 @@ export function removeUserFromGroup({owner, name, groupName}) {
     },
   }).then(res => res.json());
 }
+
+export function verifyIdentification(owner, name, realName) {
+  return fetch(`${Setting.ServerUrl}/api/verify-identification`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify({owner, name, realName}),
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then(res => res.json());
+}

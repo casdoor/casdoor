@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Form, Input, InputNumber, List, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, List, Modal, Result, Row, Select, Space, Spin, Switch, Tag, Tooltip} from "antd";
 import {withRouter} from "react-router-dom";
 import {TotpMfaType} from "./auth/MfaSetupPage";
 import * as GroupBackend from "./backend/GroupBackend";
@@ -66,6 +66,9 @@ class UserEditPage extends React.Component {
       idCardInfo: ["ID card front", "ID card back", "ID card with person"],
       openFaceRecognitionModal: false,
       transactions: [],
+      verifyDialogVisible: false,
+      verifyRealName: "",
+      verifying: false,
     };
   }
 
@@ -262,6 +265,49 @@ class UserEditPage extends React.Component {
 
   getCountryCode() {
     return this.props.account.countryCode;
+  }
+
+  showVerifyDialog() {
+    this.setState({
+      verifyDialogVisible: true,
+      verifyRealName: "",
+    });
+  }
+
+  handleVerifyCancel() {
+    this.setState({
+      verifyDialogVisible: false,
+      verifyRealName: "",
+    });
+  }
+
+  handleVerifySubmit() {
+    if (!this.state.verifyRealName || this.state.verifyRealName.trim() === "") {
+      Setting.showMessage("error", i18next.t("user:Please enter your real name"));
+      return;
+    }
+
+    this.setState({verifying: true});
+
+    UserBackend.verifyIdentification(this.state.user.owner, this.state.user.name, this.state.verifyRealName)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("user:ID verification successful"));
+          this.setState({
+            verifyDialogVisible: false,
+            verifyRealName: "",
+            verifying: false,
+          });
+          this.getUser();
+        } else {
+          Setting.showMessage("error", res.msg);
+          this.setState({verifying: false});
+        }
+      })
+      .catch(error => {
+        Setting.showMessage("error", `${i18next.t("general:Failed to connect to server")}: ${error}`);
+        this.setState({verifying: false});
+      });
   }
 
   deleteMfa = () => {
@@ -604,6 +650,29 @@ class UserEditPage extends React.Component {
             <Input value={this.state.user.idCard} disabled={disabled} onChange={e => {
               this.updateUserField("idCard", e.target.value);
             }} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Real name") {
+      const isVerified = this.state.user.realName && this.state.user.realName !== "";
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Real name"), i18next.t("user:Real name - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Row gutter={10}>
+              <Col span={18}>
+                <Input value={this.state.user.realName} disabled={true} placeholder={i18next.t("user:Real name can only be set through ID verification")} />
+              </Col>
+              <Col span={6}>
+                {this.isSelf() ? (
+                  <Button type={isVerified ? "default" : "primary"} disabled={isVerified} block onClick={() => this.showVerifyDialog()}>
+                    {isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify ID")}
+                  </Button>
+                ) : null}
+              </Col>
+            </Row>
           </Col>
         </Row>
       );
@@ -1420,6 +1489,23 @@ class UserEditPage extends React.Component {
               {this.state.mode === "add" ? <Button style={{marginLeft: "20px"}} size="large" onClick={() => this.deleteUser()}>{i18next.t("general:Cancel")}</Button> : null}
             </div>
         }
+        <Modal
+          title={i18next.t("user:Verify ID")}
+          visible={this.state.verifyDialogVisible}
+          onOk={() => this.handleVerifySubmit()}
+          onCancel={() => this.handleVerifyCancel()}
+          confirmLoading={this.state.verifying}
+          okText={i18next.t("general:Submit")}
+          cancelText={i18next.t("general:Cancel")}
+        >
+          <p>{i18next.t("user:Please enter your real name as shown on your ID card:")}</p>
+          <Input
+            placeholder={i18next.t("user:Enter your real name")}
+            value={this.state.verifyRealName}
+            onChange={(e) => this.setState({verifyRealName: e.target.value})}
+            onPressEnter={() => this.handleVerifySubmit()}
+          />
+        </Modal>
       </div>
     );
   }
