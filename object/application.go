@@ -91,6 +91,7 @@ type Application struct {
 	EnableSamlCompress    bool            `json:"enableSamlCompress"`
 	EnableSamlC14n10      bool            `json:"enableSamlC14n10"`
 	EnableSamlPostBinding bool            `json:"enableSamlPostBinding"`
+	DisableSamlAttributes bool            `json:"disableSamlAttributes"`
 	UseEmailAsSamlNameId  bool            `json:"useEmailAsSamlNameId"`
 	EnableWebAuthn        bool            `json:"enableWebAuthn"`
 	EnableLinkWithEmail   bool            `json:"enableLinkWithEmail"`
@@ -560,6 +561,7 @@ func GetMaskedApplication(application *Application, userId string) *Application 
 	application.EnableSamlCompress = false
 	application.EnableSamlC14n10 = false
 	application.EnableSamlPostBinding = false
+	application.DisableSamlAttributes = false
 	application.EnableWebAuthn = false
 	application.EnableLinkWithEmail = false
 	application.SamlReplyUrl = "***"

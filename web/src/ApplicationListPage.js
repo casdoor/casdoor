@@ -45,6 +45,7 @@ class ApplicationListPage extends BaseListPage {
       enableSigninSession: false,
       enableCodeSignin: false,
       enableSamlCompress: false,
+      disableSamlAttributes: false,
       providers: [
         {name: "provider_captcha_default", canSignUp: false, canSignIn: false, canUnlink: false, prompted: false, signupGroup: "", rule: ""},
       ],
