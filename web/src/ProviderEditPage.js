@@ -707,6 +707,8 @@ class ProviderEditPage extends React.Component {
                 this.updateProviderField("type", "Telegram");
               } else if (value === "Face ID") {
                 this.updateProviderField("type", "Alibaba Cloud Facebody");
+              } else if (value === "ID Verification") {
+                this.updateProviderField("type", "Jumio");
               } else if (value === "MFA") {
                 this.updateProviderField("type", "RADIUS");
                 this.updateProviderField("host", "");
@@ -726,6 +728,7 @@ class ProviderEditPage extends React.Component {
                   {id: "Storage", name: "Storage"},
                   {id: "Web3", name: "Web3"},
                   {id: "Face ID", name: "Face ID"},
+                  {id: "ID Verification", name: "ID Verification"},
                 ]
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map((providerCategory, index) => <Option key={index} value={providerCategory.id}>{providerCategory.name}</Option>)

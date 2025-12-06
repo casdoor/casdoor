@@ -443,6 +443,12 @@ export const OtherProviderInfo = {
       url: "https://vision.aliyun.com/facebody",
     },
   },
+  "ID Verification": {
+    "Jumio": {
+      logo: `${StaticBaseUrl}/img/social_jumio.png`,
+      url: "https://www.jumio.com/",
+    },
+  },
   "MFA": {
     "RADIUS": {
       logo: `${StaticBaseUrl}/img/mfa_radius.png`,
@@ -454,7 +460,7 @@ export const OtherProviderInfo = {
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
   "is_admin", "homepage", "birthday", "gender", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
   "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
-  "affiliation", "title", "id_card_type", "id_card", "bio", "tag", "language",
+  "affiliation", "title", "id_card_type", "id_card", "real_name", "bio", "tag", "language",
   "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
   "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
   "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
@@ -492,6 +498,7 @@ export const GetTranslatedUserItems = () => {
     {name: "Title", label: i18next.t("user:Title")},
     {name: "ID card type", label: i18next.t("user:ID card type")},
     {name: "ID card", label: i18next.t("user:ID card")},
+    {name: "Real name", label: i18next.t("user:Real name")},
     {name: "ID card info", label: i18next.t("user:ID card info")},
     {name: "Homepage", label: i18next.t("user:Homepage")},
     {name: "Bio", label: i18next.t("user:Bio")},
@@ -1324,6 +1331,10 @@ export function getProviderTypeOptions(category) {
   } else if (category === "Face ID") {
     return ([
       {id: "Alibaba Cloud Facebody", name: "Alibaba Cloud Facebody"},
+    ]);
+  } else if (category === "ID Verification") {
+    return ([
+      {id: "Jumio", name: "Jumio"},
     ]);
   } else if (category === "MFA") {
     return ([

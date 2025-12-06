@@ -81,6 +81,7 @@ type User struct {
 	Title             string   `xorm:"varchar(100)" json:"title"`
 	IdCardType        string   `xorm:"varchar(100)" json:"idCardType"`
 	IdCard            string   `xorm:"varchar(100) index" json:"idCard"`
+	RealName          string   `xorm:"varchar(100)" json:"realName"`
 	Homepage          string   `xorm:"varchar(100)" json:"homepage"`
 	Bio               string   `xorm:"varchar(100)" json:"bio"`
 	Tag               string   `xorm:"varchar(100)" json:"tag"`
