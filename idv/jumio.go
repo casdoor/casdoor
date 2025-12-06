@@ -42,11 +42,9 @@ p.Endpoint = "https://netverify.com/api/netverify/v2/performNetverify"
 }
 
 requestBody := map[string]interface{}{
-"type":     idCardType,
-"number":   idCard,
-"name":     realName,
-"country":  "US",
-"callback": "https://yourserver.com/callback",
+"type":   idCardType,
+"number": idCard,
+"name":   realName,
 }
 
 jsonData, err := json.Marshal(requestBody)
@@ -89,5 +87,5 @@ if status, ok := result["status"].(string); ok {
 return status == "APPROVED" || status == "SUCCESS", nil
 }
 
-return true, nil
+return false, fmt.Errorf("unexpected response format from Jumio API")
 }

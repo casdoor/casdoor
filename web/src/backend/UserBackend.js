@@ -250,6 +250,7 @@ export function verifyIdentification(owner, name, realName) {
     body: JSON.stringify({owner, name, realName}),
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
+      "Content-Type": "application/json",
     },
   }).then(res => res.json());
 }

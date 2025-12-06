@@ -117,6 +117,11 @@ c.ResponseError(err.Error())
 return
 }
 
+if !c.IsAdmin() {
+c.ResponseError(c.T("auth:Unauthorized operation"))
+return
+}
+
 if req.IdCardType == "" {
 req.IdCardType = "ID_CARD"
 }
