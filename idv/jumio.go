@@ -36,7 +36,7 @@ func NewJumioIdvProvider(clientId string, clientSecret string, endpoint string) 
 	if endpoint == "" {
 		endpoint = "https://api.jumio.com"
 	}
-	
+
 	return &JumioIdvProvider{
 		ClientId:     clientId,
 		ClientSecret: clientSecret,
@@ -54,10 +54,10 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 		"customerInternalReference": request.IdCardNumber,
 		"userReference":             fmt.Sprintf("%s_%s", request.FirstName, request.LastName),
 	}
-	
+
 	// Add document verification workflow
 	jumioRequest["workflowDefinition"] = map[string]interface{}{
-		"key":         1,
+		"key": 1,
 		"credentials": []map[string]interface{}{
 			{
 				"category": "ID",
@@ -70,7 +70,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			},
 		},
 	}
-	
+
 	reqBody, err := json.Marshal(jumioRequest)
 	if err != nil {
 		return &VerificationResult{
@@ -79,7 +79,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			Message:  fmt.Sprintf("Failed to marshal request: %v", err),
 		}, err
 	}
-	
+
 	// Create HTTP request
 	apiURL := fmt.Sprintf("%s/api/v1/accounts", p.Endpoint)
 	req, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(reqBody))
@@ -90,12 +90,12 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			Message:  fmt.Sprintf("Failed to create request: %v", err),
 		}, err
 	}
-	
+
 	// Set headers
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "Casdoor/1.0")
 	req.SetBasicAuth(p.ClientId, p.ClientSecret)
-	
+
 	// Send request
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
@@ -106,7 +106,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 		}, err
 	}
 	defer resp.Body.Close()
-	
+
 	// Read response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -116,7 +116,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			Message:  fmt.Sprintf("Failed to read response: %v", err),
 		}, err
 	}
-	
+
 	// Parse response
 	var jumioResponse map[string]interface{}
 	if err := json.Unmarshal(body, &jumioResponse); err != nil {
@@ -126,7 +126,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			Message:  fmt.Sprintf("Failed to parse response: %v", err),
 		}, err
 	}
-	
+
 	// Check if verification was successful
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return &VerificationResult{
@@ -135,7 +135,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 			Message:  fmt.Sprintf("API returned status %d: %s", resp.StatusCode, string(body)),
 		}, fmt.Errorf("API error: %d", resp.StatusCode)
 	}
-	
+
 	// Extract transaction ID
 	transactionID := ""
 	if id, ok := jumioResponse["account"].(map[string]interface{})["id"].(string); ok {
@@ -143,7 +143,7 @@ func (p *JumioIdvProvider) VerifyIdentity(request *VerificationRequest) (*Verifi
 	} else if id, ok := jumioResponse["transactionReference"].(string); ok {
 		transactionID = id
 	}
-	
+
 	return &VerificationResult{
 		Success:       true,
 		Verified:      false, // Verification is async, needs to be checked later
@@ -164,7 +164,7 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 			Message:  "Transaction ID is required",
 		}, fmt.Errorf("transaction ID is required")
 	}
-	
+
 	// Create HTTP request to get verification status
 	apiURL := fmt.Sprintf("%s/api/v1/accounts/%s", p.Endpoint, transactionID)
 	req, err := http.NewRequest("GET", apiURL, nil)
@@ -175,11 +175,11 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 			Message:  fmt.Sprintf("Failed to create request: %v", err),
 		}, err
 	}
-	
+
 	// Set headers
 	req.Header.Set("User-Agent", "Casdoor/1.0")
 	req.SetBasicAuth(p.ClientId, p.ClientSecret)
-	
+
 	// Send request
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
@@ -190,7 +190,7 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 		}, err
 	}
 	defer resp.Body.Close()
-	
+
 	// Read response
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -200,7 +200,7 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 			Message:  fmt.Sprintf("Failed to read response: %v", err),
 		}, err
 	}
-	
+
 	// Parse response
 	var jumioResponse map[string]interface{}
 	if err := json.Unmarshal(body, &jumioResponse); err != nil {
@@ -210,7 +210,7 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 			Message:  fmt.Sprintf("Failed to parse response: %v", err),
 		}, err
 	}
-	
+
 	// Check response status
 	if resp.StatusCode != http.StatusOK {
 		return &VerificationResult{
@@ -219,18 +219,18 @@ func (p *JumioIdvProvider) GetVerificationStatus(transactionID string) (*Verific
 			Message:  fmt.Sprintf("API returned status %d: %s", resp.StatusCode, string(body)),
 		}, fmt.Errorf("API error: %d", resp.StatusCode)
 	}
-	
+
 	// Determine verification status
 	status := "UNKNOWN"
 	verified := false
-	
+
 	if workflow, ok := jumioResponse["workflow"].(map[string]interface{}); ok {
 		if s, ok := workflow["status"].(string); ok {
 			status = s
 			verified = (s == "APPROVED" || s == "PASSED")
 		}
 	}
-	
+
 	return &VerificationResult{
 		Success:       true,
 		Verified:      verified,
@@ -250,24 +250,24 @@ func (p *JumioIdvProvider) TestConnection() error {
 	if err != nil {
 		return fmt.Errorf("failed to create test request: %v", err)
 	}
-	
+
 	req.Header.Set("User-Agent", "Casdoor/1.0")
 	req.SetBasicAuth(p.ClientId, p.ClientSecret)
-	
+
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to connect to Jumio API: %v", err)
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode == http.StatusUnauthorized {
 		return fmt.Errorf("authentication failed: invalid credentials")
 	}
-	
+
 	if resp.StatusCode >= 400 {
 		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(body))
 	}
-	
+
 	return nil
 }

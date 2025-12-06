@@ -21,11 +21,11 @@ type VerificationRequest struct {
 	LastName    string `json:"lastName"`
 	DateOfBirth string `json:"dateOfBirth"` // Format: YYYY-MM-DD
 	Country     string `json:"country"`     // ISO 3166-1 alpha-3 country code
-	
+
 	// Document information
-	IdCardType   string `json:"idCardType"`   // e.g., "PASSPORT", "ID_CARD", "DRIVING_LICENSE"
+	IdCardType   string `json:"idCardType"` // e.g., "PASSPORT", "ID_CARD", "DRIVING_LICENSE"
 	IdCardNumber string `json:"idCardNumber"`
-	
+
 	// Optional fields
 	Address string `json:"address,omitempty"`
 }
@@ -43,10 +43,10 @@ type VerificationResult struct {
 type IdvProvider interface {
 	// VerifyIdentity verifies the identity of a user
 	VerifyIdentity(request *VerificationRequest) (*VerificationResult, error)
-	
+
 	// GetVerificationStatus retrieves the status of a verification by transaction ID
 	GetVerificationStatus(transactionID string) (*VerificationResult, error)
-	
+
 	// TestConnection tests the connection to the IDV provider
 	TestConnection() error
 }
