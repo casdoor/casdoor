@@ -113,8 +113,11 @@ class LoginPage extends React.Component {
     if (prevProps.application !== this.props.application) {
       this.setState({loginMethod: this.getDefaultLoginMethod(this.props.application)});
     }
+    if (this.props.account !== undefined) {
+      if (prevProps.account === this.props.account && prevProps.application === this.props.application) {
+        return;
+      }
 
-    if (prevProps.account !== this.props.account && this.props.account !== undefined) {
       if (this.props.account && this.props.account.owner === this.props.application?.organization) {
         const params = new URLSearchParams(this.props.location.search);
         const silentSignin = params.get("silentSignin");
@@ -132,7 +135,7 @@ class LoginPage extends React.Component {
           });
         }
 
-        if (this.props.application.enableAutoSignin) {
+        if (this.props.application.enableAutoSignin && silentSignin === null) {
           const values = {};
           values["application"] = this.props.application.name;
           this.login(values);
