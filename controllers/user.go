@@ -21,6 +21,7 @@ import (
 
 	"github.com/beego/beego/utils/pagination"
 	"github.com/casdoor/casdoor/conf"
+	"github.com/casdoor/casdoor/idv"
 	"github.com/casdoor/casdoor/object"
 	"github.com/casdoor/casdoor/util"
 )
@@ -363,6 +364,140 @@ func (c *ApiController) UpdateUser() {
 
 	c.Data["json"] = wrapActionResponse(affected)
 	c.ServeJSON()
+}
+
+// VerifyIdCard
+// @Title VerifyIdCard
+// @Tag User API
+// @Description verify user's ID card and set real name
+// @Param   userId     query    string  true        "The id of the user"
+// @Param   provider   query    string  true        "The id (owner/name) of the IDV provider"
+// @Success 200 {object} controllers.Response The Response object
+// @router /verify-id-card [post]
+func (c *ApiController) VerifyIdCard() {
+	userId := c.Input().Get("userId")
+	providerId := c.Input().Get("provider")
+
+	if userId == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": userId")
+		return
+	}
+
+	if providerId == "" {
+		c.ResponseError(c.T("general:Missing parameter") + ": provider")
+		return
+	}
+
+	user, err := object.GetUser(userId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), userId))
+		return
+	}
+
+	// Check if user is verifying their own ID card
+	requestUserId := c.GetSessionUsername()
+	if requestUserId != userId && !c.IsGlobalAdmin() {
+		c.ResponseError(c.T("auth:Unauthorized operation"))
+		return
+	}
+
+	// Check if required fields are present
+	if user.FirstName == "" || user.LastName == "" {
+		c.ResponseError(c.T("user:First name and last name are required"))
+		return
+	}
+
+	if user.IdCardType == "" || user.IdCard == "" {
+		c.ResponseError(c.T("user:ID card type and number are required"))
+		return
+	}
+
+	// Get IDV provider
+	provider, err := object.GetProvider(providerId)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerId))
+		return
+	}
+
+	if provider.Category != "ID Verification" {
+		c.ResponseError(c.T("provider:Provider must be of category 'ID Verification'"))
+		return
+	}
+
+	// Get IDV provider instance
+	idvProvider, err := object.GetIdvProvider(provider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if idvProvider == nil {
+		c.ResponseError(c.T("provider:IDV provider type not supported"))
+		return
+	}
+
+	// Prepare verification request
+	verificationRequest := &idv.VerificationRequest{
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		DateOfBirth:  user.Birthday,
+		Country:      user.Region,
+		IdCardType:   user.IdCardType,
+		IdCardNumber: user.IdCard,
+		Address:      strings.Join(user.Address, ", "),
+	}
+
+	// Perform verification
+	result, err := idvProvider.VerifyIdentity(verificationRequest)
+	if err != nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:Verification failed: %s"), err.Error()))
+		return
+	}
+
+	if !result.Success {
+		c.ResponseError(fmt.Sprintf(c.T("general:Verification failed: %s"), result.Message))
+		return
+	}
+
+	// If verification is successful, set the real name
+	if result.Verified {
+		realName := fmt.Sprintf("%s %s", user.FirstName, user.LastName)
+		user.RealName = realName
+
+		affected, err := object.UpdateUser(userId, user, []string{"real_name"}, false)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if !affected {
+			c.ResponseError(c.T("general:Failed to update user"))
+			return
+		}
+
+		c.ResponseOk(map[string]interface{}{
+			"verified":      true,
+			"realName":      realName,
+			"transactionId": result.TransactionID,
+		})
+	} else {
+		// Verification is pending or async
+		c.ResponseOk(map[string]interface{}{
+			"verified":      false,
+			"message":       result.Message,
+			"transactionId": result.TransactionID,
+		})
+	}
 }
 
 // AddUser
