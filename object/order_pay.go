@@ -205,10 +205,10 @@ func PayOrder(providerName, host, paymentEnv string, order *Order) (payment *Pay
 		Tag:                product.Tag,
 		Currency:           order.Currency,
 		Price:              order.Price,
-		ReturnUrl:          product.ReturnUrl,
 		IsRecharge:         product.IsRecharge,
 
 		User:       user.Name,
+		Order:      order.Name,
 		PayUrl:     payResp.PayUrl,
 		SuccessUrl: returnUrl,
 		State:      pp.PaymentStateCreated,
