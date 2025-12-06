@@ -116,29 +116,27 @@ class LoginPage extends React.Component {
     if (prevProps.account === this.props.account && prevProps.application === this.props.application) {
       return;
     }
-    if (this.props.account !== undefined && !this.state.executedLogin) {
-      if (this.props.account && this.props.account.owner === this.props.application?.organization) {
-        const params = new URLSearchParams(this.props.location.search);
-        const silentSignin = params.get("silentSignin");
-        if (silentSignin !== null) {
-          this.sendSilentSigninData("signing-in");
+    if (this.props.account && this.props.account.owner === this.props.application?.organization) {
+      const params = new URLSearchParams(this.props.location.search);
+      const silentSignin = params.get("silentSignin");
+      if (silentSignin !== null) {
+        this.sendSilentSigninData("signing-in");
 
-          const values = {};
-          values["application"] = this.props.application.name;
-          this.login(values);
-        }
+        const values = {};
+        values["application"] = this.props.application.name;
+        this.login(values);
+      }
 
-        if (params.get("popup") === "1") {
-          window.addEventListener("beforeunload", () => {
-            this.sendPopupData({type: "windowClosed"}, params.get("redirect_uri"));
-          });
-        }
+      if (params.get("popup") === "1") {
+        window.addEventListener("beforeunload", () => {
+          this.sendPopupData({type: "windowClosed"}, params.get("redirect_uri"));
+        });
+      }
 
-        if (this.props.application.enableAutoSignin && silentSignin === null) {
-          const values = {};
-          values["application"] = this.props.application.name;
-          this.login(values);
-        }
+      if (this.props.application.enableAutoSignin && silentSignin === null) {
+        const values = {};
+        values["application"] = this.props.application.name;
+        this.login(values);
       }
     }
   }
