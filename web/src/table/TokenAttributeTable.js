@@ -95,8 +95,7 @@ class TokenAttributeTable extends React.Component {
         render: (text, record, index) => {
           return (
             <Select virtual={false} style={{width: "100%"}}
-              value={text}
-              defaultValue="Array"
+              value={text ?? "Array"}
               options={[
                 {value: "Array", label: i18next.t("application:Array")},
                 {value: "String", label: i18next.t("application:String")},
