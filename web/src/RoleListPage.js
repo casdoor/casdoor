@@ -145,10 +145,10 @@ class RoleListPage extends BaseListPage {
       <>
         <Upload {...props}>
           <Button icon={<UploadOutlined />} size="small">
-            {i18next.t("role:Upload (.xlsx)")}
+            {i18next.t("general:Upload (.xlsx)")}
           </Button>
         </Upload>
-        <Modal title={i18next.t("role:Upload (.xlsx)")}
+        <Modal title={i18next.t("general:Upload (.xlsx)")}
           width={"100%"}
           closable={true}
           open={this.state.showUploadModal}
