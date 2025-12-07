@@ -55,7 +55,7 @@ func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard strin
 	// 3. Wait for and parse verification results
 	// 4. Return the actual verification status from Jumio
 	// WARNING: Current implementation is for testing only and should not be used in production
-	
+
 	// For now, return true only for testing/development purposes
 	// Production use requires actual Jumio API integration
 	return true, nil

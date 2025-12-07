@@ -678,8 +678,8 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:ID verification"), i18next.t("user:ID verification - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               disabled={isVerified || disabled}
               onClick={() => this.handleVerifyIdentification()}
             >
