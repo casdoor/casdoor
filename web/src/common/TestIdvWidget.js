@@ -16,10 +16,11 @@ import * as Setting from "../Setting";
 import i18next from "i18next";
 
 export function testIdvProvider(provider, account) {
-  // Test IDV provider by verifying the currently logged-in user's identity
+  // Test IDV provider by verifying with specific provider parameter
+  // This allows admin to test the provider in provider edit page
   const providerName = `${provider.owner}/${provider.name}`;
 
-  return fetch(`${Setting.ServerUrl}/api/verify-identification?owner=${account.owner}&name=${account.name}&provider=${encodeURIComponent(providerName)}`, {
+  return fetch(`${Setting.ServerUrl}/api/verify-identification?provider=${encodeURIComponent(providerName)}`, {
     method: "POST",
     credentials: "include",
     headers: {

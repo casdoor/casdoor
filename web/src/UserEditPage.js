@@ -294,21 +294,14 @@ class UserEditPage extends React.Component {
       return;
     }
 
-    if (!this.state.application || !this.state.application.providers) {
-      Setting.showMessage("error", i18next.t("user:No ID Verification provider configured"));
+    if (!this.state.user.realName) {
+      Setting.showMessage("error", i18next.t("user:Please fill in your real name first"));
       return;
     }
 
-    // Note: Category string must match backend constant "ID Verification"
-    const idvProvider = this.state.application.providers.find(p => p.provider?.category === "ID Verification");
-    if (!idvProvider) {
-      Setting.showMessage("error", i18next.t("user:No ID Verification provider configured"));
-      return;
-    }
-
-    const providerName = `${idvProvider.provider.owner}/${idvProvider.provider.name}`;
-
-    UserBackend.verifyIdentification(this.state.user.owner, this.state.user.name, providerName)
+    // For normal user verifying themselves, no need to pass user or provider parameters
+    // Backend will use logged-in user and auto-select provider
+    UserBackend.verifyIdentification(this.state.user.owner, this.state.user.name, "")
       .then((res) => {
         if (res.status === "ok") {
           Setting.showMessage("success", i18next.t("user:Identity verification successful"));
@@ -341,8 +334,8 @@ class UserEditPage extends React.Component {
       }
     }
 
-    if (accountItem.name === "ID card info" || accountItem.name === "ID card") {
-      if (this.state.user.properties?.isIdCardVerified === "true") {
+    if (accountItem.name === "ID card info" || accountItem.name === "ID card" || accountItem.name === "ID card type" || accountItem.name === "Real name") {
+      if (this.state.user.isVerified) {
         disabled = true;
       }
     }
@@ -666,12 +659,14 @@ class UserEditPage extends React.Component {
             {Setting.getLabel(i18next.t("user:Real name"), i18next.t("user:Real name - Tooltip"))} :
           </Col>
           <Col span={22} >
-            <Input value={this.state.user.realName} disabled={true} placeholder={i18next.t("user:Real name will be set after verification")} />
+            <Input value={this.state.user.realName} disabled={disabled} onChange={e => {
+              this.updateUserField("realName", e.target.value);
+            }} placeholder={i18next.t("user:Please enter your real name")} />
           </Col>
         </Row>
       );
     } else if (accountItem.name === "ID verification") {
-      const isVerified = this.state.user.realName !== "" && this.state.user.realName !== undefined;
+      const isVerified = this.state.user.isVerified;
       return (
         <Row style={{marginTop: "20px"}} >
           <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
@@ -683,7 +678,7 @@ class UserEditPage extends React.Component {
               disabled={isVerified || disabled}
               onClick={() => this.handleVerifyIdentification()}
             >
-              {isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify")}
+              {isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify Identity")}
             </Button>
             {isVerified && <Tag color="success" style={{marginLeft: "10px"}}><CheckCircleOutlined /> {i18next.t("user:Identity verified")}</Tag>}
           </Col>
