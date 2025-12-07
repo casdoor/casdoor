@@ -14,7 +14,7 @@
 
 import React from "react";
 import {DeleteOutlined, DownOutlined, UpOutlined} from "@ant-design/icons";
-import {Button, Col, Input, Row, Table, Tooltip} from "antd";
+import {Button, Col, Input, Row, Select, Table, Tooltip} from "antd";
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
@@ -84,6 +84,29 @@ class TokenAttributeTable extends React.Component {
             <Input value={text} onChange={e => {
               this.updateField(table, index, "value", e.target.value);
             }} />
+          );
+        },
+      },
+      {
+        title: i18next.t("general:Type"),
+        dataIndex: "type",
+        key: "type",
+        width: "200px",
+        render: (text, record, index) => {
+          return (
+            <Select virtual={false} style={{width: "100%"}}
+              value={text}
+              defaultValue="Array"
+              options={[
+                {value: "Array", label: i18next.t("application:Array")},
+                {value: "String", label: i18next.t("application:String")},
+              ].map((item) =>
+                Setting.getOption(item.label, item.value))
+              }
+              onChange={value => {
+                this.updateField(table, index, "type", value);
+              }} >
+            </Select>
           );
         },
       },
