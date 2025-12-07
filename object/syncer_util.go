@@ -325,7 +325,13 @@ func (syncer *Syncer) getMapFromOriginalUser(user *OriginalUser) map[string]stri
 
 	m2 := map[string]string{}
 	for _, tableColumn := range syncer.TableColumns {
-		m2[tableColumn.Name] = m[tableColumn.CasdoorName]
+		value := m[tableColumn.CasdoorName]
+		// Skip empty values for non-string types to avoid database parsing errors
+		// (e.g., "parsing \"\": invalid syntax" in Postgres for timestamp/integer columns)
+		if value == "" && tableColumn.Type != "string" {
+			continue
+		}
+		m2[tableColumn.Name] = value
 	}
 
 	return m2
