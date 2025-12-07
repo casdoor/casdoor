@@ -14,7 +14,7 @@
 
 import React from "react";
 import {Link} from "react-router-dom";
-import {Button, Switch, Table, Upload} from "antd";
+import {Button, Modal, Switch, Table, Upload} from "antd";
 import moment from "moment";
 import * as Setting from "./Setting";
 import * as RoleBackend from "./backend/RoleBackend";
@@ -22,6 +22,7 @@ import i18next from "i18next";
 import BaseListPage from "./BaseListPage";
 import PopconfirmModal from "./common/modal/PopconfirmModal";
 import {UploadOutlined} from "@ant-design/icons";
+import * as XLSX from "xlsx";
 
 class RoleListPage extends BaseListPage {
   newRole() {
@@ -77,39 +78,106 @@ class RoleListPage extends BaseListPage {
   }
 
   uploadRoleFile(info) {
-    const {status, response: res} = info.file;
-    if (status === "done") {
-      if (res.status === "ok") {
-        Setting.showMessage("success", "Users uploaded successfully, refreshing the page");
-
-        const {pagination} = this.state;
-        this.fetch({pagination});
-      } else {
-        Setting.showMessage("error", `${i18next.t("general:Failed to sync")}: ${res.msg}`);
-      }
+    const {status, msg} = info;
+    if (status === "ok") {
+      Setting.showMessage("success", "Roles uploaded successfully, refreshing the page");
+      const {pagination} = this.state;
+      this.fetch({pagination});
     } else if (status === "error") {
-      Setting.showMessage("error", i18next.t("general:Failed to upload"));
+      Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${msg}`);
     }
+    this.setState({uploadJsonData: [], uploadColumns: [], showUploadModal: false});
+  }
+
+  generateDownloadTemplate() {
+    const roleObj = {};
+    const items = Setting.getRoleColumns();
+    items.forEach((item) => {
+      roleObj[item] = null;
+    });
+    const worksheet = XLSX.utils.json_to_sheet([roleObj]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "import-role.xlsx", {compression: true});
   }
 
   renderRoleUpload() {
+    const uploadThis = this;
     const props = {
       name: "file",
       accept: ".xlsx",
-      method: "post",
-      action: `${Setting.ServerUrl}/api/upload-roles`,
-      withCredentials: true,
-      onChange: (info) => {
-        this.uploadRoleFile(info);
+      showUploadList: false,
+      beforeUpload: (file) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const binary = e.target.result;
+
+          try {
+            const workbook = XLSX.read(binary, {type: "array"});
+            if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+              Setting.showMessage("error", i18next.t("general:No sheets found in file"));
+              return;
+            }
+
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            this.setState({uploadJsonData: jsonData, file: file});
+
+            const columns = Setting.getRoleColumns().map(el => {
+              return {title: el.split("#")[0], dataIndex: el, key: el};
+            });
+            this.setState({uploadColumns: columns}, () => {this.setState({showUploadModal: true});});
+          } catch (err) {
+            Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${err.message}`);
+          }
+        };
+
+        reader.onerror = (error) => {
+          Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${error?.message || error}`);
+        };
+
+        reader.readAsArrayBuffer(file);
+        return false;
       },
     };
 
     return (
-      <Upload {...props}>
-        <Button icon={<UploadOutlined />} size="small">
-          {i18next.t("user:Upload (.xlsx)")}
-        </Button>
-      </Upload>
+      <>
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />} size="small">
+            {i18next.t("general:Upload (.xlsx)")}
+          </Button>
+        </Upload>
+        <Modal title={i18next.t("general:Upload (.xlsx)")}
+          width={"100%"}
+          closable={true}
+          open={this.state.showUploadModal}
+          okText={i18next.t("general:Click to Upload")}
+          onOk = {() => {
+            const formData = new FormData();
+            formData.append("file", this.state.file);
+            fetch(`${Setting.ServerUrl}/api/upload-roles`, {
+              method: "post",
+              body: formData,
+              credentials: "include",
+              headers: {
+                "Accept-Language": Setting.getAcceptLanguage(),
+              },
+            })
+              .then((res) => res.json())
+              .then((res) => {uploadThis.uploadRoleFile(res);})
+              .catch((error) => {
+                Setting.showMessage("error", `${i18next.t("general:Failed to upload")}: ${error.message}`);
+              });
+          }}
+          cancelText={i18next.t("general:Cancel")}
+          onCancel={() => {this.setState({showUploadModal: false, uploadJsonData: [], uploadColumns: []});}}
+        >
+          <div style={{marginRight: "34px"}}>
+            <Table scroll={{x: "max-content"}} dataSource={this.state.uploadJsonData} columns={this.state.uploadColumns} />
+          </div>
+        </Modal>
+      </>
     );
   }
   renderTable(roles) {
@@ -253,6 +321,7 @@ class RoleListPage extends BaseListPage {
             <div>
               {i18next.t("general:Roles")}&nbsp;&nbsp;&nbsp;&nbsp;
               <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.addRole.bind(this)}>{i18next.t("general:Add")}</Button>
+              <Button style={{marginRight: "5px"}} type="primary" size="small" onClick={this.generateDownloadTemplate}>{i18next.t("general:Download template")} </Button>
               {
                 this.renderRoleUpload()
               }

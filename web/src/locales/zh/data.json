@@ -509,6 +509,7 @@
     "Unknown authentication type": "未知的认证类型",
     "Up": "上移",
     "Updated time": "更新时间",
+    "Upload (.xlsx)": "上传 (.xlsx)",
     "User": "用户",
     "User - Tooltip": "请确保用户名正确",
     "User Management": "用户管理",
@@ -534,7 +535,6 @@
     "Parent group - Tooltip": "该组的父组",
     "Physical": "实体组",
     "Show all": "显示全部",
-    "Upload (.xlsx)": "上传(.xlsx)",
     "Virtual": "虚拟组",
     "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "您需要先删除所有子组。您可以在 [组织] -> [群组] 页面左侧的群组树中查看子组"
   },
@@ -1368,7 +1368,6 @@
     "Title - Tooltip": "在工作单位担任的职务",
     "Two passwords you typed do not match.": "两次输入的密码不匹配。",
     "Unlink": "解绑",
-    "Upload (.xlsx)": "上传（.xlsx）",
     "Upload ID card back picture": "上传身份证反面照片",
     "Upload ID card front picture": "上传身份证正面照片",
     "Upload ID card with person picture": "上传手持身份证照片",

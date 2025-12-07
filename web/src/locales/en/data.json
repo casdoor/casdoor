@@ -510,6 +510,7 @@
     "Unknown authentication type": "Unknown authentication type",
     "Up": "Up",
     "Updated time": "Updated time",
+    "Upload (.xlsx)": "Upload (.xlsx)",
     "User": "User",
     "User - Tooltip": "Make sure the username is correct",
     "User Management": "User Management",
@@ -535,7 +536,6 @@
     "Parent group - Tooltip": "Parent group of this group",
     "Physical": "Physical",
     "Show all": "Show all",
-    "Upload (.xlsx)": "Upload (.xlsx)",
     "Virtual": "Virtual",
     "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page": "You need to delete all subgroups first. You can view the subgroups in the left group tree of the [Organizations] -> [Groups] page"
   },
@@ -1381,7 +1381,6 @@
     "Title - Tooltip": "Job title or position held in the affiliation",
     "Two passwords you typed do not match.": "Two passwords you typed do not match.",
     "Unlink": "Unlink",
-    "Upload (.xlsx)": "Upload (.xlsx)",
     "Upload ID card back picture": "Upload ID card back picture",
     "Upload ID card front picture": "Upload ID card front picture",
     "Upload ID card with person picture": "Upload ID card with person picture",
