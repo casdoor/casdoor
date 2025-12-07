@@ -288,6 +288,36 @@ class UserEditPage extends React.Component {
     });
   };
 
+  handleVerifyIdentification = () => {
+    if (!this.state.user.idCard || !this.state.user.idCardType) {
+      Setting.showMessage("error", i18next.t("user:Please fill in ID card information first"));
+      return;
+    }
+
+    if (!this.state.application || !this.state.application.providers) {
+      Setting.showMessage("error", i18next.t("user:No ID Verification provider configured"));
+      return;
+    }
+
+    const idvProvider = this.state.application.providers.find(p => p.provider?.category === "ID Verification");
+    if (!idvProvider) {
+      Setting.showMessage("error", i18next.t("user:No ID Verification provider configured"));
+      return;
+    }
+
+    const providerName = `${idvProvider.provider.owner}/${idvProvider.provider.name}`;
+
+    UserBackend.verifyIdentification(this.state.user.owner, this.state.user.name, providerName)
+      .then((res) => {
+        if (res.status === "ok") {
+          Setting.showMessage("success", i18next.t("user:Identity verification successful"));
+          this.getUser();
+        } else {
+          Setting.showMessage("error", res.msg);
+        }
+      });
+  };
+
   renderAccountItem(accountItem) {
     const isAdmin = Setting.isLocalAdminUser(this.props.account);
 
@@ -625,6 +655,36 @@ class UserEditPage extends React.Component {
                 })
               }
             </Row>
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "Real name") {
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:Real name"), i18next.t("user:Real name - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Input value={this.state.user.realName} disabled={true} placeholder={i18next.t("user:Real name will be set after verification")} />
+          </Col>
+        </Row>
+      );
+    } else if (accountItem.name === "ID verification") {
+      const isVerified = this.state.user.realName !== "" && this.state.user.realName !== undefined;
+      return (
+        <Row style={{marginTop: "20px"}} >
+          <Col style={{marginTop: "5px"}} span={(Setting.isMobile()) ? 22 : 2}>
+            {Setting.getLabel(i18next.t("user:ID verification"), i18next.t("user:ID verification - Tooltip"))} :
+          </Col>
+          <Col span={22} >
+            <Button 
+              type="primary" 
+              disabled={isVerified || disabled}
+              onClick={() => this.handleVerifyIdentification()}
+            >
+              {isVerified ? i18next.t("user:Verified") : i18next.t("user:Verify")}
+            </Button>
+            {isVerified && <Tag color="success" style={{marginLeft: "10px"}}><CheckCircleOutlined /> {i18next.t("user:Identity verified")}</Tag>}
           </Col>
         </Row>
       );
