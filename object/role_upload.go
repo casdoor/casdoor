@@ -15,6 +15,9 @@
 package object
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/casdoor/casdoor/xlsx"
 )
 
@@ -36,30 +39,30 @@ func getRoleMap(owner string) (map[string]*Role, error) {
 func UploadRoles(owner string, path string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
-	oldUserMap, err := getRoleMap(owner)
+	if len(table) == 0 {
+		return false, fmt.Errorf("empty table")
+	}
+
+	for idx, row := range table[0] {
+		splitRow := strings.Split(row, "#")
+		if len(splitRow) > 1 {
+			table[0][idx] = splitRow[1]
+		}
+	}
+
+	uploadedRoles, err := StringArrayToStruct[Role](table)
+	if err != nil {
+		return false, err
+	}
+
+	oldRoleMap, err := getRoleMap(owner)
 	if err != nil {
 		return false, err
 	}
 
 	newRoles := []*Role{}
-	for index, line := range table {
-		if index == 0 || parseLineItem(&line, 0) == "" {
-			continue
-		}
-
-		role := &Role{
-			Owner:       parseLineItem(&line, 0),
-			Name:        parseLineItem(&line, 1),
-			CreatedTime: parseLineItem(&line, 2),
-			DisplayName: parseLineItem(&line, 3),
-
-			Users:     parseListItem(&line, 4),
-			Roles:     parseListItem(&line, 5),
-			Domains:   parseListItem(&line, 6),
-			IsEnabled: parseLineItemBool(&line, 7),
-		}
-
-		if _, ok := oldUserMap[role.GetId()]; !ok {
+	for _, role := range uploadedRoles {
+		if _, ok := oldRoleMap[role.GetId()]; !ok {
 			newRoles = append(newRoles, role)
 		}
 	}

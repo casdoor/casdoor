@@ -15,6 +15,9 @@
 package object
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/casdoor/casdoor/xlsx"
 )
 
@@ -36,44 +39,30 @@ func getPermissionMap(owner string) (map[string]*Permission, error) {
 func UploadPermissions(owner string, path string) (bool, error) {
 	table := xlsx.ReadXlsxFile(path)
 
-	oldUserMap, err := getPermissionMap(owner)
+	if len(table) == 0 {
+		return false, fmt.Errorf("empty table")
+	}
+
+	for idx, row := range table[0] {
+		splitRow := strings.Split(row, "#")
+		if len(splitRow) > 1 {
+			table[0][idx] = splitRow[1]
+		}
+	}
+
+	uploadedPermissions, err := StringArrayToStruct[Permission](table)
+	if err != nil {
+		return false, err
+	}
+
+	oldPermissionMap, err := getPermissionMap(owner)
 	if err != nil {
 		return false, err
 	}
 
 	newPermissions := []*Permission{}
-	for index, line := range table {
-		if index == 0 || parseLineItem(&line, 0) == "" {
-			continue
-		}
-
-		permission := &Permission{
-			Owner:       parseLineItem(&line, 0),
-			Name:        parseLineItem(&line, 1),
-			CreatedTime: parseLineItem(&line, 2),
-			DisplayName: parseLineItem(&line, 3),
-
-			Users:   parseListItem(&line, 4),
-			Roles:   parseListItem(&line, 5),
-			Domains: parseListItem(&line, 6),
-
-			Model:        parseLineItem(&line, 7),
-			Adapter:      parseLineItem(&line, 8),
-			ResourceType: parseLineItem(&line, 9),
-
-			Resources: parseListItem(&line, 10),
-			Actions:   parseListItem(&line, 11),
-
-			Effect:    parseLineItem(&line, 12),
-			IsEnabled: parseLineItemBool(&line, 13),
-
-			Submitter:   parseLineItem(&line, 14),
-			Approver:    parseLineItem(&line, 15),
-			ApproveTime: parseLineItem(&line, 16),
-			State:       parseLineItem(&line, 17),
-		}
-
-		if _, ok := oldUserMap[permission.GetId()]; !ok {
+	for _, permission := range uploadedPermissions {
+		if _, ok := oldPermissionMap[permission.GetId()]; !ok {
 			newPermissions = append(newPermissions, permission)
 		}
 	}
