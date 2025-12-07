@@ -94,6 +94,7 @@ func initAPI() {
 	beego.Router("/api/delete-user", &controllers.ApiController{}, "POST:DeleteUser")
 	beego.Router("/api/upload-users", &controllers.ApiController{}, "POST:UploadUsers")
 	beego.Router("/api/remove-user-from-group", &controllers.ApiController{}, "POST:RemoveUserFromGroup")
+	beego.Router("/api/verify-identification", &controllers.ApiController{}, "POST:VerifyIdentification")
 
 	beego.Router("/api/get-invitations", &controllers.ApiController{}, "GET:GetInvitations")
 	beego.Router("/api/get-invitation", &controllers.ApiController{}, "GET:GetInvitation")
