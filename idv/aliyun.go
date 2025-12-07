@@ -22,6 +22,11 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 )
 
+const (
+	// DefaultAlibabaCloudEndpoint is the default endpoint for Alibaba Cloud ID verification service
+	DefaultAlibabaCloudEndpoint = "cloudauth.cn-shanghai.aliyuncs.com"
+)
+
 type AlibabaCloudIdvProvider struct {
 	ClientId     string
 	ClientSecret string
@@ -48,7 +53,7 @@ func (provider *AlibabaCloudIdvProvider) VerifyIdentity(idCardType string, idCar
 	// Default endpoint if not configured
 	endpoint := provider.Endpoint
 	if endpoint == "" {
-		endpoint = "cloudauth.cn-shanghai.aliyuncs.com"
+		endpoint = DefaultAlibabaCloudEndpoint
 	}
 
 	// Create client configuration
