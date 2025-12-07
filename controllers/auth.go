@@ -276,7 +276,7 @@ func (c *ApiController) HandleLoggedIn(application *object.Application, user *ob
 			Application: application.Name,
 			SessionId:   []string{c.Ctx.Input.CruSession.SessionID()},
 
-			ExclusiveSignin: true,
+			ExclusiveSignin: application.EnableExclusiveSignin,
 		})
 		if err != nil {
 			c.ResponseError(err.Error(), nil)
