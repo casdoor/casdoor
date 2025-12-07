@@ -417,13 +417,8 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 			strings.Contains(item.Value, "$user.groups") ||
 			strings.Contains(item.Value, "$user.permissions") {
 			res[item.Name] = valueList
-			continue
-		}
-
-		if len(valueList) == 1 {
-			res[item.Name] = valueList[0]
 		} else {
-			res[item.Name] = valueList
+			res[item.Name] = valueList[0]
 		}
 	}
 
