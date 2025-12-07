@@ -251,6 +251,8 @@ type Userinfo struct {
 	Avatar        string   `json:"picture,omitempty"`
 	Address       string   `json:"address,omitempty"`
 	Phone         string   `json:"phone,omitempty"`
+	RealName      string   `json:"real_name,omitempty"`
+	IsVerified    bool     `json:"is_verified,omitempty"`
 	Groups        []string `json:"groups,omitempty"`
 	Roles         []string `json:"roles,omitempty"`
 	Permissions   []string `json:"permissions,omitempty"`
@@ -1210,6 +1212,11 @@ func GetUserInfo(user *User, scope string, aud string, host string) (*Userinfo, 
 
 	if strings.Contains(scope, "phone") {
 		resp.Phone = user.Phone
+	}
+
+	if strings.Contains(scope, "profile") {
+		resp.RealName = user.RealName
+		resp.IsVerified = user.IsVerified
 	}
 
 	return &resp, nil

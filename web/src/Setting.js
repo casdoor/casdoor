@@ -454,7 +454,7 @@ export const OtherProviderInfo = {
 export const UserFields = ["owner", "name", "password", "display_name", "id", "type", "email", "phone", "country_code",
   "is_admin", "homepage", "birthday", "gender", "password_type", "password_salt", "external_id", "avatar", "first_name", "last_name",
   "avatar_type", "permanent_avatar", "email_verified", "region", "location", "address",
-  "affiliation", "title", "id_card_type", "id_card", "bio", "tag", "language",
+  "affiliation", "title", "id_card_type", "id_card", "real_name", "is_verified", "bio", "tag", "language",
   "education", "score", "karma", "ranking", "balance", "currency", "is_default_avatar", "is_online",
   "is_forbidden", "is_deleted", "signup_application", "hash", "pre_hash", "access_key", "access_secret", "access_token",
   "created_ip", "last_signin_time", "last_signin_ip", "github", "google", "qq", "wechat", "facebook", "dingtalk",
