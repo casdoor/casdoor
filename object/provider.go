@@ -570,8 +570,8 @@ func FromProviderToIdpInfo(ctx *context.Context, provider *Provider) *idp.Provid
 }
 
 func GetIdvProviderFromProvider(provider *Provider) idv.IdvProvider {
-if provider.Category != "ID Verification" {
-return nil
-}
-return idv.GetIdvProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
+	if provider.Category != "ID Verification" {
+		return nil
+	}
+	return idv.GetIdvProvider(provider.Type, provider.ClientId, provider.ClientSecret, provider.Endpoint)
 }

@@ -250,38 +250,38 @@ func (c *ApiController) DeleteProvider() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /test-idv-provider [post]
 func (c *ApiController) TestIdvProvider() {
-var provider object.Provider
-err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	var provider object.Provider
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &provider)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-if provider.Category != "ID Verification" {
-c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
-return
-}
+	if provider.Category != "ID Verification" {
+		c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
+		return
+	}
 
-idvProvider := object.GetIdvProviderFromProvider(&provider)
-if idvProvider == nil {
-c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
-return
-}
+	idvProvider := object.GetIdvProviderFromProvider(&provider)
+	if idvProvider == nil {
+		c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
+		return
+	}
 
-// Test with dummy data
-testIdCardType := "ID Card"
-testIdCard := "123456789"
-testRealName := "Test User"
+	// Test with dummy data
+	testIdCardType := "ID Card"
+	testIdCard := "123456789"
+	testRealName := "Test User"
 
-verified, err := idvProvider.VerifyIdentity(testIdCardType, testIdCard, testRealName)
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	verified, err := idvProvider.VerifyIdentity(testIdCardType, testIdCard, testRealName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-if verified {
-c.ResponseOk("Provider test successful")
-} else {
-c.ResponseError(c.T("provider:Provider test failed"))
-}
+	if verified {
+		c.ResponseOk("Provider test successful")
+	} else {
+		c.ResponseError(c.T("provider:Provider test failed"))
+	}
 }

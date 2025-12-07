@@ -15,40 +15,40 @@
 package idv
 
 import (
-"fmt"
+	"fmt"
 )
 
 type JumioIdvProvider struct {
-ClientId     string
-ClientSecret string
-Endpoint     string
+	ClientId     string
+	ClientSecret string
+	Endpoint     string
 }
 
 func NewJumioIdvProvider(clientId string, clientSecret string, endpoint string) *JumioIdvProvider {
-return &JumioIdvProvider{
-ClientId:     clientId,
-ClientSecret: clientSecret,
-Endpoint:     endpoint,
-}
+	return &JumioIdvProvider{
+		ClientId:     clientId,
+		ClientSecret: clientSecret,
+		Endpoint:     endpoint,
+	}
 }
 
 func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard string, realName string) (bool, error) {
-// This is a placeholder implementation for Jumio ID Verification
-// In a real implementation, this would:
-// 1. Make API calls to Jumio service
-// 2. Submit the ID card information for verification
-// 3. Wait for verification results
-// 4. Return whether the identity was successfully verified
+	// This is a placeholder implementation for Jumio ID Verification
+	// In a real implementation, this would:
+	// 1. Make API calls to Jumio service
+	// 2. Submit the ID card information for verification
+	// 3. Wait for verification results
+	// 4. Return whether the identity was successfully verified
 
-if provider.ClientId == "" || provider.ClientSecret == "" {
-return false, fmt.Errorf("Jumio credentials not configured")
-}
+	if provider.ClientId == "" || provider.ClientSecret == "" {
+		return false, fmt.Errorf("Jumio credentials not configured")
+	}
 
-if idCard == "" || realName == "" {
-return false, fmt.Errorf("ID card and real name are required")
-}
+	if idCard == "" || realName == "" {
+		return false, fmt.Errorf("ID card and real name are required")
+	}
 
-// For testing purposes, we'll return true if all required fields are present
-// Real implementation would integrate with Jumio API
-return true, nil
+	// For testing purposes, we'll return true if all required fields are present
+	// Real implementation would integrate with Jumio API
+	return true, nil
 }

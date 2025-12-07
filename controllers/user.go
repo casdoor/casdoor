@@ -788,75 +788,75 @@ func (c *ApiController) RemoveUserFromGroup() {
 // @Success 200 {object} controllers.Response The Response object
 // @router /verify-identification [post]
 func (c *ApiController) VerifyIdentification() {
-owner := c.Input().Get("owner")
-name := c.Input().Get("name")
-providerName := c.Input().Get("provider")
+	owner := c.Input().Get("owner")
+	name := c.Input().Get("name")
+	providerName := c.Input().Get("provider")
 
-if owner == "" || name == "" {
-c.ResponseError(c.T("general:Missing parameter"))
-return
-}
+	if owner == "" || name == "" {
+		c.ResponseError(c.T("general:Missing parameter"))
+		return
+	}
 
-user, err := object.GetUser(util.GetId(owner, name))
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	user, err := object.GetUser(util.GetId(owner, name))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-if user == nil {
-c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, name)))
-return
-}
+	if user == nil {
+		c.ResponseError(fmt.Sprintf(c.T("general:The user: %s doesn't exist"), util.GetId(owner, name)))
+		return
+	}
 
-if user.IdCard == "" || user.IdCardType == "" {
-c.ResponseError(c.T("user:ID card information is required"))
-return
-}
+	if user.IdCard == "" || user.IdCardType == "" {
+		c.ResponseError(c.T("user:ID card information is required"))
+		return
+	}
 
-if user.RealName != "" {
-c.ResponseError(c.T("user:User is already verified"))
-return
-}
+	if user.RealName != "" {
+		c.ResponseError(c.T("user:User is already verified"))
+		return
+	}
 
-provider, err := object.GetProvider(providerName)
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	provider, err := object.GetProvider(providerName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-if provider == nil {
-c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerName))
-return
-}
+	if provider == nil {
+		c.ResponseError(fmt.Sprintf(c.T("provider:The provider: %s does not exist"), providerName))
+		return
+	}
 
-if provider.Category != "ID Verification" {
-c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
-return
-}
+	if provider.Category != "ID Verification" {
+		c.ResponseError(c.T("provider:Provider is not an ID Verification provider"))
+		return
+	}
 
-idvProvider := object.GetIdvProviderFromProvider(provider)
-if idvProvider == nil {
-c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
-return
-}
+	idvProvider := object.GetIdvProviderFromProvider(provider)
+	if idvProvider == nil {
+		c.ResponseError(c.T("provider:Failed to initialize ID Verification provider"))
+		return
+	}
 
-verified, err := idvProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.DisplayName)
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	verified, err := idvProvider.VerifyIdentity(user.IdCardType, user.IdCard, user.DisplayName)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-if !verified {
-c.ResponseError(c.T("user:Identity verification failed"))
-return
-}
+	if !verified {
+		c.ResponseError(c.T("user:Identity verification failed"))
+		return
+	}
 
-user.RealName = user.DisplayName
-_, err = object.UpdateUser(user.GetId(), user, []string{"real_name"}, false)
-if err != nil {
-c.ResponseError(err.Error())
-return
-}
+	user.RealName = user.DisplayName
+	_, err = object.UpdateUser(user.GetId(), user, []string{"real_name"}, false)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
 
-c.ResponseOk(user.RealName)
+	c.ResponseOk(user.RealName)
 }

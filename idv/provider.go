@@ -15,12 +15,12 @@
 package idv
 
 type IdvProvider interface {
-VerifyIdentity(idCardType string, idCard string, realName string) (bool, error)
+	VerifyIdentity(idCardType string, idCard string, realName string) (bool, error)
 }
 
 func GetIdvProvider(typ string, clientId string, clientSecret string, endpoint string) IdvProvider {
-if typ == "Jumio" {
-return NewJumioIdvProvider(clientId, clientSecret, endpoint)
-}
-return NewJumioIdvProvider(clientId, clientSecret, endpoint)
+	if typ == "Jumio" {
+		return NewJumioIdvProvider(clientId, clientSecret, endpoint)
+	}
+	return NewJumioIdvProvider(clientId, clientSecret, endpoint)
 }
