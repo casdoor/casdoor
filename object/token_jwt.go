@@ -413,8 +413,11 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 
 	for _, item := range tokenAttributes {
 		valueList := replaceAttributeValue(claims.User, item.Value)
+		if len(valueList) == 0 {
+			continue
+		}
 
-		if len(valueList) == 1 {
+		if item.Type == "String" {
 			res[item.Name] = valueList[0]
 		} else {
 			res[item.Name] = valueList
