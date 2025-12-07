@@ -48,7 +48,15 @@ func (provider *JumioIdvProvider) VerifyIdentity(idCardType string, idCard strin
 		return false, fmt.Errorf("ID card and real name are required")
 	}
 
-	// For testing purposes, we'll return true if all required fields are present
-	// Real implementation would integrate with Jumio API
+	// TODO: This is a placeholder implementation for Jumio ID Verification
+	// In a production environment, this should:
+	// 1. Make API calls to Jumio service with proper authentication
+	// 2. Submit the ID card information for verification
+	// 3. Wait for and parse verification results
+	// 4. Return the actual verification status from Jumio
+	// WARNING: Current implementation is for testing only and should not be used in production
+	
+	// For now, return true only for testing/development purposes
+	// Production use requires actual Jumio API integration
 	return true, nil
 }

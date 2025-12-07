@@ -22,5 +22,6 @@ func GetIdvProvider(typ string, clientId string, clientSecret string, endpoint s
 	if typ == "Jumio" {
 		return NewJumioIdvProvider(clientId, clientSecret, endpoint)
 	}
+	// Default to Jumio as it's the only supported provider currently
 	return NewJumioIdvProvider(clientId, clientSecret, endpoint)
 }

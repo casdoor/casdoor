@@ -851,6 +851,10 @@ func (c *ApiController) VerifyIdentification() {
 		return
 	}
 
+	// TODO: In a production implementation with actual IDV provider integration,
+	// the real name should be extracted from the verification response returned
+	// by the IDV provider, not from the user's display name.
+	// The IDV provider would return the verified name from the ID document.
 	user.RealName = user.DisplayName
 	_, err = object.UpdateUser(user.GetId(), user, []string{"real_name"}, false)
 	if err != nil {

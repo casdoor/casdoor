@@ -299,6 +299,7 @@ class UserEditPage extends React.Component {
       return;
     }
 
+    // Note: Category string must match backend constant "ID Verification"
     const idvProvider = this.state.application.providers.find(p => p.provider?.category === "ID Verification");
     if (!idvProvider) {
       Setting.showMessage("error", i18next.t("user:No ID Verification provider configured"));
