@@ -488,6 +488,7 @@
     "Syncers": "Syncers",
     "System Info": "System Info",
     "Tab": "Tab",
+    "Tickets": "Tickets",
     "The actions cannot be empty": "The actions cannot be empty",
     "The resources cannot be empty": "The resources cannot be empty",
     "The users and roles cannot be empty at the same time": "The users and roles cannot be empty at the same time",
@@ -522,6 +523,7 @@
     "Users - Tooltip": "Users",
     "Users under all organizations": "Users under all organizations",
     "Verifications": "Verifications",
+    "View": "View",
     "Webhooks": "Webhooks",
     "You can only select one physical group": "You can only select one physical group",
     "You must select a picture first": "You must select a picture first",
@@ -1391,6 +1393,19 @@
     "WebAuthn credentials": "WebAuthn credentials",
     "You have changed the username, please save your change first before modifying the password": "You have changed the username, please save your change first before modifying the password",
     "input password": "input password"
+  },
+  "ticket": {
+    "Closed": "Closed",
+    "Edit Ticket": "Edit Ticket",
+    "In Progress": "In Progress",
+    "Messages": "Messages",
+    "New Ticket": "New Ticket",
+    "Open": "Open",
+    "Please enter a message": "Please enter a message",
+    "Press Ctrl+Enter to send": "Press Ctrl+Enter to send",
+    "Resolved": "Resolved",
+    "Ticket not found": "Ticket not found",
+    "Type your message here...": "Type your message here..."
   },
   "verification": {
     "Is used": "Is used",
