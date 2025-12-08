@@ -17,8 +17,8 @@ package idv
 import (
 	"fmt"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	cloudauth "github.com/alibabacloud-go/cloudauth-20190307/v3/client"
+	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 )
 
