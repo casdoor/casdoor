@@ -1,6 +1,14 @@
 swagger: "2.0"
-info: {}
+info:
+  title: Casdoor RESTful API
+  description: Swagger Docs of Casdoor Backend API
+  version: 1.503.0
+  contact:
+    email: casbin@googlegroups.com
 basePath: /
+schemes:
+- https
+- http
 paths:
   /.well-known/{application}/jwks:
     get:
