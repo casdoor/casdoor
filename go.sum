@@ -110,6 +110,8 @@ github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6/go.mod h1:4EUIoxs/do2
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4/go.mod h1:sCavSAvdzOjul4cEqeVtvlSaSScfNsTQ+46HwlTL1hc=
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5 h1:zE8vH9C7JiZLNJJQ5OwjU9mSi4T9ef9u3BURT6LCLC8=
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5/go.mod h1:tWnyE9AjF8J8qqLk645oUmVUnFybApTQWklQmi5tY6g=
+github.com/alibabacloud-go/cloudauth-20190307/v3 v3.9.2 h1:y4s0WQ1jrBtOJfXGgsv/83brJvkkHbFdORp0WDyVAuw=
+github.com/alibabacloud-go/cloudauth-20190307/v3 v3.9.2/go.mod h1:kD75qqMQyjCiz6lssjRzYGTumcli8STLXQstVe6ytxk=
 github.com/alibabacloud-go/darabonba-array v0.1.0 h1:vR8s7b1fWAQIjEjWnuF0JiKsCvclSRTfDzZHTYqfufY=
 github.com/alibabacloud-go/darabonba-array v0.1.0/go.mod h1:BLKxr0brnggqOJPqT09DFJ8g3fsDshapUD3C3aOEFaI=
 github.com/alibabacloud-go/darabonba-encode-util v0.0.2 h1:1uJGrbsGEVqWcWxrS9MyC2NG0Ax+GpOM5gtupki31XE=
@@ -120,6 +122,7 @@ github.com/alibabacloud-go/darabonba-number v1.0.4 h1:aTY1TanasI0A1AYT3Co+PLttFS
 github.com/alibabacloud-go/darabonba-number v1.0.4/go.mod h1:9NJbJwLCPxHzFwYqnr27G2X8pSTAz0uSQEJsrjr/kqw=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.0/go.mod h1:5JHVmnHvGzR2wNdgaW1zDLQG8kOC4Uec8ubkMogW7OQ=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.6/go.mod h1:CzQnh+94WDnJOnKZH5YRyouL+OOcdBnXY5VWAf0McgI=
+github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10/go.mod h1:26a14FGhZVELuz2cc2AolvW4RHmIO3/HRwsdHhaIPDE=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4 h1:IGSZHlOnWwBbLtX5xDplQvZOH0nkrV7Wmq+Fto7JK5w=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4/go.mod h1:Wxis0IBFusdbo44HO6KYYCJR1rRkoh47QQOYWvaheSU=
 github.com/alibabacloud-go/darabonba-signature-util v0.0.7 h1:UzCnKvsjPFzApvODDNEYqBHMFt1w98wC7FOo0InLyxg=
@@ -163,6 +166,7 @@ github.com/alibabacloud-go/tea-utils v1.3.6 h1:bVjrxHztM8hAs6nOfLWCgxQfAtKb9RgFF
 github.com/alibabacloud-go/tea-utils v1.3.6/go.mod h1:EI/o33aBfj3hETm4RLiAxF/ThQdSngxrpF8rKUDJjPE=
 github.com/alibabacloud-go/tea-utils/v2 v2.0.0/go.mod h1:U5MTY10WwlquGPS34DOeomUGBB0gXbLueiq5Trwu0C4=
 github.com/alibabacloud-go/tea-utils/v2 v2.0.5/go.mod h1:dL6vbUT35E4F4bFTHL845eUloqaerYBYPsdWR2/jhe4=
+github.com/alibabacloud-go/tea-utils/v2 v2.0.6/go.mod h1:qxn986l+q33J5VkialKMqT/TTs3E+U9MJpd001iWQ9I=
 github.com/alibabacloud-go/tea-utils/v2 v2.0.7 h1:WDx5qW3Xa5ZgJ1c8NfqJkF6w+AU5wB8835UdhPr6Ax0=
 github.com/alibabacloud-go/tea-utils/v2 v2.0.7/go.mod h1:qxn986l+q33J5VkialKMqT/TTs3E+U9MJpd001iWQ9I=
 github.com/alibabacloud-go/tea-xml v1.1.1/go.mod h1:Rq08vgCcCAjHyRi/M7xlHKUykZCEtyBy9+DPF6GgEu8=

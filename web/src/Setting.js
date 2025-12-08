@@ -1387,6 +1387,11 @@ export function getProviderTypeOptions(category) {
     return ([
       {id: "RADIUS", name: "RADIUS"},
     ]);
+  } else if (category === "ID Verification") {
+    return ([
+      {id: "Jumio", name: "Jumio"},
+      {id: "Alibaba Cloud", name: "Alibaba Cloud"},
+    ]);
   } else {
     return [];
   }
