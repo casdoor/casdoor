@@ -356,19 +356,17 @@ func getClaimsCustom(claims Claims, tokenField []string, tokenAttributes []*JwtI
 		res["azp"] = claims.Azp
 	}
 
+	// Always include nonce and scope as they are built-in OAuth/OIDC fields (even if empty)
+	res["nonce"] = claims.Nonce
+	res["scope"] = claims.Scope
+
 	// Create a map for quick lookup of selected token fields
 	selectedFields := make(map[string]bool)
 	for _, field := range tokenField {
 		selectedFields[field] = true
 	}
 
-	// Only include optional fields if they are explicitly selected in tokenFields
-	if selectedFields["nonce"] {
-		res["nonce"] = claims.Nonce
-	}
-	if selectedFields["scope"] {
-		res["scope"] = claims.Scope
-	}
+	// Only include signinMethod and provider if they are explicitly selected in tokenFields
 	if selectedFields["signinMethod"] {
 		res["signinMethod"] = claims.SigninMethod
 	}
