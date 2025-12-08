@@ -120,9 +120,9 @@ class TicketListPage extends BaseListPage {
         ...this.getColumnSearchProps("user"),
         render: (text, record, index) => {
           return (
-            <a target="_blank" rel="noreferrer" href={Setting.getUserProfileUrl(text, this.props.account)}>
+            <Link to={`/users/${record.owner}/${text}`}>
               {text}
-            </a>
+            </Link>
           );
         },
       },
