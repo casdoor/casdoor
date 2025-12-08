@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import React from "react";
-import {Button, Card, Col, Input, Row, Select, Space, Tag, Divider, List, Avatar} from "antd";
+import {Avatar, Button, Card, Col, Divider, Input, List, Row, Select, Space, Tag} from "antd";
 import {SendOutlined, UserOutlined} from "@ant-design/icons";
 import * as TicketBackend from "./backend/TicketBackend";
 import * as Setting from "./Setting";
@@ -208,7 +208,7 @@ class TicketEditPage extends React.Component {
             {i18next.t("general:State")}:
           </Col>
           <Col span={22} >
-            <Select virtual={false} style={{width: "100%"}} value={this.state.ticket.state} 
+            <Select virtual={false} style={{width: "100%"}} value={this.state.ticket.state}
               disabled={!isAdmin && this.state.ticket.state === "Closed"}
               onChange={(value => {
                 this.updateTicketField("state", value);
