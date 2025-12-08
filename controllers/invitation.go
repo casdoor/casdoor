@@ -234,15 +234,28 @@ func (c *ApiController) SendInvitation() {
 		return
 	}
 
-	application, err := object.GetApplicationByOrganizationName(invitation.Owner)
-	if err != nil {
-		c.ResponseError(err.Error())
-		return
+	var application *object.Application
+	if invitation.Application != "" {
+		application, err = object.GetApplication(fmt.Sprintf("admin/%s-org-%s", invitation.Application, invitation.Owner))
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+	} else {
+		application, err = object.GetApplicationByOrganizationName(invitation.Owner)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
 	}
 
 	if application == nil {
 		c.ResponseError(fmt.Sprintf(c.T("general:The organization: %s should have one application at least"), invitation.Owner))
 		return
+	}
+
+	if application.IsShared {
+		application.Name = fmt.Sprintf("%s-org-%s", application.Name, invitation.Owner)
 	}
 
 	provider, err := application.GetEmailProvider("Invitation")

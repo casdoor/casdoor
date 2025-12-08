@@ -139,10 +139,14 @@ class InvitationEditPage extends React.Component {
         <Button key={1} loading={this.state.sendLoading} type="primary"
           onClick={() => {
             this.setState({sendLoading: true});
-            InvitationBackend.sendInvitation(this.state.invitation, emails).then(() => {
+            InvitationBackend.sendInvitation(this.state.invitation, emails).then((res) => {
               this.setState({sendLoading: false});
+              if (res.status === "error") {
+                Setting.showMessage("error", res.msg);
+                return;
+              }
               Setting.showMessage("success", i18next.t("general:Successfully sent"));
-            }).catch(err => Setting.showMessage("success", err.message));
+            }).catch(err => Setting.showMessage("error", err.message));
           }}>{i18next.t("general:Send")}</Button>,
       ]}
       onCancel={() => {this.setState({showSendModal: false});}}>
