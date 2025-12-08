@@ -7618,6 +7618,7 @@ tags:
   description: |
     ApiController
     controller for handlers under /api uri
-- description: |
+- name: root
+  description: |
     RootController
     controller for handlers directly under / (root)
