@@ -209,7 +209,7 @@ class TicketEditPage extends React.Component {
           </Col>
           <Col span={22} >
             <Select virtual={false} style={{width: "100%"}} value={this.state.ticket.state} 
-              disabled={!isAdmin && (this.state.ticket.state === "Closed")}
+              disabled={!isAdmin && this.state.ticket.state === "Closed"}
               onChange={(value => {
                 this.updateTicketField("state", value);
               })}>
