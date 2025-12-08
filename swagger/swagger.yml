@@ -13,7 +13,7 @@ paths:
   /.well-known/{application}/jwks:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - OIDC API
       operationId: RootController.GetJwksByApplication
       parameters:
       - in: path
@@ -29,10 +29,8 @@ paths:
   /.well-known/{application}/openid-configuration:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
-      description: |-
-        Get Oidc Discovery for specific application
-        <br>
+      - OIDC API
+      description: Get Oidc Discovery for specific application
       operationId: RootController.GetOidcDiscoveryByApplication
       parameters:
       - in: path
@@ -48,7 +46,7 @@ paths:
   /.well-known/{application}/webfinger:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - OIDC API
       operationId: RootController.GetWebFingerByApplication
       parameters:
       - in: path
@@ -69,7 +67,7 @@ paths:
   /.well-known/jwks:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - OIDC API
       operationId: RootController.GetJwks
       responses:
         "200":
@@ -79,10 +77,8 @@ paths:
   /.well-known/openid-configuration:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
-      description: |-
-        Get Oidc Discovery
-        <br>
+      - OIDC API
+      description: Get Oidc Discovery
       operationId: RootController.GetOidcDiscovery
       responses:
         "200":
@@ -92,7 +88,7 @@ paths:
   /.well-known/webfinger:
     get:
       tags:
-      - github.com/casdoor/casdoor/controllersRootController
+      - OIDC API
       operationId: RootController.GetWebFinger
       parameters:
       - in: query
@@ -108,10 +104,8 @@ paths:
   /api/Callback:
     post:
       tags:
-      - api
-      description: |-
-        Get Login Error Counts
-        <br>
+      - Callback API
+      description: Get Login Error Counts
       operationId: ApiController.Callback
       responses:
         "200":
@@ -121,10 +115,8 @@ paths:
   /api/add-adapter:
     post:
       tags:
-      - api
-      description: |-
-        add adapter
-        <br>
+      - Adapter API
+      description: add adapter
       operationId: ApiController.AddAdapter
       parameters:
       - in: body
@@ -141,10 +133,8 @@ paths:
   /api/add-application:
     post:
       tags:
-      - api
-      description: |-
-        add an application
-        <br>
+      - Application API
+      description: add an application
       operationId: ApiController.AddApplication
       parameters:
       - in: body
@@ -161,10 +151,8 @@ paths:
   /api/add-cert:
     post:
       tags:
-      - api
-      description: |-
-        add cert
-        <br>
+      - Cert API
+      description: add cert
       operationId: ApiController.AddCert
       parameters:
       - in: body
@@ -181,10 +169,8 @@ paths:
   /api/add-enforcer:
     post:
       tags:
-      - api
-      description: |-
-        add enforcer
-        <br>
+      - Enforcer API
+      description: add enforcer
       operationId: ApiController.AddEnforcer
       parameters:
       - in: body
@@ -201,10 +187,8 @@ paths:
   /api/add-form:
     post:
       tags:
-      - api
-      description: |-
-        add form
-        <br>
+      - Form API
+      description: add form
       operationId: ApiController.AddForm
       parameters:
       - in: body
@@ -221,10 +205,8 @@ paths:
   /api/add-group:
     post:
       tags:
-      - api
-      description: |-
-        add group
-        <br>
+      - Group API
+      description: add group
       operationId: ApiController.AddGroup
       parameters:
       - in: body
@@ -241,10 +223,8 @@ paths:
   /api/add-invitation:
     post:
       tags:
-      - api
-      description: |-
-        add invitation
-        <br>
+      - Invitation API
+      description: add invitation
       operationId: ApiController.AddInvitation
       parameters:
       - in: body
@@ -261,10 +241,8 @@ paths:
   /api/add-ldap:
     post:
       tags:
-      - api
-      description: |-
-        add ldap
-        <br>
+      - Account API
+      description: add ldap
       operationId: ApiController.AddLdap
       parameters:
       - in: body
@@ -281,10 +259,8 @@ paths:
   /api/add-model:
     post:
       tags:
-      - api
-      description: |-
-        add model
-        <br>
+      - Model API
+      description: add model
       operationId: ApiController.AddModel
       parameters:
       - in: body
@@ -301,10 +277,8 @@ paths:
   /api/add-order:
     post:
       tags:
-      - api
-      description: |-
-        add order
-        <br>
+      - Order API
+      description: add order
       operationId: ApiController.AddOrder
       parameters:
       - in: body
@@ -321,10 +295,8 @@ paths:
   /api/add-organization:
     post:
       tags:
-      - api
-      description: |-
-        add organization
-        <br>
+      - Organization API
+      description: add organization
       operationId: ApiController.AddOrganization
       parameters:
       - in: body
@@ -341,10 +313,8 @@ paths:
   /api/add-payment:
     post:
       tags:
-      - api
-      description: |-
-        add payment
-        <br>
+      - Payment API
+      description: add payment
       operationId: ApiController.AddPayment
       parameters:
       - in: body
@@ -361,10 +331,8 @@ paths:
   /api/add-permission:
     post:
       tags:
-      - api
-      description: |-
-        add permission
-        <br>
+      - Permission API
+      description: add permission
       operationId: ApiController.AddPermission
       parameters:
       - in: body
@@ -381,10 +349,8 @@ paths:
   /api/add-plan:
     post:
       tags:
-      - api
-      description: |-
-        add plan
-        <br>
+      - Plan API
+      description: add plan
       operationId: ApiController.AddPlan
       parameters:
       - in: body
@@ -401,10 +367,8 @@ paths:
   /api/add-policy:
     post:
       tags:
-      - api
-      description: |-
-        add policy
-        <br>
+      - Enforcer API
+      description: add policy
       operationId: ApiController.AddPolicy
       parameters:
       - in: query
@@ -426,10 +390,8 @@ paths:
   /api/add-pricing:
     post:
       tags:
-      - api
-      description: |-
-        add pricing
-        <br>
+      - Pricing API
+      description: add pricing
       operationId: ApiController.AddPricing
       parameters:
       - in: body
@@ -446,10 +408,8 @@ paths:
   /api/add-product:
     post:
       tags:
-      - api
-      description: |-
-        add product
-        <br>
+      - Product API
+      description: add product
       operationId: ApiController.AddProduct
       parameters:
       - in: body
@@ -466,10 +426,8 @@ paths:
   /api/add-provider:
     post:
       tags:
-      - api
-      description: |-
-        add provider
-        <br>
+      - Provider API
+      description: add provider
       operationId: ApiController.AddProvider
       parameters:
       - in: body
@@ -486,10 +444,8 @@ paths:
   /api/add-record:
     post:
       tags:
-      - api
-      description: |-
-        add a record
-        <br>
+      - Record API
+      description: add a record
       operationId: ApiController.AddRecord
       parameters:
       - in: body
@@ -506,7 +462,7 @@ paths:
   /api/add-resource:
     post:
       tags:
-      - api
+      - Resource API
       operationId: ApiController.AddResource
       parameters:
       - in: body
@@ -523,10 +479,8 @@ paths:
   /api/add-role:
     post:
       tags:
-      - api
-      description: |-
-        add role
-        <br>
+      - Role API
+      description: add role
       operationId: ApiController.AddRole
       parameters:
       - in: body
@@ -543,30 +497,32 @@ paths:
   /api/add-session:
     post:
       tags:
-      - api
-      description: |-
-        Add session for one user in one application. If there are other existing sessions, join the session into the list.
-        <br>
+      - Session API
+      description: Add session for one user in one application. If there are other existing sessions, join the session into the list.
       operationId: ApiController.AddSession
       parameters:
-      - in: body
-        name: body
-        description: The session object to add
+      - in: query
+        name: id
+        description: The id(organization/user/application) of session
         required: true
-        schema:
-          $ref: '#/definitions/object.Session'
+        type: string
+      - in: query
+        name: sessionId
+        description: sessionId to be added
+        required: true
+        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/controllers.Response'
+            type: array
+            items:
+              type: string
   /api/add-subscription:
     post:
       tags:
-      - api
-      description: |-
-        add subscription
-        <br>
+      - Subscription API
+      description: add subscription
       operationId: ApiController.AddSubscription
       parameters:
       - in: body
@@ -583,10 +539,8 @@ paths:
   /api/add-syncer:
     post:
       tags:
-      - api
-      description: |-
-        add syncer
-        <br>
+      - Syncer API
+      description: add syncer
       operationId: ApiController.AddSyncer
       parameters:
       - in: body
@@ -603,10 +557,8 @@ paths:
   /api/add-token:
     post:
       tags:
-      - api
-      description: |-
-        add token
-        <br>
+      - Token API
+      description: add token
       operationId: ApiController.AddToken
       parameters:
       - in: body
@@ -623,10 +575,8 @@ paths:
   /api/add-transaction:
     post:
       tags:
-      - api
-      description: |-
-        add transaction
-        <br>
+      - Transaction API
+      description: add transaction
       operationId: ApiController.AddTransaction
       parameters:
       - in: body
@@ -647,10 +597,8 @@ paths:
   /api/add-user:
     post:
       tags:
-      - api
-      description: |-
-        add user
-        <br>
+      - User API
+      description: add user
       operationId: ApiController.AddUser
       parameters:
       - in: body
@@ -667,7 +615,7 @@ paths:
   /api/add-user-keys:
     post:
       tags:
-      - api
+      - User API
       operationId: ApiController.AddUserKeys
       responses:
         "200":
@@ -677,10 +625,8 @@ paths:
   /api/add-webhook:
     post:
       tags:
-      - api
-      description: |-
-        add webhook
-        <br>
+      - Webhook API
+      description: add webhook
       operationId: ApiController.AddWebhook
       parameters:
       - in: body
@@ -697,10 +643,8 @@ paths:
   /api/batch-enforce:
     post:
       tags:
-      - api
-      description: |-
-        Call Casbin BatchEnforce API
-        <br>
+      - Enforcer API
+      description: Call Casbin BatchEnforce API
       operationId: ApiController.BatchEnforce
       parameters:
       - in: body
@@ -728,29 +672,10 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/cancel-order:
-    post:
-      tags:
-      - api
-      description: |-
-        cancel an order
-        <br>
-      operationId: ApiController.CancelOrder
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of the order
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
   /api/check-user-password:
     post:
       tags:
-      - api
+      - User API
       operationId: ApiController.CheckUserPassword
       responses:
         "200":
@@ -760,10 +685,8 @@ paths:
   /api/delete-adapter:
     post:
       tags:
-      - api
-      description: |-
-        delete adapter
-        <br>
+      - Adapter API
+      description: delete adapter
       operationId: ApiController.DeleteAdapter
       parameters:
       - in: body
@@ -780,10 +703,8 @@ paths:
   /api/delete-application:
     post:
       tags:
-      - api
-      description: |-
-        delete an application
-        <br>
+      - Application API
+      description: delete an application
       operationId: ApiController.DeleteApplication
       parameters:
       - in: body
@@ -800,10 +721,8 @@ paths:
   /api/delete-cert:
     post:
       tags:
-      - api
-      description: |-
-        delete cert
-        <br>
+      - Cert API
+      description: delete cert
       operationId: ApiController.DeleteCert
       parameters:
       - in: body
@@ -820,10 +739,8 @@ paths:
   /api/delete-enforcer:
     post:
       tags:
-      - api
-      description: |-
-        delete enforcer
-        <br>
+      - Enforcer API
+      description: delete enforcer
       operationId: ApiController.DeleteEnforcer
       parameters:
       - in: body
@@ -840,10 +757,8 @@ paths:
   /api/delete-form:
     post:
       tags:
-      - api
-      description: |-
-        delete form
-        <br>
+      - Form API
+      description: delete form
       operationId: ApiController.DeleteForm
       parameters:
       - in: body
@@ -860,10 +775,8 @@ paths:
   /api/delete-group:
     post:
       tags:
-      - api
-      description: |-
-        delete group
-        <br>
+      - Group API
+      description: delete group
       operationId: ApiController.DeleteGroup
       parameters:
       - in: body
@@ -880,10 +793,8 @@ paths:
   /api/delete-invitation:
     post:
       tags:
-      - api
-      description: |-
-        delete invitation
-        <br>
+      - Invitation API
+      description: delete invitation
       operationId: ApiController.DeleteInvitation
       parameters:
       - in: body
@@ -900,10 +811,8 @@ paths:
   /api/delete-ldap:
     post:
       tags:
-      - api
-      description: |-
-        delete ldap
-        <br>
+      - Account API
+      description: delete ldap
       operationId: ApiController.DeleteLdap
       parameters:
       - in: body
@@ -920,10 +829,8 @@ paths:
   /api/delete-mfa/:
     post:
       tags:
-      - api
-      description: |-
-        : Delete MFA
-        <br>
+      - MFA API
+      description: ': Delete MFA'
       operationId: ApiController.DeleteMfa
       responses:
         "200":
@@ -933,10 +840,8 @@ paths:
   /api/delete-model:
     post:
       tags:
-      - api
-      description: |-
-        delete model
-        <br>
+      - Model API
+      description: delete model
       operationId: ApiController.DeleteModel
       parameters:
       - in: body
@@ -953,10 +858,8 @@ paths:
   /api/delete-order:
     post:
       tags:
-      - api
-      description: |-
-        delete order
-        <br>
+      - Order API
+      description: delete order
       operationId: ApiController.DeleteOrder
       parameters:
       - in: body
@@ -973,10 +876,8 @@ paths:
   /api/delete-organization:
     post:
       tags:
-      - api
-      description: |-
-        delete organization
-        <br>
+      - Organization API
+      description: delete organization
       operationId: ApiController.DeleteOrganization
       parameters:
       - in: body
@@ -993,10 +894,8 @@ paths:
   /api/delete-payment:
     post:
       tags:
-      - api
-      description: |-
-        delete payment
-        <br>
+      - Payment API
+      description: delete payment
       operationId: ApiController.DeletePayment
       parameters:
       - in: body
@@ -1013,10 +912,8 @@ paths:
   /api/delete-permission:
     post:
       tags:
-      - api
-      description: |-
-        delete permission
-        <br>
+      - Permission API
+      description: delete permission
       operationId: ApiController.DeletePermission
       parameters:
       - in: body
@@ -1033,10 +930,8 @@ paths:
   /api/delete-plan:
     post:
       tags:
-      - api
-      description: |-
-        delete plan
-        <br>
+      - Plan API
+      description: delete plan
       operationId: ApiController.DeletePlan
       parameters:
       - in: body
@@ -1053,10 +948,8 @@ paths:
   /api/delete-pricing:
     post:
       tags:
-      - api
-      description: |-
-        delete pricing
-        <br>
+      - Pricing API
+      description: delete pricing
       operationId: ApiController.DeletePricing
       parameters:
       - in: body
@@ -1073,10 +966,8 @@ paths:
   /api/delete-product:
     post:
       tags:
-      - api
-      description: |-
-        delete product
-        <br>
+      - Product API
+      description: delete product
       operationId: ApiController.DeleteProduct
       parameters:
       - in: body
@@ -1093,10 +984,8 @@ paths:
   /api/delete-provider:
     post:
       tags:
-      - api
-      description: |-
-        delete provider
-        <br>
+      - Provider API
+      description: delete provider
       operationId: ApiController.DeleteProvider
       parameters:
       - in: body
@@ -1113,7 +1002,7 @@ paths:
   /api/delete-resource:
     post:
       tags:
-      - api
+      - Resource API
       operationId: ApiController.DeleteResource
       parameters:
       - in: body
@@ -1130,10 +1019,8 @@ paths:
   /api/delete-role:
     post:
       tags:
-      - api
-      description: |-
-        delete role
-        <br>
+      - Role API
+      description: delete role
       operationId: ApiController.DeleteRole
       parameters:
       - in: body
@@ -1150,30 +1037,27 @@ paths:
   /api/delete-session:
     post:
       tags:
-      - api
-      description: |-
-        Delete session for one user in one application.
-        <br>
+      - Session API
+      description: Delete session for one user in one application.
       operationId: ApiController.DeleteSession
       parameters:
-      - in: body
-        name: body
-        description: The session object to delete
+      - in: query
+        name: id
+        description: The id(organization/user/application) of session
         required: true
-        schema:
-          $ref: '#/definitions/object.Session'
+        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/controllers.Response'
+            type: array
+            items:
+              type: string
   /api/delete-subscription:
     post:
       tags:
-      - api
-      description: |-
-        delete subscription
-        <br>
+      - Subscription API
+      description: delete subscription
       operationId: ApiController.DeleteSubscription
       parameters:
       - in: body
@@ -1190,10 +1074,8 @@ paths:
   /api/delete-syncer:
     post:
       tags:
-      - api
-      description: |-
-        delete syncer
-        <br>
+      - Syncer API
+      description: delete syncer
       operationId: ApiController.DeleteSyncer
       parameters:
       - in: body
@@ -1210,10 +1092,8 @@ paths:
   /api/delete-token:
     post:
       tags:
-      - api
-      description: |-
-        delete token
-        <br>
+      - Token API
+      description: delete token
       operationId: ApiController.DeleteToken
       parameters:
       - in: body
@@ -1230,10 +1110,8 @@ paths:
   /api/delete-transaction:
     post:
       tags:
-      - api
-      description: |-
-        delete transaction
-        <br>
+      - Transaction API
+      description: delete transaction
       operationId: ApiController.DeleteTransaction
       parameters:
       - in: body
@@ -1250,10 +1128,8 @@ paths:
   /api/delete-user:
     post:
       tags:
-      - api
-      description: |-
-        delete user
-        <br>
+      - User API
+      description: delete user
       operationId: ApiController.DeleteUser
       parameters:
       - in: body
@@ -1270,10 +1146,8 @@ paths:
   /api/delete-webhook:
     post:
       tags:
-      - api
-      description: |-
-        delete webhook
-        <br>
+      - Webhook API
+      description: delete webhook
       operationId: ApiController.DeleteWebhook
       parameters:
       - in: body
@@ -1290,10 +1164,8 @@ paths:
   /api/device-auth:
     post:
       tags:
-      - api
-      description: |-
-        Endpoint for the device authorization flow
-        <br>
+      - Device Authorization Endpoint
+      description: Endpoint for the device authorization flow
       operationId: ApiController.DeviceAuth
       responses:
         "200":
@@ -1303,10 +1175,8 @@ paths:
   /api/enforce:
     post:
       tags:
-      - api
-      description: |-
-        Call Casbin Enforce API
-        <br>
+      - Enforcer API
+      description: Call Casbin Enforce API
       operationId: ApiController.Enforce
       parameters:
       - in: body
@@ -1341,10 +1211,8 @@ paths:
   /api/faceid-signin-begin:
     get:
       tags:
-      - api
-      description: |-
-        FaceId Login Flow 1st stage
-        <br>
+      - Login API
+      description: FaceId Login Flow 1st stage
       operationId: ApiController.FaceIDSigninBegin
       parameters:
       - in: query
@@ -1365,10 +1233,8 @@ paths:
   /api/get-account:
     get:
       tags:
-      - api
-      description: |-
-        get the details of the current account
-        <br>
+      - Account API
+      description: get the details of the current account
       operationId: ApiController.GetAccount
       responses:
         "200":
@@ -1378,10 +1244,8 @@ paths:
   /api/get-adapter:
     get:
       tags:
-      - api
-      description: |-
-        get adapter
-        <br>
+      - Adapter API
+      description: get adapter
       operationId: ApiController.GetAdapter
       parameters:
       - in: query
@@ -1397,10 +1261,8 @@ paths:
   /api/get-adapters:
     get:
       tags:
-      - api
-      description: |-
-        get adapters
-        <br>
+      - Adapter API
+      description: get adapters
       operationId: ApiController.GetAdapters
       parameters:
       - in: query
@@ -1418,10 +1280,8 @@ paths:
   /api/get-app-login:
     get:
       tags:
-      - api
-      description: |-
-        get application login
-        <br>
+      - Login API
+      description: get application login
       operationId: ApiController.GetApplicationLogin
       parameters:
       - in: query
@@ -1457,10 +1317,8 @@ paths:
   /api/get-application:
     get:
       tags:
-      - api
-      description: |-
-        get the detail of an application
-        <br>
+      - Application API
+      description: get the detail of an application
       operationId: ApiController.GetApplication
       parameters:
       - in: query
@@ -1476,10 +1334,8 @@ paths:
   /api/get-applications:
     get:
       tags:
-      - api
-      description: |-
-        get all applications
-        <br>
+      - Application API
+      description: get all applications
       operationId: ApiController.GetApplications
       parameters:
       - in: query
@@ -1497,7 +1353,7 @@ paths:
   /api/get-captcha:
     get:
       tags:
-      - api
+      - Login API
       operationId: ApiController.GetCaptcha
       responses:
         "200":
@@ -1507,10 +1363,8 @@ paths:
   /api/get-captcha-status:
     get:
       tags:
-      - api
-      description: |-
-        Get Login Error Counts
-        <br>
+      - Token API
+      description: Get Login Error Counts
       operationId: ApiController.GetCaptchaStatus
       parameters:
       - in: query
@@ -1526,10 +1380,8 @@ paths:
   /api/get-cert:
     get:
       tags:
-      - api
-      description: |-
-        get cert
-        <br>
+      - Cert API
+      description: get cert
       operationId: ApiController.GetCert
       parameters:
       - in: query
@@ -1545,10 +1397,8 @@ paths:
   /api/get-certs:
     get:
       tags:
-      - api
-      description: |-
-        get certs
-        <br>
+      - Cert API
+      description: get certs
       operationId: ApiController.GetCerts
       parameters:
       - in: query
@@ -1566,10 +1416,8 @@ paths:
   /api/get-dashboard:
     get:
       tags:
-      - api
-      description: |-
-        get information of dashboard
-        <br>
+      - System API
+      description: get information of dashboard
       operationId: ApiController.GetDashboard
       responses:
         "200":
@@ -1579,10 +1427,8 @@ paths:
   /api/get-default-application:
     get:
       tags:
-      - api
-      description: |-
-        get default application
-        <br>
+      - Organization API
+      description: get default application
       operationId: ApiController.GetDefaultApplication
       parameters:
       - in: query
@@ -1598,10 +1444,8 @@ paths:
   /api/get-email-and-phone:
     get:
       tags:
-      - api
-      description: |-
-        get email and phone by username
-        <br>
+      - User API
+      description: get email and phone by username
       operationId: ApiController.GetEmailAndPhone
       parameters:
       - in: formData
@@ -1622,10 +1466,8 @@ paths:
   /api/get-enforcer:
     get:
       tags:
-      - api
-      description: |-
-        get enforcer
-        <br>
+      - Enforcer API
+      description: get enforcer
       operationId: ApiController.GetEnforcer
       parameters:
       - in: query
@@ -1641,10 +1483,8 @@ paths:
   /api/get-enforcers:
     get:
       tags:
-      - api
-      description: |-
-        get enforcers
-        <br>
+      - Enforcer API
+      description: get enforcers
       operationId: ApiController.GetEnforcers
       parameters:
       - in: query
@@ -1662,10 +1502,8 @@ paths:
   /api/get-filtered-policies:
     post:
       tags:
-      - api
-      description: |-
-        get filtered policies with support for multiple filters via POST body
-        <br>
+      - Enforcer API
+      description: get filtered policies with support for multiple filters via POST body
       operationId: ApiController.GetFilteredPolicies
       parameters:
       - in: query
@@ -1691,10 +1529,8 @@ paths:
   /api/get-form:
     get:
       tags:
-      - api
-      description: |-
-        get form
-        <br>
+      - Form API
+      description: get form
       operationId: ApiController.GetForm
       parameters:
       - in: query
@@ -1710,10 +1546,8 @@ paths:
   /api/get-forms:
     get:
       tags:
-      - api
-      description: |-
-        get forms
-        <br>
+      - Form API
+      description: get forms
       operationId: ApiController.GetForms
       parameters:
       - in: query
@@ -1731,10 +1565,8 @@ paths:
   /api/get-global-certs:
     get:
       tags:
-      - api
-      description: |-
-        get global certs
-        <br>
+      - Cert API
+      description: get global certs
       operationId: ApiController.GetGlobalCerts
       responses:
         "200":
@@ -1746,10 +1578,8 @@ paths:
   /api/get-global-forms:
     get:
       tags:
-      - api
-      description: |-
-        get global forms
-        <br>
+      - Form API
+      description: get global forms
       operationId: ApiController.GetGlobalForms
       responses:
         "200":
@@ -1761,10 +1591,8 @@ paths:
   /api/get-global-providers:
     get:
       tags:
-      - api
-      description: |-
-        get Global providers
-        <br>
+      - Provider API
+      description: get Global providers
       operationId: ApiController.GetGlobalProviders
       responses:
         "200":
@@ -1776,10 +1604,8 @@ paths:
   /api/get-global-users:
     get:
       tags:
-      - api
-      description: |-
-        get global users
-        <br>
+      - User API
+      description: get global users
       operationId: ApiController.GetGlobalUsers
       responses:
         "200":
@@ -1791,10 +1617,8 @@ paths:
   /api/get-group:
     get:
       tags:
-      - api
-      description: |-
-        get group
-        <br>
+      - Group API
+      description: get group
       operationId: ApiController.GetGroup
       parameters:
       - in: query
@@ -1810,10 +1634,8 @@ paths:
   /api/get-groups:
     get:
       tags:
-      - api
-      description: |-
-        get groups
-        <br>
+      - Group API
+      description: get groups
       operationId: ApiController.GetGroups
       parameters:
       - in: query
@@ -1831,10 +1653,8 @@ paths:
   /api/get-invitation:
     get:
       tags:
-      - api
-      description: |-
-        get invitation
-        <br>
+      - Invitation API
+      description: get invitation
       operationId: ApiController.GetInvitation
       parameters:
       - in: query
@@ -1850,10 +1670,8 @@ paths:
   /api/get-invitation-info:
     get:
       tags:
-      - api
-      description: |-
-        get invitation code information
-        <br>
+      - Invitation API
+      description: get invitation code information
       operationId: ApiController.GetInvitationCodeInfo
       parameters:
       - in: query
@@ -1869,10 +1687,8 @@ paths:
   /api/get-invitations:
     get:
       tags:
-      - api
-      description: |-
-        get invitations
-        <br>
+      - Invitation API
+      description: get invitations
       operationId: ApiController.GetInvitations
       parameters:
       - in: query
@@ -1890,10 +1706,8 @@ paths:
   /api/get-ldap:
     get:
       tags:
-      - api
-      description: |-
-        get ldap
-        <br>
+      - Account API
+      description: get ldap
       operationId: ApiController.GetLdap
       parameters:
       - in: query
@@ -1909,10 +1723,8 @@ paths:
   /api/get-ldap-users:
     get:
       tags:
-      - api
-      description: |-
-        get ldap users
-        <br>
+      - Account API
+      description: get ldap users
       operationId: ApiController.GetLdapser
       responses:
         "200":
@@ -1922,10 +1734,8 @@ paths:
   /api/get-ldaps:
     get:
       tags:
-      - api
-      description: |-
-        get ldaps
-        <br>
+      - Account API
+      description: get ldaps
       operationId: ApiController.GetLdaps
       parameters:
       - in: query
@@ -1942,10 +1752,8 @@ paths:
   /api/get-model:
     get:
       tags:
-      - api
-      description: |-
-        get model
-        <br>
+      - Model API
+      description: get model
       operationId: ApiController.GetModel
       parameters:
       - in: query
@@ -1961,10 +1769,8 @@ paths:
   /api/get-models:
     get:
       tags:
-      - api
-      description: |-
-        get models
-        <br>
+      - Model API
+      description: get models
       operationId: ApiController.GetModels
       parameters:
       - in: query
@@ -1982,10 +1788,8 @@ paths:
   /api/get-order:
     get:
       tags:
-      - api
-      description: |-
-        get order
-        <br>
+      - Order API
+      description: get order
       operationId: ApiController.GetOrder
       parameters:
       - in: query
@@ -2001,10 +1805,8 @@ paths:
   /api/get-orders:
     get:
       tags:
-      - api
-      description: |-
-        get orders
-        <br>
+      - Order API
+      description: get orders
       operationId: ApiController.GetOrders
       parameters:
       - in: query
@@ -2022,10 +1824,8 @@ paths:
   /api/get-organization:
     get:
       tags:
-      - api
-      description: |-
-        get organization
-        <br>
+      - Organization API
+      description: get organization
       operationId: ApiController.GetOrganization
       parameters:
       - in: query
@@ -2041,10 +1841,8 @@ paths:
   /api/get-organization-applications:
     get:
       tags:
-      - api
-      description: |-
-        get the detail of the organization's application
-        <br>
+      - Application API
+      description: get the detail of the organization's application
       operationId: ApiController.GetOrganizationApplications
       parameters:
       - in: query
@@ -2062,10 +1860,8 @@ paths:
   /api/get-organization-names:
     get:
       tags:
-      - api
-      description: |-
-        get all organization name and displayName
-        <br>
+      - Organization API
+      description: get all organization name and displayName
       operationId: ApiController.GetOrganizationNames
       parameters:
       - in: query
@@ -2083,10 +1879,8 @@ paths:
   /api/get-organizations:
     get:
       tags:
-      - api
-      description: |-
-        get organizations
-        <br>
+      - Organization API
+      description: get organizations
       operationId: ApiController.GetOrganizations
       parameters:
       - in: query
@@ -2104,10 +1898,8 @@ paths:
   /api/get-payment:
     get:
       tags:
-      - api
-      description: |-
-        get payment
-        <br>
+      - Payment API
+      description: get payment
       operationId: ApiController.GetPayment
       parameters:
       - in: query
@@ -2123,10 +1915,8 @@ paths:
   /api/get-payments:
     get:
       tags:
-      - api
-      description: |-
-        get payments
-        <br>
+      - Payment API
+      description: get payments
       operationId: ApiController.GetPayments
       parameters:
       - in: query
@@ -2144,10 +1934,8 @@ paths:
   /api/get-permission:
     get:
       tags:
-      - api
-      description: |-
-        get permission
-        <br>
+      - Permission API
+      description: get permission
       operationId: ApiController.GetPermission
       parameters:
       - in: query
@@ -2163,10 +1951,8 @@ paths:
   /api/get-permissions:
     get:
       tags:
-      - api
-      description: |-
-        get permissions
-        <br>
+      - Permission API
+      description: get permissions
       operationId: ApiController.GetPermissions
       parameters:
       - in: query
@@ -2184,10 +1970,8 @@ paths:
   /api/get-permissions-by-role:
     get:
       tags:
-      - api
-      description: |-
-        get permissions by role
-        <br>
+      - Permission API
+      description: get permissions by role
       operationId: ApiController.GetPermissionsByRole
       parameters:
       - in: query
@@ -2205,10 +1989,8 @@ paths:
   /api/get-permissions-by-submitter:
     get:
       tags:
-      - api
-      description: |-
-        get permissions by submitter
-        <br>
+      - Permission API
+      description: get permissions by submitter
       operationId: ApiController.GetPermissionsBySubmitter
       responses:
         "200":
@@ -2220,10 +2002,8 @@ paths:
   /api/get-plan:
     get:
       tags:
-      - api
-      description: |-
-        get plan
-        <br>
+      - Plan API
+      description: get plan
       operationId: ApiController.GetPlan
       parameters:
       - in: query
@@ -2243,10 +2023,8 @@ paths:
   /api/get-plans:
     get:
       tags:
-      - api
-      description: |-
-        get plans
-        <br>
+      - Plan API
+      description: get plans
       operationId: ApiController.GetPlans
       parameters:
       - in: query
@@ -2264,10 +2042,8 @@ paths:
   /api/get-policies:
     get:
       tags:
-      - api
-      description: |-
-        get policies
-        <br>
+      - Enforcer API
+      description: get policies
       operationId: ApiController.GetPolicies
       parameters:
       - in: query
@@ -2289,10 +2065,8 @@ paths:
   /api/get-pricing:
     get:
       tags:
-      - api
-      description: |-
-        get pricing
-        <br>
+      - Pricing API
+      description: get pricing
       operationId: ApiController.GetPricing
       parameters:
       - in: query
@@ -2308,10 +2082,8 @@ paths:
   /api/get-pricings:
     get:
       tags:
-      - api
-      description: |-
-        get pricings
-        <br>
+      - Pricing API
+      description: get pricings
       operationId: ApiController.GetPricings
       parameters:
       - in: query
@@ -2329,10 +2101,8 @@ paths:
   /api/get-product:
     get:
       tags:
-      - api
-      description: |-
-        get product
-        <br>
+      - Product API
+      description: get product
       operationId: ApiController.GetProduct
       parameters:
       - in: query
@@ -2348,10 +2118,8 @@ paths:
   /api/get-products:
     get:
       tags:
-      - api
-      description: |-
-        get products
-        <br>
+      - Product API
+      description: get products
       operationId: ApiController.GetProducts
       parameters:
       - in: query
@@ -2369,10 +2137,8 @@ paths:
   /api/get-prometheus-info:
     get:
       tags:
-      - api
-      description: |-
-        get Prometheus Info
-        <br>
+      - System API
+      description: get Prometheus Info
       operationId: ApiController.GetPrometheusInfo
       responses:
         "200":
@@ -2382,10 +2148,8 @@ paths:
   /api/get-provider:
     get:
       tags:
-      - api
-      description: |-
-        get provider
-        <br>
+      - Provider API
+      description: get provider
       operationId: ApiController.GetProvider
       parameters:
       - in: query
@@ -2401,10 +2165,8 @@ paths:
   /api/get-providers:
     get:
       tags:
-      - api
-      description: |-
-        get providers
-        <br>
+      - Provider API
+      description: get providers
       operationId: ApiController.GetProviders
       parameters:
       - in: query
@@ -2422,7 +2184,7 @@ paths:
   /api/get-qrcode:
     get:
       tags:
-      - api
+      - System API
       operationId: ApiController.GetWechatQRCode
       parameters:
       - in: query
@@ -2438,10 +2200,8 @@ paths:
   /api/get-records:
     get:
       tags:
-      - api
-      description: |-
-        get all records
-        <br>
+      - Record API
+      description: get all records
       operationId: ApiController.GetRecords
       parameters:
       - in: query
@@ -2462,10 +2222,8 @@ paths:
   /api/get-records-filter:
     post:
       tags:
-      - api
-      description: |-
-        get records by filter
-        <br>
+      - Record API
+      description: get records by filter
       operationId: ApiController.GetRecordsByFilter
       parameters:
       - in: body
@@ -2483,10 +2241,8 @@ paths:
   /api/get-resource:
     get:
       tags:
-      - api
-      description: |-
-        get resource
-        <br>
+      - Resource API
+      description: get resource
       operationId: ApiController.GetResource
       parameters:
       - in: query
@@ -2502,10 +2258,8 @@ paths:
   /api/get-resources:
     get:
       tags:
-      - api
-      description: |-
-        get resources
-        <br>
+      - Resource API
+      description: get resources
       operationId: ApiController.GetResources
       parameters:
       - in: query
@@ -2552,10 +2306,8 @@ paths:
   /api/get-role:
     get:
       tags:
-      - api
-      description: |-
-        get role
-        <br>
+      - Role API
+      description: get role
       operationId: ApiController.GetRole
       parameters:
       - in: query
@@ -2571,10 +2323,8 @@ paths:
   /api/get-roles:
     get:
       tags:
-      - api
-      description: |-
-        get roles
-        <br>
+      - Role API
+      description: get roles
       operationId: ApiController.GetRoles
       parameters:
       - in: query
@@ -2592,16 +2342,13 @@ paths:
   /api/get-session:
     get:
       tags:
-      - api
-      description: |-
-        Get session for one user in one application.
-        <br>
+      - Session API
+      description: Get session for one user in one application.
       operationId: ApiController.GetSingleSession
       parameters:
       - in: query
         name: sessionPkId
-        description: 'The session ID in format: organization/user/application (e.g.,
-          built-in/admin/app-built-in)'
+        description: The id(organization/user/application) of session
         required: true
         type: string
       responses:
@@ -2614,10 +2361,8 @@ paths:
   /api/get-sessions:
     get:
       tags:
-      - api
-      description: |-
-        Get organization user sessions.
-        <br>
+      - Session API
+      description: Get organization user sessions.
       operationId: ApiController.GetSessions
       parameters:
       - in: query
@@ -2635,10 +2380,7 @@ paths:
   /api/get-sorted-users:
     get:
       tags:
-      - api
-      description: |2-
-
-        <br>
+      - User API
       operationId: ApiController.GetSortedUsers
       parameters:
       - in: query
@@ -2666,10 +2408,8 @@ paths:
   /api/get-subscription:
     get:
       tags:
-      - api
-      description: |-
-        get subscription
-        <br>
+      - Subscription API
+      description: get subscription
       operationId: ApiController.GetSubscription
       parameters:
       - in: query
@@ -2685,10 +2425,8 @@ paths:
   /api/get-subscriptions:
     get:
       tags:
-      - api
-      description: |-
-        get subscriptions
-        <br>
+      - Subscription API
+      description: get subscriptions
       operationId: ApiController.GetSubscriptions
       parameters:
       - in: query
@@ -2706,10 +2444,8 @@ paths:
   /api/get-syncer:
     get:
       tags:
-      - api
-      description: |-
-        get syncer
-        <br>
+      - Syncer API
+      description: get syncer
       operationId: ApiController.GetSyncer
       parameters:
       - in: query
@@ -2725,10 +2461,8 @@ paths:
   /api/get-syncers:
     get:
       tags:
-      - api
-      description: |-
-        get syncers
-        <br>
+      - Syncer API
+      description: get syncers
       operationId: ApiController.GetSyncers
       parameters:
       - in: query
@@ -2746,10 +2480,8 @@ paths:
   /api/get-system-info:
     get:
       tags:
-      - api
-      description: |-
-        get system info like CPU and memory usage
-        <br>
+      - System API
+      description: get system info like CPU and memory usage
       operationId: ApiController.GetSystemInfo
       responses:
         "200":
@@ -2759,15 +2491,13 @@ paths:
   /api/get-token:
     get:
       tags:
-      - api
-      description: |-
-        get token
-        <br>
+      - Token API
+      description: get token
       operationId: ApiController.GetToken
       parameters:
       - in: query
         name: id
-        description: 'The token ID in format: organization/token-name (e.g., built-in/token-123456)'
+        description: The id ( owner/name ) of token
         required: true
         type: string
       responses:
@@ -2778,15 +2508,13 @@ paths:
   /api/get-tokens:
     get:
       tags:
-      - api
-      description: |-
-        get tokens
-        <br>
+      - Token API
+      description: get tokens
       operationId: ApiController.GetTokens
       parameters:
       - in: query
         name: owner
-        description: The organization name (e.g., built-in)
+        description: The owner of tokens
         required: true
         type: string
       - in: query
@@ -2809,10 +2537,8 @@ paths:
   /api/get-transaction:
     get:
       tags:
-      - api
-      description: |-
-        get transaction
-        <br>
+      - Transaction API
+      description: get transaction
       operationId: ApiController.GetTransaction
       parameters:
       - in: query
@@ -2828,10 +2554,8 @@ paths:
   /api/get-transactions:
     get:
       tags:
-      - api
-      description: |-
-        get transactions
-        <br>
+      - Transaction API
+      description: get transactions
       operationId: ApiController.GetTransactions
       parameters:
       - in: query
@@ -2849,10 +2573,8 @@ paths:
   /api/get-user:
     get:
       tags:
-      - api
-      description: |-
-        get user
-        <br>
+      - User API
+      description: get user
       operationId: ApiController.GetUser
       parameters:
       - in: query
@@ -2883,10 +2605,8 @@ paths:
   /api/get-user-application:
     get:
       tags:
-      - api
-      description: |-
-        get the detail of the user's application
-        <br>
+      - Application API
+      description: get the detail of the user's application
       operationId: ApiController.GetUserApplication
       parameters:
       - in: query
@@ -2902,10 +2622,7 @@ paths:
   /api/get-user-count:
     get:
       tags:
-      - api
-      description: |2-
-
-        <br>
+      - User API
       operationId: ApiController.GetUserCount
       parameters:
       - in: query
@@ -2915,8 +2632,7 @@ paths:
         type: string
       - in: query
         name: isOnline
-        description: The filter for query, 1 for online, 0 for offline, empty string
-          for all users
+        description: The filter for query, 1 for online, 0 for offline, empty string for all users
         required: true
         type: string
       responses:
@@ -2925,10 +2641,8 @@ paths:
   /api/get-user-orders:
     get:
       tags:
-      - api
-      description: |-
-        get orders for a user
-        <br>
+      - Order API
+      description: get orders for a user
       operationId: ApiController.GetUserOrders
       parameters:
       - in: query
@@ -2951,10 +2665,8 @@ paths:
   /api/get-user-payments:
     get:
       tags:
-      - api
-      description: |-
-        get payments for a user
-        <br>
+      - Payment API
+      description: get payments for a user
       operationId: ApiController.GetUserPayments
       parameters:
       - in: query
@@ -2982,10 +2694,7 @@ paths:
   /api/get-users:
     get:
       tags:
-      - api
-      description: |2-
-
-        <br>
+      - User API
       operationId: ApiController.GetUsers
       parameters:
       - in: query
@@ -3003,10 +2712,8 @@ paths:
   /api/get-version-info:
     get:
       tags:
-      - api
-      description: |-
-        get version info like Casdoor release version and commit ID
-        <br>
+      - System API
+      description: get version info like Casdoor release version and commit ID
       operationId: ApiController.GetVersionInfo
       responses:
         "200":
@@ -3016,10 +2723,8 @@ paths:
   /api/get-webhook:
     get:
       tags:
-      - api
-      description: |-
-        get webhook
-        <br>
+      - Webhook API
+      description: get webhook
       operationId: ApiController.GetWebhook
       parameters:
       - in: query
@@ -3036,7 +2741,7 @@ paths:
   /api/get-webhook-event:
     get:
       tags:
-      - api
+      - System API
       operationId: ApiController.GetWebhookEventType
       parameters:
       - in: query
@@ -3052,10 +2757,8 @@ paths:
   /api/get-webhooks:
     get:
       tags:
-      - api
-      description: |-
-        get webhooks
-        <br>
+      - Webhook API
+      description: get webhooks
       operationId: ApiController.GetWebhooks
       parameters:
       - in: query
@@ -3076,10 +2779,8 @@ paths:
   /api/health:
     get:
       tags:
-      - api
-      description: |-
-        check if the system is live
-        <br>
+      - System API
+      description: check if the system is live
       operationId: ApiController.Health
       responses:
         "200":
@@ -3089,10 +2790,8 @@ paths:
   /api/invoice-payment:
     post:
       tags:
-      - api
-      description: |-
-        invoice payment
-        <br>
+      - Payment API
+      description: invoice payment
       operationId: ApiController.InvoicePayment
       parameters:
       - in: query
@@ -3108,21 +2807,18 @@ paths:
   /api/is-session-duplicated:
     get:
       tags:
-      - api
-      description: |-
-        Check if there are other different sessions for one user in one application.
-        <br>
+      - Session API
+      description: Check if there are other different sessions for one user in one application.
       operationId: ApiController.IsSessionDuplicated
       parameters:
       - in: query
         name: sessionPkId
-        description: 'The session ID in format: organization/user/application (e.g.,
-          built-in/admin/app-built-in)'
+        description: The id(organization/user/application) of session
         required: true
         type: string
       - in: query
         name: sessionId
-        description: The specific session ID to check
+        description: sessionId to be checked
         required: true
         type: string
       responses:
@@ -3135,10 +2831,8 @@ paths:
   /api/login:
     post:
       tags:
-      - api
-      description: |-
-        login
-        <br>
+      - Login API
+      description: login
       operationId: ApiController.Login
       parameters:
       - in: query
@@ -3190,10 +2884,8 @@ paths:
   /api/login/oauth/access_token:
     post:
       tags:
-      - api
-      description: |-
-        get OAuth access token
-        <br>
+      - Token API
+      description: get OAuth access token
       operationId: ApiController.GetOAuthToken
       parameters:
       - in: query
@@ -3232,10 +2924,8 @@ paths:
   /api/login/oauth/introspect:
     post:
       tags:
-      - api
-      description: |-
-        The introspection endpoint is an OAuth 2.0 endpoint that takes a
-        <br>
+      - Login API
+      description: The introspection endpoint is an OAuth 2.0 endpoint that takes a
       operationId: ApiController.IntrospectToken
       parameters:
       - in: formData
@@ -3264,10 +2954,8 @@ paths:
   /api/login/oauth/refresh_token:
     post:
       tags:
-      - api
-      description: |-
-        refresh OAuth access token
-        <br>
+      - Token API
+      description: refresh OAuth access token
       operationId: ApiController.RefreshToken
       parameters:
       - in: query
@@ -3310,10 +2998,8 @@ paths:
   /api/logout:
     post:
       tags:
-      - api
-      description: |-
-        logout the current user
-        <br>
+      - Login API
+      description: logout the current user
       operationId: ApiController.Logout
       parameters:
       - in: query
@@ -3336,10 +3022,8 @@ paths:
   /api/metrics:
     get:
       tags:
-      - api
-      description: |-
-        get Prometheus metrics
-        <br>
+      - System API
+      description: get Prometheus metrics
       operationId: ApiController.GetMetrics
       responses:
         "200":
@@ -3347,10 +3031,8 @@ paths:
   /api/mfa/setup/enable:
     post:
       tags:
-      - api
-      description: |-
-        enable totp
-        <br>
+      - MFA API
+      description: enable totp
       operationId: ApiController.MfaSetupEnable
       responses:
         "200":
@@ -3360,10 +3042,8 @@ paths:
   /api/mfa/setup/initiate:
     post:
       tags:
-      - api
-      description: |-
-        setup MFA
-        <br>
+      - MFA API
+      description: setup MFA
       operationId: ApiController.MfaSetupInitiate
       responses:
         "200":
@@ -3373,10 +3053,8 @@ paths:
   /api/mfa/setup/verify:
     post:
       tags:
-      - api
-      description: |-
-        setup verify totp
-        <br>
+      - MFA API
+      description: setup verify totp
       operationId: ApiController.MfaSetupVerify
       responses:
         "200":
@@ -3386,10 +3064,8 @@ paths:
   /api/notify-payment:
     post:
       tags:
-      - api
-      description: |-
-        notify payment
-        <br>
+      - Payment API
+      description: notify payment
       operationId: ApiController.NotifyPayment
       parameters:
       - in: body
@@ -3403,72 +3079,11 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
-  /api/pay-order:
-    post:
-      tags:
-      - api
-      description: |-
-        pay an existing order
-        <br>
-      operationId: ApiController.PayOrder
-      parameters:
-      - in: query
-        name: id
-        description: The id ( owner/name ) of the order
-        required: true
-        type: string
-      - in: query
-        name: providerName
-        description: The name of the provider
-        required: true
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
-  /api/place-order:
-    post:
-      tags:
-      - api
-      description: |-
-        place an order for a product
-        <br>
-      operationId: ApiController.PlaceOrder
-      parameters:
-      - in: query
-        name: productId
-        description: The id ( owner/name ) of the product
-        required: true
-        type: string
-      - in: query
-        name: pricingName
-        description: The name of the pricing (for subscription)
-        type: string
-      - in: query
-        name: planName
-        description: The name of the plan (for subscription)
-        type: string
-      - in: query
-        name: customPrice
-        description: Custom price for recharge products
-        type: number
-      - in: query
-        name: userName
-        description: The username to place order for (admin only)
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/object.Order'
   /api/refresh-engines:
     post:
       tags:
-      - api
-      description: |-
-        Refresh all CLI engines
-        <br>
+      - CLI API
+      description: Refresh all CLI engines
       operationId: ApiController.RefreshEngines
       parameters:
       - in: query
@@ -3489,10 +3104,8 @@ paths:
   /api/remove-policy:
     post:
       tags:
-      - api
-      description: |-
-        remove policy
-        <br>
+      - Enforcer API
+      description: remove policy
       operationId: ApiController.RemovePolicy
       parameters:
       - in: query
@@ -3514,7 +3127,7 @@ paths:
   /api/reset-email-or-phone:
     post:
       tags:
-      - api
+      - Account API
       operationId: ApiController.ResetEmailOrPhone
       responses:
         "200":
@@ -3524,10 +3137,8 @@ paths:
   /api/run-casbin-command:
     get:
       tags:
-      - api
-      description: |-
-        Call Casbin CLI commands
-        <br>
+      - Enforcer API
+      description: Call Casbin CLI commands
       operationId: ApiController.RunCasbinCommand
       responses:
         "200":
@@ -3537,10 +3148,8 @@ paths:
   /api/run-syncer:
     get:
       tags:
-      - api
-      description: |-
-        run syncer
-        <br>
+      - Syncer API
+      description: run syncer
       operationId: ApiController.RunSyncer
       parameters:
       - in: body
@@ -3557,10 +3166,8 @@ paths:
   /api/send-email:
     post:
       tags:
-      - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
       operationId: ApiController.SendEmail
       parameters:
       - in: query
@@ -3587,10 +3194,8 @@ paths:
   /api/send-invitation:
     post:
       tags:
-      - api
-      description: |-
-        verify invitation
-        <br>
+      - Invitation API
+      description: verify invitation
       operationId: ApiController.VerifyInvitation
       parameters:
       - in: query
@@ -3614,10 +3219,8 @@ paths:
   /api/send-notification:
     post:
       tags:
-      - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
       operationId: ApiController.SendNotification
       parameters:
       - in: body
@@ -3634,10 +3237,8 @@ paths:
   /api/send-sms:
     post:
       tags:
-      - api
-      description: |-
-        This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
-        <br>
+      - Service API
+      description: This API is not for Casdoor frontend to call, it is for Casdoor SDKs.
       operationId: ApiController.SendSms
       parameters:
       - in: query
@@ -3664,7 +3265,7 @@ paths:
   /api/send-verification-code:
     post:
       tags:
-      - api
+      - Verification API
       operationId: ApiController.SendVerificationCode
       responses:
         "200":
@@ -3674,10 +3275,8 @@ paths:
   /api/set-password:
     post:
       tags:
-      - api
-      description: |-
-        set password
-        <br>
+      - Account API
+      description: set password
       operationId: ApiController.SetPassword
       parameters:
       - in: formData
@@ -3708,10 +3307,8 @@ paths:
   /api/set-preferred-mfa:
     post:
       tags:
-      - api
-      description: |-
-        : Set specific Mfa Preferred
-        <br>
+      - MFA API
+      description: ': Set specific Mfa Preferred'
       operationId: ApiController.SetPreferredMfa
       responses:
         "200":
@@ -3721,10 +3318,8 @@ paths:
   /api/signup:
     post:
       tags:
-      - api
-      description: |-
-        sign up a new user
-        <br>
+      - Login API
+      description: sign up a new user
       operationId: ApiController.Signup
       parameters:
       - in: formData
@@ -3745,10 +3340,8 @@ paths:
   /api/sso-logout:
     get:
       tags:
-      - api
-      description: |-
-        logout the current user from all applications
-        <br>
+      - Login API
+      description: logout the current user from all applications
       operationId: ApiController.SsoLogout
       responses:
         "200":
@@ -3757,10 +3350,8 @@ paths:
             $ref: '#/definitions/controllers.Response'
     post:
       tags:
-      - api
-      description: |-
-        logout the current user from all applications
-        <br>
+      - Login API
+      description: logout the current user from all applications
       operationId: ApiController.SsoLogout
       responses:
         "200":
@@ -3770,10 +3361,8 @@ paths:
   /api/sync-ldap-users:
     post:
       tags:
-      - api
-      description: |-
-        sync ldap users
-        <br>
+      - Account API
+      description: sync ldap users
       operationId: ApiController.SyncLdapUsers
       parameters:
       - in: query
@@ -3789,7 +3378,7 @@ paths:
   /api/unlink:
     post:
       tags:
-      - api
+      - Login API
       operationId: ApiController.Unlink
       responses:
         "200":
@@ -3799,10 +3388,8 @@ paths:
   /api/update-adapter:
     post:
       tags:
-      - api
-      description: |-
-        update adapter
-        <br>
+      - Adapter API
+      description: update adapter
       operationId: ApiController.UpdateAdapter
       parameters:
       - in: query
@@ -3824,10 +3411,8 @@ paths:
   /api/update-application:
     post:
       tags:
-      - api
-      description: |-
-        update an application
-        <br>
+      - Application API
+      description: update an application
       operationId: ApiController.UpdateApplication
       parameters:
       - in: query
@@ -3849,10 +3434,8 @@ paths:
   /api/update-cert:
     post:
       tags:
-      - api
-      description: |-
-        update cert
-        <br>
+      - Cert API
+      description: update cert
       operationId: ApiController.UpdateCert
       parameters:
       - in: query
@@ -3874,10 +3457,8 @@ paths:
   /api/update-enforcer:
     post:
       tags:
-      - api
-      description: |-
-        update enforcer
-        <br>
+      - Enforcer API
+      description: update enforcer
       operationId: ApiController.UpdateEnforcer
       parameters:
       - in: query
@@ -3899,10 +3480,8 @@ paths:
   /api/update-form:
     post:
       tags:
-      - api
-      description: |-
-        update form
-        <br>
+      - Form API
+      description: update form
       operationId: ApiController.UpdateForm
       parameters:
       - in: query
@@ -3924,10 +3503,8 @@ paths:
   /api/update-group:
     post:
       tags:
-      - api
-      description: |-
-        update group
-        <br>
+      - Group API
+      description: update group
       operationId: ApiController.UpdateGroup
       parameters:
       - in: query
@@ -3949,10 +3526,8 @@ paths:
   /api/update-invitation:
     post:
       tags:
-      - api
-      description: |-
-        update invitation
-        <br>
+      - Invitation API
+      description: update invitation
       operationId: ApiController.UpdateInvitation
       parameters:
       - in: query
@@ -3974,10 +3549,8 @@ paths:
   /api/update-ldap:
     post:
       tags:
-      - api
-      description: |-
-        update ldap
-        <br>
+      - Account API
+      description: update ldap
       operationId: ApiController.UpdateLdap
       parameters:
       - in: body
@@ -3994,10 +3567,8 @@ paths:
   /api/update-model:
     post:
       tags:
-      - api
-      description: |-
-        update model
-        <br>
+      - Model API
+      description: update model
       operationId: ApiController.UpdateModel
       parameters:
       - in: query
@@ -4019,10 +3590,8 @@ paths:
   /api/update-order:
     post:
       tags:
-      - api
-      description: |-
-        update order
-        <br>
+      - Order API
+      description: update order
       operationId: ApiController.UpdateOrder
       parameters:
       - in: query
@@ -4044,10 +3613,8 @@ paths:
   /api/update-organization:
     post:
       tags:
-      - api
-      description: |-
-        update organization
-        <br>
+      - Organization API
+      description: update organization
       operationId: ApiController.UpdateOrganization
       parameters:
       - in: query
@@ -4069,10 +3636,8 @@ paths:
   /api/update-payment:
     post:
       tags:
-      - api
-      description: |-
-        update payment
-        <br>
+      - Payment API
+      description: update payment
       operationId: ApiController.UpdatePayment
       parameters:
       - in: query
@@ -4094,10 +3659,8 @@ paths:
   /api/update-permission:
     post:
       tags:
-      - api
-      description: |-
-        update permission
-        <br>
+      - Permission API
+      description: update permission
       operationId: ApiController.UpdatePermission
       parameters:
       - in: query
@@ -4119,10 +3682,8 @@ paths:
   /api/update-plan:
     post:
       tags:
-      - api
-      description: |-
-        update plan
-        <br>
+      - Plan API
+      description: update plan
       operationId: ApiController.UpdatePlan
       parameters:
       - in: query
@@ -4144,10 +3705,8 @@ paths:
   /api/update-policy:
     post:
       tags:
-      - api
-      description: |-
-        update policy
-        <br>
+      - Enforcer API
+      description: update policy
       operationId: ApiController.UpdatePolicy
       parameters:
       - in: query
@@ -4171,10 +3730,8 @@ paths:
   /api/update-pricing:
     post:
       tags:
-      - api
-      description: |-
-        update pricing
-        <br>
+      - Pricing API
+      description: update pricing
       operationId: ApiController.UpdatePricing
       parameters:
       - in: query
@@ -4196,10 +3753,8 @@ paths:
   /api/update-product:
     post:
       tags:
-      - api
-      description: |-
-        update product
-        <br>
+      - Product API
+      description: update product
       operationId: ApiController.UpdateProduct
       parameters:
       - in: query
@@ -4221,10 +3776,8 @@ paths:
   /api/update-provider:
     post:
       tags:
-      - api
-      description: |-
-        update provider
-        <br>
+      - Provider API
+      description: update provider
       operationId: ApiController.UpdateProvider
       parameters:
       - in: query
@@ -4246,10 +3799,8 @@ paths:
   /api/update-resource:
     post:
       tags:
-      - api
-      description: |-
-        get resource
-        <br>
+      - Resource API
+      description: get resource
       operationId: ApiController.UpdateResource
       parameters:
       - in: query
@@ -4271,10 +3822,8 @@ paths:
   /api/update-role:
     post:
       tags:
-      - api
-      description: |-
-        update role
-        <br>
+      - Role API
+      description: update role
       operationId: ApiController.UpdateRole
       parameters:
       - in: query
@@ -4296,30 +3845,27 @@ paths:
   /api/update-session:
     post:
       tags:
-      - api
-      description: |-
-        Update session for one user in one application.
-        <br>
+      - Session API
+      description: Update session for one user in one application.
       operationId: ApiController.UpdateSession
       parameters:
-      - in: body
-        name: body
-        description: The session object to update
+      - in: query
+        name: id
+        description: The id(organization/user/application) of session
         required: true
-        schema:
-          $ref: '#/definitions/object.Session'
+        type: string
       responses:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/controllers.Response'
+            type: array
+            items:
+              type: string
   /api/update-subscription:
     post:
       tags:
-      - api
-      description: |-
-        update subscription
-        <br>
+      - Subscription API
+      description: update subscription
       operationId: ApiController.UpdateSubscription
       parameters:
       - in: query
@@ -4341,10 +3887,8 @@ paths:
   /api/update-syncer:
     post:
       tags:
-      - api
-      description: |-
-        update syncer
-        <br>
+      - Syncer API
+      description: update syncer
       operationId: ApiController.UpdateSyncer
       parameters:
       - in: query
@@ -4366,15 +3910,13 @@ paths:
   /api/update-token:
     post:
       tags:
-      - api
-      description: |-
-        update token
-        <br>
+      - Token API
+      description: update token
       operationId: ApiController.UpdateToken
       parameters:
       - in: query
         name: id
-        description: 'The token ID in format: organization/token-name (e.g., built-in/token-123456)'
+        description: The id ( owner/name ) of token
         required: true
         type: string
       - in: body
@@ -4391,10 +3933,8 @@ paths:
   /api/update-transaction:
     post:
       tags:
-      - api
-      description: |-
-        update transaction
-        <br>
+      - Transaction API
+      description: update transaction
       operationId: ApiController.UpdateTransaction
       parameters:
       - in: query
@@ -4416,10 +3956,8 @@ paths:
   /api/update-user:
     post:
       tags:
-      - api
-      description: |-
-        update user
-        <br>
+      - User API
+      description: update user
       operationId: ApiController.UpdateUser
       parameters:
       - in: query
@@ -4448,10 +3986,8 @@ paths:
   /api/update-webhook:
     post:
       tags:
-      - api
-      description: |-
-        update webhook
-        <br>
+      - Webhook API
+      description: update webhook
       operationId: ApiController.UpdateWebhook
       parameters:
       - in: query
@@ -4474,7 +4010,7 @@ paths:
   /api/upload-resource:
     post:
       tags:
-      - api
+      - Resource API
       operationId: ApiController.UploadResource
       parameters:
       - in: query
@@ -4526,10 +4062,8 @@ paths:
   /api/user:
     get:
       tags:
-      - api
-      description: |-
-        return Laravel compatible user information according to OAuth 2.0
-        <br>
+      - Account API
+      description: return Laravel compatible user information according to OAuth 2.0
       operationId: ApiController.UserInfo2
       responses:
         "200":
@@ -4539,10 +4073,8 @@ paths:
   /api/userinfo:
     get:
       tags:
-      - api
-      description: |-
-        return user information according to OIDC standards
-        <br>
+      - Account API
+      description: return user information according to OIDC standards
       operationId: ApiController.UserInfo
       responses:
         "200":
@@ -4552,7 +4084,7 @@ paths:
   /api/verify-captcha:
     post:
       tags:
-      - api
+      - Verification API
       operationId: ApiController.VerifyCaptcha
       responses:
         "200":
@@ -4562,47 +4094,18 @@ paths:
   /api/verify-code:
     post:
       tags:
-      - api
+      - Verification API
       operationId: ApiController.VerifyCode
       responses:
         "200":
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
-  /api/verify-identification:
-    post:
-      tags:
-      - api
-      description: |-
-        verify user's real identity using ID Verification provider
-        <br>
-      operationId: ApiController.VerifyIdentification
-      parameters:
-      - in: query
-        name: owner
-        description: The owner of the user (optional, defaults to logged-in user)
-        type: string
-      - in: query
-        name: name
-        description: The name of the user (optional, defaults to logged-in user)
-        type: string
-      - in: query
-        name: provider
-        description: The name of the ID Verification provider (optional, auto-selected
-          if not provided)
-        type: string
-      responses:
-        "200":
-          description: The Response object
-          schema:
-            $ref: '#/definitions/controllers.Response'
   /api/verify-invitation:
     get:
       tags:
-      - api
-      description: |-
-        verify invitation
-        <br>
+      - Invitation API
+      description: verify invitation
       operationId: ApiController.VerifyInvitation
       parameters:
       - in: query
@@ -4618,10 +4121,8 @@ paths:
   /api/webauthn/signin/begin:
     get:
       tags:
-      - api
-      description: |-
-        WebAuthn Login Flow 1st stage
-        <br>
+      - Login API
+      description: WebAuthn Login Flow 1st stage
       operationId: ApiController.WebAuthnSigninBegin
       parameters:
       - in: query
@@ -4642,10 +4143,8 @@ paths:
   /api/webauthn/signin/finish:
     post:
       tags:
-      - api
-      description: |-
-        WebAuthn Login Flow 2nd stage
-        <br>
+      - Login API
+      description: WebAuthn Login Flow 2nd stage
       operationId: ApiController.WebAuthnSigninFinish
       parameters:
       - in: body
@@ -4662,10 +4161,8 @@ paths:
   /api/webauthn/signup/begin:
     get:
       tags:
-      - api
-      description: |-
-        WebAuthn Registration Flow 1st stage
-        <br>
+      - User API
+      description: WebAuthn Registration Flow 1st stage
       operationId: ApiController.WebAuthnSignupBegin
       responses:
         "200":
@@ -4675,10 +4172,8 @@ paths:
   /api/webauthn/signup/finish:
     post:
       tags:
-      - api
-      description: |-
-        WebAuthn Registration Flow 2nd stage
-        <br>
+      - User API
+      description: WebAuthn Registration Flow 2nd stage
       operationId: ApiController.WebAuthnSignupFinish
       parameters:
       - in: body
@@ -4695,7 +4190,7 @@ paths:
   /api/webhook:
     post:
       tags:
-      - api
+      - System API
       operationId: ApiController.HandleOfficialAccountEvent
       responses:
         "200":
@@ -4703,92 +4198,21 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  2087.cacheStruct:
-    title: cacheStruct
-    type: object
-  83407.0.3.NewChannel:
-    title: NewChannel
-    type: object
-  217747.<nil>.string:
+  217289.<nil>.string:
     title: string
     type: object
-  217805.string.string:
+  217347.string.string:
     title: string
-    type: object
-  531915.0.3.forward:
-    title: forward
     type: object
   Response:
     title: Response
     type: object
-  caches.Cacher:
-    title: Cacher
-    type: object
-  caches.Manager:
-    title: Manager
-    type: object
-    properties:
-      cacher:
-        $ref: '#/definitions/caches.Cacher'
-      cacherLock:
-        $ref: '#/definitions/sync.RWMutex'
-      cachers:
-        $ref: '#/definitions/caches.Cacher'
-      disableGlobalCache:
-        type: boolean
   casbin.Enforcer:
     title: Enforcer
     type: object
   casvisorsdk.Record:
     title: Record
     type: object
-    properties:
-      action:
-        type: string
-      clientIp:
-        type: string
-      createdTime:
-        type: string
-      id:
-        type: integer
-        format: int64
-      isTriggered:
-        type: boolean
-      language:
-        type: string
-      method:
-        type: string
-      name:
-        type: string
-      object:
-        type: string
-      organization:
-        type: string
-      owner:
-        type: string
-      requestUri:
-        type: string
-      response:
-        type: string
-      statusCode:
-        type: integer
-        format: int64
-      user:
-        type: string
-  context.Context:
-    title: Context
-    type: object
-  contexts.Hook:
-    title: Hook
-    type: object
-  contexts.Hooks:
-    title: Hooks
-    type: object
-    properties:
-      hooks:
-        type: array
-        items:
-          $ref: '#/definitions/contexts.Hook'
   controllers.AuthForm:
     title: AuthForm
     type: object
@@ -4861,11 +4285,17 @@ definitions:
     type: object
     properties:
       data:
-        $ref: '#/definitions/controllers.interface'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       data2:
-        $ref: '#/definitions/controllers.interface'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       data3:
-        $ref: '#/definitions/controllers.interface'
+        additionalProperties:
+          description: support string, struct or []struct
+          type: string
       msg:
         type: string
       name:
@@ -4881,46 +4311,16 @@ definitions:
       content:
         type: string
       organizationId:
-        description: e.g. "admin/built-in"
         type: string
       receivers:
         type: array
         items:
           type: string
-  controllers.interface:
-    title: interface
-    type: object
-  core.DB:
-    title: DB
-    type: object
-    properties:
-      Logger:
-        $ref: '#/definitions/log.ContextLogger'
-      Mapper:
-        $ref: '#/definitions/names.Mapper'
-      hooks:
-        $ref: '#/definitions/contexts.Hooks'
-      reflectCache:
-        $ref: '#/definitions/2087.cacheStruct'
-      reflectCacheMutex:
-        $ref: '#/definitions/sync.RWMutex'
-  dialects.Dialect:
-    title: Dialect
-    type: object
   jose.JSONWebKey:
     title: JSONWebKey
     type: object
-  log.ContextLogger:
-    title: ContextLogger
-    type: object
   model.Model:
     title: Model
-    type: object
-  names.Mapper:
-    title: Mapper
-    type: object
-  net.Addr:
-    title: Addr
     type: object
   object:
     title: object
@@ -4991,8 +4391,6 @@ definitions:
         type: string
       description:
         type: string
-      disableSamlAttributes:
-        type: boolean
       disableSignin:
         type: boolean
       displayName:
@@ -5417,8 +4815,6 @@ definitions:
     properties:
       name:
         type: string
-      type:
-        type: string
       value:
         type: string
   object.Ldap:
@@ -5644,8 +5040,6 @@ definitions:
     properties:
       createdTime:
         type: string
-      currency:
-        type: string
       displayName:
         type: string
       endTime:
@@ -5658,21 +5052,8 @@ definitions:
         type: string
       payment:
         type: string
-      planName:
-        type: string
-      price:
-        type: number
-        format: double
-      pricingName:
-        type: string
       productName:
         type: string
-      products:
-        description: Future support for multiple products per order. Using varchar(1000)
-          for simple JSON array storage; can be refactored to separate table if needed
-        type: array
-        items:
-          type: string
       startTime:
         type: string
       state:
@@ -5837,11 +5218,7 @@ definitions:
         type: string
       name:
         type: string
-      order:
-        description: Internal order name
-        type: string
       outOrderId:
-        description: External payment provider's order ID
         type: string
       owner:
         type: string
@@ -5864,10 +5241,11 @@ definitions:
         type: string
       provider:
         type: string
+      returnUrl:
+        type: string
       state:
         $ref: '#/definitions/pp.PaymentState'
       successUrl:
-        description: '`successUrl` is redirected from `payUrl` after pay success'
         type: string
       tag:
         type: string
@@ -5954,7 +5332,6 @@ definitions:
       owner:
         type: string
       paymentProviders:
-        description: payment providers for related product
         type: array
         items:
           type: string
@@ -6004,8 +5381,6 @@ definitions:
         type: string
       detail:
         type: string
-      disableCustomRecharge:
-        type: boolean
       displayName:
         type: string
       image:
@@ -6030,11 +5405,8 @@ definitions:
       quantity:
         type: integer
         format: int64
-      rechargeOptions:
-        type: array
-        items:
-          type: number
-          format: double
+      returnUrl:
+        type: string
       sold:
         type: integer
         format: int64
@@ -6080,8 +5452,6 @@ definitions:
       clientSecret2:
         type: string
       content:
-        description: If provider type is WeChat, Content means QRCode string by Base64
-          encoding
         type: string
       createdTime:
         type: string
@@ -6094,8 +5464,6 @@ definitions:
       customUserInfoUrl:
         type: string
       disableSsl:
-        description: If the provider type is WeChat, DisableSsl means EnableQRCode,
-          if type is Google, it means sync phone number
         type: boolean
       displayName:
         type: string
@@ -6183,39 +5551,6 @@ definitions:
   object.Record:
     title: Record
     type: object
-    properties:
-      action:
-        type: string
-      clientIp:
-        type: string
-      createdTime:
-        type: string
-      id:
-        type: integer
-        format: int64
-      isTriggered:
-        type: boolean
-      language:
-        type: string
-      method:
-        type: string
-      name:
-        type: string
-      object:
-        type: string
-      organization:
-        type: string
-      owner:
-        type: string
-      requestUri:
-        type: string
-      response:
-        type: string
-      statusCode:
-        type: integer
-        format: int64
-      user:
-        type: string
   object.Resource:
     title: Resource
     type: object
@@ -6291,24 +5626,6 @@ definitions:
         type: string
       value:
         type: string
-  object.Session:
-    title: Session
-    type: object
-    properties:
-      ExclusiveSignin:
-        type: boolean
-      application:
-        type: string
-      createdTime:
-        type: string
-      name:
-        type: string
-      owner:
-        type: string
-      sessionId:
-        type: array
-        items:
-          type: string
   object.SigninItem:
     title: SigninItem
     type: object
@@ -6780,8 +6097,6 @@ definitions:
         type: boolean
       isOnline:
         type: boolean
-      isVerified:
-        type: boolean
       kakao:
         type: string
       karma:
@@ -6903,8 +6218,6 @@ definitions:
       ranking:
         type: integer
         format: int64
-      realName:
-        type: string
       recoveryCodes:
         type: array
         items:
@@ -7007,8 +6320,6 @@ definitions:
         type: array
         items:
           type: string
-      is_verified:
-        type: boolean
       iss:
         type: string
       name:
@@ -7022,8 +6333,6 @@ definitions:
       picture:
         type: string
       preferred_username:
-        type: string
-      real_name:
         type: string
       roles:
         type: array
@@ -7039,13 +6348,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/217747.<nil>.string'
+        $ref: '#/definitions/217289.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/217805.string.string'
+        $ref: '#/definitions/217347.string.string'
       subject:
         type: string
   object.WebFingerLink:
@@ -7106,344 +6415,23 @@ definitions:
     - PaymentStateTimeout = "Timeout"
     - PaymentStateError = "Error"
     example: Paid
-  protocol.AuthenticationExtensions:
-    title: AuthenticationExtensions
-    type: object
-  protocol.AuthenticationExtensionsClientOutputs:
-    title: AuthenticationExtensionsClientOutputs
-    type: object
-  protocol.AuthenticatorAssertionResponse:
-    title: AuthenticatorAssertionResponse
-    type: object
-    properties:
-      authenticatorData:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      clientDataJSON:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      signature:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      userHandle:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-  protocol.AuthenticatorAttachment:
-    title: AuthenticatorAttachment
-    type: string
-    enum:
-    - Platform = "platform"
-    - CrossPlatform = "cross-platform"
-    example: platform
-  protocol.AuthenticatorAttestationResponse:
-    title: AuthenticatorAttestationResponse
-    type: object
-    properties:
-      attestationObject:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      clientDataJSON:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      transports:
-        type: array
-        items:
-          type: string
-  protocol.AuthenticatorResponse:
-    title: AuthenticatorResponse
-    type: object
-    properties:
-      clientDataJSON:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-  protocol.AuthenticatorSelection:
-    title: AuthenticatorSelection
-    type: object
-    properties:
-      authenticatorAttachment:
-        $ref: '#/definitions/protocol.AuthenticatorAttachment'
-      requireResidentKey:
-        type: boolean
-      residentKey:
-        $ref: '#/definitions/protocol.ResidentKeyRequirement'
-      userVerification:
-        $ref: '#/definitions/protocol.UserVerificationRequirement'
-  protocol.AuthenticatorTransport:
-    title: AuthenticatorTransport
-    type: string
-    enum:
-    - USB = "usb"
-    - NFC = "nfc"
-    - BLE = "ble"
-    - Hybrid = "hybrid"
-    - Internal = "internal"
-    example: usb
-  protocol.ConveyancePreference:
-    title: ConveyancePreference
-    type: string
-    enum:
-    - PreferNoAttestation = "none"
-    - PreferIndirectAttestation = "indirect"
-    - PreferDirectAttestation = "direct"
-    - PreferEnterpriseAttestation = "enterprise"
-    example: none
-  protocol.Credential:
-    title: Credential
-    type: object
-    properties:
-      id:
-        type: string
-      type:
-        type: string
   protocol.CredentialAssertion:
     title: CredentialAssertion
     type: object
-    properties:
-      publicKey:
-        $ref: '#/definitions/protocol.PublicKeyCredentialRequestOptions'
   protocol.CredentialAssertionResponse:
     title: CredentialAssertionResponse
     type: object
-    properties:
-      authenticatorAttachment:
-        type: string
-      clientExtensionResults:
-        $ref: '#/definitions/protocol.AuthenticationExtensionsClientOutputs'
-      id:
-        type: string
-      rawId:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      response:
-        $ref: '#/definitions/protocol.AuthenticatorAssertionResponse'
-      type:
-        type: string
   protocol.CredentialCreation:
     title: CredentialCreation
     type: object
-    properties:
-      publicKey:
-        $ref: '#/definitions/protocol.PublicKeyCredentialCreationOptions'
   protocol.CredentialCreationResponse:
     title: CredentialCreationResponse
-    type: object
-    properties:
-      authenticatorAttachment:
-        type: string
-      clientExtensionResults:
-        $ref: '#/definitions/protocol.AuthenticationExtensionsClientOutputs'
-      id:
-        type: string
-      rawId:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      response:
-        $ref: '#/definitions/protocol.AuthenticatorAttestationResponse'
-      transports:
-        type: array
-        items:
-          type: string
-      type:
-        type: string
-  protocol.CredentialDescriptor:
-    title: CredentialDescriptor
-    type: object
-    properties:
-      id:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      transports:
-        type: array
-        items:
-          $ref: '#/definitions/protocol.AuthenticatorTransport'
-      type:
-        $ref: '#/definitions/protocol.CredentialType'
-  protocol.CredentialEntity:
-    title: CredentialEntity
-    type: object
-    properties:
-      icon:
-        type: string
-      name:
-        type: string
-  protocol.CredentialParameter:
-    title: CredentialParameter
-    type: object
-    properties:
-      alg:
-        $ref: '#/definitions/webauthncose.COSEAlgorithmIdentifier'
-      type:
-        $ref: '#/definitions/protocol.CredentialType'
-  protocol.CredentialType:
-    title: CredentialType
-    type: string
-    enum:
-    - PublicKeyCredentialType = "public-key"
-    example: public-key
-  protocol.PublicKeyCredential:
-    title: PublicKeyCredential
-    type: object
-    properties:
-      authenticatorAttachment:
-        type: string
-      clientExtensionResults:
-        $ref: '#/definitions/protocol.AuthenticationExtensionsClientOutputs'
-      id:
-        type: string
-      rawId:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      type:
-        type: string
-  protocol.PublicKeyCredentialCreationOptions:
-    title: PublicKeyCredentialCreationOptions
-    type: object
-    properties:
-      attestation:
-        $ref: '#/definitions/protocol.ConveyancePreference'
-      authenticatorSelection:
-        $ref: '#/definitions/protocol.AuthenticatorSelection'
-      challenge:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      excludeCredentials:
-        type: array
-        items:
-          $ref: '#/definitions/protocol.CredentialDescriptor'
-      extensions:
-        $ref: '#/definitions/protocol.AuthenticationExtensions'
-      pubKeyCredParams:
-        type: array
-        items:
-          $ref: '#/definitions/protocol.CredentialParameter'
-      rp:
-        $ref: '#/definitions/protocol.RelyingPartyEntity'
-      timeout:
-        type: integer
-        format: int64
-      user:
-        $ref: '#/definitions/protocol.UserEntity'
-  protocol.PublicKeyCredentialRequestOptions:
-    title: PublicKeyCredentialRequestOptions
-    type: object
-    properties:
-      allowCredentials:
-        type: array
-        items:
-          $ref: '#/definitions/protocol.CredentialDescriptor'
-      challenge:
-        $ref: '#/definitions/protocol.URLEncodedBase64'
-      extensions:
-        $ref: '#/definitions/protocol.AuthenticationExtensions'
-      rpId:
-        type: string
-      timeout:
-        type: integer
-        format: int64
-      userVerification:
-        $ref: '#/definitions/protocol.UserVerificationRequirement'
-  protocol.RelyingPartyEntity:
-    title: RelyingPartyEntity
-    type: object
-    properties:
-      icon:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-  protocol.ResidentKeyRequirement:
-    title: ResidentKeyRequirement
-    type: string
-    enum:
-    - ResidentKeyRequirementDiscouraged = "discouraged"
-    - ResidentKeyRequirementPreferred = "preferred"
-    - ResidentKeyRequirementRequired = "required"
-    example: discouraged
-  protocol.URLEncodedBase64:
-    title: URLEncodedBase64
-    format: string
-    type: array
-  protocol.UserEntity:
-    title: UserEntity
-    type: object
-    properties:
-      displayName:
-        type: string
-      icon:
-        type: string
-      id:
-        $ref: '#/definitions/protocol.interface'
-      name:
-        type: string
-  protocol.UserVerificationRequirement:
-    title: UserVerificationRequirement
-    type: string
-    enum:
-    - VerificationRequired = "required"
-    - VerificationPreferred = "preferred"
-    - VerificationDiscouraged = "discouraged"
-    example: required
-  protocol.interface:
-    title: interface
     type: object
   sql.DB:
     title: DB
     type: object
   ssh.Client:
     title: Client
-    type: object
-    properties:
-      channelHandlers:
-        $ref: '#/definitions/83407.0.3.NewChannel'
-      forwards:
-        $ref: '#/definitions/ssh.forwardList'
-      handleForwardsOnce:
-        $ref: '#/definitions/sync.Once'
-      mu:
-        $ref: '#/definitions/sync.Mutex'
-  ssh.Conn:
-    title: Conn
-    type: object
-  ssh.forwardEntry:
-    title: forwardEntry
-    type: object
-    properties:
-      c:
-        $ref: '#/definitions/531915.0.3.forward'
-      laddr:
-        $ref: '#/definitions/net.Addr'
-  ssh.forwardList:
-    title: forwardList
-    type: object
-    properties:
-      entries:
-        type: array
-        items:
-          $ref: '#/definitions/ssh.forwardEntry'
-  sync.Map:
-    title: Map
-    type: object
-  sync.Mutex:
-    title: Mutex
-    type: object
-  sync.Once:
-    title: Once
-    type: object
-  sync.RWMutex:
-    title: RWMutex
-    type: object
-  tags.Handler:
-    title: Handler
-    type: object
-  tags.Parser:
-    title: Parser
-    type: object
-    properties:
-      cacherMgr:
-        $ref: '#/definitions/caches.Manager'
-      columnMapper:
-        $ref: '#/definitions/names.Mapper'
-      dialect:
-        $ref: '#/definitions/dialects.Dialect'
-      handlers:
-        $ref: '#/definitions/tags.Handler'
-      identifier:
-        type: string
-      tableCache:
-        $ref: '#/definitions/sync.Map'
-      tableMapper:
-        $ref: '#/definitions/names.Mapper'
-  time.Location:
-    title: Location
     type: object
   util.SystemInfo:
     title: SystemInfo
@@ -7471,154 +6459,20 @@ definitions:
         format: int64
       version:
         type: string
-  webauthn.Authenticator:
-    title: Authenticator
-    type: object
-    properties:
-      AAGUID:
-        type: array
-        items:
-          type: string
-          format: byte
-      attachment:
-        $ref: '#/definitions/protocol.AuthenticatorAttachment'
-      cloneWarning:
-        type: boolean
-      signCount:
-        type: integer
-        format: int32
   webauthn.Credential:
     title: Credential
     type: object
-    properties:
-      attestationType:
-        type: string
-      authenticator:
-        $ref: '#/definitions/webauthn.Authenticator'
-      flags:
-        $ref: '#/definitions/webauthn.CredentialFlags'
-      id:
-        type: array
-        items:
-          type: string
-          format: byte
-      publicKey:
-        type: array
-        items:
-          type: string
-          format: byte
-      transport:
-        type: array
-        items:
-          $ref: '#/definitions/protocol.AuthenticatorTransport'
-  webauthn.CredentialFlags:
-    title: CredentialFlags
-    type: object
-    properties:
-      backupEligible:
-        type: boolean
-      backupState:
-        type: boolean
-      userPresent:
-        type: boolean
-      userVerified:
-        type: boolean
-  webauthncose.COSEAlgorithmIdentifier:
-    title: COSEAlgorithmIdentifier
-    format: int64
-    type: integer
   xorm.Engine:
     title: Engine
-    type: object
-    properties:
-      DatabaseTZ:
-        $ref: '#/definitions/time.Location'
-      TZLocation:
-        $ref: '#/definitions/time.Location'
-      cacherMgr:
-        $ref: '#/definitions/caches.Manager'
-      dataSourceName:
-        type: string
-      db:
-        $ref: '#/definitions/core.DB'
-      defaultContext:
-        $ref: '#/definitions/context.Context'
-      dialect:
-        $ref: '#/definitions/dialects.Dialect'
-      driverName:
-        type: string
-      engineGroup:
-        $ref: '#/definitions/xorm.EngineGroup'
-      logSessionID:
-        type: boolean
-      logger:
-        $ref: '#/definitions/log.ContextLogger'
-      tagParser:
-        $ref: '#/definitions/tags.Parser'
-  xorm.EngineGroup:
-    title: EngineGroup
-    type: object
-    properties:
-      DatabaseTZ:
-        $ref: '#/definitions/time.Location'
-      TZLocation:
-        $ref: '#/definitions/time.Location'
-      cacherMgr:
-        $ref: '#/definitions/caches.Manager'
-      dataSourceName:
-        type: string
-      db:
-        $ref: '#/definitions/core.DB'
-      defaultContext:
-        $ref: '#/definitions/context.Context'
-      dialect:
-        $ref: '#/definitions/dialects.Dialect'
-      driverName:
-        type: string
-      engineGroup:
-        $ref: '#/definitions/xorm.EngineGroup'
-      logSessionID:
-        type: boolean
-      logger:
-        $ref: '#/definitions/log.ContextLogger'
-      policy:
-        $ref: '#/definitions/xorm.GroupPolicy'
-      slaves:
-        type: array
-        items:
-          $ref: '#/definitions/xorm.Engine'
-      tagParser:
-        $ref: '#/definitions/tags.Parser'
-  xorm.GroupPolicy:
-    title: GroupPolicy
     type: object
   xormadapter.Adapter:
     title: Adapter
     type: object
-    properties:
-      dataSourceName:
-        type: string
-      dbSpecified:
-        type: boolean
-      driverName:
-        type: string
-      engine:
-        $ref: '#/definitions/xorm.Engine'
-      isFiltered:
-        type: boolean
-      tableName:
-        type: string
-      tablePrefix:
-        type: string
   xormadapter.CasbinRule:
     title: CasbinRule
     type: object
-tags:
-- name: api
-  description: |
-    ApiController
-    controller for handlers under /api uri
-- name: root
-  description: |
-    RootController
-    controller for handlers directly under / (root)
+securityDefinitions:
+  AccessToken:
+    type: apiKey
+    name: Authorization
+    in: header
