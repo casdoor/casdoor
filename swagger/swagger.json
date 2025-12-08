@@ -1,23 +1,14 @@
 {
     "swagger": "2.0",
     "info": {
-        "title": "Casdoor RESTful API",
-        "description": "Swagger Docs of Casdoor Backend API",
-        "version": "1.503.0",
-        "contact": {
-            "email": "casbin@googlegroups.com"
-        }
+        "contact": {}
     },
     "basePath": "/",
-    "schemes": [
-        "https",
-        "http"
-    ],
     "paths": {
         "/.well-known/jwks": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
                 "operationId": "RootController.GetJwks",
                 "responses": {
@@ -33,9 +24,9 @@
         "/.well-known/openid-configuration": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
-                "description": "Get Oidc Discovery",
+                "description": "Get Oidc Discovery\n\u003cbr\u003e",
                 "operationId": "RootController.GetOidcDiscovery",
                 "responses": {
                     "200": {
@@ -50,7 +41,7 @@
         "/.well-known/webfinger": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
                 "operationId": "RootController.GetWebFinger",
                 "parameters": [
@@ -75,7 +66,7 @@
         "/.well-known/{application}/jwks": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
                 "operationId": "RootController.GetJwksByApplication",
                 "parameters": [
@@ -100,9 +91,9 @@
         "/.well-known/{application}/openid-configuration": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
-                "description": "Get Oidc Discovery for specific application",
+                "description": "Get Oidc Discovery for specific application\n\u003cbr\u003e",
                 "operationId": "RootController.GetOidcDiscoveryByApplication",
                 "parameters": [
                     {
@@ -126,7 +117,7 @@
         "/.well-known/{application}/webfinger": {
             "get": {
                 "tags": [
-                    "OIDC API"
+                    "github.com/casdoor/casdoor/controllersRootController"
                 ],
                 "operationId": "RootController.GetWebFingerByApplication",
                 "parameters": [
@@ -158,9 +149,9 @@
         "/api/Callback": {
             "post": {
                 "tags": [
-                    "Callback API"
+                    "api"
                 ],
-                "description": "Get Login Error Counts",
+                "description": "Get Login Error Counts\n\u003cbr\u003e",
                 "operationId": "ApiController.Callback",
                 "responses": {
                     "200": {
@@ -175,9 +166,9 @@
         "/api/add-adapter": {
             "post": {
                 "tags": [
-                    "Adapter API"
+                    "api"
                 ],
-                "description": "add adapter",
+                "description": "add adapter\n\u003cbr\u003e",
                 "operationId": "ApiController.AddAdapter",
                 "parameters": [
                     {
@@ -203,9 +194,9 @@
         "/api/add-application": {
             "post": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "add an application",
+                "description": "add an application\n\u003cbr\u003e",
                 "operationId": "ApiController.AddApplication",
                 "parameters": [
                     {
@@ -231,9 +222,9 @@
         "/api/add-cert": {
             "post": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "add cert",
+                "description": "add cert\n\u003cbr\u003e",
                 "operationId": "ApiController.AddCert",
                 "parameters": [
                     {
@@ -259,9 +250,9 @@
         "/api/add-enforcer": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "add enforcer",
+                "description": "add enforcer\n\u003cbr\u003e",
                 "operationId": "ApiController.AddEnforcer",
                 "parameters": [
                     {
@@ -287,9 +278,9 @@
         "/api/add-form": {
             "post": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "add form",
+                "description": "add form\n\u003cbr\u003e",
                 "operationId": "ApiController.AddForm",
                 "parameters": [
                     {
@@ -315,9 +306,9 @@
         "/api/add-group": {
             "post": {
                 "tags": [
-                    "Group API"
+                    "api"
                 ],
-                "description": "add group",
+                "description": "add group\n\u003cbr\u003e",
                 "operationId": "ApiController.AddGroup",
                 "parameters": [
                     {
@@ -343,9 +334,9 @@
         "/api/add-invitation": {
             "post": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "add invitation",
+                "description": "add invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.AddInvitation",
                 "parameters": [
                     {
@@ -371,9 +362,9 @@
         "/api/add-ldap": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "add ldap",
+                "description": "add ldap\n\u003cbr\u003e",
                 "operationId": "ApiController.AddLdap",
                 "parameters": [
                     {
@@ -399,9 +390,9 @@
         "/api/add-model": {
             "post": {
                 "tags": [
-                    "Model API"
+                    "api"
                 ],
-                "description": "add model",
+                "description": "add model\n\u003cbr\u003e",
                 "operationId": "ApiController.AddModel",
                 "parameters": [
                     {
@@ -427,9 +418,9 @@
         "/api/add-order": {
             "post": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "add order",
+                "description": "add order\n\u003cbr\u003e",
                 "operationId": "ApiController.AddOrder",
                 "parameters": [
                     {
@@ -455,9 +446,9 @@
         "/api/add-organization": {
             "post": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "add organization",
+                "description": "add organization\n\u003cbr\u003e",
                 "operationId": "ApiController.AddOrganization",
                 "parameters": [
                     {
@@ -483,9 +474,9 @@
         "/api/add-payment": {
             "post": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "add payment",
+                "description": "add payment\n\u003cbr\u003e",
                 "operationId": "ApiController.AddPayment",
                 "parameters": [
                     {
@@ -511,9 +502,9 @@
         "/api/add-permission": {
             "post": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "add permission",
+                "description": "add permission\n\u003cbr\u003e",
                 "operationId": "ApiController.AddPermission",
                 "parameters": [
                     {
@@ -539,9 +530,9 @@
         "/api/add-plan": {
             "post": {
                 "tags": [
-                    "Plan API"
+                    "api"
                 ],
-                "description": "add plan",
+                "description": "add plan\n\u003cbr\u003e",
                 "operationId": "ApiController.AddPlan",
                 "parameters": [
                     {
@@ -567,9 +558,9 @@
         "/api/add-policy": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "add policy",
+                "description": "add policy\n\u003cbr\u003e",
                 "operationId": "ApiController.AddPolicy",
                 "parameters": [
                     {
@@ -602,9 +593,9 @@
         "/api/add-pricing": {
             "post": {
                 "tags": [
-                    "Pricing API"
+                    "api"
                 ],
-                "description": "add pricing",
+                "description": "add pricing\n\u003cbr\u003e",
                 "operationId": "ApiController.AddPricing",
                 "parameters": [
                     {
@@ -630,9 +621,9 @@
         "/api/add-product": {
             "post": {
                 "tags": [
-                    "Product API"
+                    "api"
                 ],
-                "description": "add product",
+                "description": "add product\n\u003cbr\u003e",
                 "operationId": "ApiController.AddProduct",
                 "parameters": [
                     {
@@ -658,9 +649,9 @@
         "/api/add-provider": {
             "post": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "add provider",
+                "description": "add provider\n\u003cbr\u003e",
                 "operationId": "ApiController.AddProvider",
                 "parameters": [
                     {
@@ -686,9 +677,9 @@
         "/api/add-record": {
             "post": {
                 "tags": [
-                    "Record API"
+                    "api"
                 ],
-                "description": "add a record",
+                "description": "add a record\n\u003cbr\u003e",
                 "operationId": "ApiController.AddRecord",
                 "parameters": [
                     {
@@ -714,7 +705,7 @@
         "/api/add-resource": {
             "post": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
                 "operationId": "ApiController.AddResource",
                 "parameters": [
@@ -741,9 +732,9 @@
         "/api/add-role": {
             "post": {
                 "tags": [
-                    "Role API"
+                    "api"
                 ],
-                "description": "add role",
+                "description": "add role\n\u003cbr\u003e",
                 "operationId": "ApiController.AddRole",
                 "parameters": [
                     {
@@ -769,34 +760,26 @@
         "/api/add-session": {
             "post": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Add session for one user in one application. If there are other existing sessions, join the session into the list.",
+                "description": "Add session for one user in one application. If there are other existing sessions, join the session into the list.\n\u003cbr\u003e",
                 "operationId": "ApiController.AddSession",
                 "parameters": [
                     {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id(organization/user/application) of session",
+                        "in": "body",
+                        "name": "body",
+                        "description": "The session object to add",
                         "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "query",
-                        "name": "sessionId",
-                        "description": "sessionId to be added",
-                        "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/object.Session"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -805,9 +788,9 @@
         "/api/add-subscription": {
             "post": {
                 "tags": [
-                    "Subscription API"
+                    "api"
                 ],
-                "description": "add subscription",
+                "description": "add subscription\n\u003cbr\u003e",
                 "operationId": "ApiController.AddSubscription",
                 "parameters": [
                     {
@@ -833,9 +816,9 @@
         "/api/add-syncer": {
             "post": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "add syncer",
+                "description": "add syncer\n\u003cbr\u003e",
                 "operationId": "ApiController.AddSyncer",
                 "parameters": [
                     {
@@ -861,9 +844,9 @@
         "/api/add-token": {
             "post": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "add token",
+                "description": "add token\n\u003cbr\u003e",
                 "operationId": "ApiController.AddToken",
                 "parameters": [
                     {
@@ -889,9 +872,9 @@
         "/api/add-transaction": {
             "post": {
                 "tags": [
-                    "Transaction API"
+                    "api"
                 ],
-                "description": "add transaction",
+                "description": "add transaction\n\u003cbr\u003e",
                 "operationId": "ApiController.AddTransaction",
                 "parameters": [
                     {
@@ -923,9 +906,9 @@
         "/api/add-user": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "add user",
+                "description": "add user\n\u003cbr\u003e",
                 "operationId": "ApiController.AddUser",
                 "parameters": [
                     {
@@ -951,7 +934,7 @@
         "/api/add-user-keys": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
                 "operationId": "ApiController.AddUserKeys",
                 "responses": {
@@ -967,9 +950,9 @@
         "/api/add-webhook": {
             "post": {
                 "tags": [
-                    "Webhook API"
+                    "api"
                 ],
-                "description": "add webhook",
+                "description": "add webhook\n\u003cbr\u003e",
                 "operationId": "ApiController.AddWebhook",
                 "parameters": [
                     {
@@ -995,9 +978,9 @@
         "/api/batch-enforce": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "Call Casbin BatchEnforce API",
+                "description": "Call Casbin BatchEnforce API\n\u003cbr\u003e",
                 "operationId": "ApiController.BatchEnforce",
                 "parameters": [
                     {
@@ -1041,10 +1024,36 @@
                 }
             }
         },
+        "/api/cancel-order": {
+            "post": {
+                "tags": [
+                    "api"
+                ],
+                "description": "cancel an order\n\u003cbr\u003e",
+                "operationId": "ApiController.CancelOrder",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the order",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/check-user-password": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
                 "operationId": "ApiController.CheckUserPassword",
                 "responses": {
@@ -1060,9 +1069,9 @@
         "/api/delete-adapter": {
             "post": {
                 "tags": [
-                    "Adapter API"
+                    "api"
                 ],
-                "description": "delete adapter",
+                "description": "delete adapter\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteAdapter",
                 "parameters": [
                     {
@@ -1088,9 +1097,9 @@
         "/api/delete-application": {
             "post": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "delete an application",
+                "description": "delete an application\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteApplication",
                 "parameters": [
                     {
@@ -1116,9 +1125,9 @@
         "/api/delete-cert": {
             "post": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "delete cert",
+                "description": "delete cert\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteCert",
                 "parameters": [
                     {
@@ -1144,9 +1153,9 @@
         "/api/delete-enforcer": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "delete enforcer",
+                "description": "delete enforcer\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteEnforcer",
                 "parameters": [
                     {
@@ -1172,9 +1181,9 @@
         "/api/delete-form": {
             "post": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "delete form",
+                "description": "delete form\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteForm",
                 "parameters": [
                     {
@@ -1200,9 +1209,9 @@
         "/api/delete-group": {
             "post": {
                 "tags": [
-                    "Group API"
+                    "api"
                 ],
-                "description": "delete group",
+                "description": "delete group\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteGroup",
                 "parameters": [
                     {
@@ -1228,9 +1237,9 @@
         "/api/delete-invitation": {
             "post": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "delete invitation",
+                "description": "delete invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteInvitation",
                 "parameters": [
                     {
@@ -1256,9 +1265,9 @@
         "/api/delete-ldap": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "delete ldap",
+                "description": "delete ldap\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteLdap",
                 "parameters": [
                     {
@@ -1284,9 +1293,9 @@
         "/api/delete-mfa/": {
             "post": {
                 "tags": [
-                    "MFA API"
+                    "api"
                 ],
-                "description": ": Delete MFA",
+                "description": ": Delete MFA\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteMfa",
                 "responses": {
                     "200": {
@@ -1301,9 +1310,9 @@
         "/api/delete-model": {
             "post": {
                 "tags": [
-                    "Model API"
+                    "api"
                 ],
-                "description": "delete model",
+                "description": "delete model\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteModel",
                 "parameters": [
                     {
@@ -1329,9 +1338,9 @@
         "/api/delete-order": {
             "post": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "delete order",
+                "description": "delete order\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteOrder",
                 "parameters": [
                     {
@@ -1357,9 +1366,9 @@
         "/api/delete-organization": {
             "post": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "delete organization",
+                "description": "delete organization\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteOrganization",
                 "parameters": [
                     {
@@ -1385,9 +1394,9 @@
         "/api/delete-payment": {
             "post": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "delete payment",
+                "description": "delete payment\n\u003cbr\u003e",
                 "operationId": "ApiController.DeletePayment",
                 "parameters": [
                     {
@@ -1413,9 +1422,9 @@
         "/api/delete-permission": {
             "post": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "delete permission",
+                "description": "delete permission\n\u003cbr\u003e",
                 "operationId": "ApiController.DeletePermission",
                 "parameters": [
                     {
@@ -1441,9 +1450,9 @@
         "/api/delete-plan": {
             "post": {
                 "tags": [
-                    "Plan API"
+                    "api"
                 ],
-                "description": "delete plan",
+                "description": "delete plan\n\u003cbr\u003e",
                 "operationId": "ApiController.DeletePlan",
                 "parameters": [
                     {
@@ -1469,9 +1478,9 @@
         "/api/delete-pricing": {
             "post": {
                 "tags": [
-                    "Pricing API"
+                    "api"
                 ],
-                "description": "delete pricing",
+                "description": "delete pricing\n\u003cbr\u003e",
                 "operationId": "ApiController.DeletePricing",
                 "parameters": [
                     {
@@ -1497,9 +1506,9 @@
         "/api/delete-product": {
             "post": {
                 "tags": [
-                    "Product API"
+                    "api"
                 ],
-                "description": "delete product",
+                "description": "delete product\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteProduct",
                 "parameters": [
                     {
@@ -1525,9 +1534,9 @@
         "/api/delete-provider": {
             "post": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "delete provider",
+                "description": "delete provider\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteProvider",
                 "parameters": [
                     {
@@ -1553,7 +1562,7 @@
         "/api/delete-resource": {
             "post": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
                 "operationId": "ApiController.DeleteResource",
                 "parameters": [
@@ -1580,9 +1589,9 @@
         "/api/delete-role": {
             "post": {
                 "tags": [
-                    "Role API"
+                    "api"
                 ],
-                "description": "delete role",
+                "description": "delete role\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteRole",
                 "parameters": [
                     {
@@ -1608,27 +1617,26 @@
         "/api/delete-session": {
             "post": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Delete session for one user in one application.",
+                "description": "Delete session for one user in one application.\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteSession",
                 "parameters": [
                     {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id(organization/user/application) of session",
+                        "in": "body",
+                        "name": "body",
+                        "description": "The session object to delete",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/object.Session"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -1637,9 +1645,9 @@
         "/api/delete-subscription": {
             "post": {
                 "tags": [
-                    "Subscription API"
+                    "api"
                 ],
-                "description": "delete subscription",
+                "description": "delete subscription\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteSubscription",
                 "parameters": [
                     {
@@ -1665,9 +1673,9 @@
         "/api/delete-syncer": {
             "post": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "delete syncer",
+                "description": "delete syncer\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteSyncer",
                 "parameters": [
                     {
@@ -1693,9 +1701,9 @@
         "/api/delete-token": {
             "post": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "delete token",
+                "description": "delete token\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteToken",
                 "parameters": [
                     {
@@ -1721,9 +1729,9 @@
         "/api/delete-transaction": {
             "post": {
                 "tags": [
-                    "Transaction API"
+                    "api"
                 ],
-                "description": "delete transaction",
+                "description": "delete transaction\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteTransaction",
                 "parameters": [
                     {
@@ -1749,9 +1757,9 @@
         "/api/delete-user": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "delete user",
+                "description": "delete user\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteUser",
                 "parameters": [
                     {
@@ -1777,9 +1785,9 @@
         "/api/delete-webhook": {
             "post": {
                 "tags": [
-                    "Webhook API"
+                    "api"
                 ],
-                "description": "delete webhook",
+                "description": "delete webhook\n\u003cbr\u003e",
                 "operationId": "ApiController.DeleteWebhook",
                 "parameters": [
                     {
@@ -1805,9 +1813,9 @@
         "/api/device-auth": {
             "post": {
                 "tags": [
-                    "Device Authorization Endpoint"
+                    "api"
                 ],
-                "description": "Endpoint for the device authorization flow",
+                "description": "Endpoint for the device authorization flow\n\u003cbr\u003e",
                 "operationId": "ApiController.DeviceAuth",
                 "responses": {
                     "200": {
@@ -1822,9 +1830,9 @@
         "/api/enforce": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "Call Casbin Enforce API",
+                "description": "Call Casbin Enforce API\n\u003cbr\u003e",
                 "operationId": "ApiController.Enforce",
                 "parameters": [
                     {
@@ -1877,9 +1885,9 @@
         "/api/faceid-signin-begin": {
             "get": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "FaceId Login Flow 1st stage",
+                "description": "FaceId Login Flow 1st stage\n\u003cbr\u003e",
                 "operationId": "ApiController.FaceIDSigninBegin",
                 "parameters": [
                     {
@@ -1910,9 +1918,9 @@
         "/api/get-account": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "get the details of the current account",
+                "description": "get the details of the current account\n\u003cbr\u003e",
                 "operationId": "ApiController.GetAccount",
                 "responses": {
                     "200": {
@@ -1927,9 +1935,9 @@
         "/api/get-adapter": {
             "get": {
                 "tags": [
-                    "Adapter API"
+                    "api"
                 ],
-                "description": "get adapter",
+                "description": "get adapter\n\u003cbr\u003e",
                 "operationId": "ApiController.GetAdapter",
                 "parameters": [
                     {
@@ -1953,9 +1961,9 @@
         "/api/get-adapters": {
             "get": {
                 "tags": [
-                    "Adapter API"
+                    "api"
                 ],
-                "description": "get adapters",
+                "description": "get adapters\n\u003cbr\u003e",
                 "operationId": "ApiController.GetAdapters",
                 "parameters": [
                     {
@@ -1982,9 +1990,9 @@
         "/api/get-app-login": {
             "get": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "get application login",
+                "description": "get application login\n\u003cbr\u003e",
                 "operationId": "ApiController.GetApplicationLogin",
                 "parameters": [
                     {
@@ -2036,9 +2044,9 @@
         "/api/get-application": {
             "get": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "get the detail of an application",
+                "description": "get the detail of an application\n\u003cbr\u003e",
                 "operationId": "ApiController.GetApplication",
                 "parameters": [
                     {
@@ -2062,9 +2070,9 @@
         "/api/get-applications": {
             "get": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "get all applications",
+                "description": "get all applications\n\u003cbr\u003e",
                 "operationId": "ApiController.GetApplications",
                 "parameters": [
                     {
@@ -2091,7 +2099,7 @@
         "/api/get-captcha": {
             "get": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
                 "operationId": "ApiController.GetCaptcha",
                 "responses": {
@@ -2107,9 +2115,9 @@
         "/api/get-captcha-status": {
             "get": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "Get Login Error Counts",
+                "description": "Get Login Error Counts\n\u003cbr\u003e",
                 "operationId": "ApiController.GetCaptchaStatus",
                 "parameters": [
                     {
@@ -2133,9 +2141,9 @@
         "/api/get-cert": {
             "get": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "get cert",
+                "description": "get cert\n\u003cbr\u003e",
                 "operationId": "ApiController.GetCert",
                 "parameters": [
                     {
@@ -2159,9 +2167,9 @@
         "/api/get-certs": {
             "get": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "get certs",
+                "description": "get certs\n\u003cbr\u003e",
                 "operationId": "ApiController.GetCerts",
                 "parameters": [
                     {
@@ -2188,9 +2196,9 @@
         "/api/get-dashboard": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "get information of dashboard",
+                "description": "get information of dashboard\n\u003cbr\u003e",
                 "operationId": "ApiController.GetDashboard",
                 "responses": {
                     "200": {
@@ -2205,9 +2213,9 @@
         "/api/get-default-application": {
             "get": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "get default application",
+                "description": "get default application\n\u003cbr\u003e",
                 "operationId": "ApiController.GetDefaultApplication",
                 "parameters": [
                     {
@@ -2231,9 +2239,9 @@
         "/api/get-email-and-phone": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "get email and phone by username",
+                "description": "get email and phone by username\n\u003cbr\u003e",
                 "operationId": "ApiController.GetEmailAndPhone",
                 "parameters": [
                     {
@@ -2264,9 +2272,9 @@
         "/api/get-enforcer": {
             "get": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "get enforcer",
+                "description": "get enforcer\n\u003cbr\u003e",
                 "operationId": "ApiController.GetEnforcer",
                 "parameters": [
                     {
@@ -2290,9 +2298,9 @@
         "/api/get-enforcers": {
             "get": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "get enforcers",
+                "description": "get enforcers\n\u003cbr\u003e",
                 "operationId": "ApiController.GetEnforcers",
                 "parameters": [
                     {
@@ -2319,9 +2327,9 @@
         "/api/get-filtered-policies": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "get filtered policies with support for multiple filters via POST body",
+                "description": "get filtered policies with support for multiple filters via POST body\n\u003cbr\u003e",
                 "operationId": "ApiController.GetFilteredPolicies",
                 "parameters": [
                     {
@@ -2360,9 +2368,9 @@
         "/api/get-form": {
             "get": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "get form",
+                "description": "get form\n\u003cbr\u003e",
                 "operationId": "ApiController.GetForm",
                 "parameters": [
                     {
@@ -2386,9 +2394,9 @@
         "/api/get-forms": {
             "get": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "get forms",
+                "description": "get forms\n\u003cbr\u003e",
                 "operationId": "ApiController.GetForms",
                 "parameters": [
                     {
@@ -2415,9 +2423,9 @@
         "/api/get-global-certs": {
             "get": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "get global certs",
+                "description": "get global certs\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGlobalCerts",
                 "responses": {
                     "200": {
@@ -2435,9 +2443,9 @@
         "/api/get-global-forms": {
             "get": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "get global forms",
+                "description": "get global forms\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGlobalForms",
                 "responses": {
                     "200": {
@@ -2455,9 +2463,9 @@
         "/api/get-global-providers": {
             "get": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "get Global providers",
+                "description": "get Global providers\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGlobalProviders",
                 "responses": {
                     "200": {
@@ -2475,9 +2483,9 @@
         "/api/get-global-users": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "get global users",
+                "description": "get global users\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGlobalUsers",
                 "responses": {
                     "200": {
@@ -2495,9 +2503,9 @@
         "/api/get-group": {
             "get": {
                 "tags": [
-                    "Group API"
+                    "api"
                 ],
-                "description": "get group",
+                "description": "get group\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGroup",
                 "parameters": [
                     {
@@ -2521,9 +2529,9 @@
         "/api/get-groups": {
             "get": {
                 "tags": [
-                    "Group API"
+                    "api"
                 ],
-                "description": "get groups",
+                "description": "get groups\n\u003cbr\u003e",
                 "operationId": "ApiController.GetGroups",
                 "parameters": [
                     {
@@ -2550,9 +2558,9 @@
         "/api/get-invitation": {
             "get": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "get invitation",
+                "description": "get invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.GetInvitation",
                 "parameters": [
                     {
@@ -2576,9 +2584,9 @@
         "/api/get-invitation-info": {
             "get": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "get invitation code information",
+                "description": "get invitation code information\n\u003cbr\u003e",
                 "operationId": "ApiController.GetInvitationCodeInfo",
                 "parameters": [
                     {
@@ -2602,9 +2610,9 @@
         "/api/get-invitations": {
             "get": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "get invitations",
+                "description": "get invitations\n\u003cbr\u003e",
                 "operationId": "ApiController.GetInvitations",
                 "parameters": [
                     {
@@ -2631,9 +2639,9 @@
         "/api/get-ldap": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "get ldap",
+                "description": "get ldap\n\u003cbr\u003e",
                 "operationId": "ApiController.GetLdap",
                 "parameters": [
                     {
@@ -2657,9 +2665,9 @@
         "/api/get-ldap-users": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "get ldap users",
+                "description": "get ldap users\n\u003cbr\u003e",
                 "operationId": "ApiController.GetLdapser",
                 "responses": {
                     "200": {
@@ -2674,9 +2682,9 @@
         "/api/get-ldaps": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "get ldaps",
+                "description": "get ldaps\n\u003cbr\u003e",
                 "operationId": "ApiController.GetLdaps",
                 "parameters": [
                     {
@@ -2702,9 +2710,9 @@
         "/api/get-model": {
             "get": {
                 "tags": [
-                    "Model API"
+                    "api"
                 ],
-                "description": "get model",
+                "description": "get model\n\u003cbr\u003e",
                 "operationId": "ApiController.GetModel",
                 "parameters": [
                     {
@@ -2728,9 +2736,9 @@
         "/api/get-models": {
             "get": {
                 "tags": [
-                    "Model API"
+                    "api"
                 ],
-                "description": "get models",
+                "description": "get models\n\u003cbr\u003e",
                 "operationId": "ApiController.GetModels",
                 "parameters": [
                     {
@@ -2757,9 +2765,9 @@
         "/api/get-order": {
             "get": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "get order",
+                "description": "get order\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrder",
                 "parameters": [
                     {
@@ -2783,9 +2791,9 @@
         "/api/get-orders": {
             "get": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "get orders",
+                "description": "get orders\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrders",
                 "parameters": [
                     {
@@ -2812,9 +2820,9 @@
         "/api/get-organization": {
             "get": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "get organization",
+                "description": "get organization\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrganization",
                 "parameters": [
                     {
@@ -2838,9 +2846,9 @@
         "/api/get-organization-applications": {
             "get": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "get the detail of the organization's application",
+                "description": "get the detail of the organization's application\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrganizationApplications",
                 "parameters": [
                     {
@@ -2867,9 +2875,9 @@
         "/api/get-organization-names": {
             "get": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "get all organization name and displayName",
+                "description": "get all organization name and displayName\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrganizationNames",
                 "parameters": [
                     {
@@ -2896,9 +2904,9 @@
         "/api/get-organizations": {
             "get": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "get organizations",
+                "description": "get organizations\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOrganizations",
                 "parameters": [
                     {
@@ -2925,9 +2933,9 @@
         "/api/get-payment": {
             "get": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "get payment",
+                "description": "get payment\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPayment",
                 "parameters": [
                     {
@@ -2951,9 +2959,9 @@
         "/api/get-payments": {
             "get": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "get payments",
+                "description": "get payments\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPayments",
                 "parameters": [
                     {
@@ -2980,9 +2988,9 @@
         "/api/get-permission": {
             "get": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "get permission",
+                "description": "get permission\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPermission",
                 "parameters": [
                     {
@@ -3006,9 +3014,9 @@
         "/api/get-permissions": {
             "get": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "get permissions",
+                "description": "get permissions\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPermissions",
                 "parameters": [
                     {
@@ -3035,9 +3043,9 @@
         "/api/get-permissions-by-role": {
             "get": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "get permissions by role",
+                "description": "get permissions by role\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPermissionsByRole",
                 "parameters": [
                     {
@@ -3064,9 +3072,9 @@
         "/api/get-permissions-by-submitter": {
             "get": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "get permissions by submitter",
+                "description": "get permissions by submitter\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPermissionsBySubmitter",
                 "responses": {
                     "200": {
@@ -3084,9 +3092,9 @@
         "/api/get-plan": {
             "get": {
                 "tags": [
-                    "Plan API"
+                    "api"
                 ],
-                "description": "get plan",
+                "description": "get plan\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPlan",
                 "parameters": [
                     {
@@ -3116,9 +3124,9 @@
         "/api/get-plans": {
             "get": {
                 "tags": [
-                    "Plan API"
+                    "api"
                 ],
-                "description": "get plans",
+                "description": "get plans\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPlans",
                 "parameters": [
                     {
@@ -3145,9 +3153,9 @@
         "/api/get-policies": {
             "get": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "get policies",
+                "description": "get policies\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPolicies",
                 "parameters": [
                     {
@@ -3180,9 +3188,9 @@
         "/api/get-pricing": {
             "get": {
                 "tags": [
-                    "Pricing API"
+                    "api"
                 ],
-                "description": "get pricing",
+                "description": "get pricing\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPricing",
                 "parameters": [
                     {
@@ -3206,9 +3214,9 @@
         "/api/get-pricings": {
             "get": {
                 "tags": [
-                    "Pricing API"
+                    "api"
                 ],
-                "description": "get pricings",
+                "description": "get pricings\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPricings",
                 "parameters": [
                     {
@@ -3235,9 +3243,9 @@
         "/api/get-product": {
             "get": {
                 "tags": [
-                    "Product API"
+                    "api"
                 ],
-                "description": "get product",
+                "description": "get product\n\u003cbr\u003e",
                 "operationId": "ApiController.GetProduct",
                 "parameters": [
                     {
@@ -3261,9 +3269,9 @@
         "/api/get-products": {
             "get": {
                 "tags": [
-                    "Product API"
+                    "api"
                 ],
-                "description": "get products",
+                "description": "get products\n\u003cbr\u003e",
                 "operationId": "ApiController.GetProducts",
                 "parameters": [
                     {
@@ -3290,9 +3298,9 @@
         "/api/get-prometheus-info": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "get Prometheus Info",
+                "description": "get Prometheus Info\n\u003cbr\u003e",
                 "operationId": "ApiController.GetPrometheusInfo",
                 "responses": {
                     "200": {
@@ -3307,9 +3315,9 @@
         "/api/get-provider": {
             "get": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "get provider",
+                "description": "get provider\n\u003cbr\u003e",
                 "operationId": "ApiController.GetProvider",
                 "parameters": [
                     {
@@ -3333,9 +3341,9 @@
         "/api/get-providers": {
             "get": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "get providers",
+                "description": "get providers\n\u003cbr\u003e",
                 "operationId": "ApiController.GetProviders",
                 "parameters": [
                     {
@@ -3362,7 +3370,7 @@
         "/api/get-qrcode": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
                 "operationId": "ApiController.GetWechatQRCode",
                 "parameters": [
@@ -3387,9 +3395,9 @@
         "/api/get-records": {
             "get": {
                 "tags": [
-                    "Record API"
+                    "api"
                 ],
-                "description": "get all records",
+                "description": "get all records\n\u003cbr\u003e",
                 "operationId": "ApiController.GetRecords",
                 "parameters": [
                     {
@@ -3420,9 +3428,9 @@
         "/api/get-records-filter": {
             "post": {
                 "tags": [
-                    "Record API"
+                    "api"
                 ],
-                "description": "get records by filter",
+                "description": "get records by filter\n\u003cbr\u003e",
                 "operationId": "ApiController.GetRecordsByFilter",
                 "parameters": [
                     {
@@ -3449,9 +3457,9 @@
         "/api/get-resource": {
             "get": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
-                "description": "get resource",
+                "description": "get resource\n\u003cbr\u003e",
                 "operationId": "ApiController.GetResource",
                 "parameters": [
                     {
@@ -3475,9 +3483,9 @@
         "/api/get-resources": {
             "get": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
-                "description": "get resources",
+                "description": "get resources\n\u003cbr\u003e",
                 "operationId": "ApiController.GetResources",
                 "parameters": [
                     {
@@ -3547,9 +3555,9 @@
         "/api/get-role": {
             "get": {
                 "tags": [
-                    "Role API"
+                    "api"
                 ],
-                "description": "get role",
+                "description": "get role\n\u003cbr\u003e",
                 "operationId": "ApiController.GetRole",
                 "parameters": [
                     {
@@ -3573,9 +3581,9 @@
         "/api/get-roles": {
             "get": {
                 "tags": [
-                    "Role API"
+                    "api"
                 ],
-                "description": "get roles",
+                "description": "get roles\n\u003cbr\u003e",
                 "operationId": "ApiController.GetRoles",
                 "parameters": [
                     {
@@ -3602,15 +3610,15 @@
         "/api/get-session": {
             "get": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Get session for one user in one application.",
+                "description": "Get session for one user in one application.\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSingleSession",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "sessionPkId",
-                        "description": "The id(organization/user/application) of session",
+                        "description": "The session ID in format: organization/user/application (e.g., built-in/admin/app-built-in)",
                         "required": true,
                         "type": "string"
                     }
@@ -3631,9 +3639,9 @@
         "/api/get-sessions": {
             "get": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Get organization user sessions.",
+                "description": "Get organization user sessions.\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSessions",
                 "parameters": [
                     {
@@ -3660,8 +3668,9 @@
         "/api/get-sorted-users": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
+                "description": "\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSortedUsers",
                 "parameters": [
                     {
@@ -3702,9 +3711,9 @@
         "/api/get-subscription": {
             "get": {
                 "tags": [
-                    "Subscription API"
+                    "api"
                 ],
-                "description": "get subscription",
+                "description": "get subscription\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSubscription",
                 "parameters": [
                     {
@@ -3728,9 +3737,9 @@
         "/api/get-subscriptions": {
             "get": {
                 "tags": [
-                    "Subscription API"
+                    "api"
                 ],
-                "description": "get subscriptions",
+                "description": "get subscriptions\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSubscriptions",
                 "parameters": [
                     {
@@ -3757,9 +3766,9 @@
         "/api/get-syncer": {
             "get": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "get syncer",
+                "description": "get syncer\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSyncer",
                 "parameters": [
                     {
@@ -3783,9 +3792,9 @@
         "/api/get-syncers": {
             "get": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "get syncers",
+                "description": "get syncers\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSyncers",
                 "parameters": [
                     {
@@ -3812,9 +3821,9 @@
         "/api/get-system-info": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "get system info like CPU and memory usage",
+                "description": "get system info like CPU and memory usage\n\u003cbr\u003e",
                 "operationId": "ApiController.GetSystemInfo",
                 "responses": {
                     "200": {
@@ -3829,15 +3838,15 @@
         "/api/get-token": {
             "get": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "get token",
+                "description": "get token\n\u003cbr\u003e",
                 "operationId": "ApiController.GetToken",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id ( owner/name ) of token",
+                        "description": "The token ID in format: organization/token-name (e.g., built-in/token-123456)",
                         "required": true,
                         "type": "string"
                     }
@@ -3855,15 +3864,15 @@
         "/api/get-tokens": {
             "get": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "get tokens",
+                "description": "get tokens\n\u003cbr\u003e",
                 "operationId": "ApiController.GetTokens",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "owner",
-                        "description": "The owner of tokens",
+                        "description": "The organization name (e.g., built-in)",
                         "required": true,
                         "type": "string"
                     },
@@ -3898,9 +3907,9 @@
         "/api/get-transaction": {
             "get": {
                 "tags": [
-                    "Transaction API"
+                    "api"
                 ],
-                "description": "get transaction",
+                "description": "get transaction\n\u003cbr\u003e",
                 "operationId": "ApiController.GetTransaction",
                 "parameters": [
                     {
@@ -3924,9 +3933,9 @@
         "/api/get-transactions": {
             "get": {
                 "tags": [
-                    "Transaction API"
+                    "api"
                 ],
-                "description": "get transactions",
+                "description": "get transactions\n\u003cbr\u003e",
                 "operationId": "ApiController.GetTransactions",
                 "parameters": [
                     {
@@ -3953,9 +3962,9 @@
         "/api/get-user": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "get user",
+                "description": "get user\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUser",
                 "parameters": [
                     {
@@ -4002,9 +4011,9 @@
         "/api/get-user-application": {
             "get": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "get the detail of the user's application",
+                "description": "get the detail of the user's application\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUserApplication",
                 "parameters": [
                     {
@@ -4028,8 +4037,9 @@
         "/api/get-user-count": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
+                "description": "\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUserCount",
                 "parameters": [
                     {
@@ -4057,9 +4067,9 @@
         "/api/get-user-orders": {
             "get": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "get orders for a user",
+                "description": "get orders for a user\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUserOrders",
                 "parameters": [
                     {
@@ -4093,9 +4103,9 @@
         "/api/get-user-payments": {
             "get": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "get payments for a user",
+                "description": "get payments for a user\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUserPayments",
                 "parameters": [
                     {
@@ -4136,8 +4146,9 @@
         "/api/get-users": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
+                "description": "\n\u003cbr\u003e",
                 "operationId": "ApiController.GetUsers",
                 "parameters": [
                     {
@@ -4164,9 +4175,9 @@
         "/api/get-version-info": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "get version info like Casdoor release version and commit ID",
+                "description": "get version info like Casdoor release version and commit ID\n\u003cbr\u003e",
                 "operationId": "ApiController.GetVersionInfo",
                 "responses": {
                     "200": {
@@ -4181,9 +4192,9 @@
         "/api/get-webhook": {
             "get": {
                 "tags": [
-                    "Webhook API"
+                    "api"
                 ],
-                "description": "get webhook",
+                "description": "get webhook\n\u003cbr\u003e",
                 "operationId": "ApiController.GetWebhook",
                 "parameters": [
                     {
@@ -4208,7 +4219,7 @@
         "/api/get-webhook-event": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
                 "operationId": "ApiController.GetWebhookEventType",
                 "parameters": [
@@ -4233,9 +4244,9 @@
         "/api/get-webhooks": {
             "get": {
                 "tags": [
-                    "Webhook API"
+                    "api"
                 ],
-                "description": "get webhooks",
+                "description": "get webhooks\n\u003cbr\u003e",
                 "operationId": "ApiController.GetWebhooks",
                 "parameters": [
                     {
@@ -4268,9 +4279,9 @@
         "/api/health": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "check if the system is live",
+                "description": "check if the system is live\n\u003cbr\u003e",
                 "operationId": "ApiController.Health",
                 "responses": {
                     "200": {
@@ -4285,9 +4296,9 @@
         "/api/invoice-payment": {
             "post": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "invoice payment",
+                "description": "invoice payment\n\u003cbr\u003e",
                 "operationId": "ApiController.InvoicePayment",
                 "parameters": [
                     {
@@ -4311,22 +4322,22 @@
         "/api/is-session-duplicated": {
             "get": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Check if there are other different sessions for one user in one application.",
+                "description": "Check if there are other different sessions for one user in one application.\n\u003cbr\u003e",
                 "operationId": "ApiController.IsSessionDuplicated",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "sessionPkId",
-                        "description": "The id(organization/user/application) of session",
+                        "description": "The session ID in format: organization/user/application (e.g., built-in/admin/app-built-in)",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "in": "query",
                         "name": "sessionId",
-                        "description": "sessionId to be checked",
+                        "description": "The specific session ID to check",
                         "required": true,
                         "type": "string"
                     }
@@ -4347,9 +4358,9 @@
         "/api/login": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "login",
+                "description": "login\n\u003cbr\u003e",
                 "operationId": "ApiController.Login",
                 "parameters": [
                     {
@@ -4426,9 +4437,9 @@
         "/api/login/oauth/access_token": {
             "post": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "get OAuth access token",
+                "description": "get OAuth access token\n\u003cbr\u003e",
                 "operationId": "ApiController.GetOAuthToken",
                 "parameters": [
                     {
@@ -4485,9 +4496,9 @@
         "/api/login/oauth/introspect": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a",
+                "description": "The introspection endpoint is an OAuth 2.0 endpoint that takes a\n\u003cbr\u003e",
                 "operationId": "ApiController.IntrospectToken",
                 "parameters": [
                     {
@@ -4530,9 +4541,9 @@
         "/api/login/oauth/refresh_token": {
             "post": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "refresh OAuth access token",
+                "description": "refresh OAuth access token\n\u003cbr\u003e",
                 "operationId": "ApiController.RefreshToken",
                 "parameters": [
                     {
@@ -4595,9 +4606,9 @@
         "/api/logout": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "logout the current user",
+                "description": "logout the current user\n\u003cbr\u003e",
                 "operationId": "ApiController.Logout",
                 "parameters": [
                     {
@@ -4632,9 +4643,9 @@
         "/api/metrics": {
             "get": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
-                "description": "get Prometheus metrics",
+                "description": "get Prometheus metrics\n\u003cbr\u003e",
                 "operationId": "ApiController.GetMetrics",
                 "responses": {
                     "200": {
@@ -4646,9 +4657,9 @@
         "/api/mfa/setup/enable": {
             "post": {
                 "tags": [
-                    "MFA API"
+                    "api"
                 ],
-                "description": "enable totp",
+                "description": "enable totp\n\u003cbr\u003e",
                 "operationId": "ApiController.MfaSetupEnable",
                 "responses": {
                     "200": {
@@ -4663,9 +4674,9 @@
         "/api/mfa/setup/initiate": {
             "post": {
                 "tags": [
-                    "MFA API"
+                    "api"
                 ],
-                "description": "setup MFA",
+                "description": "setup MFA\n\u003cbr\u003e",
                 "operationId": "ApiController.MfaSetupInitiate",
                 "responses": {
                     "200": {
@@ -4680,9 +4691,9 @@
         "/api/mfa/setup/verify": {
             "post": {
                 "tags": [
-                    "MFA API"
+                    "api"
                 ],
-                "description": "setup verify totp",
+                "description": "setup verify totp\n\u003cbr\u003e",
                 "operationId": "ApiController.MfaSetupVerify",
                 "responses": {
                     "200": {
@@ -4697,9 +4708,9 @@
         "/api/notify-payment": {
             "post": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "notify payment",
+                "description": "notify payment\n\u003cbr\u003e",
                 "operationId": "ApiController.NotifyPayment",
                 "parameters": [
                     {
@@ -4722,12 +4733,95 @@
                 }
             }
         },
+        "/api/pay-order": {
+            "post": {
+                "tags": [
+                    "api"
+                ],
+                "description": "pay an existing order\n\u003cbr\u003e",
+                "operationId": "ApiController.PayOrder",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "The id ( owner/name ) of the order",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "providerName",
+                        "description": "The name of the provider",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/place-order": {
+            "post": {
+                "tags": [
+                    "api"
+                ],
+                "description": "place an order for a product\n\u003cbr\u003e",
+                "operationId": "ApiController.PlaceOrder",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "productId",
+                        "description": "The id ( owner/name ) of the product",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "pricingName",
+                        "description": "The name of the pricing (for subscription)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "planName",
+                        "description": "The name of the plan (for subscription)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "customPrice",
+                        "description": "Custom price for recharge products",
+                        "type": "number"
+                    },
+                    {
+                        "in": "query",
+                        "name": "userName",
+                        "description": "The username to place order for (admin only)",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/object.Order"
+                        }
+                    }
+                }
+            }
+        },
         "/api/refresh-engines": {
             "post": {
                 "tags": [
-                    "CLI API"
+                    "api"
                 ],
-                "description": "Refresh all CLI engines",
+                "description": "Refresh all CLI engines\n\u003cbr\u003e",
                 "operationId": "ApiController.RefreshEngines",
                 "parameters": [
                     {
@@ -4758,9 +4852,9 @@
         "/api/remove-policy": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "remove policy",
+                "description": "remove policy\n\u003cbr\u003e",
                 "operationId": "ApiController.RemovePolicy",
                 "parameters": [
                     {
@@ -4793,7 +4887,7 @@
         "/api/reset-email-or-phone": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
                 "operationId": "ApiController.ResetEmailOrPhone",
                 "responses": {
@@ -4809,9 +4903,9 @@
         "/api/run-casbin-command": {
             "get": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "Call Casbin CLI commands",
+                "description": "Call Casbin CLI commands\n\u003cbr\u003e",
                 "operationId": "ApiController.RunCasbinCommand",
                 "responses": {
                     "200": {
@@ -4826,9 +4920,9 @@
         "/api/run-syncer": {
             "get": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "run syncer",
+                "description": "run syncer\n\u003cbr\u003e",
                 "operationId": "ApiController.RunSyncer",
                 "parameters": [
                     {
@@ -4854,9 +4948,9 @@
         "/api/send-email": {
             "post": {
                 "tags": [
-                    "Service API"
+                    "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
                 "operationId": "ApiController.SendEmail",
                 "parameters": [
                     {
@@ -4896,9 +4990,9 @@
         "/api/send-invitation": {
             "post": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "verify invitation",
+                "description": "verify invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.VerifyInvitation",
                 "parameters": [
                     {
@@ -4934,9 +5028,9 @@
         "/api/send-notification": {
             "post": {
                 "tags": [
-                    "Service API"
+                    "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
                 "operationId": "ApiController.SendNotification",
                 "parameters": [
                     {
@@ -4962,9 +5056,9 @@
         "/api/send-sms": {
             "post": {
                 "tags": [
-                    "Service API"
+                    "api"
                 ],
-                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.",
+                "description": "This API is not for Casdoor frontend to call, it is for Casdoor SDKs.\n\u003cbr\u003e",
                 "operationId": "ApiController.SendSms",
                 "parameters": [
                     {
@@ -5004,7 +5098,7 @@
         "/api/send-verification-code": {
             "post": {
                 "tags": [
-                    "Verification API"
+                    "api"
                 ],
                 "operationId": "ApiController.SendVerificationCode",
                 "responses": {
@@ -5020,9 +5114,9 @@
         "/api/set-password": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "set password",
+                "description": "set password\n\u003cbr\u003e",
                 "operationId": "ApiController.SetPassword",
                 "parameters": [
                     {
@@ -5067,9 +5161,9 @@
         "/api/set-preferred-mfa": {
             "post": {
                 "tags": [
-                    "MFA API"
+                    "api"
                 ],
-                "description": ": Set specific Mfa Preferred",
+                "description": ": Set specific Mfa Preferred\n\u003cbr\u003e",
                 "operationId": "ApiController.SetPreferredMfa",
                 "responses": {
                     "200": {
@@ -5084,9 +5178,9 @@
         "/api/signup": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "sign up a new user",
+                "description": "sign up a new user\n\u003cbr\u003e",
                 "operationId": "ApiController.Signup",
                 "parameters": [
                     {
@@ -5117,9 +5211,9 @@
         "/api/sso-logout": {
             "get": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "logout the current user from all applications",
+                "description": "logout the current user from all applications\n\u003cbr\u003e",
                 "operationId": "ApiController.SsoLogout",
                 "responses": {
                     "200": {
@@ -5132,9 +5226,9 @@
             },
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "logout the current user from all applications",
+                "description": "logout the current user from all applications\n\u003cbr\u003e",
                 "operationId": "ApiController.SsoLogout",
                 "responses": {
                     "200": {
@@ -5149,9 +5243,9 @@
         "/api/sync-ldap-users": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "sync ldap users",
+                "description": "sync ldap users\n\u003cbr\u003e",
                 "operationId": "ApiController.SyncLdapUsers",
                 "parameters": [
                     {
@@ -5175,7 +5269,7 @@
         "/api/unlink": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
                 "operationId": "ApiController.Unlink",
                 "responses": {
@@ -5191,9 +5285,9 @@
         "/api/update-adapter": {
             "post": {
                 "tags": [
-                    "Adapter API"
+                    "api"
                 ],
-                "description": "update adapter",
+                "description": "update adapter\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateAdapter",
                 "parameters": [
                     {
@@ -5226,9 +5320,9 @@
         "/api/update-application": {
             "post": {
                 "tags": [
-                    "Application API"
+                    "api"
                 ],
-                "description": "update an application",
+                "description": "update an application\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateApplication",
                 "parameters": [
                     {
@@ -5261,9 +5355,9 @@
         "/api/update-cert": {
             "post": {
                 "tags": [
-                    "Cert API"
+                    "api"
                 ],
-                "description": "update cert",
+                "description": "update cert\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateCert",
                 "parameters": [
                     {
@@ -5296,9 +5390,9 @@
         "/api/update-enforcer": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "update enforcer",
+                "description": "update enforcer\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateEnforcer",
                 "parameters": [
                     {
@@ -5331,9 +5425,9 @@
         "/api/update-form": {
             "post": {
                 "tags": [
-                    "Form API"
+                    "api"
                 ],
-                "description": "update form",
+                "description": "update form\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateForm",
                 "parameters": [
                     {
@@ -5366,9 +5460,9 @@
         "/api/update-group": {
             "post": {
                 "tags": [
-                    "Group API"
+                    "api"
                 ],
-                "description": "update group",
+                "description": "update group\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateGroup",
                 "parameters": [
                     {
@@ -5401,9 +5495,9 @@
         "/api/update-invitation": {
             "post": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "update invitation",
+                "description": "update invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateInvitation",
                 "parameters": [
                     {
@@ -5436,9 +5530,9 @@
         "/api/update-ldap": {
             "post": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "update ldap",
+                "description": "update ldap\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateLdap",
                 "parameters": [
                     {
@@ -5464,9 +5558,9 @@
         "/api/update-model": {
             "post": {
                 "tags": [
-                    "Model API"
+                    "api"
                 ],
-                "description": "update model",
+                "description": "update model\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateModel",
                 "parameters": [
                     {
@@ -5499,9 +5593,9 @@
         "/api/update-order": {
             "post": {
                 "tags": [
-                    "Order API"
+                    "api"
                 ],
-                "description": "update order",
+                "description": "update order\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateOrder",
                 "parameters": [
                     {
@@ -5534,9 +5628,9 @@
         "/api/update-organization": {
             "post": {
                 "tags": [
-                    "Organization API"
+                    "api"
                 ],
-                "description": "update organization",
+                "description": "update organization\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateOrganization",
                 "parameters": [
                     {
@@ -5569,9 +5663,9 @@
         "/api/update-payment": {
             "post": {
                 "tags": [
-                    "Payment API"
+                    "api"
                 ],
-                "description": "update payment",
+                "description": "update payment\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdatePayment",
                 "parameters": [
                     {
@@ -5604,9 +5698,9 @@
         "/api/update-permission": {
             "post": {
                 "tags": [
-                    "Permission API"
+                    "api"
                 ],
-                "description": "update permission",
+                "description": "update permission\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdatePermission",
                 "parameters": [
                     {
@@ -5639,9 +5733,9 @@
         "/api/update-plan": {
             "post": {
                 "tags": [
-                    "Plan API"
+                    "api"
                 ],
-                "description": "update plan",
+                "description": "update plan\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdatePlan",
                 "parameters": [
                     {
@@ -5674,9 +5768,9 @@
         "/api/update-policy": {
             "post": {
                 "tags": [
-                    "Enforcer API"
+                    "api"
                 ],
-                "description": "update policy",
+                "description": "update policy\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdatePolicy",
                 "parameters": [
                     {
@@ -5712,9 +5806,9 @@
         "/api/update-pricing": {
             "post": {
                 "tags": [
-                    "Pricing API"
+                    "api"
                 ],
-                "description": "update pricing",
+                "description": "update pricing\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdatePricing",
                 "parameters": [
                     {
@@ -5747,9 +5841,9 @@
         "/api/update-product": {
             "post": {
                 "tags": [
-                    "Product API"
+                    "api"
                 ],
-                "description": "update product",
+                "description": "update product\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateProduct",
                 "parameters": [
                     {
@@ -5782,9 +5876,9 @@
         "/api/update-provider": {
             "post": {
                 "tags": [
-                    "Provider API"
+                    "api"
                 ],
-                "description": "update provider",
+                "description": "update provider\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateProvider",
                 "parameters": [
                     {
@@ -5817,9 +5911,9 @@
         "/api/update-resource": {
             "post": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
-                "description": "get resource",
+                "description": "get resource\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateResource",
                 "parameters": [
                     {
@@ -5852,9 +5946,9 @@
         "/api/update-role": {
             "post": {
                 "tags": [
-                    "Role API"
+                    "api"
                 ],
-                "description": "update role",
+                "description": "update role\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateRole",
                 "parameters": [
                     {
@@ -5887,27 +5981,26 @@
         "/api/update-session": {
             "post": {
                 "tags": [
-                    "Session API"
+                    "api"
                 ],
-                "description": "Update session for one user in one application.",
+                "description": "Update session for one user in one application.\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateSession",
                 "parameters": [
                     {
-                        "in": "query",
-                        "name": "id",
-                        "description": "The id(organization/user/application) of session",
+                        "in": "body",
+                        "name": "body",
+                        "description": "The session object to update",
                         "required": true,
-                        "type": "string"
+                        "schema": {
+                            "$ref": "#/definitions/object.Session"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/controllers.Response"
                         }
                     }
                 }
@@ -5916,9 +6009,9 @@
         "/api/update-subscription": {
             "post": {
                 "tags": [
-                    "Subscription API"
+                    "api"
                 ],
-                "description": "update subscription",
+                "description": "update subscription\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateSubscription",
                 "parameters": [
                     {
@@ -5951,9 +6044,9 @@
         "/api/update-syncer": {
             "post": {
                 "tags": [
-                    "Syncer API"
+                    "api"
                 ],
-                "description": "update syncer",
+                "description": "update syncer\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateSyncer",
                 "parameters": [
                     {
@@ -5986,15 +6079,15 @@
         "/api/update-token": {
             "post": {
                 "tags": [
-                    "Token API"
+                    "api"
                 ],
-                "description": "update token",
+                "description": "update token\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateToken",
                 "parameters": [
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "The id ( owner/name ) of token",
+                        "description": "The token ID in format: organization/token-name (e.g., built-in/token-123456)",
                         "required": true,
                         "type": "string"
                     },
@@ -6021,9 +6114,9 @@
         "/api/update-transaction": {
             "post": {
                 "tags": [
-                    "Transaction API"
+                    "api"
                 ],
-                "description": "update transaction",
+                "description": "update transaction\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateTransaction",
                 "parameters": [
                     {
@@ -6056,9 +6149,9 @@
         "/api/update-user": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "update user",
+                "description": "update user\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateUser",
                 "parameters": [
                     {
@@ -6102,9 +6195,9 @@
         "/api/update-webhook": {
             "post": {
                 "tags": [
-                    "Webhook API"
+                    "api"
                 ],
-                "description": "update webhook",
+                "description": "update webhook\n\u003cbr\u003e",
                 "operationId": "ApiController.UpdateWebhook",
                 "parameters": [
                     {
@@ -6138,7 +6231,7 @@
         "/api/upload-resource": {
             "post": {
                 "tags": [
-                    "Resource API"
+                    "api"
                 ],
                 "operationId": "ApiController.UploadResource",
                 "parameters": [
@@ -6215,9 +6308,9 @@
         "/api/user": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "return Laravel compatible user information according to OAuth 2.0",
+                "description": "return Laravel compatible user information according to OAuth 2.0\n\u003cbr\u003e",
                 "operationId": "ApiController.UserInfo2",
                 "responses": {
                     "200": {
@@ -6232,9 +6325,9 @@
         "/api/userinfo": {
             "get": {
                 "tags": [
-                    "Account API"
+                    "api"
                 ],
-                "description": "return user information according to OIDC standards",
+                "description": "return user information according to OIDC standards\n\u003cbr\u003e",
                 "operationId": "ApiController.UserInfo",
                 "responses": {
                     "200": {
@@ -6249,7 +6342,7 @@
         "/api/verify-captcha": {
             "post": {
                 "tags": [
-                    "Verification API"
+                    "api"
                 ],
                 "operationId": "ApiController.VerifyCaptcha",
                 "responses": {
@@ -6265,7 +6358,7 @@
         "/api/verify-code": {
             "post": {
                 "tags": [
-                    "Verification API"
+                    "api"
                 ],
                 "operationId": "ApiController.VerifyCode",
                 "responses": {
@@ -6278,12 +6371,49 @@
                 }
             }
         },
+        "/api/verify-identification": {
+            "post": {
+                "tags": [
+                    "api"
+                ],
+                "description": "verify user's real identity using ID Verification provider\n\u003cbr\u003e",
+                "operationId": "ApiController.VerifyIdentification",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "owner",
+                        "description": "The owner of the user (optional, defaults to logged-in user)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "name",
+                        "description": "The name of the user (optional, defaults to logged-in user)",
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "provider",
+                        "description": "The name of the ID Verification provider (optional, auto-selected if not provided)",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Response object",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/verify-invitation": {
             "get": {
                 "tags": [
-                    "Invitation API"
+                    "api"
                 ],
-                "description": "verify invitation",
+                "description": "verify invitation\n\u003cbr\u003e",
                 "operationId": "ApiController.VerifyInvitation",
                 "parameters": [
                     {
@@ -6307,9 +6437,9 @@
         "/api/webauthn/signin/begin": {
             "get": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "WebAuthn Login Flow 1st stage",
+                "description": "WebAuthn Login Flow 1st stage\n\u003cbr\u003e",
                 "operationId": "ApiController.WebAuthnSigninBegin",
                 "parameters": [
                     {
@@ -6340,9 +6470,9 @@
         "/api/webauthn/signin/finish": {
             "post": {
                 "tags": [
-                    "Login API"
+                    "api"
                 ],
-                "description": "WebAuthn Login Flow 2nd stage",
+                "description": "WebAuthn Login Flow 2nd stage\n\u003cbr\u003e",
                 "operationId": "ApiController.WebAuthnSigninFinish",
                 "parameters": [
                     {
@@ -6368,9 +6498,9 @@
         "/api/webauthn/signup/begin": {
             "get": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "WebAuthn Registration Flow 1st stage",
+                "description": "WebAuthn Registration Flow 1st stage\n\u003cbr\u003e",
                 "operationId": "ApiController.WebAuthnSignupBegin",
                 "responses": {
                     "200": {
@@ -6385,9 +6515,9 @@
         "/api/webauthn/signup/finish": {
             "post": {
                 "tags": [
-                    "User API"
+                    "api"
                 ],
-                "description": "WebAuthn Registration Flow 2nd stage",
+                "description": "WebAuthn Registration Flow 2nd stage\n\u003cbr\u003e",
                 "operationId": "ApiController.WebAuthnSignupFinish",
                 "parameters": [
                     {
@@ -6413,7 +6543,7 @@
         "/api/webhook": {
             "post": {
                 "tags": [
-                    "System API"
+                    "api"
                 ],
                 "operationId": "ApiController.HandleOfficialAccountEvent",
                 "responses": {
@@ -6428,17 +6558,51 @@
         }
     },
     "definitions": {
-        "217289.\u003cnil\u003e.string": {
+        "2087.cacheStruct": {
+            "title": "cacheStruct",
+            "type": "object"
+        },
+        "217747.\u003cnil\u003e.string": {
             "title": "string",
             "type": "object"
         },
-        "217347.string.string": {
+        "217805.string.string": {
             "title": "string",
+            "type": "object"
+        },
+        "531915.0.3.forward": {
+            "title": "forward",
+            "type": "object"
+        },
+        "83407.0.3.NewChannel": {
+            "title": "NewChannel",
             "type": "object"
         },
         "Response": {
             "title": "Response",
             "type": "object"
+        },
+        "caches.Cacher": {
+            "title": "Cacher",
+            "type": "object"
+        },
+        "caches.Manager": {
+            "title": "Manager",
+            "type": "object",
+            "properties": {
+                "cacher": {
+                    "$ref": "#/definitions/caches.Cacher"
+                },
+                "cacherLock": {
+                    "$ref": "#/definitions/sync.RWMutex"
+                },
+                "cachers": {
+                    "$ref": "#/definitions/caches.Cacher"
+                },
+                "disableGlobalCache": {
+                    "type": "boolean"
+                }
+            }
         },
         "casbin.Enforcer": {
             "title": "Enforcer",
@@ -6446,7 +6610,76 @@
         },
         "casvisorsdk.Record": {
             "title": "Record",
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "clientIp": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "isTriggered": {
+                    "type": "boolean"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "requestUri": {
+                    "type": "string"
+                },
+                "response": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "context.Context": {
+            "title": "Context",
             "type": "object"
+        },
+        "contexts.Hook": {
+            "title": "Hook",
+            "type": "object"
+        },
+        "contexts.Hooks": {
+            "title": "Hooks",
+            "type": "object",
+            "properties": {
+                "hooks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/contexts.Hook"
+                    }
+                }
+            }
         },
         "controllers.AuthForm": {
             "title": "AuthForm",
@@ -6553,22 +6786,13 @@
             "type": "object",
             "properties": {
                 "data": {
-                    "additionalProperties": {
-                        "description": "support string, struct or []struct",
-                        "type": "string"
-                    }
+                    "$ref": "#/definitions/controllers.interface"
                 },
                 "data2": {
-                    "additionalProperties": {
-                        "description": "support string, struct or []struct",
-                        "type": "string"
-                    }
+                    "$ref": "#/definitions/controllers.interface"
                 },
                 "data3": {
-                    "additionalProperties": {
-                        "description": "support string, struct or []struct",
-                        "type": "string"
-                    }
+                    "$ref": "#/definitions/controllers.interface"
                 },
                 "msg": {
                     "type": "string"
@@ -6592,6 +6816,7 @@
                     "type": "string"
                 },
                 "organizationId": {
+                    "description": "e.g. \"admin/built-in\"",
                     "type": "string"
                 },
                 "receivers": {
@@ -6602,12 +6827,53 @@
                 }
             }
         },
+        "controllers.interface": {
+            "title": "interface",
+            "type": "object"
+        },
+        "core.DB": {
+            "title": "DB",
+            "type": "object",
+            "properties": {
+                "Logger": {
+                    "$ref": "#/definitions/log.ContextLogger"
+                },
+                "Mapper": {
+                    "$ref": "#/definitions/names.Mapper"
+                },
+                "hooks": {
+                    "$ref": "#/definitions/contexts.Hooks"
+                },
+                "reflectCache": {
+                    "$ref": "#/definitions/2087.cacheStruct"
+                },
+                "reflectCacheMutex": {
+                    "$ref": "#/definitions/sync.RWMutex"
+                }
+            }
+        },
+        "dialects.Dialect": {
+            "title": "Dialect",
+            "type": "object"
+        },
         "jose.JSONWebKey": {
             "title": "JSONWebKey",
             "type": "object"
         },
+        "log.ContextLogger": {
+            "title": "ContextLogger",
+            "type": "object"
+        },
         "model.Model": {
             "title": "Model",
+            "type": "object"
+        },
+        "names.Mapper": {
+            "title": "Mapper",
+            "type": "object"
+        },
+        "net.Addr": {
+            "title": "Addr",
             "type": "object"
         },
         "object": {
@@ -6709,6 +6975,9 @@
                 },
                 "description": {
                     "type": "string"
+                },
+                "disableSamlAttributes": {
+                    "type": "boolean"
                 },
                 "disableSignin": {
                     "type": "boolean"
@@ -7337,6 +7606,9 @@
                 "name": {
                     "type": "string"
                 },
+                "type": {
+                    "type": "string"
+                },
                 "value": {
                     "type": "string"
                 }
@@ -7674,6 +7946,9 @@
                 "createdTime": {
                     "type": "string"
                 },
+                "currency": {
+                    "type": "string"
+                },
                 "displayName": {
                     "type": "string"
                 },
@@ -7692,8 +7967,25 @@
                 "payment": {
                     "type": "string"
                 },
+                "planName": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "pricingName": {
+                    "type": "string"
+                },
                 "productName": {
                     "type": "string"
+                },
+                "products": {
+                    "description": "Future support for multiple products per order. Using varchar(1000) for simple JSON array storage; can be refactored to separate table if needed",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "startTime": {
                     "type": "string"
@@ -7938,7 +8230,12 @@
                 "name": {
                     "type": "string"
                 },
+                "order": {
+                    "description": "Internal order name",
+                    "type": "string"
+                },
                 "outOrderId": {
+                    "description": "External payment provider's order ID",
                     "type": "string"
                 },
                 "owner": {
@@ -7972,13 +8269,11 @@
                 "provider": {
                     "type": "string"
                 },
-                "returnUrl": {
-                    "type": "string"
-                },
                 "state": {
                     "$ref": "#/definitions/pp.PaymentState"
                 },
                 "successUrl": {
+                    "description": "`successUrl` is redirected from `payUrl` after pay success",
                     "type": "string"
                 },
                 "tag": {
@@ -8108,6 +8403,7 @@
                     "type": "string"
                 },
                 "paymentProviders": {
+                    "description": "payment providers for related product",
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -8181,6 +8477,9 @@
                 "detail": {
                     "type": "string"
                 },
+                "disableCustomRecharge": {
+                    "type": "boolean"
+                },
                 "displayName": {
                     "type": "string"
                 },
@@ -8216,8 +8515,12 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "returnUrl": {
-                    "type": "string"
+                "rechargeOptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "number",
+                        "format": "double"
+                    }
                 },
                 "sold": {
                     "type": "integer",
@@ -8285,6 +8588,7 @@
                     "type": "string"
                 },
                 "content": {
+                    "description": "If provider type is WeChat, Content means QRCode string by Base64 encoding",
                     "type": "string"
                 },
                 "createdTime": {
@@ -8303,6 +8607,7 @@
                     "type": "string"
                 },
                 "disableSsl": {
+                    "description": "If the provider type is WeChat, DisableSsl means EnableQRCode, if type is Google, it means sync phone number",
                     "type": "boolean"
                 },
                 "displayName": {
@@ -8434,7 +8739,56 @@
         },
         "object.Record": {
             "title": "Record",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "clientIp": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "isTriggered": {
+                    "type": "boolean"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "organization": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "requestUri": {
+                    "type": "string"
+                },
+                "response": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
         },
         "object.Resource": {
             "title": "Resource",
@@ -8545,6 +8899,33 @@
                 },
                 "value": {
                     "type": "string"
+                }
+            }
+        },
+        "object.Session": {
+            "title": "Session",
+            "type": "object",
+            "properties": {
+                "ExclusiveSignin": {
+                    "type": "boolean"
+                },
+                "application": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "sessionId": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -9244,6 +9625,9 @@
                 "isOnline": {
                     "type": "boolean"
                 },
+                "isVerified": {
+                    "type": "boolean"
+                },
                 "kakao": {
                     "type": "string"
                 },
@@ -9425,6 +9809,9 @@
                     "type": "integer",
                     "format": "int64"
                 },
+                "realName": {
+                    "type": "string"
+                },
                 "recoveryCodes": {
                     "type": "array",
                     "items": {
@@ -9577,6 +9964,9 @@
                         "type": "string"
                     }
                 },
+                "is_verified": {
+                    "type": "boolean"
+                },
                 "iss": {
                     "type": "string"
                 },
@@ -9596,6 +9986,9 @@
                     "type": "string"
                 },
                 "preferred_username": {
+                    "type": "string"
+                },
+                "real_name": {
                     "type": "string"
                 },
                 "roles": {
@@ -9618,7 +10011,7 @@
             "type": "object",
             "properties": {
                 "aliases": {
-                    "$ref": "#/definitions/217289.\u003cnil\u003e.string"
+                    "$ref": "#/definitions/217747.\u003cnil\u003e.string"
                 },
                 "links": {
                     "type": "array",
@@ -9627,7 +10020,7 @@
                     }
                 },
                 "properties": {
-                    "$ref": "#/definitions/217347.string.string"
+                    "$ref": "#/definitions/217805.string.string"
                 },
                 "subject": {
                     "type": "string"
@@ -9718,20 +10111,392 @@
             ],
             "example": "Paid"
         },
+        "protocol.AuthenticationExtensions": {
+            "title": "AuthenticationExtensions",
+            "type": "object"
+        },
+        "protocol.AuthenticationExtensionsClientOutputs": {
+            "title": "AuthenticationExtensionsClientOutputs",
+            "type": "object"
+        },
+        "protocol.AuthenticatorAssertionResponse": {
+            "title": "AuthenticatorAssertionResponse",
+            "type": "object",
+            "properties": {
+                "authenticatorData": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "clientDataJSON": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "signature": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "userHandle": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                }
+            }
+        },
+        "protocol.AuthenticatorAttachment": {
+            "title": "AuthenticatorAttachment",
+            "type": "string",
+            "enum": [
+                "Platform = \"platform\"",
+                "CrossPlatform = \"cross-platform\""
+            ],
+            "example": "platform"
+        },
+        "protocol.AuthenticatorAttestationResponse": {
+            "title": "AuthenticatorAttestationResponse",
+            "type": "object",
+            "properties": {
+                "attestationObject": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "clientDataJSON": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "transports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "protocol.AuthenticatorResponse": {
+            "title": "AuthenticatorResponse",
+            "type": "object",
+            "properties": {
+                "clientDataJSON": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                }
+            }
+        },
+        "protocol.AuthenticatorSelection": {
+            "title": "AuthenticatorSelection",
+            "type": "object",
+            "properties": {
+                "authenticatorAttachment": {
+                    "$ref": "#/definitions/protocol.AuthenticatorAttachment"
+                },
+                "requireResidentKey": {
+                    "type": "boolean"
+                },
+                "residentKey": {
+                    "$ref": "#/definitions/protocol.ResidentKeyRequirement"
+                },
+                "userVerification": {
+                    "$ref": "#/definitions/protocol.UserVerificationRequirement"
+                }
+            }
+        },
+        "protocol.AuthenticatorTransport": {
+            "title": "AuthenticatorTransport",
+            "type": "string",
+            "enum": [
+                "USB = \"usb\"",
+                "NFC = \"nfc\"",
+                "BLE = \"ble\"",
+                "Hybrid = \"hybrid\"",
+                "Internal = \"internal\""
+            ],
+            "example": "usb"
+        },
+        "protocol.ConveyancePreference": {
+            "title": "ConveyancePreference",
+            "type": "string",
+            "enum": [
+                "PreferNoAttestation = \"none\"",
+                "PreferIndirectAttestation = \"indirect\"",
+                "PreferDirectAttestation = \"direct\"",
+                "PreferEnterpriseAttestation = \"enterprise\""
+            ],
+            "example": "none"
+        },
+        "protocol.Credential": {
+            "title": "Credential",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "protocol.CredentialAssertion": {
             "title": "CredentialAssertion",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "publicKey": {
+                    "$ref": "#/definitions/protocol.PublicKeyCredentialRequestOptions"
+                }
+            }
         },
         "protocol.CredentialAssertionResponse": {
             "title": "CredentialAssertionResponse",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "authenticatorAttachment": {
+                    "type": "string"
+                },
+                "clientExtensionResults": {
+                    "$ref": "#/definitions/protocol.AuthenticationExtensionsClientOutputs"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rawId": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "response": {
+                    "$ref": "#/definitions/protocol.AuthenticatorAssertionResponse"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
         },
         "protocol.CredentialCreation": {
             "title": "CredentialCreation",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "publicKey": {
+                    "$ref": "#/definitions/protocol.PublicKeyCredentialCreationOptions"
+                }
+            }
         },
         "protocol.CredentialCreationResponse": {
             "title": "CredentialCreationResponse",
+            "type": "object",
+            "properties": {
+                "authenticatorAttachment": {
+                    "type": "string"
+                },
+                "clientExtensionResults": {
+                    "$ref": "#/definitions/protocol.AuthenticationExtensionsClientOutputs"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rawId": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "response": {
+                    "$ref": "#/definitions/protocol.AuthenticatorAttestationResponse"
+                },
+                "transports": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "protocol.CredentialDescriptor": {
+            "title": "CredentialDescriptor",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "transports": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/protocol.AuthenticatorTransport"
+                    }
+                },
+                "type": {
+                    "$ref": "#/definitions/protocol.CredentialType"
+                }
+            }
+        },
+        "protocol.CredentialEntity": {
+            "title": "CredentialEntity",
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "protocol.CredentialParameter": {
+            "title": "CredentialParameter",
+            "type": "object",
+            "properties": {
+                "alg": {
+                    "$ref": "#/definitions/webauthncose.COSEAlgorithmIdentifier"
+                },
+                "type": {
+                    "$ref": "#/definitions/protocol.CredentialType"
+                }
+            }
+        },
+        "protocol.CredentialType": {
+            "title": "CredentialType",
+            "type": "string",
+            "enum": [
+                "PublicKeyCredentialType = \"public-key\""
+            ],
+            "example": "public-key"
+        },
+        "protocol.PublicKeyCredential": {
+            "title": "PublicKeyCredential",
+            "type": "object",
+            "properties": {
+                "authenticatorAttachment": {
+                    "type": "string"
+                },
+                "clientExtensionResults": {
+                    "$ref": "#/definitions/protocol.AuthenticationExtensionsClientOutputs"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "rawId": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "protocol.PublicKeyCredentialCreationOptions": {
+            "title": "PublicKeyCredentialCreationOptions",
+            "type": "object",
+            "properties": {
+                "attestation": {
+                    "$ref": "#/definitions/protocol.ConveyancePreference"
+                },
+                "authenticatorSelection": {
+                    "$ref": "#/definitions/protocol.AuthenticatorSelection"
+                },
+                "challenge": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "excludeCredentials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/protocol.CredentialDescriptor"
+                    }
+                },
+                "extensions": {
+                    "$ref": "#/definitions/protocol.AuthenticationExtensions"
+                },
+                "pubKeyCredParams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/protocol.CredentialParameter"
+                    }
+                },
+                "rp": {
+                    "$ref": "#/definitions/protocol.RelyingPartyEntity"
+                },
+                "timeout": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "user": {
+                    "$ref": "#/definitions/protocol.UserEntity"
+                }
+            }
+        },
+        "protocol.PublicKeyCredentialRequestOptions": {
+            "title": "PublicKeyCredentialRequestOptions",
+            "type": "object",
+            "properties": {
+                "allowCredentials": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/protocol.CredentialDescriptor"
+                    }
+                },
+                "challenge": {
+                    "$ref": "#/definitions/protocol.URLEncodedBase64"
+                },
+                "extensions": {
+                    "$ref": "#/definitions/protocol.AuthenticationExtensions"
+                },
+                "rpId": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "userVerification": {
+                    "$ref": "#/definitions/protocol.UserVerificationRequirement"
+                }
+            }
+        },
+        "protocol.RelyingPartyEntity": {
+            "title": "RelyingPartyEntity",
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "protocol.ResidentKeyRequirement": {
+            "title": "ResidentKeyRequirement",
+            "type": "string",
+            "enum": [
+                "ResidentKeyRequirementDiscouraged = \"discouraged\"",
+                "ResidentKeyRequirementPreferred = \"preferred\"",
+                "ResidentKeyRequirementRequired = \"required\""
+            ],
+            "example": "discouraged"
+        },
+        "protocol.URLEncodedBase64": {
+            "title": "URLEncodedBase64",
+            "format": "string",
+            "type": "array"
+        },
+        "protocol.UserEntity": {
+            "title": "UserEntity",
+            "type": "object",
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "$ref": "#/definitions/protocol.interface"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "protocol.UserVerificationRequirement": {
+            "title": "UserVerificationRequirement",
+            "type": "string",
+            "enum": [
+                "VerificationRequired = \"required\"",
+                "VerificationPreferred = \"preferred\"",
+                "VerificationDiscouraged = \"discouraged\""
+            ],
+            "example": "required"
+        },
+        "protocol.interface": {
+            "title": "interface",
             "type": "object"
         },
         "sql.DB": {
@@ -9740,6 +10505,99 @@
         },
         "ssh.Client": {
             "title": "Client",
+            "type": "object",
+            "properties": {
+                "channelHandlers": {
+                    "$ref": "#/definitions/83407.0.3.NewChannel"
+                },
+                "forwards": {
+                    "$ref": "#/definitions/ssh.forwardList"
+                },
+                "handleForwardsOnce": {
+                    "$ref": "#/definitions/sync.Once"
+                },
+                "mu": {
+                    "$ref": "#/definitions/sync.Mutex"
+                }
+            }
+        },
+        "ssh.Conn": {
+            "title": "Conn",
+            "type": "object"
+        },
+        "ssh.forwardEntry": {
+            "title": "forwardEntry",
+            "type": "object",
+            "properties": {
+                "c": {
+                    "$ref": "#/definitions/531915.0.3.forward"
+                },
+                "laddr": {
+                    "$ref": "#/definitions/net.Addr"
+                }
+            }
+        },
+        "ssh.forwardList": {
+            "title": "forwardList",
+            "type": "object",
+            "properties": {
+                "entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ssh.forwardEntry"
+                    }
+                }
+            }
+        },
+        "sync.Map": {
+            "title": "Map",
+            "type": "object"
+        },
+        "sync.Mutex": {
+            "title": "Mutex",
+            "type": "object"
+        },
+        "sync.Once": {
+            "title": "Once",
+            "type": "object"
+        },
+        "sync.RWMutex": {
+            "title": "RWMutex",
+            "type": "object"
+        },
+        "tags.Handler": {
+            "title": "Handler",
+            "type": "object"
+        },
+        "tags.Parser": {
+            "title": "Parser",
+            "type": "object",
+            "properties": {
+                "cacherMgr": {
+                    "$ref": "#/definitions/caches.Manager"
+                },
+                "columnMapper": {
+                    "$ref": "#/definitions/names.Mapper"
+                },
+                "dialect": {
+                    "$ref": "#/definitions/dialects.Dialect"
+                },
+                "handlers": {
+                    "$ref": "#/definitions/tags.Handler"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "tableCache": {
+                    "$ref": "#/definitions/sync.Map"
+                },
+                "tableMapper": {
+                    "$ref": "#/definitions/names.Mapper"
+                }
+            }
+        },
+        "time.Location": {
+            "title": "Location",
             "type": "object"
         },
         "util.SystemInfo": {
@@ -9779,28 +10637,223 @@
                 }
             }
         },
+        "webauthn.Authenticator": {
+            "title": "Authenticator",
+            "type": "object",
+            "properties": {
+                "AAGUID": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "byte"
+                    }
+                },
+                "attachment": {
+                    "$ref": "#/definitions/protocol.AuthenticatorAttachment"
+                },
+                "cloneWarning": {
+                    "type": "boolean"
+                },
+                "signCount": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            }
+        },
         "webauthn.Credential": {
             "title": "Credential",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "attestationType": {
+                    "type": "string"
+                },
+                "authenticator": {
+                    "$ref": "#/definitions/webauthn.Authenticator"
+                },
+                "flags": {
+                    "$ref": "#/definitions/webauthn.CredentialFlags"
+                },
+                "id": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "byte"
+                    }
+                },
+                "publicKey": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "byte"
+                    }
+                },
+                "transport": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/protocol.AuthenticatorTransport"
+                    }
+                }
+            }
+        },
+        "webauthn.CredentialFlags": {
+            "title": "CredentialFlags",
+            "type": "object",
+            "properties": {
+                "backupEligible": {
+                    "type": "boolean"
+                },
+                "backupState": {
+                    "type": "boolean"
+                },
+                "userPresent": {
+                    "type": "boolean"
+                },
+                "userVerified": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "webauthncose.COSEAlgorithmIdentifier": {
+            "title": "COSEAlgorithmIdentifier",
+            "format": "int64",
+            "type": "integer"
         },
         "xorm.Engine": {
             "title": "Engine",
+            "type": "object",
+            "properties": {
+                "DatabaseTZ": {
+                    "$ref": "#/definitions/time.Location"
+                },
+                "TZLocation": {
+                    "$ref": "#/definitions/time.Location"
+                },
+                "cacherMgr": {
+                    "$ref": "#/definitions/caches.Manager"
+                },
+                "dataSourceName": {
+                    "type": "string"
+                },
+                "db": {
+                    "$ref": "#/definitions/core.DB"
+                },
+                "defaultContext": {
+                    "$ref": "#/definitions/context.Context"
+                },
+                "dialect": {
+                    "$ref": "#/definitions/dialects.Dialect"
+                },
+                "driverName": {
+                    "type": "string"
+                },
+                "engineGroup": {
+                    "$ref": "#/definitions/xorm.EngineGroup"
+                },
+                "logSessionID": {
+                    "type": "boolean"
+                },
+                "logger": {
+                    "$ref": "#/definitions/log.ContextLogger"
+                },
+                "tagParser": {
+                    "$ref": "#/definitions/tags.Parser"
+                }
+            }
+        },
+        "xorm.EngineGroup": {
+            "title": "EngineGroup",
+            "type": "object",
+            "properties": {
+                "DatabaseTZ": {
+                    "$ref": "#/definitions/time.Location"
+                },
+                "TZLocation": {
+                    "$ref": "#/definitions/time.Location"
+                },
+                "cacherMgr": {
+                    "$ref": "#/definitions/caches.Manager"
+                },
+                "dataSourceName": {
+                    "type": "string"
+                },
+                "db": {
+                    "$ref": "#/definitions/core.DB"
+                },
+                "defaultContext": {
+                    "$ref": "#/definitions/context.Context"
+                },
+                "dialect": {
+                    "$ref": "#/definitions/dialects.Dialect"
+                },
+                "driverName": {
+                    "type": "string"
+                },
+                "engineGroup": {
+                    "$ref": "#/definitions/xorm.EngineGroup"
+                },
+                "logSessionID": {
+                    "type": "boolean"
+                },
+                "logger": {
+                    "$ref": "#/definitions/log.ContextLogger"
+                },
+                "policy": {
+                    "$ref": "#/definitions/xorm.GroupPolicy"
+                },
+                "slaves": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/xorm.Engine"
+                    }
+                },
+                "tagParser": {
+                    "$ref": "#/definitions/tags.Parser"
+                }
+            }
+        },
+        "xorm.GroupPolicy": {
+            "title": "GroupPolicy",
             "type": "object"
         },
         "xormadapter.Adapter": {
             "title": "Adapter",
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "dataSourceName": {
+                    "type": "string"
+                },
+                "dbSpecified": {
+                    "type": "boolean"
+                },
+                "driverName": {
+                    "type": "string"
+                },
+                "engine": {
+                    "$ref": "#/definitions/xorm.Engine"
+                },
+                "isFiltered": {
+                    "type": "boolean"
+                },
+                "tableName": {
+                    "type": "string"
+                },
+                "tablePrefix": {
+                    "type": "string"
+                }
+            }
         },
         "xormadapter.CasbinRule": {
             "title": "CasbinRule",
             "type": "object"
         }
     },
-    "securityDefinitions": {
-        "AccessToken": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+    "tags": [
+        {
+            "name": "api",
+            "description": "ApiController\ncontroller for handlers under /api uri\n"
+        },
+        {
+            "description": "RootController\ncontroller for handlers directly under / (root)\n"
         }
-    }
+    ]
 }
