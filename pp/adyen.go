@@ -152,6 +152,8 @@ func (pp *AdyenPaymentProvider) Notify(body []byte, orderId string) (*NotifyResu
 }
 
 func (pp *AdyenPaymentProvider) GetInvoice(paymentName string, personName string, personIdCard string, personEmail string, personPhone string, invoiceType string, invoiceTitle string, invoiceTaxId string) (string, error) {
+	// Adyen does not provide a direct API for invoice generation
+	// Invoicing should be handled separately through Adyen's merchant portal or third-party systems
 	return "", nil
 }
 
@@ -159,5 +161,6 @@ func (pp *AdyenPaymentProvider) GetResponseError(err error) string {
 	if err == nil {
 		return "success"
 	}
-	return "fail"
+	// Return the error message for better debugging
+	return fmt.Sprintf("fail: %s", err.Error())
 }
