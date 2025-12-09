@@ -501,23 +501,17 @@ paths:
       description: Add session for one user in one application. If there are other existing sessions, join the session into the list.
       operationId: ApiController.AddSession
       parameters:
-      - in: query
-        name: id
-        description: The id(organization/user/application) of session
+      - in: body
+        name: body
+        description: The session object to add
         required: true
-        type: string
-      - in: query
-        name: sessionId
-        description: sessionId to be added
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/object.Session'
       responses:
         "200":
           description: The Response object
           schema:
-            type: array
-            items:
-              type: string
+            $ref: '#/definitions/controllers.Response'
   /api/add-subscription:
     post:
       tags:
@@ -666,6 +660,23 @@ paths:
       - in: query
         name: owner
         description: owner
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/cancel-order:
+    post:
+      tags:
+      - Order API
+      description: cancel an order
+      operationId: ApiController.CancelOrder
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the order
+        required: true
         type: string
       responses:
         "200":
@@ -1041,18 +1052,17 @@ paths:
       description: Delete session for one user in one application.
       operationId: ApiController.DeleteSession
       parameters:
-      - in: query
-        name: id
-        description: The id(organization/user/application) of session
+      - in: body
+        name: body
+        description: The session object to delete
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/object.Session'
       responses:
         "200":
           description: The Response object
           schema:
-            type: array
-            items:
-              type: string
+            $ref: '#/definitions/controllers.Response'
   /api/delete-subscription:
     post:
       tags:
@@ -1898,9 +1908,9 @@ paths:
   /api/get-payment:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payment
-      operationId: ApiController.GetPayment
+      operationId: ApiController.GetVerification
       parameters:
       - in: query
         name: id
@@ -1911,13 +1921,13 @@ paths:
         "200":
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Payment'
+            $ref: '#/definitions/object.Verification'
   /api/get-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments
-      operationId: ApiController.GetPayments
+      operationId: ApiController.GetVerifications
       parameters:
       - in: query
         name: owner
@@ -1930,7 +1940,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
   /api/get-permission:
     get:
       tags:
@@ -2348,7 +2358,7 @@ paths:
       parameters:
       - in: query
         name: sessionPkId
-        description: The id(organization/user/application) of session
+        description: 'The session ID in format: organization/user/application (e.g., built-in/admin/app-built-in)'
         required: true
         type: string
       responses:
@@ -2497,7 +2507,7 @@ paths:
       parameters:
       - in: query
         name: id
-        description: The id ( owner/name ) of token
+        description: 'The token ID in format: organization/token-name (e.g., built-in/token-123456)'
         required: true
         type: string
       responses:
@@ -2514,7 +2524,7 @@ paths:
       parameters:
       - in: query
         name: owner
-        description: The owner of tokens
+        description: The organization name (e.g., built-in)
         required: true
         type: string
       - in: query
@@ -2665,9 +2675,9 @@ paths:
   /api/get-user-payments:
     get:
       tags:
-      - Payment API
+      - Verification API
       description: get payments for a user
-      operationId: ApiController.GetUserPayments
+      operationId: ApiController.GetUserVerifications
       parameters:
       - in: query
         name: owner
@@ -2690,7 +2700,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Payment'
+              $ref: '#/definitions/object.Verification'
   /api/get-users:
     get:
       tags:
@@ -2813,12 +2823,12 @@ paths:
       parameters:
       - in: query
         name: sessionPkId
-        description: The id(organization/user/application) of session
+        description: 'The session ID in format: organization/user/application (e.g., built-in/admin/app-built-in)'
         required: true
         type: string
       - in: query
         name: sessionId
-        description: sessionId to be checked
+        description: The specific session ID to check
         required: true
         type: string
       responses:
@@ -3079,6 +3089,61 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/controllers.Response'
+  /api/pay-order:
+    post:
+      tags:
+      - Order API
+      description: pay an existing order
+      operationId: ApiController.PayOrder
+      parameters:
+      - in: query
+        name: id
+        description: The id ( owner/name ) of the order
+        required: true
+        type: string
+      - in: query
+        name: providerName
+        description: The name of the provider
+        required: true
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+  /api/place-order:
+    post:
+      tags:
+      - Order API
+      description: place an order for a product
+      operationId: ApiController.PlaceOrder
+      parameters:
+      - in: query
+        name: productId
+        description: The id ( owner/name ) of the product
+        required: true
+        type: string
+      - in: query
+        name: pricingName
+        description: The name of the pricing (for subscription)
+        type: string
+      - in: query
+        name: planName
+        description: The name of the plan (for subscription)
+        type: string
+      - in: query
+        name: customPrice
+        description: Custom price for recharge products
+        type: number
+      - in: query
+        name: userName
+        description: The username to place order for (admin only)
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/object.Order'
   /api/refresh-engines:
     post:
       tags:
@@ -3849,18 +3914,17 @@ paths:
       description: Update session for one user in one application.
       operationId: ApiController.UpdateSession
       parameters:
-      - in: query
-        name: id
-        description: The id(organization/user/application) of session
+      - in: body
+        name: body
+        description: The session object to update
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/object.Session'
       responses:
         "200":
           description: The Response object
           schema:
-            type: array
-            items:
-              type: string
+            $ref: '#/definitions/controllers.Response'
   /api/update-subscription:
     post:
       tags:
@@ -3916,7 +3980,7 @@ paths:
       parameters:
       - in: query
         name: id
-        description: The id ( owner/name ) of token
+        description: 'The token ID in format: organization/token-name (e.g., built-in/token-123456)'
         required: true
         type: string
       - in: body
@@ -4101,6 +4165,30 @@ paths:
           description: The Response object
           schema:
             $ref: '#/definitions/object.Userinfo'
+  /api/verify-identification:
+    post:
+      tags:
+      - User API
+      description: verify user's real identity using ID Verification provider
+      operationId: ApiController.VerifyIdentification
+      parameters:
+      - in: query
+        name: owner
+        description: The owner of the user (optional, defaults to logged-in user)
+        type: string
+      - in: query
+        name: name
+        description: The name of the user (optional, defaults to logged-in user)
+        type: string
+      - in: query
+        name: provider
+        description: The name of the ID Verification provider (optional, auto-selected if not provided)
+        type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
   /api/verify-invitation:
     get:
       tags:
@@ -4198,10 +4286,10 @@ paths:
           schema:
             $ref: '#/definitions/controllers.Response'
 definitions:
-  217289.<nil>.string:
+  217748.<nil>.string:
     title: string
     type: object
-  217347.string.string:
+  217806.string.string:
     title: string
     type: object
   Response:
@@ -4391,6 +4479,8 @@ definitions:
         type: string
       description:
         type: string
+      disableSamlAttributes:
+        type: boolean
       disableSignin:
         type: boolean
       displayName:
@@ -4815,6 +4905,8 @@ definitions:
     properties:
       name:
         type: string
+      type:
+        type: string
       value:
         type: string
   object.Ldap:
@@ -5040,6 +5132,8 @@ definitions:
     properties:
       createdTime:
         type: string
+      currency:
+        type: string
       displayName:
         type: string
       endTime:
@@ -5052,8 +5146,19 @@ definitions:
         type: string
       payment:
         type: string
+      planName:
+        type: string
+      price:
+        type: number
+        format: double
+      pricingName:
+        type: string
       productName:
         type: string
+      products:
+        type: array
+        items:
+          type: string
       startTime:
         type: string
       state:
@@ -5218,6 +5323,8 @@ definitions:
         type: string
       name:
         type: string
+      order:
+        type: string
       outOrderId:
         type: string
       owner:
@@ -5240,8 +5347,6 @@ definitions:
       productName:
         type: string
       provider:
-        type: string
-      returnUrl:
         type: string
       state:
         $ref: '#/definitions/pp.PaymentState'
@@ -5381,6 +5486,8 @@ definitions:
         type: string
       detail:
         type: string
+      disableCustomRecharge:
+        type: boolean
       displayName:
         type: string
       image:
@@ -5405,8 +5512,11 @@ definitions:
       quantity:
         type: integer
         format: int64
-      returnUrl:
-        type: string
+      rechargeOptions:
+        type: array
+        items:
+          type: number
+          format: double
       sold:
         type: integer
         format: int64
@@ -5626,6 +5736,24 @@ definitions:
         type: string
       value:
         type: string
+  object.Session:
+    title: Session
+    type: object
+    properties:
+      ExclusiveSignin:
+        type: boolean
+      application:
+        type: string
+      createdTime:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+      sessionId:
+        type: array
+        items:
+          type: string
   object.SigninItem:
     title: SigninItem
     type: object
@@ -6097,6 +6225,8 @@ definitions:
         type: boolean
       isOnline:
         type: boolean
+      isVerified:
+        type: boolean
       kakao:
         type: string
       karma:
@@ -6218,6 +6348,8 @@ definitions:
       ranking:
         type: integer
         format: int64
+      realName:
+        type: string
       recoveryCodes:
         type: array
         items:
@@ -6320,6 +6452,8 @@ definitions:
         type: array
         items:
           type: string
+      is_verified:
+        type: boolean
       iss:
         type: string
       name:
@@ -6333,6 +6467,8 @@ definitions:
       picture:
         type: string
       preferred_username:
+        type: string
+      real_name:
         type: string
       roles:
         type: array
@@ -6348,13 +6484,13 @@ definitions:
     type: object
     properties:
       aliases:
-        $ref: '#/definitions/217289.<nil>.string'
+        $ref: '#/definitions/217748.<nil>.string'
       links:
         type: array
         items:
           $ref: '#/definitions/object.WebFingerLink'
       properties:
-        $ref: '#/definitions/217347.string.string'
+        $ref: '#/definitions/217806.string.string'
       subject:
         type: string
   object.WebFingerLink:
