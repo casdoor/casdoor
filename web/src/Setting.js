@@ -977,6 +977,8 @@ export function goToLinkSoftOrJumpSelf(ths, link) {
   ths.props.history.push(link);
 }
 
+// Global callback for opening AI Assistant from error notifications
+// This is set once during app initialization and used throughout the app lifecycle
 let openAiAssistantCallback = null;
 
 export function setOpenAiAssistantCallback(callback) {
@@ -1004,9 +1006,7 @@ export function showMessage(type, text) {
             type="primary"
             size="small"
             onClick={() => {
-              if (openAiAssistantCallback) {
-                openAiAssistantCallback();
-              }
+              openAiAssistantCallback();
               notification.destroy(key);
             }}
           >
