@@ -1909,7 +1909,7 @@ paths:
       tags:
       - api
       description: get payment
-      operationId: ApiController.GetVerification
+      operationId: ApiController.GetPayment
       parameters:
       - in: query
         name: id
@@ -1926,7 +1926,7 @@ paths:
       tags:
       - api
       description: get payments
-      operationId: ApiController.GetVerifications
+      operationId: ApiController.GetPayments
       parameters:
       - in: query
         name: owner
@@ -2680,7 +2680,7 @@ paths:
       tags:
       - api
       description: get payments for a user
-      operationId: ApiController.GetUserVerifications
+      operationId: ApiController.GetUserPayments
       parameters:
       - in: query
         name: owner

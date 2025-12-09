@@ -95,6 +95,29 @@ def remove_html_breaks(swagger_data):
     
     return swagger_data
 
+def fix_operation_ids(swagger_data):
+    """
+    Fix incorrect operation IDs that bee sometimes generates.
+    Some payment endpoints are incorrectly labeled as verification endpoints.
+    """
+    if 'paths' not in swagger_data:
+        return swagger_data
+    
+    # Map of path to correct operation ID
+    fixes = {
+        '/api/get-payment': {'operationId': 'ApiController.GetPayment'},
+        '/api/get-payments': {'operationId': 'ApiController.GetPayments'},
+        '/api/get-user-payments': {'operationId': 'ApiController.GetUserPayments'},
+    }
+    
+    for path, fix_data in fixes.items():
+        if path in swagger_data['paths']:
+            for method, details in swagger_data['paths'][path].items():
+                if 'operationId' in details and 'operationId' in fix_data:
+                    details['operationId'] = fix_data['operationId']
+    
+    return swagger_data
+
 def main():
     # Load swagger.json
     with open('swagger/swagger.json', 'r', encoding='utf-8') as f:
@@ -104,6 +127,7 @@ def main():
     swagger_json = fix_swagger_metadata(swagger_json)
     swagger_json = fix_tags_in_paths(swagger_json)
     swagger_json = remove_html_breaks(swagger_json)
+    swagger_json = fix_operation_ids(swagger_json)
     
     # Save swagger.json
     with open('swagger/swagger.json', 'w', encoding='utf-8') as f:
@@ -119,6 +143,7 @@ def main():
     swagger_yaml = fix_swagger_metadata(swagger_yaml)
     swagger_yaml = fix_tags_in_paths(swagger_yaml)
     swagger_yaml = remove_html_breaks(swagger_yaml)
+    swagger_yaml = fix_operation_ids(swagger_yaml)
     
     # Save swagger.yml
     with open('swagger/swagger.yml', 'w', encoding='utf-8') as f:

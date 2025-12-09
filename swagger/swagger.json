@@ -2941,7 +2941,7 @@
                     "api"
                 ],
                 "description": "get payment",
-                "operationId": "ApiController.GetVerification",
+                "operationId": "ApiController.GetPayment",
                 "parameters": [
                     {
                         "in": "query",
@@ -2967,7 +2967,7 @@
                     "api"
                 ],
                 "description": "get payments",
-                "operationId": "ApiController.GetVerifications",
+                "operationId": "ApiController.GetPayments",
                 "parameters": [
                     {
                         "in": "query",
@@ -4111,7 +4111,7 @@
                     "api"
                 ],
                 "description": "get payments for a user",
-                "operationId": "ApiController.GetUserVerifications",
+                "operationId": "ApiController.GetUserPayments",
                 "parameters": [
                     {
                         "in": "query",
