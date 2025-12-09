@@ -44,6 +44,12 @@ jobs:
           cache-dependency-path: ./web/yarn.lock
       - run: yarn install && CI=false yarn run build
         working-directory: ./web
+      - name: Upload build artifacts
+        if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build-${{ github.run_id }}
+          path: ./web/build
 
   backend:
     name: Back-end
@@ -146,39 +152,95 @@ jobs:
           name: cypress-videos
           path: ./web/cypress/videos
 
-  release-and-push:
-    name: Release And Push
+  tag-release:
+    name: Create Tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
     if: github.repository == 'casdoor/casdoor' && github.event_name == 'push'
     needs: [ frontend, backend, linter, e2e ]
+    outputs:
+      new-release-published: ${{ steps.semantic.outputs.new_release_published }}
+      new-release-version: ${{ steps.semantic.outputs.new_release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Tag with Semantic Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  github-release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && needs.tag-release.outputs.new-release-published == 'true'
+    needs: [ tag-release ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build-${{ github.run_id }}
+          path: ./web/build
+
+      - name: Prepare Go caches
+        run: |
+          echo "GOMODCACHE=$RUNNER_TEMP/gomod" >> $GITHUB_ENV
+          echo "GOCACHE=$RUNNER_TEMP/gocache" >> $GITHUB_ENV
+          go clean -cache -modcache -testcache -fuzzcache
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker-release:
+    name: Docker Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    if: github.repository == 'casdoor/casdoor' && github.event_name == 'push' && needs.tag-release.outputs.new-release-published == 'true'
+    needs: [ tag-release ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: -1
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
 
       - name: Fetch Previous version
         id: get-previous-tag
-        uses: actions-ecosystem/action-get-latest-tag@v1.6.0
-
-      - name: Release
-        run: yarn global add semantic-release@17.4.4 && semantic-release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Fetch Current version
-        id: get-current-tag
         uses: actions-ecosystem/action-get-latest-tag@v1.6.0
 
       - name: Decide Should_Push Or Not
         id: should_push
         run: |
           old_version=${{steps.get-previous-tag.outputs.tag}}
-          new_version=${{steps.get-current-tag.outputs.tag }}
+          new_version=${{ needs.tag-release.outputs.new-release-version }}
 
           old_array=(${old_version//\./ })
           new_array=(${new_version//\./ })
@@ -217,7 +279,7 @@ jobs:
           target: STANDARD
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor:${{steps.get-current-tag.outputs.tag }},casbin/casdoor:latest
+          tags: casbin/casdoor:${{ needs.tag-release.outputs.new-release-version }},casbin/casdoor:latest
 
       - name: Push All In One Version to Docker Hub
         uses: docker/build-push-action@v3
@@ -227,7 +289,7 @@ jobs:
           target: ALLINONE
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: casbin/casdoor-all-in-one:${{steps.get-current-tag.outputs.tag }},casbin/casdoor-all-in-one:latest
+          tags: casbin/casdoor-all-in-one:${{ needs.tag-release.outputs.new-release-version }},casbin/casdoor-all-in-one:latest
 
       - uses: actions/checkout@v3
         if: steps.should_push.outputs.push=='true'
@@ -240,8 +302,8 @@ jobs:
         if: steps.should_push.outputs.push=='true'
         run: |
           # Set the appVersion and version of the chart to the current tag
-          sed -i "s/appVersion: .*/appVersion: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
-          sed -i "s/version: .*/version: ${{steps.get-current-tag.outputs.tag }}/g" ./charts/casdoor/Chart.yaml
+          sed -i "s/appVersion: .*/appVersion: ${{ needs.tag-release.outputs.new-release-version }}/g" ./charts/casdoor/Chart.yaml
+          sed -i "s/version: .*/version: ${{ needs.tag-release.outputs.new-release-version }}/g" ./charts/casdoor/Chart.yaml
 
           REGISTRY=oci://registry-1.docker.io/casbin
           cd charts/casdoor
@@ -255,6 +317,6 @@ jobs:
           git config --global user.name "casbin-bot"
           git config --global user.email "bot@casbin.org"
           git add Chart.yaml index.yaml
-          git commit -m "chore(helm): bump helm charts appVersion to ${{steps.get-current-tag.outputs.tag }}"
-          git tag ${{steps.get-current-tag.outputs.tag }}
+          git commit -m "chore(helm): bump helm charts appVersion to ${{ needs.tag-release.outputs.new-release-version }}"
+          git tag ${{ needs.tag-release.outputs.new-release-version }}
           git push origin HEAD:master --follow-tags
