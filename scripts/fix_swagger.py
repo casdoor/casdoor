@@ -13,7 +13,15 @@ import sys
 
 def fix_swagger_metadata(swagger_data):
     """Fix the metadata section of swagger documentation."""
-    swagger_data['info'] = {
+    # Rebuild the swagger data in the correct order to ensure schemes comes after basePath
+    result = {}
+    
+    # Add swagger version
+    if 'swagger' in swagger_data:
+        result['swagger'] = swagger_data['swagger']
+    
+    # Add info
+    result['info'] = {
         "title": "Casdoor RESTful API",
         "description": "Swagger Docs of Casdoor Backend API",
         "version": "1.503.0",
@@ -22,11 +30,19 @@ def fix_swagger_metadata(swagger_data):
         }
     }
     
-    # Add schemes if not present
-    if 'schemes' not in swagger_data or not swagger_data['schemes']:
-        swagger_data['schemes'] = ["https", "http"]
+    # Add basePath
+    if 'basePath' in swagger_data:
+        result['basePath'] = swagger_data['basePath']
     
-    return swagger_data
+    # Add schemes
+    result['schemes'] = ["https", "http"]
+    
+    # Add all other fields
+    for key, value in swagger_data.items():
+        if key not in ['swagger', 'info', 'basePath', 'schemes']:
+            result[key] = value
+    
+    return result
 
 def clean_tag_name(tag):
     """

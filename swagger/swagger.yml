@@ -6,6 +6,9 @@ info:
   contact:
     email: casbin@googlegroups.com
 basePath: /
+schemes:
+- https
+- http
 paths:
   /.well-known/{application}/jwks:
     get:
@@ -7219,6 +7222,3 @@ tags:
     controller for handlers directly under / (root)
 
     '
-schemes:
-- https
-- http

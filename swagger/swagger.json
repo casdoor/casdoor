@@ -9,6 +9,10 @@
         }
     },
     "basePath": "/",
+    "schemes": [
+        "https",
+        "http"
+    ],
     "paths": {
         "/.well-known/jwks": {
             "get": {
@@ -10860,9 +10864,5 @@
         {
             "description": "RootController\ncontroller for handlers directly under / (root)\n"
         }
-    ],
-    "schemes": [
-        "https",
-        "http"
     ]
 }
