@@ -1920,7 +1920,7 @@ paths:
         '200':
           description: The Response object
           schema:
-            $ref: '#/definitions/object.Verification'
+            $ref: '#/definitions/object.Payment'
   /api/get-payments:
     get:
       tags:
@@ -1939,7 +1939,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Verification'
+              $ref: '#/definitions/object.Payment'
   /api/get-permission:
     get:
       tags:
@@ -2703,7 +2703,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/object.Verification'
+              $ref: '#/definitions/object.Payment'
   /api/get-users:
     get:
       tags:

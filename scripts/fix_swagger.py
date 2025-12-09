@@ -95,26 +95,50 @@ def remove_html_breaks(swagger_data):
     
     return swagger_data
 
-def fix_operation_ids(swagger_data):
+def fix_operation_ids_and_schemas(swagger_data):
     """
-    Fix incorrect operation IDs that bee sometimes generates.
+    Fix incorrect operation IDs and response schemas that bee sometimes generates.
     Some payment endpoints are incorrectly labeled as verification endpoints.
     """
     if 'paths' not in swagger_data:
         return swagger_data
     
-    # Map of path to correct operation ID
+    # Map of path to correct operation ID and response schema
     fixes = {
-        '/api/get-payment': {'operationId': 'ApiController.GetPayment'},
-        '/api/get-payments': {'operationId': 'ApiController.GetPayments'},
-        '/api/get-user-payments': {'operationId': 'ApiController.GetUserPayments'},
+        '/api/get-payment': {
+            'operationId': 'ApiController.GetPayment',
+            'response_schema': '#/definitions/object.Payment'
+        },
+        '/api/get-payments': {
+            'operationId': 'ApiController.GetPayments',
+            'response_schema_array': '#/definitions/object.Payment'
+        },
+        '/api/get-user-payments': {
+            'operationId': 'ApiController.GetUserPayments',
+            'response_schema_array': '#/definitions/object.Payment'
+        },
     }
     
     for path, fix_data in fixes.items():
         if path in swagger_data['paths']:
             for method, details in swagger_data['paths'][path].items():
+                # Fix operation ID
                 if 'operationId' in details and 'operationId' in fix_data:
                     details['operationId'] = fix_data['operationId']
+                
+                # Fix response schema
+                if 'responses' in details and '200' in details['responses']:
+                    response = details['responses']['200']
+                    if 'schema' in response:
+                        # Fix single object schema
+                        if 'response_schema' in fix_data:
+                            if '$ref' in response['schema']:
+                                response['schema']['$ref'] = fix_data['response_schema']
+                        # Fix array schema
+                        elif 'response_schema_array' in fix_data:
+                            if 'type' in response['schema'] and response['schema']['type'] == 'array':
+                                if 'items' in response['schema'] and '$ref' in response['schema']['items']:
+                                    response['schema']['items']['$ref'] = fix_data['response_schema_array']
     
     return swagger_data
 
@@ -127,7 +151,7 @@ def main():
     swagger_json = fix_swagger_metadata(swagger_json)
     swagger_json = fix_tags_in_paths(swagger_json)
     swagger_json = remove_html_breaks(swagger_json)
-    swagger_json = fix_operation_ids(swagger_json)
+    swagger_json = fix_operation_ids_and_schemas(swagger_json)
     
     # Save swagger.json
     with open('swagger/swagger.json', 'w', encoding='utf-8') as f:
@@ -143,7 +167,7 @@ def main():
     swagger_yaml = fix_swagger_metadata(swagger_yaml)
     swagger_yaml = fix_tags_in_paths(swagger_yaml)
     swagger_yaml = remove_html_breaks(swagger_yaml)
-    swagger_yaml = fix_operation_ids(swagger_yaml)
+    swagger_yaml = fix_operation_ids_and_schemas(swagger_yaml)
     
     # Save swagger.yml
     with open('swagger/swagger.yml', 'w', encoding='utf-8') as f:

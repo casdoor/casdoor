@@ -2955,7 +2955,7 @@
                     "200": {
                         "description": "The Response object",
                         "schema": {
-                            "$ref": "#/definitions/object.Verification"
+                            "$ref": "#/definitions/object.Payment"
                         }
                     }
                 }
@@ -2983,7 +2983,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/object.Verification"
+                                "$ref": "#/definitions/object.Payment"
                             }
                         }
                     }
@@ -4141,7 +4141,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/object.Verification"
+                                "$ref": "#/definitions/object.Payment"
                             }
                         }
                     }
